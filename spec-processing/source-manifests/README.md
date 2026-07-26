@@ -111,7 +111,7 @@ licensed-payload metadata-only dependency.
 `WML-2` compliance sprint. It connects the sprint and work items to their
 directly mapped SCR rows, normative clauses, fixtures, requirements, source
 documents, owner layers, and dependency neighbors. Canonical manifests remain
-authoritative. Machine-derived fact: WML-201 has 177 direct clauses: 174
+authoritative. Machine-derived fact: WML-201 has 178 direct clauses: 175
 selected WML clauses plus 3 WAE composition clauses. The projection also
 imports the exact WML SCR matrix with direct spec/code/test or explicit gap
 evidence; the graph still reports other work items without direct clause

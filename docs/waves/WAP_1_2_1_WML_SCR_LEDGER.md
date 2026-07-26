@@ -30,7 +30,7 @@ pnpm wap-graph:check
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
 evidence state: 29 `direct-test-linked`, 18 `gap-work-item-mapped`, or 29
-`optional-not-assessed`. All 174 selected WML clauses directly map to
+`optional-not-assessed`. All 175 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
 

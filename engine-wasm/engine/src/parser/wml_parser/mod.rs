@@ -5,11 +5,13 @@ use crate::WmlLoadDiagnostic;
 mod actions;
 mod head;
 mod nodes;
+mod validation;
 mod xml;
 
 use actions::{parse_card_bindings, parse_template_bindings};
 use head::parse_deck_head;
 use nodes::{parse_card_nodes_xml, validate_nmtoken, validate_optional_enum};
+use validation::validate_wml13_document;
 #[cfg(test)]
 use xml::parse_xml_root;
 use xml::{parse_xml_document, WmlDocumentType, XmlElement, XmlNode};
@@ -114,18 +116,75 @@ pub(crate) struct ParsedWml {
 
 #[cfg(test)]
 pub fn parse_wml(xml: &str) -> Result<Deck, String> {
-    parse_wml_report(xml)
+    let source = if xml.contains("<!DOCTYPE") {
+        if xml.contains("<?xml") {
+            xml.to_string()
+        } else {
+            format!("<?xml version=\"1.0\"?>\n{xml}")
+        }
+    } else {
+        format!(
+            "<?xml version=\"1.0\"?>\n<!DOCTYPE wml SYSTEM \"http://tests.wap-labs.invalid/compat.dtd\">\n{xml}"
+        )
+    };
+    parse_wml_report(&source)
         .map(|parsed| parsed.deck)
         .map_err(|diagnostic| diagnostic.message)
 }
 
+#[cfg(test)]
 pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic> {
+    parse_wml_report_with_source(xml, WmlSourceKind::Text)
+}
+
+pub(crate) fn parse_wml_report_for_content_type(
+    xml: &str,
+    content_type: &str,
+) -> Result<ParsedWml, WmlLoadDiagnostic> {
+    let media_type = content_type.split(';').next().unwrap_or_default().trim();
+    let source_kind = if media_type.eq_ignore_ascii_case("application/vnd.wap.wmlc") {
+        WmlSourceKind::TokenizedWbxml
+    } else {
+        WmlSourceKind::Text
+    };
+    parse_wml_report_with_source(xml, source_kind)
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum WmlSourceKind {
+    Text,
+    TokenizedWbxml,
+}
+
+fn parse_wml_report_with_source(
+    xml: &str,
+    source_kind: WmlSourceKind,
+) -> Result<ParsedWml, WmlLoadDiagnostic> {
     let document = parse_xml_document(xml)?;
+    let document_type = match source_kind {
+        WmlSourceKind::Text => {
+            if !document.has_xml_declaration {
+                return Err(WmlLoadDiagnostic::invalid(
+                    "Invalid WML prologue: missing required XML declaration",
+                ));
+            }
+            document.document_type.ok_or_else(|| {
+                WmlLoadDiagnostic::invalid(
+                    "Invalid WML prologue: missing required DOCTYPE declaration",
+                )
+            })?
+        }
+        WmlSourceKind::TokenizedWbxml => document.document_type.unwrap_or(WmlDocumentType::Wml13),
+    };
     let root = document.root;
     if root.name != "wml" {
         return Err(WmlLoadDiagnostic::invalid(
             "Missing required <wml> root element",
         ));
+    }
+
+    if document_type == WmlDocumentType::Wml13 {
+        validate_wml13_document(&root).map_err(WmlLoadDiagnostic::invalid)?;
     }
 
     if let Some(language) = root.attr("xml:lang") {
@@ -140,7 +199,7 @@ pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic
     let mut seen_head = false;
     let mut seen_template = false;
     let mut seen_card = false;
-    let mut budget = ParseBudget::new(document.document_type);
+    let mut budget = ParseBudget::new(Some(document_type));
     for node in &root.children {
         let element = match node {
             XmlNode::Text(text) if text.trim().is_empty() => continue,

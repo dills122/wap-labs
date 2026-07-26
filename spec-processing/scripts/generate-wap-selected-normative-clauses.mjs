@@ -231,6 +231,30 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-203',
+    new Set([
+      'WML-CL-PROLOGUE-REQUIRED',
+      'WML-CL-WML-ROOT-STRUCTURE',
+      'WML-CL-HEAD-STRUCTURE',
+      'WML-CL-TEMPLATE-STRUCTURE',
+      'WML-CL-CARD-STRUCTURE',
+      'WML-CL-CARD-CONTENT-ORDER',
+      'WML-CL-DO-STRUCTURE',
+      'WML-CL-ONEVENT-SINGLE-TASK',
+      'WML-CL-GO-STRUCTURE',
+      'WML-CL-POSTFIELD-STRUCTURE',
+      'WML-CL-SETVAR-STRUCTURE',
+      'WML-CL-SELECT-STRUCTURE',
+      'WML-CL-INPUT-STRUCTURE',
+      'WML-CL-IMAGE-STRUCTURE',
+      'WML-CL-ANCHOR-STRUCTURE',
+      'WML-CL-A-REQUIRED-TARGET',
+      'WML-CL-TABLE-STRUCTURE',
+      'WML-CL-TR-STRUCTURE',
+      'WML-CL-TD-STRUCTURE'
+    ])
+  ],
+  [
     'WML-204',
     new Set([
       'WML-CL-INPUT-EMPTY-COMMIT',
@@ -324,6 +348,9 @@ const directWorkItemClauseIds = new Map([
 const implementedWml202ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-202')
 );
+const implementedWml203ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-203')
+);
 const implementedWml204ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-204')
 );
@@ -352,6 +379,12 @@ function wml202TestPath(clauseId, fixtureKind) {
     ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
     : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
 }
+
+const wml203FixtureEvidence = {
+  path: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203'
+};
 
 const wml204FixtureTests = new Map([
   ['WML-CL-INPUT-EMPTY-COMMIT', 'wml_fx_input_empty_commit_applies_format_and_emptyok_precedence'],
@@ -524,6 +557,9 @@ function refreshStrictWcmpFamily(manifest) {
 }
 
 function refreshManifestTotals(manifest) {
+  for (const family of manifest.families) {
+    family.clauseCount = family.clauses.length;
+  }
   const clauses = manifest.families.flatMap((family) => family.clauses);
   const parentCount = manifest.families.reduce(
     (total, family) => total + family.selectedParentCount,
@@ -602,7 +638,10 @@ if (refreshDirectWorkItems) {
           parentById.get(parentId).mapping.implementationStatus
         ])
       );
-      if (implementedWml202ClauseIds.has(candidate.id)) {
+      if (implementedWml203ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml203FixtureEvidence;
+      } else if (implementedWml202ClauseIds.has(candidate.id)) {
         const testPath = wml202TestPath(
           candidate.id,
           candidate.fixturePlan.kind
@@ -939,6 +978,7 @@ const sectionDefinitions = {
       '10.3.4': ['10.3.4 Setting Variables', '10.3.5 Validation'],
       '10.3.5': ['10.3.5 Validation', '10.4 Context Restrictions'],
       '10.4': ['10.4 Context Restrictions', '11. The Structure of WML Decks'],
+      '11.1': ['11.1 Document Prologue', '11.2 The WML Element'],
       '11.2': ['11.2 The WML Element', '11.2.1 A WML Example'],
       '11.3': ['11.3 The Head Element', '11.3.1 The Access Element'],
       '11.3.1': ['11.3.1 The Access Element', '11.3.2 The Meta Element'],
@@ -1519,13 +1559,16 @@ function clause(
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml' ||
+    implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
   const evidence =
-    implementedWml202ClauseIds.has(clauseId)
+    implementedWml203ClauseIds.has(clauseId)
+      ? wml203FixtureEvidence
+      : implementedWml202ClauseIds.has(clauseId)
       ? {
           path: wml202EvidencePath,
           testPath: wml202EvidencePath,
@@ -1593,6 +1636,7 @@ function clause(
 
 // WML 1.3 selected Class C user-agent clauses. Synopses are project-authored;
 // source prose remains in the verified private extraction cache.
+clause('wml', 'prologue_required', ['WML-C-53'], '11.1', 'explicit-must', 'parser', 'Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.');
 clause('wml', 'reference_encoding_detection', ['WML-C-05'], '6.1', 'implicit-must', 'parser', 'Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.');
 clause('wml', 'reference_transcoding_loss', ['WML-C-05'], '6.1', 'explicit-must', 'transport-boundary', 'Avoid transcoding when the user agent supports the original encoding and conversion would lose information.');
 clause('wml', 'reference_unicode_mapping', ['WML-C-05'], '6.1', 'explicit-must', 'parser', 'Map every character in each recognized source encoding to its Unicode character.');

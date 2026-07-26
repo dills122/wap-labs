@@ -97,6 +97,9 @@ Do now:
   before replacing the active deck
 - define stable event/error enums
 - classify an external WML `DOCTYPE` before building the deck:
+  - textual WML requires both an XML 1.0 declaration and an external
+    document type declaration; normalized WBXML supplies equivalent document
+    metadata through its content-type boundary;
   - the canonical identity is `-//WAPFORUM//DTD WML 1.3//EN` with
     `http://www.wapforum.org/DTD/wml13.dtd`;
   - alternate external DTDs are accepted under WML 1.3 section 12.4, with
@@ -106,6 +109,10 @@ Do now:
     errors;
   - no DTD is fetched, and transport-decoded WBXML remains normalized textual
     WML before engine ingestion.
+- enforce the selected WML 1.3 DTD element content models, attribute
+  declarations, required values, enumerations, XML names, and unique IDs
+  before constructing the runtime deck; keep this validator shared by native
+  and WASM adapters.
 - expose deterministic WML load outcomes:
   - malformed XML and invalid WML reject the load;
   - unsupported optional constructs are ignored with an `unsupported` diagnostic;
@@ -114,7 +121,6 @@ Do now:
 
 Defer now:
 
-- mandatory-prologue enforcement and full DTD content-model validation
 - exhaustive per-element error-condition coverage and host fetch/access failure atomicity
 - full WMLScript execution
 - full event/timer matrix

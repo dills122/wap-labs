@@ -1,0 +1,50 @@
+<!--
+label: WML 1.3 Selected DTD Family
+work-items: WML-203
+spec-items: WML-CL-PROLOGUE-REQUIRED, WML-CL-WML-ROOT-STRUCTURE, WML-CL-CARD-STRUCTURE, WML-CL-CARD-CONTENT-ORDER, WML-CL-DO-STRUCTURE, WML-CL-ONEVENT-SINGLE-TASK, WML-CL-GO-STRUCTURE, WML-CL-SELECT-STRUCTURE, WML-CL-TABLE-STRUCTURE
+description: Canonical WML 1.3 text exercising every selected DTD element family through the strict engine boundary.
+goal: Verify mandatory prologue handling and deterministic parsing/rendering across the selected WML 1.3 document family.
+testing-ac:
+- Load the example and confirm the main card renders representative text, table, and option content without a parser error.
+- Move focus once and confirm the active card and rendered family content remain deterministic.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml id="family" xml:lang="en">
+  <head>
+    <access domain="example.test" path="/apps"/>
+    <meta name="scenario" content="wml-203"/>
+  </head>
+  <template>
+    <do type="options" name="template-options"><noop/></do>
+    <onevent type="onenterbackward"><noop/></onevent>
+  </template>
+  <card id="main" title="WML family" newcontext="false" ordered="true">
+    <onevent type="onenterforward"><noop/></onevent>
+    <timer name="clock" value="10"/>
+    <do type="accept" name="submit">
+      <go href="#next" method="post">
+        <postfield name="q" value="x"/>
+        <setvar name="q" value="x"/>
+      </go>
+    </do>
+    <p align="left" mode="wrap">
+      Family <em>em <strong>strong <b>bold <i>italic <u>under
+      <big>big <small>small</small></big></u></i></b></strong></em><br/>
+      <img alt="diagram" src="diagram.png" align="bottom"/>
+      <anchor title="refresh">Refresh<refresh><setvar name="q" value="y"/></refresh></anchor>
+      <a href="#next">Next</a>
+      <table columns="1"><tr><td>Cell</td></tr></table>
+      <input name="field" type="text"/>
+      <select name="choice">
+        <optgroup title="Group">
+          <option value="1">One<onevent type="onpick"><noop/></onevent></option>
+        </optgroup>
+      </select>
+      <fieldset title="More"><input name="extra"/></fieldset>
+    </p>
+    <pre xml:space="preserve">Pre <anchor>Back<prev/></anchor><do type="reset" name="reset"><noop/></do></pre>
+  </card>
+  <card id="next"><p>Done</p></card>
+</wml>

@@ -35,7 +35,7 @@ requirements, owner layers, and legacy ticket links.
 
 The pilot intentionally reports remaining gap levels:
 
-- Machine-derived fact: WML-201 has 177 direct clauses: 174 selected WML clauses plus 3 WAE
+- Machine-derived fact: WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE
   composition clauses. It also projects the exact WML SCR matrix while retaining direct-test,
   mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps 14 root/head/access, template, and task-shadowing clauses adopted by `R0-04` and `R0-12`;

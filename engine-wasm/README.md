@@ -209,21 +209,21 @@ Type contract:
 
 ## Next implementation slice
 
-1. Preserve the completed `WML-201` 76-row evidence projection and 174/174 direct WML-clause
+1. Preserve the completed `WML-201` 76-row evidence projection and 175/175 direct WML-clause
    mapping.
 2. Preserve completed `WML-202` referring-URI access, root-language, and
    card-context/grammar evidence (30/30 direct clauses).
 3. Preserve completed `WML-204` vdata/HREF conversion, control validation,
    grouped-control syntax, deterministic failure, and native/WASM parity
    evidence (23/23 direct clauses).
-4. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
-   extend the mapped `WML-205` taxonomy across the remaining element errors
-   and host fetch/access failure atomicity. Keep these parser/runtime slices
-   serial where they touch the same validation and test files.
-5. Preserve the completed direct mappings for `WML-201` (174/174 WML
-   clauses), `WML-202` (30/30 clauses), `WML-203` (49/49 mapped clauses), and
-   `WML-204` (23/23 clauses); WML-203 and WML-205 broader implementation
-   acceptance remains open.
+4. Preserve completed `WML-203` mandatory prologue, selected DTD content-model,
+   native/WASM parity, and broader document-family evidence (68/68 direct
+   clauses), then extend the mapped `WML-205` taxonomy across the remaining
+   element errors and host fetch/access failure atomicity.
+5. Preserve the completed direct mappings for `WML-201` (175/175 WML
+   clauses), `WML-202` (30/30 clauses), `WML-203` (68/68 clauses), and
+   `WML-204` (23/23 clauses); WML-205 broader implementation acceptance
+   remains open.
 6. Keep `D0-01`, `W1-06`, `A5-03`, and `M1-03` queued as downstream
    or non-preemptive work rather than current sprint drivers.
 

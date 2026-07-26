@@ -390,7 +390,7 @@
           "acceptance": [
             "The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.",
             "All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.",
-            "All 174 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
+            "All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
@@ -429,12 +429,12 @@
             "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
             "R0-04/C5-03 close the root/head/access/meta/card model across the shared native/WASM parser and runtime paths, including the host-supplied referring-URI boundary.",
             "All 30 directly mapped WML-202 clauses have source-derived direct fixtures for access defaults/matching and pre-transition enforcement, root language metadata, card collection/order/structure/context, template shadowing, and go-only newcontext reset effects.",
-            "WML-203 retains exhaustive DTD content-model enforcement, WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
+            "WML-203 now closes mandatory prologue and selected DTD content-model enforcement; WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
           ]
         },
         {
           "id": "WML-203",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "transport-rust", "qa"],
           "sourceFamilies": ["wml", "wbxml", "associated-assets"],
           "existingTickets": ["R0-08", "T0-07"],
@@ -445,19 +445,25 @@
           ],
           "acceptance": [
             "Text WML and WBXML-derived WML reach equivalent deck models; strict DTD identity and unknown-DTD behavior are explicit.",
+            "Textual WML requires an XML declaration and external document type declaration; normalized WBXML uses equivalent header metadata supplied by the transport boundary.",
+            "Every selected WML 1.3 DTD element and attribute family has deterministic native and WASM validation evidence.",
             "WBXML-C-001, WBXML-C-010, and WBXML-C-011 are fixture-backed against a pinned decoder; fake fixed-output and either-result fixtures do not satisfy this gate."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "wasm-pack test --node engine-wasm/engine",
             "cargo test --manifest-path transport-rust/Cargo.toml",
             "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior",
             "pnpm test:story WML-203",
-            "node scripts/check-wap-wbxml-conformance-ledger.mjs"
+            "node scripts/check-wap-wbxml-conformance-ledger.mjs",
+            "node scripts/check-wap-selected-normative-clauses.mjs",
+            "pnpm wap-graph:check"
           ],
           "notes": [
             "The schema-v2 TRN-706 WDP replay fixture now carries a canonical WBXML service data unit whose expected delivery payload is decoded at the fetch boundary and compared with the canonical text deck in the native engine.",
-            "The executable WML-203 story proves the paired normalized text deck through the WASM engine boundary; the simulator does not decode WBXML.",
-            "WML-203 remains in progress because mandatory prologue enforcement, full DTD content-model validation, and broader document-family evidence remain open."
+            "The executable WML-203 stories prove canonical text/WBXML parity and the selected WML 1.3 document family through the production WASM engine boundary; the simulator does not decode WBXML.",
+            "All 68 directly mapped WML-203 clauses are implemented: 47 WBXML clauses, two alternate-DTD clauses, the mandatory textual prologue clause, and 18 selected WML DTD structure clauses.",
+            "WML-203A additively tracks migration of 31 legacy local examples that predate strict standalone-document prologue enforcement; this compatibility-corpus cleanup is not a WML-203 conformance gate."
           ]
         },
         {
@@ -481,7 +487,7 @@
           "notes": [
             "All 23 directly mapped WML-204 clauses have source-derived fixtures for input masks and failure atomicity, document-order input/select initialization, select precedence and serialization, option-value vdata evaluation, and onpick HREF conversion.",
             "The shared native/WASM variable-reference path validates $name and $(name:conversion), preserves exact CDATA and literal-dollar handling, applies noesc defaults to vdata and escape defaults to HREF, and rejects invalid control references atomically.",
-            "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 and WML-205 retain their separate parser/error gates."
+            "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 is complete; WML-205 retains its separate error-taxonomy gate."
           ]
         },
         {

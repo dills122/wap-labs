@@ -10,16 +10,19 @@ testing-ac:
 - Move focus to "External link" and press Enter; activeCardId should remain home.
 - Confirm runtime-state shows externalNavigationIntent as http://example.com/other.wml.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
     <p>WaveNav Host Harness</p>
-    <p>Use ArrowUp / ArrowDown / Enter.</p>
-    <a href="#next">Go to next card</a>
-    <br/>
-    <a href="http://example.com/other.wml">External link (emits host intent)</a>
+    <p>
+      Use ArrowUp / ArrowDown / Enter.<br/>
+      <a href="#next">Go to next card</a><br/>
+      <a href="http://example.com/other.wml">External link (emits host intent)</a>
+    </p>
   </card>
   <card id="next">
-    <p>Second card loaded.</p>
-    <a href="#home">Return home</a>
+    <p>Second card loaded. <a href="#home">Return home</a></p>
   </card>
 </wml>

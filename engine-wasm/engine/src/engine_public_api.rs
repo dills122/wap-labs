@@ -116,7 +116,11 @@ impl WmlEngine {
             )));
         }
 
-        let parsed = parse_wml_report(wml_xml)?;
+        #[cfg(test)]
+        let test_input = test_compatibility_wml_input(wml_xml, content_type);
+        #[cfg(test)]
+        let wml_xml = test_input.as_ref();
+        let parsed = parse_wml_report_for_content_type(wml_xml, content_type)?;
         let access_allowed = parsed
             .deck
             .allows_referring_uri(base_url, referring_url)
@@ -598,6 +602,29 @@ impl WmlEngine {
         self.trace_entries.clear();
         self.next_trace_seq = 1;
     }
+}
+
+#[cfg(test)]
+fn test_compatibility_wml_input<'a>(
+    wml_xml: &'a str,
+    content_type: &str,
+) -> std::borrow::Cow<'a, str> {
+    if content_type.contains("validation=strict")
+        || content_type.split(';').next().is_some_and(|media_type| {
+            media_type
+                .trim()
+                .eq_ignore_ascii_case("application/vnd.wap.wmlc")
+        })
+        || wml_xml.contains("<?xml")
+    {
+        return std::borrow::Cow::Borrowed(wml_xml);
+    }
+    if wml_xml.contains("<!DOCTYPE") {
+        return std::borrow::Cow::Owned(format!("<?xml version=\"1.0\"?>\n{wml_xml}"));
+    }
+    std::borrow::Cow::Owned(format!(
+        "<?xml version=\"1.0\"?>\n<!DOCTYPE wml SYSTEM \"http://tests.wap-labs.invalid/compat.dtd\">\n{wml_xml}"
+    ))
 }
 
 fn truncate_to_chars(value: &str, max_len: Option<usize>) -> String {

@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-204 23/23 complete, WML-203 49/49 mapped clauses)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete)
 
 ## Purpose
 
@@ -47,6 +47,7 @@ Legend:
 - Spec:
   - `WAP-191*` DTD lineage (`wml`, `card`, task-bearing content model)
 - AC:
+  - Evidence: [x] WML-203 strict native validation in `engine-wasm/engine/src/engine_tests/wml_203_validation.rs`, WASM parity in `engine-wasm/engine/src/engine_wasm_bindings_tests.rs`, and `wml-203-dtd-family.wml` cover the mandatory prologue and every selected WML 1.3 DTD element family; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-203`.
   - Evidence: [x] Template grammar and ordering: `wml_202_parses_template_and_card_bindings_independently` and `wml_202_rejects_invalid_template_structure_deterministically` in `engine-wasm/engine/src/parser/wml_parser/tests.rs`; `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202`.
   - Evidence: [x] Root/head ordering, access uniqueness/retention, and ordered meta validation/retention: `wml_202_retains_access_and_ordered_meta_for_the_whole_deck`, `wml_202_rejects_invalid_wml_root_structure_deterministically`, and `wml_202_rejects_invalid_head_access_and_meta_structure_deterministically`; WASM boundary parity: `wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior`.
   - Evidence: [x] Card collection and onevent/timer/content grammar plus language/context defaults: `wml_202_retains_root_and_card_language_context_metadata_with_defaults` and `wml_202_enforces_card_event_timer_content_order`.
@@ -151,7 +152,7 @@ Legend:
   - `WAP-238` section 5.1-5.11 and conformance sections
   - `spec-wml-19990616` reference-processing lineage
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] WML-203 canonical/alternate-DTD classification and unknown-wrapper preservation tests remain paired with strict canonical DTD enforcement; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203`.
   - [ ] Runtime compatibility notes identify where Waves follows WML 1.x strict behavior vs WML2-style compatibility handling.
   - [ ] Parser/runtime behavior for unknown markup and timer/task lifecycle remains deterministic under fixture tests.
 

@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `planned-by` → [[work-items/WML-203|WML-203]]
 - `planned-by` → [[work-items/WML-204|WML-204]]
 - `refines` → [[scr-rows/WML-C-43|WML-C-43]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
@@ -43,6 +44,7 @@ tags:
     "R0-01",
     "R0-04",
     "WML-201",
+    "WML-203",
     "WML-204"
   ],
   "ownerLayers": [

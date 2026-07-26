@@ -46,7 +46,7 @@ Status: Active
     client rows, and 10 server/encoder rows outside the client profile
   - direct evidence states: 30 code/test-linked, 17 mapped mandatory gaps,
     and 29 optional rows not assessed
-  - WML-201 directly maps all 76 SCR rows and all 174 selected WML clauses;
+  - WML-201 directly maps all 76 SCR rows and all 175 selected WML clauses;
     its declared WML-family graph gap is closed without changing row status
 - WBXML ledger:
   - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
@@ -55,7 +55,7 @@ Status: Active
   - direct normative baseline tests: 3/3 selected parent rows
 - Selected normative-clause ledger:
   - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
-  - WML: 39 selected parents / 174 clauses
+  - WML: 39 selected parents / 175 clauses
   - WAE: 11 selected parents / 39 clauses
   - WBXML: 3 selected parents / 47 clauses
   - caching: 5 selected parents / 68 clauses

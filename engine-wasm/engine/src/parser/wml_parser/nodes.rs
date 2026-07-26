@@ -643,13 +643,17 @@ fn validate_optional_number(element: &XmlElement, attr: &str) -> Result<(), Stri
     let Some(value) = element.attr(attr) else {
         return Ok(());
     };
-    if !value.is_empty() && value.bytes().all(|byte| byte.is_ascii_digit()) {
+    if is_decimal_number(value) {
         return Ok(());
     }
     Err(format!(
         "Invalid <{}>: attribute '{attr}' must contain decimal digits",
         element.name
     ))
+}
+
+pub(super) fn is_decimal_number(value: &str) -> bool {
+    !value.is_empty() && value.bytes().all(|byte| byte.is_ascii_digit())
 }
 
 fn validate_optional_nmtoken(element: &XmlElement, attr: &str) -> Result<(), String> {
@@ -672,14 +676,18 @@ fn validate_optional_xml_name(element: &XmlElement, attr: &str) -> Result<(), St
     let Some(value) = element.attr(attr) else {
         return Ok(());
     };
-    let mut chars = value.chars();
-    if chars.next().is_some_and(is_xml_name_start_char) && chars.all(is_xml_name_char) {
+    if is_xml_name(value) {
         return Ok(());
     }
     Err(format!(
         "Invalid <{}>: attribute '{attr}' must be an XML Name",
         element.name
     ))
+}
+
+pub(super) fn is_xml_name(value: &str) -> bool {
+    let mut chars = value.chars();
+    chars.next().is_some_and(is_xml_name_start_char) && chars.all(is_xml_name_char)
 }
 
 fn is_xml_name_start_char(ch: char) -> bool {

@@ -763,7 +763,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>WaveNav Host Harness</p>\n    <p>Use ArrowUp / ArrowDown / Enter.</p>\n    <a href=\"#next\">Go to next card</a>\n    <br/>\n    <a href=\"http://example.com/other.wml\">External link (emits host intent)</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card loaded.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>WaveNav Host Harness</p>\n    <p>\n      Use ArrowUp / ArrowDown / Enter.<br/>\n      <a href=\"#next\">Go to next card</a><br/>\n      <a href=\"http://example.com/other.wml\">External link (emits host intent)</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>Second card loaded. <a href=\"#home\">Return home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "cardEntryForwardBackward",
@@ -2364,6 +2364,96 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<wml xml:lang=\"en\">\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\" xml:lang=\"fr\" ordered=\"false\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\" newcontext=\"true\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml203DtdFamily",
+    "label": "WML 1.3 Selected DTD Family",
+    "description": "Canonical WML 1.3 text exercising every selected DTD element family through the strict engine boundary.",
+    "goal": "Verify mandatory prologue handling and deterministic parsing/rendering across the selected WML 1.3 document family.",
+    "workItems": [
+      "WML-203"
+    ],
+    "specItems": [
+      "WML-CL-PROLOGUE-REQUIRED",
+      "WML-CL-WML-ROOT-STRUCTURE",
+      "WML-CL-CARD-STRUCTURE",
+      "WML-CL-CARD-CONTENT-ORDER",
+      "WML-CL-DO-STRUCTURE",
+      "WML-CL-ONEVENT-SINGLE-TASK",
+      "WML-CL-GO-STRUCTURE",
+      "WML-CL-SELECT-STRUCTURE",
+      "WML-CL-TABLE-STRUCTURE"
+    ],
+    "testingAc": [
+      "Load the example and confirm the main card renders representative text, table, and option content without a parser error.",
+      "Move focus once and confirm the active card and rendered family content remain deterministic."
+    ],
+    "flows": [
+      {
+        "id": "strict-selected-dtd-family-render",
+        "title": "Strict WML 1.3 prologue and selected DTD family render deterministically",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-203"
+        ],
+        "specItems": [
+          "WML-CL-PROLOGUE-REQUIRED",
+          "WML-CL-WML-ROOT-STRUCTURE",
+          "WML-CL-CARD-STRUCTURE",
+          "WML-CL-CARD-CONTENT-ORDER",
+          "WML-CL-DO-STRUCTURE",
+          "WML-CL-ONEVENT-SINGLE-TASK",
+          "WML-CL-GO-STRUCTURE",
+          "WML-CL-SELECT-STRUCTURE",
+          "WML-CL-TABLE-STRUCTURE"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Family",
+              "Cell",
+              "One",
+              "Pre"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Family",
+                  "Cell",
+                  "One",
+                  "Pre"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml id=\"family\" xml:lang=\"en\">\n  <head>\n    <access domain=\"example.test\" path=\"/apps\"/>\n    <meta name=\"scenario\" content=\"wml-203\"/>\n  </head>\n  <template>\n    <do type=\"options\" name=\"template-options\"><noop/></do>\n    <onevent type=\"onenterbackward\"><noop/></onevent>\n  </template>\n  <card id=\"main\" title=\"WML family\" newcontext=\"false\" ordered=\"true\">\n    <onevent type=\"onenterforward\"><noop/></onevent>\n    <timer name=\"clock\" value=\"10\"/>\n    <do type=\"accept\" name=\"submit\">\n      <go href=\"#next\" method=\"post\">\n        <postfield name=\"q\" value=\"x\"/>\n        <setvar name=\"q\" value=\"x\"/>\n      </go>\n    </do>\n    <p align=\"left\" mode=\"wrap\">\n      Family <em>em <strong>strong <b>bold <i>italic <u>under\n      <big>big <small>small</small></big></u></i></b></strong></em><br/>\n      <img alt=\"diagram\" src=\"diagram.png\" align=\"bottom\"/>\n      <anchor title=\"refresh\">Refresh<refresh><setvar name=\"q\" value=\"y\"/></refresh></anchor>\n      <a href=\"#next\">Next</a>\n      <table columns=\"1\"><tr><td>Cell</td></tr></table>\n      <input name=\"field\" type=\"text\"/>\n      <select name=\"choice\">\n        <optgroup title=\"Group\">\n          <option value=\"1\">One<onevent type=\"onpick\"><noop/></onevent></option>\n        </optgroup>\n      </select>\n      <fieldset title=\"More\"><input name=\"extra\"/></fieldset>\n    </p>\n    <pre xml:space=\"preserve\">Pre <anchor>Back<prev/></anchor><do type=\"reset\" name=\"reset\"><noop/></do></pre>\n  </card>\n  <card id=\"next\"><p>Done</p></card>\n</wml>\n"
+  },
+  {
     "key": "wml203WbxmlParity",
     "label": "WML 1.3 WBXML Structural Parity",
     "description": "Canonical WML 1.3 text matching the transport decoder's binary-basic-deck output.",
@@ -2434,7 +2524,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\" newcontext=\"false\" ordered=\"true\">\n    <p align=\"left\">Hello</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\" newcontext=\"false\" ordered=\"true\">\n    <p align=\"left\">Hello</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204ControlValidation",

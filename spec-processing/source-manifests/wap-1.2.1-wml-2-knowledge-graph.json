@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "f99431d5bff7a1249505789b12d1ea507d20f9fd14a61e93fbcab2faaec5df9f"
+        "sha256": "2721464e6f06649892e58f69994b36507de0de0ec4c7f92c52eb9b2aa513c448"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "6d2d34c4ff917b1cc9d1ab84d954659109acf116c68b2d6109da6d8fa3e43080"
+        "sha256": "34d02ba7c3ecc4ff08ff14fcbb5ceab7bcbac5497ffb6c7c67d5f9496f49e9ae"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -37,11 +37,11 @@
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 589,
-    "edgeCount": 1704,
+    "nodeCount": 591,
+    "edgeCount": 1728,
     "nodesByType": {
-      "clause": 224,
-      "fixture": 224,
+      "clause": 225,
+      "fixture": 225,
       "legacy-ticket": 9,
       "owner-layer": 4,
       "profile": 1,
@@ -60,21 +60,21 @@
       "covers-family": 7,
       "depends-on": 3,
       "effective-document": 12,
-      "maps-to": 370,
+      "maps-to": 371,
       "owned-by": 12,
-      "planned-by": 367,
-      "refines": 291,
+      "planned-by": 387,
+      "refines": 292,
       "relates-to": 10,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 300,
+      "sourced-from": 301,
       "targets-profile": 1,
-      "verified-by": 224
+      "verified-by": 225
     },
     "directClauseCountsByWorkItem": {
-      "WML-201": 177,
+      "WML-201": 178,
       "WML-202": 30,
-      "WML-203": 49,
+      "WML-203": 68,
       "WML-204": 23,
       "WML-205": 3
     },
@@ -2034,7 +2034,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -2043,7 +2044,7 @@
         "requirementIds": [
           "RQ-RMK-006"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2444,7 +2445,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -2453,7 +2455,7 @@
         "requirementIds": [
           "RQ-RMK-006"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2591,7 +2593,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-203"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2709,7 +2712,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-203"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3117,7 +3121,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -3126,7 +3131,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4100,7 +4105,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -4109,7 +4115,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4293,7 +4299,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-203"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4708,7 +4715,8 @@
         "workItems": [
           "R0-01",
           "R0-05",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -4719,7 +4727,7 @@
           "RQ-WAE-006",
           "RQ-WAE-018"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5073,6 +5081,7 @@
           "R0-01",
           "R0-04",
           "WML-201",
+          "WML-203",
           "WML-204"
         ],
         "ownerLayers": [
@@ -5566,7 +5575,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -5576,7 +5586,7 @@
           "RQ-RMK-002",
           "RQ-RMK-004"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6019,7 +6029,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -6028,7 +6039,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6145,6 +6156,43 @@
           "RQ-RMK-004"
         ],
         "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "key": "WML-CL-PROLOGUE-REQUIRED",
+      "type": "clause",
+      "title": "Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-53"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.1",
+          "heading": "11.1 Document Prologue",
+          "normalizedTextSha256": "ba28b2c2d6f368d72a6871e8f77133e1445a11146c102690d5b47fe52380daad"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.",
+        "workItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-203"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6728,6 +6776,7 @@
           "R0-01",
           "R0-04",
           "WML-201",
+          "WML-203",
           "WML-204"
         ],
         "ownerLayers": [
@@ -6873,7 +6922,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -6882,7 +6932,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7287,7 +7337,8 @@
         "workItems": [
           "R0-01",
           "R0-05",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -7296,7 +7347,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7403,7 +7454,8 @@
         "workItems": [
           "R0-01",
           "R0-05",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -7412,7 +7464,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7478,7 +7530,8 @@
           "R0-04",
           "R0-12",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-203"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -7844,7 +7897,8 @@
         "workItems": [
           "R0-01",
           "R0-05",
-          "WML-201"
+          "WML-201",
+          "WML-203"
         ],
         "ownerLayers": [
           "browser",
@@ -7853,7 +7907,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8450,7 +8504,8 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-203"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -9094,7 +9149,7 @@
       "title": "Require an HREF target on each a element and restrict its child content to the declared inline set.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require an HREF target on each a element and restrict its child content to the declared inline set.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9226,7 +9281,7 @@
       "title": "Parse anchor content with exactly one go, prev, or refresh task.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Parse anchor content with exactly one go, prev, or refresh task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9442,7 +9497,7 @@
       "title": "Parse do as exactly one task with a required type and optional label, name, optionality, and language metadata.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Parse do as exactly one task with a required type and optional label, name, optionality, and language metadata.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9754,7 +9809,7 @@
       "title": "Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9946,7 +10001,7 @@
       "title": "Require alt and src on an empty img element and accept the declared optional image hints.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require alt and src on an empty img element and accept the declared optional image hints.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10222,7 +10277,7 @@
       "title": "Parse onevent as exactly one go, prev, noop, or refresh task associated with its immediately enclosing element.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Parse onevent as exactly one go, prev, noop, or refresh task associated with its immediately enclosing element.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10366,7 +10421,7 @@
       "title": "Require postfield name and value attributes and treat both as variable-bearing data.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require postfield name and value attributes and treat both as variable-bearing data.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10404,6 +10459,18 @@
         "kind": "state-machine",
         "status": "planned",
         "assertion": "Run a backward-entry handler before starting the restored card timer or displaying the card.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-PROLOGUE-REQUIRED",
+      "key": "WML-FX-PROLOGUE-REQUIRED",
+      "type": "fixture",
+      "title": "Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -10642,7 +10709,7 @@
       "title": "Require setvar name and value attributes and no child content.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require setvar name and value attributes and no child content.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10774,7 +10841,7 @@
       "title": "Require one or more tr children and prohibit nested table elements.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require one or more tr children and prohibit nested table elements.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10810,7 +10877,7 @@
       "title": "Restrict table-cell content to the declared text, layout, image, and anchor element set.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Restrict table-cell content to the declared text, layout, image, and anchor element set.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10954,7 +11021,7 @@
       "title": "Require one or more td children in each table row.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require one or more td children in each table row.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -16351,7 +16418,7 @@
         "acceptance": [
           "The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.",
           "All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.",
-          "All 174 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
+          "All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
@@ -16382,7 +16449,7 @@
           "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
           "R0-04/C5-03 close the root/head/access/meta/card model across the shared native/WASM parser and runtime paths, including the host-supplied referring-URI boundary.",
           "All 30 directly mapped WML-202 clauses have source-derived direct fixtures for access defaults/matching and pre-transition enforcement, root language metadata, card collection/order/structure/context, template shadowing, and go-only newcontext reset effects.",
-          "WML-203 retains exhaustive DTD content-model enforcement, WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
+          "WML-203 now closes mandatory prologue and selected DTD content-model enforcement; WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
         ],
         "existingTickets": [
           "R0-04",
@@ -16413,7 +16480,7 @@
       "type": "work-item",
       "title": "WML 1.3 DTD validation policy",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "transport-rust",
@@ -16426,8 +16493,9 @@
         ],
         "notes": [
           "The schema-v2 TRN-706 WDP replay fixture now carries a canonical WBXML service data unit whose expected delivery payload is decoded at the fetch boundary and compared with the canonical text deck in the native engine.",
-          "The executable WML-203 story proves the paired normalized text deck through the WASM engine boundary; the simulator does not decode WBXML.",
-          "WML-203 remains in progress because mandatory prologue enforcement, full DTD content-model validation, and broader document-family evidence remain open."
+          "The executable WML-203 stories prove canonical text/WBXML parity and the selected WML 1.3 document family through the production WASM engine boundary; the simulator does not decode WBXML.",
+          "All 68 directly mapped WML-203 clauses are implemented: 47 WBXML clauses, two alternate-DTD clauses, the mandatory textual prologue clause, and 18 selected WML DTD structure clauses.",
+          "WML-203A additively tracks migration of 31 legacy local examples that predate strict standalone-document prologue enforcement; this compatibility-corpus cleanup is not a WML-203 conformance gate."
         ],
         "existingTickets": [
           "R0-08",
@@ -16440,14 +16508,19 @@
         ],
         "acceptance": [
           "Text WML and WBXML-derived WML reach equivalent deck models; strict DTD identity and unknown-DTD behavior are explicit.",
+          "Textual WML requires an XML declaration and external document type declaration; normalized WBXML uses equivalent header metadata supplied by the transport boundary.",
+          "Every selected WML 1.3 DTD element and attribute family has deterministic native and WASM validation evidence.",
           "WBXML-C-001, WBXML-C-010, and WBXML-C-011 are fixture-backed against a pinned decoder; fake fixed-output and either-result fixtures do not satisfy this gate."
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+          "wasm-pack test --node engine-wasm/engine",
           "cargo test --manifest-path transport-rust/Cargo.toml",
           "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior",
           "pnpm test:story WML-203",
-          "node scripts/check-wap-wbxml-conformance-ledger.mjs"
+          "node scripts/check-wap-wbxml-conformance-ledger.mjs",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "pnpm wap-graph:check"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -16469,7 +16542,7 @@
         "notes": [
           "All 23 directly mapped WML-204 clauses have source-derived fixtures for input masks and failure atomicity, document-order input/select initialization, select precedence and serialization, option-value vdata evaluation, and onpick HREF conversion.",
           "The shared native/WASM variable-reference path validates $name and $(name:conversion), preserves exact CDATA and literal-dollar handling, applies noesc defaults to vdata and escape defaults to HREF, and rejects invalid control references atomically.",
-          "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 and WML-205 retain their separate parser/error gates."
+          "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 is complete; WML-205 retains its separate error-taxonomy gate."
         ],
         "existingTickets": [
           "R0-04",
@@ -19428,6 +19501,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-A-REQUIRED-TARGET|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-A-REQUIRED-TARGET",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-A-REQUIRED-TARGET|refines|scr-row:WML-C-19",
       "from": "clause:WML-CL-A-REQUIRED-TARGET",
       "relation": "refines",
@@ -19986,6 +20068,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-ANCHOR-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-ANCHOR-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-ANCHOR-STRUCTURE|refines|scr-row:WML-C-20",
       "from": "clause:WML-CL-ANCHOR-STRUCTURE",
       "relation": "refines",
@@ -20184,6 +20275,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-CARD-CONTENT-ORDER|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-CARD-CONTENT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-CARD-CONTENT-ORDER|refines|scr-row:WML-C-25",
       "from": "clause:WML-CL-CARD-CONTENT-ORDER",
       "relation": "refines",
@@ -20368,6 +20468,15 @@
       "from": "clause:WML-CL-CARD-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-CARD-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-CARD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -20926,6 +21035,15 @@
       "from": "clause:WML-CL-DO-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-DO-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -22344,6 +22462,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-GO-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-STRUCTURE|refines|scr-row:WML-C-29",
       "from": "clause:WML-CL-GO-STRUCTURE",
       "relation": "refines",
@@ -22654,6 +22781,15 @@
       "from": "clause:WML-CL-HEAD-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HEAD-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-HEAD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -23334,6 +23470,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-IMAGE-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-IMAGE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-IMAGE-STRUCTURE|refines|scr-row:WML-C-32",
       "from": "clause:WML-CL-IMAGE-STRUCTURE",
       "relation": "refines",
@@ -23869,6 +24014,15 @@
       "from": "clause:WML-CL-INPUT-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-INPUT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -24639,6 +24793,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-ONEVENT-SINGLE-TASK|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-ONEVENT-SINGLE-TASK",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-ONEVENT-SINGLE-TASK|refines|scr-row:WML-C-39",
       "from": "clause:WML-CL-ONEVENT-SINGLE-TASK",
       "relation": "refines",
@@ -25296,6 +25459,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-POSTFIELD-STRUCTURE|refines|scr-row:WML-C-37",
       "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
       "relation": "refines",
@@ -25525,6 +25697,60 @@
       "from": "clause:WML-CL-PREV-ENTRY-EVENT-PRECEDENCE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-PREV-ENTRY-EVENT-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|planned-by|work-item:WML-201",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "planned-by",
+      "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|refines|scr-row:WML-C-53",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-53",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PROLOGUE-REQUIRED|verified-by|fixture:WML-FX-PROLOGUE-REQUIRED",
+      "from": "clause:WML-CL-PROLOGUE-REQUIRED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-PROLOGUE-REQUIRED",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -26421,6 +26647,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-SELECT-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-SELECT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-SELECT-STRUCTURE|planned-by|work-item:WML-204",
       "from": "clause:WML-CL-SELECT-STRUCTURE",
       "relation": "planned-by",
@@ -26623,6 +26858,15 @@
       "from": "clause:WML-CL-SETVAR-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -27222,6 +27466,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-TABLE-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-TABLE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-TABLE-STRUCTURE|refines|scr-row:WML-C-46",
       "from": "clause:WML-CL-TABLE-STRUCTURE",
       "relation": "refines",
@@ -27411,6 +27664,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-TD-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-TD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-TD-STRUCTURE|refines|scr-row:WML-C-49",
       "from": "clause:WML-CL-TD-STRUCTURE",
       "relation": "refines",
@@ -27514,6 +27776,15 @@
       "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TEMPLATE-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-TEMPLATE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -28063,6 +28334,15 @@
       "from": "clause:WML-CL-TR-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-201",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-TR-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-TR-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -29017,6 +29297,15 @@
       "from": "clause:WML-CL-WML-ROOT-STRUCTURE",
       "relation": "planned-by",
       "to": "work-item:WML-202",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-WML-ROOT-STRUCTURE|planned-by|work-item:WML-203",
+      "from": "clause:WML-CL-WML-ROOT-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-203",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

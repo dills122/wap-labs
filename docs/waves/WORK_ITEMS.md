@@ -80,21 +80,21 @@ Canonical sprint priority rule:
 ## Next In Line (WAP Compliance Sync - 2026-07-25)
 
 The selected-profile source and planning lanes are complete. The active queue
-must now turn the 198 selected parent rows and 761 planned clauses into direct
+must now turn the 198 selected parent rows and 762 planned clauses into direct
 evidence.
 
 Current priority order is:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
-   174/174 direct WML-clause mapping.
+   175/175 direct WML-clause mapping.
 2. Preserve completed `WML-202` referring-URI access, root-language, and
    card-context/grammar evidence and the completed mandatory `WML-204`
    vdata/HREF conversion and field/control validation gate. WML-202 is complete
    at 30/30 direct clauses and WML-204 is complete at 23/23 direct clauses.
-3. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
-   extend `WML-205`'s direct three-clause taxonomy across remaining element
-   errors and host fetch/access failure atomicity. Sequence validation-file
-   edits with item 2 rather than merging competing parser patches.
+3. Preserve completed `WML-203` mandatory prologue, selected DTD content-model,
+   text/WBXML parity, and broader document-family evidence (68/68 direct
+   clauses). Next extend `WML-205`'s direct three-clause taxonomy across
+   remaining element errors and host fetch/access failure atomicity.
 4. Preserve `TRN-706`'s completed schema-v2 selected-WDP replay boundary and
    keep the conditional WTP mapping gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
@@ -105,10 +105,9 @@ Current priority order is:
    and maintenance non-preemptive unless they directly unblock a strict
    obligation.
 
-The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path
-and its paired WASM story now provide the cross-layer `WML-203` evidence.
-`WML-203` remains in progress for mandatory prologue enforcement, full DTD
-content-model validation, and broader document-family evidence.
+The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
+strict native/WASM validation fixtures, and paired executable stories now
+close the cross-layer `WML-203` evidence.
 
 Planning assessment:
 
@@ -116,6 +115,20 @@ Planning assessment:
    implementation starts.
 2. Replan only when a source-derived fixture changes a dependency, a profile
    is activated, or implementation evidence changes a parent-row assessment.
+
+### WML-203A Legacy local-example standalone-document migration
+
+1. `Status`: `todo`
+2. `Depends On`: `WML-203`
+3. `Owner`: `engine-wasm`, `browser`, `qa`
+4. `Scope`: Add source-authentic XML declarations and explicit canonical or
+   alternate external DTD identities to the 31 legacy local examples that
+   predate strict standalone-document validation, then repair any selected-DTD
+   content-model violations without changing their intended runtime stories.
+5. `Evidence`: `pnpm test:story all`, example manifest drift checks, and
+   browser local-example tests.
+6. `Boundary`: This is additive compatibility-corpus cleanup. It does not
+   reopen WML-203's strict parser, WBXML, or selected-family evidence gates.
 
 ### Desktop Browser Product Lane
 
@@ -1864,7 +1877,7 @@ Reference:
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
   7 implemented, 23 partial, and 17 missing rows, with validated code/test
   evidence for 30 rows. `WML-201` directly projects all 76 rows and maps all
-  174 selected WML clauses without treating gaps as implementation. Nested
+  175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
   ticket is not done.
 

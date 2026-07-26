@@ -16,6 +16,7 @@ const SAMPLE: &str = r##"
 const FIXTURE_BASIC_TWO_CARD: &str = include_str!("../tests/fixtures/phase-a/basic-two-card.wml");
 const FIXTURE_MISSING_FRAGMENT: &str =
     include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
+const WML_203_DTD_FAMILY: &str = include_str!("../../examples/source/wml-203-dtd-family.wml");
 
 fn draw_len(render_value: &JsValue) -> u32 {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
@@ -53,6 +54,60 @@ fn trace_kinds(trace_value: &JsValue) -> Vec<String> {
                 .and_then(|value| value.as_string())
         })
         .collect()
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_203_strict_prologue_and_selected_dtd_family_match_native_behavior() {
+    let mut engine = WmlEngine::wasm_new();
+    let err = engine
+        .load_deck_context_wasm(
+            "<wml><card id=\"main\"><p>Missing</p></card></wml>",
+            "http://example.test/apps/wml-203.wml",
+            "text/vnd.wap.wml; validation=strict",
+            None,
+            None,
+        )
+        .expect_err("the WASM boundary must enforce the text prologue");
+    assert_eq!(
+        err.as_string().as_deref(),
+        Some("Invalid WML prologue: missing required XML declaration")
+    );
+
+    engine
+        .load_deck_context_wasm(
+            WML_203_DTD_FAMILY,
+            "http://example.test/apps/wml-203.wml",
+            "text/vnd.wap.wml; validation=strict",
+            None,
+            None,
+        )
+        .expect("the selected WML 1.3 family should load through WASM");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("main"));
+    let text_render = draw_text(&engine.render_wasm().expect("text render should succeed"));
+    for expected in ["Family", "Cell", "One", "Pre"] {
+        assert!(
+            text_render.iter().any(|line| line.contains(expected)),
+            "WASM render omitted {expected:?}: {text_render:?}"
+        );
+    }
+
+    let tokenized_xml = WML_203_DTD_FAMILY
+        .split_once("<wml")
+        .map(|(_, body)| format!("<wml{body}"))
+        .expect("fixture should contain a WML root");
+    engine
+        .load_deck_context_wasm(
+            &tokenized_xml,
+            "http://example.test/apps/wml-203.wmlc",
+            "application/vnd.wap.wmlc",
+            None,
+            None,
+        )
+        .expect("normalized WBXML should use transport prologue metadata");
+    assert_eq!(
+        draw_text(&engine.render_wasm().expect("WBXML render should succeed")),
+        text_render
+    );
 }
 
 #[wasm_bindgen_test]

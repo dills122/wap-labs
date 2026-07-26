@@ -42,7 +42,7 @@ All nine selected Class C family increments are complete at SCR level:
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
-  expand into 761 deduplicated, source-anchored clauses; the selected WDP and
+  expand into 762 deduplicated, source-anchored clauses; the selected WDP and
   WCMP paths contribute 58 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
@@ -60,7 +60,7 @@ All nine selected Class C family increments are complete at SCR level:
   17 missing; the selected 39-row client subset is 7 implemented, 23 partial,
   and 9 missing;
 - 30 rows have direct code symbols and runnable test evidence.
-- `WML-201` directly projects all 76 WML rows and all 174 selected WML
+- `WML-201` directly projects all 76 WML rows and all 175 selected WML
   clauses; the remaining 17 mandatory gaps and 29 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
