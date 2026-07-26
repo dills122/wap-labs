@@ -177,7 +177,20 @@ questions to the same helpdesk.
 No request has been sent. Sending external correspondence requires explicit
 maintainer approval.
 
-### Draft request
+The maintainer-ready, still-unsent request package and its metadata-only
+106-item hash inventory are in
+`docs/waves/OMA_REDISTRIBUTION_REQUEST_PACKAGE.md` and
+`docs/waves/OMA_REDISTRIBUTION_REQUEST_INVENTORY.csv`. The package asks
+separately about unaltered binaries, parsed derivatives, bounded excerpts,
+source-derived fixtures, attribution, fork/downstream treatment, and a
+metadata-only downloader fallback. It must not be sent until the named
+maintainer fields and approval checklist are complete.
+
+### Earlier draft request
+
+The package linked above supersedes this shorter draft for any approved
+outreach. This text remains as the recovery record's original drafting
+context.
 
 Subject: Historical WAP specification preservation and redistribution guidance
 
@@ -239,5 +252,14 @@ the sender, date, scope, restrictions, and whether it covers derivatives.
    10646-1:1993, ISO 8879:1986, ISO/TR 8509:1987, and selected TIA/EIA/IS-732
    payloads.
 3. Recover a WBXML-era IANA character-set registry snapshot.
-4. Decide whether the official Unicode 2.0 UCD component set is sufficient
-   implementation evidence where the cited paper standard is unavailable.
+4. Acquire the Unicode 2.0 paper standard if independent verification of
+   definitions or algorithms absent from the official component files becomes
+   necessary. The component/UCD set is sufficient only for fixtures derived
+   from properties actually present in those files.
+
+The bounded 2026-07-26 readiness review is recorded in
+`docs/waves/SRC_006_SOURCE_READINESS_RESEARCH.md`. It leaves the historical
+IANA snapshot and licensed payload gaps open, accepts the Unicode 2.0 component
+set only for fixtures derived from properties actually present in those files,
+and separates definition-only sources from WML-307, WMLS-5, WBXML, and CDPD
+behavior gates.
