@@ -21,7 +21,6 @@ mod nav;
 mod parser;
 mod render;
 mod runtime;
-#[allow(dead_code)]
 mod wavescript;
 
 #[cfg(test)]

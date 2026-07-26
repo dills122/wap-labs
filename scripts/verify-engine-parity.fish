@@ -47,14 +47,17 @@ echo "==> WASM parity lane (adaptive)"
 echo "Attempt 1: wasm-pack test --node"
 cd $ENGINE_DIR
 wasm-pack test --node 2>&1 | tee $WASM_LOG
-set -l wasm_rc $status
+# `$status` after a pipeline reflects `tee`'s exit code, not `wasm-pack
+# test`'s (which almost always exits 0 having written its output). Use
+# `$pipestatus[1]` for the first pipeline stage's actual exit code.
+set -l wasm_rc $pipestatus[1]
 
 if test $wasm_rc -ne 0
     if $REAL_NODE --experimental-wasm-reftypes -e 'process.exit(0)' >/dev/null 2>&1
         echo ""
         echo "Attempt 2: node wrapper with --experimental-wasm-reftypes"
         env PATH="$NODE_WRAP_DIR:$PATH" wasm-pack test --node 2>&1 | tee $WASM_LOG
-        set wasm_rc $status
+        set wasm_rc $pipestatus[1]
     else
         echo "Skipping node reftypes wrapper attempt: node does not accept --experimental-wasm-reftypes"
     end
@@ -64,7 +67,7 @@ if test $wasm_rc -ne 0
     echo ""
     echo "Attempt 3: wasm-pack test --headless --chrome"
     wasm-pack test --headless --chrome 2>&1 | tee $WASM_LOG
-    set wasm_rc $status
+    set wasm_rc $pipestatus[1]
 end
 
 if test $wasm_rc -ne 0

@@ -285,6 +285,22 @@ Completed maintenance tickets are archived in:
 - `browser-presenter.ts` imports the generated table. Presenter tests pin all four existing labels and preserve the generic `script error` fallback for `none`, unknown, and absent categories.
 - `engine-wasm/contracts/wml-engine.ts` is unchanged because the runtime wire shape and semantics did not change; the generated table is host presentation metadata, not a new engine method or payload field.
 
+### M1-24 `M1-15` Files reference cites a path that no longer exists (2026-07-26)
+
+1. `Status`: `done`
+2. `Priority`: `P3`
+3. `Depends On`: `M1-15`
+4. `Files`:
+- `docs/waves/MAINTENANCE_WORK_ITEMS.md` (`M1-15` `Files` list)
+5. `Finding`:
+- `M1-15`'s `Files` list cites `engine-wasm/engine/src/engine_tests.rs`. That path no longer exists — it was split into a module directory (`engine-wasm/engine/src/engine_tests/`, containing `mod.rs`, `navigation_metadata.rs`, `panic_containment.rs`, and others), most likely as collateral from `M1-08` ("Split high-churn files into boundary modules"), which doesn't call out this specific split in its own `Files` list. The behavior `M1-15` documents (deterministic rejection of pathological nesting depth) is still correctly implemented and tested, just at `engine-wasm/engine/src/engine_tests/navigation_metadata.rs:38` instead of the cited path. Per this repo's Backlog Lifecycle Policy, `M1-15` itself is not edited; this is filed as the required additive corrective follow-up.
+6. `Recommendation`:
+- Note the corrected path here rather than editing `M1-15`'s historical record.
+7. `Accept`:
+- A reader following `M1-15`'s `Files` list to verify its regression coverage is pointed at the correct current location.
+8. `Resolution`:
+- The regression coverage `M1-15` describes lives at `engine-wasm/engine/src/engine_tests/navigation_metadata.rs:38`, not `engine-wasm/engine/src/engine_tests.rs`. No code or test changes were needed; this entry exists solely to correct the stale path reference without rewriting `M1-15`'s original record.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

@@ -18,6 +18,7 @@ Use this folder for future gateway-specific docs, profiles, and integration test
 
 ## MVP requirements
 
-- UDP WSP endpoint reachable on `9201`
+- UDP WSP endpoints reachable on `9200` (connectionless) and `9201` (session), per
+  `docker-compose.yml` and `docs/wap-test-environment/README.md`
 - Mapping to HTTP/WML upstreams
 - Stable local dev config for transport service integration

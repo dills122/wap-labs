@@ -1,3 +1,7 @@
+// This module backs `network::wtp::responder`'s TID-replay policy, part of the
+// deferred `wap-net-ext` profile — not wired into any live socket path yet
+// (see that module's own doc comment), so it's only reachable from its own
+// tests today.
 #![allow(dead_code)]
 
 use serde::{Deserialize, Serialize};

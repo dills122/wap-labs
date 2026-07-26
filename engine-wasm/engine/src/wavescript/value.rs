@@ -12,6 +12,9 @@ impl ScriptValue {
         Self::String(String::new())
     }
 
+    // Reserved introspection helper: no WaveScript opcode surfaces a `typeof`
+    // or type-checking operation yet, so nothing in-crate calls this today.
+    #[allow(dead_code)]
     pub fn type_name(&self) -> &'static str {
         match self {
             Self::Bool(_) => "bool",

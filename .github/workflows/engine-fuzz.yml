@@ -46,7 +46,7 @@ jobs:
 
       - name: Run engine WML fuzz target
         working-directory: engine-wasm/engine
-        run: cargo +nightly fuzz run engine_wml_fuzzer -- -runs=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runs || '20000' }} -max_len=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_len || '4096' }} -timeout=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.timeout || '20' }}
+        run: cargo +nightly fuzz run engine_wml_fuzzer -- -runs=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runs || '20000' }} -max_len=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_len || '600000' }} -timeout=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.timeout || '20' }}
 
       - name: Upload fuzz artifacts
         if: always()
