@@ -147,6 +147,7 @@ jobs:
 
       - name: Rendered accessibility gate
         env:
+          WAVES_ACCESSIBILITY_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.sha }}
           WAVES_ACCESSIBILITY_OUTPUT_DIR: browser/frontend/test-results/wbp-05a
         run: pnpm --dir browser/frontend run test:accessibility:rendered
 

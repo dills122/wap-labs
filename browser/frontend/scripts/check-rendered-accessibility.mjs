@@ -21,6 +21,7 @@ const outputDir = requestedOutputDir
     ? requestedOutputDir
     : path.resolve(REPO_ROOT, requestedOutputDir)
   : DEFAULT_OUTPUT_DIR;
+const requestedBaseRevision = process.env.WAVES_ACCESSIBILITY_BASE_REVISION?.trim();
 const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-accessibility-build-'));
 const tauriConfig = JSON.parse(await readFile(TAURI_CONFIG_PATH, 'utf8'));
 const windowConfig = tauriConfig.app.windows[0];
@@ -59,6 +60,21 @@ const openAllDisclosures = async (page) => {
       details.open = true;
     }
   });
+};
+
+const resolveBaseRevision = async () => {
+  if (requestedBaseRevision) {
+    assert.match(
+      requestedBaseRevision,
+      /^[0-9a-f]{40}$/,
+      'WAVES_ACCESSIBILITY_BASE_REVISION must be a full Git commit SHA'
+    );
+    return requestedBaseRevision;
+  }
+  const { stdout } = await execFileAsync('git', ['merge-base', 'HEAD', 'origin/main'], {
+    cwd: REPO_ROOT
+  });
+  return stdout.trim();
 };
 
 const auditRenderedPage = async (page, name, windowEvidence) => {
@@ -262,15 +278,15 @@ try {
     }
   }
 
-  const [{ stdout: revision }, browserVersion] = await Promise.all([
-    execFileAsync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: REPO_ROOT }),
+  const [baseRevision, browserVersion] = await Promise.all([
+    resolveBaseRevision(),
     browser.version()
   ]);
   const result = {
     schemaVersion: 1,
     workItem: 'WBP-05A',
     capturedAt: new Date().toISOString(),
-    baseRevision: revision.trim(),
+    baseRevision,
     sourceState: 'feature working tree including WBP-05A changes',
     path: 'production-built Waves browser-story entry with real WaveNav WASM and deterministic local fixture fetch',
     zoomModel:
