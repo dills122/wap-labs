@@ -9,6 +9,8 @@ use std::collections::HashMap;
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "contract-codegen")]
+pub mod contract_codegen;
 mod engine_public_api;
 mod engine_runtime_internal;
 mod engine_script_types;

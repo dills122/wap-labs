@@ -35,10 +35,8 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `clearExternalNavigationIntent()` | `RQ-RMK-003` |
 | `ScriptInvocationContext` (`callSite`, `cardId`, `sourceHref`) | `RQ-WMLS-001`, `RQ-WMLS-003`, `RQ-WAE-003` |
 | `ScriptInvocationRef.context` | `RQ-WMLS-001`, `RQ-WMLS-003` |
-| `ScriptPostInvocationEffects.navigationIntent` | `RQ-WMLS-017`, `RQ-WMLS-021` |
-| `ScriptPostInvocationEffects.requiresRefresh` | `RQ-WMLS-018`, `RQ-WMLS-022` |
-| `ScriptInvocationOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
-| `ScriptExecutionOutcome.effects` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
+| `ScriptInvocationOutcome.navigationIntent` / `requiresRefresh` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
+| `ScriptExecutionOutcome.navigationIntent` / `requiresRefresh` | `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-021`, `RQ-WMLS-022` |
 | `ScriptHostCapabilities` side-effect-only host adapters | `RQ-WMLS-003`, `RQ-WAE-003` |
 | `lastScriptDialogRequests()` (`alert`/`confirm`/`prompt`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `lastScriptTimerRequests()` (`schedule`/`cancel`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |

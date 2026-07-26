@@ -6,6 +6,7 @@
   "include": [
     "main.ts",
     "renderer.ts",
+    "runtime-dto-fixtures.ts",
     "services/**/*.ts",
     "ui/**/*.ts",
     "utils/**/*.ts",

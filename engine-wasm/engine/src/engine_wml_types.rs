@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlLoadDiagnosticClass"))]
 #[serde(rename_all = "kebab-case")]
 pub enum WmlLoadDiagnosticClassLiteral {
     Malformed,
@@ -10,6 +12,8 @@ pub enum WmlLoadDiagnosticClassLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlLoadDiagnosticCode"))]
 pub enum WmlLoadDiagnosticCodeLiteral {
     #[serde(rename = "WML_MALFORMED_XML")]
     MalformedXml,
@@ -22,6 +26,8 @@ pub enum WmlLoadDiagnosticCodeLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlLoadDiagnosticOutcome"))]
 #[serde(rename_all = "kebab-case")]
 pub enum WmlLoadDiagnosticOutcomeLiteral {
     Rejected,
@@ -29,6 +35,7 @@ pub enum WmlLoadDiagnosticOutcomeLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct WmlLoadDiagnostic {
     pub class: WmlLoadDiagnosticClassLiteral,

@@ -52,11 +52,13 @@ Secondary implementation reference (tutorial material):
 
 - `ScriptInvocationContext`: runtime-owned call-site metadata (`callSite`, `cardId`, optional `sourceHref`).
 - `ScriptInvocationRef`: script reference plus invocation context and args.
-- `ScriptPostInvocationEffects`: deterministic post-invocation runtime effects (`navigationIntent`, `requiresRefresh`).
-- `ScriptInvocationOutcome` and `ScriptExecutionOutcome`: unified outcome shape with `effects` envelope.
+- Script execution and invocation outcomes expose deterministic `navigationIntent` and
+  `requiresRefresh` fields directly in their serialized shape.
 - `ScriptHostCapabilities`: host side-effect adapters only (`dialogs`, `timers`, optional `scriptFetch`).
 
 This contract keeps VM/interpreter semantics in `engine-wasm` while limiting host responsibilities to side effects.
+The Rust serde DTOs are now the serialized source of truth through the narrow additive M1-03
+follow-up; the complete native/WASM method facade remains handwritten.
 
 Contract-level fixture coverage for W0-01 is tracked with host-sample decks:
 

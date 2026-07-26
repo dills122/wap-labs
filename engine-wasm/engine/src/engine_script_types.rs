@@ -83,10 +83,12 @@ pub(crate) fn script_value_to_literal(value: ScriptValue) -> ScriptValueLiteral 
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct ScriptExecutionOutcome {
     pub ok: bool,
     pub result: ScriptValueLiteral,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub trap: Option<String>,
     pub error_class: ScriptErrorClassLiteral,
     pub error_category: ScriptErrorCategoryLiteral,
@@ -96,6 +98,7 @@ pub struct ScriptExecutionOutcome {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[serde(rename_all = "camelCase")]
 pub struct ScriptInvocationOutcome {
     pub navigation_intent: ScriptNavigationIntentLiteral,
@@ -104,6 +107,8 @@ pub struct ScriptInvocationOutcome {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "ScriptDialogRequest"))]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum ScriptDialogRequestLiteral {
     Alert {
@@ -115,16 +120,20 @@ pub enum ScriptDialogRequestLiteral {
     Prompt {
         message: String,
         #[serde(rename = "defaultValue")]
+        #[cfg_attr(feature = "contract-codegen", ts(optional))]
         default_value: Option<String>,
     },
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "ScriptTimerRequest"))]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum ScriptTimerRequestLiteral {
     Schedule {
         #[serde(rename = "delayMs")]
         delay_ms: u32,
+        #[cfg_attr(feature = "contract-codegen", ts(optional))]
         token: Option<String>,
     },
     Cancel {
@@ -133,16 +142,26 @@ pub enum ScriptTimerRequestLiteral {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 pub struct EngineTraceEntry {
+    // `serde_wasm_bindgen` uses JS numbers for safe-range `u64` values by
+    // default. Keep the generated projection aligned with that boundary.
+    #[cfg_attr(feature = "contract-codegen", ts(type = "number"))]
     pub seq: u64,
     pub kind: String,
     pub detail: String,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub active_card_id: Option<String>,
     pub focused_link_index: usize,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub external_navigation_intent: Option<String>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub script_ok: Option<bool>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub script_error_class: Option<ScriptErrorClassLiteral>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub script_error_category: Option<ScriptErrorCategoryLiteral>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub script_trap: Option<String>,
 }
 
@@ -197,6 +216,8 @@ impl ScriptExecutionOutcome {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "ScriptErrorClass"))]
 #[serde(rename_all = "kebab-case")]
 pub enum ScriptErrorClassLiteral {
     None,
@@ -225,6 +246,8 @@ macro_rules! define_script_error_categories {
         ),+ $(,)?
     ) => {
         #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+        #[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+        #[cfg_attr(feature = "contract-codegen", ts(rename = "ScriptErrorCategory"))]
         pub enum ScriptErrorCategoryLiteral {
             #[serde(rename = $fallback_literal)]
             $fallback_variant,
@@ -358,6 +381,8 @@ impl ScriptInvocationOutcome {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "ScriptNavigationIntent"))]
 #[serde(tag = "type", rename_all = "lowercase")]
 pub enum ScriptNavigationIntentLiteral {
     None,
@@ -366,6 +391,8 @@ pub enum ScriptNavigationIntentLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoCacheControlPolicy"))]
 #[serde(rename_all = "kebab-case")]
 pub enum ScriptNavigationCacheControlPolicyLiteral {
     Default,
@@ -373,22 +400,33 @@ pub enum ScriptNavigationCacheControlPolicyLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoPostContext"))]
 #[serde(rename_all = "camelCase")]
 pub struct ScriptNavigationPostContextLiteral {
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub same_deck: Option<bool>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub content_type: Option<String>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub payload: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoRequestPolicy"))]
 #[serde(rename_all = "camelCase")]
 pub struct ScriptNavigationRequestPolicyLiteral {
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub cache_control: Option<ScriptNavigationCacheControlPolicyLiteral>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub referer_url: Option<String>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub post_context: Option<ScriptNavigationPostContextLiteral>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[serde(untagged)]
 pub enum ScriptValueLiteral {
     Bool(bool),
@@ -398,6 +436,7 @@ pub enum ScriptValueLiteral {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[serde(untagged)]
 pub enum ScriptCallArgLiteral {
     Bool(bool),

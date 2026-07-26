@@ -1,11 +1,11 @@
 import init, { WmlEngine } from '../pkg/wavenav_engine.js';
 import type {
-  DrawCmd,
   EngineTraceEntry,
   ScriptDialogRequest,
   WmlGoRequestPolicy,
   ScriptExecutionOutcome,
-  ScriptInvocationOutcome
+  ScriptInvocationOutcome,
+  WmlEngineWasm
 } from '../contracts/wml-engine';
 
 const lineHeight = 16;
@@ -80,7 +80,10 @@ export interface EngineHost {
 export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Promise<EngineHost> {
   await init();
 
-  const engine = new WmlEngine();
+  const rawEngine = new WmlEngine();
+  // wasm-bindgen exposes JsValue results as `any`; cross the boundary once
+  // through the generated DTO-backed facade instead of casting each payload.
+  const engine = rawEngine as unknown as WmlEngineWasm;
   engine.setViewportCols(20);
   registerBuiltInScriptUnits(engine);
   engine.loadDeckContext(xml, DEFAULT_BASE_URL, DEFAULT_CONTENT_TYPE);
@@ -95,7 +98,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     ctx.font = '14px "IBM Plex Mono", monospace';
     ctx.textBaseline = 'top';
 
-    const renderList = engine.render() as { draw: DrawCmd[] };
+    const renderList = engine.render();
 
     for (const cmd of renderList.draw) {
       const x = cmd.x * charWidth;
@@ -170,7 +173,7 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       return engine.setVar(name, value);
     },
     executeScriptUnit(bytes: Uint8Array) {
-      return engine.executeScriptUnit(bytes) as ScriptExecutionOutcome;
+      return engine.executeScriptUnit(bytes);
     },
     registerScriptUnit(src: string, bytes: Uint8Array) {
       engine.registerScriptUnit(src, bytes);
@@ -185,38 +188,34 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       engine.clearScriptEntryPoints();
     },
     invokeScriptRef(src: string) {
-      const outcome = engine.invokeScriptRef(src) as ScriptInvocationOutcome;
-      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
+      const outcome = engine.invokeScriptRef(src);
+      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;
     },
     invokeScriptRefFunction(src: string, functionName: string) {
-      const outcome = engine.invokeScriptRefFunction(src, functionName) as ScriptInvocationOutcome;
-      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
+      const outcome = engine.invokeScriptRefFunction(src, functionName);
+      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;
     },
     invokeScriptRefCall(src: string, functionName: string, args) {
-      const outcome = engine.invokeScriptRefCall(
-        src,
-        functionName,
-        args
-      ) as ScriptInvocationOutcome;
-      if (outcome.effects.requiresRefresh || outcome.effects.navigationIntent.type !== 'none') {
+      const outcome = engine.invokeScriptRefCall(src, functionName, args);
+      if (outcome.requiresRefresh || outcome.navigationIntent.type !== 'none') {
         paint();
       }
       return outcome;
     },
     executeScriptRef(src: string) {
-      return engine.executeScriptRef(src) as ScriptExecutionOutcome;
+      return engine.executeScriptRef(src);
     },
     executeScriptRefFunction(src: string, functionName: string) {
-      return engine.executeScriptRefFunction(src, functionName) as ScriptExecutionOutcome;
+      return engine.executeScriptRefFunction(src, functionName);
     },
     executeScriptRefCall(src: string, functionName: string, args) {
-      return engine.executeScriptRefCall(src, functionName, args) as ScriptExecutionOutcome;
+      return engine.executeScriptRefCall(src, functionName, args);
     },
     lastScriptExecutionTrap() {
       return engine.lastScriptExecutionTrap();
@@ -236,19 +235,19 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
       return engine.lastScriptRequiresRefresh();
     },
     traceEntries() {
-      return engine.traceEntries() as EngineTraceEntry[];
+      return engine.traceEntries();
     },
     clearTraceEntries() {
       engine.clearTraceEntries();
     },
     render: paint,
     getEngine() {
-      return engine;
+      return rawEngine;
     }
   };
 }
 
-function registerBuiltInScriptUnits(engine: WmlEngine): void {
+function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
   engine.clearScriptUnits();
   engine.clearScriptEntryPoints();
   engine.registerScriptUnit('calc.wmlsc', new Uint8Array([0x01, 4, 0x01, 5, 0x02, 0x00]));

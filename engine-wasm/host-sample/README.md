@@ -75,6 +75,14 @@ pnpm --dir engine-wasm/host-sample run examples:check
 pnpm --dir engine-wasm/host-sample run test:story:unit
 ```
 
+The host sample also owns the developer commands for the engine's Rust-derived serialized DTO
+projection. `contracts:generate` refreshes `engine-wasm/contracts/generated/runtime-dtos.ts`, and
+`contracts:check` fails when the committed projection has drifted:
+
+```bash
+pnpm --dir engine-wasm/host-sample run contracts:check
+```
+
 ## Executable stories
 
 Build the WASM package once, install Playwright Chromium once, then run stories from the repository

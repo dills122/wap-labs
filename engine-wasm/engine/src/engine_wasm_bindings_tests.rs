@@ -1,5 +1,5 @@
 use super::*;
-use js_sys::{Array, Reflect};
+use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
@@ -20,6 +20,16 @@ const FIXTURE_MISSING_FRAGMENT: &str =
 fn draw_len(render_value: &JsValue) -> u32 {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
     Array::from(&draw).length()
+}
+
+fn sorted_object_keys(value: &JsValue) -> Vec<String> {
+    let object = Object::from(value.clone());
+    let mut keys: Vec<String> = Object::keys(&object)
+        .iter()
+        .filter_map(|key| key.as_string())
+        .collect();
+    keys.sort();
+    keys
 }
 
 fn draw_text(render_value: &JsValue) -> Vec<String> {
@@ -158,6 +168,17 @@ fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
 
     let render_value = engine.render_wasm().expect("render should succeed");
     assert_eq!(draw_len(&render_value), 2);
+    assert_eq!(sorted_object_keys(&render_value), vec!["draw"]);
+    let draw = Reflect::get(&render_value, &JsValue::from_str("draw")).expect("draw property");
+    let commands = Array::from(&draw);
+    assert_eq!(
+        sorted_object_keys(&commands.get(0)),
+        vec!["text", "type", "x", "y"]
+    );
+    assert_eq!(
+        sorted_object_keys(&commands.get(1)),
+        vec!["focused", "href", "text", "type", "x", "y"]
+    );
     assert_eq!(
         engine
             .active_card_id_wasm()
@@ -200,6 +221,11 @@ fn wasm_m1_02_invoke_script_ref_boundary_outcomes() {
     let ok = engine
         .invoke_script_ref_wasm("ok.wmlsc".to_string())
         .expect("invokeScriptRef should succeed");
+    assert_eq!(
+        sorted_object_keys(&ok),
+        vec!["navigationIntent", "requiresRefresh", "result"]
+    );
+    assert!(!Reflect::has(&ok, &JsValue::from_str("effects")).expect("property lookup"));
     let nav = Reflect::get(&ok, &JsValue::from_str("navigationIntent"))
         .expect("navigationIntent field should exist");
     let nav_type = Reflect::get(&nav, &JsValue::from_str("type"))
@@ -227,6 +253,44 @@ fn wasm_m1_02_invoke_script_ref_boundary_outcomes() {
     assert_eq!(
         engine.last_script_execution_error_category_wasm(),
         Some("none".to_string())
+    );
+
+    let fatal = engine
+        .execute_script_unit_wasm(Vec::new())
+        .expect("fatal script outcome should serialize");
+    assert_eq!(
+        sorted_object_keys(&fatal),
+        vec![
+            "errorCategory",
+            "errorClass",
+            "invocationAborted",
+            "navigationIntent",
+            "ok",
+            "requiresRefresh",
+            "result",
+            "trap",
+        ]
+    );
+    assert!(!Reflect::has(&fatal, &JsValue::from_str("effects")).expect("property lookup"));
+
+    engine.register_script_unit_wasm(
+        "go.wmlsc".to_string(),
+        vec![
+            0x03, 0x05, b'#', b'n', b'e', b'x', b't', 0x20, 0x03, 0x01, 0x00,
+        ],
+    );
+    let go = engine
+        .execute_script_ref_wasm("go.wmlsc".to_string())
+        .expect("go script outcome should serialize");
+    let go_intent = Reflect::get(&go, &JsValue::from_str("navigationIntent"))
+        .expect("navigationIntent field should exist");
+    assert_eq!(sorted_object_keys(&go_intent), vec!["href", "type"]);
+    assert_eq!(
+        Reflect::get(&go_intent, &JsValue::from_str("type"))
+            .expect("type field")
+            .as_string()
+            .as_deref(),
+        Some("go")
     );
 
     let err = engine
