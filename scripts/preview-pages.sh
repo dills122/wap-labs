@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PORT="4173"
 SERVE="1"
 INSTALL_MODE="auto"
@@ -29,10 +29,10 @@ require_cmd() {
   fi
 }
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
   case "$1" in
     --port)
-      if [[ $# -lt 2 ]]; then
+      if [ $# -lt 2 ]; then
         echo "error: --port requires a value" >&2
         exit 1
       fi
@@ -68,14 +68,14 @@ require_cmd wasm-pack
 require_cmd python3
 
 should_install() {
-  local dir="$1"
-  if [[ "$INSTALL_MODE" == "force" ]]; then
+  dir="$1"
+  if [ "$INSTALL_MODE" = "force" ]; then
     return 0
   fi
-  if [[ "$INSTALL_MODE" == "skip" ]]; then
+  if [ "$INSTALL_MODE" = "skip" ]; then
     return 1
   fi
-  [[ ! -d "$dir/node_modules" ]]
+  [ ! -d "$dir/node_modules" ]
 }
 
 if should_install "$ROOT_DIR/marketing-site"; then
@@ -132,7 +132,7 @@ rm -rf "$PREVIEW_ROOT"
 mkdir -p "$PREVIEW_ROOT/wap-labs"
 cp -R "$ROOT_DIR/_site/." "$PREVIEW_ROOT/wap-labs/"
 
-if [[ "$SERVE" == "0" ]]; then
+if [ "$SERVE" = "0" ]; then
   echo "    Preview:   $PREVIEW_ROOT/wap-labs/index.html"
   echo "==> Done (no server started)"
   exit 0

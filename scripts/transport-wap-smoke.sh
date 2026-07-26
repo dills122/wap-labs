@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3000/health}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
@@ -10,9 +10,22 @@ TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
 SMOKE_ARTIFACT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/transport-wap-smoke.XXXXXX")"
 
+# Run a piped command and fail if the *command* (not `tee`) exited nonzero.
+# POSIX sh has no `pipefail`/`PIPESTATUS`, so the command's real exit code is
+# written to a scratch file from inside the pipeline and read back afterward.
+run_and_tee() {
+  log_file="$1"
+  shift
+  status_file="$(mktemp "${TMPDIR:-/tmp}/transport-wap-smoke-status.XXXXXX")"
+  { "$@"; echo "$?" >"$status_file"; } | tee "$log_file"
+  cmd_status="$(cat "$status_file")"
+  rm -f "$status_file"
+  return "$cmd_status"
+}
+
 print_failure_diagnostics() {
-  local exit_code="$?"
-  if [[ "${exit_code}" -eq 0 ]]; then
+  exit_code="$?"
+  if [ "$exit_code" -eq 0 ]; then
     echo "transport-wap-smoke artifacts: ${SMOKE_ARTIFACT_DIR}"
     return 0
   fi
@@ -44,16 +57,17 @@ print_failure_diagnostics() {
 trap print_failure_diagnostics EXIT
 
 wait_for_http() {
-  local url="$1"
-  local retries="${2:-40}"
-  local sleep_seconds="${3:-1}"
-  local i
+  url="$1"
+  retries="${2:-40}"
+  sleep_seconds="${3:-1}"
+  i=1
 
-  for ((i = 1; i <= retries; i += 1)); do
+  while [ "$i" -le "$retries" ]; do
     if curl -fsS --connect-timeout 2 --max-time 5 "$url" >/dev/null 2>&1; then
       return 0
     fi
     sleep "$sleep_seconds"
+    i=$((i + 1))
   done
 
   echo "Timeout waiting for $url" >&2
@@ -70,35 +84,28 @@ wait_for_http "${WML_HEALTH_URL}"
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
-    WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL}" \
-    TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
-    TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
-    RUST_TEST_THREADS=1 \
-    cargo test --test kannel_smoke -- --ignored --test-threads=1 \
-    | tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log"
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export RUST_TEST_THREADS=1
+  run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
+    cargo test --test kannel_smoke -- --ignored --test-threads=1
 )
 
 echo "==> Running browser host native Kannel smoke unit test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
-    TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
-    TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
-    RUST_TEST_THREADS=1 \
-    cargo test host_fetch_deck_command_native_wap_home_smoke_succeeds --lib -- --ignored --test-threads=1 \
-    | tee "${SMOKE_ARTIFACT_DIR}/browser-host-native-smoke.log"
+  export WAP_SMOKE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export RUST_TEST_THREADS=1
+  run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-host-native-smoke.log" \
+    cargo test host_fetch_deck_command_native_wap_home_smoke_succeeds --lib -- --ignored --test-threads=1
 )
 
 echo "==> Running browser engine/render native Kannel smoke integration test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  WAP_SMOKE_URL="${WAP_SMOKE_URL}" \
-    TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS}" \
-    TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES}" \
-    RUST_TEST_THREADS=1 \
-    cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1 \
-    | tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log"
+  export WAP_SMOKE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export RUST_TEST_THREADS=1
+  run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log" \
+    cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1
 )
 
 echo "transport-wap-smoke: PASS (artifacts: ${SMOKE_ARTIFACT_DIR})"
