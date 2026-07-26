@@ -28,13 +28,16 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
 | Nested clauses | The 198 parents expand into 762 clauses: 722 required, 29 recommended, and 11 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 762 clause fixtures have target locations; 173 clauses now have direct conformance assessment and 589 remain unassessed |
+| Fixtures | All 762 clause fixtures have target locations; 190 clauses now have direct conformance assessment and 572 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
-| Execution program | 13 dependency-ordered sprints contain 81 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
+| Execution program | 13 dependency-ordered sprints contain 82 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
 
-`SRC-006` is the only blocked source item. It prevents public promotion of
-recovered source binaries/derivatives, not internal evidence use,
+`SRC-006` is the only blocked source item. All 97 technical members are
+available for private extraction, and the 106-entry redistribution inventory
+and request package are maintainer-ready. The gate now prevents public
+promotion of recovered source binaries/derivatives until outreach is approved
+and written permission is received; it does not block internal evidence use,
 implementation, or fixture construction.
 
 ## Conservative implementation snapshot
@@ -54,7 +57,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WSP | 8 | 57 | 0 | 8 | 0 |
 | **Total** | **198** | **762** | **24** | **76** | **98** |
 
-Parent-row status is not a substitute for direct clause evidence. With 176 of
+Parent-row status is not a substitute for direct clause evidence. With 190 of
 762 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.

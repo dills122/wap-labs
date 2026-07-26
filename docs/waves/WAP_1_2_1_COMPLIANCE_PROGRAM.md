@@ -155,7 +155,7 @@ executable evidence.
 
 ## Dependency-ordered program
 
-The program contains 13 sprints and 81 unique work items. Existing completed
+The program contains 13 sprints and 82 unique work items. Existing completed
 tickets remain historical facts; the program maps to them where relevant and
 adds work only for uncovered obligations.
 

@@ -212,9 +212,9 @@ Type contract:
 1. Preserve the completed `WML-2` parser/validation baseline: `WML-201`
    (175/175 mapped WML clauses), `WML-202` (30/30), `WML-203` (68/68),
    `WML-204` (23/23), and `WML-205` (3/3).
-2. Advance `WML-303` task/event/softkey precedence as the first unlocked
-   `WML-3` dependency slice.
-3. Follow with `WML-302` variable/setvar closure, preserving WML-205 failure
+2. Preserve completed `WML-303` task/event/BACK/softkey precedence evidence
+   (27/27 directly mapped clauses).
+3. Advance `WML-302` variable/setvar closure, preserving WML-205 failure
    atomicity as task data becomes richer.
 4. Then advance `WML-305` native timer lifecycle and target-parity evidence.
 5. Keep host fetching at the browser boundary, WBXML decoding in transport,

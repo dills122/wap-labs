@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '148 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
+      '190 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
     ]
   ],
   [
@@ -368,7 +368,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '176 fixture-backed clauses assessed'
+      '190 fixture-backed clauses assessed'
     ]
   ],
   [
@@ -391,7 +391,7 @@ const requiredDocumentFragments = new Map([
     'README.md',
     [
       '24/198 selected parent rows are implemented',
-      '176/762 clauses are directly assessed'
+      '190/762 clauses are directly assessed'
     ]
   ]
 ]);

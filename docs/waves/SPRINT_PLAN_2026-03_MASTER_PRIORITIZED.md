@@ -33,10 +33,10 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
-13-sprint/81-item execution program plus the `TRN-7-CL-C` selected-profile
+13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
 is 24 implemented, 76 partial, and 98 missing parent rows; clause-level
-assessment is 176/762.
+assessment is 190/762.
 
 Use this order for new completion work:
 
@@ -54,7 +54,9 @@ Use this order for new completion work:
 Existing downstream work may continue as an isolated foundation, but it
 cannot close its sprint or satisfy an upstream obligation early. The blocked
 source item `SRC-006` gates public redistribution only and does not block
-internal implementation or evidence work.
+internal implementation or evidence work: the 97-member private evidence set,
+106-entry redistribution inventory, and request package are ready, while
+maintainer approval to send and written permission remain open.
 
 ## Current Snapshot (as of 2026-07-25)
 
@@ -242,6 +244,11 @@ Current recommendation after all merged implementation workstreams:
    `WML-303` now satisfy their prerequisites; keep `WBP-06` inactive because
    the overlapping `D0-01` contract sequence remains the gate recorded in the
    browser implementation plan.
+6. **Profile research lane:** treat `WBP-15` as ready for evidence-bounded Nokia
+   7110 profile planning while its implementation dependencies remain closed;
+   advance `WBP-16` independently only as an Openwave handset/browser
+   evidence-lock task, without changing runtime behavior or naming a generic
+   Openwave profile.
 
 `W1-06`, `D0-01`, frame migration, and general maintenance remain
 non-preemptive until these upstream Class C gates materially change.
