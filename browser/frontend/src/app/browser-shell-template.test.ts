@@ -76,4 +76,30 @@ describe('mountBrowserShell', () => {
       String(WAVES_CONFIG.defaultViewportCols)
     );
   });
+
+  it('distinguishes source, route, and compatibility profile in the toolbar', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('wap://localhost/start.wml', 'local');
+
+    const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
+    const routeLabelEl = document.querySelector('#route-label');
+    const profileLabelEl = document.querySelector('#profile-label');
+
+    // Source (run mode) is a live, user-configurable control.
+    expect(runModeSelectEl?.tagName).toBe('SELECT');
+    // Route is read-only display text derived from source + address, not a
+    // separate control -- there is no configurable transport route yet.
+    expect(routeLabelEl?.tagName).toBe('SPAN');
+    expect(routeLabelEl?.textContent).toBe('Local fixtures');
+    // Profile is a static read-only label: profile switching does not exist
+    // yet, so it must not be presented as an interactive/functional control.
+    expect(profileLabelEl?.tagName).toBe('SPAN');
+    expect(profileLabelEl?.textContent).toBe('Class C Reference');
+
+    if (runModeSelectEl) {
+      runModeSelectEl.value = 'network';
+      runModeSelectEl.dispatchEvent(new Event('change'));
+    }
+    expect(routeLabelEl?.textContent).toBe('Network — localhost');
+  });
 });
