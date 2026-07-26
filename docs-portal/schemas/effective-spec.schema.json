@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wap-labs.dev/schemas/effective-spec.schema.json",
+  "title": "Project Atlas effective specification input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "releaseId",
+    "generatedFrom",
+    "governingConformanceDocument",
+    "governingClassProfileDocument",
+    "classProfileLedger",
+    "graphStatus",
+    "semantics",
+    "summary",
+    "families"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "releaseId": {
+      "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+    },
+    "generatedFrom": {
+      "const": "spec-processing/source-manifests/wap-1.2.1-release.json"
+    },
+    "governingConformanceDocument": {
+      "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+    },
+    "governingClassProfileDocument": {
+      "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+    },
+    "classProfileLedger": {
+      "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+    },
+    "graphStatus": {
+      "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+    },
+    "semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effectiveSequence", "proposedDocuments", "laterSpecifications"],
+      "properties": {
+        "effectiveSequence": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "proposedDocuments": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "laterSpecifications": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["familyCount", "byTargetDisposition"],
+      "properties": {
+        "familyCount": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/positiveInteger"
+        },
+        "byTargetDisposition": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonNegativeInteger"
+          }
+        }
+      }
+    },
+    "families": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/family" }
+    }
+  },
+  "$defs": {
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family",
+        "title",
+        "sourceClass",
+        "targetDisposition",
+        "ownerLayers",
+        "completeness",
+        "interpretationRule",
+        "effectiveSequence",
+        "baseDocuments",
+        "sinDocuments",
+        "historicalDocuments",
+        "relationships",
+        "scrExtraction",
+        "successorEvidence",
+        "documents"
+      ],
+      "properties": {
+        "family": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+        },
+        "title": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "sourceClass": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sourceClass"
+        },
+        "targetDisposition": {
+          "enum": [
+            "historical-only",
+            "optional-profile",
+            "strict-baseline",
+            "strict-conditional",
+            "strict-supporting"
+          ]
+        },
+        "ownerLayers": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "completeness": {
+          "enum": ["release-carried-sin-without-base", "release-member-chain-complete"]
+        },
+        "interpretationRule": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "effectiveSequence": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "baseDocuments": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "sinDocuments": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "historicalDocuments": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to", "type"],
+            "properties": {
+              "from": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+              },
+              "to": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+              },
+              "type": { "enum": ["amended-by", "applied-before"] }
+            }
+          }
+        },
+        "scrExtraction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "governingDocument", "note"],
+          "properties": {
+            "status": {
+              "enum": ["line-item-ledger-complete-class-c-applied", "pending-line-item-ledger"]
+            },
+            "governingDocument": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+            },
+            "governingClassProfileDocument": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+            },
+            "ledger": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            },
+            "classProfileLedger": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            },
+            "selectedProfile": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+            },
+            "selectedFeatureGroup": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            },
+            "note": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            }
+          }
+        },
+        "successorEvidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["documentId", "role", "deltaStatus"],
+            "properties": {
+              "documentId": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+              },
+              "role": { "const": "delta-evidence-only" },
+              "deltaStatus": {
+                "enum": [
+                  "optional-media-delta-pending",
+                  "pending",
+                  "selected-profile-delta-complete"
+                ]
+              }
+            }
+          }
+        },
+        "documents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "documentId",
+              "filename",
+              "documentRole",
+              "publicationStatus",
+              "publishedOn",
+              "sha256",
+              "localState"
+            ],
+            "properties": {
+              "documentId": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+              },
+              "filename": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+              },
+              "documentRole": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/documentRole"
+              },
+              "publicationStatus": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/publicationStatus"
+              },
+              "publishedOn": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/date"
+              },
+              "sha256": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/sha256"
+              },
+              "localState": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/localState"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -423,6 +423,9 @@ jobs:
       - name: Validate transport conformance evidence
         run: node scripts/check-wap-transport-conformance-ledgers.mjs
 
+      - name: Validate Project Atlas inputs
+        run: pnpm --dir docs-portal run test:data
+
       - name: Build project Atlas
         run: pnpm --dir docs-portal run build
 

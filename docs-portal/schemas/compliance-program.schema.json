@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wap-labs.dev/schemas/compliance-program.schema.json",
+  "title": "Project Atlas compliance program input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "target", "profiles", "executionPolicy", "sprints"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release",
+        "markup",
+        "compatibilityFloor",
+        "implementationClaim",
+        "certificationClaim"
+      ],
+      "properties": {
+        "release": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "markup": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "compatibilityFloor": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "implementationClaim": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "certificationClaim": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role", "status", "summary"],
+        "properties": {
+          "id": {
+            "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+          },
+          "role": {
+            "enum": ["additive-extension-mode", "optional-future-profile", "primary-strict-target"]
+          },
+          "status": { "enum": ["deferred", "planned", "selected-from-wap-215"] },
+          "summary": {
+            "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "executionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strictBeforeEnhancement",
+        "completedTicketsImmutable",
+        "runtimeChangesRequireSourceAnchor",
+        "sourceQualityChecksRemainManual",
+        "binarySourcePromotionRequiresRedistributionApproval",
+        "redistributionBlockDoesNotBlockInternalEvidence"
+      ],
+      "properties": {
+        "strictBeforeEnhancement": { "type": "boolean" },
+        "completedTicketsImmutable": { "type": "boolean" },
+        "runtimeChangesRequireSourceAnchor": { "type": "boolean" },
+        "sourceQualityChecksRemainManual": { "type": "boolean" },
+        "binarySourcePromotionRequiresRedistributionApproval": { "type": "boolean" },
+        "redistributionBlockDoesNotBlockInternalEvidence": { "type": "boolean" }
+      }
+    },
+    "sprints": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sprint" }
+    }
+  },
+  "$defs": {
+    "sprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "dependsOn", "goal", "workItems", "exitGates"],
+      "properties": {
+        "id": { "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier" },
+        "title": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "status": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/deliveryStatus"
+        },
+        "dependsOn": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "goal": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+        },
+        "workItems": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/workItem" }
+        },
+        "exitGates": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "strictDifferentialGate": { "type": "boolean" }
+      }
+    },
+    "workItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "ownerLayers",
+        "sourceFamilies",
+        "existingTickets",
+        "outputs",
+        "acceptance",
+        "evidence"
+      ],
+      "properties": {
+        "id": { "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier" },
+        "status": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/deliveryStatus"
+        },
+        "ownerLayers": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "sourceFamilies": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "existingTickets": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "outputs": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "acceptance": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "evidence": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "contextDocuments": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "dependsOn": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "explicitUnmappedFamilies": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "followUpWorkItems": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "notes": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        },
+        "scrMatrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["family", "scope"],
+          "properties": {
+            "family": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+            },
+            "scope": {
+              "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+            }
+          }
+        },
+        "specReferences": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
+        }
+      }
+    }
+  }
+}
