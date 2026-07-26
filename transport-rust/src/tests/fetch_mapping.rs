@@ -27,6 +27,28 @@ fn transport_fetch_invalid_method_maps_invalid_request() {
 }
 
 #[test]
+fn transport_fetch_with_profile_invalid_method_maps_invalid_request_for_each_profile() {
+    for profile in [
+        FetchTransportProfile::GatewayBridged,
+        FetchTransportProfile::WapNetCore,
+    ] {
+        let response = fetch_deck_in_process_with_profile(
+            FetchDeckRequest {
+                method: Some("POST".to_string()),
+                request_id: Some("req-invalid-method-profile".to_string()),
+                ..basic_request("http://example.test".to_string())
+            },
+            profile,
+        );
+        assert!(!response.ok);
+        assert_eq!(
+            response.error.as_ref().map(|err| err.code.as_str()),
+            Some("INVALID_REQUEST")
+        );
+    }
+}
+
+#[test]
 fn transport_fetch_invalid_url_maps_invalid_request() {
     let response = fetch_deck_in_process(FetchDeckRequest {
         request_id: Some("req-invalid-url".to_string()),

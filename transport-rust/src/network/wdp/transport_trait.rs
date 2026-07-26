@@ -241,4 +241,93 @@ mod tests {
         let error = WdpError::DestinationPortUnsupported(9999);
         assert!(error.to_string().contains("9999"));
     }
+
+    #[test]
+    fn wdp_error_display_covers_remaining_variants() {
+        let cases: Vec<(WdpError, &str)> = vec![
+            (
+                WdpError::TransportUnavailable("no socket".to_string()),
+                "transport unavailable: no socket",
+            ),
+            (
+                WdpError::AddressTypeUnsupported,
+                "address type unsupported by WDP transport",
+            ),
+            (
+                WdpError::AddressUnresolvable("bad host".to_string()),
+                "address unresolvable: bad host",
+            ),
+            (WdpError::NoRouteToDestination, "no route to destination"),
+            (
+                WdpError::CommunicationAdministrativelyProhibited,
+                "communication administratively prohibited",
+            ),
+            (
+                WdpError::AddressUnreachable,
+                "destination address unreachable",
+            ),
+            (
+                WdpError::PeerMessageTooBig { max: 1500 },
+                "peer maximum message size is 1500",
+            ),
+            (
+                WdpError::Ipv4LargeDatagramUnassured {
+                    actual: 2000,
+                    baseline: 576,
+                },
+                "IPv4 datagram size 2000 exceeds baseline 576 without destination assurance",
+            ),
+            (
+                WdpError::Ipv4DontFragmentMtuExceeded {
+                    actual: 2000,
+                    mtu: 1500,
+                },
+                "IPv4 datagram size 2000 exceeds path MTU 1500 with DF set",
+            ),
+            (
+                WdpError::Ipv4FragmentationNeeded {
+                    actual: 2000,
+                    next_hop_mtu: Some(1500),
+                },
+                "IPv4 datagram size 2000 requires fragmentation but DF is set; next-hop MTU is 1500",
+            ),
+            (
+                WdpError::Ipv4FragmentationNeeded {
+                    actual: 2000,
+                    next_hop_mtu: None,
+                },
+                "IPv4 datagram size 2000 requires fragmentation but DF is set; next-hop MTU was not reported",
+            ),
+            (
+                WdpError::Ipv4ReassemblyCapacityExceeded {
+                    actual: 10,
+                    max: 8,
+                },
+                "IPv4 pending reassembly count 10 exceeds configured limit 8",
+            ),
+            (
+                WdpError::Ipv4ReassemblyBufferExceeded {
+                    actual: 4096,
+                    max: 2048,
+                },
+                "IPv4 reassembly buffer size 4096 exceeds configured limit 2048",
+            ),
+            (
+                WdpError::Ipv4ReassemblyPolicyInvalid,
+                "invalid IPv4 reassembly policy",
+            ),
+            (
+                WdpError::CorruptOrMalformed,
+                "corrupt or malformed datagram",
+            ),
+            (
+                WdpError::Internal("state machine desync".to_string()),
+                "internal transport error: state machine desync",
+            ),
+        ];
+
+        for (error, expected) in cases {
+            assert_eq!(error.to_string(), expected);
+        }
+    }
 }

@@ -218,6 +218,47 @@ fn echo_reply_truncates_only_data_to_return_path_fragment_size() {
 }
 
 #[test]
+fn incoming_echo_reply_is_reported_not_re_replied() {
+    let fixture = fixture();
+    let reply = fixture_case(&fixture, "echo-reply");
+    let outcome = handle_wcmp(
+        &reply.encoded,
+        WcmpHandlingPolicy {
+            max_bearer_fragment_bytes: 64,
+            permit_echo_reply: true,
+        },
+    )
+    .expect("echo reply should decode");
+
+    let WcmpMessage::EchoReply {
+        identifier,
+        sequence_number,
+        data,
+    } = expected_message(&fixture, "echo-reply")
+    else {
+        panic!("fixture echo-reply case should decode to an EchoReply message");
+    };
+    assert_eq!(
+        outcome,
+        WcmpHandlingOutcome::EchoReplyReceived {
+            identifier,
+            sequence_number,
+            data,
+        }
+    );
+}
+
+#[test]
+fn wcmp_handling_error_display_wraps_decode_and_encode_causes() {
+    assert!(WcmpHandlingError::from(WcmpDecodeError::LengthOverflow)
+        .to_string()
+        .contains("WCMP decode failed"));
+    assert!(WcmpHandlingError::from(WcmpEncodeError::LengthOverflow)
+        .to_string()
+        .contains("WCMP reply generation failed"));
+}
+
+#[test]
 fn echo_reply_rate_limit_is_explicit_and_deterministic() {
     let fixture = fixture();
     let request = fixture_case(&fixture, "echo-request");
@@ -278,6 +319,64 @@ fn generation_maps_port_and_buffer_failures_to_selected_messages() {
                 .clone(),
         }
     );
+}
+
+#[test]
+fn reported_destination_unreachable_maps_remaining_codes_to_wdp_errors() {
+    let fixture = fixture();
+    let address = fixture_address(&fixture);
+    let reported = |code| WcmpReportedError::DestinationUnreachable {
+        code,
+        destination_port: 9200,
+        originator_port: 49_152,
+        address: address.clone(),
+    };
+
+    assert_eq!(
+        reported(WcmpDestinationUnreachableCode::NoRouteToDestination).to_wdp_error(),
+        WdpError::NoRouteToDestination
+    );
+    assert_eq!(
+        reported(WcmpDestinationUnreachableCode::CommunicationAdministrativelyProhibited)
+            .to_wdp_error(),
+        WdpError::CommunicationAdministrativelyProhibited
+    );
+    assert_eq!(
+        reported(WcmpDestinationUnreachableCode::AddressUnreachable).to_wdp_error(),
+        WdpError::AddressUnreachable
+    );
+}
+
+#[test]
+fn generation_maps_remaining_destination_unreachable_failures() {
+    let cases = [
+        (
+            WcmpGenerationFailure::NoRouteToDestination,
+            WcmpDestinationUnreachableCode::NoRouteToDestination,
+        ),
+        (
+            WcmpGenerationFailure::CommunicationAdministrativelyProhibited,
+            WcmpDestinationUnreachableCode::CommunicationAdministrativelyProhibited,
+        ),
+        (
+            WcmpGenerationFailure::AddressUnreachable,
+            WcmpDestinationUnreachableCode::AddressUnreachable,
+        ),
+    ];
+
+    for (failure, expected_code) in cases {
+        let outcome = generate_wcmp_error(&generation_request(failure))
+            .expect("destination-unreachable failure should generate WCMP");
+        match outcome {
+            WcmpGenerationOutcome::Generated { message, .. } => match message {
+                WcmpMessage::DestinationUnreachable { code, .. } => {
+                    assert_eq!(code, expected_code);
+                }
+                other => panic!("expected DestinationUnreachable, got {other:?}"),
+            },
+            other => panic!("expected Generated outcome, got {other:?}"),
+        }
+    }
 }
 
 #[test]

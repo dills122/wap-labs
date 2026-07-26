@@ -126,3 +126,43 @@ impl WcmpMessage {
         matches!(self.type_class(), WcmpTypeClass::Error)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn destination_unreachable_code_roundtrips_every_variant() {
+        let codes = [
+            WcmpDestinationUnreachableCode::NoRouteToDestination,
+            WcmpDestinationUnreachableCode::CommunicationAdministrativelyProhibited,
+            WcmpDestinationUnreachableCode::AddressUnreachable,
+            WcmpDestinationUnreachableCode::PortUnreachable,
+        ];
+        for code in codes {
+            let byte = code.to_u8();
+            assert_eq!(WcmpDestinationUnreachableCode::from_u8(byte), Some(code));
+        }
+        assert_eq!(WcmpDestinationUnreachableCode::from_u8(2), None);
+    }
+
+    #[test]
+    fn message_type_class_matches_error_and_informational_ranges() {
+        let unreachable = WcmpMessage::DestinationUnreachable {
+            code: WcmpDestinationUnreachableCode::NoRouteToDestination,
+            destination_port: 1,
+            originator_port: 2,
+            address: WcmpAddress::cdpd_ipv4([10, 0, 0, 1]),
+        };
+        assert_eq!(unreachable.type_class(), WcmpTypeClass::Error);
+        assert!(unreachable.is_error());
+
+        let echo_request = WcmpMessage::EchoRequest {
+            identifier: 1,
+            sequence_number: 1,
+            data: vec![],
+        };
+        assert_eq!(echo_request.type_class(), WcmpTypeClass::Informational);
+        assert!(!echo_request.is_error());
+    }
+}

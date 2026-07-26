@@ -190,4 +190,76 @@ mod tests {
         ));
         assert!(encode_wdp_control_message(WdpControlProfile::CdpdIpv4Strict, &icmp, 64).is_ok());
     }
+
+    #[test]
+    fn wdp_control_error_display_messages_are_descriptive() {
+        let encode_mismatch = WdpControlEncodeError::ProfileMismatch {
+            profile: WdpControlProfile::CdpdIpv4Strict,
+            message_family: "general WCMP",
+        };
+        assert_eq!(
+            encode_mismatch.to_string(),
+            "general WCMP control message is unavailable for CdpdIpv4Strict"
+        );
+        assert!(
+            WdpControlEncodeError::Icmpv4(Icmpv4EncodeError::LengthOverflow)
+                .to_string()
+                .contains("ICMPv4 encode failed")
+        );
+        assert!(
+            WdpControlEncodeError::GeneralWcmp(WcmpEncodeError::LengthOverflow)
+                .to_string()
+                .contains("general WCMP encode failed")
+        );
+
+        assert!(
+            WdpControlDecodeError::Icmpv4(Icmpv4DecodeError::InvalidChecksum)
+                .to_string()
+                .contains("ICMPv4 decode failed")
+        );
+        assert!(
+            WdpControlDecodeError::GeneralWcmp(WcmpDecodeError::LengthOverflow)
+                .to_string()
+                .contains("general WCMP decode failed")
+        );
+
+        assert!(WdpControlHandlingError::Icmpv4(Icmpv4HandlingError::Decode(
+            Icmpv4DecodeError::InvalidChecksum
+        ))
+        .to_string()
+        .contains("ICMPv4 handling failed"));
+        assert!(
+            WdpControlHandlingError::GeneralWcmp(WcmpHandlingError::Decode(
+                WcmpDecodeError::LengthOverflow
+            ))
+            .to_string()
+            .contains("general WCMP handling failed")
+        );
+    }
+
+    #[test]
+    fn handle_wdp_control_message_routes_general_wcmp_profile() {
+        let echo = WdpControlMessage::GeneralWcmp(WcmpMessage::EchoRequest {
+            identifier: 1,
+            sequence_number: 2,
+            data: vec![9, 9],
+        });
+        let encoded =
+            encode_wdp_control_message(WdpControlProfile::GeneralWcmpNonIp, &echo, 64).unwrap();
+
+        let outcome = handle_wdp_control_message(
+            WdpControlProfile::GeneralWcmpNonIp,
+            &encoded,
+            WdpControlHandlingPolicy {
+                permit_echo_reply: true,
+                max_non_ip_bearer_fragment_bytes: 64,
+            },
+        )
+        .expect("general WCMP echo request should be handled");
+
+        assert!(matches!(
+            outcome,
+            WdpControlHandlingOutcome::GeneralWcmp(WcmpHandlingOutcome::EchoReplyGenerated { .. })
+        ));
+    }
 }

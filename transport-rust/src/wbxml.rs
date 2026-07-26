@@ -30,3 +30,15 @@ pub(crate) fn decode_wbxml_for_content_type(
 pub fn preflight_wbxml_decoder() -> Result<String, String> {
     Ok(WML13_DECODER_ID.to_string())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn decode_wbxml_for_content_type_rejects_media_types_without_a_token_table() {
+        let error = decode_wbxml_for_content_type(&[], "application/json")
+            .expect_err("unsupported media type should be rejected before decoding");
+        assert!(error.contains("no selected token table"));
+    }
+}
