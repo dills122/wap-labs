@@ -324,15 +324,28 @@ The implementation plan owns delivery gates. Product-level targets are:
 5. The browser never performs WML navigation, task resolution, focus movement, line wrapping, WBXML
    decoding, or gateway protocol behavior on behalf of the owning core layer.
 
+## Adopted Initial Baseline Decisions
+
+The `WBP-00` baseline adopts the following working decisions, with measurements and rationale in
+[Waves Browser WBP-00/WBP-01 Baseline](WAVES_BROWSER_BASELINE.md):
+
+1. Primary launch audience: WAP/WML implementers and emulator evaluators. Preservationists and
+   learners are secondary audiences whose onboarding assumptions remain subject to `WBP-04`
+   validation.
+2. Initial `Class C Reference` viewport: neutral, non-vendor, and 20 engine-owned logical columns.
+   A fixed row count and device metrics wait for the `WBP-06` frame/profile contract rather than
+   being inferred by the browser.
+3. Performance reference: the recorded Apple M1 Max/macOS browser-WASM local path. It is a
+   reproducible comparison baseline, not a release budget or network-performance claim.
+4. Toolbar information architecture: source remains configurable, while route and compatibility
+   profile remain visible, read-only facts until their runtime choices genuinely exist.
+
 ## Open Product Decisions
 
-1. Primary launch audience: preservationists, WAP developers, learners, or emulator evaluators.
-2. Whether pointer assistance defaults on or is selected during first-run setup.
-3. Exact initial `Class C Reference` viewport metrics and control arrangement.
-4. Persistence and redaction policy for form fields and diagnostic captures.
-5. Whether route selection remains visible in the toolbar or moves into an advanced popover.
-6. Exact performance reference hardware.
-7. Evidence threshold required before naming and shipping a device-specific profile.
+1. `WBP-08` owner: whether pointer assistance defaults on or is selected during first-run setup.
+2. `WBP-12`/`WBP-13` owners: persistence and redaction policy for form fields and diagnostic
+   captures.
+3. `WBP-15` owner: evidence threshold required before naming and shipping a device-specific profile.
 
 ## Evidence Gaps
 
@@ -340,5 +353,7 @@ The implementation plan owns delivery gates. Product-level targets are:
 - Current stories do not provide broad automated coverage of the complete Tauri UI path.
 - Dynamic softkey order, menu overflow, modal form editing, and pointer acceleration need focused
   prototypes and user testing.
-- Startup and recovery budgets need measurement on agreed reference hardware.
-- The current audience assumptions need validation with both newcomers and technical users.
+- Network, gateway, startup-recovery, and packaged-Tauri budgets still need measurement; the
+  deterministic local browser/WASM comparison baseline is established.
+- The primary technical-audience assumption is adopted for launch planning; `WBP-04` still needs to
+  validate newcomer and learner onboarding.

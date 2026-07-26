@@ -113,6 +113,16 @@ cd ../..
 pnpm test:story:waves
 ```
 
+Reproducible WBP-00/WBP-01 startup, navigation, input/render, window, and keyboard baseline:
+
+```bash
+WAVES_BASELINE_RUNS=20 pnpm test:baseline:waves
+```
+
+The default output is ignored test evidence. Set `WAVES_BASELINE_OUTPUT_DIR` to retain a named run;
+relative paths resolve from the repository root. The adopted reference run and scope limitations are
+documented in `docs/waves/WAVES_BROWSER_BASELINE.md`.
+
 The lane drives the real Waves controls with softkey clicks and browser keyboard events. Its
 primary oracle is the test-only semantic bridge: runtime snapshots, engine traces, host session
 state, and render-list text. Playwright screenshots and traces are retained only for failed-flow
@@ -134,7 +144,8 @@ VITE_WAVES_DEFAULT_URL=wap://127.0.0.1:3000/ pnpm tauri:dev
 
 Current priority follows the main Waves board:
 
-1. `D0-01` debug connector contract/architecture definition
-2. `W1-06` fatal/non-fatal script taxonomy closure
-3. Preserve the completed `W0-05` timer/dialog baseline
-4. `M1-09` frame migration only after those stabilize
+1. `WBP-05` as a leaf-component slice using the accepted shell seam; `WBP-02` through `WBP-04` are
+   landed
+2. One integration owner for the root template, global stylesheet, copy, and example manifest
+3. `WBP-06` and later frame/input work only after their engine contract gate
+4. Preserve the current engine and transport contracts throughout the browser-owned slices

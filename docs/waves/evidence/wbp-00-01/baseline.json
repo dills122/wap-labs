@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-07-26T00:56:34.402Z",
+  "baseRevision": "e3c373748357874f69c5fc7c615daf1d392d47c4",
+  "sourceState": "working tree including the WBP-00/WBP-01 branch changes",
+  "path": "production-built Waves browser-story entry with real WaveNav WASM and deterministic local fixture fetch",
+  "environment": {
+    "platform": "darwin",
+    "release": "25.5.0",
+    "architecture": "arm64",
+    "cpu": "Apple M1 Max",
+    "logicalCpus": 10,
+    "memoryBytes": 68719476736,
+    "node": "v22.22.1",
+    "chromium": "151.0.7922.34",
+    "headless": true
+  },
+  "configuredWindows": {
+    "default": {
+      "width": 1024,
+      "height": 768
+    },
+    "minimum": {
+      "width": 880,
+      "height": 640
+    }
+  },
+  "referenceViewport": {
+    "logicalColumns": 20
+  },
+  "measurements": {
+    "startupToDeckReady": {
+      "unit": "ms",
+      "runs": 20,
+      "min": 49.4,
+      "p50": 53.8,
+      "p95": 57.9,
+      "max": 70.7,
+      "samples": [
+        70.7,
+        54.9,
+        55,
+        51.8,
+        52.6,
+        51.4,
+        51.8,
+        49.7,
+        54.6,
+        54.7,
+        51.7,
+        56.8,
+        53.9,
+        51.4,
+        49.4,
+        57.9,
+        53.8,
+        53.3,
+        55,
+        56
+      ]
+    },
+    "localNavigationToRenderedDeck": {
+      "unit": "ms",
+      "runs": 20,
+      "min": 6.9,
+      "p50": 7.3,
+      "p95": 7.5,
+      "max": 8.4,
+      "samples": [
+        8.4,
+        6.9,
+        7,
+        7.3,
+        7.4,
+        7.4,
+        7.4,
+        7.5,
+        7.3,
+        6.9,
+        7.3,
+        7.3,
+        7.4,
+        7.3,
+        7.1,
+        7.1,
+        7.2,
+        7.4,
+        7.2,
+        7.4
+      ]
+    },
+    "keyboardInputToFocusedRender": {
+      "unit": "ms",
+      "runs": 20,
+      "min": 6.3,
+      "p50": 7.3,
+      "p95": 7.5,
+      "max": 7.5,
+      "samples": [
+        6.3,
+        7,
+        7.3,
+        7.4,
+        7.4,
+        7.3,
+        7.5,
+        7.4,
+        7.1,
+        7.5,
+        7.4,
+        7.5,
+        7.2,
+        6.9,
+        7.3,
+        7.5,
+        7.2,
+        7.5,
+        7.1,
+        7.4
+      ]
+    }
+  },
+  "windowEvidence": {
+    "default": {
+      "layout": {
+        "viewport": {
+          "width": 1024,
+          "height": 768
+        },
+        "document": {
+          "scrollWidth": 1024,
+          "scrollHeight": 847,
+          "horizontalOverflow": false
+        },
+        "railOpen": true,
+        "landmarks": {
+          ".browser-shell": {
+            "left": 18,
+            "right": 1006,
+            "top": 18,
+            "bottom": 829,
+            "width": 988,
+            "height": 811,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".nav-toolbar": {
+            "left": 26,
+            "right": 998,
+            "top": 51,
+            "bottom": 141,
+            "width": 972,
+            "height": 90,
+            "display": "block",
+            "visibility": "visible"
+          },
+          ".handset-stage": {
+            "left": 32,
+            "right": 625,
+            "top": 159,
+            "bottom": 772,
+            "width": 593,
+            "height": 613,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".utility-rail": {
+            "left": 637,
+            "right": 992,
+            "top": 159,
+            "bottom": 772,
+            "width": 356,
+            "height": 613,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".developer-drawer-section": {
+            "left": 20,
+            "right": 1004,
+            "top": 784,
+            "bottom": 827,
+            "width": 984,
+            "height": 43,
+            "display": "block",
+            "visibility": "visible"
+          },
+          "#viewport": {
+            "left": 52,
+            "right": 605,
+            "top": 199,
+            "bottom": 719,
+            "width": 553,
+            "height": 520,
+            "display": "block",
+            "visibility": "visible"
+          },
+          ".softkey-row": {
+            "left": 52,
+            "right": 605,
+            "top": 727,
+            "bottom": 752,
+            "width": 553,
+            "height": 25,
+            "display": "grid",
+            "visibility": "visible"
+          }
+        }
+      },
+      "keyboard": {
+        "initialOrder": [
+          "btn-reload",
+          "run-mode",
+          "local-example",
+          "btn-load-local",
+          "viewport",
+          "btn-up",
+          "btn-enter",
+          "btn-down",
+          "utility-rail-toggle",
+          "welcome-help-toggle",
+          "btn-start-tour",
+          "btn-try-local-examples",
+          "btn-connect-network",
+          "viewport-cols",
+          "handset-scale-select",
+          "local-example-notes-toggle",
+          "dev-drawer-toggle",
+          "btn-health",
+          "btn-render",
+          "btn-snapshot",
+          "btn-clear-intent",
+          "btn-export-timeline",
+          "btn-clear-timeline",
+          "debug-raw-mode-toggle",
+          "base-url",
+          "wml-input",
+          "btn-load-context",
+          "timeline"
+        ],
+        "backEnabledOrder": [
+          "btn-back",
+          "btn-reload",
+          "run-mode",
+          "local-example",
+          "btn-load-local",
+          "viewport",
+          "btn-up",
+          "btn-enter",
+          "btn-down",
+          "utility-rail-toggle",
+          "welcome-help-toggle",
+          "btn-start-tour",
+          "btn-try-local-examples",
+          "btn-connect-network",
+          "viewport-cols",
+          "handset-scale-select",
+          "local-example-notes-toggle",
+          "dev-drawer-toggle",
+          "btn-health",
+          "btn-render",
+          "btn-snapshot",
+          "btn-clear-intent",
+          "btn-export-timeline",
+          "btn-clear-timeline",
+          "debug-raw-mode-toggle",
+          "base-url",
+          "wml-input",
+          "btn-load-context",
+          "timeline"
+        ],
+        "activated": [
+          "utility rail",
+          "welcome/help",
+          "example notes",
+          "developer drawer",
+          "raw WML drawer",
+          "Back",
+          "Reload",
+          "Health"
+        ]
+      },
+      "screenshot": "default-window-1024x768.png"
+    },
+    "minimum": {
+      "layout": {
+        "viewport": {
+          "width": 880,
+          "height": 640
+        },
+        "document": {
+          "scrollWidth": 880,
+          "scrollHeight": 737,
+          "horizontalOverflow": false
+        },
+        "railOpen": false,
+        "landmarks": {
+          ".browser-shell": {
+            "left": 10,
+            "right": 870,
+            "top": 10,
+            "bottom": 727,
+            "width": 860,
+            "height": 717,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".nav-toolbar": {
+            "left": 18,
+            "right": 862,
+            "top": 43,
+            "bottom": 266,
+            "width": 844,
+            "height": 223,
+            "display": "block",
+            "visibility": "visible"
+          },
+          ".handset-stage": {
+            "left": 24,
+            "right": 856,
+            "top": 284,
+            "bottom": 627,
+            "width": 832,
+            "height": 343,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".utility-rail": {
+            "left": 24,
+            "right": 856,
+            "top": 639,
+            "bottom": 670,
+            "width": 832,
+            "height": 31,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          ".developer-drawer-section": {
+            "left": 12,
+            "right": 868,
+            "top": 682,
+            "bottom": 725,
+            "width": 856,
+            "height": 43,
+            "display": "block",
+            "visibility": "visible"
+          },
+          "#viewport": {
+            "left": 44,
+            "right": 836,
+            "top": 324,
+            "bottom": 574,
+            "width": 792,
+            "height": 250,
+            "display": "block",
+            "visibility": "visible"
+          },
+          ".softkey-row": {
+            "left": 44,
+            "right": 836,
+            "top": 582,
+            "bottom": 607,
+            "width": 792,
+            "height": 25,
+            "display": "grid",
+            "visibility": "visible"
+          }
+        }
+      },
+      "keyboard": {
+        "initialOrder": [
+          "btn-reload",
+          "run-mode",
+          "local-example",
+          "btn-load-local",
+          "viewport",
+          "btn-up",
+          "btn-enter",
+          "btn-down",
+          "utility-rail-toggle",
+          "welcome-help-toggle",
+          "btn-start-tour",
+          "btn-try-local-examples",
+          "btn-connect-network",
+          "viewport-cols",
+          "handset-scale-select",
+          "local-example-notes-toggle",
+          "dev-drawer-toggle",
+          "btn-health",
+          "btn-render",
+          "btn-snapshot",
+          "btn-clear-intent",
+          "btn-export-timeline",
+          "btn-clear-timeline",
+          "debug-raw-mode-toggle",
+          "base-url",
+          "wml-input",
+          "btn-load-context",
+          "timeline"
+        ],
+        "backEnabledOrder": [
+          "btn-back",
+          "btn-reload",
+          "run-mode",
+          "local-example",
+          "btn-load-local",
+          "viewport",
+          "btn-up",
+          "btn-enter",
+          "btn-down",
+          "utility-rail-toggle",
+          "welcome-help-toggle",
+          "btn-start-tour",
+          "btn-try-local-examples",
+          "btn-connect-network",
+          "viewport-cols",
+          "handset-scale-select",
+          "local-example-notes-toggle",
+          "dev-drawer-toggle",
+          "btn-health",
+          "btn-render",
+          "btn-snapshot",
+          "btn-clear-intent",
+          "btn-export-timeline",
+          "btn-clear-timeline",
+          "debug-raw-mode-toggle",
+          "base-url",
+          "wml-input",
+          "btn-load-context",
+          "timeline"
+        ],
+        "activated": [
+          "utility rail",
+          "welcome/help",
+          "example notes",
+          "developer drawer",
+          "raw WML drawer",
+          "Back",
+          "Reload",
+          "Health"
+        ]
+      },
+      "screenshot": "minimum-window-880x640.png"
+    }
+  }
+}

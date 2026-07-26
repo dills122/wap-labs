@@ -121,21 +121,21 @@ Planning assessment:
 
 ### Desktop Browser Product Lane
 
-The `Authentic Core, Modern Console` direction is adopted in the active
-desktop product documents. Current evidence-backed status is:
+The `Authentic Core, Modern Console` direction is adopted. Current status is:
 
-| Slice | Status | Current evidence / next gate |
+| Slice | Status | Direct evidence / next gate |
 | --- | --- | --- |
-| `WBP-00` | `in-progress` | Product direction is documented in `#339`; reproducible baseline performance, reference viewport, and audience decisions remain open. |
-| `WBP-01` | `in-progress` | `#343` decomposed the shell into toolbar, handset stage, utility rail, phase slot, and developer drawer with landmark tests; minimum-window keyboard and complete existing-story integration evidence remain. |
-| `WBP-02` | `todo` | Start after the `WBP-01` integration gate; keep global style integration under one owner. |
-| `WBP-03` | `todo` | Start after the `WBP-01` integration gate; preserve current navigation ordering and transport truthfulness. |
-| `WBP-04` | `todo` | Start after the `WBP-01` integration gate and coordinate distinct example/story generation. |
-| `WBP-05` | `todo` | Start after the `WBP-01` integration gate; host semantics must not duplicate the WML runtime model. |
+| `WBP-00` | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`. |
+| `WBP-01` | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced. |
+| `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
+| `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
+| `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
+| `WBP-05` | `todo` | Extend host semantics and focus treatment through leaf templates/tests without duplicating the WML runtime model. |
 
-`WBP-02` through `WBP-05` are parallel-safe as leaf-component slices after
-the gate, but the root shell template, global stylesheet, copy module, and
-generated example manifest require a single integration owner.
+`WBP-05` remains available after this gate within the exact seam documented in
+`WAVES_BROWSER_BASELINE.md`. The root shell template, global stylesheet, copy module, and generated
+example manifest remain single-owner integration surfaces. The same document records the seams
+used by landed `WBP-02` through `WBP-04` for future maintenance.
 
 ## Next In Line (Architecture Maintenance Sprint)
 

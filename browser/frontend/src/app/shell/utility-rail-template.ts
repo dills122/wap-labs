@@ -7,7 +7,7 @@ export const UTILITY_RAIL_NARROW_MEDIA_QUERY = '(max-width: 900px)';
 export const utilityRailTemplate = () => `
   <aside class="utility-rail" aria-label="Utility rail">
     <details id="utility-rail-panel" class="utility-rail-panel chrome-disclosure" open>
-      <summary>${WAVES_COPY.shell.utilityRail}</summary>
+      <summary id="utility-rail-toggle">${WAVES_COPY.shell.utilityRail}</summary>
       <div class="utility-rail-body">
         ${welcomeHelpTemplate()}
         <label class="compact-field">
@@ -36,7 +36,7 @@ export const utilityRailTemplate = () => `
           class="local-example-notes chrome-disclosure"
           aria-live="polite"
         >
-          <summary>${WAVES_COPY.shell.localExampleNotes}</summary>
+          <summary id="local-example-notes-toggle">${WAVES_COPY.shell.localExampleNotes}</summary>
           <div class="local-example-notes-body">
             <p id="local-example-coverage" class="local-example-notes-coverage"></p>
             <p id="local-example-description"></p>

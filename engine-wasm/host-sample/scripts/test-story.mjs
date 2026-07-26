@@ -1,10 +1,8 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { createServer as createNetServer } from 'node:net';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
-import { build as buildVite, preview as previewVite } from 'vite';
 import { generateExamples } from './generate-example-manifest.mjs';
 import {
   NoExecutableCoverageError,
@@ -13,6 +11,7 @@ import {
   selectExecutableStories,
   storyListLines
 } from './story-runner-lib.mjs';
+import { startVitePreview } from './vite-preview-harness.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const HOST_SAMPLE_DIR = path.resolve(SCRIPT_DIR, '..');
@@ -300,68 +299,18 @@ async function runStory(browser, baseUrl, story, artifactRoot) {
   }
 }
 
-async function reservePort() {
-  return new Promise((resolve, reject) => {
-    const reservation = createNetServer();
-    reservation.once('error', reject);
-    reservation.listen(0, '127.0.0.1', () => {
-      const address = reservation.address();
-      if (!address || typeof address === 'string') {
-        reservation.close();
-        reject(new Error('Could not reserve an ephemeral localhost port'));
-        return;
-      }
-      reservation.close((error) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-        resolve(address.port);
-      });
-    });
-  });
-}
-
 async function startTargetServer(target, tempRoot) {
   const config = STORY_TARGETS[target];
   if (!config) {
     throw new Error(`Unknown story target: ${target}`);
   }
-  const port = await reservePort();
   const outDir = path.join(tempRoot, target);
-  const build = {
-    outDir,
-    emptyOutDir: true,
-    ...(target === 'waves-browser'
-      ? { rollupOptions: { input: path.join(config.root, config.entry) } }
-      : {})
-  };
-  await buildVite({
+  return startVitePreview({
     root: config.root,
     configFile: config.configFile,
-    logLevel: 'error',
-    build
+    entry: target === 'waves-browser' ? path.join(config.root, config.entry) : undefined,
+    outDir
   });
-  const server = await previewVite({
-    root: config.root,
-    configFile: config.configFile,
-    logLevel: 'error',
-    build: { outDir },
-    preview: {
-      host: '127.0.0.1',
-      port,
-      strictPort: true
-    }
-  });
-  const address = server.httpServer?.address();
-  if (!address || typeof address === 'string') {
-    await server.close();
-    throw new Error(`Vite preview did not expose a local TCP address for ${target}`);
-  }
-  return {
-    server,
-    baseUrl: `http://127.0.0.1:${address.port}/${target === 'waves-browser' ? config.entry : ''}`
-  };
 }
 
 async function startTargetServers(stories) {

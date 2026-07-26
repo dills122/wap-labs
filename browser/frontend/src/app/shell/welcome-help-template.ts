@@ -2,7 +2,7 @@ import { WAVES_COPY } from '../waves-copy';
 
 export const welcomeHelpTemplate = () => `
   <details id="welcome-help-panel" class="welcome-help-panel chrome-disclosure" open>
-    <summary>${WAVES_COPY.shell.welcomeHelpTitle}</summary>
+    <summary id="welcome-help-toggle">${WAVES_COPY.shell.welcomeHelpTitle}</summary>
     <div class="welcome-help-body">
       <p>${WAVES_COPY.shell.welcomeIntro}</p>
       <p>${WAVES_COPY.shell.welcomeModes}</p>
