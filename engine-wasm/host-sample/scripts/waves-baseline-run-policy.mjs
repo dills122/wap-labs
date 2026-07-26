@@ -1,0 +1,3 @@
+export const WAVES_BASELINE_MIN_RUNS = 5;
+export const WAVES_BASELINE_MAX_RUNS = 100;
+export const WAVES_BASELINE_DEFAULT_RUNS = 20;

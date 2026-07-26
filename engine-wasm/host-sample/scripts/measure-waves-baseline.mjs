@@ -7,6 +7,11 @@ import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 import { startVitePreview } from './vite-preview-harness.mjs';
+import {
+  WAVES_BASELINE_DEFAULT_RUNS,
+  WAVES_BASELINE_MAX_RUNS,
+  WAVES_BASELINE_MIN_RUNS
+} from './waves-baseline-run-policy.mjs';
 
 const execFileAsync = promisify(execFile);
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -15,10 +20,15 @@ const REPO_ROOT = path.resolve(HOST_SAMPLE_DIR, '..', '..');
 const BROWSER_FRONTEND_DIR = path.join(REPO_ROOT, 'browser', 'frontend');
 const TAURI_CONFIG_PATH = path.join(REPO_ROOT, 'browser', 'src-tauri', 'tauri.conf.json');
 const DEFAULT_OUTPUT_DIR = path.join(HOST_SAMPLE_DIR, 'test-results', 'waves-baseline');
-const RUNS = Number.parseInt(process.env.WAVES_BASELINE_RUNS ?? '20', 10);
+const RUNS = Number.parseInt(
+  process.env.WAVES_BASELINE_RUNS ?? String(WAVES_BASELINE_DEFAULT_RUNS),
+  10
+);
 
-if (!Number.isInteger(RUNS) || RUNS < 5 || RUNS > 100) {
-  throw new Error('WAVES_BASELINE_RUNS must be an integer from 5 through 100');
+if (!Number.isInteger(RUNS) || RUNS < WAVES_BASELINE_MIN_RUNS || RUNS > WAVES_BASELINE_MAX_RUNS) {
+  throw new Error(
+    `WAVES_BASELINE_RUNS must be an integer from ${WAVES_BASELINE_MIN_RUNS} through ${WAVES_BASELINE_MAX_RUNS}`
+  );
 }
 
 const requestedOutputDir = process.env.WAVES_BASELINE_OUTPUT_DIR;
