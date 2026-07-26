@@ -72,7 +72,7 @@ This snapshot replaces the original kickoff view and reflects the current post-t
 | `W0-05` | wavescript/runtime | `done` | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
 | `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
 | `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
-| `D0-01` | engine + browser + docs | `todo` | next planning-ready contract/architecture slice after active runtime correctness work |
+| `D0-01` | engine + browser + docs | `done` | debug connector contract types landed (additive, no runtime emission); unlocks `D0-02` |
 | `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
 | `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
 | `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |

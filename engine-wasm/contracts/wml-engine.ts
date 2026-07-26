@@ -182,3 +182,109 @@ export interface WmlEngineCompatibilityRules {
   navigationParityRequired: true;
   scriptInvocationParityRequired: true;
 }
+
+// --- Debug connector contract (D0-01: additive, contract-only) ---
+//
+// See `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md` for the full design and
+// `docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md` for the rationale behind
+// the choices below. No engine crate Rust types back these yet (that is
+// `D0-02`), so unlike the rest of this file's imports these are hand-authored
+// here rather than generated from `./generated/runtime-dtos`.
+
+export type EngineDebugEventKind =
+  | 'deck.load'
+  | 'card.enter'
+  | 'card.exit'
+  | 'focus.change'
+  | 'input.edit.start'
+  | 'input.edit.draft'
+  | 'input.edit.commit'
+  | 'input.edit.cancel'
+  | 'action.accept'
+  | 'action.external'
+  | 'nav.intent'
+  | 'postfield.resolve'
+  | 'script.invoke'
+  | 'script.trap'
+  | 'timer.schedule'
+  | 'timer.fire'
+  | 'timer.cancel';
+
+// Flat, JSON-serializable payload dict. Exact per-kind fields are deferred to
+// `D0-02` once real emission points exist, with one deliberate exception:
+// `postfield.resolve` events must include a `source` field with one of
+// `'var' | 'draft' | 'card' | 'fallback'` (the single highest-value detail
+// for form-submit triage per the research doc).
+export type EngineDebugEventPayload = Record<string, string | number | boolean | undefined>;
+
+export interface EngineDebugEvent {
+  // Monotonic per-engine-process sequence number; the ordering source of
+  // truth. `tsMs` is for operator context only, never for correctness.
+  seq: number;
+  kind: EngineDebugEventKind;
+  tsMs: number;
+  cardId?: string;
+  payload: EngineDebugEventPayload;
+}
+
+export interface EngineDebugFormFieldStateSummary {
+  name: string;
+  masked: boolean;
+  value?: string;
+}
+
+export interface EngineDebugTimerStateSummary {
+  scheduledCount: number;
+  nextFireDelayMs?: number;
+}
+
+export interface EngineDebugBufferMetadata {
+  oldestSeq?: number;
+  latestSeq?: number;
+  droppedCount: number;
+}
+
+// MVP read-only snapshot surface. Sensitive fields (focused input value,
+// runtime vars) are masked at the engine boundary per the masking policy in
+// `ENGINE_DEBUG_CONNECTOR_PLAN.md`; this contract does not distinguish masked
+// from unmasked payloads beyond the `masked` flag on each summarized field.
+export interface EngineDebugSnapshot {
+  activeCardId?: string;
+  focusedLinkIndex: number;
+  focusedInputEditName?: string;
+  focusedInputEditValue?: string;
+  formState: EngineDebugFormFieldStateSummary[];
+  runtimeVars: EngineDebugFormFieldStateSummary[];
+  externalNavigationIntent?: string;
+  externalNavigationRequestPolicy?: WmlGoRequestPolicy;
+  timerState: EngineDebugTimerStateSummary;
+  bufferMetadata: EngineDebugBufferMetadata;
+  viewportCols: number;
+  baseUrl: string;
+  contentType: string;
+}
+
+export type EngineDebugMaskingPolicy = 'masked' | 'unmasked';
+
+export interface EngineDebugCapabilities {
+  supportsSnapshots: boolean;
+  supportsPolling: boolean;
+  masking: EngineDebugMaskingPolicy;
+  supportsUnmaskSensitive: boolean;
+}
+
+export interface EngineDebugEventBatch {
+  events: EngineDebugEvent[];
+  nextSeq: number;
+  droppedCount: number;
+}
+
+// Engine-owned debug primitives. Deliberately NOT part of `WmlEngineCommon`:
+// this surface is additive/optional and unimplemented until `D0-02`, so it
+// must not be required by every native/WASM target today. Once implemented,
+// `WmlEngineCompatibilityRules`-style parity applies here too — both targets
+// must expose identical event ordering and snapshot content.
+export interface WmlEngineDebugSurface {
+  debugSnapshot(): EngineDebugSnapshot;
+  debugEvents(sinceSeq: number, maxEvents: number): EngineDebugEventBatch;
+}

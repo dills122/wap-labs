@@ -12,12 +12,16 @@ use wavenav_host_lib::command_contract::{
     render_default_capability, render_host_permission, TauriCommandDescriptor, TAURI_COMMANDS,
 };
 use wavenav_host_lib::contract_types::{
-    AdvanceTimeRequest, DrawCmd, EngineFrame, EngineKey, EngineRuntimeSnapshot,
+    AdvanceTimeRequest, CloseDebugSessionRequest, CloseDebugSessionResponse, DebugMaskingPolicy,
+    DebugSessionCapabilities, DrawCmd, EngineDebugBufferMetadata, EngineDebugEventKind,
+    EngineDebugEventSnapshot, EngineDebugFormFieldStateSummary, EngineDebugSnapshotView,
+    EngineDebugTimerStateSummary, EngineFrame, EngineKey, EngineRuntimeSnapshot,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationPostContextSnapshot,
-    ExternalNavigationRequestPolicySnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
-    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
-    SetViewportColsRequest,
+    ExternalNavigationRequestPolicySnapshot, GetDebugSnapshotRequest, HandleKeyRequest,
+    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
+    OpenDebugSessionRequest, OpenDebugSessionResponse, PollDebugEventsRequest,
+    PollDebugEventsResponse, RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
+    SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 
 fn push_decl<T: TS>(out: &mut String) {
@@ -138,6 +142,24 @@ fn write_engine_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<EngineFrame>(&mut output);
     push_decl::<DrawCmd>(&mut output);
     push_decl::<RenderList>(&mut output);
+
+    // Debug connector contract (D0-01: additive, contract-only).
+    push_decl::<DebugMaskingPolicy>(&mut output);
+    push_decl::<DebugSessionCapabilities>(&mut output);
+    push_decl::<OpenDebugSessionRequest>(&mut output);
+    push_decl::<OpenDebugSessionResponse>(&mut output);
+    push_decl::<PollDebugEventsRequest>(&mut output);
+    push_decl::<EngineDebugEventKind>(&mut output);
+    push_decl::<EngineDebugEventSnapshot>(&mut output);
+    push_decl::<PollDebugEventsResponse>(&mut output);
+    push_decl::<GetDebugSnapshotRequest>(&mut output);
+    push_decl::<EngineDebugFormFieldStateSummary>(&mut output);
+    push_decl::<EngineDebugTimerStateSummary>(&mut output);
+    push_decl::<EngineDebugBufferMetadata>(&mut output);
+    push_decl::<EngineDebugSnapshotView>(&mut output);
+    push_decl::<CloseDebugSessionRequest>(&mut output);
+    push_decl::<CloseDebugSessionResponse>(&mut output);
+
     output.push_str(
         &render_script_error_category_labels(SCRIPT_ERROR_CATEGORY_METADATA)
             .map_err(std::io::Error::other)?,

@@ -37,6 +37,36 @@ export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | 
 
 export type RenderList = { draw: Array<DrawCmd>, };
 
+export type DebugMaskingPolicy = "masked" | "unmasked";
+
+export type DebugSessionCapabilities = { supportsSnapshots: boolean, supportsPolling: boolean, masking: DebugMaskingPolicy, supportsUnmaskSensitive: boolean, };
+
+export type OpenDebugSessionRequest = Record<symbol, never>;
+
+export type OpenDebugSessionResponse = { sessionId: string, cursor: number, capabilities: DebugSessionCapabilities, };
+
+export type PollDebugEventsRequest = { sessionId: string, cursor: number, maxEvents: number, };
+
+export type EngineDebugEventKind = "deck.load" | "card.enter" | "card.exit" | "focus.change" | "input.edit.start" | "input.edit.draft" | "input.edit.commit" | "input.edit.cancel" | "action.accept" | "action.external" | "nav.intent" | "postfield.resolve" | "script.invoke" | "script.trap" | "timer.schedule" | "timer.fire" | "timer.cancel";
+
+export type EngineDebugEventSnapshot = { seq: number, kind: EngineDebugEventKind, tsMs: number, cardId?: string, payload: { [key in string]: string }, };
+
+export type PollDebugEventsResponse = { events: Array<EngineDebugEventSnapshot>, nextCursor: number, droppedCount: number, };
+
+export type GetDebugSnapshotRequest = { sessionId: string, };
+
+export type EngineDebugFormFieldStateSummary = { name: string, masked: boolean, value?: string, };
+
+export type EngineDebugTimerStateSummary = { scheduledCount: number, nextFireDelayMs?: number, };
+
+export type EngineDebugBufferMetadata = { oldestSeq?: number, latestSeq?: number, droppedCount: number, };
+
+export type EngineDebugSnapshotView = { activeCardId?: string, focusedLinkIndex: number, focusedInputEditName?: string, focusedInputEditValue?: string, formState: Array<EngineDebugFormFieldStateSummary>, runtimeVars: Array<EngineDebugFormFieldStateSummary>, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, timerState: EngineDebugTimerStateSummary, bufferMetadata: EngineDebugBufferMetadata, viewportCols: number, baseUrl: string, contentType: string, };
+
+export type CloseDebugSessionRequest = { sessionId: string, };
+
+export type CloseDebugSessionResponse = { closed: boolean, };
+
 export const SCRIPT_ERROR_CATEGORY_LABELS: Readonly<Record<string, string>> = {
   "computational": "computation error",
   "integrity": "data integrity error",

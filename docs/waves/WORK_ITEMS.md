@@ -1379,7 +1379,7 @@ Reference plan:
 
 ### D0-01 Debug connector contract and architecture baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `A5-06`
 3. `Owner`: `engine-wasm`, `browser`, `docs`
 4. `Files`:
@@ -1402,6 +1402,9 @@ Reference plan:
 - `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`
 9. `Notes`:
 - this ticket establishes interfaces only; no runtime emission implementation in this slice
+- Landed: `EngineDebugEventKind`/`EngineDebugEvent`/`EngineDebugSnapshot`/`EngineDebugCapabilities` plus a separate `WmlEngineDebugSurface` interface (deliberately not merged into `WmlEngineCommon`) in `engine-wasm/contracts/wml-engine.ts`; host-bridge session request/response types in `browser/src-tauri/src/contract_types.rs`, generated into `browser/contracts/engine.ts` via the existing `contracts:codegen` pipeline. No `#[tauri::command]` handlers were added (that is `D0-03`).
+- All 4 open questions from `ENGINE_DEBUG_CONNECTOR_PLAN.md` were resolved using `ENGINE_DEBUG_CONNECTOR_RESEARCH.md`'s MVP recommendations: monotonic-only `seq`/`tsMs` ordering, multi-session support (free, since sessions are host-side cursor bookmarks over one shared engine buffer), a documented (not yet implemented) 512/128 dev-vs-CI ring-buffer default owned by `D0-02`, and a `source` field on `postfield.resolve` payloads.
+- Unlocks `D0-02` (engine ring buffer + event/snapshot emission).
 
 ### D0-02 Engine event stream and snapshot emitter
 

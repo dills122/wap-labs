@@ -1,6 +1,6 @@
 # Engine Debug Connector Plan
 
-Status: planning-ready
+Status: `D0-01` contract-defined (types only, no runtime emission)
 Owner lane: `engine-wasm` + `browser`
 
 Related reference:
@@ -51,7 +51,7 @@ This is a diagnostics surface, not a transport/runtime control plane.
 
 ## Proposed Debug Contract Surface (Additive)
 
-`openDebugSession(options) -> { sessionId, cursor }`
+`openDebugSession(options) -> { sessionId, cursor, capabilities }`
 
 `pollDebugEvents({ sessionId, cursor, maxEvents }) -> { events, nextCursor, droppedCount }`
 
@@ -60,6 +60,36 @@ This is a diagnostics surface, not a transport/runtime control plane.
 `closeDebugSession({ sessionId }) -> { closed: boolean }`
 
 MVP posture is read-only.
+
+`capabilities` lets clients adapt safely instead of assuming behavior:
+
+- `supportsSnapshots: true`
+- `supportsPolling: true`
+- `masking: "masked"`
+- `supportsUnmaskSensitive: false`
+
+Session semantics (per `ENGINE_DEBUG_CONNECTOR_RESEARCH.md` "Session
+Ownership"): `sessionId` is host-owned, process-local, and opaque. The engine
+does not model per-client sessions — it only exposes cursor-based reads over
+one shared ring buffer (`debugSnapshot()`, `debugEvents(sinceSeq,
+maxEvents)`). Because sessions are just host-tracked cursor bookmarks over
+that shared, read-only buffer, MVP supports multiple concurrent sessions at
+no extra engine-side cost; the host may still cap the count later, but that
+is not a contract concern.
+
+Type-level pinning of this surface landed in `D0-01`:
+
+- `engine-wasm/contracts/wml-engine.ts`: `EngineDebugEventKind`,
+  `EngineDebugEvent`, `EngineDebugSnapshot`, `EngineDebugCapabilities`, and
+  the `WmlEngineDebugSurface` interface (`debugSnapshot`/`debugEvents`),
+  deliberately kept separate from `WmlEngineCommon` so it isn't required by
+  every native/WASM target before `D0-02` implements it.
+- `browser/src-tauri/src/contract_types.rs`: the host-bridge session
+  request/response types (`OpenDebugSessionRequest/Response`,
+  `PollDebugEventsRequest/Response`, `GetDebugSnapshotRequest`,
+  `CloseDebugSessionRequest/Response`, `EngineDebugSnapshotView`,
+  `EngineDebugEventSnapshot`), generated into `browser/contracts/engine.ts`.
+  No `#[tauri::command]` handlers exist yet — that is `D0-03`.
 
 ## Event Model (MVP)
 
@@ -110,6 +140,20 @@ Initial event kinds:
 3. Events must not expose raw transport credentials or secrets.
 4. Session handles are process-local and non-persistent.
 
+Masking happens at the engine boundary, not the frontend, so behavior is
+consistent across every consumer (a first-party panel, an exported JSON
+artifact, or a future external tool) instead of relying on each consumer to
+redact correctly. MVP masking heuristics (`D0-02` implements these; this
+document pins the decision):
+
+1. password-type WML inputs (`type="password"`)
+2. field or variable names containing `pin`, `passwd`, or `password`
+   (case-insensitive substring match)
+3. runtime vars whose value was last set from a masked field
+
+`supportsUnmaskSensitive` stays `false` in the MVP capabilities; a future
+explicit local override is out of scope until a concrete need justifies it.
+
 ## Performance Constraints
 
 1. Fixed-size ring buffer with drop-oldest semantics.
@@ -119,8 +163,15 @@ Initial event kinds:
 
 ## Rollout Phases
 
-1. Phase D0-01: contract and architecture definition.
-2. Phase D0-02: engine ring buffer + event/snapshot emission.
+1. Phase D0-01: contract and architecture definition. **Done** — additive
+   types landed in `engine-wasm/contracts/wml-engine.ts` and
+   `browser/src-tauri/src/contract_types.rs` (generated into
+   `browser/contracts/engine.ts`); zero runtime behavior change.
+2. Phase D0-02: engine ring buffer + event/snapshot emission. Also owns the
+   default ring-buffer capacity: intended default is 512 events for dev/prod,
+   with a smaller cap (for example 128) for CI/test contexts to keep fixture
+   output small and deterministic. This is an engine-side implementation
+   detail, not part of the `D0-01` contract surface.
 3. Phase D0-03: tauri host bridge + contract generation wiring.
 4. Phase D0-04: first-party consumer panel and capture/export workflow.
 
@@ -131,9 +182,27 @@ Initial event kinds:
 3. Snapshot + event cursor supports deterministic bug replay investigation.
 4. Sensitive values are masked by default and policy-tested.
 
-## Open Questions
+## Open Questions (resolved in `D0-01`)
 
-1. Should event timestamps be monotonic only, or include wall-clock projection?
-2. Should session model support multiple concurrent consumers in MVP?
-3. What is the default ring-buffer size cap for dev mode vs CI mode?
-4. Should `postfield.resolve` include resolution source (`var|draft|card|fallback`) for each field?
+Decisions below follow `ENGINE_DEBUG_CONNECTOR_RESEARCH.md`'s MVP
+recommendations.
+
+1. **Should event timestamps be monotonic only, or include wall-clock
+   projection?** Monotonic only. `seq` is the ordering source of truth;
+   `tsMs` is a monotonic runtime timestamp for operator context, never for
+   correctness. No wall-clock projection in MVP.
+2. **Should the session model support multiple concurrent consumers in
+   MVP?** Yes, for free: the engine owns one shared ring buffer and only
+   exposes cursor-based reads, so sessions are host-side cursor bookmarks
+   over that shared buffer rather than per-client engine state. Multiple
+   concurrent read-only sessions are supported; the host may cap the count
+   later if needed, but it is not a contract concern.
+3. **What is the default ring-buffer size cap for dev mode vs CI mode?**
+   512 events for dev/prod, a smaller cap (for example 128) for CI/test.
+   This is a `D0-02` engine-side implementation detail, not part of the
+   `D0-01` contract shape.
+4. **Should `postfield.resolve` include resolution source
+   (`var|draft|card|fallback`) for each field?** Yes — per the research
+   doc, this is the single highest-value event detail for form-submit
+   triage. `EngineDebugEvent.payload` for `postfield.resolve` events must
+   include a `source` key with one of those four values.

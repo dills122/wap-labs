@@ -42,6 +42,20 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `lastScriptDialogRequests()` (`alert`/`confirm`/`prompt`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
 | `lastScriptTimerRequests()` (`schedule`/`cancel`) | `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017` |
 
+## Debug connector contract mapping (`D0-01`, additive/contract-only)
+
+Reference: `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md`. No runtime emission
+exists yet (`D0-02`); these rows map the pinned wire shape.
+
+| Contract Surface | Requirement IDs |
+|---|---|
+| `WmlEngineDebugSurface.debugSnapshot()` / `EngineDebugSnapshot` (`engine-wasm/contracts/wml-engine.ts`) | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017` |
+| `WmlEngineDebugSurface.debugEvents(sinceSeq, maxEvents)` / `EngineDebugEvent` | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017` |
+| `EngineDebugCapabilities` (`supportsSnapshots`/`supportsPolling`/`masking`/`supportsUnmaskSensitive`) | `RQ-RMK-008` |
+| `OpenDebugSessionRequest/Response`, `CloseDebugSessionRequest/Response` (`browser/src-tauri/src/contract_types.rs`) | `RQ-RMK-002`, `RQ-RMK-008` |
+| `PollDebugEventsRequest/Response`, `EngineDebugEventSnapshot` | `RQ-RMK-002`, `RQ-RMK-008` |
+| `GetDebugSnapshotRequest`, `EngineDebugSnapshotView` | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017` |
+
 ## Transport mapping (`transport-rust/src/lib.rs`)
 
 | Contract Surface | Requirement IDs |

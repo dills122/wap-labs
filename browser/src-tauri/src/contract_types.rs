@@ -270,3 +270,194 @@ impl From<engine::DrawCmd> for DrawCmd {
         }
     }
 }
+
+// --- Debug connector contract (D0-01: additive, contract-only) ---
+//
+// See `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md` and
+// `docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md`. These types pin the
+// host-bridge session wire shape ahead of `D0-02`'s engine-side emitter.
+// Unlike `EngineRuntimeSnapshot` above, no `From<engine::...>` impl exists
+// yet because there is no backing engine type; `D0-02` adds those once the
+// engine-owned ring buffer and snapshot builder exist.
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, TS)]
+#[serde(rename_all = "kebab-case")]
+pub enum DebugMaskingPolicy {
+    Masked,
+    Unmasked,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct DebugSessionCapabilities {
+    pub supports_snapshots: bool,
+    pub supports_polling: bool,
+    pub masking: DebugMaskingPolicy,
+    pub supports_unmask_sensitive: bool,
+}
+
+// Reserved for future session-scoping options (for example, event-kind
+// filters). Empty for the MVP contract.
+#[derive(Clone, Debug, Deserialize, TS)]
+pub struct OpenDebugSessionRequest {}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct OpenDebugSessionResponse {
+    // Host-owned, process-local, opaque. The engine does not model sessions
+    // (see `docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md` "Session Ownership").
+    pub session_id: String,
+    #[ts(type = "number")]
+    pub cursor: u64,
+    pub capabilities: DebugSessionCapabilities,
+}
+
+#[derive(Clone, Debug, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct PollDebugEventsRequest {
+    pub session_id: String,
+    #[ts(type = "number")]
+    pub cursor: u64,
+    pub max_events: u32,
+}
+
+// Mirrors `EngineDebugEventKind` in `engine-wasm/contracts/wml-engine.ts`.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+pub enum EngineDebugEventKind {
+    #[serde(rename = "deck.load")]
+    DeckLoad,
+    #[serde(rename = "card.enter")]
+    CardEnter,
+    #[serde(rename = "card.exit")]
+    CardExit,
+    #[serde(rename = "focus.change")]
+    FocusChange,
+    #[serde(rename = "input.edit.start")]
+    InputEditStart,
+    #[serde(rename = "input.edit.draft")]
+    InputEditDraft,
+    #[serde(rename = "input.edit.commit")]
+    InputEditCommit,
+    #[serde(rename = "input.edit.cancel")]
+    InputEditCancel,
+    #[serde(rename = "action.accept")]
+    ActionAccept,
+    #[serde(rename = "action.external")]
+    ActionExternal,
+    #[serde(rename = "nav.intent")]
+    NavIntent,
+    #[serde(rename = "postfield.resolve")]
+    PostfieldResolve,
+    #[serde(rename = "script.invoke")]
+    ScriptInvoke,
+    #[serde(rename = "script.trap")]
+    ScriptTrap,
+    #[serde(rename = "timer.schedule")]
+    TimerSchedule,
+    #[serde(rename = "timer.fire")]
+    TimerFire,
+    #[serde(rename = "timer.cancel")]
+    TimerCancel,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineDebugEventSnapshot {
+    // Monotonic per-engine-process sequence number; the ordering source of
+    // truth. `tsMs` is for operator context only, never for correctness
+    // (see `ENGINE_DEBUG_CONNECTOR_RESEARCH.md` "Event Ordering and Time").
+    #[ts(type = "number")]
+    pub seq: u64,
+    pub kind: EngineDebugEventKind,
+    #[ts(type = "number")]
+    pub ts_ms: u64,
+    #[ts(optional)]
+    pub card_id: Option<String>,
+    // Flat, JSON-serializable payload. The TS hand-authored
+    // `EngineDebugEventPayload` is intentionally broader (string | number |
+    // boolean | undefined); this narrower `String`-valued map is a
+    // placeholder pending `D0-02`'s real per-kind payload design. Every
+    // `postfield.resolve` event must include a `source` key with one of
+    // `var | draft | card | fallback`.
+    pub payload: std::collections::HashMap<String, String>,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct PollDebugEventsResponse {
+    pub events: Vec<EngineDebugEventSnapshot>,
+    #[ts(type = "number")]
+    pub next_cursor: u64,
+    #[ts(type = "number")]
+    pub dropped_count: u64,
+}
+
+#[derive(Clone, Debug, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct GetDebugSnapshotRequest {
+    pub session_id: String,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineDebugFormFieldStateSummary {
+    pub name: String,
+    pub masked: bool,
+    #[ts(optional)]
+    pub value: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineDebugTimerStateSummary {
+    pub scheduled_count: u32,
+    #[ts(optional)]
+    pub next_fire_delay_ms: Option<u32>,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineDebugBufferMetadata {
+    #[ts(optional, type = "number")]
+    pub oldest_seq: Option<u64>,
+    #[ts(optional, type = "number")]
+    pub latest_seq: Option<u64>,
+    #[ts(type = "number")]
+    pub dropped_count: u64,
+}
+
+// Mirrors `EngineDebugSnapshot` in `engine-wasm/contracts/wml-engine.ts`.
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct EngineDebugSnapshotView {
+    #[ts(optional)]
+    pub active_card_id: Option<String>,
+    pub focused_link_index: usize,
+    #[ts(optional)]
+    pub focused_input_edit_name: Option<String>,
+    #[ts(optional)]
+    pub focused_input_edit_value: Option<String>,
+    pub form_state: Vec<EngineDebugFormFieldStateSummary>,
+    pub runtime_vars: Vec<EngineDebugFormFieldStateSummary>,
+    #[ts(optional)]
+    pub external_navigation_intent: Option<String>,
+    #[ts(optional)]
+    pub external_navigation_request_policy: Option<ExternalNavigationRequestPolicySnapshot>,
+    pub timer_state: EngineDebugTimerStateSummary,
+    pub buffer_metadata: EngineDebugBufferMetadata,
+    pub viewport_cols: usize,
+    pub base_url: String,
+    pub content_type: String,
+}
+
+#[derive(Clone, Debug, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct CloseDebugSessionRequest {
+    pub session_id: String,
+}
+
+#[derive(Clone, Debug, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct CloseDebugSessionResponse {
+    pub closed: bool,
+}
