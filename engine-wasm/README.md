@@ -79,7 +79,9 @@ cargo test
 ### 7) Consume from host app
 
 - Import generated package from `engine-wasm/pkg`
-- Use API contract in `engine-wasm/contracts/wml-engine.ts`
+- Use the handwritten method facade in `engine-wasm/contracts/wml-engine.ts`; its serialized DTOs
+  are generated from engine-owned Rust serde metadata as documented in
+  `engine-wasm/contracts/README.md`
 - See host loop sample in `engine-wasm/host-sample/renderer.ts`
 
 ### 8) Quick local harness (no Electron)
@@ -181,7 +183,7 @@ Additional helpers:
 - `setVar(name: string, value: string)`
 - `invokeScriptRef(src: string)` (runtime invocation + post-invocation effect application)
 - `invokeScriptRefFunction(src: string, functionName: string)`
-- `invokeScriptRefCall(src: string, functionName: string, args: ScriptValueLiteral[])`
+- `invokeScriptRefCall(src: string, functionName: string, args: ScriptCallArgLiteral[])`
 - `executeScriptRef(...)` / `executeScriptRefFunction(...)` / `executeScriptRefCall(...)` (raw execution outcome only)
 
 ## Native API
@@ -198,6 +200,7 @@ Behavior must stay aligned with the WASM API for:
 Type contract:
 
 - `engine-wasm/contracts/wml-engine.ts`
+- `engine-wasm/contracts/generated/runtime-dtos.ts` (generated; Rust serde types are authoritative)
 - `docs/wml-engine/requirements-matrix.md`
 - `docs/wml-engine/ticket-plan.md`
 - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`

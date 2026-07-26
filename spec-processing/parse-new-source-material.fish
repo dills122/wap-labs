@@ -10,11 +10,8 @@ end
 
 source .venv/bin/activate.fish
 
-if not command -q docling
-    echo "docling is not available in the active environment."
-    echo "Run spec-processing/setup-spec-parser-env.fish first."
-    exit 1
-end
+source $ROOT/spec-processing/scripts/require-docling.fish
+or exit 1
 
 source $ROOT/spec-processing/scripts/docling-profile.fish
 set DOCFLAGS $DOCLING_PROFILE_FLAGS

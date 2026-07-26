@@ -158,6 +158,9 @@ jobs:
       - name: Release version consistency check
         run: pnpm run version:check
 
+      - name: Docling provenance strict check
+        run: pnpm run docling:check
+
       - name: Browser frontend typecheck (contract drift guard)
         run: pnpm --dir browser/frontend exec tsc --noEmit
 
@@ -325,6 +328,13 @@ jobs:
       - name: Install host-sample deps
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Engine serialized DTO drift check
+        run: pnpm --dir engine-wasm/host-sample run contracts:check
+
+      - name: Engine WASM boundary tests
+        working-directory: engine-wasm/engine
+        run: wasm-pack test --node
+
       - name: Host-sample story schema tests
         run: pnpm --dir engine-wasm/host-sample run test:story:unit
 
@@ -419,6 +429,9 @@ jobs:
 
       - name: Validate transport conformance evidence
         run: node scripts/check-wap-transport-conformance-ledgers.mjs
+
+      - name: Validate Project Atlas inputs
+        run: pnpm --dir docs-portal run test:data
 
       - name: Build project Atlas
         run: pnpm --dir docs-portal run build

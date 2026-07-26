@@ -20,3 +20,4 @@ browser/src-tauri/icons/icon.icns linguist-generated=true
 browser/src-tauri/icons/icon.ico linguist-generated=true
 browser/src-tauri/icons/icon.png linguist-generated=true
 browser/src-tauri/permissions/waves-host.toml linguist-generated=true
+engine-wasm/contracts/generated/*.ts linguist-generated=true

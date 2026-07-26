@@ -1,3 +1,39 @@
+import type {
+  EngineTraceEntry,
+  RenderList,
+  ScriptCallArgLiteral,
+  ScriptDialogRequest,
+  ScriptErrorCategory,
+  ScriptErrorClass,
+  ScriptExecutionOutcome,
+  ScriptInvocationOutcome,
+  ScriptTimerRequest,
+  WmlGoRequestPolicy,
+  WmlLoadDiagnostic
+} from './generated/runtime-dtos';
+
+export type {
+  DrawCmd,
+  EngineTraceEntry,
+  RenderList,
+  ScriptCallArgLiteral,
+  ScriptDialogRequest,
+  ScriptErrorCategory,
+  ScriptErrorClass,
+  ScriptExecutionOutcome,
+  ScriptInvocationOutcome,
+  ScriptNavigationIntent,
+  ScriptTimerRequest,
+  ScriptValueLiteral,
+  WmlGoCacheControlPolicy,
+  WmlGoPostContext,
+  WmlGoRequestPolicy,
+  WmlLoadDiagnostic,
+  WmlLoadDiagnosticClass,
+  WmlLoadDiagnosticCode,
+  WmlLoadDiagnosticOutcome
+} from './generated/runtime-dtos';
+
 export type EngineKey = 'up' | 'down' | 'enter';
 
 export interface WmlDeckInput {
@@ -11,27 +47,6 @@ export interface WmlDeckInput {
   rawBytesBase64?: string;
   // Referring deck URI supplied by the host for destination access checks.
   referringUrl?: string;
-}
-
-export type WmlLoadDiagnosticClass =
-  | 'malformed'
-  | 'invalid'
-  | 'unsupported'
-  | 'recoverable';
-
-export type WmlLoadDiagnosticCode =
-  | 'WML_MALFORMED_XML'
-  | 'WML_INVALID_WML'
-  | 'WML_UNSUPPORTED_OPTIONAL_CONSTRUCT'
-  | 'WML_RECOVERABLE_CONTENT';
-
-export type WmlLoadDiagnosticOutcome = 'rejected' | 'ignored';
-
-export interface WmlLoadDiagnostic {
-  class: WmlLoadDiagnosticClass;
-  code: WmlLoadDiagnosticCode;
-  outcome: WmlLoadDiagnosticOutcome;
-  message: string;
 }
 
 export type ScriptCallSite =
@@ -54,59 +69,7 @@ export interface ScriptInvocationRef {
   src: string;
   functionName: string;
   context: ScriptInvocationContext;
-  args: ScriptValueLiteral[];
-}
-
-export type ScriptValueLiteral = boolean | number | string | { invalid: true };
-
-export type ScriptNavigationIntent =
-  | { type: 'none' }
-  | { type: 'go'; href: string; requestPolicy?: WmlGoRequestPolicy }
-  | { type: 'prev' };
-
-export type WmlGoCacheControlPolicy = 'default' | 'no-cache';
-
-export interface WmlGoPostContext {
-  // Transport-facing metadata for form submission initiated by WML <go method="post">.
-  sameDeck?: boolean;
-  contentType?: string;
-  payload?: string;
-}
-
-export interface WmlGoRequestPolicy {
-  cacheControl?: WmlGoCacheControlPolicy;
-  refererUrl?: string;
-  postContext?: WmlGoPostContext;
-}
-
-// Runtime applies script side effects at deterministic post-invocation boundaries.
-export interface ScriptPostInvocationEffects {
-  navigationIntent: ScriptNavigationIntent;
-  requiresRefresh: boolean;
-}
-
-export type ScriptDialogRequest =
-  | { type: 'alert'; message: string }
-  | { type: 'confirm'; message: string }
-  | { type: 'prompt'; message: string; defaultValue?: string };
-
-export type ScriptTimerRequest =
-  | { type: 'schedule'; delayMs: number; token?: string }
-  | { type: 'cancel'; token: string };
-
-export interface ScriptInvocationOutcome {
-  effects: ScriptPostInvocationEffects;
-  result: ScriptValueLiteral;
-}
-
-export interface ScriptExecutionOutcome {
-  ok: boolean;
-  result: ScriptValueLiteral;
-  trap?: string;
-  errorClass: 'none' | 'non-fatal' | 'fatal';
-  errorCategory: 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
-  invocationAborted: boolean;
-  effects: ScriptPostInvocationEffects;
+  args: ScriptCallArgLiteral[];
 }
 
 // Host capabilities are side-effect adapters only; they do not define script semantics.
@@ -123,41 +86,6 @@ export interface ScriptHostCapabilities {
   scriptFetch?: {
     fetchUnit(src: string): Promise<Uint8Array>;
   };
-}
-
-export interface EngineTraceEntry {
-  seq: number;
-  kind: string;
-  detail: string;
-  active_card_id?: string;
-  focused_link_index: number;
-  external_navigation_intent?: string;
-  script_ok?: boolean;
-  script_error_class?: 'none' | 'non-fatal' | 'fatal';
-  script_error_category?: 'none' | 'computational' | 'integrity' | 'resource' | 'host-binding';
-  script_trap?: string;
-}
-
-export interface RenderList {
-  draw: DrawCmd[];
-}
-
-export type DrawCmd = DrawText | DrawLink;
-
-export interface DrawText {
-  type: 'text';
-  x: number;
-  y: number;
-  text: string;
-}
-
-export interface DrawLink {
-  type: 'link';
-  x: number;
-  y: number;
-  text: string;
-  focused: boolean;
-  href: string;
 }
 
 // Target-agnostic engine surface. Every method here must behave identically on
@@ -208,25 +136,19 @@ export interface WmlEngineCommon {
   invokeScriptRefCall(
     src: string,
     functionName: string,
-    args: ScriptValueLiteral[]
+    args: ScriptCallArgLiteral[]
   ): ScriptInvocationOutcome;
   executeScriptRef(src: string): ScriptExecutionOutcome;
   executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
   executeScriptRefCall(
     src: string,
     functionName: string,
-    args: ScriptValueLiteral[]
+    args: ScriptCallArgLiteral[]
   ): ScriptExecutionOutcome;
   lastScriptExecutionTrap(): string | undefined;
   lastScriptExecutionOk(): boolean | undefined;
-  lastScriptExecutionErrorClass(): 'none' | 'non-fatal' | 'fatal' | undefined;
-  lastScriptExecutionErrorCategory():
-    | 'none'
-    | 'computational'
-    | 'integrity'
-    | 'resource'
-    | 'host-binding'
-    | undefined;
+  lastScriptExecutionErrorClass(): ScriptErrorClass | undefined;
+  lastScriptExecutionErrorCategory(): ScriptErrorCategory | undefined;
   lastScriptRequiresRefresh(): boolean | undefined;
   lastScriptDialogRequests(): ScriptDialogRequest[];
   lastScriptTimerRequests(): ScriptTimerRequest[];

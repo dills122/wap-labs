@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wap-labs.dev/schemas/atlas-common.schema.json",
+  "title": "Project Atlas shared data definitions",
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      },
+      "uniqueItems": true
+    },
+    "identifierArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/identifier"
+      },
+      "uniqueItems": true
+    },
+    "deliveryStatus": {
+      "enum": ["blocked", "done", "in-progress", "todo"]
+    },
+    "publicationStatus": {
+      "enum": ["approved", "candidate", "proposed"]
+    },
+    "documentRole": {
+      "enum": ["base", "sin"]
+    },
+    "sourceClass": {
+      "enum": [
+        "core-mandatory",
+        "core-optional",
+        "dependency",
+        "explicitly-deferred",
+        "historical",
+        "profile-optional"
+      ]
+    },
+    "localState": {
+      "enum": ["canonical-content-differs", "canonical-exact", "missing"]
+    }
+  }
+}
