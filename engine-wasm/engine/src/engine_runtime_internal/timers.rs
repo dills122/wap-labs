@@ -1,49 +1,53 @@
 use crate::*;
 
+use super::evaluate_vdata;
+
 impl WmlEngine {
-    pub(crate) fn start_or_resume_timer_for_active_card(
-        &mut self,
-        is_refresh: bool,
-    ) -> Result<(), String> {
-        let (timer_value_ds, ontimer_action) = {
+    pub(crate) fn start_timer_for_active_card(&mut self) -> Result<(), String> {
+        let (timer, ontimer_action) = {
             let card = self.active_card_internal()?;
             (
-                card.timer_value_ds,
+                card.timer.clone(),
                 self.active_onevent_action_internal("ontimer")?,
             )
         };
-        let Some(value_ds) = timer_value_ds else {
+        let Some(timer) = timer else {
             self.active_timer = None;
             return Ok(());
         };
-        if is_refresh {
-            if let Some(timer) = &self.active_timer {
-                if timer.card_idx == self.active_card_idx {
-                    self.push_trace(
-                        "TIMER_RESUME",
-                        format!("remainingMs={}", timer.remaining_ms),
-                    );
-                    return Ok(());
-                }
-            }
+        let raw_value = match timer.name.as_deref() {
+            Some(name) => match self.vars.get(name) {
+                Some(value) => value.clone(),
+                None => evaluate_vdata(&timer.value, &self.vars)?,
+            },
+            None => evaluate_vdata(&timer.value, &self.vars)?,
+        };
+        let Ok(value_ds) = raw_value.trim().parse::<u32>() else {
+            self.active_timer = None;
+            self.push_trace("TIMER_IGNORE", format!("value={raw_value}"));
+            return Ok(());
+        };
+        if value_ds == 0 {
+            self.active_timer = None;
+            self.push_trace("TIMER_IGNORE", "value=0".to_string());
+            return Ok(());
         }
         let remaining_ms = value_ds.saturating_mul(100);
         self.active_timer = Some(CardTimerState {
             card_idx: self.active_card_idx,
             remaining_ms,
+            name: timer.name,
             ontimer_action,
         });
         self.push_trace("TIMER_START", format!("valueDs={value_ds}"));
-        if remaining_ms != 0 {
-            return Ok(());
-        }
-        self.dispatch_active_timer_expiry()
+        Ok(())
     }
 
     pub(crate) fn stop_active_timer_for_exit(&mut self) {
         let Some(timer) = self.active_timer.take() else {
             return;
         };
+        self.persist_timer_value(&timer, Self::remaining_timer_deciseconds(&timer));
         self.push_trace("TIMER_STOP", format!("remainingMs={}", timer.remaining_ms));
     }
 
@@ -51,6 +55,7 @@ impl WmlEngine {
         let Some(timer) = self.active_timer.take() else {
             return Ok(());
         };
+        self.persist_timer_value(&timer, 0);
         self.push_trace("TIMER_EXPIRE", String::new());
         let Some(action) = timer.ontimer_action else {
             return Ok(());
@@ -98,5 +103,16 @@ impl WmlEngine {
             self.dispatch_active_timer_expiry()?;
         }
         Ok(())
+    }
+
+    fn remaining_timer_deciseconds(timer: &CardTimerState) -> u32 {
+        timer.remaining_ms / 100 + u32::from(!timer.remaining_ms.is_multiple_of(100))
+    }
+
+    fn persist_timer_value(&mut self, timer: &CardTimerState, value_ds: u32) {
+        if let Some(name) = &timer.name {
+            self.vars.insert(name.clone(), value_ds.to_string());
+            self.push_trace("TIMER_PERSIST", format!("name={name};valueDs={value_ds}"));
+        }
     }
 }

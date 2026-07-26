@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "example": "wml305TimerLifecycle",
+  "flows": [
+    {
+      "id": "host-refresh-resume-and-expire",
+      "title": "Host sample refreshes a named timer and dispatches at one-to-zero",
+      "workItems": ["WML-305"],
+      "specItems": [
+        "WML-CL-GO-TIMER-THEN-DISPLAY",
+        "WML-CL-REFRESH-TIMER-RESTART",
+        "WML-CL-TIMER-EVENT-TRANSITION",
+        "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+        "WML-CL-TIMER-NAME-PERSISTENCE",
+        "WML-CL-TIMER-REFRESH-RESUME",
+        "WML-CL-TIMER-START-STOP",
+        "WML-CL-TIMER-UNITS"
+      ],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "refresh-timer",
+              "focusedLinkIndex": 0,
+              "nextTimerWakeupMs": 500
+            },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_START"]
+          }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": {
+            "state": { "activeCardId": "refresh-timer", "nextTimerWakeupMs": 400 },
+            "traceKinds": ["TIMER_TICK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "refresh-timer", "nextTimerWakeupMs": 200 },
+            "traceKinds": [
+              "ACTION_REFRESH",
+              "TIMER_PERSIST",
+              "TIMER_STOP",
+              "TIMER_START"
+            ]
+          }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": { "state": { "activeCardId": "refresh-timer", "nextTimerWakeupMs": 100 } }
+        },
+        {
+          "action": { "type": "tick", "ms": 100 },
+          "expect": {
+            "state": { "activeCardId": "expired" },
+            "traceKinds": [
+              "TIMER_TICK",
+              "TIMER_PERSIST",
+              "TIMER_EXPIRE",
+              "ACTION_ONTIMER",
+              "ACTION_FRAGMENT"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-refresh-resume-and-expire",
+      "title": "Waves refreshes a named timer through deterministic host wakeups",
+      "target": "waves-browser",
+      "workItems": ["WML-305"],
+      "specItems": [
+        "WML-CL-GO-TIMER-THEN-DISPLAY",
+        "WML-CL-REFRESH-TIMER-RESTART",
+        "WML-CL-TIMER-EVENT-TRANSITION",
+        "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+        "WML-CL-TIMER-NAME-PERSISTENCE",
+        "WML-CL-TIMER-REFRESH-RESUME",
+        "WML-CL-TIMER-START-STOP",
+        "WML-CL-TIMER-UNITS"
+      ],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "refresh-timer", "nextTimerWakeupMs": 500 },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_START"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "refresh-timer", "nextTimerWakeupMs": 200 },
+            "traceKinds": ["ACTION_REFRESH", "TIMER_PERSIST", "TIMER_STOP", "TIMER_START"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "up" },
+          "expect": {
+            "state": { "activeCardId": "expired" },
+            "traceKinds": ["TIMER_EXPIRE", "ACTION_ONTIMER", "ACTION_FRAGMENT"],
+            "render": { "textIncludes": ["Expired at 0."] }
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-exit-persists-current-value",
+      "title": "Waves persists a named timer when its card exits",
+      "target": "waves-browser",
+      "workItems": ["WML-305"],
+      "specItems": [
+        "WML-CL-GO-TIMER-THEN-DISPLAY",
+        "WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE",
+        "WML-CL-TIMER-NAME-PERSISTENCE",
+        "WML-CL-TIMER-START-STOP",
+        "WML-CL-TIMER-UNITS"
+      ],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        { "action": { "type": "key", "key": "down" }, "expect": { "state": { "focusedLinkIndex": 1 } } },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "exit-timer", "nextTimerWakeupMs": 500 },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_START"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "persisted" },
+            "traceKinds": ["ACTION_FRAGMENT", "TIMER_PERSIST", "TIMER_STOP"],
+            "render": { "textIncludes": ["Persisted timer value: 5."] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -35,7 +35,7 @@ aligned engine priorities are:
    and `WML-205` 3/3 direct-clause evidence without reopening their history.
 3. Preserve completed `WML-302` variable/setvar evidence (20/20 directly
    mapped clauses) and `WML-303` task/event/BACK precedence evidence (27/27),
-   then advance `WML-305` native timer lifecycle.
+   plus completed `WML-305` native timer lifecycle evidence (10/10).
 4. Preserve WML-205 failure atomicity and keep host fetching outside the engine.
 5. Preserve the completed `D0-01` baseline and the `W1-06` boundary; keep
    `M1-03` non-preemptive unless it directly unblocks the active WML-3 baton.
@@ -144,19 +144,23 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### A5-03 WML timer lifecycle runtime follow-up
 
 1. `Requirement IDs`: `WML-R-014`
-2. `Status`: `in-progress`
+2. `Status`: `done`
 3. `Depends On`: `A5-02`
 4. `Files`:
-- `engine-wasm/engine/src/runtime/events.rs`
-- `engine-wasm/engine/src/lib.rs`
-- `engine-wasm/engine/tests/fixtures/*`
+- `engine-wasm/engine/src/engine_runtime_internal/timers.rs`
+- `engine-wasm/engine/src/engine_tests/wml_305_timers.rs`
+- `engine-wasm/contracts/wml-engine.ts`
+- `browser/frontend/src/app/engine-timer-runtime.ts`
+- `engine-wasm/examples/source/wml-305-timer-lifecycle.*`
 5. `Build`:
 - Implement `<timer>` lifecycle semantics (card-entry start, card-exit stop, refresh resume, ontimer dispatch, invalid timeout ignore).
 - Keep timer ownership in runtime semantics; host only supplies timing capability plumbing.
 6. `Tests`:
 - Deterministic simulated clock tests for start/stop/resume/expire.
+- Native/WASM boundary, exact browser wakeup, and executable host/Waves story coverage.
 7. `Accept`:
 - Timer behavior is deterministic and card-scoped under navigation and refresh paths.
+- All 10 directly mapped WML-305 clauses are implemented with a 5-parent, zero-gap focused pack.
 8. `Notes`:
 - Distinct from WaveScript timer hostcalls tracked in `docs/waves/WORK_ITEMS.md`.
 

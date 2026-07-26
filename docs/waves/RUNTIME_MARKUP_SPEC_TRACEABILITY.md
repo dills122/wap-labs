@@ -91,8 +91,8 @@ Legend:
 - AC:
   - Evidence: [x] WML-303 covers intrinsic attribute/element equivalence, same-scope conflict rejection, illegal-parent ignoring, card-over-template precedence, forward/backward entry order, and the entry-handler-before-timer boundary in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs` plus the existing `actions_timers.rs` suite.
   - [x] Enter events are dispatched in deterministic order before the entered card timer/display boundary.
-  - [ ] Timer start/stop/expiry behavior is card-scoped and test-checklisted.
-  - Native timer lifecycle closure remains WML-305; this residual does not reopen WML-303.
+  - Evidence: [x] WML-305 covers single-timer validation, named-value precedence, tenths units, invalid/zero disabling, entry start, exit persistence/stop, refresh stop-update-resume, start-before-display ordering, one-to-zero dispatch, and exact host wakeups in `wml_305_timers.rs`, the WASM boundary suite, browser timer-runtime tests, and `pnpm test:story WML-305`.
+  - [x] Timer start/stop/expiry behavior is card-scoped and target-parity tested without reopening WML-303.
 
 ### RQ-RMK-005 Variable substitution behavior
 

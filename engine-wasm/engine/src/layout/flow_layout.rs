@@ -256,7 +256,7 @@ mod tests {
                 },
             ])],
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         };
 
         let out = layout_card(&card, 10, 0);
@@ -286,7 +286,7 @@ mod tests {
                 InlineNode::Text("after".to_string()),
             ])],
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         };
 
         let out = layout_card(&card, 20, 0);
@@ -319,7 +319,7 @@ mod tests {
                 "supercalifragilistic".to_string(),
             )])],
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         };
 
         let out = layout_card(&card, 5, 0);
@@ -348,7 +348,7 @@ mod tests {
                 href: "#next".to_string(),
             }])],
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         };
 
         let out = layout_card(&card, 4, 0);
@@ -422,7 +422,7 @@ mod tests {
                 },
             ])],
             event_bindings: vec![],
-            timer_value_ds: None,
+            timer: None,
         };
 
         let out = layout_card(&card, 40, 1);

@@ -19,6 +19,12 @@ pub struct CardSetVar {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CardTimer {
+    pub name: Option<String>,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CardTaskAction {
     Go {
         href: String,
@@ -187,5 +193,5 @@ pub struct Card {
     pub ordered: bool,
     pub nodes: Vec<Node>,
     pub event_bindings: Vec<CardEventBinding>,
-    pub timer_value_ds: Option<u32>,
+    pub timer: Option<CardTimer>,
 }

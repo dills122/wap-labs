@@ -645,7 +645,7 @@
         },
         {
           "id": "WML-305",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "browser", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["A5-03", "W0-05"],
@@ -656,8 +656,27 @@
             "Timer start, stop, resume, expiry, invalid values, ontimer dispatch, and host wakeups are deterministic and target-parity tested."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305",
+            "wasm-pack test --node engine-wasm/engine",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "pnpm test:story WML-305",
+            "node scripts/wap-context-pack.mjs WML-305",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "followUpWorkItems": [
+            "WML-301",
+            "WML-304",
+            "WML-306"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 11.7, 12.5.1, and 12.5.4"
+          ],
+          "notes": [
+            "All 10 directly mapped WML-305 clauses have source-derived native fixtures, native/WASM boundary coverage, browser adapter coverage, and four executable host/Waves stories. The focused pack selects five parent SCR rows with zero explicit or declared-family mapping gaps.",
+            "The engine owns deterministic tenths-based lifecycle state and publishes only the exact next wakeup delay; browser scheduling remains one-shot boundary glue and does not move timer semantics out of native Rust.",
+            "WML-305 preserves completed WML-202/204/205/302/303 behavior. GET/POST construction remains WML-304, broader context navigation remains WML-301, and access/error policy remains WML-306; D0-02 and F0-01 are unchanged."
           ]
         },
         {

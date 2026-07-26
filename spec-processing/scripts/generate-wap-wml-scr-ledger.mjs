@@ -948,20 +948,46 @@ const mandatoryImplementationAudit = new Map(
       ]
     },
     'WML-C-48': {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.',
+        'WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.',
       implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
+          'parse_timer_xml'
+        ),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/timers.rs',
           'advance_time_ms_internal'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/engine_public_api.rs',
+          'next_timer_wakeup_ms'
+        ),
+        codeEvidence(
+          'browser/frontend/src/app/engine-timer-runtime.ts',
+          'scheduleNextWakeup'
         )
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'timer_non_zero_expires_after_deterministic_advance'
-        )
+          'engine-wasm/engine/src/engine_tests/wml_305_timers.rs',
+          'wml_305_dispatches_only_when_positive_timer_transitions_to_zero'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_wasm_bindings_tests.rs',
+          'wasm_wml_305_named_timer_lifecycle_matches_native_boundary'
+        ),
+        {
+          path: 'engine-wasm/examples/source/wml-305-timer-lifecycle.flow.json',
+          test: 'WML-305 executable stories',
+          command: 'pnpm test:story WML-305'
+        },
+        {
+          path: 'browser/frontend/src/app/engine-timer-runtime.test.ts',
+          test: 'EngineTimerRuntime exact wakeup scheduling',
+          command: 'pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts'
+        }
       ]
     },
     'WML-C-49': {

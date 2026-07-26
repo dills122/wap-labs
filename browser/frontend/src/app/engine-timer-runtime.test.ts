@@ -48,16 +48,36 @@ describe('EngineTimerRuntime', () => {
     vi.useRealTimers();
   });
 
-  it('starts one interval and stops it cleanly', () => {
+  it('schedules only the exact native timer wakeup and stops it cleanly', () => {
     const deps = createDeps();
     const runtime = new EngineTimerRuntime(deps);
 
     runtime.start();
     runtime.start();
+    expect(vi.getTimerCount()).toBe(0);
+
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'home', focusedLinkIndex: 0, nextTimerWakeupMs: 250 })
+    );
     expect(vi.getTimerCount()).toBe(1);
 
     runtime.stop();
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('advances by the engine-provided wakeup delay', async () => {
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
+    const deps = createDeps({ advanceLocal });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'timed', focusedLinkIndex: 0, nextTimerWakeupMs: 275 })
+    );
+    await vi.advanceTimersByTimeAsync(274);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(advanceLocal).toHaveBeenCalledWith(275);
   });
 
   it('renders local snapshots when timer advancement changes state', async () => {

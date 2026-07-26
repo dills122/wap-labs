@@ -214,11 +214,12 @@ Type contract:
    `WML-204` (23/23), and `WML-205` (3/3).
 2. Preserve completed `WML-302` variable/setvar evidence (20/20 directly
    mapped clauses) and `WML-303` task/event/BACK/softkey precedence evidence
-   (27/27 directly mapped clauses).
-3. Advance `WML-305` native timer lifecycle and target-parity evidence.
+   (27/27 directly mapped clauses), plus completed `WML-305` native timer
+   lifecycle and target-parity evidence (10/10).
+3. Keep the remaining `WML-3` work additive without reopening those completed slices.
 4. Keep host fetching at the browser boundary and WBXML decoding in transport;
    preserve the completed `D0-01` baseline and the `W1-06` boundary while leaving
-   `A5-03` and `M1-03` queued unless they directly unblock that baton.
+   `M1-03` queued unless it directly unblocks an active compliance baton.
 
 ## Current checklist (planning/execution)
 
@@ -233,7 +234,7 @@ Type contract:
 - [x] Implement select/option interaction baseline (`A5-05`)
 - [x] Implement active MVP form-submit hardening slice (`A5-06`)
 - [x] Implement inter-card task pipeline conformance follow-up (`A5-02`)
-- [ ] Implement WML timer lifecycle follow-up (`A5-03`)
+- [x] Implement WML timer lifecycle follow-up (`A5-03`)
 - [x] Implement input-mask/commit semantics follow-up (`B5-01`)
 
 ## Troubleshooting

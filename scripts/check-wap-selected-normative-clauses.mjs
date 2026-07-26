@@ -216,6 +216,18 @@ const wml303ClauseIds = new Set([
   'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
   'WML-CL-TEMPLATE-STRUCTURE'
 ]);
+const wml305ClauseIds = new Set([
+  'WML-CL-GO-TIMER-THEN-DISPLAY',
+  'WML-CL-REFRESH-TIMER-RESTART',
+  'WML-CL-TIMER-EVENT-TRANSITION',
+  'WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE',
+  'WML-CL-TIMER-INVALID-VALUE',
+  'WML-CL-TIMER-NAME-PERSISTENCE',
+  'WML-CL-TIMER-REFRESH-RESUME',
+  'WML-CL-TIMER-SINGLE-PER-CARD',
+  'WML-CL-TIMER-START-STOP',
+  'WML-CL-TIMER-UNITS'
+]);
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -357,6 +369,7 @@ const implementedWmlClauseIds = new Set([
   ...wml205ClauseIds,
   ...wml302ClauseIds,
   ...wml303ClauseIds,
+  ...wml305ClauseIds,
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
 ]);
@@ -618,6 +631,7 @@ for (const family of ledger.families ?? []) {
         ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
         ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
         ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
+        ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -632,6 +646,7 @@ for (const family of ledger.families ?? []) {
       ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
       ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
       ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
+      ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),

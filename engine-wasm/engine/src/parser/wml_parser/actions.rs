@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::runtime::card::{
-    CardEventBinding, CardEventBindingKind, CardPostField, CardSetVar, CardTaskAction,
+    CardEventBinding, CardEventBindingKind, CardPostField, CardSetVar, CardTaskAction, CardTimer,
 };
 
 use super::nodes::validate_nmtoken;
@@ -13,7 +13,7 @@ const CARD_EVENT_TYPES: [&str; 3] = ["onenterforward", "onenterbackward", "ontim
 pub(super) fn parse_card_bindings(
     card: &XmlElement,
     budget: &mut ParseBudget,
-) -> Result<(Vec<CardEventBinding>, Option<u32>), String> {
+) -> Result<(Vec<CardEventBinding>, Option<CardTimer>), String> {
     let mut elements = Vec::new();
     collect_card_action_elements(&card.children, &mut elements, budget, 0)?;
     let mut bindings = Vec::new();
@@ -29,7 +29,7 @@ pub(super) fn parse_card_bindings(
             _ => {}
         }
     }
-    Ok((bindings, parse_timer_value_ds_xml(&elements, budget)))
+    Ok((bindings, parse_timer_xml(&elements, budget)))
 }
 
 pub(super) fn parse_template_bindings(
@@ -262,22 +262,29 @@ fn parse_set_vars_xml(nodes: &[XmlNode]) -> Vec<CardSetVar> {
         .collect()
 }
 
-fn parse_timer_value_ds_xml(
+fn parse_timer_xml(
     elements: &[(usize, &XmlElement)],
     budget: &mut ParseBudget,
-) -> Option<u32> {
+) -> Option<CardTimer> {
     for (_, element) in elements {
         if element.name != "timer" {
             continue;
         }
-        if let Some(raw) = element.attr("value") {
-            if let Ok(value_ds) = raw.trim().parse::<u32>() {
-                return Some(value_ds);
-            }
+        let Some(raw) = element.attr("value") else {
+            budget.note_recoverable(
+                "Recoverable <timer>: invalid or missing 'value' attribute was ignored",
+            );
+            return None;
+        };
+        if !raw.contains('$') && raw.trim().parse::<u32>().is_err() {
+            budget.note_recoverable(
+                "Recoverable <timer>: invalid or missing 'value' attribute was ignored",
+            );
         }
-        budget.note_recoverable(
-            "Recoverable <timer>: invalid or missing 'value' attribute was ignored",
-        );
+        return Some(CardTimer {
+            name: element.attr("name").map(str::to_string),
+            value: raw.to_string(),
+        });
     }
     None
 }

@@ -1,5 +1,5 @@
 use super::{parse_wml, parse_wml_report_for_content_type, parse_xml_root, MAX_PARSE_TREE_DEPTH};
-use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction};
+use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction, CardTimer};
 use crate::runtime::deck::DeckMetaProperty;
 use crate::runtime::node::{InlineNode, Node};
 
@@ -649,7 +649,13 @@ fn parses_accept_do_and_card_entry_go_actions() {
         card_onevent_action(&deck.cards[0], "ontimer"),
         Some(go_action("#timer"))
     );
-    assert_eq!(deck.cards[0].timer_value_ds, Some(0));
+    assert_eq!(
+        deck.cards[0].timer,
+        Some(CardTimer {
+            name: None,
+            value: "0".to_string(),
+        })
+    );
 }
 
 #[test]
@@ -853,18 +859,42 @@ fn parses_onevent_actions_and_ignores_non_matching_event_types() {
 }
 
 #[test]
-fn parses_timer_value_and_ignores_invalid_or_missing_timers() {
+fn parses_timer_metadata_and_retains_values_for_runtime_resolution() {
     let deck =
         parse_wml(&deck_with_card_body("<timer value=\"10\"/>")).expect("timer should parse");
-    assert_eq!(deck.cards[0].timer_value_ds, Some(10));
+    assert_eq!(
+        deck.cards[0].timer,
+        Some(CardTimer {
+            name: None,
+            value: "10".to_string(),
+        })
+    );
 
     let deck = parse_wml(&deck_with_card_body("<timer value=\"x\"/>"))
         .expect("invalid timer value should be ignored");
-    assert_eq!(deck.cards[0].timer_value_ds, None);
+    assert_eq!(
+        deck.cards[0].timer,
+        Some(CardTimer {
+            name: None,
+            value: "x".to_string(),
+        })
+    );
+
+    let deck = parse_wml(&deck_with_card_body(
+        "<timer name=\"remaining\" value=\"$(fallback)\"/>",
+    ))
+    .expect("named variable timer should parse");
+    assert_eq!(
+        deck.cards[0].timer,
+        Some(CardTimer {
+            name: Some("remaining".to_string()),
+            value: "$(fallback)".to_string(),
+        })
+    );
 
     let deck = parse_wml(&deck_with_card_body("<p>No timer</p>"))
         .expect("deck without a timer should parse");
-    assert_eq!(deck.cards[0].timer_value_ds, None);
+    assert_eq!(deck.cards[0].timer, None);
 
     let malformed = parse_wml(&deck_with_card_body("<timer value=\"3\""))
         .expect_err("malformed <timer> must fail");

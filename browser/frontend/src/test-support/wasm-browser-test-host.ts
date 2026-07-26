@@ -21,6 +21,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
   const snapshot = (): EngineRuntimeSnapshot => ({
     activeCardId: readActiveCardId(engine),
     focusedLinkIndex: engine.focusedLinkIndex(),
+    nextTimerWakeupMs: engine.nextTimerWakeupMs(),
     focusedInputEditName: engine.focusedInputEditName(),
     focusedInputEditValue: engine.focusedInputEditValue(),
     focusedSelectEditName: engine.focusedSelectEditName(),

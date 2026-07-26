@@ -376,8 +376,8 @@ export class BrowserController {
   };
 
   private readonly handleKeyButtonPress = async (key: EngineKey): Promise<void> => {
-    await this.applyEngineKey(key);
     this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
+    await this.applyEngineKey(key);
   };
 
   // ---------------------------------------------------------------------

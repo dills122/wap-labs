@@ -156,6 +156,8 @@ pub struct EngineRuntimeSnapshot {
     pub active_card_id: Option<String>,
     pub focused_link_index: usize,
     #[ts(optional)]
+    pub next_timer_wakeup_ms: Option<u32>,
+    #[ts(optional)]
     pub focused_input_edit_name: Option<String>,
     #[ts(optional)]
     pub focused_input_edit_value: Option<String>,

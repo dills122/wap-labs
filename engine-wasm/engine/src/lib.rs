@@ -143,6 +143,7 @@ fn panic_payload_message(payload: &(dyn std::any::Any + Send)) -> String {
 struct CardTimerState {
     card_idx: usize,
     remaining_ms: u32,
+    name: Option<String>,
     ontimer_action: Option<CardTaskAction>,
 }
 

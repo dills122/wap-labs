@@ -1,13 +1,13 @@
 <!--
-label: Timer Ontimer Immediate
-description: Demonstrates immediate ontimer dispatch for `<timer value="0"/>` at card-entry boundaries.
-goal: Verify runtime-owned timer dispatch executes ontimer action deterministically on entry.
-work-items: A5-03
-spec-items: WML-R-014
+label: Timer Zero Disabled
+description: Demonstrates that `<timer value="0"/>` disables ontimer dispatch at card-entry boundaries.
+goal: Verify a zero timer remains inactive and publishes no host wakeup.
+work-items: WML-305
+spec-items: WML-CL-TIMER-INVALID-VALUE
 testing-ac:
 - Press Enter on "To timed" from home.
-- Confirm activeCardId becomes next immediately (timed card should not remain active).
-- Confirm trace includes TIMER_START and ACTION_ONTIMER before the final ACTION_FRAGMENT to next.
+- Confirm activeCardId remains timed after a deterministic one-second tick.
+- Confirm trace includes TIMER_IGNORE and does not include ACTION_ONTIMER.
 -->
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
@@ -19,7 +19,7 @@ testing-ac:
   <card id="timed">
     <onevent type="ontimer"><go href="#next"/></onevent>
     <timer value="0"/>
-    <p>Timed card should auto-advance.</p>
+    <p>Zero timer remains disabled.</p>
   </card>
   <card id="next">
     <p>Reached via ontimer dispatch.</p>

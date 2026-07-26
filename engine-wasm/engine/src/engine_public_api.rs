@@ -141,7 +141,7 @@ impl WmlEngine {
         next.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         next.initialize_controls_on_active_card()
             .map_err(WmlLoadDiagnostic::invalid)?;
-        next.start_or_resume_timer_for_active_card(false)
+        next.start_timer_for_active_card()
             .map_err(WmlLoadDiagnostic::invalid)?;
         *self = next;
         Ok(())
@@ -234,6 +234,11 @@ impl WmlEngine {
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn advance_time_ms(&mut self, delta_ms: u32) -> Result<(), String> {
         catch_engine_panic(|| self.advance_time_ms_internal(delta_ms))?
+    }
+
+    /// Return the deterministic delay until the active native WML timer expires.
+    pub fn next_timer_wakeup_ms(&self) -> Option<u32> {
+        self.active_timer.as_ref().map(|timer| timer.remaining_ms)
     }
 
     /// Set viewport width in columns.

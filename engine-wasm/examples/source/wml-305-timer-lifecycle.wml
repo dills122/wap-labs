@@ -1,0 +1,40 @@
+<!--
+label: WML-305 Native Timer Lifecycle
+work-items: WML-305
+spec-items: WML-CL-GO-TIMER-THEN-DISPLAY,WML-CL-REFRESH-TIMER-RESTART,WML-CL-TIMER-EVENT-TRANSITION,WML-CL-TIMER-INITIAL-VALUE-PRECEDENCE,WML-CL-TIMER-NAME-PERSISTENCE,WML-CL-TIMER-REFRESH-RESUME,WML-CL-TIMER-START-STOP,WML-CL-TIMER-UNITS
+description: Exercises named WML timer initialization, refresh resume, exit persistence, expiry, and host wakeup boundaries.
+goal: Verify native timer semantics stay deterministic through the production WASM host and Waves browser adapters.
+testing-ac:
+- Run the refresh path and confirm the timer restarts from the refresh assignment before expiring at zero.
+- Run the exit path and confirm the current timer value is persisted in tenths on the destination card.
+- Confirm host snapshots expose the exact remaining native-timer wakeup delay.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <p>
+      WML timer lifecycle.
+      <a href="#refresh-timer">Refresh lifecycle</a>
+      <a href="#exit-timer">Exit persistence</a>
+    </p>
+  </card>
+
+  <card id="refresh-timer">
+    <onevent type="ontimer"><go href="#expired"/></onevent>
+    <timer name="remaining" value="5"/>
+    <do type="accept" label="Refresh timer">
+      <refresh><setvar name="remaining" value="2"/></refresh>
+    </do>
+    <p>Press Enter after one tick to refresh the timer.</p>
+  </card>
+
+  <card id="exit-timer">
+    <timer name="saved" value="5"/>
+    <p><a href="#persisted">Leave timer card</a></p>
+  </card>
+
+  <card id="expired"><p>Expired at $(remaining).</p></card>
+  <card id="persisted"><p>Persisted timer value: $(saved).</p></card>
+</wml>

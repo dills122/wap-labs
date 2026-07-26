@@ -28,7 +28,7 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
 | Nested clauses | The 198 parents expand into 762 clauses: 722 required, 29 recommended, and 11 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 762 clause fixtures have target locations; 243 clauses now have direct conformance assessment and 519 remain unassessed |
+| Fixtures | All 762 clause fixtures have target locations; 253 clauses now have direct conformance assessment and 509 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 82 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
@@ -46,7 +46,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 175 | 8 | 22 | 9 |
+| WML | 39 | 175 | 9 | 21 | 9 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 23 | 18 |
@@ -55,9 +55,9 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 6 | 2 | 0 |
-| **Total** | **198** | **762** | **30** | **70** | **98** |
+| **Total** | **198** | **762** | **31** | **69** | **98** |
 
-Parent-row status is not a substitute for direct clause evidence. With 243 of
+Parent-row status is not a substitute for direct clause evidence. With 253 of
 762 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
@@ -66,16 +66,16 @@ gap.
 
 The 82 work items currently roll up to:
 
-- 26 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801 connectionless matrix, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, and the frontend production-build defect closure);
+- 27 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801 connectionless matrix, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
 - 9 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 46 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without preempting the `WML-305` baton.
+- 45 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
 
 New completion claims should follow the machine dependency graph:
 
 1. Preserve the completed `WML-2` baseline while `TRN-7` continues after the
    completed `CONF-1` planning gate.
-2. Preserve completed `WML-302` and `WML-303`, then advance `WML-3` through `WML-305` after `WML-2`.
+2. Preserve completed `WML-302`, `WML-303`, and `WML-305` while advancing the remaining `WML-3` work after `WML-2`.
 3. Complete `REN-4` and `WMLS-5` after `WML-3`.
 4. Complete `WAE-6` after runtime, rendering, and script dependencies.
 5. Advance the selected connectionless `WSP-8` path after the completed
@@ -112,8 +112,8 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 70 partial and 98 missing parent rows;
-2. implement and assess the remaining 519 direct clause fixtures;
+1. close or correct the 69 partial and 98 missing parent rows;
+2. implement and assess the remaining 509 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 243
+    "assessedClauseCount": 253
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "3098bb51792c65caaef69371933cd036701cc682506f8d65e6ab6f6d7d68cc5f",
+      "parentLedgerSha256": "25f8386771c805dbd92e3174c9a043de8aa5622a525f2f03ef119bf18690c316",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -997,7 +997,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -4557,8 +4557,13 @@
           "fixturePlan": {
             "id": "WML-FX-GO-TIMER-THEN-DISPLAY",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "If no forward-entry handler diverts processing, start the destination timer before rendering with current variables."
+            "status": "implemented",
+            "assertion": "If no forward-entry handler diverts processing, start the destination timer before rendering with current variables.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_go_starts_destination_timer_before_host_render_boundary"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4582,13 +4587,14 @@
             "parentImplementationSnapshot": {
               "WML-C-18": "partial",
               "WML-C-29": "partial",
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -4881,8 +4887,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFRESH-TIMER-RESTART",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Restart the current card timer during refresh after context updates."
+            "status": "implemented",
+            "assertion": "Restart the current card timer during refresh after context updates.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_refresh_stops_updates_and_resumes_named_timer"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4905,13 +4916,14 @@
             "parentImplementationSnapshot": {
               "WML-C-18": "partial",
               "WML-C-42": "partial",
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8456,8 +8468,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-SINGLE-PER-CARD",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Reject a card containing more than one timer element."
+            "status": "implemented",
+            "assertion": "Reject a card containing more than one timer element.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8474,13 +8491,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8501,8 +8519,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-START-STOP",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Initialize and start the timer on card entry and stop it on card exit."
+            "status": "implemented",
+            "assertion": "Initialize and start the timer on card entry and stop it on card exit.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_exit_stops_and_persists_named_timer_before_reentry"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8519,13 +8542,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8547,8 +8571,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-EVENT-TRANSITION",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Dispatch ontimer when a running timer transitions from one to zero while its card remains active."
+            "status": "implemented",
+            "assertion": "Dispatch ontimer when a running timer transitions from one to zero while its card remains active.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_dispatches_only_when_positive_timer_transitions_to_zero"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8567,14 +8596,15 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial",
+              "WML-C-48": "implemented",
               "WML-C-09": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8595,8 +8625,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-UNITS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Interpret timer values in tenths of a second without requiring a particular scheduling resolution."
+            "status": "implemented",
+            "assertion": "Interpret timer values in tenths of a second without requiring a particular scheduling resolution.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_unnamed_timer_uses_value_and_tenths_of_a_second_units"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8613,13 +8648,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8640,8 +8676,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-INVALID-VALUE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Ignore a timer whose resolved timeout is not a non-negative integer, with zero disabling it."
+            "status": "implemented",
+            "assertion": "Ignore a timer whose resolved timeout is not a non-negative integer, with zero disabling it.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_invalid_and_zero_values_disable_the_timer"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8658,13 +8699,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8686,8 +8728,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-REFRESH-RESUME",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Treat refresh as timer exit and re-entry: stop and persist the current value, update context, then resume."
+            "status": "implemented",
+            "assertion": "Treat refresh as timer exit and re-entry: stop and persist the current value, update context, then resume.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_refresh_stops_updates_and_resumes_named_timer"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8707,14 +8754,15 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial",
+              "WML-C-48": "implemented",
               "WML-C-42": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8735,8 +8783,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-NAME-PERSISTENCE",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Store the current timer value in its name variable on card exit or expiration."
+            "status": "implemented",
+            "assertion": "Store the current timer value in its name variable on card exit or expiration.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_exit_stops_and_persists_named_timer_before_reentry"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8753,13 +8806,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {
@@ -8780,8 +8834,13 @@
           "fixturePlan": {
             "id": "WML-FX-TIMER-INITIAL-VALUE-PRECEDENCE",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Initialize a named timer from its set variable, otherwise from value; always use value when no name is declared."
+            "status": "implemented",
+            "assertion": "Initialize a named timer from its set variable, otherwise from value; always use value when no name is declared.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_305_timers.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_305_named_timer_uses_existing_variable_then_falls_back_to_value"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -8798,13 +8857,14 @@
               "RQ-RMK-004"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-48": "partial"
+              "WML-C-48": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-305"
           ]
         },
         {

@@ -23,6 +23,7 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
     EngineRuntimeSnapshot {
         active_card_id: engine.active_card_id().ok(),
         focused_link_index: engine.focused_link_index(),
+        next_timer_wakeup_ms: engine.next_timer_wakeup_ms(),
         focused_input_edit_name: engine.focused_input_edit_name(),
         focused_input_edit_value: engine.focused_input_edit_value(),
         focused_select_edit_name: engine.focused_select_edit_name(),

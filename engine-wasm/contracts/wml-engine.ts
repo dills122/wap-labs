@@ -163,6 +163,8 @@ export interface WmlEngineCommon {
   render(): RenderList;
   handleKey(key: EngineKey): void;
   advanceTimeMs(deltaMs: number): void;
+  // Delay until the active native WML timer expires; absent when no timer is running.
+  nextTimerWakeupMs(): number | undefined;
   navigateToCard(id: string): void;
   navigateBack(): boolean;
   // Reports whether the most recent BACK activation was consumed by either

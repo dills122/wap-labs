@@ -16,27 +16,28 @@ export interface EngineTimerRuntimeDependencies {
 }
 
 export class EngineTimerRuntime {
-  private timerLoopHandle: ReturnType<typeof setInterval> | null = null;
+  private timerLoopHandle: ReturnType<typeof setTimeout> | null = null;
   private timerTickInFlight = false;
+  private running = false;
+  private nativeTimerWakeupMs: number | undefined;
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
 
   constructor(private readonly deps: EngineTimerRuntimeDependencies) {}
 
   start(): void {
-    if (this.timerLoopHandle) {
+    if (this.running) {
       return;
     }
-    this.timerLoopHandle = setInterval(() => {
-      void this.tick();
-    }, WAVES_CONFIG.engineTimerTickMs);
+    this.running = true;
+    this.scheduleNextWakeup();
   }
 
   stop(): void {
-    if (!this.timerLoopHandle) {
-      return;
+    this.running = false;
+    if (this.timerLoopHandle) {
+      clearTimeout(this.timerLoopHandle);
+      this.timerLoopHandle = null;
     }
-    clearInterval(this.timerLoopHandle);
-    this.timerLoopHandle = null;
   }
 
   resetScriptTimers(): void {
@@ -44,6 +45,7 @@ export class EngineTimerRuntime {
   }
 
   applySnapshot(snapshot: EngineRuntimeSnapshot): void {
+    this.nativeTimerWakeupMs = snapshot.nextTimerWakeupMs;
     const applied = this.scriptTimerRegistry.applyRequests(snapshot.lastScriptTimerRequests);
     for (const scheduled of applied.scheduled) {
       this.deps.recordTimeline('script-timer-schedule', 'state', {
@@ -60,9 +62,10 @@ export class EngineTimerRuntime {
         nowMs: this.scriptTimerRegistry.currentTimeMs()
       });
     }
+    this.scheduleNextWakeup();
   }
 
-  async tick(): Promise<void> {
+  async tick(deltaMs: number = WAVES_CONFIG.engineTimerTickMs): Promise<void> {
     if (this.timerTickInFlight || !this.deps.canTick()) {
       return;
     }
@@ -71,8 +74,8 @@ export class EngineTimerRuntime {
       const before = this.deps.getSessionState().activeCardId;
       const snapshot =
         this.deps.getRunMode() === 'local'
-          ? await this.deps.advanceLocal(WAVES_CONFIG.engineTimerTickMs)
-          : await this.deps.advanceNetwork(WAVES_CONFIG.engineTimerTickMs);
+          ? await this.deps.advanceLocal(deltaMs)
+          : await this.deps.advanceNetwork(deltaMs);
       if (
         this.deps.getRunMode() === 'local' &&
         shouldRenderTimerSnapshot(snapshot, this.deps.getSessionState())
@@ -80,7 +83,7 @@ export class EngineTimerRuntime {
         await this.deps.renderLocalSnapshot(snapshot);
       }
       this.applySnapshot(snapshot);
-      const expired = this.scriptTimerRegistry.advance(WAVES_CONFIG.engineTimerTickMs);
+      const expired = this.scriptTimerRegistry.advance(deltaMs);
       for (const timer of expired) {
         this.deps.recordTimeline('script-timer-expire', 'state', {
           id: timer.id,
@@ -103,6 +106,28 @@ export class EngineTimerRuntime {
       this.deps.recordTimeline('engine-timer-tick', 'error', { message });
     } finally {
       this.timerTickInFlight = false;
+      this.scheduleNextWakeup();
     }
+  }
+
+  private scheduleNextWakeup(): void {
+    if (!this.running || this.timerTickInFlight) {
+      return;
+    }
+    if (this.timerLoopHandle) {
+      clearTimeout(this.timerLoopHandle);
+      this.timerLoopHandle = null;
+    }
+    const delays = [this.nativeTimerWakeupMs, this.scriptTimerRegistry.nextWakeupMs()].filter(
+      (delay): delay is number => delay !== undefined
+    );
+    if (delays.length === 0) {
+      return;
+    }
+    const delayMs = Math.max(0, Math.min(...delays));
+    this.timerLoopHandle = setTimeout(() => {
+      this.timerLoopHandle = null;
+      void this.tick(delayMs);
+    }, delayMs);
   }
 }
