@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '208 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
+      '243 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
     ]
   ],
   [
@@ -375,7 +375,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **24** | **76** | **98** |',
+      '| **Total** | **198** | **762** | **30** | **70** | **98** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]

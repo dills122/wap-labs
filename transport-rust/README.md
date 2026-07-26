@@ -88,7 +88,8 @@ When `FetchDeckResponse.ok === false`:
    the work item's conditional WTP family gap.
 3. Keep the completed WSP-801 connectionless matrix distinct from WSP-802's
    header registry, Encoding-Version, code-page, and unknown/fallback closure;
-   keep WTP inactive unless connection-oriented WSP is explicitly claimed.
+   keep WTP inactive unless connection-oriented WSP is explicitly claimed, and
+   retain `M1-03` as a non-priority follow-up.
 
 ## Current checklist (planning/execution)
 
