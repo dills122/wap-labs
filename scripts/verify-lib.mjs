@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { WAVES_BASELINE_MIN_RUNS } from '../engine-wasm/host-sample/scripts/waves-baseline-run-policy.mjs';
 
 export const OUTCOMES = Object.freeze({
   pass: 'PASS',
@@ -243,11 +244,7 @@ export const LANES = Object.freeze([
       command('browser host tests', 'cargo', ['test', '--locked'], {
         cwd: 'browser/src-tauri'
       }),
-      command('browser frontend unit tests', 'pnpm', [
-        '--dir',
-        'browser/frontend',
-        'test'
-      ]),
+      command('browser frontend unit tests', 'pnpm', ['--dir', 'browser/frontend', 'test']),
       command('rendered accessibility', 'pnpm', [
         '--dir',
         'browser/frontend',
@@ -321,9 +318,14 @@ export const LANES = Object.freeze([
     advisory: true,
     prerequisites: [prerequisite('pnpm', 'run ./scripts/init-refresh.sh'), workspaceDependencies],
     commands: [
-      command('three-run browser baseline', 'pnpm', ['run', 'test:baseline:waves'], {
-        env: { WAVES_BASELINE_RUNS: '3' }
-      })
+      command(
+        `minimum supported browser baseline (${WAVES_BASELINE_MIN_RUNS} runs)`,
+        'pnpm',
+        ['run', 'test:baseline:waves'],
+        {
+          env: { WAVES_BASELINE_RUNS: String(WAVES_BASELINE_MIN_RUNS) }
+        }
+      )
     ]
   }
 ]);

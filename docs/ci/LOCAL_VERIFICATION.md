@@ -3,12 +3,12 @@
 The canonical local verification family is exposed through root `pnpm` scripts and matching Make
 targets:
 
-| Profile  | Command                               | Contract                                                                                                                                                                                                                                    |
-| -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                      |
-| Change   | `pnpm verify` or `pnpm verify:change` | Runs strict common checks plus every deterministic lane selected by changed paths relative to `origin/main`. Override the base with `WAP_VERIFY_BASE=<ref>` or `--base <ref>`.                                                              |
+| Profile  | Command                               | Contract                                                                                                                                                                                                                                         |
+| -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                           |
+| Change   | `pnpm verify` or `pnpm verify:change` | Runs strict common checks plus every deterministic lane selected by changed paths relative to `origin/main`. Override the base with `WAP_VERIFY_BASE=<ref>` or `--base <ref>`.                                                                   |
 | Full     | `pnpm verify:full`                    | Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, and WML server checks. |
-| Extended | `pnpm verify:extended`                | Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.                                                                                            |
+| Extended | `pnpm verify:extended`                | Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.                                                                                                 |
 
 Equivalent Make targets are `verify-fast`, `verify-change`, `verify-full`, and `verify-extended`.
 `make ci-local` is retained only as a deprecated compatibility alias. It prints an advisory and
@@ -42,7 +42,7 @@ The `full` profile is the ordinary pre-PR command. It deliberately excludes:
 
 - the live Kannel/browser smoke, which requires Docker services and is run by
   `pnpm verify:extended` or the manual `Transport WAP Smoke (Kannel)` workflow;
-- scheduled/advisory performance trends beyond the bounded three-run extended baseline;
+- scheduled/advisory performance trends beyond the bounded five-run extended baseline;
 - fuzz campaigns, which remain explicit time-bounded commands;
 - GitHub-hosted dependency, CodeQL, coverage-threshold, release, deployment, and OS-packaging
   jobs.

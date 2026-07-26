@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
+import { WAVES_BASELINE_MIN_RUNS } from '../../engine-wasm/host-sample/scripts/waves-baseline-run-policy.mjs';
 import { buildPlan, executePlan, OUTCOMES } from '../verify-lib.mjs';
 
 function byId(plan, id) {
@@ -55,18 +56,25 @@ test('full builds the WASM package before workspace typecheck', () => {
 
 test('full keeps the platform-sensitive frontend coverage threshold in GitHub CI', () => {
   const browser = byId(buildPlan('full', []), 'browser');
-  const frontend = browser.commands.find((command) =>
-    command.label.startsWith('browser frontend')
-  );
+  const frontend = browser.commands.find((command) => command.label.startsWith('browser frontend'));
   assert.equal(frontend.label, 'browser frontend unit tests');
   assert.deepEqual(frontend.args, ['--dir', 'browser/frontend', 'test']);
 });
 
 test('extended selects live smoke and keeps baseline advisory', () => {
   const plan = buildPlan('extended', []);
-  assert.equal(byId(plan, 'live-kannel').selected, true);
-  assert.equal(byId(plan, 'browser-baseline').selected, true);
-  assert.equal(byId(plan, 'browser-baseline').advisory, true);
+  const liveKannel = byId(plan, 'live-kannel');
+  const browserBaseline = byId(plan, 'browser-baseline');
+  const baselineCommand = browserBaseline.commands[0];
+
+  assert.equal(liveKannel.selected, true);
+  assert.notEqual(liveKannel.advisory, true);
+  assert.equal(browserBaseline.selected, true);
+  assert.equal(browserBaseline.advisory, true);
+  assert.equal(baselineCommand.label, 'minimum supported browser baseline (5 runs)');
+  assert.equal(baselineCommand.executable, 'pnpm');
+  assert.deepEqual(baselineCommand.args, ['run', 'test:baseline:waves']);
+  assert.equal(baselineCommand.env.WAVES_BASELINE_RUNS, String(WAVES_BASELINE_MIN_RUNS));
 });
 
 test('missing required prerequisite is unavailable and fails the run', () => {
