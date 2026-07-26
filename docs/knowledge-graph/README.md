@@ -58,14 +58,31 @@ obligations directly mapped to the selected work item and keep unrelated transpo
 details out of the pack. `TRN-706` and `TRN-707` intentionally retain declared WTP-family gaps
 while connection-oriented WSP/WTP remains conditional. The `TRN-707` pack also includes the
 explicit WAP-259 successor context linked by that work item. `TRN-708` projects the adopted
-CDPD/IPv4 correction, including its directly mapped WDP and RFC 792 ICMP obligations.
+CDPD/IPv4 correction, including its directly mapped WDP and RFC 792 ICMP obligations. The
+focused `TRN-710` target preserves its `TRN-703`/`T0-17` dependencies and exposes both the
+zero-clause and declared-`wcmp` gaps; it does not infer the deferred non-IP WCMP mapping. In
+particular, canonical planning references to WAP-202 section 5.4 bearer encapsulations or
+WAP-159 do not mean those bearer/SMPP clauses are mapped, implemented, or satisfied.
 
 The `WML-3` slice adds the bounded runtime projection needed for variable, task, event, BACK, and
 softkey work. Its focused `WML-302` target exposes the audited variable-store, substitution,
 setvar-ordering, and history-resolution obligations; `WML-303` exposes only directly mapped
 action/event clauses, their selected SCR parents and planned fixtures, the effective WML
 amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. Request
-and timer lifecycle obligations remain assigned to their later WML-3 work items.
+work remains assigned to `WML-304`; the focused `WML-305` target exposes the ten directly mapped
+timer-lifecycle clauses and their five selected SCR parents without changing fixture status.
+
+The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP lane:
+
+- `spec-processing/source-manifests/wap-1.2.1-wsp-8-knowledge-graph.json`;
+- `docs/knowledge-graph/vault-WSP-8/`;
+- `docs/knowledge-graph/context-packs/WSP-8.md`.
+
+Its focused `WSP-801` and `WSP-802` targets use only canonical direct-clause mappings. `WSP-801`
+exposes the connectionless PDU, primitive, and method obligations and their selected SCR parents.
+`WSP-802` exposes header and encoding-version obligations while retaining the explicit
+`general-formats` declared-family gap. The canonical WSP SCR ledger remains authoritative; this
+checkpoint does not change row dispositions, fixture states, or implementation evidence.
 
 ## Commands
 
@@ -93,11 +110,12 @@ For implementation or review of one pilot work item, request a focused pack:
 node scripts/wap-context-pack.mjs WML-203
 ```
 
-The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-302`, `WML-303`,
-`TRN-7`, `TRN-702`, `TRN-703`, and `TRN-706` through `TRN-708`. A work-item target keeps sprint dependencies and
-conformance governance in view while limiting work-item details, direct obligations, mapping
-gaps, and source documents to the selected slice. Other targets remain rejected until their
-implementation slice starts, so graph expansion is explicit and reviewable.
+The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-302`,
+`WML-303`, `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
+`WSP-8`, `WSP-801`, and `WSP-802`. A work-item target keeps sprint dependencies and conformance
+governance in view while limiting work-item details, direct obligations, mapping gaps, and source
+documents to the selected slice. Other targets remain rejected until their implementation slice
+starts, so graph expansion is explicit and reviewable.
 
 ## Graph contract
 

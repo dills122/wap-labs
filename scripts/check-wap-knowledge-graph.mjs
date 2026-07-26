@@ -46,6 +46,7 @@ const root = process.cwd();
 const artifacts = buildGeneratedArtifacts(root, 'WML-2');
 const trnArtifacts = buildGeneratedArtifacts(root, 'TRN-7');
 const wml3Artifacts = buildGeneratedArtifacts(root, 'WML-3');
+const wspArtifacts = buildGeneratedArtifacts(root, 'WSP-8');
 const { graph } = artifacts;
 const failures = [];
 const nodeIds = new Set(graph.nodes.map((node) => node.id));
@@ -260,6 +261,7 @@ try {
 failures.push(...checkGeneratedArtifacts(root, artifacts));
 failures.push(...checkGeneratedArtifacts(root, trnArtifacts));
 failures.push(...checkGeneratedArtifacts(root, wml3Artifacts));
+failures.push(...checkGeneratedArtifacts(root, wspArtifacts));
 
 const wml3Graph = wml3Artifacts.graph;
 const wml302Pack = renderContextPack(wml3Graph, 'WML-302');
@@ -300,6 +302,27 @@ if (
 ) {
   failures.push(
     'WML-303 context rendering must expose its 27 bounded clauses, 12 selected parents, effective WML source order, and successor-only BACK context without a declared-family gap'
+  );
+}
+
+const wml305Pack = renderContextPack(wml3Graph, 'WML-305');
+if (
+  !wml305Pack.startsWith('# WML-305 AI Context Pack') ||
+  !wml305Pack.includes('### WML-305:') ||
+  wml305Pack.includes('### WML-304:') ||
+  !wml305Pack.includes('- Selected work items: 1') ||
+  !wml305Pack.includes('- Selected SCR parents: 5') ||
+  !wml305Pack.includes('- Direct normative clauses: 10') ||
+  !wml305Pack.includes('**WML-CL-TIMER-START-STOP**') ||
+  !wml305Pack.includes('**WML-CL-TIMER-REFRESH-RESUME**') ||
+  !wml305Pack.includes(
+    '`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`'
+  ) ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-305') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-305']
+) {
+  failures.push(
+    'WML-305 context rendering must expose its ten mapped timer clauses, five selected parents, and effective WML source order without a mapping gap'
   );
 }
 
@@ -402,6 +425,88 @@ if (
 ) {
   failures.push(
     'TRN-708 context rendering must expose thirteen direct WDP/ICMP clauses, RFC 792, and no declared-family gap'
+  );
+}
+
+const trn710Pack = renderContextPack(trnGraph, 'TRN-710');
+if (
+  !trn710Pack.startsWith('# TRN-710 AI Context Pack') ||
+  !trn710Pack.includes('### TRN-710:') ||
+  trn710Pack.includes('### TRN-708:') ||
+  !trn710Pack.includes('- Selected work items: 1') ||
+  !trn710Pack.includes('- Direct normative clauses: 0') ||
+  !trn710Pack.includes('- Work items without direct clause mappings: 1') ||
+  !trn710Pack.includes('- Work items with unmapped declared normative families: 1') ||
+  !trn710Pack.includes('`TRN-710` has no direct clause mapping') ||
+  !trn710Pack.includes('`TRN-710` declares `wcmp` scope without a direct clause mapping') ||
+  !trn710Pack.includes('- Depends on: `TRN-703`, `T0-17`') ||
+  !trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-710') ||
+  JSON.stringify(trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-710']) !==
+    JSON.stringify(['wcmp'])
+) {
+  failures.push(
+    'TRN-710 context rendering must preserve its dependencies and expose both the zero-clause and declared WCMP-family gaps'
+  );
+}
+
+const wspGraph = wspArtifacts.graph;
+const wspNodeIds = new Set(wspGraph.nodes.map((node) => node.id));
+const wsp801Pack = renderContextPack(wspGraph, 'WSP-801');
+const wsp802Pack = renderContextPack(wspGraph, 'WSP-802');
+if (
+  wspGraph.target.sprint !== 'WSP-8' ||
+  wspGraph.target.profile !== 'CCR-CLASSC-C-001' ||
+  !wspNodeIds.has('work-item:WSP-801') ||
+  !wspNodeIds.has('work-item:WSP-802') ||
+  JSON.stringify(wspGraph.summary.workItemsWithoutDirectClauses) !==
+    JSON.stringify(['WSP-803', 'WSP-806']) ||
+  JSON.stringify(wspGraph.summary.unmappedNormativeFamiliesByWorkItem) !==
+    JSON.stringify({
+      'WSP-802': ['general-formats'],
+      'WSP-803': ['wsp'],
+      'WSP-804': ['wdp'],
+      'WSP-805': ['wae', 'wdp', 'wml'],
+      'WSP-806': ['wsp']
+    })
+) {
+  failures.push(
+    'WSP-8 must retain the selected Class C profile and expose its exact zero-clause and declared-family gaps'
+  );
+}
+if (
+  !wsp801Pack.startsWith('# WSP-801 AI Context Pack') ||
+  !wsp801Pack.includes('### WSP-801:') ||
+  wsp801Pack.includes('### WSP-802:') ||
+  !wsp801Pack.includes('- Selected work items: 1') ||
+  !wsp801Pack.includes('- Selected SCR parents: 7') ||
+  !wsp801Pack.includes('- Direct normative clauses: 35') ||
+  !wsp801Pack.includes('**WSP-CL-DEVICE-CONNECTIONLESS-MODE**') ||
+  !wsp801Pack.includes(
+    '`WAP-203-WSP` -> `WAP-203_001-WSP` -> `WAP-203_003-WSP` -> `WAP-203_005-WSP`'
+  ) ||
+  wspGraph.summary.workItemsWithoutDirectClauses.includes('WSP-801') ||
+  wspGraph.summary.unmappedNormativeFamiliesByWorkItem['WSP-801']
+) {
+  failures.push(
+    'WSP-801 context rendering must expose its 35 mapped connectionless clauses, seven direct parents, and effective WSP source order without a mapping gap'
+  );
+}
+if (
+  !wsp802Pack.startsWith('# WSP-802 AI Context Pack') ||
+  !wsp802Pack.includes('### WSP-802:') ||
+  wsp802Pack.includes('### WSP-801:') ||
+  !wsp802Pack.includes('- Selected work items: 1') ||
+  !wsp802Pack.includes('- Selected SCR parents: 6') ||
+  !wsp802Pack.includes('- Direct normative clauses: 25') ||
+  !wsp802Pack.includes('**WSP-CL-HEADER-HTTP-COMPATIBILITY**') ||
+  !wsp802Pack.includes('`general-formats`: `WAP-188-WAPGenFormats`') ||
+  !wsp802Pack.includes('`WSP-802` declares `general-formats` scope without a direct clause mapping') ||
+  wspGraph.summary.workItemsWithoutDirectClauses.includes('WSP-802') ||
+  JSON.stringify(wspGraph.summary.unmappedNormativeFamiliesByWorkItem['WSP-802']) !==
+    JSON.stringify(['general-formats'])
+) {
+  failures.push(
+    'WSP-802 context rendering must expose its 25 mapped WSP clauses, six direct parents, effective source order, and the general-formats family gap'
   );
 }
 
