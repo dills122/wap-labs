@@ -44,12 +44,6 @@ jobs:
           # what the trailing `# nightly` comment documents), so pin it
           # explicitly instead of relying on the ref alone.
           toolchain: nightly
-          # cargo-fuzz defaults to this target on Linux (for sanitizer-friendly
-          # static binaries); it is not part of the toolchain's default target
-          # set and must be installed explicitly. It must be installed on the
-          # nightly toolchain specifically, since that's what `cargo +nightly
-          # fuzz run` below actually uses.
-          targets: x86_64-unknown-linux-musl
 
       - name: Install cargo-fuzz
         uses: taiki-e/install-action@82fc405565b9cf90abfe700ba43b4751ce2fe422 # cargo-fuzz
@@ -61,7 +55,14 @@ jobs:
 
       - name: Run engine WML fuzz target
         working-directory: engine-wasm/engine
-        run: cargo +nightly fuzz run engine_wml_fuzzer -- -runs=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runs || '20000' }} -max_len=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_len || '600000' }} -timeout=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.timeout || '20' }}
+        # cargo-fuzz defaults to the musl target on Linux for fully static
+        # binaries, but musl's static libc conflicts with the sanitizer
+        # cargo-fuzz also enables by default ("sanitizer is incompatible
+        # with statically linked libc"). Target gnu explicitly instead of
+        # threading a matching `-C target-feature=-crt-static` override
+        # through; it needs no extra toolchain target install and is the
+        # standard fix for this well-known cargo-fuzz/musl interaction.
+        run: cargo +nightly fuzz run engine_wml_fuzzer --target x86_64-unknown-linux-gnu -- -runs=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.runs || '20000' }} -max_len=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.max_len || '600000' }} -timeout=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.timeout || '20' }}
 
       - name: Upload fuzz artifacts
         if: always()
