@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b67e817aaed70f0a02dd6f6489b49abad54a4eb698412cc92d72049978af367b"
+        "sha256": "57b57f188dc239d36c2ec65a9c302e7737ef0127856a01db9fa605d36ea0208d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "2cb01517e20fada088a8c646b72bc4fc7eb99affd3941cbbb92c514b5f13782a"
+        "sha256": "c350fbcda21faf193cce877e071e219c78cc1c91d87a1745d173e77610a6a3d6"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -34,16 +34,16 @@
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 240,
-    "edgeCount": 604,
+    "nodeCount": 279,
+    "edgeCount": 728,
     "nodesByType": {
-      "clause": 77,
-      "fixture": 77,
+      "clause": 96,
+      "fixture": 96,
       "legacy-ticket": 14,
       "owner-layer": 4,
       "profile": 1,
       "requirement": 12,
-      "scr-row": 25,
+      "scr-row": 26,
       "source-document": 13,
       "source-family": 3,
       "sprint": 6,
@@ -52,26 +52,26 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 25,
+      "belongs-to": 26,
       "contains": 8,
       "covers-family": 13,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 126,
+      "maps-to": 162,
       "owned-by": 24,
-      "planned-by": 85,
-      "refines": 115,
+      "planned-by": 105,
+      "refines": 144,
       "relates-to": 16,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 77,
+      "sourced-from": 96,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 77
+      "verified-by": 96
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 9,
-      "WML-302": 0,
+      "WML-302": 20,
       "WML-303": 27,
       "WML-304": 8,
       "WML-305": 10,
@@ -84,7 +84,9 @@
         "wae",
         "wml"
       ],
-      "WML-302": [],
+      "WML-302": [
+        "wml"
+      ],
       "WML-303": [
         "wml"
       ],
@@ -121,9 +123,6 @@
       "WML-308": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "WML-302": [
-        "wml"
-      ],
       "WML-304": [
         "wae"
       ],
@@ -140,7 +139,6 @@
       ]
     },
     "workItemsWithoutDirectClauses": [
-      "WML-302",
       "WML-306",
       "WML-307"
     ]
@@ -1058,6 +1056,46 @@
       }
     },
     {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "key": "WML-CL-GO-ASSIGNMENT-ORDER",
+      "type": "clause",
+      "title": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.1",
+          "heading": "12.5.1 The Go Task",
+          "normalizedTextSha256": "64953475f2bdd343ead6d19fab5489ca50c840303fc961f186284ccef87bab9c"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-GO-ENTRY-EVENT-PRECEDENCE",
       "key": "WML-CL-GO-ENTRY-EVENT-PRECEDENCE",
       "type": "clause",
@@ -1100,6 +1138,46 @@
       }
     },
     {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "key": "WML-CL-GO-SETVAR-SNAPSHOT",
+      "type": "clause",
+      "title": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.1",
+          "heading": "12.5.1 The Go Task",
+          "normalizedTextSha256": "64953475f2bdd343ead6d19fab5489ca50c840303fc961f186284ccef87bab9c"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-GO-STRUCTURE",
       "key": "WML-CL-GO-STRUCTURE",
       "type": "clause",
@@ -1132,6 +1210,46 @@
         ],
         "requirementIds": [
           "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "key": "WML-CL-GO-TARGET-RESOLUTION",
+      "type": "clause",
+      "title": "Resolve variables in the go target URI before fetching it.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.1",
+          "heading": "12.5.1 The Go Task",
+          "normalizedTextSha256": "64953475f2bdd343ead6d19fab5489ca50c840303fc961f186284ccef87bab9c"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Resolve variables in the go target URI before fetching it.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -1215,6 +1333,44 @@
         ],
         "requirementIds": [
           "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-WAE-016"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "key": "WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "type": "clause",
+      "title": "Resolve variable references before request data is stored in history.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-07"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.2",
+          "heading": "9.2 History",
+          "normalizedTextSha256": "ddb05258d93542ece6bbeec4487a59dfc0da1b1afbf8a2979f59d5db6e8f8cf4"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Resolve variable references before request data is stored in history.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
@@ -1989,6 +2145,45 @@
       }
     },
     {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "key": "WML-CL-PREV-ASSIGNMENT-ORDER",
+      "type": "clause",
+      "title": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-18",
+          "WML-C-38"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.2",
+          "heading": "12.5.2 The Prev Task",
+          "normalizedTextSha256": "4c3633fc8ac91f591164d71491637c64794cba56ce4f4558abfe9e4070fec1fa"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-PREV-EMPTY-HISTORY",
       "key": "WML-CL-PREV-EMPTY-HISTORY",
       "type": "clause",
@@ -2062,6 +2257,45 @@
           "RQ-RMK-002",
           "RQ-RMK-003",
           "RQ-RMK-004"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "key": "WML-CL-REFRESH-ASSIGNMENTS",
+      "type": "clause",
+      "title": "For refresh, resolve and apply every setvar assignment without changing cards.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-18",
+          "WML-C-42"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.4",
+          "heading": "12.5.4 The Refresh Task",
+          "normalizedTextSha256": "897f1abc8b6eb63307f64eba8a12ca8bcd472af307585e5ded0d5371000f6ba9"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For refresh, resolve and apply every setvar assignment without changing cards.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -2516,6 +2750,121 @@
         ],
         "requirementIds": [
           "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "key": "WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "type": "clause",
+      "title": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-52"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.4",
+          "heading": "9.4 The Setvar Element",
+          "normalizedTextSha256": "351155436bd3b04d57f1a0995afa3f0ed55ab568bcd375410219cee4aaa4aa9e"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE",
+      "key": "WML-CL-SETVAR-STRUCTURE",
+      "type": "clause",
+      "title": "Require setvar name and value attributes and no child content.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-52"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.4",
+          "heading": "9.4 The Setvar Element",
+          "normalizedTextSha256": "351155436bd3b04d57f1a0995afa3f0ed55ab568bcd375410219cee4aaa4aa9e"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Require setvar name and value attributes and no child content.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-203",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "key": "WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "type": "clause",
+      "title": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-52"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.4",
+          "heading": "9.4 The Setvar Element",
+          "normalizedTextSha256": "351155436bd3b04d57f1a0995afa3f0ed55ab568bcd375410219cee4aaa4aa9e"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -3137,6 +3486,7 @@
           "R0-04",
           "WML-201",
           "WML-204",
+          "WML-302",
           "WML-308"
         ],
         "ownerLayers": [
@@ -3145,6 +3495,394 @@
         ],
         "requirementIds": [
           "RQ-RMK-001",
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "key": "WML-CL-VARIABLE-CONVERSION-MODES",
+      "type": "clause",
+      "title": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.1",
+          "heading": "10.3.1 Variable Substitution",
+          "normalizedTextSha256": "9849f9672c816afb631c60353168ab6e789a48a110f800b6cd51e2ecb0055c8f"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "key": "WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "type": "clause",
+      "title": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.1",
+          "heading": "10.3.1 Variable Substitution",
+          "normalizedTextSha256": "9849f9672c816afb631c60353168ab6e789a48a110f800b6cd51e2ecb0055c8f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "key": "WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "type": "clause",
+      "title": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.3",
+          "heading": "10.3.3 The Dollar-sign Character",
+          "normalizedTextSha256": "646d3b51c0b0e61d76eb8a488752b20b1df7f18da919d4cf6d86c1d1c282e748"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "key": "WML-CL-VARIABLE-NAME-GRAMMAR",
+      "type": "clause",
+      "title": "Enforce the WML variable-name grammar and case sensitivity.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.1",
+          "heading": "10.3.1 Variable Substitution",
+          "normalizedTextSha256": "9849f9672c816afb631c60353168ab6e789a48a110f800b6cd51e2ecb0055c8f"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Enforce the WML variable-name grammar and case sensitivity.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "key": "WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "type": "clause",
+      "title": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.2",
+          "heading": "10.3.2 Parsing the Variable Substitution Syntax",
+          "normalizedTextSha256": "62e9a805e5db5aa9522932d9c1a3ba2a0f84cc55cbd085939553928e7df51ea8"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "key": "WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "type": "clause",
+      "title": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.5",
+          "heading": "10.3.5 Validation",
+          "normalizedTextSha256": "7c8a2ebfc7c1b8cdfa7c7fb9de65558b3e082cd1f116cf2e7985e7b367af7be9"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "key": "WML-CL-VARIABLE-SET-DEFINITION",
+      "type": "clause",
+      "title": "Treat a variable as set only when its current value is known and non-empty.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3",
+          "heading": "10.3 Variables",
+          "normalizedTextSha256": "cb1038afa0dfb0bb7b50003d7745c0a8d0b25fb15f2002b4b1d72fc041141f09"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Treat a variable as set only when its current value is known and non-empty.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "key": "WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "type": "clause",
+      "title": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.1",
+          "heading": "10.3.1 Variable Substitution",
+          "normalizedTextSha256": "9849f9672c816afb631c60353168ab6e789a48a110f800b6cd51e2ecb0055c8f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "key": "WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "type": "clause",
+      "title": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12",
+          "WML-C-18",
+          "WML-C-29",
+          "WML-C-38",
+          "WML-C-42",
+          "WML-C-52"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.4",
+          "heading": "10.3.4 Setting Variables",
+          "normalizedTextSha256": "06c5e4be7633a32ca7e1c524c832663d5940f60f82bc3e371926ec76f535350d"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-03",
+          "R0-06",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "key": "WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "type": "clause",
+      "title": "Substitute an empty string for a referenced variable that is unset or undefined.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-12"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "10.3.1",
+          "heading": "10.3.1 Variable Substitution",
+          "normalizedTextSha256": "9849f9672c816afb631c60353168ab6e789a48a110f800b6cd51e2ecb0055c8f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Substitute an empty string for a referenced variable that is unset or undefined.",
+        "workItems": [
+          "R0-01",
+          "R0-03",
+          "WML-201",
+          "WML-302"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
@@ -3430,6 +4168,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-GO-ASSIGNMENT-ORDER",
+      "key": "WML-FX-GO-ASSIGNMENT-ORDER",
+      "type": "fixture",
+      "title": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-GO-ENTRY-EVENT-PRECEDENCE",
       "key": "WML-FX-GO-ENTRY-EVENT-PRECEDENCE",
       "type": "fixture",
@@ -3442,6 +4192,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-GO-SETVAR-SNAPSHOT",
+      "key": "WML-FX-GO-SETVAR-SNAPSHOT",
+      "type": "fixture",
+      "title": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-GO-STRUCTURE",
       "key": "WML-FX-GO-STRUCTURE",
       "type": "fixture",
@@ -3450,6 +4212,18 @@
         "kind": "parser",
         "status": "implemented",
         "assertion": "Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-TARGET-RESOLUTION",
+      "key": "WML-FX-GO-TARGET-RESOLUTION",
+      "type": "fixture",
+      "title": "Resolve variables in the go target URI before fetching it.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Resolve variables in the go target URI before fetching it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -3474,6 +4248,18 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "A prev task pops the current entry and returns to the prior history entry.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-HISTORY-RESOLVES-VARIABLES",
+      "key": "WML-FX-HISTORY-RESOLVES-VARIABLES",
+      "type": "fixture",
+      "title": "Resolve variable references before request data is stored in history.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "Resolve variable references before request data is stored in history.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -3718,6 +4504,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-PREV-ASSIGNMENT-ORDER",
+      "key": "WML-FX-PREV-ASSIGNMENT-ORDER",
+      "type": "fixture",
+      "title": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-PREV-EMPTY-HISTORY",
       "key": "WML-FX-PREV-EMPTY-HISTORY",
       "type": "fixture",
@@ -3738,6 +4536,18 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "Run a backward-entry handler before starting the restored card timer or displaying the card.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFRESH-ASSIGNMENTS",
+      "key": "WML-FX-REFRESH-ASSIGNMENTS",
+      "type": "fixture",
+      "title": "For refresh, resolve and apply every setvar assignment without changing cards.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "For refresh, resolve and apply every setvar assignment without changing cards.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -3882,6 +4692,42 @@
         "kind": "runtime",
         "status": "implemented",
         "assertion": "Initialize name from selected option values and iname from the validated selected indices.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SETVAR-INVALID-NAME-IGNORED",
+      "key": "WML-FX-SETVAR-INVALID-NAME-IGNORED",
+      "type": "fixture",
+      "title": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SETVAR-STRUCTURE",
+      "key": "WML-FX-SETVAR-STRUCTURE",
+      "type": "fixture",
+      "title": "Require setvar name and value attributes and no child content.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Require setvar name and value attributes and no child content.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-SETVAR-TASK-SIDE-EFFECT",
+      "key": "WML-FX-SETVAR-TASK-SIDE-EFFECT",
+      "type": "fixture",
+      "title": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -4074,6 +4920,126 @@
         "kind": "runtime",
         "status": "implemented",
         "assertion": "Commit input and selection variables before invoking any task.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-CONVERSION-MODES",
+      "key": "WML-FX-VARIABLE-CONVERSION-MODES",
+      "type": "fixture",
+      "title": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-DEFAULT-CONVERSION",
+      "key": "WML-FX-VARIABLE-DEFAULT-CONVERSION",
+      "type": "fixture",
+      "title": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-DOLLAR-ESCAPE",
+      "key": "WML-FX-VARIABLE-DOLLAR-ESCAPE",
+      "type": "fixture",
+      "title": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-NAME-GRAMMAR",
+      "key": "WML-FX-VARIABLE-NAME-GRAMMAR",
+      "type": "fixture",
+      "title": "Enforce the WML variable-name grammar and case sensitivity.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Enforce the WML variable-name grammar and case sensitivity.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-PARSE-PRECEDENCE",
+      "key": "WML-FX-VARIABLE-PARSE-PRECEDENCE",
+      "type": "fixture",
+      "title": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-REFERENCE-VALIDATION",
+      "key": "WML-FX-VARIABLE-REFERENCE-VALIDATION",
+      "type": "fixture",
+      "title": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-SET-DEFINITION",
+      "key": "WML-FX-VARIABLE-SET-DEFINITION",
+      "type": "fixture",
+      "title": "Treat a variable as set only when its current value is known and non-empty.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Treat a variable as set only when its current value is known and non-empty.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "key": "WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "type": "fixture",
+      "title": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-TASK-SNAPSHOT",
+      "key": "WML-FX-VARIABLE-TASK-SNAPSHOT",
+      "type": "fixture",
+      "title": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-VARIABLE-UNDEFINED-EMPTY",
+      "key": "WML-FX-VARIABLE-UNDEFINED-EMPTY",
+      "type": "fixture",
+      "title": "Substitute an empty string for a referenced variable that is unset or undefined.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Substitute an empty string for a referenced variable that is unset or undefined.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -5026,6 +5992,32 @@
       }
     },
     {
+      "id": "scr-row:WML-C-52",
+      "key": "WML-C-52",
+      "type": "scr-row",
+      "title": "setvar",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "9.4",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "implementationStatus": "missing",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "source-document:WAP-190_101-WAESpec",
       "key": "WAP-190_101-WAESpec",
       "type": "source-document",
@@ -5418,13 +6410,26 @@
       "type": "work-item",
       "title": "Variable store and substitution closure",
       "properties": {
-        "status": "todo",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "qa"
         ],
         "sourceFamilies": [
           "wml"
+        ],
+        "followUpWorkItems": [
+          "WML-301",
+          "WML-304",
+          "WML-305"
+        ],
+        "notes": [
+          "All 20 directly mapped WML-302 clauses have source-derived native fixtures, WASM parity, and an executable host/Waves story. The focused WML-302 context pack is generated from the effective base -> SIN 102 -> SIN 104 -> SIN 105 source order with no zero-clause or family mapping gaps.",
+          "HISTORY-RESOLVES-VARIABLES is explicitly adjudicated across WML-301/WML-302/WML-304: WML-302 resolves WML-authored target and variable data before the engine records same-deck history or publishes an external navigation intent; WML-301 retains ownership of the broader deck/card history model; WML-304 retains request construction and GET/POST/postfield serialization. No unresolved WML variable reference crosses the WML-302 engine history or navigation boundary.",
+          "WML-302 preserves WML-202 newcontext reset, WML-204 control/vdata commit, WML-205 atomic failure rollback, and WML-303 task/action/BACK ordering. It makes no wml-engine.ts or browser debug-contract change; D0-01 remains the exclusive contract lane. Native timer lifecycle remains WML-305 and is the next engine baton."
+        ],
+        "specReferences": [
+          "WAP-191_104-WML sections 9.2, 9.4, 10.3 through 10.3.5, and 12.5.1, 12.5.2, and 12.5.4"
         ],
         "existingTickets": [
           "C5-04"
@@ -5436,7 +6441,12 @@
           "Initialization, escaping modes, substitution contexts, setvar ordering, and invalid references match effective WML rules."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302",
+          "wasm-pack test --node engine-wasm/engine",
+          "pnpm test:story WML-302",
+          "node scripts/wap-context-pack.mjs WML-302",
+          "pnpm wap-compliance:check",
+          "pnpm wap-graph:check"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -5467,7 +6477,7 @@
         "notes": [
           "WML-303 owns deterministic task/event activation, card/template shadowing, BACK override, and strict softkey-action precedence. WAP-236 is clarification/delta evidence and does not replace the effective WAP 1.2.1 WML source sequence.",
           "All 27 directly mapped WML-303 clauses have source-derived native fixtures, native/WASM boundary coverage, browser host coverage, and four executable host/Waves stories. The three dynamic do presentation clauses (active visibility, label best effort, and unique widget exposure) remain outside this engine-semantic slice under the existing WBP-06/D0-01 frame gate.",
-          "Variable/setvar evaluation remains WML-302, GET/POST request construction remains WML-304, and native timer lifecycle remains WML-305. WML-205 failure atomicity is a shared regression obligation and remains completed history. The evidence-backed next baton is WML-302, followed by WML-305."
+          "Variable/setvar evaluation is completed by WML-302, GET/POST request construction remains WML-304, and native timer lifecycle remains WML-305. WML-205 failure atomicity is a shared regression obligation and remains completed history. The evidence-backed next engine baton is WML-305."
         ],
         "specReferences": [
           "WAP-191_104-WML sections 9.2, 9.5, 9.6, 9.7, 9.10, 11.4, and 12.5",
@@ -5614,7 +6624,7 @@
           "wbxml"
         ],
         "notes": [
-          "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203 or preempt the WML-303, WML-302, WML-305 baton."
+          "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203/WML-302/WML-303 or preempt the WML-305 baton."
         ],
         "existingTickets": [
           "C5-06"
@@ -5650,7 +6660,7 @@
           "wae"
         ],
         "notes": [
-          "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-302 then WML-305 baton or authorize the separately gated WBP-06 frame contract."
+          "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
         ],
         "existingTickets": [
           "R0-04",
@@ -6888,6 +7898,69 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|verified-by|fixture:WML-FX-GO-ASSIGNMENT-ORDER",
+      "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-ASSIGNMENT-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-ENTRY-EVENT-PRECEDENCE|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-GO-ENTRY-EVENT-PRECEDENCE",
       "relation": "maps-to",
@@ -6969,6 +8042,69 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|verified-by|fixture:WML-FX-GO-SETVAR-SNAPSHOT",
+      "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-SETVAR-SNAPSHOT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-STRUCTURE|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-GO-STRUCTURE",
       "relation": "maps-to",
@@ -7009,6 +8145,69 @@
       "from": "clause:WML-CL-GO-STRUCTURE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-GO-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-TARGET-RESOLUTION|verified-by|fixture:WML-FX-GO-TARGET-RESOLUTION",
+      "from": "clause:WML-CL-GO-TARGET-RESOLUTION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-TARGET-RESOLUTION",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7171,6 +8370,60 @@
       "from": "clause:WML-CL-HISTORY-PREV-POP",
       "relation": "verified-by",
       "to": "fixture:WML-FX-HISTORY-PREV-POP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|maps-to|requirement:RQ-WAE-016",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-016",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|refines|scr-row:WML-C-07",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "refines",
+      "to": "scr-row:WML-C-07",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES|verified-by|fixture:WML-FX-HISTORY-RESOLVES-VARIABLES",
+      "from": "clause:WML-CL-HISTORY-RESOLVES-VARIABLES",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-HISTORY-RESOLVES-VARIABLES",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8220,6 +9473,69 @@
       ]
     },
     {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|refines|scr-row:WML-C-38",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-38",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-PREV-ASSIGNMENT-ORDER|verified-by|fixture:WML-FX-PREV-ASSIGNMENT-ORDER",
+      "from": "clause:WML-CL-PREV-ASSIGNMENT-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-PREV-ASSIGNMENT-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-PREV-EMPTY-HISTORY|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-PREV-EMPTY-HISTORY",
       "relation": "maps-to",
@@ -8359,6 +9675,69 @@
       "from": "clause:WML-CL-PREV-ENTRY-EVENT-PRECEDENCE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-PREV-ENTRY-EVENT-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|refines|scr-row:WML-C-42",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-42",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFRESH-ASSIGNMENTS|verified-by|fixture:WML-FX-REFRESH-ASSIGNMENTS",
+      "from": "clause:WML-CL-REFRESH-ASSIGNMENTS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFRESH-ASSIGNMENTS",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8971,6 +10350,141 @@
       "from": "clause:WML-CL-SELECT-VARIABLE-INITIALIZATION",
       "relation": "verified-by",
       "to": "fixture:WML-FX-SELECT-VARIABLE-INITIALIZATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED|refines|scr-row:WML-C-52",
+      "from": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-52",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED|verified-by|fixture:WML-FX-SETVAR-INVALID-NAME-IGNORED",
+      "from": "clause:WML-CL-SETVAR-INVALID-NAME-IGNORED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SETVAR-INVALID-NAME-IGNORED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|refines|scr-row:WML-C-52",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-52",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-STRUCTURE|verified-by|fixture:WML-FX-SETVAR-STRUCTURE",
+      "from": "clause:WML-CL-SETVAR-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SETVAR-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT|refines|scr-row:WML-C-52",
+      "from": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-52",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT|verified-by|fixture:WML-FX-SETVAR-TASK-SIDE-EFFECT",
+      "from": "clause:WML-CL-SETVAR-TASK-SIDE-EFFECT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-SETVAR-TASK-SIDE-EFFECT",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9867,6 +11381,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK|planned-by|work-item:WML-308",
       "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
       "relation": "planned-by",
@@ -9916,6 +11439,600 @@
       "from": "clause:WML-CL-VARIABLE-COMMIT-BEFORE-TASK",
       "relation": "verified-by",
       "to": "fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-CONVERSION-MODES|verified-by|fixture:WML-FX-VARIABLE-CONVERSION-MODES",
+      "from": "clause:WML-CL-VARIABLE-CONVERSION-MODES",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-CONVERSION-MODES",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION|verified-by|fixture:WML-FX-VARIABLE-DEFAULT-CONVERSION",
+      "from": "clause:WML-CL-VARIABLE-DEFAULT-CONVERSION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-DEFAULT-CONVERSION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE|verified-by|fixture:WML-FX-VARIABLE-DOLLAR-ESCAPE",
+      "from": "clause:WML-CL-VARIABLE-DOLLAR-ESCAPE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-DOLLAR-ESCAPE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-NAME-GRAMMAR|verified-by|fixture:WML-FX-VARIABLE-NAME-GRAMMAR",
+      "from": "clause:WML-CL-VARIABLE-NAME-GRAMMAR",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-NAME-GRAMMAR",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE|verified-by|fixture:WML-FX-VARIABLE-PARSE-PRECEDENCE",
+      "from": "clause:WML-CL-VARIABLE-PARSE-PRECEDENCE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-PARSE-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION|verified-by|fixture:WML-FX-VARIABLE-REFERENCE-VALIDATION",
+      "from": "clause:WML-CL-VARIABLE-REFERENCE-VALIDATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-REFERENCE-VALIDATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SET-DEFINITION|verified-by|fixture:WML-FX-VARIABLE-SET-DEFINITION",
+      "from": "clause:WML-CL-VARIABLE-SET-DEFINITION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-SET-DEFINITION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS|verified-by|fixture:WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "from": "clause:WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-38",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-38",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-42",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-42",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|refines|scr-row:WML-C-52",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-52",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT|verified-by|fixture:WML-FX-VARIABLE-TASK-SNAPSHOT",
+      "from": "clause:WML-CL-VARIABLE-TASK-SNAPSHOT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-TASK-SNAPSHOT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|maps-to|requirement:RQ-RMK-005",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-005",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|planned-by|work-item:WML-302",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "planned-by",
+      "to": "work-item:WML-302",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|refines|scr-row:WML-C-12",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-12",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY|verified-by|fixture:WML-FX-VARIABLE-UNDEFINED-EMPTY",
+      "from": "clause:WML-CL-VARIABLE-UNDEFINED-EMPTY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-VARIABLE-UNDEFINED-EMPTY",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -10249,6 +12366,15 @@
       "from": "scr-row:WML-C-48",
       "relation": "planned-by",
       "to": "work-item:WML-305",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-52|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-52",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

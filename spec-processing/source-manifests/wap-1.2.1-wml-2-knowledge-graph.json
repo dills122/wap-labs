@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b67e817aaed70f0a02dd6f6489b49abad54a4eb698412cc92d72049978af367b"
+        "sha256": "57b57f188dc239d36c2ec65a9c302e7737ef0127856a01db9fa605d36ea0208d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "2cb01517e20fada088a8c646b72bc4fc7eb99affd3941cbbb92c514b5f13782a"
+        "sha256": "c350fbcda21faf193cce877e071e219c78cc1c91d87a1745d173e77610a6a3d6"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
@@ -3639,7 +3639,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -3649,7 +3650,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4138,7 +4139,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -4148,7 +4150,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4254,7 +4256,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -4264,7 +4267,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4600,7 +4603,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -4610,7 +4614,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6163,7 +6167,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -6173,7 +6178,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6508,7 +6513,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -6518,7 +6524,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7000,7 +7006,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -7009,7 +7016,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7038,7 +7045,8 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -7075,7 +7083,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -7084,7 +7093,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8143,6 +8152,7 @@
           "R0-04",
           "WML-201",
           "WML-204",
+          "WML-302",
           "WML-308"
         ],
         "ownerLayers": [
@@ -8181,7 +8191,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8191,7 +8202,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8218,7 +8229,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8228,7 +8240,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8255,7 +8267,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8265,7 +8278,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8292,7 +8305,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8302,7 +8316,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8329,7 +8343,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8339,7 +8354,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8366,7 +8381,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8376,7 +8392,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8403,7 +8419,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8413,7 +8430,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8440,7 +8457,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8450,7 +8468,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8484,7 +8502,8 @@
           "R0-02",
           "R0-03",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8495,7 +8514,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8522,7 +8541,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-302"
         ],
         "ownerLayers": [
           "browser",
@@ -8532,7 +8552,7 @@
           "RQ-RMK-003",
           "RQ-RMK-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9772,7 +9792,7 @@
       "title": "Apply temporary setvar assignments before newcontext processing and history insertion.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply temporary setvar assignments before newcontext processing and history insertion.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9928,7 +9948,7 @@
       "title": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9964,7 +9984,7 @@
       "title": "Resolve variables in the go target URI before fetching it.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve variables in the go target URI before fetching it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10072,7 +10092,7 @@
       "title": "Resolve variable references before request data is stored in history.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve variable references before request data is stored in history.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10564,7 +10584,7 @@
       "title": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10672,7 +10692,7 @@
       "title": "For refresh, resolve and apply every setvar assignment without changing cards.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For refresh, resolve and apply every setvar assignment without changing cards.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10828,7 +10848,7 @@
       "title": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10852,7 +10872,7 @@
       "title": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11200,7 +11220,7 @@
       "title": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11212,7 +11232,7 @@
       "title": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11224,7 +11244,7 @@
       "title": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11236,7 +11256,7 @@
       "title": "Enforce the WML variable-name grammar and case sensitivity.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Enforce the WML variable-name grammar and case sensitivity.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11248,7 +11268,7 @@
       "title": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11260,7 +11280,7 @@
       "title": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11272,7 +11292,7 @@
       "title": "Treat a variable as set only when its current value is known and non-empty.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat a variable as set only when its current value is known and non-empty.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11284,7 +11304,7 @@
       "title": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11296,7 +11316,7 @@
       "title": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11308,7 +11328,7 @@
       "title": "Substitute an empty string for a referenced variable that is unset or undefined.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Substitute an empty string for a referenced variable that is unset or undefined.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

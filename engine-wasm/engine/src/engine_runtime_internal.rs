@@ -1,3 +1,4 @@
+use crate::runtime::node::{InlineNode, Node};
 use crate::runtime::variable::{evaluate as evaluate_variable, SubstitutionContext};
 use crate::*;
 
@@ -147,13 +148,9 @@ impl WmlEngine {
 
     pub(crate) fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         self.push_trace("KEY", format!("key={key}"));
-        let (layout, accept_action) = {
-            let card = self.active_card_internal()?;
-            (
-                layout_card(card, self.viewport_cols, self.focused_link_idx),
-                self.active_do_action_internal("accept")?,
-            )
-        };
+        let card = self.active_card_internal()?;
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let accept_action = self.active_do_action_internal("accept")?;
         let target_total = layout.focus_targets.len();
         self.focused_link_idx = clamp_focus(self.focused_link_idx, target_total);
 
@@ -389,23 +386,15 @@ impl WmlEngine {
         self.active_select_edit = None;
         self.push_trace("SELECT_EDIT_COMMIT", edit.select_name.clone());
         if let Some(onpick) = onpick {
-            let onpick = match onpick {
-                CardTaskAction::Go {
-                    href,
-                    method,
-                    post_fields,
-                } => CardTaskAction::Go {
-                    href: evaluate_href(&href, &self.vars)?,
-                    method,
-                    post_fields,
-                },
-                action => action,
-            };
-            let detail = match &onpick {
+            let (base_action, _) = onpick.base_and_set_vars();
+            let detail = match base_action {
                 CardTaskAction::Go { href, .. } => href.clone(),
                 CardTaskAction::Prev => "prev".to_string(),
                 CardTaskAction::Refresh => "refresh".to_string(),
                 CardTaskAction::Noop => "noop".to_string(),
+                CardTaskAction::WithSetVars { .. } => {
+                    unreachable!("base_and_set_vars unwraps the setvar wrapper")
+                }
             };
             self.push_trace("ACTION_ONPICK", detail);
             self.execute_card_task_action(&onpick)?;
@@ -598,6 +587,48 @@ impl WmlEngine {
         let card = self.active_card_internal().ok()?;
         node_lookup::find_input(card, control_id).map(|input| (input.mask.clone(), input.empty_ok))
     }
+
+    pub(crate) fn runtime_card_for_layout(&self) -> Result<runtime::card::Card, String> {
+        let mut card = self.active_card_internal()?.clone();
+        if let Some(edit) = &self.active_input_edit {
+            self.apply_input_value_to_card(&mut card, &edit.control_id, &edit.draft_value);
+        }
+        if let Some(edit) = &self.active_select_edit {
+            self.apply_select_index_to_card(&mut card, &edit.select_name, edit.draft_index);
+        }
+        substitute_card_text_and_links(&mut card, &self.vars)?;
+        Ok(card)
+    }
+}
+
+fn substitute_card_text_and_links(
+    card: &mut runtime::card::Card,
+    vars: &HashMap<String, String>,
+) -> Result<(), String> {
+    for node in &mut card.nodes {
+        let Node::Paragraph(inline) = node else {
+            continue;
+        };
+        for entry in inline {
+            match entry {
+                InlineNode::Text(text) => *text = evaluate_vdata(text, vars)?,
+                InlineNode::Link { text, href } => {
+                    *text = evaluate_vdata(text, vars)?;
+                    *href = evaluate_href(href, vars)?;
+                }
+                InlineNode::Select { title, options, .. } => {
+                    if let Some(title) = title {
+                        *title = evaluate_vdata(title, vars)?;
+                    }
+                    for option in options {
+                        option.label = evaluate_vdata(&option.label, vars)?;
+                    }
+                }
+                InlineNode::Break | InlineNode::Input { .. } => {}
+            }
+        }
+    }
+    Ok(())
 }
 
 fn input_value_is_valid(

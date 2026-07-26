@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 190
+    "assessedClauseCount": 208
   },
   "families": [
     {
@@ -1759,8 +1759,13 @@
           "fixturePlan": {
             "id": "WML-FX-HISTORY-RESOLVES-VARIABLES",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Resolve variable references before request data is stored in history."
+            "status": "implemented",
+            "assertion": "Resolve variable references before request data is stored in history.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1770,7 +1775,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -1779,11 +1785,12 @@
             "parentImplementationSnapshot": {
               "WML-C-07": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -2817,8 +2824,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-SET-DEFINITION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Treat a variable as set only when its current value is known and non-empty."
+            "status": "implemented",
+            "assertion": "Treat a variable as set only when its current value is known and non-empty.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2828,7 +2840,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2837,11 +2850,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -2862,8 +2876,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup."
+            "status": "implemented",
+            "assertion": "Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2873,7 +2892,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2882,11 +2902,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -2907,8 +2928,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-UNDEFINED-EMPTY",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Substitute an empty string for a referenced variable that is unset or undefined."
+            "status": "implemented",
+            "assertion": "Substitute an empty string for a referenced variable that is unset or undefined.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2918,7 +2944,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2927,11 +2954,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -2952,8 +2980,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-NAME-GRAMMAR",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Enforce the WML variable-name grammar and case sensitivity."
+            "status": "implemented",
+            "assertion": "Enforce the WML variable-name grammar and case sensitivity.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -2963,7 +2996,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -2972,11 +3006,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -2997,8 +3032,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-CONVERSION-MODES",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value."
+            "status": "implemented",
+            "assertion": "Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3008,7 +3048,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -3017,11 +3058,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -3042,8 +3084,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-DEFAULT-CONVERSION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion."
+            "status": "implemented",
+            "assertion": "Default HREF substitutions to URL escaping and other substitution contexts to no conversion.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3053,7 +3100,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -3062,11 +3110,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -3087,8 +3136,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-PARSE-PRECEDENCE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Parse XML and entity syntax before parsing WML variable-substitution syntax."
+            "status": "implemented",
+            "assertion": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3098,7 +3152,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -3107,11 +3162,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -3132,8 +3188,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-DOLLAR-ESCAPE",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values."
+            "status": "implemented",
+            "assertion": "Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3143,7 +3204,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -3152,11 +3214,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -3182,8 +3245,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-TASK-SNAPSHOT",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Evaluate task setvar names and values before applying the resulting assignments to the browser context."
+            "status": "implemented",
+            "assertion": "Evaluate task setvar names and values before applying the resulting assignments to the browser context.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3195,7 +3263,8 @@
               "R0-02",
               "R0-03",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -3210,11 +3279,12 @@
               "WML-C-42": "partial",
               "WML-C-52": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -3256,6 +3326,7 @@
               "R0-04",
               "WML-201",
               "WML-204",
+              "WML-302",
               "WML-308"
             ],
             "requirementIds": [
@@ -3273,7 +3344,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-204"
+            "WML-204",
+            "WML-302"
           ]
         },
         {
@@ -3294,8 +3366,13 @@
           "fixturePlan": {
             "id": "WML-FX-VARIABLE-REFERENCE-VALIDATION",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location."
+            "status": "implemented",
+            "assertion": "Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3305,7 +3382,8 @@
             "workItems": [
               "R0-01",
               "R0-03",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-003",
@@ -3314,11 +3392,12 @@
             "parentImplementationSnapshot": {
               "WML-C-12": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -4095,8 +4174,13 @@
           "fixturePlan": {
             "id": "WML-FX-GO-SETVAR-SNAPSHOT",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "For go, resolve setvar names and values into temporary assignments before fetching or changing context."
+            "status": "implemented",
+            "assertion": "For go, resolve setvar names and values into temporary assignments before fetching or changing context.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4107,7 +4191,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4117,11 +4202,12 @@
               "WML-C-18": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -4143,8 +4229,13 @@
           "fixturePlan": {
             "id": "WML-FX-GO-TARGET-RESOLUTION",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Resolve variables in the go target URI before fetching it."
+            "status": "implemented",
+            "assertion": "Resolve variables in the go target URI before fetching it.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4155,7 +4246,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4165,11 +4257,12 @@
               "WML-C-18": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -4298,8 +4391,13 @@
           "fixturePlan": {
             "id": "WML-FX-GO-ASSIGNMENT-ORDER",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Apply temporary setvar assignments before newcontext processing and history insertion."
+            "status": "implemented",
+            "assertion": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4310,7 +4408,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4320,11 +4419,12 @@
               "WML-C-18": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -4564,8 +4664,13 @@
           "fixturePlan": {
             "id": "WML-FX-PREV-ASSIGNMENT-ORDER",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments."
+            "status": "implemented",
+            "assertion": "For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4575,7 +4680,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4585,11 +4691,12 @@
               "WML-C-18": "partial",
               "WML-C-38": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -4719,8 +4826,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFRESH-ASSIGNMENTS",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "For refresh, resolve and apply every setvar assignment without changing cards."
+            "status": "implemented",
+            "assertion": "For refresh, resolve and apply every setvar assignment without changing cards.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4730,7 +4842,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4740,11 +4853,12 @@
               "WML-C-18": "partial",
               "WML-C-42": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -5052,7 +5166,8 @@
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-203"
+              "WML-203",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5065,7 +5180,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-203"
+            "WML-203",
+            "WML-302"
           ]
         },
         {
@@ -5086,8 +5202,13 @@
           "fixturePlan": {
             "id": "WML-FX-SETVAR-INVALID-NAME-IGNORED",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Ignore a setvar whose evaluated name is not a legal WML variable name."
+            "status": "implemented",
+            "assertion": "Ignore a setvar whose evaluated name is not a legal WML variable name.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5098,7 +5219,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5106,11 +5228,12 @@
             "parentImplementationSnapshot": {
               "WML-C-52": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {
@@ -5131,8 +5254,13 @@
           "fixturePlan": {
             "id": "WML-FX-SETVAR-TASK-SIDE-EFFECT",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Apply a valid setvar assignment only as a side effect of executing its containing task."
+            "status": "implemented",
+            "assertion": "Apply a valid setvar assignment only as a side effect of executing its containing task.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_302_variables.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -5143,7 +5271,8 @@
               "R0-01",
               "R0-02",
               "R0-06",
-              "WML-201"
+              "WML-201",
+              "WML-302"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5151,11 +5280,12 @@
             "parentImplementationSnapshot": {
               "WML-C-52": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-302"
           ]
         },
         {

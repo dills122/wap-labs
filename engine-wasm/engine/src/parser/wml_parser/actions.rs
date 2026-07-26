@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 
-use crate::runtime::card::{CardEventBinding, CardEventBindingKind, CardPostField, CardTaskAction};
+use crate::runtime::card::{
+    CardEventBinding, CardEventBindingKind, CardPostField, CardSetVar, CardTaskAction,
+};
 
 use super::nodes::validate_nmtoken;
 use super::xml::{XmlElement, XmlNode};
@@ -209,15 +211,26 @@ pub(super) fn parse_first_task_action_xml(
         match element.name.as_str() {
             "go" => {
                 if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
-                    return Ok(Some(CardTaskAction::Go {
-                        href: href.to_string(),
-                        method: parse_go_method_xml(element),
-                        post_fields: parse_post_fields_xml(&element.children),
-                    }));
+                    return Ok(Some(
+                        CardTaskAction::Go {
+                            href: href.to_string(),
+                            method: parse_go_method_xml(element),
+                            post_fields: parse_post_fields_xml(&element.children),
+                        }
+                        .with_set_vars(parse_set_vars_xml(&element.children)),
+                    ));
                 }
             }
-            "prev" => return Ok(Some(CardTaskAction::Prev)),
-            "refresh" => return Ok(Some(CardTaskAction::Refresh)),
+            "prev" => {
+                return Ok(Some(
+                    CardTaskAction::Prev.with_set_vars(parse_set_vars_xml(&element.children)),
+                ))
+            }
+            "refresh" => {
+                return Ok(Some(
+                    CardTaskAction::Refresh.with_set_vars(parse_set_vars_xml(&element.children)),
+                ))
+            }
             "noop" => return Ok(Some(CardTaskAction::Noop)),
             _ => {
                 if let Some(action) =
@@ -229,6 +242,24 @@ pub(super) fn parse_first_task_action_xml(
         }
     }
     Ok(None)
+}
+
+fn parse_set_vars_xml(nodes: &[XmlNode]) -> Vec<CardSetVar> {
+    nodes
+        .iter()
+        .filter_map(|node| {
+            let XmlNode::Element(element) = node else {
+                return None;
+            };
+            if element.name != "setvar" {
+                return None;
+            }
+            Some(CardSetVar {
+                name: element.attr("name")?.to_string(),
+                value: element.attr("value")?.to_string(),
+            })
+        })
+        .collect()
 }
 
 fn parse_timer_value_ds_xml(

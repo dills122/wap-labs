@@ -43,6 +43,10 @@ pub(crate) fn decode_literal_dollars(raw: &str) -> Result<String, String> {
     })
 }
 
+pub(crate) fn is_valid_name(name: &str) -> bool {
+    variable_name_len(name).is_ok_and(|len| len == name.len())
+}
+
 pub(crate) fn evaluate(
     raw: &str,
     vars: &HashMap<String, String>,

@@ -262,6 +262,27 @@ failures.push(...checkGeneratedArtifacts(root, trnArtifacts));
 failures.push(...checkGeneratedArtifacts(root, wml3Artifacts));
 
 const wml3Graph = wml3Artifacts.graph;
+const wml302Pack = renderContextPack(wml3Graph, 'WML-302');
+if (
+  !wml302Pack.startsWith('# WML-302 AI Context Pack') ||
+  !wml302Pack.includes('### WML-302:') ||
+  wml302Pack.includes('### WML-303:') ||
+  !wml302Pack.includes('- Selected work items: 1') ||
+  !wml302Pack.includes('- Selected SCR parents: 9') ||
+  !wml302Pack.includes('- Direct normative clauses: 20') ||
+  !wml302Pack.includes('**WML-CL-HISTORY-RESOLVES-VARIABLES**') ||
+  !wml302Pack.includes('**WML-CL-VARIABLE-DOLLAR-ESCAPE**') ||
+  !wml302Pack.includes('**WML-CL-GO-ASSIGNMENT-ORDER**') ||
+  !wml302Pack.includes('**WML-CL-PREV-ASSIGNMENT-ORDER**') ||
+  !wml302Pack.includes('**WML-CL-REFRESH-ASSIGNMENTS**') ||
+  !wml302Pack.includes('`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-302') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-302']
+) {
+  failures.push(
+    'WML-302 context rendering must expose its audited 20-clause universe, 9 selected parents, effective WML source order, and explicit history-variable obligation without a declared-family gap'
+  );
+}
 const wml303Pack = renderContextPack(wml3Graph, 'WML-303');
 if (
   wml3Graph.target.sprint !== 'WML-3' ||

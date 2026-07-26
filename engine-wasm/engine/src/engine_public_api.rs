@@ -181,14 +181,7 @@ impl WmlEngine {
     }
 
     fn render_bounded(&self) -> Result<RenderList, String> {
-        let card = self.active_card_internal()?;
-        let mut runtime_card = card.clone();
-        if let Some(edit) = &self.active_input_edit {
-            self.apply_input_value_to_card(&mut runtime_card, &edit.control_id, &edit.draft_value);
-        }
-        if let Some(edit) = &self.active_select_edit {
-            self.apply_select_index_to_card(&mut runtime_card, &edit.select_name, edit.draft_index);
-        }
+        let runtime_card = self.runtime_card_for_layout()?;
         let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
         Ok(layout.render_list)
     }

@@ -1,6 +1,9 @@
-use crate::runtime::card::CardPostField;
+use crate::runtime::card::{CardPostField, CardSetVar};
+use crate::runtime::variable::is_valid_name;
 use crate::*;
 use url::Url;
+
+use super::{evaluate_href, evaluate_vdata};
 
 impl WmlEngine {
     pub(crate) fn active_do_action_internal(
@@ -148,17 +151,24 @@ impl WmlEngine {
     /// Navigate back in history, guarded against unbounded recursion. See
     /// [`Self::navigate_to_card_internal`] for why the guard is needed.
     pub(crate) fn navigate_back_internal(&mut self) -> bool {
+        self.navigate_back_internal_with_assignments(&[])
+    }
+
+    fn navigate_back_internal_with_assignments(
+        &mut self,
+        assignments: &[(String, String)],
+    ) -> bool {
         if self.nav_dispatch_depth >= MAX_NAV_DISPATCH_DEPTH {
             self.push_trace("NAV_DEPTH_EXCEEDED", "target=<back>".to_string());
             return false;
         }
         self.nav_dispatch_depth += 1;
-        let result = self.navigate_back_internal_bounded();
+        let result = self.navigate_back_internal_bounded(assignments);
         self.nav_dispatch_depth -= 1;
         result
     }
 
-    fn navigate_back_internal_bounded(&mut self) -> bool {
+    fn navigate_back_internal_bounded(&mut self, assignments: &[(String, String)]) -> bool {
         let nav = NavRollbackGuard::back(self);
         let Some(back_target_idx) = nav.engine.nav_stack.pop() else {
             nav.engine.push_trace("ACTION_BACK_EMPTY", String::new());
@@ -171,6 +181,7 @@ impl WmlEngine {
         nav.engine.active_select_edit = None;
         nav.engine.active_card_idx = back_target_idx;
         nav.engine.focused_link_idx = 0;
+        nav.engine.apply_set_var_assignments(assignments);
         nav.engine.push_trace("ACTION_BACK", String::new());
         // Each fallible entry step traces first, then leaves the guard armed so
         // the drop restores the pre-navigation state before returning.
@@ -236,18 +247,26 @@ impl WmlEngine {
         }
         self.sync_all_select_variables_on_active_card()?;
 
+        let (action, set_vars) = action.base_and_set_vars();
+        let assignments = self.snapshot_set_vars(set_vars)?;
+
         match action {
             CardTaskAction::Go {
                 href,
                 method,
                 post_fields,
-            } => self.execute_action_href(href, method.as_deref(), post_fields),
+            } => {
+                let href = evaluate_href(href, &self.vars)?;
+                self.apply_set_var_assignments(&assignments);
+                self.execute_prepared_action_href(&href, method.as_deref(), post_fields)
+            }
             CardTaskAction::Prev => {
                 self.push_trace("ACTION_PREV", String::new());
-                self.navigate_back_internal();
+                self.navigate_back_internal_with_assignments(&assignments);
                 Ok(())
             }
             CardTaskAction::Refresh => {
+                self.apply_set_var_assignments(&assignments);
                 self.push_trace("ACTION_REFRESH", String::new());
                 self.initialize_controls_on_active_card()?;
                 self.start_or_resume_timer_for_active_card(true)?;
@@ -256,6 +275,9 @@ impl WmlEngine {
             CardTaskAction::Noop => {
                 self.push_trace("ACTION_NOOP", String::new());
                 Ok(())
+            }
+            CardTaskAction::WithSetVars { .. } => {
+                unreachable!("base_and_set_vars unwraps the setvar wrapper")
             }
         }
     }
@@ -274,6 +296,16 @@ impl WmlEngine {
         }
         self.sync_all_select_variables_on_active_card()?;
 
+        let href = evaluate_href(href, &self.vars)?;
+        self.execute_prepared_action_href(&href, method, post_fields)
+    }
+
+    fn execute_prepared_action_href(
+        &mut self,
+        href: &str,
+        method: Option<&str>,
+        post_fields: &[CardPostField],
+    ) -> Result<(), String> {
         if let Some(script_ref) = parse_script_href(href) {
             let function_name = script_ref.function_name.unwrap_or("main");
             self.push_trace(
@@ -308,6 +340,26 @@ impl WmlEngine {
         self.active_input_edit = None;
         self.active_select_edit = None;
         Ok(())
+    }
+
+    fn snapshot_set_vars(&self, set_vars: &[CardSetVar]) -> Result<Vec<(String, String)>, String> {
+        set_vars
+            .iter()
+            .map(|set_var| {
+                Ok((
+                    evaluate_vdata(&set_var.name, &self.vars)?,
+                    evaluate_vdata(&set_var.value, &self.vars)?,
+                ))
+            })
+            .collect()
+    }
+
+    fn apply_set_var_assignments(&mut self, assignments: &[(String, String)]) {
+        for (name, value) in assignments {
+            if is_valid_name(name) {
+                self.vars.insert(name.clone(), value.clone());
+            }
+        }
     }
 
     pub(crate) fn resolve_external_href(&self, href: &str) -> String {

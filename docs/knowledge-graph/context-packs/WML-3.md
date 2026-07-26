@@ -13,13 +13,13 @@
 
 ## Graph summary
 
-- Nodes: 240
-- Edges: 604
+- Nodes: 279
+- Edges: 728
 - Selected work items: 8
 - Direct SCR rows: 0
-- Direct normative clauses: 77
-- Work items without direct clause mappings: 3
-- Work items with unmapped declared normative families: 5
+- Direct normative clauses: 97
+- Work items without direct clause mappings: 2
+- Work items with unmapped declared normative families: 4
 
 ## Execution target
 
@@ -66,16 +66,16 @@ Evidence commands:
 
 ### WML-302: Variable store and substitution closure
 
-- Status: `todo`
+- Status: `done`
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `C5-04`
 - Direct SCR rows: 0
-- Selected SCR parents: 0
-- Direct normative clauses: 0
-- Requirements: None
-- Spec references: None
-- Follow-up work items: None
+- Selected SCR parents: 9 (`WML-C-07`, `WML-C-12`, `WML-C-18`, `WML-C-29`, `WML-C-33`, `WML-C-38`, `WML-C-42`, `WML-C-43`, `WML-C-52`)
+- Direct normative clauses: 20
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-005`, `RQ-WAE-016`
+- Spec references: `WAP-191_104-WML sections 9.2, 9.4, 10.3 through 10.3.5, and 12.5.1, 12.5.2, and 12.5.4`
+- Follow-up work items: `WML-301`, `WML-304`, `WML-305`
 
 Outputs:
 
@@ -87,7 +87,12 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302`
+- `wasm-pack test --node engine-wasm/engine`
+- `pnpm test:story WML-302`
+- `node scripts/wap-context-pack.mjs WML-302`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ### WML-303: do/onevent/task shadowing and softkey precedence closure
 
@@ -315,6 +320,129 @@ Evidence commands:
   - Parents: `WML-C-25`, `WML-C-46`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `planned`)
+
+### WML-302
+
+- **WML-CL-GO-ASSIGNMENT-ORDER** — Apply temporary setvar assignments before newcontext processing and history insertion.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-GO-ASSIGNMENT-ORDER` (`state-machine`, `implemented`)
+- **WML-CL-GO-SETVAR-SNAPSHOT** — For go, resolve setvar names and values into temporary assignments before fetching or changing context.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-GO-SETVAR-SNAPSHOT` (`state-machine`, `implemented`)
+- **WML-CL-GO-TARGET-RESOLUTION** — Resolve variables in the go target URI before fetching it.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-GO-TARGET-RESOLUTION` (`transport-boundary`, `implemented`)
+- **WML-CL-HISTORY-RESOLVES-VARIABLES** — Resolve variable references before request data is stored in history.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`
+  - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-RESOLVES-VARIABLES` (`state-machine`, `implemented`)
+- **WML-CL-PREV-ASSIGNMENT-ORDER** — For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
+  - Parents: `WML-C-18`, `WML-C-38`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-PREV-ASSIGNMENT-ORDER` (`state-machine`, `implemented`)
+- **WML-CL-REFRESH-ASSIGNMENTS** — For refresh, resolve and apply every setvar assignment without changing cards.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
+  - Parents: `WML-C-18`, `WML-C-42`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-REFRESH-ASSIGNMENTS` (`state-machine`, `implemented`)
+- **WML-CL-SETVAR-INVALID-NAME-IGNORED** — Ignore a setvar whose evaluated name is not a legal WML variable name.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
+  - Parents: `WML-C-52`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SETVAR-INVALID-NAME-IGNORED` (`runtime`, `implemented`)
+- **WML-CL-SETVAR-STRUCTURE** — Require setvar name and value attributes and no child content.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
+  - Parents: `WML-C-52`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SETVAR-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-SETVAR-TASK-SIDE-EFFECT** — Apply a valid setvar assignment only as a side effect of executing its containing task.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
+  - Parents: `WML-C-52`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SETVAR-TASK-SIDE-EFFECT` (`state-machine`, `implemented`)
+- **WML-CL-VARIABLE-COMMIT-BEFORE-TASK** — Commit input and selection variables before invoking any task.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.4 (10.3.4 Setting Variables)
+  - Parents: `WML-C-12`, `WML-C-33`, `WML-C-43`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `implemented`)
+- **WML-CL-VARIABLE-CONVERSION-MODES** — Implement no-escape, URL-escape, and URL-unescape substitution conversions without mutating the stored value.
+  - Family: `wml`; force: `table`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-CONVERSION-MODES` (`runtime`, `implemented`)
+- **WML-CL-VARIABLE-DEFAULT-CONVERSION** — Default HREF substitutions to URL escaping and other substitution contexts to no conversion.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-DEFAULT-CONVERSION` (`runtime`, `implemented`)
+- **WML-CL-VARIABLE-DOLLAR-ESCAPE** — Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.3 (10.3.3 The Dollar-sign Character)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-DOLLAR-ESCAPE` (`parser`, `implemented`)
+- **WML-CL-VARIABLE-NAME-GRAMMAR** — Enforce the WML variable-name grammar and case sensitivity.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-NAME-GRAMMAR` (`parser`, `implemented`)
+- **WML-CL-VARIABLE-PARSE-PRECEDENCE** — Parse XML and entity syntax before parsing WML variable-substitution syntax.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.2 (10.3.2 Parsing the Variable Substitution Syntax)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-PARSE-PRECEDENCE` (`parser`, `implemented`)
+- **WML-CL-VARIABLE-REFERENCE-VALIDATION** — Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.5 (10.3.5 Validation)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-REFERENCE-VALIDATION` (`error-policy`, `implemented`)
+- **WML-CL-VARIABLE-SET-DEFINITION** — Treat a variable as set only when its current value is known and non-empty.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3 (10.3 Variables)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-SET-DEFINITION` (`runtime`, `implemented`)
+- **WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS** — Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS` (`parser`, `implemented`)
+- **WML-CL-VARIABLE-TASK-SNAPSHOT** — Evaluate task setvar names and values before applying the resulting assignments to the browser context.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.4 (10.3.4 Setting Variables)
+  - Parents: `WML-C-12`, `WML-C-18`, `WML-C-29`, `WML-C-38`, `WML-C-42`, `WML-C-52`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-TASK-SNAPSHOT` (`state-machine`, `implemented`)
+- **WML-CL-VARIABLE-UNDEFINED-EMPTY** — Substitute an empty string for a referenced variable that is unset or undefined.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
+  - Parents: `WML-C-12`
+  - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
+  - Fixture: `WML-FX-VARIABLE-UNDEFINED-EMPTY` (`runtime`, `implemented`)
 
 ### WML-303
 
@@ -738,13 +866,11 @@ Evidence commands:
 
 ## Explicit mapping gaps
 
-- `WML-302` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `WML-306` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `WML-307` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
-- `WML-302` declares `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-304` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-306` declares `wae`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-307` declares `wbxml`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.

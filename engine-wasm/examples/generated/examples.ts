@@ -3910,6 +3910,209 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n        <a href=\"http://fixtures.test/examples/wml205MissingTarget.wml\">Missing target</a>\n        <a href=\"http://fixtures.test/examples/wml202TemplateShadowing.wml\">Restricted target</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml302VariableSubstitution",
+    "label": "WML-302 Variable Store and Substitution",
+    "description": "Exercises task-snapshot setvars, literal-dollar handling, text and HREF substitution, context persistence, and prev assignment order.",
+    "goal": "Verify that WML variables are resolved from stable task snapshots and remain engine-owned across render and navigation.",
+    "workItems": [
+      "WML-302"
+    ],
+    "specItems": [
+      "WML-C-07",
+      "WML-C-12",
+      "WML-C-18",
+      "WML-C-29",
+      "WML-C-38",
+      "WML-C-52",
+      "RQ-RMK-002",
+      "RQ-RMK-003",
+      "RQ-RMK-005"
+    ],
+    "testingAc": [
+      "Press Enter on home; the go task snapshots all setvars, reaches display, and renders the substituted greeting plus literal and undefined-dollar cases.",
+      "Follow the substituted link target to final; the same browser context preserves the greeting.",
+      "Press Back on final; the WML prev task applies Return before restoring display."
+    ],
+    "flows": [
+      {
+        "id": "host-variable-snapshot-substitution-and-prev",
+        "title": "Host sample preserves WML variable snapshot and prev ordering",
+        "target": "host-sample",
+        "workItems": [
+          "WML-302"
+        ],
+        "specItems": [
+          "WML-C-07",
+          "WML-C-12",
+          "WML-C-18",
+          "WML-C-29",
+          "WML-C-38",
+          "WML-C-52",
+          "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "display",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "final",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "display",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK_OVERRIDE",
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-variable-snapshot-substitution-and-prev",
+        "title": "Waves preserves WML variable snapshot and prev ordering",
+        "target": "waves-browser",
+        "workItems": [
+          "WML-302"
+        ],
+        "specItems": [
+          "WML-C-07",
+          "WML-C-12",
+          "WML-C-18",
+          "WML-C-29",
+          "WML-C-38",
+          "WML-C-52",
+          "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-RMK-005"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "Press Enter to snapshot variables."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "display",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Greeting: A B.",
+                  "Dollar: $.",
+                  "Undefined: prepost.",
+                  "Open final"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "final",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Variables persisted: A B."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "display",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK_OVERRIDE",
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Return: back."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <do type=\"accept\">\n      <go href=\"#display\">\n        <setvar name=\"Greeting\" value=\"A B\"/>\n        <setvar name=\"Route\" value=\"final\"/>\n        <setvar name=\"First\" value=\"new\"/>\n        <setvar name=\"Copied\" value=\"$(First)\"/>\n      </go>\n    </do>\n    <p>Press Enter to snapshot variables.</p>\n  </card>\n\n  <card id=\"display\">\n    <p>\n      Greeting: $(Greeting:noesc).\n      Dollar: $$.\n      Undefined: pre$(Missing)post.\n      Snapshot: pre$(Copied)post.\n      Return: $(Return).\n      <a href=\"#$(Route)\">Open $(Route:noesc)</a>\n    </p>\n  </card>\n\n  <card id=\"final\">\n    <do type=\"prev\">\n      <prev><setvar name=\"Return\" value=\"back\"/></prev>\n    </do>\n    <p>Variables persisted: $(Greeting:noesc).</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml303ActionsSoftkeys",
     "label": "WML-303 Actions and Softkey Precedence",
     "description": "Exercises deterministic BACK activation across optional, card, template, and noop-masked do bindings.",

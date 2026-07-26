@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 23, blocked: 1, 'in-progress': 10, todo: 48 })
+  JSON.stringify({ done: 24, blocked: 1, 'in-progress': 10, todo: 47 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -368,7 +368,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '190 fixture-backed clauses assessed'
+      '208 fixture-backed clauses assessed'
     ]
   ],
   [
@@ -391,7 +391,7 @@ const requiredDocumentFragments = new Map([
     'README.md',
     [
       '24/198 selected parent rows are implemented',
-      '190/762 clauses are directly assessed'
+      '208/762 clauses are directly assessed'
     ]
   ]
 ]);

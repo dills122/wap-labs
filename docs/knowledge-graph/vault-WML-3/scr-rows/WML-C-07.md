@@ -17,6 +17,7 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `refines` ← [[clauses/WML-CL-HISTORY-PREV-POP|WML-CL-HISTORY-PREV-POP]]
+- `refines` ← [[clauses/WML-CL-HISTORY-RESOLVES-VARIABLES|WML-CL-HISTORY-RESOLVES-VARIABLES]]
 
 ## Data
 

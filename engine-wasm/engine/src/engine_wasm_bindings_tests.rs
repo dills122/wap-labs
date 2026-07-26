@@ -885,3 +885,52 @@ fn wasm_wml_204_conversion_order_empty_option_and_href_match_native() {
     );
     assert_eq!(engine.get_var_wasm("Raw".to_string()).as_deref(), Some(raw));
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_302_variable_render_and_task_snapshot_match_native() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r##"
+            <wml>
+              <card id="home">
+                <do type="accept">
+                  <go href="next/$(Value)">
+                    <setvar name="Copied" value="$(Value)"/>
+                    <setvar name="Value" value="new"/>
+                  </go>
+                </do>
+                <p>Value $$ $(Value:noesc)</p>
+              </card>
+            </wml>
+            "##,
+            "https://example.test/decks/home.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("deck should load through WASM");
+    assert!(engine.set_var_wasm("Value".to_string(), "old value".to_string()));
+
+    assert!(
+        draw_text(&engine.render_wasm().expect("render should succeed"))
+            .iter()
+            .any(|line| line.contains("Value $ old value"))
+    );
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("accept task should execute through WASM");
+
+    assert_eq!(
+        engine.get_var_wasm("Copied".to_string()).as_deref(),
+        Some("old value")
+    );
+    assert_eq!(
+        engine.get_var_wasm("Value".to_string()).as_deref(),
+        Some("new")
+    );
+    assert_eq!(
+        engine.external_navigation_intent_wasm().as_deref(),
+        Some("https://example.test/decks/next/old%20value")
+    );
+}

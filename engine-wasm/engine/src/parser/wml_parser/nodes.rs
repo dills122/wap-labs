@@ -108,6 +108,7 @@ fn map_card_level_nodes(
         budget.visit_node("card-node traversal")?;
         match node {
             XmlNode::Text(text) => {
+                validate_text_variables(text)?;
                 let text = normalize_text(text);
                 if !text.is_empty() {
                     out.push(Node::Paragraph(vec![InlineNode::Text(text)]));
@@ -187,7 +188,10 @@ fn map_inline_nodes_recursive(
     for node in nodes {
         budget.visit_node("inline-node traversal")?;
         match node {
-            XmlNode::Text(text) => pending_text.push_str(text),
+            XmlNode::Text(text) => {
+                validate_text_variables(text)?;
+                pending_text.push_str(text);
+            }
             XmlNode::Element(element) => {
                 if let Some(outcome) =
                     map_shared_inline_tag(element, budget, depth + 1, control_ids)?
@@ -630,6 +634,10 @@ fn validate_literal_attributes(element: &XmlElement, attrs: &[&str]) -> Result<(
     Ok(())
 }
 
+fn validate_text_variables(text: &str) -> Result<(), String> {
+    validate_vdata(text).map_err(|error| format!("Invalid card text variable reference: {error}"))
+}
+
 pub(super) fn validate_allowed_attributes(
     element: &XmlElement,
     allowed: &[&str],
@@ -766,7 +774,10 @@ fn inline_text_content(
     for node in nodes {
         budget.visit_node("inline text extraction")?;
         match node {
-            XmlNode::Text(text) => out.push_str(text),
+            XmlNode::Text(text) => {
+                validate_text_variables(text)?;
+                out.push_str(text);
+            }
             XmlNode::Element(element) => {
                 out.push_str(&inline_text_content(&element.children, budget, depth + 1)?)
             }

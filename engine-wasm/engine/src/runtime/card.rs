@@ -13,6 +13,12 @@ pub struct CardPostField {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CardSetVar {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CardTaskAction {
     Go {
         href: String,
@@ -22,6 +28,30 @@ pub enum CardTaskAction {
     Prev,
     Refresh,
     Noop,
+    WithSetVars {
+        action: Box<CardTaskAction>,
+        set_vars: Vec<CardSetVar>,
+    },
+}
+
+impl CardTaskAction {
+    pub fn with_set_vars(self, set_vars: Vec<CardSetVar>) -> Self {
+        if set_vars.is_empty() {
+            self
+        } else {
+            Self::WithSetVars {
+                action: Box::new(self),
+                set_vars,
+            }
+        }
+    }
+
+    pub fn base_and_set_vars(&self) -> (&Self, &[CardSetVar]) {
+        match self {
+            Self::WithSetVars { action, set_vars } => (action, set_vars),
+            action => (action, &[]),
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

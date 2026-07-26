@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "example": "wml302VariableSubstitution",
+  "flows": [
+    {
+      "id": "host-variable-snapshot-substitution-and-prev",
+      "title": "Host sample preserves WML variable snapshot and prev ordering",
+      "workItems": ["WML-302"],
+      "specItems": ["WML-C-07", "WML-C-12", "WML-C-18", "WML-C-29", "WML-C-38", "WML-C-52", "RQ-RMK-002", "RQ-RMK-003", "RQ-RMK-005"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "display", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "final", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "display", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK_OVERRIDE", "ACTION_PREV", "ACTION_BACK"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-variable-snapshot-substitution-and-prev",
+      "title": "Waves preserves WML variable snapshot and prev ordering",
+      "target": "waves-browser",
+      "workItems": ["WML-302"],
+      "specItems": ["WML-C-07", "WML-C-12", "WML-C-18", "WML-C-29", "WML-C-38", "WML-C-52", "RQ-RMK-002", "RQ-RMK-003", "RQ-RMK-005"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+        "render": { "textIncludes": ["Press Enter to snapshot variables."] }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "display", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"],
+            "render": {
+              "textIncludes": ["Greeting: A B.", "Dollar: $.", "Undefined: prepost.", "Open final"]
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "final", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"],
+            "render": { "textIncludes": ["Variables persisted: A B."] }
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "display", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK_OVERRIDE", "ACTION_PREV", "ACTION_BACK"],
+            "render": { "textIncludes": ["Return: back."] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -60,11 +60,12 @@ while connection-oriented WSP/WTP remains conditional. The `TRN-707` pack also i
 explicit WAP-259 successor context linked by that work item. `TRN-708` projects the adopted
 CDPD/IPv4 correction, including its directly mapped WDP and RFC 792 ICMP obligations.
 
-The `WML-3` slice adds the bounded runtime projection needed for task, event, BACK, and softkey
-work. Its first focused target, `WML-303`, exposes only directly mapped action/event clauses,
-their selected SCR parents and planned fixtures, the effective WML amendment order, and the
-explicit WAP-236 successor-only context used by `RQ-WAE-017`. Variable, request, and timer
-lifecycle obligations remain assigned to their later WML-3 work items.
+The `WML-3` slice adds the bounded runtime projection needed for variable, task, event, BACK, and
+softkey work. Its focused `WML-302` target exposes the audited variable-store, substitution,
+setvar-ordering, and history-resolution obligations; `WML-303` exposes only directly mapped
+action/event clauses, their selected SCR parents and planned fixtures, the effective WML
+amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. Request
+and timer lifecycle obligations remain assigned to their later WML-3 work items.
 
 ## Commands
 
@@ -92,7 +93,7 @@ For implementation or review of one pilot work item, request a focused pack:
 node scripts/wap-context-pack.mjs WML-203
 ```
 
-The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-303`,
+The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-302`, `WML-303`,
 `TRN-7`, `TRN-702`, `TRN-703`, and `TRN-706` through `TRN-708`. A work-item target keeps sprint dependencies and
 conformance governance in view while limiting work-item details, direct obligations, mapping
 gaps, and source documents to the selected slice. Other targets remain rejected until their

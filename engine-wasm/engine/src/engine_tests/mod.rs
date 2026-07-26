@@ -98,5 +98,6 @@ mod serialized_contracts;
 mod traces_public_api;
 mod wml_202_residual;
 mod wml_203_validation;
+mod wml_302_variables;
 mod wml_303_actions;
 mod wml_load_errors;

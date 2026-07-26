@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b67e817aaed70f0a02dd6f6489b49abad54a4eb698412cc92d72049978af367b"
+        "sha256": "57b57f188dc239d36c2ec65a9c302e7737ef0127856a01db9fa605d36ea0208d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "2cb01517e20fada088a8c646b72bc4fc7eb99affd3941cbbb92c514b5f13782a"
+        "sha256": "c350fbcda21faf193cce877e071e219c78cc1c91d87a1745d173e77610a6a3d6"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"

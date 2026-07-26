@@ -33,11 +33,10 @@ aligned engine priorities are:
    WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE composition clauses.
 2. Preserve completed `WML-202` 30/30, `WML-203` 68/68, `WML-204` 23/23,
    and `WML-205` 3/3 direct-clause evidence without reopening their history.
-3. Preserve completed `WML-303` task/event/BACK precedence evidence (27/27
-   directly mapped clauses), then advance `WML-302` variable/setvar closure,
-   followed by `WML-305` native timer lifecycle.
-4. Preserve WML-205 failure atomicity as WML-302 adds richer pending task
-   assignments; keep host fetching outside the engine.
+3. Preserve completed `WML-302` variable/setvar evidence (20/20 directly
+   mapped clauses) and `WML-303` task/event/BACK precedence evidence (27/27),
+   then advance `WML-305` native timer lifecycle.
+4. Preserve WML-205 failure atomicity and keep host fetching outside the engine.
 5. Preserve the completed `D0-01` baseline and the `W1-06` boundary; keep
    `M1-03` non-preemptive unless it directly unblocks the active WML-3 baton.
 
@@ -390,8 +389,12 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - The WML-303 action/event portion is complete: effective do identity, optional/noop
   filtering, card/template shadowing, intrinsic-event validation, go/prev/refresh/noop
   execution, entry ordering, BACK override precedence, and atomic failure rollback have
-  focused native/WASM/browser/story evidence. Variable substitution and setvar ordering
-  remain the additive WML-302 portion of this ticket.
+  focused native/WASM/browser/story evidence.
+- The WML-302 variable portion is complete: post-XML substitution, conversions/defaults,
+  undefined and literal-dollar behavior, invalid-reference rejection, control commit,
+  task snapshots, and go/prev/refresh setvar order have focused native/WASM/story evidence.
+  WML-301 retains broader history modeling, WML-304 retains request/postfield
+  serialization, and WML-305 retains native timer lifecycle.
 
 ### C5-05 Form controls and commit semantics completion
 
