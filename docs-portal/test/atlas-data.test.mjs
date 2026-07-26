@@ -27,15 +27,51 @@ test('current Atlas inputs pass schema, reference, and ordering validation', () 
 
   assert.equal(atlas.program.schemaVersion, 1);
   assert.equal(atlas.releaseManifest.schemaVersion, 1);
-  assert.equal(atlas.effectiveSpec.schemaVersion, 1);
+  assert.equal(atlas.effectiveSpec.schemaVersion, 2);
   assert.equal(atlas.clauseManifest.schemaVersion, 1);
 });
 
-test('unknown schema versions fail before portal assembly', () => {
+test('unknown compliance-program schema versions fail before portal assembly', () => {
   const data = clone(baseline());
   data.program.schemaVersion = 2;
 
   assertValidationFailure(data, /compliance-program\.json \/schemaVersion/);
+});
+
+test('stale and unknown effective-spec schema versions fail before portal assembly', () => {
+  for (const schemaVersion of [1, 3]) {
+    const data = clone(baseline());
+    data.effectiveSpec.schemaVersion = schemaVersion;
+
+    assertValidationFailure(data, /wap-1\.2\.1-effective-spec\.json \/schemaVersion/);
+  }
+});
+
+test('stale effective-spec generator provenance fails before portal assembly', () => {
+  const data = clone(baseline());
+  data.effectiveSpec.generatedFrom.generator =
+    'spec-processing/scripts/legacy-generate-wap-effective-spec.mjs';
+
+  assertValidationFailure(
+    data,
+    /wap-1\.2\.1-effective-spec\.json \/generatedFrom\/generator: must be equal to constant/
+  );
+});
+
+test('unintended effective-spec fields fail before portal assembly', () => {
+  const rootData = clone(baseline());
+  rootData.effectiveSpec.unexpected = true;
+  assertValidationFailure(
+    rootData,
+    /wap-1\.2\.1-effective-spec\.json \/: must NOT have additional properties/
+  );
+
+  const nestedData = clone(baseline());
+  nestedData.effectiveSpec.strictTransportProfile.selectedBearer.unexpected = true;
+  assertValidationFailure(
+    nestedData,
+    /wap-1\.2\.1-effective-spec\.json \/strictTransportProfile\/selectedBearer: must NOT have additional properties/
+  );
 });
 
 test('missing required portal fields fail before portal assembly', () => {
