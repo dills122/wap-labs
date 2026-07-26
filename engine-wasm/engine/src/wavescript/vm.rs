@@ -81,6 +81,11 @@ impl Vm {
         self.execute_from_pc_with_host(unit, 0, &mut host)
     }
 
+    // The following three are part of a deliberately complete combinatorial
+    // entry-point family alongside `execute`/`execute_from_pc_with_locals_and_host`
+    // (host x entry-point x locals); only the two above are exercised in-crate
+    // today, so these are unused from the compiler's point of view.
+    #[allow(dead_code)]
     pub fn execute_with_host<H: VmHost>(
         &self,
         unit: &DecodedUnit,
@@ -89,6 +94,7 @@ impl Vm {
         self.execute_from_pc_with_host(unit, 0, host)
     }
 
+    #[allow(dead_code)]
     pub fn execute_from_pc(
         &self,
         unit: &DecodedUnit,
@@ -107,6 +113,7 @@ impl Vm {
         self.execute_from_pc_with_locals_and_host(unit, entry_pc, Vec::new(), host)
     }
 
+    #[allow(dead_code)]
     pub fn execute_from_pc_with_locals(
         &self,
         unit: &DecodedUnit,

@@ -24,6 +24,10 @@ pub const WMLBROWSER_GET_CURRENT_CARD: u8 = 0x0B;
 
 #[derive(Clone, Debug, Default)]
 pub struct WmlBrowserContext {
+    // Populated by every call site (`engine_runtime_internal.rs`) for
+    // prospective href-resolution use, but no WMLBrowser opcode in this file
+    // reads it yet — none currently need to resolve a relative URL.
+    #[allow(dead_code)]
     pub base_url: Option<String>,
     pub active_card_id: Option<String>,
 }
