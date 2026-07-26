@@ -50,6 +50,8 @@ jobs:
 
       - name: Install cargo-audit
         uses: taiki-e/install-action@3a26e1142857d4ed43aacfecf39df466de8a685d # cargo-audit
+        with:
+          tool: cargo-audit
 
       - name: Audit engine runtime dependencies
         working-directory: engine-wasm/engine

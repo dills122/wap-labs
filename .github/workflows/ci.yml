@@ -237,6 +237,8 @@ jobs:
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@ed87afb44e1aa5ecc737d1d8cad72f2eeb3d3fec # cargo-llvm-cov
+        with:
+          tool: cargo-llvm-cov
 
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
@@ -286,6 +288,8 @@ jobs:
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@ed87afb44e1aa5ecc737d1d8cad72f2eeb3d3fec # cargo-llvm-cov
+        with:
+          tool: cargo-llvm-cov
 
       - name: Cache Rust build artifacts
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
@@ -521,6 +525,8 @@ jobs:
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@ed87afb44e1aa5ecc737d1d8cad72f2eeb3d3fec # cargo-llvm-cov
+        with:
+          tool: cargo-llvm-cov
 
       - name: Cache Browser Rust build artifacts
         uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
