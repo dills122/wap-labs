@@ -8,7 +8,8 @@ testing-ac:
 - Load the example in Waves local mode and verify the default selected country is rendered.
 - Focus the Country select, press Enter, then ArrowDown to cycle through options.
 - Press Escape once and confirm the select returns to the original committed option.
-- Re-enter select edit, cycle to a new option, press Enter to commit, then submit and confirm local mode captures the external intent.
+- Re-enter select edit, cycle to a new option, and press Enter to commit.
+- Move focus to the Notes field and press Enter to submit; confirm local mode captures the external intent with the committed Country value.
 -->
 <wml>
   <card id="profile" title="Local Select">
@@ -20,9 +21,11 @@ testing-ac:
         <option value="Germany">Germany</option>
       </select>
     </p>
+    <p>Notes: <input name="notes" value=""/></p>
     <do type="accept">
       <go method="post" href="/profile">
         <postfield name="Country" value="$(Country)"/>
+        <postfield name="notes" value="$(notes)"/>
       </go>
     </do>
   </card>

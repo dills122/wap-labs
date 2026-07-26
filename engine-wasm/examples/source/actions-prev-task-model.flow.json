@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "example": "actionsPrevTaskModel",
+  "flows": [
+    {
+      "id": "accept-and-onenterbackward-prev",
+      "title": "Both accept-prev and onenterbackward-prev navigate deterministically",
+      "workItems": ["A5-02"],
+      "specItems": ["WML-R-012", "WML-R-015"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "mid-accept", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_PREV", "ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 1 }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "mid-back", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK", "ACTION_PREV", "ACTION_BACK"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "example": "onenterbackwardReentry",
+  "flows": [
+    {
+      "id": "backward-entry-redirects-past-middle",
+      "title": "Backward navigation triggers onenterbackward before the user resumes input",
+      "workItems": ["A2-03"],
+      "specItems": ["WML-R-008"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "mid", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "rewind", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
