@@ -18,6 +18,13 @@ describe('ui-helpers', () => {
     expect(inferStatusTone('Rendered current card.')).toBe('idle');
   });
 
+  it('infers error tone for deck-parse and script-execution failures', () => {
+    expect(inferStatusTone(WAVES_COPY.status.deckParseFailed('unexpected token'))).toBe('error');
+    expect(
+      inferStatusTone(WAVES_COPY.status.scriptExecutionFailed('integrity', 'bad opcode'))
+    ).toBe('error');
+  });
+
   it('builds stable status classes', () => {
     expect(statusClassName('idle')).toBe('status status-idle');
     expect(statusClassName('loading')).toBe('status status-loading');

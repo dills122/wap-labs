@@ -76,6 +76,8 @@ const locale = {
   statusPrefix: {
     error: 'Error:',
     fetchFailed: 'Fetch failed:',
+    deckParseFailed: 'Deck parse failed:',
+    scriptExecutionFailed: 'Script error (',
     loading: 'Loading ',
     followingExternalIntent: 'Following external intent:',
     checkingGateway: 'Checking WAP gateway',
