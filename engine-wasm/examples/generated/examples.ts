@@ -3101,5 +3101,291 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Back\" and confirm return to home."
     ],
     "wml": "<wml>\n  <card id=\"home\">\n    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>\n    <a href=\"#next\">Continue</a>\n  </card>\n  <card id=\"next\">\n    <p>Wrap test complete.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "yourFirstDeck",
+    "label": "Your First Deck",
+    "description": "Guided first-run tutorial deck teaching the Up/Down/Select/Back softkey controls.",
+    "goal": "Verify a newcomer can move focus, select a link, and use Back to return through engine card history using only the four softkey controls.",
+    "workItems": [
+      "WBP-04"
+    ],
+    "specItems": [
+      "WBP-04"
+    ],
+    "testingAc": [
+      "Press Select on \"Select this link to continue\"; activeCardId should become next.",
+      "Press Down then Up; focus should move to the second link then back to the first.",
+      "Press Down then Select; activeCardId should become detail-two.",
+      "Press Back; activeCardId should return to next.",
+      "Press Select on \"First option\"; activeCardId should become detail-one."
+    ],
+    "flows": [
+      {
+        "id": "keypad-softkey-tour",
+        "title": "Up/Down/Select/Back softkeys move focus, navigate, and pop history",
+        "target": "host-sample",
+        "workItems": [
+          "WBP-04"
+        ],
+        "specItems": [
+          "WBP-04"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "start",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "up"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "detail-two",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "detail-one",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-keypad-softkey-tour",
+        "title": "Waves UI drives the softkey tour through the ordinary engine path",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WBP-04"
+        ],
+        "specItems": [
+          "WBP-04"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "start",
+            "focusedLinkIndex": 0
+          },
+          "session": {
+            "runMode": "local",
+            "navigationStatus": "loaded"
+          },
+          "render": {
+            "textIncludes": [
+              "Welcome to Waves.",
+              "Select this link to continue"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Nice work. You selected a link.",
+                  "First option",
+                  "Second option"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "up"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "detail-two",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Now try Back to return through history."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "detail-one",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "You selected the first option."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<wml>\n  <card id=\"start\">\n    <p>Welcome to Waves.</p>\n    <p>Up and Down move focus between links. Select activates the focused link.</p>\n    <a href=\"#next\">Select this link to continue</a>\n  </card>\n  <card id=\"next\">\n    <p>Nice work. You selected a link.</p>\n    <p>Try Down, then Select, to open the second option.</p>\n    <a href=\"#detail-one\">First option</a>\n    <a href=\"#detail-two\">Second option</a>\n  </card>\n  <card id=\"detail-one\">\n    <p>You selected the first option.</p>\n    <a href=\"#next\">Back to options</a>\n  </card>\n  <card id=\"detail-two\">\n    <p>You moved focus with Down, then selected the second option.</p>\n    <p>Now try Back to return through history.</p>\n    <a href=\"#next\">Back to options</a>\n  </card>\n</wml>\n"
   }
 ];

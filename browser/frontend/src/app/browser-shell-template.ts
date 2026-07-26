@@ -1,6 +1,7 @@
 import type { WvStatusPanel } from '../components/status-panel';
 import { bindHandsetScaleControl } from './handset-scale-control';
 import { bindRouteIndicator } from './route-indicator';
+import { bindWelcomeHelpControls } from './welcome-help-control';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { developerDrawerTemplate } from './shell/developer-drawer-template';
@@ -154,6 +155,21 @@ export const mountBrowserShell = (
   const routeLabelEl = document.querySelector<HTMLSpanElement>('#route-label');
   if (routeLabelEl) {
     bindRouteIndicator(routeLabelEl, runModeSelectEl, fetchUrlInput);
+  }
+
+  const startTourBtn = document.querySelector<HTMLButtonElement>('#btn-start-tour');
+  const tryLocalBtn = document.querySelector<HTMLButtonElement>('#btn-try-local-examples');
+  const connectNetworkBtn = document.querySelector<HTMLButtonElement>('#btn-connect-network');
+  if (startTourBtn && tryLocalBtn && connectNetworkBtn) {
+    bindWelcomeHelpControls({
+      startTourBtn,
+      tryLocalBtn,
+      connectNetworkBtn,
+      runModeSelectEl,
+      localExampleSelectEl,
+      loadLocalBtnEl,
+      fetchUrlInputEl: fetchUrlInput
+    });
   }
 
   return {

@@ -1,0 +1,186 @@
+{
+  "version": 1,
+  "example": "yourFirstDeck",
+  "flows": [
+    {
+      "id": "keypad-softkey-tour",
+      "title": "Up/Down/Select/Back softkeys move focus, navigate, and pop history",
+      "workItems": ["WBP-04"],
+      "specItems": ["WBP-04"],
+      "initial": {
+        "state": {
+          "activeCardId": "start",
+          "focusedLinkIndex": 0
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "up" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "detail-two",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "detail-one",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "waves-keypad-softkey-tour",
+      "title": "Waves UI drives the softkey tour through the ordinary engine path",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WBP-04"],
+      "specItems": ["WBP-04"],
+      "initial": {
+        "state": {
+          "activeCardId": "start",
+          "focusedLinkIndex": 0
+        },
+        "session": {
+          "runMode": "local",
+          "navigationStatus": "loaded"
+        },
+        "render": {
+          "textIncludes": ["Welcome to Waves.", "Select this link to continue"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "render": {
+              "textIncludes": ["Nice work. You selected a link.", "First option", "Second option"]
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "up" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 1
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "detail-two",
+              "focusedLinkIndex": 0
+            },
+            "render": {
+              "textIncludes": ["Now try Back to return through history."]
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": {
+              "activeCardId": "next",
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "detail-one",
+              "focusedLinkIndex": 0
+            },
+            "render": {
+              "textIncludes": ["You selected the first option."]
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

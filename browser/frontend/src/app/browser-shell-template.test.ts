@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mountBrowserShell } from './browser-shell-template';
 import { WAVES_CONFIG } from './waves-config';
 
@@ -101,5 +101,28 @@ describe('mountBrowserShell', () => {
       runModeSelectEl.dispatchEvent(new Event('change'));
     }
     expect(routeLabelEl?.textContent).toBe('Network — localhost');
+  });
+
+  it('wires the Welcome/Help panel into the ordinary mode/local-example controls', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('wap://localhost/start.wml', 'network');
+
+    const welcomePanel = document.querySelector('#welcome-help-panel');
+    expect(welcomePanel).not.toBeNull();
+
+    const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
+    const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
+    const loadClickSpy = vi.fn();
+    loadLocalBtnEl?.addEventListener('click', loadClickSpy);
+
+    document.querySelector<HTMLButtonElement>('#btn-start-tour')?.click();
+
+    expect(runModeSelectEl?.value).toBe('local');
+    expect(loadClickSpy).toHaveBeenCalledTimes(1);
+
+    // Mode is already "local" from the tour click above; confirm "Connect to
+    // a WAP Server" switches it to network.
+    document.querySelector<HTMLButtonElement>('#btn-connect-network')?.click();
+    expect(runModeSelectEl?.value).toBe('network');
   });
 });

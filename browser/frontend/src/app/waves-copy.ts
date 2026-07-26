@@ -49,7 +49,21 @@ const locale = {
     localExampleCoverage: 'Coverage:',
     localExampleDescription: 'Description:',
     localExampleGoal: 'Goal:',
-    localExampleTestingAc: 'Testing AC'
+    localExampleTestingAc: 'Testing AC',
+    welcomeHelpTitle: 'Welcome / Help',
+    welcomeIntro:
+      'Waves emulates a WAP 1.2.1 / WML 1.3 handset — decks and cards, not modern web pages.',
+    welcomeModes:
+      'Local mode browses bundled example decks with no network required. Network mode fetches real WML through a WAP gateway.',
+    takeTheTour: 'Take the Tour',
+    tryLocalExamples: 'Try Local Examples',
+    connectToServer: 'Connect to a WAP Server',
+    controlsReferenceTitle: 'Controls',
+    controlsReferenceBody:
+      'Up and Down move focus between links. Select activates the focused link. Back returns through card history.',
+    troubleshootingTitle: 'Troubleshooting',
+    troubleshootingBody:
+      'No network available? Switch Mode to Local to keep browsing bundled examples without a WAP gateway.'
   },
   sampleDeck: {
     intro: WAVES_CONFIG.appTagline,
