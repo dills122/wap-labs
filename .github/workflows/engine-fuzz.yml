@@ -37,6 +37,11 @@ jobs:
 
       - name: Setup Rust (nightly)
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # nightly
+        with:
+          # cargo-fuzz defaults to this target on Linux (for sanitizer-friendly
+          # static binaries); it is not part of the toolchain's default target
+          # set and must be installed explicitly.
+          targets: x86_64-unknown-linux-musl
 
       - name: Install cargo-fuzz
         uses: taiki-e/install-action@82fc405565b9cf90abfe700ba43b4751ce2fe422 # cargo-fuzz
