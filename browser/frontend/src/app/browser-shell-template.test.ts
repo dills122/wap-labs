@@ -52,4 +52,28 @@ describe('mountBrowserShell', () => {
     const railPanel = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
     expect(railPanel?.open).toBe(true);
   });
+
+  it('wraps the device frame in a handset housing and wires the display-scale control', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    document.documentElement.style.removeProperty('--handset-scale');
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const housing = document.querySelector('.handset-housing');
+    expect(housing?.querySelector('.device-frame')).not.toBeNull();
+
+    const scaleSelect = document.querySelector<HTMLSelectElement>('#handset-scale-select');
+    expect(scaleSelect).not.toBeNull();
+    expect(scaleSelect?.value).toBe('1');
+
+    if (scaleSelect) {
+      scaleSelect.value = '2';
+      scaleSelect.dispatchEvent(new Event('change'));
+    }
+    expect(document.documentElement.style.getPropertyValue('--handset-scale')).toBe('2');
+
+    // Display scale must not touch the independent viewport-cols engine config.
+    expect((document.querySelector('#viewport-cols') as HTMLInputElement).value).toBe(
+      String(WAVES_CONFIG.defaultViewportCols)
+    );
+  });
 });
