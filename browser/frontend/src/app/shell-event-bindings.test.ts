@@ -231,12 +231,14 @@ describe('ShellEventBindings', () => {
     expect(backBtn).not.toBeNull();
 
     bindings.setBackButtonAvailable(false);
-    expect(backBtn?.disabled).toBe(true);
-    expect(backBtn?.getAttribute('aria-disabled')).toBe('true');
+    expect(backBtn?.disabled).toBe(false);
+    expect(backBtn?.getAttribute('aria-disabled')).toBe('false');
+    expect(backBtn?.dataset.historyAvailable).toBe('false');
 
     bindings.setBackButtonAvailable(true);
     expect(backBtn?.disabled).toBe(false);
     expect(backBtn?.getAttribute('aria-disabled')).toBe('false');
+    expect(backBtn?.dataset.historyAvailable).toBe('true');
   });
 
   it('setBackButtonAvailable is a no-op when #btn-back is missing from the DOM', () => {

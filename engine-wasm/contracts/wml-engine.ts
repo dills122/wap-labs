@@ -102,6 +102,9 @@ export interface WmlEngineCommon {
   advanceTimeMs(deltaMs: number): void;
   navigateToCard(id: string): void;
   navigateBack(): boolean;
+  // Reports whether the most recent BACK activation was consumed by either
+  // an effective WML `do type="prev"` binding or intrinsic history fallback.
+  lastBackNavigationHandled(): boolean;
   setViewportCols(cols: number): void;
   activeCardId(): string;
   focusedLinkIndex(): number;

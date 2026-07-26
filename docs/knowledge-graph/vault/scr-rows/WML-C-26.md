@@ -54,7 +54,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Named do bindings retain type/name/label and execute with template precedence; optional presentation and complete user-interface exposure remain incomplete.",
+  "assessmentNote": "Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -63,9 +63,9 @@ tags:
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "enter_triggers_accept_do_action_when_no_links_exist",
-      "command": "cd engine-wasm/engine && cargo test enter_triggers_accept_do_action_when_no_links_exist"
+      "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
+      "test": "active_do_order_retains_metadata_effective_identity_and_optional_policy",
+      "command": "cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy"
     }
   ],
   "ownerLayers": [

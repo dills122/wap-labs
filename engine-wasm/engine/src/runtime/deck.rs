@@ -1,4 +1,6 @@
-use crate::runtime::card::{Card, CardEventBinding, CardEventBindingIdentity, CardTaskAction};
+use crate::runtime::card::{
+    Card, CardEventBinding, CardEventBindingIdentity, CardEventBindingKind, CardTaskAction,
+};
 use std::collections::{HashMap, HashSet};
 use url::Url;
 
@@ -122,7 +124,9 @@ impl Deck {
     /// template bindings, which WML 1.3 treats as occurring at the end of the
     /// card text flow for inline presentation. A card binding shadows a
     /// template binding by identity even when the card task is `noop`; inactive
-    /// `noop` bindings are never returned.
+    /// `noop` bindings are never returned. The Class C reference profile also
+    /// exercises the WML permission to omit explicitly optional `do` actions,
+    /// so those bindings remain parsed but are excluded from this active set.
     pub fn active_event_bindings(&self, card_idx: usize) -> Vec<&CardEventBinding> {
         let Some(card) = self.cards.get(card_idx) else {
             return Vec::new();
@@ -134,17 +138,42 @@ impl Deck {
             .collect();
         card.event_bindings
             .iter()
-            .filter(|binding| !binding.is_noop())
+            .filter(|binding| !binding.is_noop() && !binding.is_optional_do())
             .chain(self.template_bindings.iter().filter(|binding| {
-                !binding.is_noop() && !card_identities.contains(&binding.identity())
+                !binding.is_noop()
+                    && !binding.is_optional_do()
+                    && !card_identities.contains(&binding.identity())
             }))
             .collect()
     }
 
-    pub fn active_do_action(&self, card_idx: usize, do_type: &str) -> Option<&CardTaskAction> {
+    pub fn active_do_bindings(&self, card_idx: usize) -> Vec<&CardEventBinding> {
         self.active_event_bindings(card_idx)
             .into_iter()
+            .filter(|binding| matches!(binding.kind, CardEventBindingKind::Do { .. }))
+            .collect()
+    }
+
+    pub fn active_do_action(&self, card_idx: usize, do_type: &str) -> Option<&CardTaskAction> {
+        self.active_do_bindings(card_idx)
+            .into_iter()
             .find(|binding| binding.matches_do_type(do_type))
+            .map(|binding| &binding.action)
+    }
+
+    #[cfg(test)]
+    pub fn active_do_action_by_name(&self, card_idx: usize, name: &str) -> Option<&CardTaskAction> {
+        self.active_do_bindings(card_idx)
+            .into_iter()
+            .find(|binding| {
+                matches!(
+                    &binding.kind,
+                    CardEventBindingKind::Do {
+                        name: binding_name,
+                        ..
+                    } if binding_name == name
+                )
+            })
             .map(|binding| &binding.action)
     }
 

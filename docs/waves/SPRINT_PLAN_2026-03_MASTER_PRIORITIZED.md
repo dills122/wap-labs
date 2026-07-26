@@ -41,8 +41,8 @@ assessment is 176/762.
 Use this order for new completion work:
 
 1. Preserve the completed `WML-2` baseline while `TRN-7` continues.
-2. Advance the unlocked `WML-3` baton through `WML-303`, `WML-302`, and
-   `WML-305`.
+2. Preserve completed `WML-303`, then advance the unlocked `WML-3` baton
+   through `WML-302` and `WML-305`.
 3. `REN-4` and `WMLS-5` follow `WML-3`.
 4. `WAE-6` follows runtime, rendering, and script closure.
 5. The selected connectionless `WSP-8` path follows completed gate
@@ -229,8 +229,8 @@ Current recommendation after all merged implementation workstreams:
 3. **Engine lane, next:** preserve completed `WML-203` mandatory prologue,
    selected DTD content-model, text/WBXML parity, and document-family evidence
    (68/68 direct clauses), plus completed `WML-205` exhaustive invalid-WML and
-   atomic fetch/access failure evidence (3/3), then advance `WML-303`,
-   `WML-302`, and `WML-305`.
+   atomic fetch/access failure evidence (3/3), plus completed `WML-303`
+   action/event/BACK evidence (27/27), then advance `WML-302` and `WML-305`.
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
@@ -238,9 +238,10 @@ Current recommendation after all merged implementation workstreams:
    selected connectionless profile, and track the zero-direct-clause
    `TRN-703` gap additively in `TRN-710` without reopening TRN-703.
 5. **Browser lane:** preserve the completed `WBP-00` through additive `WBP-05A`
-   accessibility evidence closure without reopening `WBP-05`. Keep `WBP-06` inactive until `WML-2`,
-   `WML-303`, and the overlapping `D0-01` contract sequence satisfy the gate
-   recorded in the browser implementation plan.
+   accessibility evidence closure without reopening `WBP-05`. `WML-2` and
+   `WML-303` now satisfy their prerequisites; keep `WBP-06` inactive because
+   the overlapping `D0-01` contract sequence remains the gate recorded in the
+   browser implementation plan.
 
 `W1-06`, `D0-01`, frame migration, and general maintenance remain
 non-preemptive until these upstream Class C gates materially change.

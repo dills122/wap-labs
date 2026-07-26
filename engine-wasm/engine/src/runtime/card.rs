@@ -30,6 +30,8 @@ pub enum CardEventBindingKind {
         name: String,
         do_type: String,
         label: Option<String>,
+        optional: bool,
+        language: Option<String>,
     },
     Onevent {
         event_type: String,
@@ -54,6 +56,10 @@ impl CardEventBinding {
 
     pub fn is_noop(&self) -> bool {
         self.action == CardTaskAction::Noop
+    }
+
+    pub fn is_optional_do(&self) -> bool {
+        matches!(&self.kind, CardEventBindingKind::Do { optional: true, .. })
     }
 
     pub fn matches_do_type(&self, target_type: &str) -> bool {

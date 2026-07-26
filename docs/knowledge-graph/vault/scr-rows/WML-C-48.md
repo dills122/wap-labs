@@ -55,7 +55,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior are not closed.",
+  "assessmentNote": "Card timer parsing, lifecycle, expiry, refresh, and rollback paths exist; variable-bound timer value and all specification edge behavior remain assigned to WML-305.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/timers.rs",
@@ -82,7 +82,8 @@ tags:
   "workItems": [
     "R0-01",
     "R0-04",
-    "WML-201"
+    "WML-201",
+    "WML-305"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

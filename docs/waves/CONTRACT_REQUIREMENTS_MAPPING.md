@@ -28,6 +28,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `render()` / `RenderList` | `RQ-RMK-001`, `RQ-RMK-009` |
 | `handleKey('up'|'down'|'enter')` | `RQ-RMK-003`, `RQ-WAE-017` |
 | `navigateToCard(id)` | `RQ-RMK-003` |
+| `navigateBack()` / `lastBackNavigationHandled()` | `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017`, `WML-303` |
 | `activeCardId()` | `RQ-RMK-003` |
 | `focusedLinkIndex()` | `RQ-RMK-006` |
 | `deckLanguage()` / `activeCardLanguage()` | `RQ-RMK-001`, `WML-202` |
@@ -72,6 +73,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `HostSessionState.navigationSource` | `RQ-WAE-010`, `RQ-TRN-012` |
 | `HostSessionState.history` / `historyIndex` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
 | `HostHistoryEntry.url` / `activeCardId` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
+| `EngineRuntimeSnapshot.lastBackNavigationHandled` | `RQ-RMK-002`, `RQ-WAE-017`, `WML-303` |
 
 Deterministic transport error trigger mapping:
 

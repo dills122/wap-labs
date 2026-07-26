@@ -27,6 +27,7 @@ impl WmlEngine {
             active_timer: None,
             active_input_edit: None,
             active_select_edit: None,
+            last_back_navigation_handled: false,
             last_wml_load_diagnostics: Vec::new(),
         }
     }
@@ -209,7 +210,8 @@ impl WmlEngine {
         catch_engine_panic(|| self.navigate_to_card_without_newcontext_internal(&id))?
     }
 
-    /// Navigate back in history. Returns `false` when history is empty.
+    /// Activate BACK. An effective WML `do type="prev"` binding takes
+    /// precedence; otherwise the intrinsic history-pop behavior runs.
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     /// This method has no `Result` in its public signature (kept stable per
@@ -218,13 +220,20 @@ impl WmlEngine {
     /// observable outcome as the existing empty-history and
     /// dispatch-depth-exceeded cases.
     pub fn navigate_back(&mut self) -> bool {
-        match catch_engine_panic(|| self.navigate_back_internal()) {
+        let handled = match catch_engine_panic(|| self.activate_back_internal()) {
             Ok(handled) => handled,
             Err(message) => {
                 self.push_trace("ENGINE_PANIC_CONTAINED", message);
                 false
             }
-        }
+        };
+        self.last_back_navigation_handled = handled;
+        handled
+    }
+
+    /// Return whether the most recent BACK activation was consumed.
+    pub fn last_back_navigation_handled(&self) -> bool {
+        self.last_back_navigation_handled
     }
 
     /// Advance simulated runtime clock for card timer lifecycle behavior.

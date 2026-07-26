@@ -45,7 +45,8 @@ tags:
     "R0-04",
     "WML-201",
     "WML-203",
-    "WML-204"
+    "WML-204",
+    "WML-308"
   ],
   "ownerLayers": [
     "engine-wasm"

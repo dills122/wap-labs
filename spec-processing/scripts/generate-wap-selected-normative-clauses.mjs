@@ -291,6 +291,38 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-303',
+    new Set([
+      'WML-CL-DO-ACTIVATION',
+      'WML-CL-DO-EFFECTIVE-NAME',
+      'WML-CL-DO-INACTIVE-HIDDEN',
+      'WML-CL-DO-OPTIONAL-PERMISSION',
+      'WML-CL-DO-STRUCTURE',
+      'WML-CL-DO-TYPE-ACCEPTANCE',
+      'WML-CL-GO-ENTRY-EVENT-PRECEDENCE',
+      'WML-CL-GO-STRUCTURE',
+      'WML-CL-HISTORY-PREV-POP',
+      'WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE',
+      'WML-CL-INTRINSIC-CARD-OVERRIDES-TEMPLATE',
+      'WML-CL-INTRINSIC-CONFLICT-ERROR',
+      'WML-CL-INTRINSIC-EVENT-TYPES',
+      'WML-CL-INTRINSIC-ILLEGAL-PARENT',
+      'WML-CL-INTRINSIC-SCOPE',
+      'WML-CL-NOOP-NO-PROCESSING',
+      'WML-CL-ONEVENT-SINGLE-TASK',
+      'WML-CL-PREV-EMPTY-HISTORY',
+      'WML-CL-PREV-ENTRY-EVENT-PRECEDENCE',
+      'WML-CL-REFRESH-REDISPLAY',
+      'WML-CL-SHADOW-ACTIVE-SET',
+      'WML-CL-SHADOW-CARD-PRECEDENCE',
+      'WML-CL-SHADOW-MATCHING',
+      'WML-CL-SHADOW-NOOP-MASK',
+      'WML-CL-TASK-FAILURE-ATOMICITY',
+      'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
+      'WML-CL-TEMPLATE-STRUCTURE'
+    ])
+  ],
+  [
     'TRN-702',
     new Set([
       'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -356,6 +388,9 @@ const implementedWml204ClauseIds = new Set(
 );
 const implementedWml205ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-205')
+);
+const implementedWml303ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-303')
 );
 const residualWml202ClauseIds = new Set([
   'WML-CL-ACCESS-ABSENT-ALLOWS',
@@ -448,6 +483,12 @@ function wml205FixtureEvidence(clauseId) {
     command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205'
   };
 }
+
+const wml303FixtureEvidence = {
+  path: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
+};
 
 function directWorkItemsForClause(clauseId) {
   const mappedWorkItems = [...directWorkItemClauseIds]
@@ -677,6 +718,15 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml205ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml205FixtureEvidence(candidate.id);
+      } else if (implementedWml303ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (
+        candidate.family === 'wml' &&
+        candidate.fixturePlan.evidence?.command === wml303FixtureEvidence.command
+      ) {
+        candidate.fixturePlan.status = 'planned';
+        delete candidate.fixturePlan.evidence;
       }
       candidate.mapping.clauseImplementationStatus =
         candidate.fixturePlan.status === 'implemented'
@@ -1583,7 +1633,8 @@ function clause(
     implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId) ||
-    implementedWml205ClauseIds.has(clauseId);
+    implementedWml205ClauseIds.has(clauseId) ||
+    implementedWml303ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -1601,6 +1652,8 @@ function clause(
       ? wml204FixtureEvidence(clauseId)
       : implementedWml205ClauseIds.has(clauseId)
       ? wml205FixtureEvidence(clauseId)
+      : implementedWml303ClauseIds.has(clauseId)
+      ? wml303FixtureEvidence
       : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',

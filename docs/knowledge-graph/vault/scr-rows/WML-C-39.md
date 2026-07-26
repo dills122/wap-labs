@@ -49,7 +49,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card/template intrinsic onevent bindings parse, reject same-scope conflicts, and execute with shadowing; intrinsic events outside the card/deck lifecycle remain incomplete.",
+  "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -58,9 +58,9 @@ tags:
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "navigate_runs_onenterforward_action",
-      "command": "cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action"
+      "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
+      "test": "option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict",
+      "command": "cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict"
     }
   ],
   "ownerLayers": [

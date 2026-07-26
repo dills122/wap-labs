@@ -1,0 +1,52 @@
+<!--
+label: WML-303 Actions and Softkey Precedence
+work-items: WML-303
+spec-items: WML-C-08,WML-C-18,WML-C-26,WML-C-35,WML-C-38,WML-C-47,RQ-WAE-017
+description: Exercises deterministic BACK activation across optional, card, template, and noop-masked do bindings.
+goal: Verify WML-owned action identity and precedence before the host falls back to intrinsic history.
+testing-ac:
+- Follow First precedence and press Back; the first active card do type prev reaches card-wins.
+- Follow Noop mask and press Back; the card noop masks the matching template do and intrinsic history returns home.
+- Run both paths through the host sample and Waves browser story targets.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <template>
+    <do name="back" type="prev" label="Template back">
+      <go href="#template-wins"/>
+    </do>
+  </template>
+
+  <card id="home">
+    <p>
+      WML action precedence.
+      <a href="#ordered">First precedence</a>
+      <a href="#masked">Noop mask</a>
+    </p>
+  </card>
+
+  <card id="ordered">
+    <do name="optional-prev" type="prev" label="Optional" optional="true">
+      <go href="#optional-wins"/>
+    </do>
+    <do name="card-first" type="prev" label="Card back">
+      <go href="#card-wins"/>
+    </do>
+    <do name="card-second" type="prev" label="Second card back">
+      <go href="#second-wins"/>
+    </do>
+    <p>Back resolves the first active card binding.</p>
+  </card>
+
+  <card id="masked">
+    <do name="back" type="prev"><noop/></do>
+    <p>Back ignores the masked template action and pops history.</p>
+  </card>
+
+  <card id="card-wins"><p>First card BACK binding won.</p></card>
+  <card id="second-wins"><p>The second card binding must not win.</p></card>
+  <card id="template-wins"><p>The template binding must not win.</p></card>
+  <card id="optional-wins"><p>The optional binding must not be presented.</p></card>
+</wml>

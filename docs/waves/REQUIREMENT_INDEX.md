@@ -110,7 +110,7 @@ remains conditional unless connection-oriented WSP is claimed.
 | `RQ-WAE-014` | transport-rust + browser | `WAE-607` | `missing/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-015` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-016` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
-| `RQ-WAE-017` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
+| `RQ-WAE-017` | engine-wasm + browser | `R0-09`, `WML-303` | `implemented` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WAE-018` | engine-wasm + transport-rust + browser | `T0-04`, `R0-*`, transport `T0-*` as mapped | `partial/planned` | `WAE_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-001` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |
 | `RQ-WMLS-002` | engine-wasm (+ browser integration) | `W0-*`/`W1-*` | `partial/planned` | `WMLSCRIPT_SPEC_TRACEABILITY.md` |

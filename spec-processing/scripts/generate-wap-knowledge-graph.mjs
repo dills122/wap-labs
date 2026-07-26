@@ -30,6 +30,13 @@ export const TARGET_CONFIGS = {
     inputPaths: {
       wmlScr: 'spec-processing/source-manifests/wap-1.2.1-wml-scr.json'
     }
+  },
+  'WML-3': {
+    graphId: 'wap-1.2.1-wml-3-slice',
+    graphOutput: 'spec-processing/source-manifests/wap-1.2.1-wml-3-knowledge-graph.json',
+    contextPackOutput: 'docs/knowledge-graph/context-packs/WML-3.md',
+    vaultOutput: 'docs/knowledge-graph/vault-WML-3',
+    title: 'WAP 1.2.1 WML-3 Knowledge Graph Slice'
   }
 };
 
@@ -927,6 +934,12 @@ export function renderContextPack(graph, focusWorkItemId = null) {
   const workItemSections = workItems.map((workItem) => {
     const directClauses = directClausesForWorkItem(graph, workItem.key);
     const directScrRows = directScrRowsForWorkItem(graph, workItem.key);
+    const directParentIds = sortedUnique(
+      directClauses.flatMap((clause) => clause.properties.parentRows)
+    );
+    const directRequirementIds = sortedUnique(
+      directClauses.flatMap((clause) => clause.properties.requirementIds)
+    );
     const evidenceStates = graph.summary.directScrRowEvidenceStatesByWorkItem[workItem.key];
     return `### ${workItem.key}: ${workItem.title}
 
@@ -943,7 +956,21 @@ export function renderContextPack(graph, focusWorkItemId = null) {
             .join(', ')})`
         : ''
     }
+- Selected SCR parents: ${directParentIds.length}${
+      directParentIds.length
+        ? ` (${directParentIds.map((item) => `\`${item}\``).join(', ')})`
+        : ''
+    }
 - Direct normative clauses: ${directClauses.length}
+- Requirements: ${
+      directRequirementIds.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
+- Spec references: ${
+      workItem.properties.specReferences?.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
+- Follow-up work items: ${
+      workItem.properties.followUpWorkItems?.map((item) => `\`${item}\``).join(', ') || 'None'
+    }
 
 Outputs:
 
@@ -1067,6 +1094,17 @@ ${lines.join('\n')}
     const url = document.properties.authorityUrl ? ` — ${document.properties.authorityUrl}` : '';
     return `- \`${document.key}\`: ${document.title}${url}`;
   });
+  const sourceFamilyLines = [...selectedFamilies]
+    .sort((left, right) => left.localeCompare(right))
+    .map((familyId) => {
+      const family = findNode(graph, nodeId('source-family', familyId));
+      const effectiveSequence = family.properties.effectiveSequence ?? [];
+      return `- \`${familyId}\`: ${
+        effectiveSequence.length
+          ? effectiveSequence.map((documentId) => `\`${documentId}\``).join(' -> ')
+          : 'No effective sequence recorded; treat as an explicit source-order gap.'
+      }`;
+    });
 
   const directClauseCount = workItems.reduce(
     (sum, workItem) => sum + directClausesForWorkItem(graph, workItem.key).length,
@@ -1148,6 +1186,10 @@ ${gapLines.length ? gapLines.join('\n') : '- None'}
 Declared-family gaps:
 
 ${familyGapLines.length ? familyGapLines.join('\n') : '- None'}
+
+## Effective source order
+
+${sourceFamilyLines.join('\n')}
 
 ## Source documents
 

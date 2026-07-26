@@ -530,7 +530,7 @@
     {
       "id": "WML-3",
       "title": "WML state, tasks, events, forms, and navigation",
-      "status": "todo",
+      "status": "in-progress",
       "dependsOn": ["WML-2"],
       "goal": "Close the observable runtime mechanics that define historical WML browser behavior.",
       "workItems": [
@@ -569,7 +569,7 @@
         },
         {
           "id": "WML-303",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "browser", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["R0-04", "R0-09", "C5-04"],
@@ -581,7 +581,30 @@
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "wasm-pack test --node engine-wasm/engine",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "pnpm test:story WML-303",
+            "node scripts/wap-context-pack.mjs WML-303",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "contextDocuments": [
+            "WAP-236-WAESpec-20020207-a"
+          ],
+          "followUpWorkItems": [
+            "WML-302",
+            "WML-304",
+            "WML-305"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 9.2, 9.5, 9.6, 9.7, 9.10, 11.4, and 12.5",
+            "RQ-WAE-017 / WAP-236 section 7.11.2 (successor delta evidence only)"
+          ],
+          "notes": [
+            "WML-303 owns deterministic task/event activation, card/template shadowing, BACK override, and strict softkey-action precedence. WAP-236 is clarification/delta evidence and does not replace the effective WAP 1.2.1 WML source sequence.",
+            "All 27 directly mapped WML-303 clauses have source-derived native fixtures, native/WASM boundary coverage, browser host coverage, and four executable host/Waves stories. The three dynamic do presentation clauses (active visibility, label best effort, and unique widget exposure) remain outside this engine-semantic slice under the existing WBP-06/D0-01 frame gate.",
+            "Variable/setvar evaluation remains WML-302, GET/POST request construction remains WML-304, and native timer lifecycle remains WML-305. WML-205 failure atomicity is a shared regression obligation and remains completed history. The evidence-backed next baton is WML-302, followed by WML-305."
           ]
         },
         {
@@ -655,6 +678,27 @@
           ],
           "notes": [
             "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203 or preempt the WML-303, WML-302, WML-305 baton."
+          ]
+        },
+        {
+          "id": "WML-308",
+          "status": "todo",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml", "wae"],
+          "existingTickets": ["R0-04", "R0-05"],
+          "outputs": [
+            "Additive form-control presentation and capability residual closure"
+          ],
+          "acceptance": [
+            "Input, option, select, and optgroup presentation metadata and optional capability behavior are source-aligned without moving frame policy into the engine."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "pnpm test:story WML-308"
+          ],
+          "notes": [
+            "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-302 then WML-305 baton or authorize the separately gated WBP-06 frame contract."
           ]
         }
       ],

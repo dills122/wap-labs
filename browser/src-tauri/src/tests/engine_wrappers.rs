@@ -206,6 +206,32 @@ fn apply_navigate_back_on_empty_history_keeps_state() {
     let snapshot = apply_navigate_back(&mut engine);
     assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
     assert_eq!(snapshot.focused_link_index, 0);
+    assert!(!snapshot.last_back_navigation_handled);
+}
+
+#[test]
+fn wml_303_back_override_handled_state_crosses_the_native_host_contract() {
+    let mut engine = WmlEngine::new();
+    apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(
+                r#"<wml><card id="home">
+                  <do name="refresh-back" type="prev"><refresh/></do>
+                  <p>Home</p>
+                </card></wml>"#,
+            ),
+            base_url: "http://local.test/wml-303.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+        },
+    )
+    .expect("deck should load");
+
+    let snapshot = apply_navigate_back(&mut engine);
+    assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
+    assert!(snapshot.last_back_navigation_handled);
 }
 
 #[test]

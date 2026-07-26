@@ -49,7 +49,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, and onpick HREF conversion/dispatch for single selection plus multiple selection/deselection are represented. The selected WML-204 tranche is complete; option title/xml:lang presentation and onevent task forms remain outside it and keep this parent row partial.",
+  "assessmentNote": "Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -110,7 +110,8 @@ tags:
     "R0-01",
     "R0-04",
     "WML-201",
-    "WML-204"
+    "WML-204",
+    "WML-308"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

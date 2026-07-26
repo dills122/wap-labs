@@ -4,7 +4,7 @@ key: "WML-FX-INTRINSIC-ILLEGAL-PARENT"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "error-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Ignore onevent bindings whose event type is not legal for the immediately enclosing element.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

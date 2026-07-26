@@ -33,8 +33,9 @@ aligned engine priorities are:
    WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE composition clauses.
 2. Preserve completed `WML-202` 30/30, `WML-203` 68/68, `WML-204` 23/23,
    and `WML-205` 3/3 direct-clause evidence without reopening their history.
-3. Advance `WML-303` task/event/softkey precedence, then `WML-302`
-   variable/setvar closure, then `WML-305` native timer lifecycle.
+3. Preserve completed `WML-303` task/event/BACK precedence evidence (27/27
+   directly mapped clauses), then advance `WML-302` variable/setvar closure,
+   followed by `WML-305` native timer lifecycle.
 4. Preserve WML-205 failure atomicity as WML-302 adds richer pending task
    assignments; keep host fetching outside the engine.
 5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive unless they directly
@@ -368,7 +369,7 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 ### C5-04 Task/event pipeline and variable-substitution conformance
 
 1. `Requirement IDs`: `WML-R-011`, `WML-R-012`, `WML-R-013`, `WML-R-015`, `WML-R-016`, `WML-R-017`
-2. `Status`: `todo`
+2. `Status`: `in-progress`
 3. `Depends On`: `A5-02`, `A5-03`
 4. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -386,6 +387,11 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - Task/event/variable behavior is deterministic and matches spec-driven ordering expectations for covered flows.
 8. `Notes`:
 - Spec anchor refs: WAP-191 section `9.5`, `9.10`, `10.3`, `12.5`.
+- The WML-303 action/event portion is complete: effective do identity, optional/noop
+  filtering, card/template shadowing, intrinsic-event validation, go/prev/refresh/noop
+  execution, entry ordering, BACK override precedence, and atomic failure rollback have
+  focused native/WASM/browser/story evidence. Variable substitution and setvar ordering
+  remain the additive WML-302 portion of this ticket.
 
 ### C5-05 Form controls and commit semantics completion
 

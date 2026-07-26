@@ -31,6 +31,7 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         content_type: engine.content_type(),
         deck_language: engine.deck_language(),
         active_card_language: engine.active_card_language(),
+        last_back_navigation_handled: engine.last_back_navigation_handled(),
         external_navigation_intent: engine.external_navigation_intent(),
         external_navigation_request_policy: engine
             .external_navigation_request_policy()

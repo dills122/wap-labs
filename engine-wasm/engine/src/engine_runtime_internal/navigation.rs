@@ -29,6 +29,28 @@ impl WmlEngine {
             .cloned())
     }
 
+    /// Resolve BACK through the WML1 action set before using intrinsic history.
+    /// The active action list is already in card-before-template, document
+    /// order, so the first effective `prev` binding is deterministic.
+    pub(crate) fn activate_back_internal(&mut self) -> bool {
+        let action = match self.active_do_action_internal("prev") {
+            Ok(action) => action,
+            Err(error) => {
+                self.push_trace("ACTION_BACK_ERROR", error);
+                return false;
+            }
+        };
+        let Some(action) = action else {
+            return self.navigate_back_internal();
+        };
+
+        self.push_trace("ACTION_BACK_OVERRIDE", String::new());
+        if let Err(error) = self.execute_card_task_action(&action) {
+            self.push_trace("ACTION_BACK_OVERRIDE_ERROR", error);
+        }
+        true
+    }
+
     /// Navigate to `id`, guarded against unbounded recursion.
     ///
     /// `onenterforward`/`onenterbackward` actions and `WMLBrowser.go()` from
@@ -99,7 +121,10 @@ impl WmlEngine {
         nav.engine.active_card_idx = next_idx;
         nav.engine.focused_link_idx = 0;
         nav.engine.initialize_controls_on_active_card()?;
-        nav.engine.run_onenterforward_for_active_card()?;
+        if nav.engine.run_onenterforward_for_active_card()? {
+            nav.commit();
+            return Ok(());
+        }
         nav.engine.start_or_resume_timer_for_active_card(false)?;
         nav.commit();
         Ok(())
@@ -153,9 +178,16 @@ impl WmlEngine {
             nav.engine.push_trace("INPUT_INIT_ERROR", err);
             return true;
         }
-        if let Err(err) = nav.engine.run_onenterbackward_for_active_card() {
-            nav.engine.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
-            return true;
+        match nav.engine.run_onenterbackward_for_active_card() {
+            Ok(true) => {
+                nav.commit();
+                return true;
+            }
+            Ok(false) => {}
+            Err(err) => {
+                nav.engine.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
+                return true;
+            }
         }
         if let Err(err) = nav.engine.start_or_resume_timer_for_active_card(false) {
             nav.engine.push_trace("ACTION_ONTIMER_ERROR", err);
@@ -165,26 +197,37 @@ impl WmlEngine {
         true
     }
 
-    pub(crate) fn run_onenterforward_for_active_card(&mut self) -> Result<(), String> {
+    pub(crate) fn run_onenterforward_for_active_card(&mut self) -> Result<bool, String> {
         let action = self.active_onevent_action_internal("onenterforward")?;
         if let Some(action) = action {
             self.execute_card_task_action(&action)?;
+            return Ok(true);
         }
-        Ok(())
+        Ok(false)
     }
 
-    pub(crate) fn run_onenterbackward_for_active_card(&mut self) -> Result<(), String> {
+    pub(crate) fn run_onenterbackward_for_active_card(&mut self) -> Result<bool, String> {
         let action = self.active_onevent_action_internal("onenterbackward")?;
         if let Some(action) = action {
             self.execute_card_task_action(&action)?;
+            return Ok(true);
         }
-        Ok(())
+        Ok(false)
     }
 
     pub(crate) fn execute_card_task_action(
         &mut self,
         action: &CardTaskAction,
     ) -> Result<(), String> {
+        let task = TaskRollbackGuard::new(self);
+        let result = task.engine.execute_card_task_action_bounded(action);
+        if result.is_ok() {
+            task.commit();
+        }
+        result
+    }
+
+    fn execute_card_task_action_bounded(&mut self, action: &CardTaskAction) -> Result<(), String> {
         if self.active_input_edit.is_some() {
             self.commit_focused_input_edit_internal()?;
         }
@@ -419,6 +462,22 @@ impl NavStateRollback {
             last_script_timer_requests: engine.last_script_timer_requests.clone(),
         }
     }
+
+    fn restore(self, engine: &mut WmlEngine) {
+        engine.active_card_idx = self.active_card_idx;
+        engine.focused_link_idx = self.focused_link_idx;
+        engine.nav_stack = self.nav_stack;
+        engine.active_timer = self.active_timer;
+        engine.vars = self.vars;
+        engine.external_nav_intent = self.external_nav_intent;
+        engine.external_nav_request_policy = self.external_nav_request_policy;
+        engine.active_input_edit = self.active_input_edit;
+        engine.active_select_edit = self.active_select_edit;
+        engine.pending_script_effects = self.pending_script_effects;
+        engine.last_script_outcome = self.last_script_outcome;
+        engine.last_script_dialog_requests = self.last_script_dialog_requests;
+        engine.last_script_timer_requests = self.last_script_timer_requests;
+    }
 }
 
 impl<'a> NavRollbackGuard<'a> {
@@ -449,19 +508,38 @@ impl Drop for NavRollbackGuard<'_> {
         let Some(rollback) = self.rollback.take() else {
             return;
         };
-        self.engine.active_card_idx = rollback.active_card_idx;
-        self.engine.focused_link_idx = rollback.focused_link_idx;
-        self.engine.nav_stack = rollback.nav_stack;
-        self.engine.active_timer = rollback.active_timer;
-        self.engine.vars = rollback.vars;
-        self.engine.external_nav_intent = rollback.external_nav_intent;
-        self.engine.external_nav_request_policy = rollback.external_nav_request_policy;
-        self.engine.active_input_edit = rollback.active_input_edit;
-        self.engine.active_select_edit = rollback.active_select_edit;
-        self.engine.pending_script_effects = rollback.pending_script_effects;
-        self.engine.last_script_outcome = rollback.last_script_outcome;
-        self.engine.last_script_dialog_requests = rollback.last_script_dialog_requests;
-        self.engine.last_script_timer_requests = rollback.last_script_timer_requests;
+        rollback.restore(self.engine);
+    }
+}
+
+/// Roll back all state mutated while a task is being evaluated. Navigation has
+/// its own nested guard, but task preparation also commits control drafts and
+/// synchronizes variables; those mutations must be atomic with task success.
+struct TaskRollbackGuard<'a> {
+    engine: &'a mut WmlEngine,
+    rollback: Option<NavStateRollback>,
+}
+
+impl<'a> TaskRollbackGuard<'a> {
+    fn new(engine: &'a mut WmlEngine) -> Self {
+        let rollback = NavStateRollback::capture(engine);
+        Self {
+            engine,
+            rollback: Some(rollback),
+        }
+    }
+
+    fn commit(mut self) {
+        self.rollback = None;
+    }
+}
+
+impl Drop for TaskRollbackGuard<'_> {
+    fn drop(&mut self) {
+        let Some(rollback) = self.rollback.take() else {
+            return;
+        };
+        rollback.restore(self.engine);
     }
 }
 

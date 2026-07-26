@@ -45,6 +45,7 @@ const allowedRelations = new Set([
 const root = process.cwd();
 const artifacts = buildGeneratedArtifacts(root, 'WML-2');
 const trnArtifacts = buildGeneratedArtifacts(root, 'TRN-7');
+const wml3Artifacts = buildGeneratedArtifacts(root, 'WML-3');
 const { graph } = artifacts;
 const failures = [];
 const nodeIds = new Set(graph.nodes.map((node) => node.id));
@@ -258,6 +259,28 @@ try {
 
 failures.push(...checkGeneratedArtifacts(root, artifacts));
 failures.push(...checkGeneratedArtifacts(root, trnArtifacts));
+failures.push(...checkGeneratedArtifacts(root, wml3Artifacts));
+
+const wml3Graph = wml3Artifacts.graph;
+const wml303Pack = renderContextPack(wml3Graph, 'WML-303');
+if (
+  wml3Graph.target.sprint !== 'WML-3' ||
+  wml3Graph.target.profile !== 'CCR-CLASSC-C-001' ||
+  !wml303Pack.startsWith('# WML-303 AI Context Pack') ||
+  !wml303Pack.includes('### WML-303:') ||
+  wml303Pack.includes('### WML-302:') ||
+  !wml303Pack.includes('- Selected work items: 1') ||
+  !wml303Pack.includes('- Selected SCR parents: 12') ||
+  !wml303Pack.includes('- Direct normative clauses: 27') ||
+  !wml303Pack.includes('`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`') ||
+  !wml303Pack.includes('`WAP-236-WAESpec-20020207-a`') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-303') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-303']
+) {
+  failures.push(
+    'WML-303 context rendering must expose its 27 bounded clauses, 12 selected parents, effective WML source order, and successor-only BACK context without a declared-family gap'
+  );
+}
 
 const trnGraph = trnArtifacts.graph;
 const trnNodeIds = new Set(trnGraph.nodes.map((node) => node.id));

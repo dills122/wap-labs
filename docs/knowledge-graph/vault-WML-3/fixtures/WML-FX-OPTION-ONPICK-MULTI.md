@@ -1,0 +1,30 @@
+---
+id: "fixture:WML-FX-OPTION-ONPICK-MULTI"
+key: "WML-FX-OPTION-ONPICK-MULTI"
+type: "fixture"
+generated: true
+slice: "WML-3"
+status: "implemented"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# For multiple selection, dispatch onpick whenever the option is selected or deselected.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WML-CL-OPTION-ONPICK-MULTI|WML-CL-OPTION-ONPICK-MULTI]]
+
+## Data
+
+```json
+{
+  "kind": "runtime",
+  "status": "implemented",
+  "assertion": "For multiple selection, dispatch onpick whenever the option is selected or deselected.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```
