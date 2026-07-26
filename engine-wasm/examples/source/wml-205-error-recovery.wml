@@ -9,6 +9,7 @@ testing-ac:
 - Confirm supported metadata coexists with the recovered vendor extension.
 - Activate Recovery proof and confirm deterministic navigation reaches the proof card.
 -->
+<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 PLUS//EN"
   "http://vendor.test/wml13-plus.dtd">
 <wml>

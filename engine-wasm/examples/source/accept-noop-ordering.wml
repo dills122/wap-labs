@@ -10,12 +10,17 @@ testing-ac:
 - Enter "Accept refresh" then Enter; activeCardId should stay accept-refresh.
 - Enter "Accept noop" then Enter; activeCardId should stay accept-noop, history depth should not change, and no task action should activate.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <a href="#accept-go">Accept go</a>
-    <a href="#accept-prev">Accept prev</a>
-    <a href="#accept-refresh">Accept refresh</a>
-    <a href="#accept-noop">Accept noop</a>
+    <p>
+      <a href="#accept-go">Accept go</a>
+      <a href="#accept-prev">Accept prev</a>
+      <a href="#accept-refresh">Accept refresh</a>
+      <a href="#accept-noop">Accept noop</a>
+    </p>
   </card>
 
   <card id="accept-go">

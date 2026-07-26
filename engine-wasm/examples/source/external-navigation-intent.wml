@@ -10,18 +10,22 @@ testing-ac:
 - Press Down then Enter on "Absolute external link" and confirm intent is exactly https://example.org/absolute.
 - Press Down then Enter on "Internal fragment link" and confirm activeCardId becomes details.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
     <p>External intent demo</p>
     <p>Enter on first link emits host intent only.</p>
-    <a href="next.wml?from=home">Relative external link</a>
-    <br/>
-    <a href="https://example.org/absolute">Absolute external link</a>
-    <br/>
-    <a href="#details">Internal fragment link</a>
+    <p>
+      <a href="next.wml?from=home">Relative external link</a>
+      <br/>
+      <a href="https://example.org/absolute">Absolute external link</a>
+      <br/>
+      <a href="#details">Internal fragment link</a>
+    </p>
   </card>
   <card id="details">
-    <p>Fragment navigation still changes active card.</p>
-    <a href="#home">Back home</a>
+    <p>Fragment navigation still changes active card. <a href="#home">Back home</a></p>
   </card>
 </wml>

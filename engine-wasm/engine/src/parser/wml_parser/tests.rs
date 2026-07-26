@@ -1,4 +1,4 @@
-use super::{parse_wml, parse_xml_root, MAX_PARSE_TREE_DEPTH};
+use super::{parse_wml, parse_wml_report_for_content_type, parse_xml_root, MAX_PARSE_TREE_DEPTH};
 use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction};
 use crate::runtime::deck::DeckMetaProperty;
 use crate::runtime::node::{InlineNode, Node};
@@ -86,8 +86,12 @@ fn wml_203_canonical_wml13_doctype_and_decoded_wbxml_reach_equal_decks() {
     // fixture. The engine receives this text; it never parses the WBXML bytes.
     let decoded_wbxml = r#"<wml><card id="main" newcontext="false" ordered="true"><p align="left">Hello</p></card></wml>"#;
 
-    let text_deck = parse_wml(text_wml).expect("canonical WML 1.3 text should parse");
-    let decoded_deck = parse_wml(decoded_wbxml).expect("transport-decoded WBXML text should parse");
+    let text_deck = parse_wml_report_for_content_type(text_wml, "text/vnd.wap.wml")
+        .expect("canonical WML 1.3 text should parse")
+        .deck;
+    let decoded_deck = parse_wml_report_for_content_type(decoded_wbxml, "application/vnd.wap.wmlc")
+        .expect("transport-decoded WBXML text should use its binary header metadata")
+        .deck;
     assert_eq!(text_deck, decoded_deck);
 }
 

@@ -12,8 +12,12 @@ testing-ac:
 - Confirm escaped literal dollars and undefined variables are evaluated deterministically in the proof controls.
 - Focus Country, move to France, press Enter, and confirm the committed option is rendered.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="controls" title="WML Controls">
+    <do type="accept"><noop/></do>
     <p>
       <fieldset title="Account controls">
         User:
@@ -59,7 +63,6 @@ testing-ac:
         </select>
       </fieldset>
     </p>
-    <do type="accept"><noop/></do>
   </card>
   <card id="proof" title="PIN Variable Proof">
     <p>Committed PIN:</p>

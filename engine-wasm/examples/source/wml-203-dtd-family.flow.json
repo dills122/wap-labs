@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "example": "wml203DtdFamily",
+  "flows": [
+    {
+      "id": "strict-selected-dtd-family-render",
+      "title": "Strict WML 1.3 prologue and selected DTD family render deterministically",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-203"],
+      "specItems": [
+        "WML-CL-PROLOGUE-REQUIRED",
+        "WML-CL-WML-ROOT-STRUCTURE",
+        "WML-CL-CARD-STRUCTURE",
+        "WML-CL-CARD-CONTENT-ORDER",
+        "WML-CL-DO-STRUCTURE",
+        "WML-CL-ONEVENT-SINGLE-TASK",
+        "WML-CL-GO-STRUCTURE",
+        "WML-CL-SELECT-STRUCTURE",
+        "WML-CL-TABLE-STRUCTURE"
+      ],
+      "initial": {
+        "state": {
+          "activeCardId": "main",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "render": { "textIncludes": ["Family", "Cell", "One", "Pre"] }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": {
+              "activeCardId": "main",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": null
+            },
+            "render": { "textIncludes": ["Family", "Cell", "One", "Pre"] },
+            "traceKinds": ["KEY"]
+          }
+        }
+      ]
+    }
+  ]
+}

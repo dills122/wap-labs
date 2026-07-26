@@ -9,13 +9,14 @@ testing-ac:
 - Press Back; activeCardId should return to home.
 - Press Back again and confirm status reports history empty with activeCardId still home.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>History baseline demo.</p>
-    <a href="#next">Go to next</a>
+    <p>History baseline demo. <a href="#next">Go to next</a></p>
   </card>
   <card id="next">
-    <p>Second card reached by fragment navigation.</p>
-    <a href="#home">Return home via link</a>
+    <p>Second card reached by fragment navigation. <a href="#home">Return home via link</a></p>
   </card>
 </wml>

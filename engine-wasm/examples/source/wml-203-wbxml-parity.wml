@@ -7,6 +7,7 @@ goal: Verify the text-only engine ingests and renders the same canonical deck mo
 testing-ac:
 - Load the example and confirm the main card renders Hello without a parser error.
 -->
+<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
   "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>

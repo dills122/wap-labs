@@ -9,6 +9,9 @@ testing-ac:
 - Confirm onenterforward on trigger executes immediately and activeCardId becomes final.
 - Confirm externalNavigationIntent remains (none) through the flow.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
     <do type="accept">
@@ -23,7 +26,6 @@ testing-ac:
     <p>This card should auto-forward to final.</p>
   </card>
   <card id="final">
-    <p>Final card reached via onenterforward.</p>
-    <a href="#home">Back home</a>
+    <p>Final card reached via onenterforward. <a href="#home">Back home</a></p>
   </card>
 </wml>

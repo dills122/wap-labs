@@ -231,12 +231,12 @@ if (
       'gap-work-item-mapped': 17,
       'optional-not-assessed': 29
     }) ||
-  graph.summary.directClauseCountsByWorkItem['WML-201'] !== 177 ||
+  graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
   JSON.stringify(graph.summary.directClauseFamiliesByWorkItem['WML-201']) !==
     JSON.stringify(['wae', 'wml']) ||
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
-  !wml201Pack.includes('- Direct normative clauses: 177') ||
+  !wml201Pack.includes('- Direct normative clauses: 178') ||
   !wml201Pack.includes('30 `direct-test-linked`') ||
   !wml201Pack.includes('17 `gap-work-item-mapped`') ||
   !wml201Pack.includes('29 `optional-not-assessed`') ||
@@ -244,7 +244,7 @@ if (
   !wml201Pack.includes('**WML-C-76**')
 ) {
   failures.push(
-    'WML-201 must expose the exact 76-row SCR matrix, all 177 direct WAE/WML clauses, and conservative direct-evidence states without a declared-family gap'
+    'WML-201 must expose the exact 76-row SCR matrix, all 178 direct WAE/WML clauses, and conservative direct-evidence states without a declared-family gap'
   );
 }
 try {

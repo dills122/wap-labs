@@ -164,7 +164,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Rollback demo.</p>\n    <a href=\"#accept-broken\">To broken accept</a>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Accept action should fail and keep this card active.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Rollback demo. <a href=\"#accept-broken\">To broken accept</a></p>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Accept action should fail and keep this card active.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "acceptNoopOrdering",
@@ -292,7 +292,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-noop\">Accept noop</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should leave the inactive accept noop binding masked.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      <a href=\"#accept-go\">Accept go</a>\n      <a href=\"#accept-prev\">Accept prev</a>\n      <a href=\"#accept-refresh\">Accept refresh</a>\n      <a href=\"#accept-noop\">Accept noop</a>\n    </p>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-noop\">\n    <do type=\"accept\"><noop/></do>\n    <p>Enter should leave the inactive accept noop binding masked.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsDoOnevent",
@@ -350,7 +350,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <do type=\"accept\">\n      <go href=\"#trigger\"/>\n    </do>\n    <p>Press Enter to run the accept action.</p>\n  </card>\n  <card id=\"trigger\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#final\"/>\n    </onevent>\n    <p>This card should auto-forward to final.</p>\n  </card>\n  <card id=\"final\">\n    <p>Final card reached via onenterforward.</p>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <do type=\"accept\">\n      <go href=\"#trigger\"/>\n    </do>\n    <p>Press Enter to run the accept action.</p>\n  </card>\n  <card id=\"trigger\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#final\"/>\n    </onevent>\n    <p>This card should auto-forward to final.</p>\n  </card>\n  <card id=\"final\">\n    <p>Final card reached via onenterforward. <a href=\"#home\">Back home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsPrevTaskModel",
@@ -484,7 +484,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Prev task demo.</p>\n    <a href=\"#mid-accept\">To middle (accept prev)</a>\n    <a href=\"#mid-back\">To middle (onenterbackward prev)</a>\n  </card>\n\n  <card id=\"mid-accept\">\n    <do type=\"accept\"><prev/></do>\n    <p>No links on this card; Enter should invoke accept prev.</p>\n  </card>\n\n  <card id=\"mid-back\">\n    <onevent type=\"onenterbackward\"><prev/></onevent>\n    <a href=\"#next\">To next</a>\n  </card>\n\n  <card id=\"next\">\n    <p>Use host Back to trigger onenterbackward prev in mid-back.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Prev task demo.\n      <a href=\"#mid-accept\">To middle (accept prev)</a>\n      <a href=\"#mid-back\">To middle (onenterbackward prev)</a>\n    </p>\n  </card>\n\n  <card id=\"mid-accept\">\n    <do type=\"accept\"><prev/></do>\n    <p>No links on this card; Enter should invoke accept prev.</p>\n  </card>\n\n  <card id=\"mid-back\">\n    <onevent type=\"onenterbackward\"><prev/></onevent>\n    <p><a href=\"#next\">To next</a></p>\n  </card>\n\n  <card id=\"next\">\n    <p>Use host Back to trigger onenterbackward prev in mid-back.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsRefreshRollback",
@@ -598,7 +598,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh + rollback demo.</p>\n    <a href=\"#refresh-card\">To refresh card</a>\n    <a href=\"#broken-forward\">Broken forward entry</a>\n  </card>\n\n  <card id=\"refresh-card\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter invokes refresh and stays on this card.</p>\n  </card>\n\n  <card id=\"broken-forward\">\n    <onevent type=\"onenterforward\"><go href=\"#missing\"/></onevent>\n    <p>This card should never become active because entry action fails.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Refresh + rollback demo.\n      <a href=\"#refresh-card\">To refresh card</a>\n      <a href=\"#broken-forward\">Broken forward entry</a>\n    </p>\n  </card>\n\n  <card id=\"refresh-card\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter invokes refresh and stays on this card.</p>\n  </card>\n\n  <card id=\"broken-forward\">\n    <onevent type=\"onenterforward\"><go href=\"#missing\"/></onevent>\n    <p>This card should never become active because entry action fails.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsTaskOrderRollback",
@@ -876,7 +876,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#accept-go\">Accept go</a>\n    <a href=\"#accept-prev\">Accept prev</a>\n    <a href=\"#accept-refresh\">Accept refresh</a>\n    <a href=\"#accept-broken\">Accept broken</a>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Enter should fail and keep this card active.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      <a href=\"#accept-go\">Accept go</a>\n      <a href=\"#accept-prev\">Accept prev</a>\n      <a href=\"#accept-refresh\">Accept refresh</a>\n      <a href=\"#accept-broken\">Accept broken</a>\n    </p>\n  </card>\n\n  <card id=\"accept-go\">\n    <do type=\"accept\"><go href=\"#target\"/></do>\n    <p>Enter should run accept go.</p>\n  </card>\n\n  <card id=\"accept-prev\">\n    <do type=\"accept\"><prev/></do>\n    <p>Enter should run accept prev.</p>\n  </card>\n\n  <card id=\"accept-refresh\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter should run accept refresh.</p>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Enter should fail and keep this card active.</p>\n  </card>\n\n  <card id=\"target\">\n    <p>Reached via accept go.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "basic",
@@ -1077,7 +1077,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>WaveNav Host Harness</p>\n    <p>Use ArrowUp / ArrowDown / Enter.</p>\n    <a href=\"#next\">Go to next card</a>\n    <br/>\n    <a href=\"http://example.com/other.wml\">External link (emits host intent)</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card loaded.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>WaveNav Host Harness</p>\n    <p>\n      Use ArrowUp / ArrowDown / Enter.<br/>\n      <a href=\"#next\">Go to next card</a><br/>\n      <a href=\"http://example.com/other.wml\">External link (emits host intent)</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>Second card loaded. <a href=\"#home\">Return home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "cardEntryForwardBackward",
@@ -1147,7 +1147,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Start card.</p>\n    <a href=\"#transit\">Enter transit</a>\n  </card>\n  <card id=\"transit\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#next\"/>\n    </onevent>\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Transit card should not remain active after either entry event.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached from onenterforward.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached from onenterbackward.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Start card. <a href=\"#transit\">Enter transit</a></p>\n  </card>\n  <card id=\"transit\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#next\"/>\n    </onevent>\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Transit card should not remain active after either entry event.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached from onenterforward.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached from onenterbackward. <a href=\"#home\">Return home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "externalNavigationIntent",
@@ -1263,7 +1263,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>External intent demo</p>\n    <p>Enter on first link emits host intent only.</p>\n    <a href=\"next.wml?from=home\">Relative external link</a>\n    <br/>\n    <a href=\"https://example.org/absolute\">Absolute external link</a>\n    <br/>\n    <a href=\"#details\">Internal fragment link</a>\n  </card>\n  <card id=\"details\">\n    <p>Fragment navigation still changes active card.</p>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>External intent demo</p>\n    <p>Enter on first link emits host intent only.</p>\n    <p>\n      <a href=\"next.wml?from=home\">Relative external link</a>\n      <br/>\n      <a href=\"https://example.org/absolute\">Absolute external link</a>\n      <br/>\n      <a href=\"#details\">Internal fragment link</a>\n    </p>\n  </card>\n  <card id=\"details\">\n    <p>Fragment navigation still changes active card. <a href=\"#home\">Back home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "fieldOpenwave2011Navigation",
@@ -1541,7 +1541,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <p>Notes: <input name=\"notes\" value=\"\"/></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"notes\" value=\"$(notes)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"notes\" value=\"$(notes)\"/>\n      </go>\n    </do>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <p>Notes: <input name=\"notes\" value=\"\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "formsSelectNavigationLocal",
@@ -1725,7 +1725,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "formsTextSubmitLocal",
@@ -1876,7 +1876,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "historyBackProcessOrder",
@@ -1990,7 +1990,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>History process-order demo.</p>\n    <a href=\"#level-1\">To level 1</a>\n  </card>\n\n  <card id=\"level-1\">\n    <p>Level 1 card.</p>\n    <a href=\"#level-2\">To level 2</a>\n  </card>\n\n  <card id=\"level-2\">\n    <p>Level 2 card.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>History process-order demo. <a href=\"#level-1\">To level 1</a></p>\n  </card>\n\n  <card id=\"level-1\">\n    <p>Level 1 card. <a href=\"#level-2\">To level 2</a></p>\n  </card>\n\n  <card id=\"level-2\">\n    <p>Level 2 card. <a href=\"#home\">Return home via link</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "historyBackStack",
@@ -2151,7 +2151,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>History baseline demo.</p>\n    <a href=\"#next\">Go to next</a>\n  </card>\n  <card id=\"next\">\n    <p>Second card reached by fragment navigation.</p>\n    <a href=\"#home\">Return home via link</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>History baseline demo. <a href=\"#next\">Go to next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Second card reached by fragment navigation. <a href=\"#home\">Return home via link</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "missingFragment",
@@ -2229,7 +2229,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Missing fragment test</p>\n    <a href=\"#missing\">Broken target</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Missing fragment test <a href=\"#missing\">Broken target</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "onenterbackwardReentry",
@@ -2315,7 +2315,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Start card.</p>\n    <a href=\"#mid\">To middle</a>\n  </card>\n  <card id=\"mid\">\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Middle card runs backward-entry action.</p>\n    <a href=\"#next\">To next</a>\n  </card>\n  <card id=\"next\">\n    <p>Reached from middle.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached via onenterbackward.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Start card. <a href=\"#mid\">To middle</a></p>\n  </card>\n  <card id=\"mid\">\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Middle card runs backward-entry action. <a href=\"#next\">To next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Reached from middle.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached via onenterbackward. <a href=\"#home\">Return home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "parserRobustness",
@@ -2391,7 +2391,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <cardinal id=\"noise\">Ignore me</cardinal>\n  <card id=\"home\">\n    <p>Hello <a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Still works.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <cardinal id=\"noise\">Ignore me</cardinal>\n  <card id=\"home\">\n    <p>Hello <a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Still works. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "scriptLinkExecution",
@@ -2482,7 +2482,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Script action execution demo.</p>\n    <a href=\"script:calc.wmlsc#main\">Run calc script</a>\n    <br/>\n    <a href=\"#done\">Continue</a>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:calc.wmlsc#main\">Run calc script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerHostClockLifecycle",
@@ -2619,7 +2619,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timed card</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#done\"/></onevent>\n    <timer value=\"15\"/>\n    <p>Auto tick should move this card after 1.5 seconds.</p>\n  </card>\n  <card id=\"done\">\n    <p>Timer completed through host clock lifecycle.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#timed\">Start timed card</a></p>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#done\"/></onevent>\n    <timer value=\"15\"/>\n    <p>Auto tick should move this card after 1.5 seconds.</p>\n  </card>\n  <card id=\"done\">\n    <p>Timer completed through host clock lifecycle.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerOntimerImmediate",
@@ -2678,7 +2678,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">To timed</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <timer value=\"0\"/>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#timed\">To timed</a></p>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\"><go href=\"#next\"/></onevent>\n    <timer value=\"0\"/>\n    <p>Timed card should auto-advance.</p>\n  </card>\n  <card id=\"next\">\n    <p>Reached via ontimer dispatch.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerScriptDialog",
@@ -2765,7 +2765,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <a href=\"#timed\">Start timer</a>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\">\n      <go href=\"script:timer-dialog.wmlsc#showExpiryAlert\"/>\n    </onevent>\n    <timer value=\"10\"/>\n    <p>Waiting for the runtime timer.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#timed\">Start timer</a></p>\n  </card>\n  <card id=\"timed\">\n    <onevent type=\"ontimer\">\n      <go href=\"script:timer-dialog.wmlsc#showExpiryAlert\"/>\n    </onevent>\n    <timer value=\"10\"/>\n    <p>Waiting for the runtime timer.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wavescriptGoCancel",
@@ -2825,7 +2825,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>go(\"#next\") then go(\"\") in one script invocation.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#goCancel\">Script go then cancel</a>\n  </card>\n  <card id=\"next\">\n    <p>If you can read this from the script link, cancellation regressed.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      go(\"#next\") then go(\"\") in one script invocation.\n      <a href=\"script:wavescript-fixtures.wmlsc#goCancel\">Script go then cancel</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>If you can read this from the script link, cancellation regressed. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wavescriptNavOrder",
@@ -2931,7 +2931,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Navigation ordering matrix.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#goThenPrev\">go then prev</a>\n    <br/>\n    <a href=\"script:wavescript-fixtures.wmlsc#prevThenGo\">prev then go</a>\n  </card>\n  <card id=\"next\">\n    <p>Reached via prev-then-go ordering.</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#externalGo\">Script external go</a>\n    <br/>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Navigation ordering matrix.\n      <a href=\"script:wavescript-fixtures.wmlsc#goThenPrev\">go then prev</a>\n      <br/>\n      <a href=\"script:wavescript-fixtures.wmlsc#prevThenGo\">prev then go</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>\n      Reached via prev-then-go ordering.\n      <a href=\"script:wavescript-fixtures.wmlsc#externalGo\">Script external go</a>\n      <br/>\n      <a href=\"#home\">Back home</a>\n    </p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wavescriptRefreshPolicy",
@@ -2995,7 +2995,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh policy demo (no navigation).</p>\n    <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Refresh policy demo (no navigation).\n      <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n    </p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml202TemplateShadowing",
@@ -3130,7 +3130,97 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml xml:lang=\"en\">\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\" xml:lang=\"fr\" ordered=\"false\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\" newcontext=\"true\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml xml:lang=\"en\">\n  <head>\n    <meta name=\"scenario\" content=\"wml-202\" scheme=\"work-item\"/>\n    <access domain=\"example.test\" path=\"/examples\"/>\n    <meta http-equiv=\"Cache-Control\" content=\"max-age=60\" forua=\"true\"/>\n  </head>\n  <template>\n    <do type=\"accept\" name=\"primary\" label=\"Deck next\">\n      <go href=\"#override\"/>\n    </do>\n  </template>\n  <card id=\"inherited\">\n    <p>The template accept task is active on this card.</p>\n  </card>\n  <card id=\"override\" xml:lang=\"fr\" ordered=\"false\">\n    <do type=\"accept\" name=\"primary\" label=\"Card next\">\n      <go href=\"#masked\"/>\n    </do>\n    <p>The card accept task shadows the template task.</p>\n  </card>\n  <card id=\"masked\" newcontext=\"true\">\n    <do type=\"accept\" name=\"primary\">\n      <noop/>\n    </do>\n    <p>The same-named noop masks both accept tasks.</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "wml203DtdFamily",
+    "label": "WML 1.3 Selected DTD Family",
+    "description": "Canonical WML 1.3 text exercising every selected DTD element family through the strict engine boundary.",
+    "goal": "Verify mandatory prologue handling and deterministic parsing/rendering across the selected WML 1.3 document family.",
+    "workItems": [
+      "WML-203"
+    ],
+    "specItems": [
+      "WML-CL-PROLOGUE-REQUIRED",
+      "WML-CL-WML-ROOT-STRUCTURE",
+      "WML-CL-CARD-STRUCTURE",
+      "WML-CL-CARD-CONTENT-ORDER",
+      "WML-CL-DO-STRUCTURE",
+      "WML-CL-ONEVENT-SINGLE-TASK",
+      "WML-CL-GO-STRUCTURE",
+      "WML-CL-SELECT-STRUCTURE",
+      "WML-CL-TABLE-STRUCTURE"
+    ],
+    "testingAc": [
+      "Load the example and confirm the main card renders representative text, table, and option content without a parser error.",
+      "Move focus once and confirm the active card and rendered family content remain deterministic."
+    ],
+    "flows": [
+      {
+        "id": "strict-selected-dtd-family-render",
+        "title": "Strict WML 1.3 prologue and selected DTD family render deterministically",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-203"
+        ],
+        "specItems": [
+          "WML-CL-PROLOGUE-REQUIRED",
+          "WML-CL-WML-ROOT-STRUCTURE",
+          "WML-CL-CARD-STRUCTURE",
+          "WML-CL-CARD-CONTENT-ORDER",
+          "WML-CL-DO-STRUCTURE",
+          "WML-CL-ONEVENT-SINGLE-TASK",
+          "WML-CL-GO-STRUCTURE",
+          "WML-CL-SELECT-STRUCTURE",
+          "WML-CL-TABLE-STRUCTURE"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Family",
+              "Cell",
+              "One",
+              "Pre"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Family",
+                  "Cell",
+                  "One",
+                  "Pre"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml id=\"family\" xml:lang=\"en\">\n  <head>\n    <access domain=\"example.test\" path=\"/apps\"/>\n    <meta name=\"scenario\" content=\"wml-203\"/>\n  </head>\n  <template>\n    <do type=\"options\" name=\"template-options\"><noop/></do>\n    <onevent type=\"onenterbackward\"><noop/></onevent>\n  </template>\n  <card id=\"main\" title=\"WML family\" newcontext=\"false\" ordered=\"true\">\n    <onevent type=\"onenterforward\"><noop/></onevent>\n    <timer name=\"clock\" value=\"10\"/>\n    <do type=\"accept\" name=\"submit\">\n      <go href=\"#next\" method=\"post\">\n        <postfield name=\"q\" value=\"x\"/>\n        <setvar name=\"q\" value=\"x\"/>\n      </go>\n    </do>\n    <p align=\"left\" mode=\"wrap\">\n      Family <em>em <strong>strong <b>bold <i>italic <u>under\n      <big>big <small>small</small></big></u></i></b></strong></em><br/>\n      <img alt=\"diagram\" src=\"diagram.png\" align=\"bottom\"/>\n      <anchor title=\"refresh\">Refresh<refresh><setvar name=\"q\" value=\"y\"/></refresh></anchor>\n      <a href=\"#next\">Next</a>\n      <table columns=\"1\"><tr><td>Cell</td></tr></table>\n      <input name=\"field\" type=\"text\"/>\n      <select name=\"choice\">\n        <optgroup title=\"Group\">\n          <option value=\"1\">One<onevent type=\"onpick\"><noop/></onevent></option>\n        </optgroup>\n      </select>\n      <fieldset title=\"More\"><input name=\"extra\"/></fieldset>\n    </p>\n    <pre xml:space=\"preserve\">Pre <anchor>Back<prev/></anchor><do type=\"reset\" name=\"reset\"><noop/></do></pre>\n  </card>\n  <card id=\"next\"><p>Done</p></card>\n</wml>\n"
   },
   {
     "key": "wml203WbxmlParity",
@@ -3203,7 +3293,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\" newcontext=\"false\" ordered=\"true\">\n    <p align=\"left\">Hello</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\" newcontext=\"false\" ordered=\"true\">\n    <p align=\"left\">Hello</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204ControlValidation",
@@ -3469,7 +3559,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <p>\n      <fieldset title=\"Account controls\">\n        User:\n        <input\n          name=\"UserName\"\n          title=\"User name\"\n          type=\"text\"\n          value=\"AHMED\"\n          size=\"12\"\n          maxlength=\"24\"\n          tabindex=\"1\"\n          accesskey=\"1\"\n        />\n        <br/>\n        PIN:\n        <input\n          name=\"Pin\"\n          title=\"Numeric PIN\"\n          type=\"password\"\n          value=\"1234\"\n          format=\"4N\"\n          emptyok=\"false\"\n          size=\"4\"\n          maxlength=\"4\"\n          tabindex=\"2\"\n          accesskey=\"2\"\n        />\n        <br/>\n        <a href=\"#proof\">Verify PIN variable</a>\n        <br/>\n        Country:\n        <select\n          name=\"Country\"\n          title=\"Country\"\n          multiple=\"false\"\n          iname=\"CountryIndex\"\n          ivalue=\"1\"\n          tabindex=\"3\"\n        >\n          <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n          <option value=\"France\" title=\"France\">France</option>\n          <option value=\"Germany\" title=\"Germany\">Germany</option>\n        </select>\n      </fieldset>\n    </p>\n    <do type=\"accept\"><noop/></do>\n  </card>\n  <card id=\"proof\" title=\"PIN Variable Proof\">\n    <p>Committed PIN:</p>\n    <p><input name=\"PinProof\" value=\"$(Pin)\" format=\"4N\"/></p>\n    <p><input name=\"DollarProof\" value=\"$$$(Pin)\"/></p>\n    <p><input name=\"MissingProof\" value=\"pre$(Missing)post\"/></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"controls\" title=\"WML Controls\">\n    <do type=\"accept\"><noop/></do>\n    <p>\n      <fieldset title=\"Account controls\">\n        User:\n        <input\n          name=\"UserName\"\n          title=\"User name\"\n          type=\"text\"\n          value=\"AHMED\"\n          size=\"12\"\n          maxlength=\"24\"\n          tabindex=\"1\"\n          accesskey=\"1\"\n        />\n        <br/>\n        PIN:\n        <input\n          name=\"Pin\"\n          title=\"Numeric PIN\"\n          type=\"password\"\n          value=\"1234\"\n          format=\"4N\"\n          emptyok=\"false\"\n          size=\"4\"\n          maxlength=\"4\"\n          tabindex=\"2\"\n          accesskey=\"2\"\n        />\n        <br/>\n        <a href=\"#proof\">Verify PIN variable</a>\n        <br/>\n        Country:\n        <select\n          name=\"Country\"\n          title=\"Country\"\n          multiple=\"false\"\n          iname=\"CountryIndex\"\n          ivalue=\"1\"\n          tabindex=\"3\"\n        >\n          <option value=\"Jordan\" title=\"Jordan\">Jordan</option>\n          <option value=\"France\" title=\"France\">France</option>\n          <option value=\"Germany\" title=\"Germany\">Germany</option>\n        </select>\n      </fieldset>\n    </p>\n  </card>\n  <card id=\"proof\" title=\"PIN Variable Proof\">\n    <p>Committed PIN:</p>\n    <p><input name=\"PinProof\" value=\"$(Pin)\" format=\"4N\"/></p>\n    <p><input name=\"DollarProof\" value=\"$$$(Pin)\"/></p>\n    <p><input name=\"MissingProof\" value=\"pre$(Missing)post\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml204SelectSemantics",
@@ -3565,7 +3655,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <optgroup title=\"Destinations\">\n          <option value=\"Jordan\">Jordan</option>\n          <optgroup title=\"Europe\">\n            <option value=\"France\">France</option>\n            <option value=\"$(route)\" onpick=\"/choose/$(route)\">Germany</option>\n          </optgroup>\n        </optgroup>\n      </select>\n      <input name=\"selectionProof\" value=\"$(nextCard)\"/>\n      <input name=\"route\" value=\"A B/C?D=E&amp;F\"/>\n    </p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"select-semantics\" title=\"Select Semantics\">\n    <p>\n      Destination:\n      <select\n        name=\"nextCard\"\n        iname=\"nextCardIndex\"\n        ivalue=\"2\"\n        title=\"Destination\"\n      >\n        <optgroup title=\"Destinations\">\n          <option value=\"Jordan\">Jordan</option>\n          <optgroup title=\"Europe\">\n            <option value=\"France\">France</option>\n            <option value=\"$(route)\" onpick=\"/choose/$(route)\">Germany</option>\n          </optgroup>\n        </optgroup>\n      </select>\n      <input name=\"selectionProof\" value=\"$(nextCard)\"/>\n      <input name=\"route\" value=\"A B/C?D=E&amp;F\"/>\n    </p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml205ErrorRecovery",
@@ -3639,7 +3729,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wmlbrowserContextFidelity",
@@ -3788,7 +3878,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>WMLBrowser context semantics demo.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n    <a href=\"#next\">Go to next card</a>\n  </card>\n  <card id=\"next\">\n    <p>newContext should clear vars/history and ignore prev in same script.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#newContextPrev\">Run newContext + prev</a>\n    <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      WMLBrowser context semantics demo.\n      <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n      <a href=\"#next\">Go to next card</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>\n      newContext should clear vars/history and ignore prev in same script.\n      <a href=\"script:wmlbrowser-demo.wmlsc#newContextPrev\">Run newContext + prev</a>\n      <a href=\"script:wmlbrowser-demo.wmlsc#readCurrentCard\">Read current card into nextCard</a>\n    </p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wmlbrowserVarNav",
@@ -3867,7 +3957,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>WMLBrowser var/nav subset demo.</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#main\">Script setVar + go</a>\n  </card>\n  <card id=\"next\">\n    <p>Navigation came from script go().</p>\n    <a href=\"script:wmlbrowser-demo.wmlsc#back\">Script prev</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>WMLBrowser var/nav subset demo. <a href=\"script:wmlbrowser-demo.wmlsc#main\">Script setVar + go</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Navigation came from script go(). <a href=\"script:wmlbrowser-demo.wmlsc#back\">Script prev</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wrapStress",
@@ -3939,7 +4029,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>\n    <a href=\"#next\">Continue</a>\n  </card>\n  <card id=\"next\">\n    <p>Wrap test complete.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis\n      <a href=\"#next\">Continue</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>Wrap test complete. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "yourFirstDeck",
@@ -4225,6 +4315,6 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<wml>\n  <card id=\"start\">\n    <p>Welcome to Waves.</p>\n    <p>Up and Down move focus between links. Select activates the focused link.</p>\n    <a href=\"#next\">Select this link to continue</a>\n  </card>\n  <card id=\"next\">\n    <p>Nice work. You selected a link.</p>\n    <p>Try Down, then Select, to open the second option.</p>\n    <a href=\"#detail-one\">First option</a>\n    <a href=\"#detail-two\">Second option</a>\n  </card>\n  <card id=\"detail-one\">\n    <p>You selected the first option.</p>\n    <a href=\"#next\">Back to options</a>\n  </card>\n  <card id=\"detail-two\">\n    <p>You moved focus with Down, then selected the second option.</p>\n    <p>Now try Back to return through history.</p>\n    <a href=\"#next\">Back to options</a>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p>Welcome to Waves.</p>\n    <p>Up and Down move focus between links. Select activates the focused link.</p>\n    <p><a href=\"#next\">Select this link to continue</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Nice work. You selected a link.</p>\n    <p>Try Down, then Select, to open the second option.</p>\n    <p>\n      <a href=\"#detail-one\">First option</a>\n      <a href=\"#detail-two\">Second option</a>\n    </p>\n  </card>\n  <card id=\"detail-one\">\n    <p>You selected the first option. <a href=\"#next\">Back to options</a></p>\n  </card>\n  <card id=\"detail-two\">\n    <p>You moved focus with Down, then selected the second option.</p>\n    <p>Now try Back to return through history.</p>\n    <p><a href=\"#next\">Back to options</a></p>\n  </card>\n</wml>\n"
   }
 ];

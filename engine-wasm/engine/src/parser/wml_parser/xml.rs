@@ -19,6 +19,7 @@ pub(super) enum WmlDocumentType {
 pub(super) struct XmlDocument {
     pub(super) root: XmlElement,
     pub(super) document_type: Option<WmlDocumentType>,
+    pub(super) has_xml_declaration: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -52,9 +53,33 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
     let mut stack: Vec<XmlElement> = Vec::new();
     let mut root: Option<XmlElement> = None;
     let mut document_type = None;
+    let mut has_xml_declaration = false;
 
     loop {
         match reader.read_event() {
+            Ok(Event::Decl(declaration)) => {
+                if has_xml_declaration {
+                    return Err(WmlLoadDiagnostic::malformed(
+                        "Malformed XML: multiple XML declarations",
+                    ));
+                }
+                if document_type.is_some() || root.is_some() || !stack.is_empty() {
+                    return Err(WmlLoadDiagnostic::malformed(
+                        "Malformed XML: XML declaration must precede the DOCTYPE and root element",
+                    ));
+                }
+                let version = declaration.version().map_err(|err| {
+                    WmlLoadDiagnostic::malformed(format!(
+                        "Malformed XML: XML declaration version is invalid: {err}"
+                    ))
+                })?;
+                if version.as_ref() != b"1.0" {
+                    return Err(WmlLoadDiagnostic::invalid(
+                        "Invalid WML prologue: XML declaration version must be '1.0'",
+                    ));
+                }
+                has_xml_declaration = true;
+            }
             Ok(Event::Start(start)) => {
                 // Enforce the nesting-depth budget while the tree is being
                 // built, not only afterward in the semantic walkers
@@ -126,6 +151,7 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
     Ok(XmlDocument {
         root,
         document_type,
+        has_xml_declaration,
     })
 }
 
@@ -219,7 +245,7 @@ fn reject_doctype_trailing_data(value: &str) -> Result<(), WmlLoadDiagnostic> {
 fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnostic> {
     let name = String::from_utf8_lossy(start.name().as_ref()).to_ascii_lowercase();
     let mut attrs = HashMap::new();
-    for attr in start.attributes().with_checks(false) {
+    for attr in start.attributes() {
         let attr = attr.map_err(|err| {
             WmlLoadDiagnostic::malformed(format!("Malformed XML attribute: {err}"))
         })?;

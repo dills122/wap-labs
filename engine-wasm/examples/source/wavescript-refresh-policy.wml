@@ -9,9 +9,14 @@ testing-ac:
 - Confirm activeCardId remains home and focusedLinkIndex remains stable.
 - Confirm runtime-state nextCardVar becomes updated and lastScriptRequiresRefresh becomes true.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>Refresh policy demo (no navigation).</p>
-    <a href="script:wavescript-fixtures.wmlsc#refreshOnly">Script setVar only</a>
+    <p>
+      Refresh policy demo (no navigation).
+      <a href="script:wavescript-fixtures.wmlsc#refreshOnly">Script setVar only</a>
+    </p>
   </card>
 </wml>

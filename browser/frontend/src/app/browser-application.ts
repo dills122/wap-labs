@@ -8,7 +8,9 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { registerBrowserComponents } from '../components';
 
-const SAMPLE_WML = `<wml>
+const SAMPLE_WML = `<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
   <card id="home">
     <p>${WAVES_COPY.sampleDeck.intro}</p>
     <a href="#next">${WAVES_COPY.sampleDeck.next}</a>

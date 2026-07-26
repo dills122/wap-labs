@@ -28,7 +28,7 @@ mod engine_tests;
 
 use layout::flow_layout::{layout_card, FocusTarget};
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
-use parser::wml_parser::parse_wml_report;
+use parser::wml_parser::parse_wml_report_for_content_type;
 use runtime::card::CardTaskAction;
 use runtime::deck::Deck;
 use runtime::events::{

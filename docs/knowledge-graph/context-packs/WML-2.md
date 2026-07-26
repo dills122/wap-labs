@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 589
-- Edges: 1704
+- Nodes: 591
+- Edges: 1728
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 282
+- Direct normative clauses: 302
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 0
 
@@ -45,7 +45,7 @@ Exit gates:
 - Source families: `wml`
 - Existing tickets: `R0-01`
 - Direct SCR rows: 76 (30 `direct-test-linked`, 17 `gap-work-item-mapped`, 29 `optional-not-assessed`)
-- Direct normative clauses: 177
+- Direct normative clauses: 178
 
 Outputs:
 
@@ -56,7 +56,7 @@ Acceptance:
 
 - The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.
 - All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.
-- All 174 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
+- All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
 
 Evidence commands:
 
@@ -95,12 +95,12 @@ Evidence commands:
 
 ### WML-203: WML 1.3 DTD validation policy
 
-- Status: `in-progress`
+- Status: `done`
 - Owner layers: `engine-wasm`, `transport-rust`, `qa`
 - Source families: `wml`, `wbxml`, `associated-assets`
 - Existing tickets: `R0-08`, `T0-07`
 - Direct SCR rows: 0
-- Direct normative clauses: 49
+- Direct normative clauses: 68
 
 Outputs:
 
@@ -111,15 +111,20 @@ Outputs:
 Acceptance:
 
 - Text WML and WBXML-derived WML reach equivalent deck models; strict DTD identity and unknown-DTD behavior are explicit.
+- Textual WML requires an XML declaration and external document type declaration; normalized WBXML uses equivalent header metadata supplied by the transport boundary.
+- Every selected WML 1.3 DTD element and attribute family has deterministic native and WASM validation evidence.
 - WBXML-C-001, WBXML-C-010, and WBXML-C-011 are fixture-backed against a pinned decoder; fake fixed-output and either-result fixtures do not satisfy this gate.
 
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `wasm-pack test --node engine-wasm/engine`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
 - `cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior`
 - `pnpm test:story WML-203`
 - `node scripts/check-wap-wbxml-conformance-ledger.mjs`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `pnpm wap-graph:check`
 
 ### WML-204: Complete field/control syntax and attribute validation
 
@@ -821,7 +826,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
   - Parents: `WML-C-19`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-A-REQUIRED-TARGET` (`parser`, `planned`)
+  - Fixture: `WML-FX-A-REQUIRED-TARGET` (`parser`, `implemented`)
 - **WML-CL-ACCESS-ABSENT-ALLOWS** — When no access element is present, allow referrals from any deck.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
@@ -887,7 +892,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.8 (9.8 The Anchor Element)
   - Parents: `WML-C-20`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-ANCHOR-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-ANCHOR-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-BR-LINE-BREAK** — End the current rendered line at br and continue on the following line.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.4 (11.8.4 The Br Element)
@@ -995,7 +1000,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-DO-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-DO-TYPE-ACCEPTANCE** — Accept every do type and treat an unrecognized type as unknown when no specialized mapping exists.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1151,7 +1156,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-GO-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-GO-SUBMISSION-ORDER** — Substitute variables, transcode fields, then serialize postfields in document order.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1247,7 +1252,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.9 (11.9 Images)
   - Parents: `WML-C-32`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-006`, `RQ-WAE-018`
-  - Fixture: `WML-FX-IMAGE-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-IMAGE-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-IMAGE-TEXT-FLOW** — Lay out an image within the surrounding text flow.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.9 (11.9 Images)
@@ -1385,7 +1390,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.10.1 (9.10.1 The Onevent Element)
   - Parents: `WML-C-39`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-004`
-  - Fixture: `WML-FX-ONEVENT-SINGLE-TASK` (`parser`, `planned`)
+  - Fixture: `WML-FX-ONEVENT-SINGLE-TASK` (`parser`, `implemented`)
 - **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)
@@ -1457,7 +1462,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
   - Parents: `WML-C-37`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-POSTFIELD-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-POSTFIELD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-PREV-ASSIGNMENT-ORDER** — For prev, snapshot setvar values, pop history, locate the destination, and then apply assignments.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
@@ -1476,6 +1481,12 @@ Evidence commands:
   - Parents: `WML-C-09`, `WML-C-18`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
   - Fixture: `WML-FX-PREV-ENTRY-EVENT-PRECEDENCE` (`state-machine`, `planned`)
+- **WML-CL-PROLOGUE-REQUIRED** — Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.1 (11.1 Document Prologue)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-PROLOGUE-REQUIRED` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-ENCODING-DETECTION** — Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
@@ -1595,7 +1606,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
   - Parents: `WML-C-52`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-SETVAR-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-SETVAR-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-SETVAR-TASK-SIDE-EFFECT** — Apply a valid setvar assignment only as a side effect of executing its containing task.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
@@ -1661,7 +1672,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.5 (11.8.5 The Table Element)
   - Parents: `WML-C-46`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-TABLE-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-TABLE-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-TASK-FAILURE-ATOMICITY** — On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.5 (12.5.5 Task Execution Failure)
@@ -1679,7 +1690,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.7 (11.8.7 The Td Element)
   - Parents: `WML-C-49`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-TD-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-TD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-TEMPLATE-APPLIES-ALL-CARDS** — Apply each template event binding as though it were declared in every card unless shadowed.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.4 (11.4 The Template Element)
@@ -1751,7 +1762,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.6 (11.8.6 The Tr Element)
   - Parents: `WML-C-50`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-TR-STRUCTURE` (`parser`, `planned`)
+  - Fixture: `WML-FX-TR-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-UNKNOWN-CONTENT-PRESERVED** — Continue rendering recognized content nested inside an unrecognized element.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
@@ -2316,6 +2327,114 @@ Evidence commands:
   - Parents: `WBXML-C-001`
   - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
   - Fixture: `WBXML-FX-VERSION-BYTE` (`binary-decoder`, `implemented`)
+- **WML-CL-A-REQUIRED-TARGET** — Require an HREF target on each a element and restrict its child content to the declared inline set.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
+  - Parents: `WML-C-19`
+  - Requirements: `RQ-RMK-006`
+  - Fixture: `WML-FX-A-REQUIRED-TARGET` (`parser`, `implemented`)
+- **WML-CL-ANCHOR-STRUCTURE** — Parse anchor content with exactly one go, prev, or refresh task.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.8 (9.8 The Anchor Element)
+  - Parents: `WML-C-20`
+  - Requirements: `RQ-RMK-006`
+  - Fixture: `WML-FX-ANCHOR-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-CARD-CONTENT-ORDER** — Preserve significant card element order during presentation.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `implemented`)
+- **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-DO-STRUCTURE** — Parse do as exactly one task with a required type and optional label, name, optionality, and language metadata.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-GO-STRUCTURE** — Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-HEAD-STRUCTURE** — When head is present, require one or more access or meta children.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3 (11.3 The Head Element)
+  - Parents: `WML-C-30`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-HEAD-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-IMAGE-STRUCTURE** — Require alt and src on an empty img element and accept the declared optional image hints.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.9 (11.9 Images)
+  - Parents: `WML-C-32`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-006`, `RQ-WAE-018`
+  - Fixture: `WML-FX-IMAGE-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-STRUCTURE** — Require an input variable name and constrain input attributes to the declared text-entry grammar.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-ONEVENT-SINGLE-TASK** — Parse onevent as exactly one go, prev, noop, or refresh task associated with its immediately enclosing element.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.10.1 (9.10.1 The Onevent Element)
+  - Parents: `WML-C-39`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-004`
+  - Fixture: `WML-FX-ONEVENT-SINGLE-TASK` (`parser`, `implemented`)
+- **WML-CL-POSTFIELD-STRUCTURE** — Require postfield name and value attributes and treat both as variable-bearing data.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
+  - Parents: `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-POSTFIELD-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-PROLOGUE-REQUIRED** — Require textual WML decks to contain both an XML declaration and a document type declaration; tokenized WBXML supplies equivalent header metadata at its boundary.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.1 (11.1 Document Prologue)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-PROLOGUE-REQUIRED` (`parser`, `implemented`)
+- **WML-CL-SELECT-STRUCTURE** — Require one or more option or optgroup children in each select element.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.6.2.1 (11.6.2.1 The Select Element)
+  - Parents: `WML-C-43`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-SELECT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-SETVAR-STRUCTURE** — Require setvar name and value attributes and no child content.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
+  - Parents: `WML-C-52`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-SETVAR-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-TABLE-STRUCTURE** — Require one or more tr children and prohibit nested table elements.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.8.5 (11.8.5 The Table Element)
+  - Parents: `WML-C-46`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TABLE-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-TD-STRUCTURE** — Restrict table-cell content to the declared text, layout, image, and anchor element set.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.8.7 (11.8.7 The Td Element)
+  - Parents: `WML-C-49`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TD-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-TEMPLATE-STRUCTURE** — Parse template as zero or more do or onevent bindings plus card-event attributes.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.4 (11.4 The Template Element)
+  - Parents: `WML-C-47`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TEMPLATE-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-TR-STRUCTURE** — Require one or more td children in each table row.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.8.6 (11.8.6 The Tr Element)
+  - Parents: `WML-C-50`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-TR-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-UNKNOWN-CONTENT-PRESERVED** — Continue rendering recognized content nested inside an unrecognized element.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
@@ -2328,6 +2447,12 @@ Evidence commands:
   - Parents: `WML-C-17`
   - Requirements: `RQ-RMK-009`
   - Fixture: `WML-FX-UNKNOWN-MARKUP-IGNORED` (`parser`, `implemented`)
+- **WML-CL-WML-ROOT-STRUCTURE** — Require a wml root containing optional head, optional template, and one or more cards in that order.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)
+  - Parents: `WML-C-53`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-WML-ROOT-STRUCTURE` (`parser`, `implemented`)
 
 ### WML-204
 

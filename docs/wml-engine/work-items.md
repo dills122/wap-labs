@@ -30,12 +30,12 @@ With WML-202 deck/access/card-context closure and the WML-205 engine-boundary ta
 current aligned engine priorities are:
 
 1. Preserve the generated `WML-201` evidence projection. Machine-derived fact:
-   WML-201 has 177 direct clauses: 174 selected WML clauses plus 3 WAE composition clauses.
+   WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE composition clauses.
 2. Preserve the mapped `WML-205` malformed/invalid/unsupported/recoverable load taxonomy, then
    close its residual exhaustive error-enforcement and host fetch/access failure-atomicity gates.
 3. Preserve the completed `WML-204` field/control validation gate without
    reopening completed WML-202 evidence.
-4. Preserve the completed `WML-202` 30/30, `WML-203` 49/49, and `WML-204` 23/23
+4. Preserve the completed `WML-202` 30/30, `WML-203` 68/68, and `WML-204` 23/23
    direct-clause slices; WML-202 has no remaining work-item acceptance gate.
 5. Keep `D0-01`, `W1-06`, and `M1-03` non-preemptive until the upstream
    `WML-2` gate materially changes.

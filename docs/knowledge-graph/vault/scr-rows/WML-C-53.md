@@ -17,6 +17,7 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `refines` ← [[clauses/WML-CL-PROLOGUE-REQUIRED|WML-CL-PROLOGUE-REQUIRED]]
 - `refines` ← [[clauses/WML-CL-WML-ROOT-DECK-SCOPE|WML-CL-WML-ROOT-DECK-SCOPE]]
 - `refines` ← [[clauses/WML-CL-WML-ROOT-LANGUAGE|WML-CL-WML-ROOT-LANGUAGE]]
 - `refines` ← [[clauses/WML-CL-WML-ROOT-STRUCTURE|WML-CL-WML-ROOT-STRUCTURE]]

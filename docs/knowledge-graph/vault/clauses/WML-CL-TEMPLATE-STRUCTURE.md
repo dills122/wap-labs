@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
 - `planned-by` → [[work-items/WML-202|WML-202]]
+- `planned-by` → [[work-items/WML-203|WML-203]]
 - `refines` → [[scr-rows/WML-C-47|WML-C-47]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-TEMPLATE-STRUCTURE|WML-FX-TEMPLATE-STRUCTURE]]
@@ -44,7 +45,8 @@ tags:
     "R0-04",
     "R0-12",
     "WML-201",
-    "WML-202"
+    "WML-202",
+    "WML-203"
   ],
   "ownerLayers": [
     "engine-wasm"

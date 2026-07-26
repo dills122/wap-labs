@@ -11,8 +11,17 @@ testing-ac:
 - Re-enter Country edit, change the draft option, then press Escape and confirm the original committed option remains visible.
 - Submit the card and confirm Waves captures the local-mode external intent without fetching.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="profile" title="Select Navigation">
+    <do type="accept">
+      <go method="post" href="/profile">
+        <postfield name="Country" value="$(Country)"/>
+        <postfield name="pin" value="$(pin)"/>
+      </go>
+    </do>
     <p><a href="#help">Help</a></p>
     <p>
       Country:
@@ -25,12 +34,6 @@ testing-ac:
     </p>
     <p>PIN: <input name="pin" value="" type="password"/></p>
     <p><a href="#review">Review</a></p>
-    <do type="accept">
-      <go method="post" href="/profile">
-        <postfield name="Country" value="$(Country)"/>
-        <postfield name="pin" value="$(pin)"/>
-      </go>
-    </do>
   </card>
   <card id="help" title="Help">
     <p>Use Enter to begin or commit select edit.</p>

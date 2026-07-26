@@ -12,7 +12,7 @@ fn tauri_command_wrappers_drive_managed_state_roundtrip() {
     let loaded = super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -57,7 +57,7 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
     let loaded = super::super::engine_load_deck_context_frame(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -106,7 +106,7 @@ fn tauri_command_wrappers_cover_viewport_and_direct_navigation_paths() {
     let loaded = super::super::engine_load_deck(
         borrowed_state(&state),
         LoadDeckRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
         },
     )
     .expect("load should succeed");
@@ -179,7 +179,7 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: EXTERNAL_LINK_WML.to_string(),
+            wml_xml: canonical_text_wml(EXTERNAL_LINK_WML),
             base_url: "http://local.test/dir/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -227,7 +227,7 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     let xml = r##"
     <wml>
       <card id="home">
-        <a href="#timed">To timed</a>
+        <p><a href="#timed">To timed</a></p>
       </card>
       <card id="timed">
         <onevent type="ontimer"><go href="#done"/></onevent>
@@ -240,7 +240,7 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
     super::super::engine_load_deck_context(
         borrowed_state(&timer_state),
         LoadDeckContextRequest {
-            wml_xml: xml.to_string(),
+            wml_xml: canonical_text_wml(xml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -287,7 +287,7 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
     let raw_error = super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some("A".repeat((1024 * 1024) + 1)),
@@ -304,7 +304,7 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
     let wml = r##"
     <wml>
       <card id="home">
-        <input name="UserName" value="AHMED" type="text"/>
+        <p><input name="UserName" value="AHMED" type="text"/></p>
       </card>
     </wml>
     "##;
@@ -312,7 +312,7 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -362,7 +362,7 @@ fn tauri_frame_command_wrappers_handle_focused_input_edit_commands() {
     let wml = r##"
     <wml>
       <card id="home">
-        <input name="UserName" value="AHMED" type="text"/>
+        <p><input name="UserName" value="AHMED" type="text"/></p>
       </card>
     </wml>
     "##;
@@ -370,7 +370,7 @@ fn tauri_frame_command_wrappers_handle_focused_input_edit_commands() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -418,11 +418,13 @@ fn tauri_command_wrappers_handle_focused_select_edit_commands() {
     let wml = r##"
     <wml>
       <card id="home">
-        <select name="Country" title="Country">
-          <option value="Jordan">Jordan</option>
-          <option value="France">France</option>
-          <option value="Germany">Germany</option>
-        </select>
+        <p>
+          <select name="Country" title="Country">
+            <option value="Jordan">Jordan</option>
+            <option value="France">France</option>
+            <option value="Germany">Germany</option>
+          </select>
+        </p>
       </card>
     </wml>
     "##;
@@ -430,7 +432,7 @@ fn tauri_command_wrappers_handle_focused_select_edit_commands() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -477,11 +479,13 @@ fn tauri_frame_command_wrappers_handle_focused_select_edit_commands() {
     let wml = r##"
     <wml>
       <card id="home">
-        <select name="Country" title="Country">
-          <option value="Jordan">Jordan</option>
-          <option value="France">France</option>
-          <option value="Germany">Germany</option>
-        </select>
+        <p>
+          <select name="Country" title="Country">
+            <option value="Jordan">Jordan</option>
+            <option value="France">France</option>
+            <option value="Germany">Germany</option>
+          </select>
+        </p>
       </card>
     </wml>
     "##;
@@ -489,7 +493,7 @@ fn tauri_frame_command_wrappers_handle_focused_select_edit_commands() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -534,14 +538,14 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
     let wml = r##"
     <wml>
       <card id="login">
-        <p>User: <input name="username" value="" type="text"/></p>
-        <p>PIN: <input name="pin" value="" type="password"/></p>
         <do type="accept">
           <go method="post" href="/login">
             <postfield name="username" value="$(username)"/>
             <postfield name="pin" value="$(pin)"/>
           </go>
         </do>
+        <p>User: <input name="username" value="" type="text"/></p>
+        <p>PIN: <input name="pin" value="" type="password"/></p>
       </card>
     </wml>
     "##;
@@ -549,7 +553,7 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "wap://localhost/login".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -607,19 +611,19 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
 }
 
 #[test]
-fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_or_whitespace_templates() {
+fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_templates() {
     let state = AppState::default();
     let wml = r##"
     <wml>
       <card id="login">
-        <p>User: <input name="username" value="" type="text"/></p>
-        <p>PIN: <input name="pin" value="" type="password"/></p>
         <do type="accept">
           <go method="post" href="/login">
-            <postfield name="username" value="$( username )"/>
+            <postfield name="username" value=""/>
             <postfield name="pin" value=""/>
           </go>
         </do>
+        <p>User: <input name="username" value="" type="text"/></p>
+        <p>PIN: <input name="pin" value="" type="password"/></p>
       </card>
     </wml>
     "##;
@@ -627,7 +631,7 @@ fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_or_whitespace_temp
     super::super::engine_load_deck_context(
         borrowed_state(&state),
         LoadDeckContextRequest {
-            wml_xml: wml.to_string(),
+            wml_xml: canonical_text_wml(wml),
             base_url: "wap://localhost/login".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,

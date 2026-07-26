@@ -45,7 +45,7 @@ const familyDefinitions = new Map([
       ledgerFile: 'wap-1.2.1-wml-scr.json',
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 39,
-      expectedClauses: 174
+      expectedClauses: 175
     }
   ],
   [
@@ -262,9 +262,31 @@ const wml205ClauseIds = new Set([
   'WML-CL-ERROR-NO-INTENT-INFERENCE',
   'WML-CL-TASK-FAILURE-ATOMICITY'
 ]);
+const wml203ClauseIds = new Set([
+  'WML-CL-PROLOGUE-REQUIRED',
+  'WML-CL-WML-ROOT-STRUCTURE',
+  'WML-CL-HEAD-STRUCTURE',
+  'WML-CL-TEMPLATE-STRUCTURE',
+  'WML-CL-CARD-STRUCTURE',
+  'WML-CL-CARD-CONTENT-ORDER',
+  'WML-CL-DO-STRUCTURE',
+  'WML-CL-ONEVENT-SINGLE-TASK',
+  'WML-CL-GO-STRUCTURE',
+  'WML-CL-POSTFIELD-STRUCTURE',
+  'WML-CL-SETVAR-STRUCTURE',
+  'WML-CL-SELECT-STRUCTURE',
+  'WML-CL-INPUT-STRUCTURE',
+  'WML-CL-IMAGE-STRUCTURE',
+  'WML-CL-ANCHOR-STRUCTURE',
+  'WML-CL-A-REQUIRED-TARGET',
+  'WML-CL-TABLE-STRUCTURE',
+  'WML-CL-TR-STRUCTURE',
+  'WML-CL-TD-STRUCTURE'
+]);
 const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
+  ...wml203ClauseIds,
   ...wml204ClauseIds,
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
@@ -522,6 +544,7 @@ for (const family of ledger.families ?? []) {
         ...parents.flatMap((parent) => parent.mapping.workItems),
         ...(candidate.family === 'wml' ? ['WML-201'] : []),
         ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
+        ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
         ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
         ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
@@ -533,6 +556,7 @@ for (const family of ledger.families ?? []) {
     const expectedDirectWorkItems = [
       ...(candidate.family === 'wml' ? ['WML-201'] : []),
       ...(wml202ClauseIds.has(candidate.id) ? ['WML-202'] : []),
+      ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
       ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
       ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
@@ -666,7 +690,7 @@ const expectedSummary = {
 };
 if (
   selectedParentCount !== 198 ||
-  clauseCount !== 761 ||
+  clauseCount !== 762 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);

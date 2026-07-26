@@ -164,7 +164,7 @@ Cross-source selected-profile accounting is now executable:
 - 23 implemented, 77 partial, and 98 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
-- all 198 selected rows now expand into 761 deduplicated nested clauses with
+- all 198 selected rows now expand into 762 deduplicated nested clauses with
   source anchors and fixture plans;
 - 145 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed; direct
   conformance fixture implementation remains the principal evidence gap for
@@ -194,7 +194,7 @@ WTP is additionally conditional on connection-oriented WSP.
 - [x] Source inventory, canonical precedence, and domain ownership.
 - [x] Effective base/SIN order for every selected family.
 - [x] Exact WAP-215 Class C profile and conditional-capability boundaries.
-- [x] Per-family SCR ledgers and all 761 selected nested clauses.
+- [x] Per-family SCR ledgers and all 762 selected nested clauses.
 - [x] Requirement, owner, work-item, and fixture-target crosswalk.
 - [x] Unified successor-delta register and deterministic drift controls.
 - [x] Dependency-ordered 13-sprint/78-item compliance program.

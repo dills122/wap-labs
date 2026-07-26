@@ -9,11 +9,16 @@ testing-ac:
 - From home, Enter "To middle", then Enter "To next".
 - Press Back once; activeCardId should become home because middle runs onenterbackward prev.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>Prev task demo.</p>
-    <a href="#mid-accept">To middle (accept prev)</a>
-    <a href="#mid-back">To middle (onenterbackward prev)</a>
+    <p>
+      Prev task demo.
+      <a href="#mid-accept">To middle (accept prev)</a>
+      <a href="#mid-back">To middle (onenterbackward prev)</a>
+    </p>
   </card>
 
   <card id="mid-accept">
@@ -23,7 +28,7 @@ testing-ac:
 
   <card id="mid-back">
     <onevent type="onenterbackward"><prev/></onevent>
-    <a href="#next">To next</a>
+    <p><a href="#next">To next</a></p>
   </card>
 
   <card id="next">

@@ -57,7 +57,7 @@ The current artifact covers all 198 selected Class C parent rows:
 
 | Family | Selected parents | Deduplicated clauses |
 |---|---:|---:|
-| WML | 39 | 174 |
+| WML | 39 | 175 |
 | WAE | 11 | 39 |
 | WBXML | 3 | 47 |
 | Caching | 5 | 68 |
@@ -66,9 +66,9 @@ The current artifact covers all 198 selected Class C parent rows:
 | WDP | 9 | 49 |
 | WMLScript | 41 | 107 |
 | WMLScript Libraries | 80 | 211 |
-| **Total** | **198** | **761** |
+| **Total** | **198** | **762** |
 
-The 761 clauses are classified as 721 required, 29 recommended, and 11
+The 762 clauses are classified as 722 required, 29 recommended, and 11
 permitted behaviors. Shared behaviors map to multiple SCR parents instead of
 being copied. Examples include task variable sequencing, template/card event
 shadowing, Basic-authentication protection spaces, HTTP URL defaults,
@@ -91,16 +91,17 @@ Each clause records:
 
 A planned fixture is not test evidence. An implemented fixture must name its
 fixture path, test path, and command, and clause implementation status changes
-only after that direct evidence is reviewed. The current ledger records 161
-implemented clauses with reviewed direct evidence and keeps 600 clauses
+only after that direct evidence is reviewed. The current ledger records 173
+implemented clauses with reviewed direct evidence and keeps 589 clauses
 `not-assessed`. The WML-203 slice contributes 47 implemented WBXML clauses and
-two implemented WML unknown-markup clauses; WML-204 adds 23 implemented WML
+21 implemented WML clauses covering alternate-DTD behavior, the mandatory
+text prologue, and selected DTD structures; WML-204 adds 23 implemented WML
 clauses, WML-C-24 adds the inline line-break clause, and WML-202 adds 30
 root/head/access, template, task-shadowing, card-context, and newcontext clauses. The validator allowlists the 14-clause
 `TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
 silently substitute for slice adoption.
 
-WML-201 directly maps all 174 selected WML clauses for family ownership and
+WML-201 directly maps all 175 selected WML clauses for family ownership and
 retrieval. That mapping is not fixture evidence: clause assessment remains
 unchanged, and the canonical 76-row SCR ledger now distinguishes 30 rows
 with direct code/test links from 17 mapped mandatory gaps and 29 optional
