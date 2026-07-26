@@ -60,6 +60,15 @@ Fixture lane:
   WSP/WTP, Push, and advanced session features.
 - Promotion requires explicit additional gates beyond the protocol-core baseline.
 - Activation must remain contract-compatible or ship with explicit contract changes.
+- "Gated" here means gated by the promotion process above (`T0-*` gates), not a
+  Cargo compile-time feature flag — none exists today. The `network::wtp`,
+  `network::wcmp`, `wsp_registry.rs`, `wsp_capability.rs`, and
+  `network::wsp::pdu`/`session` modules that back this profile are compiled
+  unconditionally into `transport-rust`; they are simply unwired from the live
+  fetch path, which is the only thing keeping them out of production traffic
+  today. A future change that wires any of this in must go through the
+  promotion gates above rather than relying on a build flag to have kept it
+  inert.
 
 ## Promotion gates
 
