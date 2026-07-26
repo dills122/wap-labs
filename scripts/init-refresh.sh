@@ -23,18 +23,25 @@ need_cmd() {
   return 0
 }
 
-ensure_rust_tool() {
-  check_cmd="$1"
-  install_cmd="$2"
-  if command -v "${check_cmd}" >/dev/null 2>&1; then
+ensure_wasm_pack() {
+  # Pinned to match .github/workflows/{ci,pages,milestone-release}.yml, which
+  # all install wasm-pack 0.13.1 explicitly. Local bootstrap previously
+  # installed unpinned latest, so a local wasm-pack build could differ from
+  # CI's output inventory without any repository change signaling it.
+  expected_version="0.13.1"
+  actual_version=""
+  if command -v wasm-pack >/dev/null 2>&1; then
+    actual_version="$(wasm-pack --version 2>/dev/null || true)"
+  fi
+  if [ "${actual_version}" = "wasm-pack ${expected_version}" ]; then
     return 0
   fi
   if [ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]; then
-    warn "${check_cmd} not found (set AUTO_INSTALL_RUST_TOOLS=1 to auto-install)"
+    warn "wasm-pack ${expected_version} required (found: ${actual_version:-missing}; set AUTO_INSTALL_RUST_TOOLS=1 to install)"
     return 0
   fi
-  log "installing ${check_cmd}"
-  eval "${install_cmd}"
+  log "installing wasm-pack ${expected_version}"
+  cargo install wasm-pack --version "${expected_version}" --locked --force
 }
 
 ensure_tauri_cli() {
@@ -61,7 +68,7 @@ need_cmd pnpm || true
 need_cmd cargo || true
 
 if command -v cargo >/dev/null 2>&1; then
-  ensure_rust_tool wasm-pack "cargo install wasm-pack --locked"
+  ensure_wasm_pack
   ensure_tauri_cli
 fi
 
