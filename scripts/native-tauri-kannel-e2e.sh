@@ -87,7 +87,7 @@ export NATIVE_E2E_ARTIFACT_DIR="${ARTIFACT_DIR}"
 export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 
 {
-  echo "tauri-driver: $(tauri-driver --version)"
+  echo "tauri-driver: $(cargo install --list | sed -n '/^tauri-driver /{p;q;}')"
   echo "WebKitWebDriver: $(WebKitWebDriver --version 2>&1 | head -n 1)"
   echo "rustc: $(rustc --version)"
   echo "node: $(node --version)"
@@ -98,7 +98,10 @@ export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 } >"${ARTIFACT_DIR}/environment.txt"
 
 echo "==> Building the production Tauri frontend and debug application binary"
-pnpm --dir browser run tauri:build -- --debug --no-bundle
+(
+  cd "${ROOT_DIR}/browser/src-tauri"
+  cargo tauri build --debug --no-bundle
+)
 
 echo "==> Driving the native Waves window through tauri-driver"
 pnpm --dir browser/frontend run test:native-kannel:ui

@@ -475,8 +475,14 @@ fn fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_valu
 #[ignore = "runs against external Kannel dev stack (make up)"]
 fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
     let _guard = env_lock().lock().expect("env lock should succeed");
+    let previous_destination =
+        std::env::var(super::waves_config::FETCH_DESTINATION_POLICY_ENV).ok();
     let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
     let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
+    std::env::set_var(
+        super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+        super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+    );
     std::env::set_var(
         super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
         super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
@@ -502,6 +508,11 @@ fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
         }),
     });
 
+    if let Some(old) = previous_destination {
+        std::env::set_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV);
+    }
     if let Some(old) = previous_profile {
         std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
     } else {
@@ -529,8 +540,14 @@ fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
 #[ignore = "runs against external Kannel dev stack (make up)"]
 fn host_fetch_deck_command_native_wap_post_smoke_registers_and_logs_in() {
     let _guard = env_lock().lock().expect("env lock should succeed");
+    let previous_destination =
+        std::env::var(super::waves_config::FETCH_DESTINATION_POLICY_ENV).ok();
     let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
     let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
+    std::env::set_var(
+        super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+        super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+    );
     std::env::set_var(
         super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
         super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
@@ -600,6 +617,11 @@ fn host_fetch_deck_command_native_wap_post_smoke_registers_and_logs_in() {
         }),
     });
 
+    if let Some(old) = previous_destination {
+        std::env::set_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV, old);
+    } else {
+        std::env::remove_var(super::waves_config::FETCH_DESTINATION_POLICY_ENV);
+    }
     if let Some(old) = previous_profile {
         std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
     } else {

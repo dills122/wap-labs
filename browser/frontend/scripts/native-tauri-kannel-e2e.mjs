@@ -157,7 +157,8 @@ const run = async () => {
   await capture('01-startup');
 
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const homeViewport = await waitForText('#viewport', 'Local WAP training environment.');
+  const homeViewport = await waitForText('#viewport', 'Local WAP training');
+  assert.match(await homeViewport.getText(), /environment\./);
   assert.match(await homeViewport.getText(), /Open Menu/);
   assert.equal(await body.getAttribute('data-boot-phase'), 'deck-ready');
   recordAssertion('gateway deck render', 'wap://localhost/ rendered the Kannel-served home deck');
@@ -178,7 +179,8 @@ const run = async () => {
 
   await replaceInput('#fetch-url', 'wap://localhost/');
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const recoveredViewport = await waitForText('#viewport', 'Local WAP training environment.');
+  const recoveredViewport = await waitForText('#viewport', 'Local WAP training');
+  assert.match(await recoveredViewport.getText(), /environment\./);
   assert.match(await recoveredViewport.getText(), /Open Menu/);
   recordAssertion('failure recovery', 'a subsequent native Kannel load restored the home deck');
   await capture('05-recovered-home');
