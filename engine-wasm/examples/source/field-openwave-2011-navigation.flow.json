@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "example": "fieldOpenwave2011Navigation",
+  "flows": [
+    {
+      "id": "legacy-content-fragment-and-external-links",
+      "title": "Legacy-style source ordering keeps fragment and external navigation deterministic",
+      "workItems": ["A1-03", "A2-01"],
+      "specItems": ["WML-R-002", "WML-R-006"],
+      "initial": {
+        "state": {
+          "activeCardId": "main",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "content",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": { "activeCardId": "content", "focusedLinkIndex": 1 }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "content",
+              "focusedLinkIndex": 1,
+              "externalNavigationIntent": "http://local.test/Lectures.wml"
+            },
+            "traceKinds": ["KEY", "ACTION_EXTERNAL"]
+          }
+        }
+      ]
+    }
+  ]
+}

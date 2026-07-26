@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "example": "actionsRefreshRollback",
+  "flows": [
+    {
+      "id": "refresh-stays-and-failed-entry-rolls-back",
+      "title": "Refresh stays on the current card and a failed entry task rolls back",
+      "workItems": ["A5-02"],
+      "specItems": ["WML-R-012", "WML-R-015", "WML-R-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "refresh-card", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "refresh-card", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_REFRESH"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 1 }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 1 },
+            "statusIncludes": "Card id not found"
+          }
+        }
+      ]
+    }
+  ]
+}

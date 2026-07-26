@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "example": "formsSelectLocal",
+  "flows": [
+    {
+      "id": "select-cycle-cancel-commit-and-submit",
+      "title": "Select edit cycles deterministically, survives cancel, and feeds a local submit intent",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["A5-05", "A5-06"],
+      "specItems": ["WML-R-019", "RQ-RMK-003", "RQ-RMK-008"],
+      "initial": {
+        "state": {
+          "activeCardId": "profile",
+          "focusedLinkIndex": 0,
+          "focusedSelectEditName": null
+        },
+        "render": {
+          "textIncludes": ["Jordan"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "Jordan"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "France"
+            },
+            "render": {
+              "textIncludes": ["France"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Escape" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": null,
+              "focusedSelectEditValue": null
+            },
+            "render": {
+              "textIncludes": ["Jordan"]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "Jordan"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": "Country",
+              "focusedSelectEditValue": "France"
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "focusedSelectEditName": null,
+              "focusedSelectEditValue": null,
+              "focusedLinkIndex": 0
+            },
+            "traceKinds": ["SELECT_EDIT_COMMIT"],
+            "render": {
+              "textIncludes": ["France"]
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": {
+            "state": { "focusedLinkIndex": 1 }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": {
+              "externalNavigationIntent": "http://local.test/profile",
+              "externalNavigationRequestPolicy": {
+                "refererUrl": "http://local.test/examples/formsSelectLocal.wml",
+                "postContext": {
+                  "sameDeck": false,
+                  "contentType": "application/x-www-form-urlencoded",
+                  "payload": "Country=France&notes="
+                }
+              }
+            },
+            "session": {
+              "runMode": "local",
+              "navigationStatus": "loaded",
+              "externalNavigationIntent": "http://local.test/profile"
+            },
+            "statusIncludes": "Local mode captured external intent",
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_EXTERNAL"]
+          }
+        }
+      ]
+    }
+  ]
+}

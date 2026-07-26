@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "example": "actionsDoOnevent",
+  "flows": [
+    {
+      "id": "accept-then-onenterforward-chain",
+      "title": "Accept action then onenterforward chain to the final card",
+      "workItems": ["W0-01"],
+      "specItems": ["RQ-WMLS-018"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "final",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

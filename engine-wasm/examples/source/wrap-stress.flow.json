@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "example": "wrapStress",
+  "flows": [
+    {
+      "id": "long-token-navigation-stays-usable",
+      "title": "Long unbroken token wraps and navigation remains usable",
+      "workItems": ["A3-01"],
+      "specItems": ["WML-R-004"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
