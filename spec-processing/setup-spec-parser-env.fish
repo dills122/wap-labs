@@ -1,7 +1,9 @@
 #!/usr/bin/env fish
 
-set -l ROOT (cd (dirname (status --current-filename)); and pwd)
+set -l ROOT (cd (dirname (status --current-filename))/..; and pwd)
 cd $ROOT
+set -l VENV "$ROOT/.venv"
+set -l REQUIREMENTS "$ROOT/spec-processing/requirements-docling.txt"
 
 set -l PYTHON_BIN
 if command -q python3
@@ -13,16 +15,16 @@ else
     exit 1
 end
 
-if not test -d .venv
-    echo "Creating Python environment at ./.venv"
-    $PYTHON_BIN -m venv .venv
+if not test -d $VENV
+    echo "Creating Python environment at $VENV"
+    $PYTHON_BIN -m venv $VENV
     or begin
         echo "Failed to create .venv"
         exit 1
     end
 end
 
-source .venv/bin/activate.fish
+source $VENV/bin/activate.fish
 
 if not command -q pip
     echo "pip is unavailable in the created virtual environment."
@@ -30,11 +32,9 @@ if not command -q pip
 end
 
 pip install --quiet --upgrade pip
-pip install --quiet docling
+pip install --quiet --requirement $REQUIREMENTS
 
-if not command -q docling
-    echo "docling installation did not complete successfully."
-    exit 1
-end
+source $ROOT/spec-processing/scripts/require-docling.fish
+or exit 1
 
-echo "Spec parser environment ready."
+echo "Spec parser environment ready at $VENV."

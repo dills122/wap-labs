@@ -27,4 +27,7 @@ Subproject steering for `spec-processing/`.
 
 5. Provenance policy:
 - Update provenance via `spec-processing/scripts/generate-docling-provenance.sh`.
-- Keep `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md` append-only.
+- Keep exactly one generated current snapshot. Historical snapshots remain available through Git
+  history and must not be treated as active provenance inputs.
+- Run `spec-processing/scripts/generate-docling-provenance.sh --check` before landing source,
+  cleaned-corpus, profile, runtime-pin, policy, or provenance changes.

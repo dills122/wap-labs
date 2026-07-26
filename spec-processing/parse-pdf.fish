@@ -10,10 +10,8 @@ end
 
 source .venv/bin/activate.fish
 
-if not command -q docling
-    echo "docling is not available in the active environment"
-    exit 1
-end
+source $ROOT/spec-processing/scripts/require-docling.fish
+or exit 1
 
 # Shared deterministic Docling profile
 source $ROOT/spec-processing/scripts/docling-profile.fish

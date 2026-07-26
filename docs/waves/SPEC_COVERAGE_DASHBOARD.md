@@ -29,7 +29,9 @@ Status: Active
   `docs/waves/WAP_1_2_1_SOURCE_BASELINE.md`
 - Planning closure checkpoint:
   `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
-- Parsing validation: docling rerun parsing completed for all current high-value in-scope source families (`48` canonical files total across prior and remaining rerun waves) plus `2` supplemental context-source parses (`WAP.pdf`, Wiley tech brief)
+- Parsing validation: the canonical Docling-cleaned corpus contains `52` uniquely mapped sources:
+  `48` prior/remaining rerun-wave files plus the WAP 2.0 WSP source, WTLS base source, `WAP.pdf`,
+  and the Wiley technical brief
 
 ### Completed traceability domains
 
@@ -289,7 +291,7 @@ Status: Active
   - `docs/waves/archive/reports/DOCLING_RERUN_REMAINING_DELTA_REPORT_2026-03-02.md`
   - `spec-processing/README.md`
   - `docs/waves/SOURCE_CLEAN_PROVENANCE_MANIFEST.md`
-  - `docs/waves/provenance/docling-provenance-2026-03-02.csv`
+  - `docs/waves/provenance/docling-provenance-current.json`
   - `docs/waves/archive/reports/DOCLING_CLEANED_QUALITY_REPORT_2026-03-02.md`
 - Focus:
   - table-fidelity ambiguity resolution

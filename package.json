@@ -21,6 +21,8 @@
   },
   "scripts": {
     "codex:links": "node scripts/setup-codex-links.mjs",
+    "docling:check": "node --test spec-processing/scripts/tests/docling-provenance.test.mjs && ./spec-processing/scripts/generate-docling-provenance.sh --check && ./spec-processing/scripts/check-docling-cleaned-quality.sh --strict",
+    "docling:provenance:generate": "./spec-processing/scripts/generate-docling-provenance.sh --write",
     "wap-graph:generate": "node spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "wap-graph:check": "node scripts/check-wap-knowledge-graph.mjs",
     "lint:node": "pnpm -r --if-present run lint",
