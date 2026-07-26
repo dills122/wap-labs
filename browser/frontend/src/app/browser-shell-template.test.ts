@@ -1,8 +1,12 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mountBrowserShell } from './browser-shell-template';
 import { WAVES_CONFIG } from './waves-config';
 
 describe('mountBrowserShell', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('assigns runtime URL values via element properties after mount', () => {
     document.body.innerHTML = '<div id="app"></div>';
     const injectedUrl = 'http://example.test/start.wml?x=%22%3Cscript%3E';
@@ -124,5 +128,28 @@ describe('mountBrowserShell', () => {
     // a WAP Server" switches it to network.
     document.querySelector<HTMLButtonElement>('#btn-connect-network')?.click();
     expect(runModeSelectEl?.value).toBe('network');
+  });
+
+  it('collapses the utility rail when mounted at the configured narrow breakpoint', () => {
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn(() => ({ matches: true }))
+    );
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const railPanel = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
+    expect(railPanel?.open).toBe(false);
+  });
+
+  it('provides stable selectors for every shell disclosure seam', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    expect(document.querySelector('#utility-rail-toggle')).not.toBeNull();
+    expect(document.querySelector('#welcome-help-toggle')).not.toBeNull();
+    expect(document.querySelector('#local-example-notes-toggle')).not.toBeNull();
+    expect(document.querySelector('#dev-drawer-toggle')).not.toBeNull();
+    expect(document.querySelector('#debug-raw-mode-toggle')).not.toBeNull();
   });
 });

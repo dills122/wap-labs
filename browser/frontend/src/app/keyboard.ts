@@ -8,12 +8,12 @@ export const resolveKeyboardIntent = (
   key: string,
   ctrlKey: boolean,
   shiftKey: boolean,
-  isTextEntryTarget: boolean
+  isHostControlTarget: boolean
 ): KeyboardIntent => {
   if (ctrlKey && shiftKey && key.toLowerCase() === 'd') {
     return { type: 'toggle-dev-tools' };
   }
-  if (isTextEntryTarget) {
+  if (isHostControlTarget) {
     return { type: 'none' };
   }
   if (key === 'ArrowUp') {

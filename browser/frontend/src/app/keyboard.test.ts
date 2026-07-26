@@ -11,7 +11,7 @@ describe('app/keyboard', () => {
     });
   });
 
-  it('suppresses engine keys when target is text-entry', () => {
+  it('suppresses engine keys when a browser-owned control is targeted', () => {
     expect(resolveKeyboardIntent('ArrowUp', false, false, true)).toEqual({
       type: 'none'
     });

@@ -15,6 +15,7 @@
     "preview": "vite preview",
     "test": "pnpm run test:story:unit",
     "test:story": "node ./scripts/test-story.mjs",
+    "test:baseline:waves": "node ./scripts/measure-waves-baseline.mjs",
     "test:story:unit": "node --test ./scripts/tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",

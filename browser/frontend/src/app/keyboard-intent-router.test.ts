@@ -59,6 +59,21 @@ describe('KeyboardIntentRouter', () => {
     expect(router.isActionInFlight()).toBe(false);
   });
 
+  it('preserves native Enter activation for browser-owned controls', async () => {
+    const deps = createDeps();
+    const router = new KeyboardIntentRouter(deps);
+    const summary = document.createElement('summary');
+    const event = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true });
+    Object.defineProperty(event, 'target', { value: summary });
+
+    router.handleWindowKeydown(event);
+    await flushAsyncWork();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(deps.applyEngineKey).not.toHaveBeenCalled();
+    expect(deps.applyFocusedControlEditKey).not.toHaveBeenCalled();
+  });
+
   it('routes an engine-key intent through applyEngineKey and reports status', async () => {
     const deps = createDeps();
     const router = new KeyboardIntentRouter(deps);

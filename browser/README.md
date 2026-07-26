@@ -22,6 +22,9 @@ Implemented now:
 - Ordinary-browser Waves story entry backed by the real WaveNav WASM engine and deterministic
   canonical fixture fetching (`pnpm test:story:waves`)
 - Browser-style shell UI (address bar + back/reload/go + viewport-first layout)
+- Closed `WBP-00`/`WBP-01` baseline with a neutral 20-column Class C reference, reproducible
+  startup/navigation/input measurements, stable complete keyboard order, and default/minimum-window
+  evidence
 - Responsive full-window shell plus gateway-aware startup status that names the probed URL and
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
@@ -105,15 +108,12 @@ pnpm --dir browser run tauri:icons
 
 ## Next implementation slice
 
-1. Close the remaining `WBP-00` adoption/baseline evidence and `WBP-01`
-   minimum-window, keyboard, and existing-story integration gate. The shell
-   component seams landed in `#343`; do not reopen that decomposition.
-2. Once that gate is green, run browser-owned `WBP-02` visual system,
-   `WBP-03` toolbar information architecture, `WBP-04` onboarding/help, and
-   `WBP-05` host accessibility as leaf-component slices with one owner for
-   root shell and global-style integration.
-3. Keep `WBP-06` and later frame, input, transport lifecycle, persistence,
-   and diagnostics work dependency-gated on their engine/transport contracts.
+1. Continue with browser-owned `WBP-05` host accessibility using the safe seam in
+   `docs/waves/WAVES_BROWSER_BASELINE.md`; `WBP-02`, `WBP-03`, and `WBP-04` landed in `#344`,
+   `#346`, and `#347` without changing engine or transport contracts.
+2. Keep one owner for root shell, global-style, copy, and generated example-manifest integration.
+3. Keep `WBP-06` and later frame, input, transport lifecycle, persistence, and diagnostics work
+   dependency-gated on their engine/transport contracts.
 4. Defer `D0-01`, `W1-06`, and `M1-09` (`F0-F4` frame migration) until the
    upstream runtime boundary is stable enough not to churn the host contract.
 5. Keep `M1-03` as non-priority generator follow-up.
@@ -122,6 +122,7 @@ pnpm --dir browser run tauri:icons
 
 - Desktop product and interaction design: `docs/waves/WAVES_DESKTOP_PRODUCT_DESIGN.md`
 - Browser product implementation plan: `docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md`
+- WBP-00/WBP-01 decisions, measurements, and integration seams: `docs/waves/WAVES_BROWSER_BASELINE.md`
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`

@@ -48,7 +48,7 @@ export class KeyboardIntentRouter {
       event.key,
       event.ctrlKey,
       event.shiftKey,
-      isTextEntryTarget(event.target)
+      isHostControlTarget(event.target)
     );
 
     if (intent.type === 'none') {
@@ -148,7 +148,7 @@ export class KeyboardIntentRouter {
     if (event.ctrlKey || event.metaKey || event.altKey) {
       return false;
     }
-    if (isTextEntryTarget(event.target)) {
+    if (isHostControlTarget(event.target)) {
       return false;
     }
     if (
@@ -164,19 +164,11 @@ export class KeyboardIntentRouter {
   }
 }
 
-const isTextEntryTarget = (target: EventTarget | null): boolean => {
+const isHostControlTarget = (target: EventTarget | null): boolean => {
   if (!(target instanceof Element)) {
     return false;
   }
-  if (target instanceof HTMLInputElement) {
-    const type = target.type.toLowerCase();
-    return type === 'text' || type === 'search' || type === 'url' || type === 'number';
-  }
-  if (target instanceof HTMLTextAreaElement) {
-    return true;
-  }
-  if (target instanceof HTMLSelectElement) {
-    return true;
-  }
-  return target.getAttribute('contenteditable') === 'true';
+  return Boolean(
+    target.closest('button, input, select, textarea, summary, a[href], [contenteditable="true"]')
+  );
 };

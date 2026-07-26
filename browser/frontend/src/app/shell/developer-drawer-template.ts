@@ -3,7 +3,7 @@ import { WAVES_COPY } from '../waves-copy';
 export const developerDrawerTemplate = () => `
   <section class="developer-drawer-section" aria-label="Developer tools">
     <details id="dev-drawer" class="dev-drawer chrome-disclosure">
-      <summary>${WAVES_COPY.shell.developerTools}</summary>
+      <summary id="dev-drawer-toggle">${WAVES_COPY.shell.developerTools}</summary>
       <div class="panel-body">
         <div class="actions">
           <button id="btn-health" class="btn wv95-btn">${WAVES_COPY.shell.health}</button>
@@ -14,7 +14,7 @@ export const developerDrawerTemplate = () => `
           <button id="btn-clear-timeline" class="btn wv95-btn">${WAVES_COPY.shell.clearTimeline}</button>
         </div>
         <details id="debug-raw-mode" class="debug-raw-mode">
-          <summary>${WAVES_COPY.shell.rawWmlPaste}</summary>
+          <summary id="debug-raw-mode-toggle">${WAVES_COPY.shell.rawWmlPaste}</summary>
           <div class="debug-raw-mode-content">
             <label class="compact-field">
               ${WAVES_COPY.shell.baseUrl}
