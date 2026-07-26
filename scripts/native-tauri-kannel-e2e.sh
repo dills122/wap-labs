@@ -98,7 +98,10 @@ export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 } >"${ARTIFACT_DIR}/environment.txt"
 
 echo "==> Building the production Tauri frontend and debug application binary"
-pnpm --dir browser run tauri:build -- --no-bundle
+(
+  cd "${ROOT_DIR}/browser/src-tauri"
+  cargo tauri build --debug --no-bundle
+)
 
 echo "==> Driving the native Waves window through tauri-driver"
 pnpm --dir browser/frontend run test:native-kannel:ui
