@@ -150,6 +150,28 @@ const trn702ClauseIds = new Set([
   'WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY',
   'WDP-CL-IPV4-DONT-FRAGMENT'
 ]);
+const wml302ClauseIds = new Set([
+  'WML-CL-GO-ASSIGNMENT-ORDER',
+  'WML-CL-GO-SETVAR-SNAPSHOT',
+  'WML-CL-GO-TARGET-RESOLUTION',
+  'WML-CL-HISTORY-RESOLVES-VARIABLES',
+  'WML-CL-PREV-ASSIGNMENT-ORDER',
+  'WML-CL-REFRESH-ASSIGNMENTS',
+  'WML-CL-SETVAR-INVALID-NAME-IGNORED',
+  'WML-CL-SETVAR-STRUCTURE',
+  'WML-CL-SETVAR-TASK-SIDE-EFFECT',
+  'WML-CL-VARIABLE-COMMIT-BEFORE-TASK',
+  'WML-CL-VARIABLE-CONVERSION-MODES',
+  'WML-CL-VARIABLE-DEFAULT-CONVERSION',
+  'WML-CL-VARIABLE-DOLLAR-ESCAPE',
+  'WML-CL-VARIABLE-NAME-GRAMMAR',
+  'WML-CL-VARIABLE-PARSE-PRECEDENCE',
+  'WML-CL-VARIABLE-REFERENCE-VALIDATION',
+  'WML-CL-VARIABLE-SET-DEFINITION',
+  'WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS',
+  'WML-CL-VARIABLE-TASK-SNAPSHOT',
+  'WML-CL-VARIABLE-UNDEFINED-EMPTY'
+]);
 const wml303ClauseIds = new Set([
   'WML-CL-DO-ACTIVATION',
   'WML-CL-DO-EFFECTIVE-NAME',
@@ -318,6 +340,7 @@ const implementedWmlClauseIds = new Set([
   ...wml203ClauseIds,
   ...wml204ClauseIds,
   ...wml205ClauseIds,
+  ...wml302ClauseIds,
   ...wml303ClauseIds,
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
@@ -578,6 +601,7 @@ for (const family of ledger.families ?? []) {
         ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
         ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
         ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
+        ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
         ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
@@ -591,6 +615,7 @@ for (const family of ledger.families ?? []) {
       ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
       ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
       ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
+      ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
       ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),

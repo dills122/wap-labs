@@ -1097,7 +1097,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-GO-ASSIGNMENT-ORDER` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-ASSIGNMENT-ORDER` (`state-machine`, `implemented`)
 - **WML-CL-GO-ENCTYPE-SUPPORT** — Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1175,7 +1175,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-GO-SETVAR-SNAPSHOT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-SETVAR-SNAPSHOT` (`state-machine`, `implemented`)
 - **WML-CL-GO-STRUCTURE** — Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1193,7 +1193,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-GO-TARGET-RESOLUTION` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-TARGET-RESOLUTION` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-TIMER-THEN-DISPLAY** — If no forward-entry handler diverts processing, start the destination timer before rendering with current variables.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1247,7 +1247,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`
   - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-RESOLVES-VARIABLES` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-RESOLVES-VARIABLES` (`state-machine`, `implemented`)
 - **WML-CL-HISTORY-STACK-MODEL** — Maintain navigational history as an ordered stack of visited card request identities.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
@@ -1493,7 +1493,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
   - Parents: `WML-C-18`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-PREV-ASSIGNMENT-ORDER` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-PREV-ASSIGNMENT-ORDER` (`state-machine`, `implemented`)
 - **WML-CL-PREV-EMPTY-HISTORY** — Stop prev processing without a transition when the history stack has no prior card.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.2 (12.5.2 The Prev Task)
@@ -1547,7 +1547,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
   - Parents: `WML-C-18`, `WML-C-42`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-REFRESH-ASSIGNMENTS` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-REFRESH-ASSIGNMENTS` (`state-machine`, `implemented`)
 - **WML-CL-REFRESH-REDISPLAY** — Redisplay the current card from the updated variable state even when refresh contains no setvar elements.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
@@ -1625,7 +1625,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
   - Parents: `WML-C-52`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-SETVAR-INVALID-NAME-IGNORED` (`runtime`, `planned`)
+  - Fixture: `WML-FX-SETVAR-INVALID-NAME-IGNORED` (`runtime`, `implemented`)
 - **WML-CL-SETVAR-STRUCTURE** — Require setvar name and value attributes and no child content.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
@@ -1637,7 +1637,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.4 (9.4 The Setvar Element)
   - Parents: `WML-C-52`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-SETVAR-TASK-SIDE-EFFECT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-SETVAR-TASK-SIDE-EFFECT` (`state-machine`, `implemented`)
 - **WML-CL-SHADOW-ACTIVE-SET** — Build the active event set from non-noop card bindings plus unshadowed non-noop template bindings.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.6 (9.6 Card/Deck Task Shadowing)
@@ -1811,61 +1811,61 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-CONVERSION-MODES` (`runtime`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-CONVERSION-MODES` (`runtime`, `implemented`)
 - **WML-CL-VARIABLE-DEFAULT-CONVERSION** — Default HREF substitutions to URL escaping and other substitution contexts to no conversion.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-DEFAULT-CONVERSION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-DEFAULT-CONVERSION` (`runtime`, `implemented`)
 - **WML-CL-VARIABLE-DOLLAR-ESCAPE** — Interpret two consecutive dollar signs as one literal dollar sign in WML text and CDATA values.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.3 (10.3.3 The Dollar-sign Character)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-DOLLAR-ESCAPE` (`parser`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-DOLLAR-ESCAPE` (`parser`, `implemented`)
 - **WML-CL-VARIABLE-NAME-GRAMMAR** — Enforce the WML variable-name grammar and case sensitivity.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-NAME-GRAMMAR` (`parser`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-NAME-GRAMMAR` (`parser`, `implemented`)
 - **WML-CL-VARIABLE-PARSE-PRECEDENCE** — Parse XML and entity syntax before parsing WML variable-substitution syntax.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.2 (10.3.2 Parsing the Variable Substitution Syntax)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-PARSE-PRECEDENCE` (`parser`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-PARSE-PRECEDENCE` (`parser`, `implemented`)
 - **WML-CL-VARIABLE-REFERENCE-VALIDATION** — Reject a deck when a variable reference has invalid syntax or appears outside a permitted text or attribute location.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.5 (10.3.5 Validation)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-REFERENCE-VALIDATION` (`error-policy`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-REFERENCE-VALIDATION` (`error-policy`, `implemented`)
 - **WML-CL-VARIABLE-SET-DEFINITION** — Treat a variable as set only when its current value is known and non-empty.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3 (10.3 Variables)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-SET-DEFINITION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-SET-DEFINITION` (`runtime`, `implemented`)
 - **WML-CL-VARIABLE-SUBSTITUTION-LOCATIONS** — Allow runtime variable substitution in card text and in attributes typed as vdata or HREF, but not as markup.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS` (`parser`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-SUBSTITUTION-LOCATIONS` (`parser`, `implemented`)
 - **WML-CL-VARIABLE-TASK-SNAPSHOT** — Evaluate task setvar names and values before applying the resulting assignments to the browser context.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.4 (10.3.4 Setting Variables)
   - Parents: `WML-C-12`, `WML-C-18`, `WML-C-29`, `WML-C-38`, `WML-C-42`, `WML-C-52`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-TASK-SNAPSHOT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-TASK-SNAPSHOT` (`state-machine`, `implemented`)
 - **WML-CL-VARIABLE-UNDEFINED-EMPTY** — Substitute an empty string for a referenced variable that is unset or undefined.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.3.1 (10.3.1 Variable Substitution)
   - Parents: `WML-C-12`
   - Requirements: `RQ-RMK-003`, `RQ-RMK-005`
-  - Fixture: `WML-FX-VARIABLE-UNDEFINED-EMPTY` (`runtime`, `planned`)
+  - Fixture: `WML-FX-VARIABLE-UNDEFINED-EMPTY` (`runtime`, `implemented`)
 - **WML-CL-WML-ROOT-DECK-SCOPE** — Treat the wml element as the enclosing scope for every card and all deck-level information.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.2 (11.2 The WML Element)

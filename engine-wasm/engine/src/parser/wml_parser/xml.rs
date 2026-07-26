@@ -274,6 +274,12 @@ fn attach_node(
     node: XmlNode,
 ) -> Result<(), WmlLoadDiagnostic> {
     if let Some(parent) = stack.last_mut() {
+        if let XmlNode::Text(text) = &node {
+            if let Some(XmlNode::Text(previous)) = parent.children.last_mut() {
+                previous.push_str(text);
+                return Ok(());
+            }
+        }
         parent.children.push(node);
         return Ok(());
     }
@@ -329,6 +335,19 @@ fn decode_entities(input: &str) -> String {
 
 fn decode_general_entity(raw: &str) -> String {
     let token = raw.trim_start_matches('&').trim_end_matches(';');
+    let numeric = token
+        .strip_prefix("#x")
+        .or_else(|| token.strip_prefix("#X"))
+        .and_then(|value| u32::from_str_radix(value, 16).ok())
+        .or_else(|| {
+            token
+                .strip_prefix('#')
+                .and_then(|value| value.parse::<u32>().ok())
+        })
+        .and_then(char::from_u32);
+    if let Some(ch) = numeric {
+        return ch.to_string();
+    }
     match token {
         "lt" => "<".to_string(),
         "gt" => ">".to_string(),

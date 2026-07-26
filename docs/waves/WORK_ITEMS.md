@@ -100,8 +100,9 @@ Current priority order is:
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
    complete but intentionally remains open while its declared WTP family is
    inactive and unmapped.
-5. Preserve completed `WML-303` action/event/BACK evidence and advance the
-   unlocked engine baton through `WML-302`, then `WML-305`; treat
+5. Preserve completed `WML-302` variable/substitution and `WML-303`
+   action/event/BACK evidence and advance the unlocked engine baton through
+   `WML-305`; treat
    `WSP-801`/`WSP-802` as downstream connectionless-WSP foundation work
    until `TRN-7` and `WAE-6` close. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
@@ -155,7 +156,9 @@ for a separately authorized activation task but remains inactive in this lane:
    precedence semantics that the frame contract would expose. The three dynamic `do`
    presentation clauses remain planned for that frame/affordance slice rather than being
    inferred from the engine-semantic closure.
-3. `D0-01` has settled the overlapping `EngineDebug*` surface and reserved frame/input work for a
+3. `WML-302` has closed engine-internal variable substitution and setvar ordering without changing
+   `wml-engine.ts` or browser debug contracts; request serialization remains WML-304.
+4. `D0-01` has settled the overlapping `EngineDebug*` surface and reserved frame/input work for a
    later additive namespace owned by one F0 contract lane.
 
 A dedicated future `WBP-06`/`F0` task may now activate `F0-01`; `F0-02` and `F0-03` remain ordered
@@ -1999,9 +2002,14 @@ Reference:
   optionality/language retention, same-scope conflict validation, illegal-parent ignoring,
   card/template shadowing, and deterministic activation order. Remaining R0-04 scope is
   optional `fieldset`/`optgroup` capability declaration and grouping presentation, native
-  timer lifecycle, substitution outside the bounded input/select/option paths, and
+  timer lifecycle and
   language-aware non-Basic-Latin mask repertoires. Those gates are not residual WML-204
   acceptance work; the mandatory Unicode Basic Latin input floor is implemented and directly tested.
+- WML-302 closes post-XML variable substitution in text, vdata, and HREF contexts; undefined,
+  escaping/default, literal-dollar, validation, task-snapshot, go/prev/refresh order, and
+  resolved history/navigation-boundary behavior have direct native/WASM/story evidence.
+  Broader history modeling remains WML-301, request/postfield serialization remains WML-304,
+  and native timer lifecycle remains WML-305.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 

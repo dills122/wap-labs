@@ -63,9 +63,10 @@ Legend:
   - `WAP-191*` task model and `do`/`onevent` DTD usage
 - AC:
   - Evidence: [x] WML-303 task identity, optional/noop filtering, card/template shadowing, intrinsic conflicts/scope, BACK/accept precedence, entry order, and rollback are covered in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs`, the native/WASM host boundary suites, and `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-303`.
+  - Evidence: [x] WML-302 setvar task snapshot, assignment, target-resolution, prev, refresh, and rollback ordering is covered in `engine-wasm/engine/src/engine_tests/wml_302_variables.rs`, WASM parity, and `engine-wasm/examples/source/wml-302-variable-substitution.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-302`.
   - [x] Each task path has explicit runtime behavior and observable state transitions.
   - [x] Unsupported task attributes fail deterministically without host/runtime crash.
-  - Dynamic do visibility, labels, and widget exposure remain planned for the WBP-06 frame/affordance gate after the completed D0-01 contract sequence; variable/setvar task ordering is WML-302.
+  - Dynamic do visibility, labels, and widget exposure remain planned for the WBP-06 frame/affordance gate after the completed D0-01 contract sequence; WML-302 closes variable/setvar task ordering without changing the host-visible engine contract.
 
 ### RQ-RMK-003 Card context and navigation semantics
 
@@ -77,6 +78,7 @@ Legend:
 - AC:
   - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_202_residual.rs` proves newcontext defaults, go-only variable/history/private-state reset, direct-navigation exclusion, and rollback-safe state; `pnpm test:story WML-202` proves empty history after the stable newcontext flow.
   - [x] `#cardId` resolution is deterministic and missing target handling is explicit in the existing navigation tests.
+  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` is closed for variable resolution here; WML-301 still owns the broader deck/card history model and WML-304 owns request serialization/postfield history identity.
   - [x] History behavior is stable across forward/back transitions and refresh paths for the covered card-context lane; broader request identity remains tracked separately.
 
 ### RQ-RMK-004 Event and timer lifecycle
@@ -102,9 +104,10 @@ Legend:
 - AC:
   - Evidence: [x] The bounded WML-204 input/select/option lane is covered by `wml_204_input_vdata_conversions_preserve_source_variable`, `wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order`, `wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape`, and `wml_204_invalid_control_variable_references_reject_load_atomically`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_204` and `pnpm test:story WML-204`.
   - Evidence: [x] WASM boundary parity and load-failure atomicity are covered by `wasm_wml_204_invalid_variable_reference_rejection_is_atomic` and `wasm_wml_204_conversion_order_empty_option_and_href_match_native`; run `wasm-pack test --node engine-wasm/engine`.
-  - [ ] Substitution timing is fixed in runtime pipeline (post-parse, pre-render/task use).
-  - [x] Undefined-variable behavior is covered for the completed WML-204 control contexts.
-  - Broader non-control substitution contexts remain additive RQ-RMK-005 work and do not reopen WML-204.
+  - Evidence: [x] WML-302 fixes substitution after XML/entity parsing and before render/task use, including text, vdata/HREF defaults, conversions, undefined variables, `$$`, invalid-reference rejection, task snapshots, and resolved link/go targets in `engine-wasm/engine/src/engine_tests/wml_302_variables.rs` plus WASM/story parity.
+  - [x] Substitution timing is fixed in runtime pipeline (post-parse, pre-render/task use).
+  - [x] Undefined-variable behavior is covered for control and ordinary text/link contexts.
+  - Request serialization/postfields remain additive WML-304 work and do not reopen WML-302.
 
 ### RQ-RMK-006 Anchor shorthand semantics
 

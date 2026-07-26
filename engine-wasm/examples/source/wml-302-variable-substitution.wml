@@ -1,0 +1,45 @@
+<!--
+label: WML-302 Variable Store and Substitution
+work-items: WML-302
+spec-items: WML-C-07,WML-C-12,WML-C-18,WML-C-29,WML-C-38,WML-C-52,RQ-RMK-002,RQ-RMK-003,RQ-RMK-005
+description: Exercises task-snapshot setvars, literal-dollar handling, text and HREF substitution, context persistence, and prev assignment order.
+goal: Verify that WML variables are resolved from stable task snapshots and remain engine-owned across render and navigation.
+testing-ac:
+- Press Enter on home; the go task snapshots all setvars, reaches display, and renders the substituted greeting plus literal and undefined-dollar cases.
+- Follow the substituted link target to final; the same browser context preserves the greeting.
+- Press Back on final; the WML prev task applies Return before restoring display.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <do type="accept">
+      <go href="#display">
+        <setvar name="Greeting" value="A B"/>
+        <setvar name="Route" value="final"/>
+        <setvar name="First" value="new"/>
+        <setvar name="Copied" value="$(First)"/>
+      </go>
+    </do>
+    <p>Press Enter to snapshot variables.</p>
+  </card>
+
+  <card id="display">
+    <p>
+      Greeting: $(Greeting:noesc).
+      Dollar: $$.
+      Undefined: pre$(Missing)post.
+      Snapshot: pre$(Copied)post.
+      Return: $(Return).
+      <a href="#$(Route)">Open $(Route:noesc)</a>
+    </p>
+  </card>
+
+  <card id="final">
+    <do type="prev">
+      <prev><setvar name="Return" value="back"/></prev>
+    </do>
+    <p>Variables persisted: $(Greeting:noesc).</p>
+  </card>
+</wml>

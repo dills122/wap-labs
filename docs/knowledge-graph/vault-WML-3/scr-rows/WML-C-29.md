@@ -16,10 +16,14 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
+- `refines` ← [[clauses/WML-CL-GO-ASSIGNMENT-ORDER|WML-CL-GO-ASSIGNMENT-ORDER]]
 - `refines` ← [[clauses/WML-CL-GO-ENTRY-EVENT-PRECEDENCE|WML-CL-GO-ENTRY-EVENT-PRECEDENCE]]
+- `refines` ← [[clauses/WML-CL-GO-SETVAR-SNAPSHOT|WML-CL-GO-SETVAR-SNAPSHOT]]
 - `refines` ← [[clauses/WML-CL-GO-STRUCTURE|WML-CL-GO-STRUCTURE]]
+- `refines` ← [[clauses/WML-CL-GO-TARGET-RESOLUTION|WML-CL-GO-TARGET-RESOLUTION]]
 - `refines` ← [[clauses/WML-CL-GO-TIMER-THEN-DISPLAY|WML-CL-GO-TIMER-THEN-DISPLAY]]
 - `refines` ← [[clauses/WML-CL-TASK-FAILURE-ATOMICITY|WML-CL-TASK-FAILURE-ATOMICITY]]
+- `refines` ← [[clauses/WML-CL-VARIABLE-TASK-SNAPSHOT|WML-CL-VARIABLE-TASK-SNAPSHOT]]
 
 ## Data
 

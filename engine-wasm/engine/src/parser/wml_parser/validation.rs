@@ -23,6 +23,16 @@ fn validate_element(
     }
     validate_attributes(element, ids)?;
     validate_content_model(element)?;
+    for child in &element.children {
+        if let XmlNode::Text(text) = child {
+            validate_vdata(text).map_err(|error| {
+                format!(
+                    "Invalid <{}>: text contains an invalid variable reference: {error}",
+                    element.name
+                )
+            })?;
+        }
+    }
     let child_table_depth = table_depth + usize::from(element.name == "table");
     for child in &element.children {
         if let XmlNode::Element(child) = child {

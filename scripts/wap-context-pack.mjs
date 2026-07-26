@@ -10,7 +10,7 @@ import {
 const target = process.argv[2];
 if (!target) {
   console.error(
-    'Usage: node scripts/wap-context-pack.mjs TRN-7|TRN-702|TRN-703|TRN-706|TRN-707|TRN-708|WML-2|WML-201|WML-202|WML-203|WML-204|WML-205|WML-3|WML-303'
+    'Usage: node scripts/wap-context-pack.mjs TRN-7|TRN-702|TRN-703|TRN-706|TRN-707|TRN-708|WML-2|WML-201|WML-202|WML-203|WML-204|WML-205|WML-3|WML-302|WML-303'
   );
   process.exit(1);
 }
@@ -29,6 +29,7 @@ const targetSprints = new Map([
   ['WML-204', 'WML-2'],
   ['WML-205', 'WML-2'],
   ['WML-3', 'WML-3'],
+  ['WML-302', 'WML-3'],
   ['WML-303', 'WML-3']
 ]);
 const sprint = targetSprints.get(target);

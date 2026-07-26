@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
 - `maps-to` → [[requirements/RQ-RMK-005|RQ-RMK-005]]
+- `planned-by` → [[work-items/WML-302|WML-302]]
 - `planned-by` → [[work-items/WML-308|WML-308]]
 - `refines` → [[scr-rows/WML-C-12|WML-C-12]]
 - `refines` → [[scr-rows/WML-C-33|WML-C-33]]
@@ -50,6 +51,7 @@ tags:
     "R0-04",
     "WML-201",
     "WML-204",
+    "WML-302",
     "WML-308"
   ],
   "ownerLayers": [

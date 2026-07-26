@@ -4,7 +4,7 @@ key: "WML-FX-VARIABLE-PARSE-PRECEDENCE"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "parser",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Parse XML and entity syntax before parsing WML variable-substitution syntax.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -16,9 +16,11 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
+- `refines` ← [[clauses/WML-CL-REFRESH-ASSIGNMENTS|WML-CL-REFRESH-ASSIGNMENTS]]
 - `refines` ← [[clauses/WML-CL-REFRESH-REDISPLAY|WML-CL-REFRESH-REDISPLAY]]
 - `refines` ← [[clauses/WML-CL-REFRESH-TIMER-RESTART|WML-CL-REFRESH-TIMER-RESTART]]
 - `refines` ← [[clauses/WML-CL-TIMER-REFRESH-RESUME|WML-CL-TIMER-REFRESH-RESUME]]
+- `refines` ← [[clauses/WML-CL-VARIABLE-TASK-SNAPSHOT|WML-CL-VARIABLE-TASK-SNAPSHOT]]
 
 ## Data
 

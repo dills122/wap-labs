@@ -553,7 +553,7 @@
         },
         {
           "id": "WML-302",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["C5-04"],
@@ -564,7 +564,25 @@
             "Initialization, escaping modes, substitution contexts, setvar ordering, and invalid references match effective WML rules."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302",
+            "wasm-pack test --node engine-wasm/engine",
+            "pnpm test:story WML-302",
+            "node scripts/wap-context-pack.mjs WML-302",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "followUpWorkItems": [
+            "WML-301",
+            "WML-304",
+            "WML-305"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 9.2, 9.4, 10.3 through 10.3.5, and 12.5.1, 12.5.2, and 12.5.4"
+          ],
+          "notes": [
+            "All 20 directly mapped WML-302 clauses have source-derived native fixtures, WASM parity, and an executable host/Waves story. The focused WML-302 context pack is generated from the effective base -> SIN 102 -> SIN 104 -> SIN 105 source order with no zero-clause or family mapping gaps.",
+            "HISTORY-RESOLVES-VARIABLES is explicitly adjudicated across WML-301/WML-302/WML-304: WML-302 resolves WML-authored target and variable data before the engine records same-deck history or publishes an external navigation intent; WML-301 retains ownership of the broader deck/card history model; WML-304 retains request construction and GET/POST/postfield serialization. No unresolved WML variable reference crosses the WML-302 engine history or navigation boundary.",
+            "WML-302 preserves WML-202 newcontext reset, WML-204 control/vdata commit, WML-205 atomic failure rollback, and WML-303 task/action/BACK ordering. It makes no wml-engine.ts or browser debug-contract change; D0-01 remains the exclusive contract lane. Native timer lifecycle remains WML-305 and is the next engine baton."
           ]
         },
         {
@@ -604,7 +622,7 @@
           "notes": [
             "WML-303 owns deterministic task/event activation, card/template shadowing, BACK override, and strict softkey-action precedence. WAP-236 is clarification/delta evidence and does not replace the effective WAP 1.2.1 WML source sequence.",
             "All 27 directly mapped WML-303 clauses have source-derived native fixtures, native/WASM boundary coverage, browser host coverage, and four executable host/Waves stories. The three dynamic do presentation clauses (active visibility, label best effort, and unique widget exposure) remain outside this engine-semantic slice under the existing WBP-06/D0-01 frame gate.",
-            "Variable/setvar evaluation remains WML-302, GET/POST request construction remains WML-304, and native timer lifecycle remains WML-305. WML-205 failure atomicity is a shared regression obligation and remains completed history. The evidence-backed next baton is WML-302, followed by WML-305."
+            "Variable/setvar evaluation is completed by WML-302, GET/POST request construction remains WML-304, and native timer lifecycle remains WML-305. WML-205 failure atomicity is a shared regression obligation and remains completed history. The evidence-backed next engine baton is WML-305."
           ]
         },
         {
@@ -677,7 +695,7 @@
             "node scripts/check-wap-conformance-ledger.mjs"
           ],
           "notes": [
-            "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203 or preempt the WML-303, WML-302, WML-305 baton."
+            "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203/WML-302/WML-303 or preempt the WML-305 baton."
           ]
         },
         {
@@ -698,7 +716,7 @@
             "pnpm test:story WML-308"
           ],
           "notes": [
-            "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-302 then WML-305 baton or authorize the separately gated WBP-06 frame contract."
+            "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
           ]
         }
       ],

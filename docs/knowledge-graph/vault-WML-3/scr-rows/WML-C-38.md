@@ -17,9 +17,11 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `refines` ← [[clauses/WML-CL-HISTORY-PREV-POP|WML-CL-HISTORY-PREV-POP]]
+- `refines` ← [[clauses/WML-CL-PREV-ASSIGNMENT-ORDER|WML-CL-PREV-ASSIGNMENT-ORDER]]
 - `refines` ← [[clauses/WML-CL-PREV-EMPTY-HISTORY|WML-CL-PREV-EMPTY-HISTORY]]
 - `refines` ← [[clauses/WML-CL-PREV-ENTRY-EVENT-PRECEDENCE|WML-CL-PREV-ENTRY-EVENT-PRECEDENCE]]
 - `refines` ← [[clauses/WML-CL-TASK-FAILURE-ATOMICITY|WML-CL-TASK-FAILURE-ATOMICITY]]
+- `refines` ← [[clauses/WML-CL-VARIABLE-TASK-SNAPSHOT|WML-CL-VARIABLE-TASK-SNAPSHOT]]
 
 ## Data
 
