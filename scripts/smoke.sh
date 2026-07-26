@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 require_cmd() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -13,16 +13,17 @@ require_cmd() {
 require_cmd curl
 
 wait_for_http() {
-  local url="$1"
-  local retries="${2:-40}"
-  local sleep_seconds="${3:-1}"
-  local i
+  url="$1"
+  retries="${2:-40}"
+  sleep_seconds="${3:-1}"
+  i=1
 
-  for ((i = 1; i <= retries; i += 1)); do
+  while [ "$i" -le "$retries" ]; do
     if curl -fsS --connect-timeout 2 --max-time 3 "$url" >/dev/null 2>&1; then
       return 0
     fi
     sleep "$sleep_seconds"
+    i=$((i + 1))
   done
 
   echo "Timeout waiting for $url" >&2
@@ -50,7 +51,7 @@ LOGIN_RESP="$(curl -fsS --connect-timeout 2 --max-time 5 -X POST 'http://localho
   -H 'Content-Type: application/x-www-form-urlencoded' \
   --data 'username=demo&pin=1234')"
 SID="$(echo "$LOGIN_RESP" | sed -n 's/.*portal?sid=\([a-f0-9]\{16\}\).*/\1/p' | head -n 1)"
-if [[ -z "$SID" ]]; then
+if [ -z "$SID" ]; then
   echo "Unable to extract session ID from login response" >&2
   exit 1
 fi

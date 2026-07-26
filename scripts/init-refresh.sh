@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env sh
+set -eu
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 AUTO_INSTALL_RUST_TOOLS="${AUTO_INSTALL_RUST_TOOLS:-0}"
 SKIP_NODE_INSTALLS="${SKIP_NODE_INSTALLS:-0}"
 SKIP_HOOKS="${SKIP_HOOKS:-0}"
@@ -15,7 +15,7 @@ warn() {
 }
 
 need_cmd() {
-  local cmd="$1"
+  cmd="$1"
   if ! command -v "${cmd}" >/dev/null 2>&1; then
     warn "missing required command: ${cmd}"
     return 1
@@ -24,12 +24,12 @@ need_cmd() {
 }
 
 ensure_rust_tool() {
-  local check_cmd="$1"
-  local install_cmd="$2"
+  check_cmd="$1"
+  install_cmd="$2"
   if command -v "${check_cmd}" >/dev/null 2>&1; then
     return 0
   fi
-  if [[ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]]; then
+  if [ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]; then
     warn "${check_cmd} not found (set AUTO_INSTALL_RUST_TOOLS=1 to auto-install)"
     return 0
   fi
@@ -38,15 +38,15 @@ ensure_rust_tool() {
 }
 
 ensure_tauri_cli() {
-  local expected_version="2.10.0"
-  local actual_version=""
+  expected_version="2.10.0"
+  actual_version=""
   if command -v cargo-tauri >/dev/null 2>&1; then
     actual_version="$(cargo tauri --version 2>/dev/null || true)"
   fi
-  if [[ "${actual_version}" == "tauri-cli ${expected_version}" ]]; then
+  if [ "${actual_version}" = "tauri-cli ${expected_version}" ]; then
     return 0
   fi
-  if [[ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]]; then
+  if [ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]; then
     warn "tauri-cli ${expected_version} required (found: ${actual_version:-missing}; set AUTO_INSTALL_RUST_TOOLS=1 to install)"
     return 0
   fi
@@ -65,7 +65,7 @@ if command -v cargo >/dev/null 2>&1; then
   ensure_tauri_cli
 fi
 
-if [[ "${SKIP_NODE_INSTALLS}" != "1" ]]; then
+if [ "${SKIP_NODE_INSTALLS}" != "1" ]; then
   if command -v pnpm >/dev/null 2>&1; then
     log "pnpm install (workspace)"
     (cd "${ROOT_DIR}" && pnpm install)
@@ -73,12 +73,12 @@ if [[ "${SKIP_NODE_INSTALLS}" != "1" ]]; then
     log "install browser frontend dependencies"
     (cd "${ROOT_DIR}" && pnpm --dir browser/frontend install)
 
-    if [[ -f "${ROOT_DIR}/engine-wasm/host-sample/package.json" ]]; then
+    if [ -f "${ROOT_DIR}/engine-wasm/host-sample/package.json" ]; then
       log "install host-sample dependencies"
       (cd "${ROOT_DIR}" && pnpm --dir engine-wasm/host-sample install --ignore-workspace)
     fi
 
-    if [[ -f "${ROOT_DIR}/marketing-site/package.json" ]]; then
+    if [ -f "${ROOT_DIR}/marketing-site/package.json" ]; then
       log "install marketing-site dependencies"
       (cd "${ROOT_DIR}" && pnpm --dir marketing-site --ignore-workspace install)
     fi
@@ -87,7 +87,7 @@ if [[ "${SKIP_NODE_INSTALLS}" != "1" ]]; then
     warn "pnpm not found; skipping node installs"
   fi
 
-  if command -v npm >/dev/null 2>&1 && [[ -f "${ROOT_DIR}/wml-server/package.json" ]]; then
+  if command -v npm >/dev/null 2>&1 && [ -f "${ROOT_DIR}/wml-server/package.json" ]; then
     log "install wml-server dependencies"
     (cd "${ROOT_DIR}" && npm --prefix wml-server install)
   else
@@ -97,7 +97,7 @@ else
   log "skipping node installs (SKIP_NODE_INSTALLS=1)"
 fi
 
-if [[ "${SKIP_HOOKS}" != "1" ]]; then
+if [ "${SKIP_HOOKS}" != "1" ]; then
   if command -v pre-commit >/dev/null 2>&1; then
     log "installing repo hooks"
     (cd "${ROOT_DIR}" && make hooks-install)
