@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
+import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
 import { defaultLocalDeckExample } from './local-examples';
 import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
@@ -249,7 +250,7 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
-    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
     vi.mocked(hostClient.fetchDeck).mockClear();
 
     refs.fetchUrlInput.value = 'http://example.test/network.wml';
@@ -442,7 +443,7 @@ describe('BrowserController behavior coverage', () => {
     vi.mocked(hostClient.fetchDeck).mockResolvedValue(gatewayTimeoutResponse() as never);
     const controller = new BrowserController(hostClient as never, presenter, refs);
     await controller.init('<wml><card id="seed"/></wml>');
-    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
 
     refs.fetchUrlInput.value = 'http://example.test/network.wml';
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
@@ -475,7 +476,7 @@ describe('BrowserController behavior coverage', () => {
     } as never);
     const controller = new BrowserController(hostClient as never, presenter, refs);
     await controller.init('<wml><card id="seed"/></wml>');
-    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
 
     refs.fetchUrlInput.value = 'http://example.test/network.wml';
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
@@ -503,8 +504,8 @@ describe('BrowserController behavior coverage', () => {
       // mocked engineAdvanceTimeMs response would otherwise trigger an
       // unrelated re-render mid-delay, incidentally canceling the pending
       // indicator this test is trying to observe.
-      (controller as any).timerRuntime.stop();
-      await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+      controllerPrivates(controller).timerRuntime.stop();
+      await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
       // setRunMode kicks off the startup network probe, which also calls
       // hostClient.fetchDeck -- let that settle against the default (fast,
       // successful) mock before installing the pending mock below, so it
@@ -567,7 +568,7 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
-    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
     const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
     // No page has been fetched yet in this mode -- nothing to go back to.
     expect(backBtn?.disabled).toBe(false);

@@ -16,6 +16,7 @@ export const createTsLintConfig = ({
         : globals.browser;
 
   return [
+    ...tsPlugin.configs['flat/recommended'],
     {
       files,
       ignores,

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
+import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
 import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
 
@@ -151,7 +152,7 @@ describe('BrowserController local timer behavior', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
     presenter.setSessionState(initialSession);
     presenter.setSnapshot(snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }));
-    await (controller as any).tickEngineTimerRuntime();
+    await controllerPrivates(controller).tickEngineTimerRuntime();
 
     expect(engineRender).not.toHaveBeenCalled();
   });
