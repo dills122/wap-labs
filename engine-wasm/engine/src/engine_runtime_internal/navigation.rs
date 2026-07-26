@@ -39,17 +39,36 @@ impl WmlEngine {
     /// bounds that recursion, mirroring the `timer_dispatch_depth` guard in
     /// `engine_runtime_internal/timers.rs`.
     pub(crate) fn navigate_to_card_internal(&mut self, id: &str) -> Result<(), String> {
+        self.navigate_to_card_internal_with_context(id, true)
+    }
+
+    pub(crate) fn navigate_to_card_without_newcontext_internal(
+        &mut self,
+        id: &str,
+    ) -> Result<(), String> {
+        self.navigate_to_card_internal_with_context(id, false)
+    }
+
+    fn navigate_to_card_internal_with_context(
+        &mut self,
+        id: &str,
+        apply_new_context: bool,
+    ) -> Result<(), String> {
         if self.nav_dispatch_depth >= MAX_NAV_DISPATCH_DEPTH {
             self.push_trace("NAV_DEPTH_EXCEEDED", format!("target={id}"));
             return Err("navigation: dispatch depth exceeded".to_string());
         }
         self.nav_dispatch_depth += 1;
-        let result = self.navigate_to_card_internal_bounded(id);
+        let result = self.navigate_to_card_internal_bounded(id, apply_new_context);
         self.nav_dispatch_depth -= 1;
         result
     }
 
-    fn navigate_to_card_internal_bounded(&mut self, id: &str) -> Result<(), String> {
+    fn navigate_to_card_internal_bounded(
+        &mut self,
+        id: &str,
+        apply_new_context: bool,
+    ) -> Result<(), String> {
         let deck = self
             .deck
             .as_ref()
@@ -58,6 +77,7 @@ impl WmlEngine {
         let next_idx = deck
             .card_index(id)
             .ok_or_else(|| "Card id not found".to_string())?;
+        let reset_context = apply_new_context && deck.cards[next_idx].new_context;
 
         // Every fallible entry step below rolls back all navigation state for
         // deterministic failure behavior on entry-task failures. This also
@@ -70,7 +90,12 @@ impl WmlEngine {
         nav.engine.active_input_edit = None;
         nav.engine.active_select_edit = None;
         let previous_idx = nav.engine.active_card_idx;
-        nav.engine.nav_stack.push(previous_idx);
+        if reset_context {
+            nav.engine.reset_browser_context_for_newcontext();
+            nav.engine.push_trace("NEWCONTEXT", format!("target={id}"));
+        } else {
+            nav.engine.nav_stack.push(previous_idx);
+        }
         nav.engine.active_card_idx = next_idx;
         nav.engine.focused_link_idx = 0;
         nav.engine.initialize_controls_on_active_card()?;
@@ -78,6 +103,21 @@ impl WmlEngine {
         nav.engine.start_or_resume_timer_for_active_card(false)?;
         nav.commit();
         Ok(())
+    }
+
+    fn reset_browser_context_for_newcontext(&mut self) {
+        self.vars.clear();
+        self.nav_stack.clear();
+        self.focused_link_idx = 0;
+        self.external_nav_intent = None;
+        self.external_nav_request_policy = None;
+        self.active_timer = None;
+        self.active_input_edit = None;
+        self.active_select_edit = None;
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_outcome = None;
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
     }
 
     /// Navigate back in history, guarded against unbounded recursion. See
@@ -348,27 +388,42 @@ struct NavRollbackGuard<'a> {
 struct NavStateRollback {
     active_card_idx: usize,
     focused_link_idx: usize,
-    nav_stack: NavStackRollback,
+    nav_stack: Vec<usize>,
     active_timer: Option<CardTimerState>,
+    vars: HashMap<String, String>,
+    external_nav_intent: Option<String>,
+    external_nav_request_policy: Option<ScriptNavigationRequestPolicyLiteral>,
+    active_input_edit: Option<InputEditState>,
+    active_select_edit: Option<SelectEditState>,
+    pending_script_effects: ScriptRuntimeEffects,
+    last_script_outcome: Option<ScriptExecutionOutcome>,
+    last_script_dialog_requests: Vec<ScriptDialogRequest>,
+    last_script_timer_requests: Vec<ScriptTimerRequest>,
 }
 
-/// How to undo a navigation attempt's change to the history stack.
-enum NavStackRollback {
-    /// Forward navigation only pushes, so dropping entries added since the
-    /// snapshot restores the prior history.
-    TruncateTo(usize),
-    /// Back navigation pops, so the exact prior contents are restored.
-    Restore(Vec<usize>),
+impl NavStateRollback {
+    fn capture(engine: &WmlEngine) -> Self {
+        Self {
+            active_card_idx: engine.active_card_idx,
+            focused_link_idx: engine.focused_link_idx,
+            nav_stack: engine.nav_stack.clone(),
+            active_timer: engine.active_timer.clone(),
+            vars: engine.vars.clone(),
+            external_nav_intent: engine.external_nav_intent.clone(),
+            external_nav_request_policy: engine.external_nav_request_policy.clone(),
+            active_input_edit: engine.active_input_edit.clone(),
+            active_select_edit: engine.active_select_edit.clone(),
+            pending_script_effects: engine.pending_script_effects.clone(),
+            last_script_outcome: engine.last_script_outcome.clone(),
+            last_script_dialog_requests: engine.last_script_dialog_requests.clone(),
+            last_script_timer_requests: engine.last_script_timer_requests.clone(),
+        }
+    }
 }
 
 impl<'a> NavRollbackGuard<'a> {
     fn forward(engine: &'a mut WmlEngine) -> Self {
-        let rollback = NavStateRollback {
-            active_card_idx: engine.active_card_idx,
-            focused_link_idx: engine.focused_link_idx,
-            nav_stack: NavStackRollback::TruncateTo(engine.nav_stack.len()),
-            active_timer: engine.active_timer.clone(),
-        };
+        let rollback = NavStateRollback::capture(engine);
         Self {
             engine,
             rollback: Some(rollback),
@@ -376,12 +431,7 @@ impl<'a> NavRollbackGuard<'a> {
     }
 
     fn back(engine: &'a mut WmlEngine) -> Self {
-        let rollback = NavStateRollback {
-            active_card_idx: engine.active_card_idx,
-            focused_link_idx: engine.focused_link_idx,
-            nav_stack: NavStackRollback::Restore(engine.nav_stack.clone()),
-            active_timer: engine.active_timer.clone(),
-        };
+        let rollback = NavStateRollback::capture(engine);
         Self {
             engine,
             rollback: Some(rollback),
@@ -401,11 +451,17 @@ impl Drop for NavRollbackGuard<'_> {
         };
         self.engine.active_card_idx = rollback.active_card_idx;
         self.engine.focused_link_idx = rollback.focused_link_idx;
-        match rollback.nav_stack {
-            NavStackRollback::TruncateTo(len) => self.engine.nav_stack.truncate(len),
-            NavStackRollback::Restore(stack) => self.engine.nav_stack = stack,
-        }
+        self.engine.nav_stack = rollback.nav_stack;
         self.engine.active_timer = rollback.active_timer;
+        self.engine.vars = rollback.vars;
+        self.engine.external_nav_intent = rollback.external_nav_intent;
+        self.engine.external_nav_request_policy = rollback.external_nav_request_policy;
+        self.engine.active_input_edit = rollback.active_input_edit;
+        self.engine.active_select_edit = rollback.active_select_edit;
+        self.engine.pending_script_effects = rollback.pending_script_effects;
+        self.engine.last_script_outcome = rollback.last_script_outcome;
+        self.engine.last_script_dialog_requests = rollback.last_script_dialog_requests;
+        self.engine.last_script_timer_requests = rollback.last_script_timer_requests;
     }
 }
 
@@ -449,8 +505,8 @@ mod tests {
             <a href="#timed">To timed</a>
           </card>
           <card id="timed">
-            <timer value="0"/>
             <onevent type="ontimer"><go href="script:timer.wmlsc#main"/></onevent>
+            <timer value="0"/>
             <a href="#next">To next</a>
           </card>
           <card id="next"><p>Next</p></card>

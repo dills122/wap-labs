@@ -10,6 +10,7 @@ Transport layer must normalize network payloads to:
 - `baseUrl: string`
 - `contentType: string` (`text/vnd.wap.wml` or normalized from `application/vnd.wap.wmlc`)
 - optional `rawBytesBase64: string`
+- optional `referringUrl: string` for destination-deck access policy
 
 Engine must not parse WBXML directly in MVP.
 
@@ -35,6 +36,8 @@ Planned soon (already in WML model):
 - Relative references resolve against `baseUrl`.
 - Non-fragment URLs trigger host navigation request.
 - History model must support back behavior per card/deck transitions.
+- Destination access is evaluated in the engine against the host-supplied
+  referring deck URI before a loaded deck replaces active runtime state.
 
 ## 4. State and Context Semantics
 

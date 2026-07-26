@@ -16,6 +16,7 @@ fn tauri_command_wrappers_drive_managed_state_roundtrip() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -60,6 +61,7 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("frame load should succeed");
@@ -181,6 +183,7 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
             base_url: "http://local.test/dir/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -227,8 +230,8 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
         <a href="#timed">To timed</a>
       </card>
       <card id="timed">
-        <timer value="1"/>
         <onevent type="ontimer"><go href="#done"/></onevent>
+        <timer value="1"/>
         <p>Timed</p>
       </card>
       <card id="done"><p>Done</p></card>
@@ -241,6 +244,7 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -274,6 +278,7 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect_err("oversized xml should fail");
@@ -286,6 +291,7 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some("A".repeat((1024 * 1024) + 1)),
+            referring_url: None,
         },
     )
     .expect_err("oversized raw payload should fail");
@@ -310,6 +316,7 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -367,6 +374,7 @@ fn tauri_frame_command_wrappers_handle_focused_input_edit_commands() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -426,6 +434,7 @@ fn tauri_command_wrappers_handle_focused_select_edit_commands() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -484,6 +493,7 @@ fn tauri_frame_command_wrappers_handle_focused_select_edit_commands() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -543,6 +553,7 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
             base_url: "wap://localhost/login".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");
@@ -620,6 +631,7 @@ fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_or_whitespace_temp
             base_url: "wap://localhost/login".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("load should succeed");

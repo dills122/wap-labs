@@ -4,7 +4,7 @@ key: "WML-FX-ACCESS-ABSENT-ALLOWS"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "security-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "When no access element is present, allow referrals from any deck.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

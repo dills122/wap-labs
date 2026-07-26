@@ -34,8 +34,8 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 761 planned clause fixtures, and a
 13-sprint/79-item execution program. The conservative implementation snapshot
-is 22 implemented, 77 partial, and 99 missing parent rows; clause-level
-assessment is 145/761.
+is 23 implemented, 77 partial, and 98 missing parent rows; clause-level
+assessment is 161/761.
 
 Use this order for new completion work:
 
@@ -218,14 +218,14 @@ Current recommendation after all merged implementation workstreams:
 
 1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
    projection and 174/174 direct WML-clause mapping.
-2. **Engine lane, first:** close `WML-202` referring-URI access policy,
-   root-language, and card-context/grammar, followed by the residual mandatory
-   `WML-204` vdata/HREF conversion and field/control validation gate. Preserve
-   their completed direct-clause and grouped-control evidence.
+2. **Engine lane, first:** preserve completed `WML-202` access-policy,
+   root-language, and card-context evidence (30/30 direct clauses), then close
+   the residual mandatory `WML-204` vdata/HREF conversion and field/control
+   validation gate without reopening WML-202 history.
 3. **Engine lane, next:** close `WML-203` mandatory prologue and DTD
    content-model enforcement, then extend `WML-205`'s deterministic load
    taxonomy across remaining element errors and host fetch/access failure
-   atomicity. All four residual WML-2 slices overlap parser/runtime validation
+   atomicity. These residual WML-2 slices overlap parser/runtime validation
    tests and should land serially.
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive

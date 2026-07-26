@@ -40,12 +40,14 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Reject a deck containing more than one access element.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201",
     "WML-202"
   ],
   "ownerLayers": [
+    "browser",
     "engine-wasm"
   ],
   "requirementIds": [

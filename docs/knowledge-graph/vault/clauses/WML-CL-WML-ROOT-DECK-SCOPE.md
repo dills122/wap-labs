@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Treat the wml element as the enclosing scope for every card and all deck-level information.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201",

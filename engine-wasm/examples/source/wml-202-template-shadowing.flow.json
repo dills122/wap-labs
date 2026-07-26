@@ -62,6 +62,17 @@
               "KEY"
             ]
           }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": {
+              "activeCardId": "masked",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "traceKinds": ["NEWCONTEXT", "ACTION_BACK_EMPTY"]
+          }
         }
       ]
     }

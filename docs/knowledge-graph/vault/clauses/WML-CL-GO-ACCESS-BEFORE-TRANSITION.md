@@ -19,6 +19,7 @@ tags:
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
 - `maps-to` → [[requirements/RQ-RMK-011|RQ-RMK-011]]
 - `planned-by` → [[work-items/WML-201|WML-201]]
+- `planned-by` → [[work-items/WML-202|WML-202]]
 - `refines` → [[scr-rows/WML-C-14|WML-C-14]]
 - `refines` → [[scr-rows/WML-C-18|WML-C-18]]
 - `refines` → [[scr-rows/WML-C-29|WML-C-29]]
@@ -49,7 +50,8 @@ tags:
     "R0-02",
     "R0-06",
     "R0-07",
-    "WML-201"
+    "WML-201",
+    "WML-202"
   ],
   "ownerLayers": [
     "browser",
@@ -60,7 +62,7 @@ tags:
     "RQ-RMK-003",
     "RQ-RMK-011"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

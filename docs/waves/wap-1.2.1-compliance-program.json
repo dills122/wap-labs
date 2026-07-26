@@ -389,7 +389,7 @@
           ],
           "acceptance": [
             "The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.",
-            "All 76 rows are directly planned by WML-201 in the graph: 29 retain validated code/test links, 18 retain additive gap work items, and 29 optional rows remain explicitly not assessed.",
+            "All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.",
             "All 174 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
           ],
           "evidence": [
@@ -406,26 +406,30 @@
         },
         {
           "id": "WML-202",
-          "status": "in-progress",
-          "ownerLayers": ["engine-wasm", "qa"],
+          "status": "done",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
           "sourceFamilies": ["wml"],
           "existingTickets": ["R0-04", "R0-12", "C5-03"],
           "outputs": [
             "Complete deck/head/template/card/access/meta parser model"
           ],
           "acceptance": [
-            "Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors."
+            "Grammar, uniqueness, ordering, template inheritance, and metadata retention match effective WML 1.3 with deterministic errors.",
+            "Destination access policy applies WML domain/path defaults, component-aware matching, relative-path resolution, and URL case rules against a host-supplied referring URI before a deck transition commits.",
+            "Root and card language metadata, card newcontext/ordered defaults, card content order, and go-only browser-context reset behavior are retained and parity-backed across native, WASM, and host boundaries."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "pnpm --dir browser test",
             "pnpm test:story WML-202",
             "node scripts/check-wap-conformance-ledger.mjs",
             "node scripts/check-wap-selected-normative-clauses.mjs"
           ],
           "notes": [
             "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
-            "R0-04/C5-03 now close five directly mapped root/head/access clauses and retain validated ordered meta records across the shared native/WASM parser path.",
-            "WML-202 remains in progress because referring-URI access policy, root language metadata, and card context/grammar acceptance are not complete."
+            "R0-04/C5-03 close the root/head/access/meta/card model across the shared native/WASM parser and runtime paths, including the host-supplied referring-URI boundary.",
+            "All 30 directly mapped WML-202 clauses have source-derived direct fixtures for access defaults/matching and pre-transition enforcement, root language metadata, card collection/order/structure/context, template shadowing, and go-only newcontext reset effects.",
+            "WML-203 retains exhaustive DTD content-model enforcement, WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
           ]
         },
         {

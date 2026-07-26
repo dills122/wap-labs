@@ -75,8 +75,8 @@ fn wml_205_successful_load_replaces_diagnostics_with_ordered_recoveries() {
         <wml>
           <head><meta name="author" content="Waves"/></head>
           <card id="home">
-            <future><p>Preserved known content</p></future>
             <timer value="not-a-number"/>
+            <future><p>Preserved known content</p></future>
           </card>
         </wml>
     "#;

@@ -55,6 +55,7 @@ fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
             "http://example.test/deck.wml",
             "text/vnd.wap.wml",
             Some("AAECAw==".to_string()),
+            None,
         )
         .expect("loadDeckContext wasm wrapper should succeed");
 
@@ -110,6 +111,42 @@ fn wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior() {
         .as_string()
         .expect("parser error should be a string")
         .contains("only one <head>"));
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_202_access_and_language_boundary_matches_native_behavior() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r#"<wml xml:lang="en"><head><access domain="example.test" path="/allowed"/></head><card id="home"><p>Allowed</p></card></wml>"#,
+            "https://service.example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+            Some("https://www.example.test/allowed/source.wml".to_string()),
+        )
+        .expect("matching referring URI should load through wasm");
+    assert_eq!(engine.deck_language_wasm().as_deref(), Some("en"));
+    assert_eq!(engine.active_card_language_wasm().as_deref(), Some("en"));
+
+    let err = engine
+        .load_deck_context_wasm(
+            r#"<wml><head><access domain="trusted.test"/></head><card id="blocked"><p>Blocked</p></card></wml>"#,
+            "https://service.test/blocked.wml",
+            "text/vnd.wap.wml",
+            None,
+            Some("https://attacker.test/source.wml".to_string()),
+        )
+        .expect_err("mismatched referring URI should be denied through wasm");
+    assert_eq!(
+        err.as_string().as_deref(),
+        Some("Deck access denied for referring URI")
+    );
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("denial must preserve prior active card"),
+        "home"
+    );
 }
 
 #[wasm_bindgen_test]
@@ -270,6 +307,7 @@ fn wasm_load_deck_context_rejects_oversized_wml_payload() {
             "http://example.test/deck.wml",
             "text/vnd.wap.wml",
             None,
+            None,
         )
         .expect_err("oversized wml payload should fail at wasm boundary");
     let err_msg = err.as_string().expect("error should be a string message");
@@ -287,6 +325,7 @@ fn wasm_load_deck_context_rejects_oversized_raw_payload() {
             "http://example.test/deck.wml",
             "text/vnd.wap.wml",
             Some(oversized_raw),
+            None,
         )
         .expect_err("oversized raw payload should fail at wasm boundary");
     let err_msg = err.as_string().expect("error should be a string message");
@@ -347,7 +386,7 @@ fn wasm_wml_205_load_diagnostics_match_native_taxonomy() {
         .load_deck_wasm(
             r#"<!DOCTYPE wml SYSTEM "http://example.test/alternate.dtd">
                <wml><head><meta name="x" content="y"/></head><card id="ok">
-               <future><p>Known</p></future><timer value="bad"/></card></wml>"#,
+               <timer value="bad"/><future><p>Known</p></future></card></wml>"#,
         )
         .expect("recoverable deck should load at wasm boundary");
     let recovered = Array::from(

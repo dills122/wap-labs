@@ -51,18 +51,27 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card identity, ordering, and content are parsed; mandatory card attributes and lifecycle semantics are only partially retained.",
+  "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain separate WML-201 gaps outside WML-202.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
       "symbol": "parse_wml"
+    },
+    {
+      "path": "engine-wasm/engine/src/runtime/card.rs",
+      "symbol": "Card"
     }
   ],
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "parses_cards_and_links",
-      "command": "cd engine-wasm/engine && cargo test parses_cards_and_links"
+      "test": "wml_202_enforces_card_event_timer_content_order",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+      "test": "wml_202_card_content_order_is_preserved_in_render_output",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output"
     }
   ],
   "ownerLayers": [
@@ -75,6 +84,7 @@ tags:
     "WML-201"
   ],
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "WML-201"

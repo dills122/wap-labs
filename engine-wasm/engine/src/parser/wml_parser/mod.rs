@@ -9,10 +9,10 @@ mod xml;
 
 use actions::{parse_card_bindings, parse_template_bindings};
 use head::parse_deck_head;
-use nodes::parse_card_nodes_xml;
+use nodes::{parse_card_nodes_xml, validate_nmtoken, validate_optional_enum};
 #[cfg(test)]
 use xml::parse_xml_root;
-use xml::{parse_xml_document, WmlDocumentType, XmlNode};
+use xml::{parse_xml_document, WmlDocumentType, XmlElement, XmlNode};
 
 const MAX_PARSE_TREE_DEPTH: usize = 128;
 const MAX_PARSE_VISITED_NODES: usize = 50_000;
@@ -128,6 +128,11 @@ pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic
         ));
     }
 
+    if let Some(language) = root.attr("xml:lang") {
+        validate_nmtoken("wml", "xml:lang", language).map_err(WmlLoadDiagnostic::invalid)?;
+    }
+    let language = root.attr("xml:lang").map(str::to_string);
+
     let mut cards = Vec::new();
     let mut template_bindings = Vec::new();
     let mut access_control = None;
@@ -193,6 +198,8 @@ pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic
         }
         seen_card = true;
         let card = element;
+        validate_card_attributes(card).map_err(WmlLoadDiagnostic::invalid)?;
+        validate_card_child_order(card).map_err(WmlLoadDiagnostic::invalid)?;
 
         let id = card
             .attr("id")
@@ -203,6 +210,9 @@ pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic
         let nodes = parse_card_nodes_xml(card, &mut budget).map_err(WmlLoadDiagnostic::invalid)?;
         cards.push(Card {
             id,
+            language: card.attr("xml:lang").map(str::to_string),
+            new_context: card.attr("newcontext") == Some("true"),
+            ordered: card.attr("ordered") != Some("false"),
             nodes,
             event_bindings,
             timer_value_ds,
@@ -214,9 +224,48 @@ pub(crate) fn parse_wml_report(xml: &str) -> Result<ParsedWml, WmlLoadDiagnostic
     }
 
     Ok(ParsedWml {
-        deck: Deck::with_template(cards, template_bindings, access_control, metadata),
+        deck: Deck::with_template(cards, language, template_bindings, access_control, metadata),
         diagnostics: budget.diagnostics,
     })
+}
+
+fn validate_card_attributes(card: &XmlElement) -> Result<(), String> {
+    validate_optional_enum(card, "newcontext", &["true", "false"])?;
+    validate_optional_enum(card, "ordered", &["true", "false"])?;
+    if let Some(language) = card.attr("xml:lang") {
+        validate_nmtoken("card", "xml:lang", language)?;
+    }
+    Ok(())
+}
+
+fn validate_card_child_order(card: &XmlElement) -> Result<(), String> {
+    let mut content_started = false;
+    let mut timer_seen = false;
+    for child in &card.children {
+        let XmlNode::Element(child) = child else {
+            if matches!(child, XmlNode::Text(text) if !text.trim().is_empty()) {
+                content_started = true;
+            }
+            continue;
+        };
+        match child.name.as_str() {
+            "onevent" if timer_seen || content_started => {
+                return Err(
+                    "Invalid <card>: <onevent> must precede <timer> and card content".to_string(),
+                )
+            }
+            "onevent" => {}
+            "timer" if timer_seen => {
+                return Err("Invalid <card>: only one <timer> element is allowed".to_string())
+            }
+            "timer" if content_started => {
+                return Err("Invalid <card>: <timer> must precede card content".to_string())
+            }
+            "timer" => timer_seen = true,
+            _ => content_started = true,
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

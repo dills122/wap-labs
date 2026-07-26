@@ -539,8 +539,8 @@ if (
     JSON.stringify({ family: 'wml', scope: 'all-effective-rows' }) ||
   !wml201?.acceptance?.some(
     (line) =>
-      line.includes('29 retain validated code/test links') &&
-      line.includes('18 retain additive gap work items') &&
+      line.includes('30 retain validated code/test links') &&
+      line.includes('17 retain additive gap work items') &&
       line.includes('29 optional rows')
   ) ||
   !wml201?.acceptance?.some(

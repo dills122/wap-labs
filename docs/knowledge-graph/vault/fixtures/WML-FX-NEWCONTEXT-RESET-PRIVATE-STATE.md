@@ -4,7 +4,7 @@ key: "WML-FX-NEWCONTEXT-RESET-PRIVATE-STATE"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "state-machine",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "On newcontext initialization, reset implementation-specific context state to a documented initial value.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

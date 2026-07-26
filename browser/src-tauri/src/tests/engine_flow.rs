@@ -10,6 +10,7 @@ fn smoke_load_render_and_snapshot() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -39,6 +40,7 @@ fn smoke_key_navigation_and_back_stack() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -65,8 +67,8 @@ fn advance_time_command_expires_timer_card_deterministically() {
         <a href="#timed">To timed</a>
       </card>
       <card id="timed">
-        <timer value="2"/>
         <onevent type="ontimer"><go href="#done"/></onevent>
+        <timer value="2"/>
         <p>Timed</p>
       </card>
       <card id="done"><p>Done</p></card>
@@ -79,6 +81,7 @@ fn advance_time_command_expires_timer_card_deterministically() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -105,6 +108,7 @@ fn smoke_external_intent_set_and_clear() {
             base_url: "http://local.test/dir/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -151,6 +155,7 @@ fn snapshot_exposes_script_dialog_and_timer_requests() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");
@@ -218,6 +223,7 @@ fn snapshot_exposes_script_error_class_and_category() {
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
+            referring_url: None,
         },
     )
     .expect("deck should load");

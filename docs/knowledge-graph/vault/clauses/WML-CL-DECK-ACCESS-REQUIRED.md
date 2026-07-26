@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
   "workItems": [
+    "C5-03",
     "R0-01",
     "R0-04",
     "R0-07",

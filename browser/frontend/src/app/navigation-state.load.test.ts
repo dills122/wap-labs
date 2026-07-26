@@ -287,6 +287,77 @@ describe('navigation-state load behavior', () => {
     });
   });
 
+  it('passes the current deck URI only to external-intent access checks', async () => {
+    const loadRequests: Array<{ referringUrl?: string }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineLoadDeckContext: async (request) => {
+          loadRequests.push(request);
+          return snapshot({ activeCardId: 'home', baseUrl: request.baseUrl });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/next.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(loadRequests).toHaveLength(2);
+    expect(loadRequests[0]?.referringUrl).toBeUndefined();
+    expect(loadRequests[1]?.referringUrl).toBe('http://example.test/start.wml');
+  });
+
+  it('keeps host history atomic when the engine rejects destination access', async () => {
+    let loadCount = 0;
+    const navigationErrors: Array<{ message: string; kind: string }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineLoadDeckContext: async () => {
+          loadCount += 1;
+          if (loadCount === 2) {
+            throw new Error('Deck access denied for referring URI');
+          }
+          return snapshot({ activeCardId: 'home' });
+        }
+      }),
+      'http://seed.test',
+      {
+        onNavigationError: (message, kind) => navigationErrors.push({ message, kind })
+      }
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    const result = await machine.loadTransportUrl({
+      url: 'http://blocked.test/next.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(result).toBeNull();
+    expect(machine.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      finalUrl: 'http://example.test/start.wml',
+      lastError: 'Deck access denied for referring URI'
+    });
+    expect(machine.getHistoryState().entries).toHaveLength(1);
+    expect(machine.getHistoryState().entries[0]?.url).toBe('http://example.test/start.wml');
+    expect(navigationErrors).toEqual([
+      { message: 'Deck access denied for referring URI', kind: 'parse' }
+    ]);
+  });
+
   it('does not let renderer navigation weaken the host destination policy', async () => {
     const requestPolicies: unknown[] = [];
     const machine = createNavigationStateMachine(

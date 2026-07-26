@@ -52,9 +52,9 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 0 | 8 | 0 |
-| **Total** | **198** | **761** | **22** | **77** | **99** |
+| **Total** | **198** | **761** | **23** | **77** | **98** |
 
-Parent-row status is not a substitute for direct clause evidence. With 145 of
+Parent-row status is not a substitute for direct clause evidence. With 161 of
 761 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
@@ -107,8 +107,8 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 77 partial and 99 missing parent rows;
-2. implement and assess the remaining 616 direct clause fixtures;
+1. close or correct the 77 partial and 98 missing parent rows;
+2. implement and assess the remaining 600 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

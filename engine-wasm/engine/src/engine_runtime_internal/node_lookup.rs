@@ -265,6 +265,9 @@ mod tests {
     fn card_with(nodes: Vec<Node>) -> Card {
         Card {
             id: "card".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
             nodes,
             event_bindings: vec![],
             timer_value_ds: None,
