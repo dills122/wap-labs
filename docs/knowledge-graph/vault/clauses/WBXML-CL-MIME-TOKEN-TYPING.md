@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

@@ -225,8 +225,6 @@ export const createNavigationStateMachine = (
       const errorMessage = transport.error?.message ?? WAVES_COPY.errors.unknownTransportFailure;
       mergeSessionState({
         navigationStatus: 'error',
-        finalUrl: transport.finalUrl,
-        contentType: transport.contentType,
         lastError: errorMessage
       });
       if (transport.error?.code === 'TRANSPORT_UNAVAILABLE') {
@@ -246,8 +244,6 @@ export const createNavigationStateMachine = (
     if (!deckInput.wmlXml) {
       mergeSessionState({
         navigationStatus: 'error',
-        finalUrl: transport.finalUrl,
-        contentType: transport.contentType,
         lastError: WAVES_COPY.errors.missingWmlPayload
       });
       hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse');
@@ -319,7 +315,6 @@ export const createNavigationStateMachine = (
       let nextUrl = frame.snapshot.externalNavigationIntent;
       let nextRequestPolicy = frame.snapshot.externalNavigationRequestPolicy;
       for (let hop = 1; hop <= maxExternalIntentHops; hop += 1) {
-        await hostClient.engineClearExternalNavigationIntent();
         const nextSnapshot = await loadTransportUrl(
           {
             url: nextUrl,

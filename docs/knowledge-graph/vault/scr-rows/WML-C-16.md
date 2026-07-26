@@ -46,20 +46,33 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Parsing and task failures are surfaced deterministically with rollback in covered paths, but all WML-defined error conditions are not enforced.",
+  "assessmentNote": "Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.",
   "implementationEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
-      "symbol": "navigate_to_card_internal"
+      "path": "engine-wasm/engine/src/parser/wml_parser/validation.rs",
+      "symbol": "validate_wml13_document"
+    },
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
+      "symbol": "start_to_element"
+    },
+    {
+      "path": "browser/frontend/src/app/navigation-state.ts",
+      "symbol": "loadTransportUrl"
     }
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "fixture_accept_failure_rolls_back_and_trace_order_is_deterministic",
-      "command": "cd engine-wasm/engine && cargo test fixture_accept_failure_rolls_back_and_trace_order_is_deterministic"
+      "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+      "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+      "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
     }
   ],
   "ownerLayers": [

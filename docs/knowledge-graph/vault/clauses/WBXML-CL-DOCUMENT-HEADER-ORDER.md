@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode each document in version, public identifier, charset, string-table, then body order.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

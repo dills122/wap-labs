@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

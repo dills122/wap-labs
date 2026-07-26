@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `owned-by` ← [[work-items/WML-202|WML-202]]
+- `owned-by` ← [[work-items/WML-205|WML-205]]
 
 ## Data
 

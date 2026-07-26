@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-05",
     "R0-08",

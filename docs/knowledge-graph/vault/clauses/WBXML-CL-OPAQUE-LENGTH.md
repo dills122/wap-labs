@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

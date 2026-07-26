@@ -33,14 +33,15 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
-13-sprint/79-item execution program. The conservative implementation snapshot
-is 23 implemented, 77 partial, and 98 missing parent rows; clause-level
-assessment is 173/762.
+13-sprint/80-item execution program. The conservative implementation snapshot
+is 24 implemented, 76 partial, and 98 missing parent rows; clause-level
+assessment is 176/762.
 
 Use this order for new completion work:
 
-1. `WML-2` and `TRN-7` may proceed in parallel.
-2. `WML-3` follows `WML-2`.
+1. Preserve the completed `WML-2` baseline while `TRN-7` continues.
+2. Advance the unlocked `WML-3` baton through `WML-303`, `WML-302`, and
+   `WML-305`.
 3. `REN-4` and `WMLS-5` follow `WML-3`.
 4. `WAE-6` follows runtime, rendering, and script closure.
 5. `WSP-8` follows `TRN-7` and `WAE-6`.
@@ -224,8 +225,9 @@ Current recommendation after all merged implementation workstreams:
    direct clauses) without reopening either history.
 3. **Engine lane, next:** preserve completed `WML-203` mandatory prologue,
    selected DTD content-model, text/WBXML parity, and document-family evidence
-   (68/68 direct clauses), then extend `WML-205`'s deterministic load taxonomy
-   across remaining element errors and host fetch/access failure atomicity.
+   (68/68 direct clauses), plus completed `WML-205` exhaustive invalid-WML and
+   atomic fetch/access failure evidence (3/3), then advance `WML-303`,
+   `WML-302`, and `WML-305`.
 4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
    boundary for `TRN-706` and keep its WTP family gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
@@ -254,7 +256,8 @@ Completed this sprint:
    paired with executable WASM text-deck rendering evidence
 10. WML-201 direct SCR/clause evidence projection and declared-family mapping
 11. WML-202 root/head/access/meta retention and deterministic parser evidence
-12. WML-205 structured engine load diagnostics and recovery story
+12. WML-205 structured diagnostics, exhaustive invalid-WML enforcement, and
+    atomic production-WASM fetch/access failure recovery (3/3 clauses), closing WML-2
 13. WML-204 grouped-control syntax validation and executable story coverage
 14. Waves desktop product direction plus the first WBP-01 shell component seams
 

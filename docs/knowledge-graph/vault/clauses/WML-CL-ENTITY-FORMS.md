@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

@@ -262,7 +262,7 @@ const selectedAudit = new Map([
       status: 'partial',
       note:
         'The pinned built-in WML 1.3 decoder and source-derived corpus directly implement all 42 client-applicable mapped section 5 clauses, including carrying-protocol charset precedence and bounded handling of all 256 tag and attribute code-page indices. The row remains partial because only the WML 1.3 page-zero tables are registered and non-WML document families remain unsupported.',
-      workItems: ['WML-203', 'R0-08', 'T0-07'],
+      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',
@@ -294,7 +294,7 @@ const selectedAudit = new Map([
       status: 'partial',
       note:
         'The pinned decoder reconstructs the WML 1.3 DTD default and fixed attributes exercised by a source-derived omitted-attribute fixture. Additional version-dependent and externally supplied implied-value cases remain open.',
-      workItems: ['WML-203', 'R0-08'],
+      workItems: ['WML-203', 'R0-08', 'C5-06'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',
@@ -322,7 +322,7 @@ const selectedAudit = new Map([
       status: 'partial',
       note:
         'The pinned decoder uses the WMLC MIME media type as its external token-table key and exhaustively pairs all 36 WML 1.3 page-zero tags, 85 attribute starts, and 27 attribute values with literal forms. The row remains partial for non-WML document families and generic WBXML routing.',
-      workItems: ['WML-203', 'R0-08', 'T0-07'],
+      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',

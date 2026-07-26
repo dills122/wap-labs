@@ -354,6 +354,9 @@ const implementedWml203ClauseIds = new Set(
 const implementedWml204ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-204')
 );
+const implementedWml205ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-205')
+);
 const residualWml202ClauseIds = new Set([
   'WML-CL-ACCESS-ABSENT-ALLOWS',
   'WML-CL-ACCESS-COMPONENT-MATCH',
@@ -428,6 +431,21 @@ function wml204FixtureEvidence(clauseId) {
     path: testPath,
     testPath,
     command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${testName}`
+  };
+}
+
+function wml205FixtureEvidence(clauseId) {
+  if (clauseId === 'WML-CL-TASK-FAILURE-ATOMICITY') {
+    return {
+      path: 'engine-wasm/examples/source/wml-205-error-recovery.flow.json',
+      testPath: 'engine-wasm/examples/source/wml-205-error-recovery.flow.json',
+      command: 'pnpm test:story WML-205'
+    };
+  }
+  return {
+    path: 'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
+    testPath: 'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
+    command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205'
   };
 }
 
@@ -656,6 +674,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml204ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml204FixtureEvidence(candidate.id);
+      } else if (implementedWml205ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml205FixtureEvidence(candidate.id);
       }
       candidate.mapping.clauseImplementationStatus =
         candidate.fixturePlan.status === 'implemented'
@@ -1561,7 +1582,8 @@ function clause(
     family === 'wbxml' ||
     implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
-    implementedWml204ClauseIds.has(clauseId);
+    implementedWml204ClauseIds.has(clauseId) ||
+    implementedWml205ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -1577,6 +1599,8 @@ function clause(
         }
       : implementedWml204ClauseIds.has(clauseId)
       ? wml204FixtureEvidence(clauseId)
+      : implementedWml205ClauseIds.has(clauseId)
+      ? wml205FixtureEvidence(clauseId)
       : family === 'wbxml'
       ? {
           path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',

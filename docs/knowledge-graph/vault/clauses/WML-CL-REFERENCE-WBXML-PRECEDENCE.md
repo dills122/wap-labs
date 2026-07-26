@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

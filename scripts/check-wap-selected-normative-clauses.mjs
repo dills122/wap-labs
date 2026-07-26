@@ -288,6 +288,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   ...wml203ClauseIds,
   ...wml204ClauseIds,
+  ...wml205ClauseIds,
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
 ]);
@@ -624,7 +625,9 @@ for (const family of ledger.families ?? []) {
         (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
           !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
           !candidate.fixturePlan.evidence?.command?.includes(
-            'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
+            candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
+              ? 'pnpm test:story WML-205'
+              : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
           )))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);

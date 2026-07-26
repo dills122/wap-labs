@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Do not treat non-breaking space as a legal inter-word line-break point.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-05",
     "R0-08",

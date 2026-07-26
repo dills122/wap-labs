@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Resolve string-table references as byte offsets from the first table byte.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

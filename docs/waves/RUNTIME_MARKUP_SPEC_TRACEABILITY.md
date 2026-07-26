@@ -234,8 +234,12 @@ Legend:
   - [x] Rejected parse and payload-boundary loads preserve the last successfully loaded deck and
     metadata.
   - [x] Strict load failures remain distinct from optional diagnostics and extension recovery.
-  - [ ] Fetch/access-control task failures still need host-boundary notification and complete
-    card/context/pending-assignment/event atomicity evidence.
+  - [x] Every declared WML element has an invalid-form rejection fixture, with additional
+    case-sensitive name, literal-only, length, table, task, event, variable, prologue, and
+    structure enforcement.
+  - [x] Fetch and access-control task failures notify at the host boundary while preserving the
+    invoking card, context, pending external intent/task data, focus/event state, committed
+    session metadata, and history; the production-WASM story covers both paths.
 
 ## Notes
 

@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Require unused value bits in the initial multi-byte integer octet to be zero.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

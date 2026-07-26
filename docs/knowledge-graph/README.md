@@ -39,8 +39,8 @@ The pilot intentionally reports remaining gap levels:
   composition clauses. It also projects the exact WML SCR matrix while retaining direct-test,
   mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps 14 root/head/access, template, and task-shadowing clauses adopted by `R0-04` and `R0-12`;
-- `WML-204` has 23 completed direct WML clause mappings with exact fixture commands, and `WML-205` directly maps the three selected
-  error-policy clauses for its deterministic taxonomy slice;
+- `WML-204` has 23 completed direct WML clause mappings with exact fixture commands, and completed `WML-205` directly maps and implements the three selected
+  error-policy clauses with native invalid-WML tests and executable production-WASM fetch/access failure stories;
 - declared source families without direct clauses remain explicit rather than inferred from broad
   ownership or adjacent work.
 

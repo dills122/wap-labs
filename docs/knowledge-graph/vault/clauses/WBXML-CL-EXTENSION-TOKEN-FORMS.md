@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode single-byte, inline-string, and inline-integer extension token forms.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

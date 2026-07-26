@@ -78,7 +78,8 @@ tags:
   "workItems": [
     "WML-203",
     "R0-08",
-    "T0-07"
+    "T0-07",
+    "C5-06"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

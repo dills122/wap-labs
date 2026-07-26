@@ -25,8 +25,8 @@ const familyDefinitions = [
     selectedDisposition: 'required-by-class-c-client-mcf',
     expectedRows: 76,
     expectedSelected: 39,
-    expectedClauses: 174,
-    expectedStatus: { implemented: 7, partial: 23, missing: 9 },
+    expectedClauses: 175,
+    expectedStatus: { implemented: 8, partial: 22, missing: 9 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 20, blocked: 1, 'in-progress': 12, todo: 46 })
+  JSON.stringify({ done: 22, blocked: 1, 'in-progress': 10, todo: 47 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -322,9 +322,9 @@ if (
   selectedClauses.scope?.remainingSelectedParentCount !== 0 ||
   aggregateRows !== 712 ||
   aggregateSelected !== 198 ||
-  aggregateClauses !== 761 ||
+  aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 23, partial: 77, missing: 98 })
+  JSON.stringify({ implemented: 24, partial: 76, missing: 98 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -346,15 +346,15 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
-      'all 198 selected rows now expand into 761',
-      '145 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
+      'all 198 selected rows now expand into 762',
+      '148 WML, WBXML, WDP, and WCMP clauses are directly fixture-backed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
     [
       'covers all 198 selected Class C parent rows',
-      'The 761 clauses are classified as 721 required'
+      'The 762 clauses are classified as 722 required'
     ]
   ],
   [
@@ -368,14 +368,14 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '161 fixture-backed clauses assessed'
+      '176 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **761** | **23** | **77** | **98** |',
+      '| **Total** | **198** | **762** | **24** | **76** | **98** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -390,8 +390,8 @@ const requiredDocumentFragments = new Map([
   [
     'README.md',
     [
-      '23/198 selected parent rows are implemented',
-      '161/761 clauses are directly assessed'
+      '24/198 selected parent rows are implemented',
+      '176/762 clauses are directly assessed'
     ]
   ]
 ]);
@@ -448,7 +448,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 requirement/status drift');
 console.log(
-  'PASS 712 source rows / 198 selected rows / 761 clauses remain synchronized'
+  'PASS 712 source rows / 198 selected rows / 762 clauses remain synchronized'
 );
 console.log(
   `PASS ${seenRequirementIds.size} requirement IDs, active additive work, evidence states, and strict guards`

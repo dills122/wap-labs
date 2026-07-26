@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode STR_I as encoding-dependent terminated inline character data.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

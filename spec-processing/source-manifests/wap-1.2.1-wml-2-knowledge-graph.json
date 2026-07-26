@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "56f80431087ff76bcdddfcee0b948dc397996c8b5788787903f28732879e4a28"
+        "sha256": "bdfaa9fe9401ac10d51a6d557cdbfb3a30ee9086ba0f421eb7594d7093c59602"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,20 +25,20 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "34d02ba7c3ecc4ff08ff14fcbb5ceab7bcbac5497ffb6c7c67d5f9496f49e9ae"
+        "sha256": "47fe9dc916f9bc0ad70d3037b56a786f8b4541a8ea7bf6bbd93955a7a312b79c"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "7cc4ba1081399ca6f71623a855e1535ae6b2e962df2110816624d4f2fcd09841"
+        "sha256": "1081ac830c59467b13ead90a98c50463b2cb9735c7b18f7fe30ab43c66275359"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 591,
-    "edgeCount": 1728,
+    "edgeCount": 1729,
     "nodesByType": {
       "clause": 225,
       "fixture": 225,
@@ -61,7 +61,7 @@
       "depends-on": 3,
       "effective-document": 12,
       "maps-to": 371,
-      "owned-by": 12,
+      "owned-by": 13,
       "planned-by": 387,
       "refines": 292,
       "relates-to": 10,
@@ -268,6 +268,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Do not interpret LITERAL as encoding any portion of an attribute value.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -304,6 +305,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -340,6 +342,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -376,6 +379,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Interpret non-global attribute tokens at or above 128 only as known attribute-value fragments.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -412,6 +416,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -448,6 +453,7 @@
         "obligationLevel": "recommended",
         "obligationSynopsis": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -484,6 +490,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -520,6 +527,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -556,6 +564,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -592,6 +601,7 @@
         "obligationLevel": "permitted",
         "obligationSynopsis": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "WML-203"
         ],
@@ -627,6 +637,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "WML-203"
         ],
@@ -662,6 +673,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -698,6 +710,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode each document in version, public identifier, charset, string-table, then body order.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -734,6 +747,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Recognize an explicitly encoded empty string in attribute-value contexts where the application defines no other encoding.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -770,6 +784,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Use END to terminate the current attribute list or element as determined by parser state.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -806,6 +821,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -842,6 +858,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Apply a switch preceding an extension to the tag page in content and the attribute page in an attribute list.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -878,6 +895,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode single-byte, inline-string, and inline-integer extension token forms.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -914,6 +932,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Use an external typing system to associate an XML document family with its WBXML token values.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -950,6 +969,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Give each global token the same structure and meaning in every code space and page.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -986,6 +1006,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode STR_I as encoding-dependent terminated inline character data.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1023,6 +1044,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Interpret a LITERAL name as a tag or attribute according to parser state and resolve its name through the string table.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1060,6 +1082,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1096,6 +1119,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1132,6 +1156,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode a multi-byte integer from seven-bit groups whose high bit marks every non-final octet.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1168,6 +1193,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Combine multi-byte integer groups in most-significant-group-first order.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1204,6 +1230,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Require unused value bits in the initial multi-byte integer octet to be zero.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1240,6 +1267,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1276,6 +1304,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode OPAQUE as a multi-byte length followed by exactly that many application-specific bytes.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1312,6 +1341,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Maintain separate current code pages for tag and attribute parser states, each initialized to page zero.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1348,6 +1378,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Keep a selected code page active for its parser state until another switch in that state or document end.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1384,6 +1415,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode PI target and optional value using attribute-start/value syntax terminated by END.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1420,6 +1452,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Accept a positive multi-byte numeric public identifier for a known document type.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1456,6 +1489,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "When public identifier is zero, resolve its following index through the string table.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1492,6 +1526,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Treat string-table length as its byte count excluding the encoded length field.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1528,6 +1563,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Resolve string-table references as byte offsets from the first table byte.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1564,6 +1600,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Read a string-table length immediately after charset even when the table is empty.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1600,6 +1637,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode SWITCH_PAGE and its following page byte for the current parser state.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1636,6 +1674,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode STR_T as a multi-byte byte offset into the string table.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1672,6 +1711,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Use tag bit seven to determine whether an END-terminated attribute list follows.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1708,6 +1748,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "When a tag has attributes and content, decode the complete attribute list before content.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1744,6 +1785,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Use tag bit six to determine whether content and its terminating END follow.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1780,6 +1822,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Use tag bits zero through five as the application tag identity.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1816,6 +1859,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Support 256 code pages per code space and reserve page 255 for implementation-specific use.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1852,6 +1896,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Distinguish fixed global tokens from context-dependent application tokens.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1888,6 +1933,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Interpret application token values in separate tag and attribute code spaces.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -1924,6 +1970,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.",
         "workItems": [
+          "C5-06",
           "R0-08",
           "T0-07",
           "WML-203"
@@ -3228,6 +3275,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -3265,6 +3313,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -3302,6 +3351,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Resolve numeric character references against Unicode independently of the document byte encoding.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -3351,7 +3401,7 @@
         "requirementIds": [
           "RQ-RMK-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3388,7 +3438,7 @@
         "requirementIds": [
           "RQ-RMK-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5837,6 +5887,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Do not treat non-breaking space as a legal inter-word line-break point.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-05",
           "R0-08",
@@ -5913,6 +5964,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-05",
           "R0-08",
@@ -6217,6 +6269,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -6254,6 +6307,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Process character entities in the document character set.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -6291,6 +6345,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -6328,6 +6383,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Map every character in each recognized source encoding to its Unicode character.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -6365,6 +6421,7 @@
         "obligationLevel": "required",
         "obligationSynopsis": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -7391,7 +7448,7 @@
           "RQ-RMK-003",
           "RQ-RMK-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9569,7 +9626,7 @@
       "title": "Enforce every error condition defined by WML.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Enforce every error condition defined by WML.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9581,7 +9638,7 @@
       "title": "Do not hide invalid decks by guessing author or origin-server intent.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not hide invalid decks by guessing author or origin-server intent.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10853,7 +10910,7 @@
       "title": "On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11645,7 +11702,8 @@
         "workItems": [
           "WML-203",
           "R0-08",
-          "T0-07"
+          "T0-07",
+          "C5-06"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11669,7 +11727,8 @@
         ],
         "workItems": [
           "WML-203",
-          "R0-08"
+          "R0-08",
+          "C5-06"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11694,7 +11753,8 @@
         "workItems": [
           "WML-203",
           "R0-08",
-          "T0-07"
+          "T0-07",
+          "C5-06"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11953,6 +12013,7 @@
           "WML-201"
         ],
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -12014,6 +12075,7 @@
           "WML-201"
         ],
         "workItems": [
+          "C5-06",
           "R0-01",
           "R0-08",
           "WML-201"
@@ -12574,20 +12636,33 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Parsing and task failures are surfaced deterministically with rollback in covered paths, but all WML-defined error conditions are not enforced.",
+        "assessmentNote": "Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
-            "symbol": "navigate_to_card_internal"
+            "path": "engine-wasm/engine/src/parser/wml_parser/validation.rs",
+            "symbol": "validate_wml13_document"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
+            "symbol": "start_to_element"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "loadTransportUrl"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "fixture_accept_failure_rolls_back_and_trace_order_is_deterministic",
-            "command": "cd engine-wasm/engine && cargo test fixture_accept_failure_rolls_back_and_trace_order_is_deterministic"
+            "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+            "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+            "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
           }
         ],
         "ownerLayers": [
@@ -16362,7 +16437,7 @@
       "type": "sprint",
       "title": "WML parser, deck model, and validation baseline",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "goal": "Make effective WML 1.3 structure and validation deterministic before closing higher-order runtime behavior.",
         "dependsOn": [
           "CONF-1"
@@ -16449,7 +16524,7 @@
           "R0-12 closes the template and card/deck task-shadowing slice with direct WML-C-47 and WML-C-08 evidence.",
           "R0-04/C5-03 close the root/head/access/meta/card model across the shared native/WASM parser and runtime paths, including the host-supplied referring-URI boundary.",
           "All 30 directly mapped WML-202 clauses have source-derived direct fixtures for access defaults/matching and pre-transition enforcement, root language metadata, card collection/order/structure/context, template shadowing, and go-only newcontext reset effects.",
-          "WML-203 now closes mandatory prologue and selected DTD content-model enforcement; WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 retains the broader task-failure taxonomy; none is a residual WML-202 acceptance gate."
+          "WML-203 closes mandatory prologue and selected DTD content-model enforcement; WML-C-21 remains parent-partial for the broader sendreferer clause, and WML-205 closes its separate error-enforcement and task-failure atomicity slice; none is a residual WML-202 acceptance gate."
         ],
         "existingTickets": [
           "R0-04",
@@ -16542,7 +16617,7 @@
         "notes": [
           "All 23 directly mapped WML-204 clauses have source-derived fixtures for input masks and failure atomicity, document-order input/select initialization, select precedence and serialization, option-value vdata evaluation, and onpick HREF conversion.",
           "The shared native/WASM variable-reference path validates $name and $(name:conversion), preserves exact CDATA and literal-dollar handling, applies noesc defaults to vdata and escape defaults to HREF, and rejects invalid control references atomically.",
-          "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 is complete; WML-205 retains its separate error-taxonomy gate."
+          "Optional tabindex, optional fieldset/optgroup capability declarations and presentation, broader non-control substitution contexts, and non-selected language repertoires remain explicitly outside this completed Class C work-item slice. WML-203 and WML-205 are complete."
         ],
         "existingTickets": [
           "R0-04",
@@ -16570,9 +16645,10 @@
       "type": "work-item",
       "title": "WML parse/error taxonomy",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
+          "browser",
           "qa"
         ],
         "sourceFamilies": [
@@ -16580,19 +16656,26 @@
         ],
         "notes": [
           "The direct graph slice maps WML-CL-ERROR-ENFORCEMENT, WML-CL-ERROR-NO-INTENT-INFERENCE, and WML-CL-TASK-FAILURE-ATOMICITY.",
-          "The engine-boundary taxonomy and stable recovery story are direct WML-205 evidence; exhaustive per-element error enforcement and host fetch/access-control failure atomicity remain explicit residual gates."
+          "Native invalid-load tests cover an invalid form of all 36 declared WML elements plus source-defined case, literal, length, table, task, event, variable, prologue, and structural failures.",
+          "The executable production-WASM story proves both fetch failure and access denial preserve the invoking state and pending external intent while surfacing a stable host notification. The host remains responsible for fetching; WBXML decoding remains in transport.",
+          "WML-205 closes only the bounded error-handling slice. Broader task, variable, timer, rendering, sendreferer, low-memory, and optional-capability work remains additive under WML-3 and later slices."
         ],
         "existingTickets": [
           "R0-07"
         ],
         "outputs": [
-          "WML parse/error taxonomy"
+          "WML parse/error taxonomy",
+          "Exhaustive declared-element invalid-WML enforcement",
+          "Atomic host fetch/access-control failure notification"
         ],
         "acceptance": [
-          "Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes."
+          "Malformed XML, invalid WML, unsupported optional constructs, and recoverable content errors have spec-shaped deterministic outcomes.",
+          "Every declared WML element has a rejected invalid form, and literal, length, table, task, event, variable, prologue, structural, and case-sensitive constraints fail atomically without intent inference.",
+          "Fetch and destination access-control failures notify the user while preserving the invoking card, context, pending external intent, event/focus state, committed session metadata, and history across the native/WASM host boundary."
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205",
+          "pnpm --dir browser/frontend test",
           "pnpm test:story WML-205",
           "node scripts/check-wap-selected-normative-clauses.mjs",
           "node scripts/check-wap-knowledge-graph.mjs"
@@ -32206,6 +32289,15 @@
       "from": "work-item:WML-205",
       "relation": "covers-family",
       "to": "source-family:wml",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-205|owned-by|owner-layer:browser",
+      "from": "work-item:WML-205",
+      "relation": "owned-by",
+      "to": "owner-layer:browser",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

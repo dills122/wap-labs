@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

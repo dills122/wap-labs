@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use tag bit six to determine whether content and its terminating END follow.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

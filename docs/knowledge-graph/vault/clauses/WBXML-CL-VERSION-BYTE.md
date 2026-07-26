@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode the initial version byte as major-minus-one in the high nibble and minor version in the low nibble.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

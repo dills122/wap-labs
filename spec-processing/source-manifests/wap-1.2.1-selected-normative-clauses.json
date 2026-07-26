@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 173
+    "assessedClauseCount": 176
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "7cc4ba1081399ca6f71623a855e1535ae6b2e962df2110816624d4f2fcd09841",
+      "parentLedgerSha256": "1081ac830c59467b13ead90a98c50463b2cb9735c7b18f7fe30ab43c66275359",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -86,7 +86,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-08"
+            "R0-08",
+            "C5-06"
           ],
           "clauseIds": [
             "WML-CL-REFERENCE-ENCODING-DETECTION",
@@ -112,7 +113,8 @@
           ],
           "workItems": [
             "R0-01",
-            "R0-08"
+            "R0-08",
+            "C5-06"
           ],
           "clauseIds": [
             "WML-CL-ENTITY-FORMS",
@@ -350,7 +352,7 @@
             "staticConformanceSection": "15.1.4",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -1212,6 +1214,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1257,6 +1260,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1302,6 +1306,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1347,6 +1352,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1392,6 +1398,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1437,6 +1444,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1482,6 +1490,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -1527,6 +1536,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-08",
               "WML-201"
@@ -3769,8 +3779,13 @@
           "fixturePlan": {
             "id": "WML-FX-ERROR-ENFORCEMENT",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Enforce every error condition defined by WML."
+            "status": "implemented",
+            "assertion": "Enforce every error condition defined by WML.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3787,9 +3802,9 @@
               "RQ-RMK-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-16": "partial"
+              "WML-C-16": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -3815,8 +3830,13 @@
           "fixturePlan": {
             "id": "WML-FX-ERROR-NO-INTENT-INFERENCE",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Do not hide invalid decks by guessing author or origin-server intent."
+            "status": "implemented",
+            "assertion": "Do not hide invalid decks by guessing author or origin-server intent.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3833,9 +3853,9 @@
               "RQ-RMK-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-16": "partial"
+              "WML-C-16": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -4749,8 +4769,13 @@
           "fixturePlan": {
             "id": "WML-FX-TASK-FAILURE-ATOMICITY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state."
+            "status": "implemented",
+            "assertion": "On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-205-error-recovery.flow.json",
+              "testPath": "engine-wasm/examples/source/wml-205-error-recovery.flow.json",
+              "command": "pnpm test:story WML-205"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -4771,12 +4796,12 @@
               "RQ-RMK-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-16": "partial",
+              "WML-C-16": "implemented",
               "WML-C-18": "partial",
               "WML-C-29": "partial",
               "WML-C-38": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -8548,6 +8573,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-05",
               "R0-08",
@@ -8597,6 +8623,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-01",
               "R0-05",
               "R0-08",
@@ -11584,7 +11611,7 @@
       "family": "wbxml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "e4da9fe870995895dfd8140947bd8e7cac655ed0990fea328db20bc7031e3f77",
+      "parentLedgerSha256": "28934f63b284ce6e6fc130a97be4c93b563cb454ffc08b281eeb3ab4a62a7421",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -11625,7 +11652,8 @@
           "workItems": [
             "WML-203",
             "R0-08",
-            "T0-07"
+            "T0-07",
+            "C5-06"
           ],
           "clauseIds": [
             "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
@@ -11687,7 +11715,8 @@
           ],
           "workItems": [
             "WML-203",
-            "R0-08"
+            "R0-08",
+            "C5-06"
           ],
           "clauseIds": [
             "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
@@ -11710,7 +11739,8 @@
           "workItems": [
             "WML-203",
             "R0-08",
-            "T0-07"
+            "T0-07",
+            "C5-06"
           ],
           "clauseIds": [
             "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
@@ -11748,6 +11778,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11789,6 +11820,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11830,6 +11862,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11871,6 +11904,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11912,6 +11946,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11953,6 +11988,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -11994,6 +12030,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12035,6 +12072,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12076,6 +12114,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12117,6 +12156,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12158,6 +12198,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12199,6 +12240,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12240,6 +12282,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12281,6 +12324,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12322,6 +12366,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12363,6 +12408,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12404,6 +12450,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12445,6 +12492,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12486,6 +12534,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12527,6 +12576,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12568,6 +12618,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12609,6 +12660,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12650,6 +12702,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12691,6 +12744,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12732,6 +12786,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12773,6 +12828,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12814,6 +12870,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12855,6 +12912,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12896,6 +12954,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12937,6 +12996,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -12978,6 +13038,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13019,6 +13080,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13060,6 +13122,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13101,6 +13164,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13142,6 +13206,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13183,6 +13248,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13224,6 +13290,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13266,6 +13333,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13309,6 +13377,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13351,6 +13420,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13392,6 +13462,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13433,6 +13504,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13474,6 +13546,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "WML-203"
             ],
@@ -13514,6 +13587,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "WML-203"
             ],
@@ -13554,6 +13628,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13595,6 +13670,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"
@@ -13636,6 +13712,7 @@
               "transport-rust"
             ],
             "workItems": [
+              "C5-06",
               "R0-08",
               "T0-07",
               "WML-203"

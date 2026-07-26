@@ -58,6 +58,66 @@ describe('navigation-state load behavior', () => {
     expect(networkUnavailable).toBe(1);
   });
 
+  it('keeps the committed deck session and history atomic when a later fetch fails', async () => {
+    let fetchCount = 0;
+    let loadCount = 0;
+    const navigationErrors: string[] = [];
+    const host = createHostClientMock({
+      fetchDeck: async (request) => {
+        fetchCount += 1;
+        if (fetchCount === 1) {
+          return fetchOk({ finalUrl: request.url });
+        }
+        return fetchOk({
+          ok: false,
+          status: 503,
+          finalUrl: request.url,
+          contentType: 'text/plain',
+          error: { code: 'TRANSPORT_UNAVAILABLE', message: 'destination unavailable' },
+          engineDeckInput: undefined,
+          wml: undefined
+        });
+      },
+      engineLoadDeckContext: async (request) => {
+        loadCount += 1;
+        return snapshot({
+          activeCardId: 'stable',
+          focusedLinkIndex: 2,
+          baseUrl: request.baseUrl
+        });
+      }
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message) => navigationErrors.push(message)
+    });
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/stable.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    const result = await machine.loadTransportUrl({
+      url: 'http://example.test/unavailable.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(result).toBeNull();
+    expect(loadCount).toBe(1);
+    expect(machine.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      requestedUrl: 'http://example.test/unavailable.wml',
+      finalUrl: 'http://example.test/stable.wml',
+      contentType: 'text/vnd.wap.wml',
+      activeCardId: 'stable',
+      focusedLinkIndex: 2,
+      lastError: 'destination unavailable'
+    });
+    expect(machine.getHistoryState().entries).toHaveLength(1);
+    expect(machine.getHistoryState().entries[0]?.url).toBe('http://example.test/stable.wml');
+    expect(navigationErrors).toEqual(['destination unavailable']);
+  });
+
   it('fires onNavigationError for transport failures, alongside onNetworkUnavailable', async () => {
     let networkUnavailable = 0;
     const navigationErrors: string[] = [];

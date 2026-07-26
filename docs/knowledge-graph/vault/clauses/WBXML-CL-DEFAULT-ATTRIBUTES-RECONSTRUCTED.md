@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "WML-203"
   ],

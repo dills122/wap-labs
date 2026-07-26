@@ -243,13 +243,16 @@ fn reject_doctype_trailing_data(value: &str) -> Result<(), WmlLoadDiagnostic> {
 }
 
 fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnostic> {
-    let name = String::from_utf8_lossy(start.name().as_ref()).to_ascii_lowercase();
+    // WML inherits XML's case sensitivity. Preserving authored spelling here
+    // ensures the strict WML validator rejects case-folded guesses instead of
+    // silently turning <CARD> or HREF into declared WML names.
+    let name = String::from_utf8_lossy(start.name().as_ref()).to_string();
     let mut attrs = HashMap::new();
     for attr in start.attributes() {
         let attr = attr.map_err(|err| {
             WmlLoadDiagnostic::malformed(format!("Malformed XML attribute: {err}"))
         })?;
-        let key = String::from_utf8_lossy(attr.key.as_ref()).to_ascii_lowercase();
+        let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
         let value = attr
             .normalized_value(XmlVersion::Implicit1_0)
             .map_err(|err| {

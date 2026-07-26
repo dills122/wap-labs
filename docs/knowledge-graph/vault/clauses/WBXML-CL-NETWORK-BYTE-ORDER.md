@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode multi-byte fields and bit fields using the specified most-significant-first network ordering.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

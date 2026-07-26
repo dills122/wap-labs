@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Keep a selected code page active for its parser state until another switch in that state or document end.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

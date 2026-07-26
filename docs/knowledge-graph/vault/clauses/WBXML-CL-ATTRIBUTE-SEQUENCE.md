@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Start every encoded attribute with one attribute-start token and terminate its value at the next start, literal, or END token.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

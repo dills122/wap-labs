@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Enforce the WBXML element, attribute, content, string, entity, processing-instruction, extension, and opaque-data grammar.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

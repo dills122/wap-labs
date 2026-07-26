@@ -42,6 +42,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Honor the attribute and content flags encoded by LITERAL_A, LITERAL_C, and LITERAL_AC.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

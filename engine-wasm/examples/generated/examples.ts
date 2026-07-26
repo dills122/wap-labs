@@ -3660,19 +3660,23 @@ export const EXAMPLES: HostExample[] = [
   {
     "key": "wml205ErrorRecovery",
     "label": "WML 1.3 Deterministic Error Recovery",
-    "description": "Alternate-DTD extensions recover without hiding recognized content or disrupting supported metadata.",
-    "goal": "Verify recoverable content remains navigable while the engine reports deterministic WML load diagnostics.",
+    "description": "Alternate-DTD extensions recover deterministically, while failed external fetch and access-control tasks preserve the invoking card and pending intent.",
+    "goal": "Verify recoverable content remains navigable and host task failures are visible without partially committing a deck transition.",
     "workItems": [
       "WML-205"
     ],
     "specItems": [
       "WML-C-16",
-      "WML-C-17"
+      "WML-C-17",
+      "WML-C-18",
+      "WML-C-29"
     ],
     "testingAc": [
       "Load the example and confirm recognized content nested in the vendor wrapper remains visible.",
       "Confirm supported metadata coexists with the recovered vendor extension.",
-      "Activate Recovery proof and confirm deterministic navigation reaches the proof card."
+      "Activate Recovery proof and confirm deterministic navigation reaches the proof card.",
+      "Activate Missing target in network mode and confirm the fetch failure is reported while the invoking card, render, and pending intent remain unchanged.",
+      "Activate Restricted target in network mode and confirm access denial is reported while the invoking card, render, and pending intent remain unchanged."
     ],
     "flows": [
       {
@@ -3727,9 +3731,183 @@ export const EXAMPLES: HostExample[] = [
             }
           }
         ]
+      },
+      {
+        "id": "fetch-failure-preserves-invoking-task-state",
+        "title": "A failed external fetch notifies the user without committing task state",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "network"
+        },
+        "workItems": [
+          "WML-205"
+        ],
+        "specItems": [
+          "WML-C-16",
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "network",
+            "navigationStatus": "loaded",
+            "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+          },
+          "render": {
+            "textIncludes": [
+              "Recovered extension content.",
+              "Missing target"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": "http://fixtures.test/examples/wml205MissingTarget.wml"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "navigationStatus": "error",
+                "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+              },
+              "statusIncludes": "Fetch failed:",
+              "render": {
+                "textIncludes": [
+                  "Recovered extension content.",
+                  "Missing target"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "access-denial-preserves-invoking-task-state",
+        "title": "Destination access denial notifies the user without committing task state",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "network"
+        },
+        "workItems": [
+          "WML-205"
+        ],
+        "specItems": [
+          "WML-C-16",
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "network",
+            "navigationStatus": "loaded",
+            "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+          },
+          "render": {
+            "textIncludes": [
+              "Recovered extension content.",
+              "Restricted target"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": null
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "KEY"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2,
+                "externalNavigationIntent": "http://fixtures.test/examples/wml202TemplateShadowing.wml"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "navigationStatus": "error",
+                "finalUrl": "http://fixtures.test/examples/wml205ErrorRecovery.wml"
+              },
+              "statusIncludes": "Deck parse failed: Deck access denied for referring URI",
+              "render": {
+                "textIncludes": [
+                  "Recovered extension content.",
+                  "Restricted target"
+                ]
+              }
+            }
+          }
+        ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n        <a href=\"http://fixtures.test/examples/wml205MissingTarget.wml\">Missing target</a>\n        <a href=\"http://fixtures.test/examples/wml202TemplateShadowing.wml\">Restricted target</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wmlbrowserContextFidelity",

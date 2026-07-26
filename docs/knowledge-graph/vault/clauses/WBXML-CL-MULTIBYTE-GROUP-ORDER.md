@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Combine multi-byte integer groups in most-significant-group-first order.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

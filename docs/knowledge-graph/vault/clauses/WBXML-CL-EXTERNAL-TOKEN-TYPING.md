@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use an external typing system to associate an XML document family with its WBXML token values.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

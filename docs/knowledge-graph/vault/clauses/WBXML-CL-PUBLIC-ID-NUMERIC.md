@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Accept a positive multi-byte numeric public identifier for a known document type.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

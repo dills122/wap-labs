@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
   "workItems": [
+    "C5-06",
     "R0-01",
     "R0-08",
     "WML-201"

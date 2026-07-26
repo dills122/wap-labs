@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Give each global token the same structure and meaning in every code space and page.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

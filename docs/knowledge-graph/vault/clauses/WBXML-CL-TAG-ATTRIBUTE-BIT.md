@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Use tag bit seven to determine whether an END-terminated attribute list follows.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

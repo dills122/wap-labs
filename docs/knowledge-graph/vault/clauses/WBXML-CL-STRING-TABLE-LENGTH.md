@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Treat string-table length as its byte count excluding the encoded length field.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"

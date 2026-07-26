@@ -40,6 +40,7 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Decode PI target and optional value using attribute-start/value syntax terminated by END.",
   "workItems": [
+    "C5-06",
     "R0-08",
     "T0-07",
     "WML-203"
