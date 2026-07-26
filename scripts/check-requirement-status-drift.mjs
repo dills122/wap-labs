@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 19, blocked: 1, 'in-progress': 13, todo: 46 })
+  JSON.stringify({ done: 20, blocked: 1, 'in-progress': 12, todo: 46 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }

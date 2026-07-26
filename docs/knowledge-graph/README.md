@@ -38,7 +38,7 @@ The pilot intentionally reports remaining gap levels:
 - `WML-201` directly projects the exact 76-row WML SCR matrix and maps all 174 selected WML
   clauses while retaining direct-test, mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps 14 root/head/access, template, and task-shadowing clauses adopted by `R0-04` and `R0-12`;
-- `WML-204` has direct WML clause mappings, and `WML-205` directly maps the three selected
+- `WML-204` has 23 completed direct WML clause mappings with exact fixture commands, and `WML-205` directly maps the three selected
   error-policy clauses for its deterministic taxonomy slice;
 - declared source families without direct clauses remain explicit rather than inferred from broad
   ownership or adjacent work.

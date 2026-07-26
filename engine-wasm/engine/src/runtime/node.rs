@@ -27,6 +27,7 @@ pub enum InlineNode {
         href: String,
     },
     Input {
+        control_id: String,
         name: String,
         value: String,
         default_value: Option<String>,

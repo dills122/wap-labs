@@ -352,7 +352,7 @@ impl WmlEngine {
         if let Some(value) = self.vars.get(name).cloned() {
             return value;
         }
-        if let Some(value) = self.input_value_on_active_card(name) {
+        if let Some(value) = self.input_value_for_name_on_active_card(name) {
             return value;
         }
         String::new()

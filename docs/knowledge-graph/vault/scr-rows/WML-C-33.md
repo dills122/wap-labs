@@ -57,7 +57,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Input value vdata defaults are evaluated at card entry; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry; escaped literals remain part of accepted values and visible password mask literals stay unobscured while the actual variable remains intact. General vdata validation/conversion beyond input value defaults and language-aware non-Basic-Latin mask repertoires remain incomplete.",
+  "assessmentNote": "Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics keep this parent row partial.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -66,6 +66,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/runtime/input_mask.rs",
       "symbol": "InputMask"
+    },
+    {
+      "path": "engine-wasm/engine/src/runtime/variable.rs",
+      "symbol": "SubstitutionContext"
     },
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
@@ -136,6 +140,16 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/select_semantics.rs",
       "test": "wml_fx_select_init_order_precedence_validation_and_serialization",
       "command": "cd engine-wasm/engine && cargo test wml_fx_select_init_order_precedence_validation_and_serialization"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/navigation_metadata.rs",
+      "test": "wml_204_input_vdata_conversions_preserve_source_variable",
+      "command": "cd engine-wasm/engine && cargo test wml_204_input_vdata_conversions_preserve_source_variable"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+      "test": "wml_204_invalid_control_variable_references_reject_load_atomically",
+      "command": "cd engine-wasm/engine && cargo test wml_204_invalid_control_variable_references_reject_load_atomically"
     }
   ],
   "ownerLayers": [

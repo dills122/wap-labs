@@ -1,16 +1,49 @@
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
+use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
+use std::collections::HashMap;
 
 use super::xml::{normalize_text, XmlElement, XmlNode};
 use super::ParseBudget;
+
+#[derive(Default)]
+struct ControlIdAllocator {
+    input_counts: HashMap<String, usize>,
+    select_counts: HashMap<String, usize>,
+    anonymous_select_ordinal: usize,
+}
+
+impl ControlIdAllocator {
+    fn input(&mut self, name: &str) -> String {
+        unique_control_id(&mut self.input_counts, name.to_string())
+    }
+
+    fn select(&mut self, preferred: Option<&str>) -> String {
+        let base = preferred.map(str::to_string).unwrap_or_else(|| {
+            self.anonymous_select_ordinal = self.anonymous_select_ordinal.saturating_add(1);
+            format!("select-{}", self.anonymous_select_ordinal)
+        });
+        unique_control_id(&mut self.select_counts, base)
+    }
+}
+
+fn unique_control_id(counts: &mut HashMap<String, usize>, base: String) -> String {
+    let count = counts.entry(base.clone()).or_default();
+    *count = count.saturating_add(1);
+    if *count == 1 {
+        base
+    } else {
+        format!("{base}#{}", *count)
+    }
+}
 
 pub(super) fn parse_card_nodes_xml(
     card: &XmlElement,
     budget: &mut ParseBudget,
 ) -> Result<Vec<Node>, String> {
     let mut out = Vec::new();
-    let mut select_ordinal = 0usize;
-    map_card_level_nodes(&card.children, &mut out, budget, 0, &mut select_ordinal)?;
+    let mut control_ids = ControlIdAllocator::default();
+    map_card_level_nodes(&card.children, &mut out, budget, 0, &mut control_ids)?;
     Ok(out)
 }
 
@@ -44,14 +77,14 @@ fn map_shared_inline_tag(
     element: &XmlElement,
     budget: &mut ParseBudget,
     child_depth: usize,
-    select_ordinal: &mut usize,
+    control_ids: &mut ControlIdAllocator,
 ) -> Result<Option<InlineTagOutcome>, String> {
     let outcome = match element.name.as_str() {
         "a" => parse_link_inline_node(element, budget, child_depth)?
             .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
         "br" => InlineTagOutcome::Break,
-        "input" => InlineTagOutcome::Node(parse_input_inline_node(element)?),
-        "select" => parse_select_inline_node(element, budget, child_depth, select_ordinal)?
+        "input" => InlineTagOutcome::Node(parse_input_inline_node(element, control_ids)?),
+        "select" => parse_select_inline_node(element, budget, child_depth, control_ids)?
             .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
         "option" => {
             return Err("Invalid <option>: must be contained by <select> or <optgroup>".to_string())
@@ -66,7 +99,7 @@ fn map_card_level_nodes(
     out: &mut Vec<Node>,
     budget: &mut ParseBudget,
     depth: usize,
-    select_ordinal: &mut usize,
+    control_ids: &mut ControlIdAllocator,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "card-node traversal")?;
     for node in nodes {
@@ -80,7 +113,7 @@ fn map_card_level_nodes(
             }
             XmlNode::Element(element) => {
                 if let Some(outcome) =
-                    map_shared_inline_tag(element, budget, depth + 1, select_ordinal)?
+                    map_shared_inline_tag(element, budget, depth + 1, control_ids)?
                 {
                     match outcome {
                         InlineTagOutcome::Break => out.push(Node::Break),
@@ -92,7 +125,7 @@ fn map_card_level_nodes(
 
                 if element.name == "p" {
                     let inline =
-                        map_inline_nodes(&element.children, budget, depth + 1, select_ordinal)?;
+                        map_inline_nodes(&element.children, budget, depth + 1, control_ids)?;
                     if !inline.is_empty() {
                         out.push(Node::Paragraph(inline));
                     }
@@ -101,13 +134,7 @@ fn map_card_level_nodes(
 
                 if element.name == "fieldset" {
                     validate_fieldset_element(element)?;
-                    map_card_level_nodes(
-                        &element.children,
-                        out,
-                        budget,
-                        depth + 1,
-                        select_ordinal,
-                    )?;
+                    map_card_level_nodes(&element.children, out, budget, depth + 1, control_ids)?;
                     continue;
                 }
 
@@ -119,7 +146,7 @@ fn map_card_level_nodes(
                 }
 
                 budget.note_alternate_dtd_unknown(&element.name);
-                map_card_level_nodes(&element.children, out, budget, depth + 1, select_ordinal)?;
+                map_card_level_nodes(&element.children, out, budget, depth + 1, control_ids)?;
             }
         }
     }
@@ -130,7 +157,7 @@ fn map_inline_nodes(
     nodes: &[XmlNode],
     budget: &mut ParseBudget,
     depth: usize,
-    select_ordinal: &mut usize,
+    control_ids: &mut ControlIdAllocator,
 ) -> Result<Vec<InlineNode>, String> {
     let mut out = Vec::new();
     let mut pending_text = String::new();
@@ -140,7 +167,7 @@ fn map_inline_nodes(
         &mut out,
         budget,
         depth,
-        select_ordinal,
+        control_ids,
     )?;
     flush_pending_inline_text(&mut pending_text, &mut out);
     Ok(out)
@@ -152,7 +179,7 @@ fn map_inline_nodes_recursive(
     out: &mut Vec<InlineNode>,
     budget: &mut ParseBudget,
     depth: usize,
-    select_ordinal: &mut usize,
+    control_ids: &mut ControlIdAllocator,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "inline-node traversal")?;
     for node in nodes {
@@ -161,7 +188,7 @@ fn map_inline_nodes_recursive(
             XmlNode::Text(text) => pending_text.push_str(text),
             XmlNode::Element(element) => {
                 if let Some(outcome) =
-                    map_shared_inline_tag(element, budget, depth + 1, select_ordinal)?
+                    map_shared_inline_tag(element, budget, depth + 1, control_ids)?
                 {
                     // Text accumulated before this tag has to be emitted first
                     // so inline ordering is preserved.
@@ -182,7 +209,7 @@ fn map_inline_nodes_recursive(
                         out,
                         budget,
                         depth + 1,
-                        select_ordinal,
+                        control_ids,
                     )?;
                     continue;
                 }
@@ -201,7 +228,7 @@ fn map_inline_nodes_recursive(
                     out,
                     budget,
                     depth + 1,
-                    select_ordinal,
+                    control_ids,
                 )?;
             }
         }
@@ -238,7 +265,10 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
     }
 }
 
-fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
+fn parse_input_inline_node(
+    element: &XmlElement,
+    control_ids: &mut ControlIdAllocator,
+) -> Result<InlineNode, String> {
     validate_allowed_attributes(
         element,
         &[
@@ -257,6 +287,8 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
             "xml:lang",
         ],
     )?;
+    validate_vdata_attributes(element, &["accesskey", "title", "value"])?;
+    validate_literal_attributes(element, &["class", "format"])?;
     if !element.children.is_empty() {
         return Err("Invalid <input>: element must be empty".to_string());
     }
@@ -273,7 +305,8 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
     }
 
     let name = name.to_string();
-    let default_value = element.attr("value").map(normalize_text);
+    let control_id = control_ids.input(&name);
+    let default_value = element.attr("value").map(str::to_string);
     let value = default_value.clone().unwrap_or_default();
     let is_password = element
         .attr("type")
@@ -290,8 +323,12 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
                 })
         })
         .transpose()?;
-    let mask = element
+    let format = element
         .attr("format")
+        .map(decode_literal_dollars)
+        .transpose()?;
+    let mask = format
+        .as_deref()
         .and_then(InputMask::parse)
         .unwrap_or_default();
     let empty_ok = element
@@ -299,6 +336,7 @@ fn parse_input_inline_node(element: &XmlElement) -> Result<InlineNode, String> {
         .map(|value| value == "true")
         .unwrap_or_else(|| mask.allows_empty());
     Ok(InlineNode::Input {
+        control_id,
         name,
         value,
         default_value,
@@ -313,7 +351,7 @@ fn parse_select_inline_node(
     element: &XmlElement,
     budget: &mut ParseBudget,
     depth: usize,
-    select_ordinal: &mut usize,
+    control_ids: &mut ControlIdAllocator,
 ) -> Result<Option<InlineNode>, String> {
     validate_allowed_attributes(
         element,
@@ -322,6 +360,8 @@ fn parse_select_inline_node(
             "xml:lang",
         ],
     )?;
+    validate_vdata_attributes(element, &["ivalue", "title", "value"])?;
+    validate_literal_attributes(element, &["class"])?;
     validate_optional_xml_name(element, "id")?;
     for attr in ["name", "iname", "xml:lang"] {
         validate_optional_nmtoken(element, attr)?;
@@ -329,14 +369,10 @@ fn parse_select_inline_node(
     validate_optional_enum(element, "multiple", &["true", "false"])?;
     validate_optional_number(element, "tabindex")?;
 
-    let title = {
-        let value = normalize_text(element.attr("title").unwrap_or_default());
-        if value.is_empty() {
-            None
-        } else {
-            Some(value)
-        }
-    };
+    let title = element
+        .attr("title")
+        .filter(|value| !value.is_empty())
+        .map(str::to_string);
 
     let mut options = Vec::new();
     let choice_child_count =
@@ -350,13 +386,9 @@ fn parse_select_inline_node(
     if options.is_empty() {
         return Ok(None);
     }
-    *select_ordinal = select_ordinal.saturating_add(1);
     let name = element.attr("name").map(str::to_string);
     let iname = element.attr("iname").map(str::to_string);
-    let control_id = name
-        .clone()
-        .or_else(|| iname.clone())
-        .unwrap_or_else(|| format!("select-{}", *select_ordinal));
+    let control_id = control_ids.select(name.as_deref().or(iname.as_deref()));
 
     Ok(Some(InlineNode::Select {
         control_id,
@@ -402,10 +434,7 @@ fn collect_select_options(
                         })
                         .collect::<String>(),
                 );
-                let value = child
-                    .attr("value")
-                    .map(normalize_text)
-                    .unwrap_or_else(|| label.clone());
+                let value = child.attr("value").unwrap_or_default().to_string();
                 options.push(SelectOption {
                     label,
                     value,
@@ -430,6 +459,8 @@ fn collect_select_options(
 
 fn validate_optgroup_element(element: &XmlElement) -> Result<(), String> {
     validate_allowed_attributes(element, &["class", "id", "title", "xml:lang"])?;
+    validate_vdata_attributes(element, &["title"])?;
+    validate_literal_attributes(element, &["class"])?;
     validate_optional_xml_name(element, "id")?;
     validate_optional_nmtoken(element, "xml:lang")?;
     for child in &element.children {
@@ -467,6 +498,8 @@ fn validate_optgroup_element(element: &XmlElement) -> Result<(), String> {
 
 fn validate_fieldset_element(element: &XmlElement) -> Result<(), String> {
     validate_allowed_attributes(element, &["class", "id", "title", "xml:lang"])?;
+    validate_vdata_attributes(element, &["title"])?;
+    validate_literal_attributes(element, &["class"])?;
     validate_optional_xml_name(element, "id")?;
     validate_optional_nmtoken(element, "xml:lang")?;
 
@@ -517,6 +550,8 @@ fn validate_option_element(element: &XmlElement) -> Result<(), String> {
         element,
         &["class", "id", "onpick", "title", "value", "xml:lang"],
     )?;
+    validate_vdata_attributes(element, &["onpick", "title", "value"])?;
+    validate_literal_attributes(element, &["class"])?;
     validate_optional_xml_name(element, "id")?;
     validate_optional_nmtoken(element, "xml:lang")?;
 
@@ -529,6 +564,36 @@ fn validate_option_element(element: &XmlElement) -> Result<(), String> {
                 ));
             }
         }
+    }
+    Ok(())
+}
+
+fn validate_vdata_attributes(element: &XmlElement, attrs: &[&str]) -> Result<(), String> {
+    for attr in attrs {
+        let Some(value) = element.attr(attr) else {
+            continue;
+        };
+        validate_vdata(value).map_err(|error| {
+            format!(
+                "Invalid <{}>: attribute '{attr}' contains an invalid variable reference: {error}",
+                element.name
+            )
+        })?;
+    }
+    Ok(())
+}
+
+fn validate_literal_attributes(element: &XmlElement, attrs: &[&str]) -> Result<(), String> {
+    for attr in attrs {
+        let Some(value) = element.attr(attr) else {
+            continue;
+        };
+        crate::runtime::variable::validate_literal_only(value).map_err(|error| {
+            format!(
+                "Invalid <{}>: attribute '{attr}' contains an invalid variable reference: {error}",
+                element.name
+            )
+        })?;
     }
     Ok(())
 }

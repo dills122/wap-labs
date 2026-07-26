@@ -1,3 +1,4 @@
+use crate::runtime::variable::{evaluate as evaluate_variable, SubstitutionContext};
 use crate::*;
 
 mod navigation;
@@ -179,7 +180,7 @@ impl WmlEngine {
                     .get(self.focused_link_idx)
                     .ok_or_else(|| "Focused target index out of range".to_string())?;
                 match target {
-                    FocusTarget::Input(name) => {
+                    FocusTarget::Input { name, .. } => {
                         self.active_select_edit = None;
                         self.push_trace("ACTION_INPUT", name.clone());
                         if self.active_input_edit.is_some() {
@@ -220,14 +221,15 @@ impl WmlEngine {
     }
 
     pub(crate) fn begin_focused_input_edit_internal(&mut self) -> Result<bool, String> {
-        let Some(input_name) = self.focused_input_name_internal()? else {
+        let Some((control_id, input_name)) = self.focused_input_internal()? else {
             return Ok(false);
         };
         let current = self
-            .input_value_on_active_card(&input_name)
+            .input_value_on_active_card(&control_id)
             .unwrap_or_default();
         self.active_select_edit = None;
         self.active_input_edit = Some(InputEditState {
+            control_id,
             input_name: input_name.clone(),
             original_value: current.clone(),
             draft_value: current,
@@ -240,7 +242,7 @@ impl WmlEngine {
         let Some(edit) = self.active_input_edit.clone() else {
             return Ok(false);
         };
-        let Some((mask, empty_ok)) = self.input_constraints_on_active_card(&edit.input_name) else {
+        let Some((mask, empty_ok)) = self.input_constraints_on_active_card(&edit.control_id) else {
             return Ok(false);
         };
         let rejection = if edit.draft_value.is_empty() && !empty_ok {
@@ -260,7 +262,7 @@ impl WmlEngine {
             self.push_trace("INPUT_EDIT_REJECT", edit.input_name);
             return Err(error);
         }
-        let committed = self.set_input_value_on_active_card(&edit.input_name, &edit.draft_value)?;
+        let committed = self.set_input_value_on_active_card(&edit.control_id, &edit.draft_value)?;
         if !committed {
             return Ok(false);
         }
@@ -277,49 +279,54 @@ impl WmlEngine {
             .and_then(|deck| deck.cards.get_mut(self.active_card_idx))
             .ok_or_else(|| "Active card not found".to_string())?;
 
-        for input in node_lookup::inputs_mut(card) {
-            let valid_existing = vars
-                .get(input.name)
-                .cloned()
-                .filter(|candidate| input_value_is_valid(input.mask, input.empty_ok, candidate));
-            let initial_value = if let Some(existing) = valid_existing {
-                Some(existing)
-            } else {
-                vars.remove(input.name);
-                input
-                    .default_value
-                    .as_deref()
-                    .map(|candidate| evaluate_vdata(candidate, vars))
-                    .filter(|candidate| input_value_is_valid(input.mask, input.empty_ok, candidate))
-            };
+        for control in node_lookup::controls_mut(card) {
+            match control {
+                node_lookup::ControlMut::Input(input) => {
+                    let valid_existing = vars.get(input.name).cloned().filter(|candidate| {
+                        input_value_is_valid(input.mask, input.empty_ok, candidate)
+                    });
+                    let initial_value = if let Some(existing) = valid_existing {
+                        Some(existing)
+                    } else {
+                        vars.remove(input.name);
+                        input
+                            .default_value
+                            .as_deref()
+                            .map(|candidate| evaluate_vdata(candidate, vars))
+                            .transpose()?
+                            .filter(|candidate| {
+                                input_value_is_valid(input.mask, input.empty_ok, candidate)
+                            })
+                    };
 
-            if let Some(initial_value) = initial_value {
-                vars.insert(input.name.to_string(), initial_value.clone());
-                *input.value = initial_value;
-            } else {
-                vars.remove(input.name);
-                input.value.clear();
+                    if let Some(initial_value) = initial_value {
+                        vars.insert(input.name.to_string(), initial_value.clone());
+                        *input.value = initial_value;
+                    } else {
+                        vars.remove(input.name);
+                        input.value.clear();
+                    }
+                }
+                node_lookup::ControlMut::Select(select) => {
+                    *select.selected_indices = initial_select_indices(
+                        select.name,
+                        select.iname,
+                        select.default_value,
+                        select.default_index_value,
+                        select.multiple,
+                        select.options,
+                        vars,
+                    )?;
+                    sync_select_variables(
+                        vars,
+                        select.name,
+                        select.iname,
+                        select.multiple,
+                        select.options,
+                        select.selected_indices,
+                    )?;
+                }
             }
-        }
-
-        for select in node_lookup::selects_mut(card) {
-            *select.selected_indices = initial_select_indices(
-                select.name,
-                select.iname,
-                select.default_value,
-                select.default_index_value,
-                select.multiple,
-                select.options,
-                vars,
-            );
-            sync_select_variables(
-                vars,
-                select.name,
-                select.iname,
-                select.multiple,
-                select.options,
-                select.selected_indices,
-            );
         }
         Ok(())
     }
@@ -371,14 +378,14 @@ impl WmlEngine {
         self.active_select_edit = None;
         self.push_trace("SELECT_EDIT_COMMIT", edit.select_name.clone());
         if let Some(onpick) = onpick {
-            let onpick = evaluate_vdata(&onpick, &self.vars);
+            let onpick = evaluate_href(&onpick, &self.vars)?;
             self.push_trace("ACTION_ONPICK", onpick.clone());
             self.execute_action_href(&onpick, None, &[])?;
         }
         Ok(true)
     }
 
-    fn focused_input_name_internal(&self) -> Result<Option<String>, String> {
+    fn focused_input_internal(&self) -> Result<Option<(String, String)>, String> {
         let card = self.active_card_internal()?;
         let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
         let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
@@ -386,7 +393,7 @@ impl WmlEngine {
             return Ok(None);
         };
         match target {
-            FocusTarget::Input(name) => Ok(Some(name.clone())),
+            FocusTarget::Input { control_id, name } => Ok(Some((control_id.clone(), name.clone()))),
             FocusTarget::Select(_) | FocusTarget::Link(_) => Ok(None),
         }
     }
@@ -400,22 +407,27 @@ impl WmlEngine {
         };
         match target {
             FocusTarget::Select(name) => Ok(Some(name.clone())),
-            FocusTarget::Input(_) | FocusTarget::Link(_) => Ok(None),
+            FocusTarget::Input { .. } | FocusTarget::Link(_) => Ok(None),
         }
     }
 
-    fn input_value_on_active_card(&self, input_name: &str) -> Option<String> {
+    fn input_value_on_active_card(&self, control_id: &str) -> Option<String> {
         let card = self.active_card_internal().ok()?;
-        node_lookup::find_input(card, input_name).map(|input| input.value.to_string())
+        node_lookup::find_input(card, control_id).map(|input| input.value.to_string())
+    }
+
+    fn input_value_for_name_on_active_card(&self, name: &str) -> Option<String> {
+        let card = self.active_card_internal().ok()?;
+        node_lookup::find_input_by_name(card, name).map(|input| input.value.to_string())
     }
 
     fn set_input_value_on_active_card(
         &mut self,
-        input_name: &str,
+        control_id: &str,
         value: &str,
     ) -> Result<bool, String> {
         let card = self.active_card_internal_mut()?;
-        let Some(input) = node_lookup::find_input_mut(card, input_name) else {
+        let Some(input) = node_lookup::find_input_mut(card, control_id) else {
             return Ok(false);
         };
         *input.value = value.to_string();
@@ -425,10 +437,10 @@ impl WmlEngine {
     pub(crate) fn apply_input_value_to_card(
         &self,
         card: &mut runtime::card::Card,
-        input_name: &str,
+        control_id: &str,
         value: &str,
     ) {
-        if let Some(input) = node_lookup::find_input_mut(card, input_name) {
+        if let Some(input) = node_lookup::find_input_mut(card, control_id) {
             *input.value = value.to_string();
         }
     }
@@ -453,7 +465,7 @@ impl WmlEngine {
         node_lookup::find_select(card, select_name)?
             .options
             .get(selected_index)
-            .map(|option| evaluate_vdata(&option.value, &self.vars))
+            .and_then(|option| evaluate_vdata(&option.value, &self.vars).ok())
     }
 
     pub(crate) fn set_select_selected_indices_on_active_card(
@@ -523,7 +535,7 @@ impl WmlEngine {
             select.multiple,
             select.options,
             select.selected_indices,
-        );
+        )?;
         Ok(())
     }
 
@@ -541,22 +553,22 @@ impl WmlEngine {
                 select.multiple,
                 select.options,
                 select.selected_indices,
-            );
+            )?;
         }
         Ok(())
     }
 
-    pub(crate) fn input_max_len_on_active_card(&self, input_name: &str) -> Option<usize> {
+    pub(crate) fn input_max_len_on_active_card(&self, control_id: &str) -> Option<usize> {
         let card = self.active_card_internal().ok()?;
-        node_lookup::find_input(card, input_name).and_then(|input| input.max_length)
+        node_lookup::find_input(card, control_id).and_then(|input| input.max_length)
     }
 
     fn input_constraints_on_active_card(
         &self,
-        input_name: &str,
+        control_id: &str,
     ) -> Option<(runtime::input_mask::InputMask, bool)> {
         let card = self.active_card_internal().ok()?;
-        node_lookup::find_input(card, input_name).map(|input| (input.mask.clone(), input.empty_ok))
+        node_lookup::find_input(card, control_id).map(|input| (input.mask.clone(), input.empty_ok))
     }
 }
 
@@ -580,33 +592,38 @@ fn initial_select_indices(
     multiple: bool,
     options: &[runtime::node::SelectOption],
     vars: &HashMap<String, String>,
-) -> Vec<usize> {
+) -> Result<Vec<usize>, String> {
     let mut indices = iname
         .and_then(|variable| vars.get(variable))
         .map(|value| validate_select_indices(value, multiple, options.len()))
         .unwrap_or_default();
     if indices.is_empty() {
-        indices = default_index_value
-            .map(|value| evaluate_vdata(value, vars))
-            .map(|value| validate_select_indices(&value, multiple, options.len()))
-            .unwrap_or_default();
+        indices = match default_index_value {
+            Some(value) => {
+                validate_select_indices(&evaluate_vdata(value, vars)?, multiple, options.len())
+            }
+            None => Vec::new(),
+        };
     }
     if indices.is_empty() {
         indices = name
             .and_then(|variable| vars.get(variable))
             .map(|value| select_indices_for_values(value, multiple, options, vars))
+            .transpose()?
             .unwrap_or_default();
     }
     if indices.is_empty() {
-        indices = default_value
-            .map(|value| evaluate_vdata(value, vars))
-            .map(|value| select_indices_for_values(&value, multiple, options, vars))
-            .unwrap_or_default();
+        indices = match default_value {
+            Some(value) => {
+                select_indices_for_values(&evaluate_vdata(value, vars)?, multiple, options, vars)?
+            }
+            None => Vec::new(),
+        };
     }
     if indices.is_empty() && !multiple && !options.is_empty() {
         indices.push(0);
     }
-    indices
+    Ok(indices)
 }
 
 fn validate_select_indices(raw: &str, multiple: bool, option_count: usize) -> Vec<usize> {
@@ -640,7 +657,7 @@ fn select_indices_for_values(
     multiple: bool,
     options: &[runtime::node::SelectOption],
     vars: &HashMap<String, String>,
-) -> Vec<usize> {
+) -> Result<Vec<usize>, String> {
     let values = if multiple {
         raw.split(';').collect::<Vec<_>>()
     } else {
@@ -648,16 +665,20 @@ fn select_indices_for_values(
     };
     let mut indices = Vec::new();
     for value in values {
-        if let Some(index) = options
-            .iter()
-            .position(|option| evaluate_vdata(&option.value, vars) == value)
-        {
+        let mut matching_index = None;
+        for (index, option) in options.iter().enumerate() {
+            if evaluate_vdata(&option.value, vars)? == value {
+                matching_index = Some(index);
+                break;
+            }
+        }
+        if let Some(index) = matching_index {
             if !indices.contains(&index) {
                 indices.push(index);
             }
         }
     }
-    indices
+    Ok(indices)
 }
 
 fn sync_select_variables(
@@ -667,14 +688,18 @@ fn sync_select_variables(
     multiple: bool,
     options: &[runtime::node::SelectOption],
     selected_indices: &[usize],
-) {
+) -> Result<(), String> {
     if let Some(name) = name {
-        let values = selected_indices
+        let mut values = Vec::new();
+        for option in selected_indices
             .iter()
             .filter_map(|index| options.get(*index))
-            .map(|option| evaluate_vdata(&option.value, vars))
-            .filter(|value| !value.is_empty())
-            .collect::<Vec<_>>();
+        {
+            let value = evaluate_vdata(&option.value, vars)?;
+            if !value.is_empty() {
+                values.push(value);
+            }
+        }
         if values.is_empty() {
             vars.remove(name);
         } else {
@@ -696,58 +721,13 @@ fn sync_select_variables(
         };
         vars.insert(iname.to_string(), serialized);
     }
+    Ok(())
 }
 
-fn evaluate_vdata(raw: &str, vars: &HashMap<String, String>) -> String {
-    let mut out = String::new();
-    let chars = raw.char_indices().collect::<Vec<_>>();
-    let mut cursor = 0usize;
-    while cursor < chars.len() {
-        let (byte_index, ch) = chars[cursor];
-        if ch != '$' {
-            out.push(ch);
-            cursor += 1;
-            continue;
-        }
-        if chars.get(cursor + 1).is_some_and(|(_, next)| *next == '$') {
-            out.push('$');
-            cursor += 2;
-            continue;
-        }
-        if chars.get(cursor + 1).is_some_and(|(_, next)| *next == '(') {
-            let Some(close_offset) = raw[byte_index + 2..].find(')') else {
-                out.push('$');
-                cursor += 1;
-                continue;
-            };
-            let close = byte_index + 2 + close_offset;
-            let variable = raw[byte_index + 2..close]
-                .split(':')
-                .next()
-                .unwrap_or_default();
-            out.push_str(vars.get(variable).map(String::as_str).unwrap_or_default());
-            cursor = chars
-                .iter()
-                .position(|(index, _)| *index > close)
-                .unwrap_or(chars.len());
-            continue;
-        }
-        let variable_start = byte_index + 1;
-        let variable_end = raw[variable_start..]
-            .find(|ch: char| !(ch == '_' || ch.is_ascii_alphanumeric()))
-            .map(|offset| variable_start + offset)
-            .unwrap_or(raw.len());
-        if variable_end == variable_start {
-            out.push('$');
-            cursor += 1;
-            continue;
-        }
-        let variable = &raw[variable_start..variable_end];
-        out.push_str(vars.get(variable).map(String::as_str).unwrap_or_default());
-        cursor = chars
-            .iter()
-            .position(|(index, _)| *index >= variable_end)
-            .unwrap_or(chars.len());
-    }
-    out
+fn evaluate_vdata(raw: &str, vars: &HashMap<String, String>) -> Result<String, String> {
+    evaluate_variable(raw, vars, SubstitutionContext::VData)
+}
+
+fn evaluate_href(raw: &str, vars: &HashMap<String, String>) -> Result<String, String> {
+    evaluate_variable(raw, vars, SubstitutionContext::Href)
 }

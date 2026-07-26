@@ -11,7 +11,7 @@ pub struct LayoutResult {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FocusTarget {
     Link(String),
-    Input(String),
+    Input { control_id: String, name: String },
     Select(String),
 }
 
@@ -26,7 +26,7 @@ impl FocusTarget {
     pub fn to_render_href(&self) -> String {
         match self {
             FocusTarget::Link(href) => href.clone(),
-            FocusTarget::Input(name) => format!("input:{name}"),
+            FocusTarget::Input { control_id, .. } => format!("input:{control_id}"),
             FocusTarget::Select(name) => format!("select:{name}"),
         }
     }
@@ -65,6 +65,7 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             ));
                         }
                         InlineNode::Input {
+                            control_id,
                             name,
                             value,
                             is_password,
@@ -79,7 +80,10 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                             let rendered = format!("[{name}: {display_value}]");
                             parts.push(ParagraphPart::Segment(
                                 rendered,
-                                Some(FocusTarget::Input(name.clone())),
+                                Some(FocusTarget::Input {
+                                    control_id: control_id.clone(),
+                                    name: name.clone(),
+                                }),
                             ));
                         }
                         InlineNode::Select {
@@ -375,6 +379,7 @@ mod tests {
             ordered: true,
             nodes: vec![Node::Paragraph(vec![
                 InlineNode::Input {
+                    control_id: "UserName".to_string(),
                     name: "UserName".to_string(),
                     value: "AHMED".to_string(),
                     default_value: Some("AHMED".to_string()),
@@ -384,6 +389,7 @@ mod tests {
                     empty_ok: true,
                 },
                 InlineNode::Input {
+                    control_id: "Password".to_string(),
                     name: "Password".to_string(),
                     value: "secret".to_string(),
                     default_value: Some("secret".to_string()),
@@ -423,8 +429,14 @@ mod tests {
         assert_eq!(
             out.focus_targets,
             vec![
-                FocusTarget::Input("UserName".to_string()),
-                FocusTarget::Input("Password".to_string()),
+                FocusTarget::Input {
+                    control_id: "UserName".to_string(),
+                    name: "UserName".to_string(),
+                },
+                FocusTarget::Input {
+                    control_id: "Password".to_string(),
+                    name: "Password".to_string(),
+                },
                 FocusTarget::Select("Country".to_string())
             ]
         );

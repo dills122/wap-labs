@@ -13,12 +13,12 @@ fn wml_fx_select_init_order_precedence_validation_and_serialization() {
             <p>Start</p>
           </card>
           <card id="controls">
-            <input name="default-index" value="3;2"/>
+            <input name="default_index" value="3;2"/>
             <select
               name="choices"
               iname="choice-indexes"
               value="fallback"
-              ivalue="$(default-index)"
+              ivalue="$(default_index)"
               multiple="true"
               title="Choices"
             >
@@ -29,7 +29,7 @@ fn wml_fx_select_init_order_precedence_validation_and_serialization() {
             <select
               name="ordered-choices"
               iname="ordered-indexes"
-              ivalue="$(default-index)"
+              ivalue="$(default_index)"
               multiple="true"
             >
               <option value="alpha">Alpha</option>
@@ -83,11 +83,11 @@ fn wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment() {
             <select
               name="values"
               iname="indexes"
-              ivalue="$(initial-indexes)"
+              ivalue="$(initial_indexes)"
               multiple="true"
             >
-              <option value="$(shared-value)">First</option>
-              <option value="$(shared-value)">Second</option>
+              <option value="$(shared_value)">First</option>
+              <option value="$(shared_value)">Second</option>
               <option value="">Empty</option>
             </select>
           </card>
@@ -95,8 +95,8 @@ fn wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment() {
         "#;
 
     engine.load_deck(xml).expect("deck should load");
-    assert!(engine.set_var("initial-indexes".to_string(), "1;2;3".to_string()));
-    assert!(engine.set_var("shared-value".to_string(), "duplicate".to_string()));
+    assert!(engine.set_var("initial_indexes".to_string(), "1;2;3".to_string()));
+    assert!(engine.set_var("shared_value".to_string(), "duplicate".to_string()));
     engine
         .navigate_to_card("controls".to_string())
         .expect("controls should initialize");
@@ -112,6 +112,174 @@ fn wml_fx_select_value_and_ivalue_references_are_evaluated_before_assignment() {
 }
 
 #[test]
+fn wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order() {
+    let mut engine = WmlEngine::new();
+    let xml = r#"
+        <wml>
+          <card id="start"><p>Start</p></card>
+          <card id="controls">
+            <select name="BeforeInput" value="$(Later)">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <input name="Later" value="beta"/>
+            <select name="Selected" value="beta">
+              <option value="alpha">Alpha</option>
+              <option value="beta">Beta</option>
+            </select>
+            <input name="Copied" value="$(Selected)"/>
+          </card>
+        </wml>
+        "#;
+
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .navigate_to_card("controls".to_string())
+        .expect("controls should initialize in source order");
+
+    assert_eq!(
+        engine.get_var("BeforeInput".to_string()).as_deref(),
+        Some("alpha")
+    );
+    assert_eq!(engine.get_var("Later".to_string()).as_deref(), Some("beta"));
+    assert_eq!(
+        engine.get_var("Selected".to_string()).as_deref(),
+        Some("beta")
+    );
+    assert_eq!(
+        engine.get_var("Copied".to_string()).as_deref(),
+        Some("beta")
+    );
+}
+
+#[test]
+fn wml_204_absent_option_value_is_empty_while_label_remains_visible() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml>
+              <card id="home">
+                <select name="Choice" iname="ChoiceIndex" ivalue="1">
+                  <option>Visible label</option>
+                </select>
+              </card>
+            </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(engine.get_var("Choice".to_string()), None);
+    assert_eq!(
+        engine.get_var("ChoiceIndex".to_string()).as_deref(),
+        Some("1")
+    );
+    engine.set_viewport_cols(80);
+    assert!(render_snapshot_lines(&engine)
+        .iter()
+        .any(|line| line.contains("href=select:Choice:text=[Choice: Visible label]")));
+}
+
+#[test]
+fn wml_204_option_vdata_preserves_exact_cdata() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml>
+              <card id="home">
+                <select name="ExactChoice" iname="ExactIndex" ivalue="1">
+                  <option value="  leading  middle   trailing  ">Exact label</option>
+                </select>
+              </card>
+            </wml>
+            "#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(
+        engine.get_var("ExactChoice".to_string()).as_deref(),
+        Some("  leading  middle   trailing  ")
+    );
+}
+
+#[test]
+fn wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape() {
+    let mut engine = WmlEngine::new();
+    let raw = "A B/C?D=E&F";
+    engine
+        .load_deck_context(
+            r##"
+            <wml>
+              <card id="start"><a href="#controls">Controls</a></card>
+              <card id="controls">
+                <select name="Choice">
+                  <option value="$(Raw)" onpick="/choose/$(Raw)">Choose raw value</option>
+                </select>
+              </card>
+            </wml>
+            "##,
+            "https://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("deck should load");
+    assert!(engine.set_var("Raw".to_string(), raw.to_string()));
+    engine
+        .navigate_to_card("controls".to_string())
+        .expect("controls should initialize");
+
+    assert_eq!(engine.get_var("Choice".to_string()).as_deref(), Some(raw));
+    engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    engine
+        .commit_focused_select_edit()
+        .expect("onpick navigation should succeed");
+
+    assert_eq!(
+        engine.external_navigation_intent().as_deref(),
+        Some("https://example.test/choose/A%20B%2FC%3FD%3DE%26F")
+    );
+    assert_eq!(engine.get_var("Raw".to_string()).as_deref(), Some(raw));
+}
+
+#[test]
+fn wml_204_same_name_selects_keep_independent_control_state() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml><card id="home">
+              <select name="Shared">
+                <option value="a1">A1</option><option value="a2">A2</option>
+              </select>
+              <select name="Shared">
+                <option value="b1">B1</option><option value="b2">B2</option>
+              </select>
+            </card></wml>
+            "#,
+        )
+        .expect("deck should load");
+    engine.set_viewport_cols(80);
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move to the second select");
+    assert!(engine
+        .begin_focused_select_edit()
+        .expect("second select edit should begin"));
+    assert!(engine.move_focused_select_edit(1));
+    assert!(engine
+        .commit_focused_select_edit()
+        .expect("second select should commit"));
+
+    let lines = render_snapshot_lines(&engine);
+    assert!(lines.iter().any(|line| line.contains("[Shared: A1]")));
+    assert!(lines.iter().any(|line| line.contains("[Shared: B2]")));
+    assert_eq!(engine.get_var("Shared".to_string()).as_deref(), Some("b2"));
+}
+
+#[test]
 fn wml_fx_select_default_precedence_covers_every_source_and_fallback() {
     // WML-CL-SELECT-DEFAULT-PRECEDENCE and WML-CL-SELECT-INDEX-VALIDATION,
     // WAP-191_104-WML section 11.6.2.1 step 1.
@@ -120,7 +288,7 @@ fn wml_fx_select_default_precedence_covers_every_source_and_fallback() {
         <wml>
           <card id="start"><p>Start</p></card>
           <card id="controls">
-            <input name="default-value" value="beta"/>
+            <input name="default_value" value="beta"/>
             <select name="from-iname" iname="index-a" ivalue="2" value="alpha">
               <option value="alpha">Alpha</option>
               <option value="beta">Beta</option>
@@ -134,7 +302,7 @@ fn wml_fx_select_default_precedence_covers_every_source_and_fallback() {
               <option value="alpha">Alpha</option>
               <option value="gamma">Gamma</option>
             </select>
-            <select name="from-value" value="$(default-value)">
+            <select name="from-value" value="$(default_value)">
               <option value="alpha">Alpha</option>
               <option value="beta">Beta</option>
             </select>

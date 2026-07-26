@@ -136,7 +136,7 @@ The first `CONF-003` slice now expands all 39 selected WML rows into 174
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
 owner/work mapping and a direct fixture plan. Fifty-six clauses now have
 reviewed direct evidence, including the `WML-C-24` line-break clause, the two `WML-C-17` unknown-DTD clauses,
-the 11-clause WML-204 input tranche, and the completed 30-clause WML-202 root/head/access,
+the completed 23-clause WML-204 field/control tranche, and the completed 30-clause WML-202 root/head/access,
 template, task-shadowing, card-context, and newcontext tranche; the remaining clauses stay `not-assessed`. The
 parent-row implementation audit remains conservative.
 

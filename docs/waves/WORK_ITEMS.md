@@ -88,10 +88,9 @@ Current priority order is:
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
    174/174 direct WML-clause mapping.
 2. Preserve completed `WML-202` referring-URI access, root-language, and
-   card-context/grammar evidence, then close the residual mandatory `WML-204`
+   card-context/grammar evidence and the completed mandatory `WML-204`
    vdata/HREF conversion and field/control validation gate. WML-202 is complete
-   at 30/30 direct clauses; WML-204 retains its completed 23/23 mapped slice and
-   grouped-control evidence from `#342` while its broader gate remains open.
+   at 30/30 direct clauses and WML-204 is complete at 23/23 direct clauses.
 3. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
    extend `WML-205`'s direct three-clause taxonomy across remaining element
    errors and host fetch/access failure atomicity. Sequence validation-file
@@ -1899,7 +1898,8 @@ Reference:
 - Input commit now enforces valid Basic Latin format codes, escaped literals, invalid-mask fallback, `emptyok` precedence, and `maxlength`. Rejection returns a deterministic host-visible error while preserving the prior variable and active draft for retry; password rendering conceals entered characters without replacing the real variable and preserves visible format literals.
 - Input name/value initialization now runs in document order on load, navigation, back, and refresh; input `value` vdata defaults are evaluated at entry, and invalid existing values are unset before valid-default fallback. Active input/select edits commit before card task execution, and invalid masked input blocks task side effects.
 - Select initialization, multiple selection, `iname`/`ivalue` precedence, option-value evaluation, serialization, onpick dispatch, and no-implicit-refresh behavior have direct runtime evidence.
-- Remaining scope: `do`/`onevent`, optional `fieldset`/`optgroup` capability declaration and grouping presentation, `timer`, general vdata/HREF validation and conversion outside the bounded input/select paths, and language-aware non-Basic-Latin mask repertoires. The mandatory Unicode Basic Latin input floor is implemented and directly tested.
+- Control vdata and onpick HREF references now share source-derived validation and evaluation semantics, including exact CDATA, literal dollars, undefined variables, conversion defaults/aliases, document-order initialization, empty option values, and atomic invalid-load rejection across native/WASM boundaries.
+- Remaining R0-04 scope: `do`/`onevent`, optional `fieldset`/`optgroup` capability declaration and grouping presentation, `timer`, substitution outside the bounded input/select/option paths, and language-aware non-Basic-Latin mask repertoires. Those gates are not residual WML-204 acceptance work; the mandatory Unicode Basic Latin input floor is implemented and directly tested.
 
 ### R0-05 Renderer semantics completion (`11.8`/`11.9`)
 

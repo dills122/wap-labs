@@ -219,9 +219,9 @@ Current recommendation after all merged implementation workstreams:
 1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
    projection and 174/174 direct WML-clause mapping.
 2. **Engine lane, first:** preserve completed `WML-202` access-policy,
-   root-language, and card-context evidence (30/30 direct clauses), then close
-   the residual mandatory `WML-204` vdata/HREF conversion and field/control
-   validation gate without reopening WML-202 history.
+   root-language, and card-context evidence (30/30 direct clauses) and completed
+   `WML-204` vdata/HREF conversion and field/control validation evidence (23/23
+   direct clauses) without reopening either history.
 3. **Engine lane, next:** close `WML-203` mandatory prologue and DTD
    content-model enforcement, then extend `WML-205`'s deterministic load
    taxonomy across remaining element errors and host fetch/access failure
@@ -247,7 +247,7 @@ Completed this sprint:
 3. browser responsiveness and UI-blocking remediation
 4. transport/engine payload-size guardrails for active boundaries
 5. story-driven host-sample and Waves-browser acceptance harnesses
-6. WML-204 input/select direct evidence (23/23 mapped clauses)
+6. WML-204 input/select direct evidence and acceptance closure (23/23 clauses)
 7. WML-203 WML/WBXML evidence tranche (49/49 mapped clauses)
 8. TRN-701 WDP, TRN-702 constrained payload, and TRN-703 WCMP direct evidence
 9. WML-203 schema-v2 WDP SDU -> fetch/WBXML decode -> native engine parity,

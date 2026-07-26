@@ -210,17 +210,18 @@ Type contract:
    mapping.
 2. Preserve completed `WML-202` referring-URI access, root-language, and
    card-context/grammar evidence (30/30 direct clauses).
-3. Close the residual mandatory `WML-204` vdata/HREF conversion and control
-   validation gate, preserving the grouped-control syntax and story evidence
-   landed in `#342`.
+3. Preserve completed `WML-204` vdata/HREF conversion, control validation,
+   grouped-control syntax, deterministic failure, and native/WASM parity
+   evidence (23/23 direct clauses).
 4. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
    extend the mapped `WML-205` taxonomy across the remaining element errors
    and host fetch/access failure atomicity. Keep these parser/runtime slices
    serial where they touch the same validation and test files.
 5. Preserve the completed direct mappings for `WML-201` (174/174 WML
    clauses), `WML-202` (30/30 clauses), `WML-203` (49/49 mapped clauses), and
-   `WML-204` (23/23 clauses); broader implementation acceptance remains open.
-6. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
+   `WML-204` (23/23 clauses); WML-203 and WML-205 broader implementation
+   acceptance remains open.
+6. Keep `D0-01`, `W1-06`, `A5-03`, and `M1-03` queued as downstream
    or non-preemptive work rather than current sprint drivers.
 
 ## Current checklist (planning/execution)
@@ -237,7 +238,7 @@ Type contract:
 - [x] Implement active MVP form-submit hardening slice (`A5-06`)
 - [x] Implement inter-card task pipeline conformance follow-up (`A5-02`)
 - [ ] Implement WML timer lifecycle follow-up (`A5-03`)
-- [ ] Implement input-mask/commit semantics follow-up (`B5-01`)
+- [x] Implement input-mask/commit semantics follow-up (`B5-01`)
 
 ## Troubleshooting
 

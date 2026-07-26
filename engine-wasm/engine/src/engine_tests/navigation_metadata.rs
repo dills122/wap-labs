@@ -608,10 +608,136 @@ fn input_initialization_runs_in_document_order() {
         .any(|line| line.contains("href=input:Shared:text=[Shared: 12]")));
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=input:Shared:text=[Shared: AB]")));
+        .any(|line| line.contains("href=input:Shared#2:text=[Shared: AB]")));
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=input:Shared:text=[Shared: 34]")));
+        .any(|line| line.contains("href=input:Shared#3:text=[Shared: 34]")));
+}
+
+#[test]
+fn wml_204_input_vdata_conversions_preserve_source_variable() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"
+            <wml>
+              <card id="start"><a href="#form">Form</a></card>
+              <card id="form">
+                <input name="DefaultNoesc" value="$(Raw)"/>
+                <input name="ExplicitNoesc" value="$(Raw:noesc)"/>
+                <input name="Escaped" value="$(Raw:escape)"/>
+                <input name="Unescaped" value="$(Encoded:unesc)"/>
+                <input name="EntityFirst" value="&#36;(Raw:escape)"/>
+                <input name="LiteralDollar" value="$$(Raw)"/>
+                <input name="Undefined" value="pre$(Missing)post"/>
+                <input name="CaseSensitive" value="$(raw)"/>
+              </card>
+            </wml>
+            "##,
+        )
+        .expect("deck should load");
+    let raw = "A B/C?D=E&F";
+    let escaped = "A%20B%2FC%3FD%3DE%26F";
+    assert!(engine.set_var("Raw".to_string(), raw.to_string()));
+    assert!(engine.set_var("Encoded".to_string(), escaped.to_string()));
+
+    engine
+        .navigate_to_card("form".to_string())
+        .expect("form controls should initialize");
+
+    assert_eq!(
+        engine.get_var("DefaultNoesc".to_string()).as_deref(),
+        Some(raw)
+    );
+    assert_eq!(
+        engine.get_var("ExplicitNoesc".to_string()).as_deref(),
+        Some(raw)
+    );
+    assert_eq!(
+        engine.get_var("Escaped".to_string()).as_deref(),
+        Some(escaped)
+    );
+    assert_eq!(
+        engine.get_var("Unescaped".to_string()).as_deref(),
+        Some(raw)
+    );
+    assert_eq!(
+        engine.get_var("EntityFirst".to_string()).as_deref(),
+        Some(escaped)
+    );
+    assert_eq!(
+        engine.get_var("LiteralDollar".to_string()).as_deref(),
+        Some("$(Raw)")
+    );
+    assert_eq!(
+        engine.get_var("Undefined".to_string()).as_deref(),
+        Some("prepost")
+    );
+    assert_eq!(
+        engine.get_var("CaseSensitive".to_string()).as_deref(),
+        Some("")
+    );
+    assert_eq!(engine.get_var("Raw".to_string()).as_deref(), Some(raw));
+    assert_eq!(
+        engine.get_var("Encoded".to_string()).as_deref(),
+        Some(escaped)
+    );
+}
+
+#[test]
+fn wml_204_input_vdata_preserves_exact_cdata() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"<wml><card id="form"><input name="Exact" value="  leading  middle   trailing  "/></card></wml>"#,
+        )
+        .expect("deck should load");
+
+    assert_eq!(
+        engine.get_var("Exact".to_string()).as_deref(),
+        Some("  leading  middle   trailing  ")
+    );
+}
+
+#[test]
+fn wml_204_same_name_inputs_keep_independent_control_state() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml><card id="home">
+              <input name="Shared" value="first"/>
+              <input name="Shared" value="second"/>
+            </card></wml>
+            "#,
+        )
+        .expect("deck should load");
+    engine.set_viewport_cols(80);
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move to the second input");
+    assert!(engine
+        .begin_focused_input_edit()
+        .expect("second input edit should begin"));
+    assert!(engine.set_focused_input_edit_draft("changed".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("second input should commit"));
+
+    let lines = render_snapshot_lines(&engine);
+    let first = lines
+        .iter()
+        .position(|line| line.contains("[Shared: first]"))
+        .expect("first input should retain its displayed value");
+    let changed = lines
+        .iter()
+        .position(|line| line.contains("[Shared: changed]"))
+        .expect("second input should display its committed value");
+    assert!(first < changed, "the later focused control must be updated");
+    assert_eq!(
+        engine.get_var("Shared".to_string()).as_deref(),
+        Some("changed")
+    );
 }
 
 #[test]

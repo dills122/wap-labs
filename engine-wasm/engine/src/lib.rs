@@ -127,6 +127,7 @@ struct CardTimerState {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct InputEditState {
+    control_id: String,
     input_name: String,
     original_value: String,
     draft_value: String,
