@@ -206,15 +206,20 @@ Type contract:
 
 1. Preserve the completed `WML-201` 76-row evidence projection and 174/174 direct WML-clause
    mapping.
-2. Extend the mapped `WML-205` load taxonomy into exhaustive WML error enforcement and host
-   fetch/access-control failure atomicity; keep those broader gates explicit until direct evidence
-   lands.
-3. Close the remaining `WML-202` access-policy/card-context and `WML-204`
-   validation gates serially because they overlap parser/runtime test files.
-4. Preserve the completed direct mappings for `WML-201` (174/174 WML
+2. Close the remaining `WML-202` referring-URI access policy, root-language,
+   and card-context/grammar gate while preserving its completed direct-clause
+   evidence.
+3. Close the residual mandatory `WML-204` vdata/HREF conversion and control
+   validation gate, preserving the grouped-control syntax and story evidence
+   landed in `#342`.
+4. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
+   extend the mapped `WML-205` taxonomy across the remaining element errors
+   and host fetch/access failure atomicity. Keep these parser/runtime slices
+   serial where they touch the same validation and test files.
+5. Preserve the completed direct mappings for `WML-201` (174/174 WML
    clauses), `WML-202` (14/14 clauses), `WML-203` (49/49 mapped clauses), and
    `WML-204` (23/23 clauses); broader implementation acceptance remains open.
-5. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
+6. Keep `D0-01`, `W1-06`, `A5-03`, `B5-01`, and `M1-03` queued as downstream
    or non-preemptive work rather than current sprint drivers.
 
 ## Current checklist (planning/execution)

@@ -87,12 +87,16 @@ Current priority order is:
 
 1. Preserve `WML-201`'s completed 76-row SCR evidence projection and
    174/174 direct WML-clause mapping.
-2. Preserve `WML-205`'s direct three-clause mapping and engine-boundary load taxonomy, then close
-   the residual exhaustive WML error-enforcement and host fetch/access failure-atomicity gates.
-3. Close the remaining `WML-202` access-policy/card-context gate and then the
-   residual `WML-204` field/control validation gate. Preserve their completed
-   14/14 and 23/23 direct-clause slices; the remaining work shares engine parser
-   and runtime tests, so keep it in one serial lane.
+2. Close the remaining `WML-202` referring-URI access policy,
+   root-language, and card-context/grammar gate, then the residual mandatory
+   `WML-204` vdata/HREF conversion and field/control validation gate. Preserve
+   their completed 14/14 and 23/23 direct-clause slices and the grouped-control
+   evidence from `#342`; the remaining work shares engine parser/runtime tests,
+   so keep it in one serial lane.
+3. Close `WML-203` mandatory prologue and DTD content-model enforcement, then
+   extend `WML-205`'s direct three-clause taxonomy across remaining element
+   errors and host fetch/access failure atomicity. Sequence validation-file
+   edits with item 2 rather than merging competing parser patches.
 4. Preserve `TRN-706`'s completed schema-v2 selected-WDP replay boundary and
    keep the conditional WTP mapping gap explicit under additive
    `TRN-704`/`TRN-705` follow-ups. `TRN-707`'s bounded WDP/WCMP audit is
@@ -114,6 +118,24 @@ Planning assessment:
    implementation starts.
 2. Replan only when a source-derived fixture changes a dependency, a profile
    is activated, or implementation evidence changes a parent-row assessment.
+
+### Desktop Browser Product Lane
+
+The `Authentic Core, Modern Console` direction is adopted in the active
+desktop product documents. Current evidence-backed status is:
+
+| Slice | Status | Current evidence / next gate |
+| --- | --- | --- |
+| `WBP-00` | `in-progress` | Product direction is documented in `#339`; reproducible baseline performance, reference viewport, and audience decisions remain open. |
+| `WBP-01` | `in-progress` | `#343` decomposed the shell into toolbar, handset stage, utility rail, phase slot, and developer drawer with landmark tests; minimum-window keyboard and complete existing-story integration evidence remain. |
+| `WBP-02` | `todo` | Start after the `WBP-01` integration gate; keep global style integration under one owner. |
+| `WBP-03` | `todo` | Start after the `WBP-01` integration gate; preserve current navigation ordering and transport truthfulness. |
+| `WBP-04` | `todo` | Start after the `WBP-01` integration gate and coordinate distinct example/story generation. |
+| `WBP-05` | `todo` | Start after the `WBP-01` integration gate; host semantics must not duplicate the WML runtime model. |
+
+`WBP-02` through `WBP-05` are parallel-safe as leaf-component slices after
+the gate, but the root shell template, global stylesheet, copy module, and
+generated example manifest require a single integration owner.
 
 ## Next In Line (Architecture Maintenance Sprint)
 

@@ -105,14 +105,18 @@ pnpm --dir browser run tauri:icons
 
 ## Next implementation slice
 
-1. Support cross-layer binary-WBXML-to-engine parity evidence for `WML-203`;
-   no browser-first feature slice should preempt the upstream `WML-2` gate.
-2. Browser-owned foundation work `WBP-01` through `WBP-05` may proceed under
-   `docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md` while preserving
-   current engine and transport contracts.
-3. Defer `D0-01`, `W1-06`, and `M1-09` (`F0-F4` frame migration) until the
+1. Close the remaining `WBP-00` adoption/baseline evidence and `WBP-01`
+   minimum-window, keyboard, and existing-story integration gate. The shell
+   component seams landed in `#343`; do not reopen that decomposition.
+2. Once that gate is green, run browser-owned `WBP-02` visual system,
+   `WBP-03` toolbar information architecture, `WBP-04` onboarding/help, and
+   `WBP-05` host accessibility as leaf-component slices with one owner for
+   root shell and global-style integration.
+3. Keep `WBP-06` and later frame, input, transport lifecycle, persistence,
+   and diagnostics work dependency-gated on their engine/transport contracts.
+4. Defer `D0-01`, `W1-06`, and `M1-09` (`F0-F4` frame migration) until the
    upstream runtime boundary is stable enough not to churn the host contract.
-4. Keep `M1-03` as non-priority generator follow-up.
+5. Keep `M1-03` as non-priority generator follow-up.
 
 ## Planning + Traceability
 
