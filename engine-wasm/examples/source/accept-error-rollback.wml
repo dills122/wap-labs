@@ -9,10 +9,12 @@ testing-ac:
 - Confirm action fails and activeCardId remains accept-broken.
 - Press Back and confirm activeCardId returns to home.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>Rollback demo.</p>
-    <a href="#accept-broken">To broken accept</a>
+    <p>Rollback demo. <a href="#accept-broken">To broken accept</a></p>
   </card>
 
   <card id="accept-broken">

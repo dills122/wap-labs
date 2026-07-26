@@ -9,13 +9,14 @@ testing-ac:
 - Confirm runtime-state nextCardVar becomes #next after the script runs.
 - On next card, press Enter on "Script prev"; activeCardId should return to home.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>WMLBrowser var/nav subset demo.</p>
-    <a href="script:wmlbrowser-demo.wmlsc#main">Script setVar + go</a>
+    <p>WMLBrowser var/nav subset demo. <a href="script:wmlbrowser-demo.wmlsc#main">Script setVar + go</a></p>
   </card>
   <card id="next">
-    <p>Navigation came from script go().</p>
-    <a href="script:wmlbrowser-demo.wmlsc#back">Script prev</a>
+    <p>Navigation came from script go(). <a href="script:wmlbrowser-demo.wmlsc#back">Script prev</a></p>
   </card>
 </wml>

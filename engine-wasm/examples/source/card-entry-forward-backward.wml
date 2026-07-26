@@ -9,10 +9,12 @@ testing-ac:
 - Press Back once; activeCardId should become rewind because transit runs onenterbackward on re-entry.
 - Confirm runtime trace shows ACTION_BACK and subsequent ACTION_FRAGMENT for rewind.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>Start card.</p>
-    <a href="#transit">Enter transit</a>
+    <p>Start card. <a href="#transit">Enter transit</a></p>
   </card>
   <card id="transit">
     <onevent type="onenterforward">
@@ -27,7 +29,6 @@ testing-ac:
     <p>Reached from onenterforward.</p>
   </card>
   <card id="rewind">
-    <p>Reached from onenterbackward.</p>
-    <a href="#home">Return home</a>
+    <p>Reached from onenterbackward. <a href="#home">Return home</a></p>
   </card>
 </wml>

@@ -6,7 +6,7 @@ fn smoke_load_render_and_snapshot() {
     let snapshot = apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -36,7 +36,7 @@ fn smoke_key_navigation_and_back_stack() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -64,7 +64,7 @@ fn advance_time_command_expires_timer_card_deterministically() {
     let xml = r##"
     <wml>
       <card id="home">
-        <a href="#timed">To timed</a>
+        <p><a href="#timed">To timed</a></p>
       </card>
       <card id="timed">
         <onevent type="ontimer"><go href="#done"/></onevent>
@@ -77,7 +77,7 @@ fn advance_time_command_expires_timer_card_deterministically() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: xml.to_string(),
+            wml_xml: canonical_text_wml(xml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -104,7 +104,7 @@ fn smoke_external_intent_set_and_clear() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: EXTERNAL_LINK_WML.to_string(),
+            wml_xml: canonical_text_wml(EXTERNAL_LINK_WML),
             base_url: "http://local.test/dir/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -144,14 +144,14 @@ fn snapshot_exposes_script_dialog_and_timer_requests() {
     let script_deck = r##"
     <wml>
       <card id="home">
-        <a href="script:effects.wmlsc#main">Run</a>
+        <p><a href="script:effects.wmlsc#main">Run</a></p>
       </card>
     </wml>
     "##;
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: script_deck.to_string(),
+            wml_xml: canonical_text_wml(script_deck),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -211,15 +211,17 @@ fn snapshot_exposes_script_error_class_and_category() {
     let script_deck = r##"
     <wml>
       <card id="home">
-        <a href="script:ok.wmlsc#main">Run ok</a>
-        <a href="script:fatal.wmlsc#main">Run fatal</a>
+        <p>
+          <a href="script:ok.wmlsc#main">Run ok</a>
+          <a href="script:fatal.wmlsc#main">Run fatal</a>
+        </p>
       </card>
     </wml>
     "##;
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: script_deck.to_string(),
+            wml_xml: canonical_text_wml(script_deck),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -313,8 +315,7 @@ fn browser_e2e_fetch_load_render_sequence_renders_expected_content() {
     let wml = r##"
     <wml>
       <card id="home">
-        <p>Transport-to-engine pipeline</p>
-        <a href="#next">Next</a>
+        <p>Transport-to-engine pipeline <a href="#next">Next</a></p>
       </card>
       <card id="next"><p>Second</p></card>
     </wml>

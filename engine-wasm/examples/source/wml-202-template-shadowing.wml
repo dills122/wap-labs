@@ -11,6 +11,9 @@ testing-ac:
 - Activate Enter on masked; the card-level noop masks both bindings and produces no task action.
 - Navigate Back from masked; newcontext has cleared the prior card history, so masked remains active.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml xml:lang="en">
   <head>
     <meta name="scenario" content="wml-202" scheme="work-item"/>

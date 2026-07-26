@@ -9,13 +9,17 @@ testing-ac:
 - Confirm activeCardId remains home after invocation.
 - Confirm runtime-state externalNavigationIntent remains (none).
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>go("#next") then go("") in one script invocation.</p>
-    <a href="script:wavescript-fixtures.wmlsc#goCancel">Script go then cancel</a>
+    <p>
+      go("#next") then go("") in one script invocation.
+      <a href="script:wavescript-fixtures.wmlsc#goCancel">Script go then cancel</a>
+    </p>
   </card>
   <card id="next">
-    <p>If you can read this from the script link, cancellation regressed.</p>
-    <a href="#home">Back</a>
+    <p>If you can read this from the script link, cancellation regressed. <a href="#home">Back</a></p>
   </card>
 </wml>

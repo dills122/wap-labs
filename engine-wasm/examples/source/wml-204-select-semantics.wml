@@ -11,6 +11,9 @@ testing-ac:
 - Begin select editing, move once to Germany, and confirm the draft does not change the committed variable.
 - Commit Germany and confirm its vdata value remains raw while its onpick HREF escapes reserved characters.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="select-semantics" title="Select Semantics">
     <p>

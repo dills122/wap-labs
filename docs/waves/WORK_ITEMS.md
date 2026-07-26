@@ -122,9 +122,11 @@ Planning assessment:
 2. `Depends On`: `WML-203`
 3. `Owner`: `engine-wasm`, `browser`, `qa`
 4. `Scope`: Add source-authentic XML declarations and explicit canonical or
-   alternate external DTD identities to the 31 legacy local examples that
-   predate strict standalone-document validation, then repair any selected-DTD
-   content-model violations without changing their intended runtime stories.
+   alternate external DTD identities to the remaining 8 legacy local examples
+   that predate strict standalone-document validation, then repair any
+   selected-DTD content-model violations without changing their intended
+   runtime stories. The WML-203 CI corrective slice migrated the 23 stable
+   boot and executable-story examples first.
 5. `Evidence`: `pnpm test:story all`, example manifest drift checks, and
    browser local-example tests.
 6. `Boundary`: This is additive compatibility-corpus cleanup. It does not

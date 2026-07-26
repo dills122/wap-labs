@@ -10,9 +10,11 @@ testing-ac:
 - Confirm status shows a key error and activeCardId remains home.
 - Confirm focusedLinkIndex remains stable after the failed navigation.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>Missing fragment test</p>
-    <a href="#missing">Broken target</a>
+    <p>Missing fragment test <a href="#missing">Broken target</a></p>
   </card>
 </wml>

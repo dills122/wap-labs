@@ -6,7 +6,7 @@ fn apply_load_deck_returns_error_for_invalid_root() {
     let error = apply_load_deck(
         &mut engine,
         LoadDeckRequest {
-            wml_xml: "<card id=\"home\"><p>bad</p></card>".to_string(),
+            wml_xml: canonical_text_wml("<card id=\"home\"><p>bad</p></card>"),
         },
     )
     .expect_err("invalid root should fail");
@@ -41,7 +41,7 @@ fn apply_load_deck_context_rejects_oversized_raw_payload() {
     let error = apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
@@ -58,8 +58,9 @@ fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomicall
     let stable = apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: r#"<wml xml:lang="en"><card id="stable"><p>Stable</p></card></wml>"#
-                .to_string(),
+            wml_xml: canonical_text_wml(
+                r#"<wml xml:lang="en"><card id="stable"><p>Stable</p></card></wml>"#,
+            ),
             base_url: "https://stable.test/deck.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -73,8 +74,9 @@ fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomicall
     let error = apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: r#"<wml><head><access domain="trusted.test"/></head><card id="blocked"><p>Blocked</p></card></wml>"#
-                .to_string(),
+            wml_xml: canonical_text_wml(
+                r#"<wml><head><access domain="trusted.test"/></head><card id="blocked"><p>Blocked</p></card></wml>"#,
+            ),
             base_url: "https://service.test/blocked.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -95,7 +97,7 @@ fn apply_navigate_to_card_returns_error_for_unknown_card() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -160,7 +162,7 @@ fn apply_set_viewport_cols_clamps_to_minimum_one() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -192,7 +194,7 @@ fn apply_navigate_back_on_empty_history_keeps_state() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -212,7 +214,7 @@ fn command_engine_wrappers_drive_state_transitions() {
     let loaded = command_engine_load_deck_context(
         &state,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -259,7 +261,7 @@ fn command_engine_load_deck_path_is_callable() {
     let out = command_engine_load_deck(
         &state,
         LoadDeckRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
         },
     )
     .expect("load_deck wrapper should succeed");
@@ -274,7 +276,7 @@ fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
     let error = command_engine_load_deck_context(
         &state,
         LoadDeckContextRequest {
-            wml_xml: BASIC_NAV_WML.to_string(),
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
@@ -291,7 +293,7 @@ fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
     apply_load_deck_context(
         &mut engine,
         LoadDeckContextRequest {
-            wml_xml: TASK_ACTION_ORDER_WML.to_string(),
+            wml_xml: canonical_text_wml(TASK_ACTION_ORDER_WML),
             base_url: "http://local.test/task-order.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
@@ -463,7 +465,7 @@ fn command_engine_advance_time_ms_is_callable() {
     let xml = r##"
     <wml>
       <card id="home">
-        <a href="#timed">To timed</a>
+        <p><a href="#timed">To timed</a></p>
       </card>
       <card id="timed">
         <onevent type="ontimer"><go href="#done"/></onevent>
@@ -476,7 +478,7 @@ fn command_engine_advance_time_ms_is_callable() {
     command_engine_load_deck_context(
         &state,
         LoadDeckContextRequest {
-            wml_xml: xml.to_string(),
+            wml_xml: canonical_text_wml(xml),
             base_url: "http://local.test/start.wml".to_string(),
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,

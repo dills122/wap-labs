@@ -10,9 +10,12 @@ testing-ac:
 - Confirm the trace orders TIMER_EXPIRE, ACTION_ONTIMER, ACTION_SCRIPT, DIALOG_ALERT, and SCRIPT_OK.
 - Confirm the dialog request is published only after the script invocation boundary.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <a href="#timed">Start timer</a>
+    <p><a href="#timed">Start timer</a></p>
   </card>
   <card id="timed">
     <onevent type="ontimer">

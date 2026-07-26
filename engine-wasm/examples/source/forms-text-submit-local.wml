@@ -10,15 +10,18 @@ testing-ac:
 - Move to the PIN field, type digits, and confirm the viewport masks the committed value.
 - Submit the card and confirm Waves reports a captured external intent instead of performing a fetch.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="login" title="Local Login">
-    <p>User: <input name="username" value="AHMED" type="text"/></p>
-    <p>PIN: <input name="pin" value="" type="password"/></p>
     <do type="accept">
       <go method="post" href="/login">
         <postfield name="username" value="$(username)"/>
         <postfield name="pin" value="$(pin)"/>
       </go>
     </do>
+    <p>User: <input name="username" value="AHMED" type="text"/></p>
+    <p>PIN: <input name="pin" value="" type="password"/></p>
   </card>
 </wml>

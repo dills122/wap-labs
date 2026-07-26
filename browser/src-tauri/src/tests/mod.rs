@@ -31,8 +31,7 @@ pub(super) use wavenav_engine::WmlEngine;
 const BASIC_NAV_WML: &str = r##"
 <wml>
   <card id="home">
-    <p>Hello from Waves</p>
-    <a href="#next">Next</a>
+    <p>Hello from Waves <a href="#next">Next</a></p>
   </card>
   <card id="next">
     <p>Second card</p>
@@ -43,7 +42,7 @@ const BASIC_NAV_WML: &str = r##"
 const EXTERNAL_LINK_WML: &str = r##"
 <wml>
   <card id="home">
-    <a href="next.wml?foo=1">Load External</a>
+    <p><a href="next.wml?foo=1">Load External</a></p>
   </card>
 </wml>
 "##;
@@ -53,11 +52,13 @@ const FIXTURE_LOAD_NAV_EXTERNAL_WML: &str =
 const TASK_ACTION_ORDER_WML: &str = r##"
 <wml>
   <card id="home">
-    <a href="#accept-go">Accept go</a>
-    <a href="#accept-prev">Accept prev</a>
-    <a href="#accept-refresh">Accept refresh</a>
-    <a href="#accept-noop">Accept noop</a>
-    <a href="#accept-broken">Accept broken</a>
+    <p>
+      <a href="#accept-go">Accept go</a>
+      <a href="#accept-prev">Accept prev</a>
+      <a href="#accept-refresh">Accept refresh</a>
+      <a href="#accept-noop">Accept noop</a>
+      <a href="#accept-broken">Accept broken</a>
+    </p>
   </card>
   <card id="accept-go">
     <do type="accept"><go href="#target"/></do>
@@ -85,13 +86,25 @@ const TASK_ACTION_ORDER_WML: &str = r##"
 </wml>
 "##;
 
+const CANONICAL_WML13_PROLOGUE: &str = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">"#;
+
+fn canonical_text_wml(wml: &str) -> String {
+    if wml.contains("<?xml") {
+        return wml.to_string();
+    }
+    format!("{CANONICAL_WML13_PROLOGUE}\n{}", wml.trim_start())
+}
+
 fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse {
+    let wml = canonical_text_wml(wml);
     FetchDeckResponse {
         ok: true,
         status: 200,
         final_url: url.to_string(),
         content_type: content_type.to_string(),
-        wml: Some(wml.to_string()),
+        wml: Some(wml.clone()),
         error: None,
         timing_ms: FetchTiming {
             encode: 0.0,
@@ -99,7 +112,7 @@ fn mock_fetch_ok(url: &str, content_type: &str, wml: &str) -> FetchDeckResponse 
             decode: 0.0,
         },
         engine_deck_input: Some(EngineDeckInputPayload {
-            wml_xml: wml.to_string(),
+            wml_xml: wml,
             base_url: url.to_string(),
             content_type: content_type.to_string(),
             raw_bytes_base64: None,
