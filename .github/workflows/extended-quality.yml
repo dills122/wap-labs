@@ -1,0 +1,268 @@
+name: Extended Quality - Required Path Gates + Advisory Baseline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 7 * * 0'
+  workflow_dispatch:
+    inputs:
+      baseline_runs:
+        description: Latency samples per browser baseline metric (5-100)
+        required: false
+        default: '20'
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+  RUST_SHARED_KEY: wavenav-rust
+  WASM_PACK_VERSION: '0.13.1'
+
+jobs:
+  changes:
+    name: Classify Required Quality Paths
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      engine_clippy: ${{ steps.filter.outputs.engine_clippy }}
+      rendered_accessibility: ${{ steps.filter.outputs.rendered_accessibility }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Detect extended quality paths
+        id: filter
+        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4
+        with:
+          filters: |
+            engine_clippy:
+              - ".github/workflows/extended-quality.yml"
+              - "engine-wasm/engine/**"
+            rendered_accessibility:
+              - ".github/workflows/extended-quality.yml"
+              - "browser/contracts/**"
+              - "browser/frontend/**"
+              - "browser/src-tauri/tauri.conf.json"
+              - "engine-wasm/engine/**"
+              - "engine-wasm/examples/**"
+              - "pnpm-lock.yaml"
+              - "pnpm-workspace.yaml"
+              - "tsconfig.base.json"
+
+  engine-clippy:
+    name: Required - Engine Clippy (path-scoped)
+    needs: [changes]
+    if: ${{ needs.changes.outputs.engine_clippy == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust with Clippy
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+        with:
+          components: clippy
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          shared-key: ${{ env.RUST_SHARED_KEY }}
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Verify engine Cargo.lock
+        working-directory: engine-wasm/engine
+        run: cargo metadata --locked --format-version 1 --no-deps >/dev/null
+
+      - name: Engine Clippy with zero-warning policy
+        working-directory: engine-wasm/engine
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+  rendered-accessibility:
+    name: Required - Rendered Accessibility (path-scoped)
+    needs: [changes]
+    if: ${{ needs.changes.outputs.rendered_accessibility == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          shared-key: ${{ env.RUST_SHARED_KEY }}
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Cache wasm-pack binary
+        id: cache-wasm-pack-accessibility
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cargo/bin/wasm-pack
+          key: ${{ runner.os }}-wasm-pack-${{ env.WASM_PACK_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-wasm-pack-
+
+      - name: Install wasm-pack (if cache miss)
+        if: steps.cache-wasm-pack-accessibility.outputs.cache-hit != 'true'
+        run: cargo install wasm-pack --version "${WASM_PACK_VERSION}" --locked
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install pinned Playwright Chromium
+        run: pnpm --dir browser/frontend exec playwright install --with-deps chromium
+
+      - name: Deterministic accessibility unit tests
+        run: pnpm --dir browser/frontend exec vitest run src/app/accessibility-audit.test.ts
+
+      - name: Rendered accessibility gate
+        env:
+          WAVES_ACCESSIBILITY_BASE_REVISION: ${{ github.event.pull_request.base.sha || github.sha }}
+          WAVES_ACCESSIBILITY_OUTPUT_DIR: browser/frontend/test-results/wbp-05a
+        run: pnpm --dir browser/frontend run test:accessibility:rendered
+
+      - name: Upload rendered accessibility failure evidence
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rendered-accessibility-failure-evidence
+          path: browser/frontend/test-results/wbp-05a
+          if-no-files-found: ignore
+          retention-days: 14
+
+  required-gate:
+    name: Extended Quality Required Gate
+    if: ${{ always() && (github.event_name == 'pull_request' || github.event_name == 'push') }}
+    permissions: {}
+    needs: [changes, engine-clippy, rendered-accessibility]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify selected required gates
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          ENGINE_CLIPPY_SELECTED: ${{ needs.changes.outputs.engine_clippy }}
+          ENGINE_CLIPPY_RESULT: ${{ needs.engine-clippy.result }}
+          ACCESSIBILITY_SELECTED: ${{ needs.changes.outputs.rendered_accessibility }}
+          ACCESSIBILITY_RESULT: ${{ needs.rendered-accessibility.result }}
+        run: |
+          if [ "${CHANGES_RESULT}" != "success" ]; then
+            echo "Quality path classification concluded: ${CHANGES_RESULT}"
+            exit 1
+          fi
+
+          verify_selected_gate() {
+            selected="$1"
+            result="$2"
+            label="$3"
+            if [ "${selected}" = "true" ] && [ "${result}" != "success" ]; then
+              echo "${label} was selected but concluded: ${result}"
+              exit 1
+            fi
+            if [ "${selected}" != "true" ] && [ "${result}" != "skipped" ]; then
+              echo "${label} was not selected but concluded: ${result}"
+              exit 1
+            fi
+          }
+
+          verify_selected_gate "${ENGINE_CLIPPY_SELECTED}" "${ENGINE_CLIPPY_RESULT}" "Engine Clippy"
+          verify_selected_gate "${ACCESSIBILITY_SELECTED}" "${ACCESSIBILITY_RESULT}" "Rendered Accessibility"
+
+  browser-baseline:
+    name: Advisory - Browser Stability Baseline (scheduled/manual)
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      WAVES_BASELINE_RUNS: ${{ inputs.baseline_runs || '20' }}
+      WAVES_BASELINE_OUTPUT_DIR: engine-wasm/host-sample/test-results/waves-baseline
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          shared-key: ${{ env.RUST_SHARED_KEY }}
+          workspaces: |
+            engine-wasm/engine -> target
+
+      - name: Cache wasm-pack binary
+        id: cache-wasm-pack-baseline
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cargo/bin/wasm-pack
+          key: ${{ runner.os }}-wasm-pack-${{ env.WASM_PACK_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-wasm-pack-
+
+      - name: Install wasm-pack (if cache miss)
+        if: steps.cache-wasm-pack-baseline.outputs.cache-hit != 'true'
+        run: cargo install wasm-pack --version "${WASM_PACK_VERSION}" --locked
+
+      - name: Build WaveNav WASM package
+        working-directory: engine-wasm/engine
+        run: wasm-pack build --target web --out-dir ../pkg
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Install pinned Playwright Chromium
+        run: pnpm --dir engine-wasm/host-sample exec playwright install --with-deps chromium
+
+      - name: Measure deterministic browser baseline
+        run: pnpm test:baseline:waves
+
+      - name: Upload browser baseline evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: waves-browser-baseline-${{ github.run_id }}
+          path: engine-wasm/host-sample/test-results/waves-baseline
+          if-no-files-found: ignore
+          retention-days: 14

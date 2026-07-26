@@ -21,6 +21,7 @@ const outputDir = requestedOutputDir
     ? requestedOutputDir
     : path.resolve(REPO_ROOT, requestedOutputDir)
   : DEFAULT_OUTPUT_DIR;
+const requestedBaseRevision = process.env.WAVES_ACCESSIBILITY_BASE_REVISION?.trim();
 const tempRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-accessibility-build-'));
 const tauriConfig = JSON.parse(await readFile(TAURI_CONFIG_PATH, 'utf8'));
 const windowConfig = tauriConfig.app.windows[0];
@@ -59,6 +60,21 @@ const openAllDisclosures = async (page) => {
       details.open = true;
     }
   });
+};
+
+const resolveBaseRevision = async () => {
+  if (requestedBaseRevision) {
+    assert.match(
+      requestedBaseRevision,
+      /^[0-9a-f]{40}$/,
+      'WAVES_ACCESSIBILITY_BASE_REVISION must be a full Git commit SHA'
+    );
+    return requestedBaseRevision;
+  }
+  const { stdout } = await execFileAsync('git', ['merge-base', 'HEAD', 'origin/main'], {
+    cwd: REPO_ROOT
+  });
+  return stdout.trim();
 };
 
 const auditRenderedPage = async (page, name, windowEvidence) => {
@@ -190,28 +206,30 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
 };
 
 await mkdir(outputDir, { recursive: true });
-await build({
-  root: FRONTEND_DIR,
-  configFile: path.join(FRONTEND_DIR, 'vite.config.ts'),
-  build: {
-    outDir: tempRoot,
-    emptyOutDir: true,
-    rollupOptions: { input: path.join(FRONTEND_DIR, 'browser-story.html') }
-  }
-});
-const previewServer = await preview({
-  root: FRONTEND_DIR,
-  configFile: path.join(FRONTEND_DIR, 'vite.config.ts'),
-  build: { outDir: tempRoot },
-  preview: { host: '127.0.0.1', port: 0, strictPort: false }
-});
-const baseUrl = previewServer.resolvedUrls?.local[0];
-if (!baseUrl) {
-  throw new Error('Vite preview did not expose a local URL');
-}
-
+const failureArtifacts = {};
+let previewServer;
 let browser;
 try {
+  await build({
+    root: FRONTEND_DIR,
+    configFile: path.join(FRONTEND_DIR, 'vite.config.ts'),
+    build: {
+      outDir: tempRoot,
+      emptyOutDir: true,
+      rollupOptions: { input: path.join(FRONTEND_DIR, 'browser-story.html') }
+    }
+  });
+  previewServer = await preview({
+    root: FRONTEND_DIR,
+    configFile: path.join(FRONTEND_DIR, 'vite.config.ts'),
+    build: { outDir: tempRoot },
+    preview: { host: '127.0.0.1', port: 0, strictPort: false }
+  });
+  const baseUrl = previewServer.resolvedUrls?.local[0];
+  if (!baseUrl) {
+    throw new Error('Vite preview did not expose a local URL');
+  }
+
   browser = await chromium.launch({ headless: true });
   const windowEvidence = {};
   for (const [name, dimensions] of Object.entries(windows)) {
@@ -221,24 +239,54 @@ try {
       reducedMotion: 'reduce'
     });
     const page = await context.newPage();
-    await page.goto(new URL('browser-story.html', baseUrl).href, {
-      waitUntil: 'domcontentloaded'
-    });
-    await waitForReady(page);
-    await openAllDisclosures(page);
-    windowEvidence[name] = await auditRenderedPage(page, name, dimensions);
-    await context.close();
+    let tracing = false;
+    try {
+      await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
+      tracing = true;
+      await page.goto(new URL('browser-story.html', baseUrl).href, {
+        waitUntil: 'domcontentloaded'
+      });
+      await waitForReady(page);
+      await openAllDisclosures(page);
+      windowEvidence[name] = await auditRenderedPage(page, name, dimensions);
+      await context.tracing.stop();
+      tracing = false;
+    } catch (error) {
+      const screenshot = `${name}-failure.png`;
+      const trace = `${name}-trace.zip`;
+      const screenshotSaved = await page
+        .screenshot({ path: path.join(outputDir, screenshot), fullPage: true })
+        .then(() => true)
+        .catch(() => false);
+      const traceSaved = tracing
+        ? await context.tracing
+            .stop({ path: path.join(outputDir, trace) })
+            .then(() => true)
+            .catch(() => false)
+        : false;
+      tracing = false;
+      failureArtifacts[name] = {
+        screenshot: screenshotSaved ? screenshot : null,
+        trace: traceSaved ? trace : null
+      };
+      throw error;
+    } finally {
+      if (tracing) {
+        await context.tracing.stop().catch(() => undefined);
+      }
+      await context.close();
+    }
   }
 
-  const [{ stdout: revision }, browserVersion] = await Promise.all([
-    execFileAsync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: REPO_ROOT }),
+  const [baseRevision, browserVersion] = await Promise.all([
+    resolveBaseRevision(),
     browser.version()
   ]);
   const result = {
     schemaVersion: 1,
     workItem: 'WBP-05A',
     capturedAt: new Date().toISOString(),
-    baseRevision: revision.trim(),
+    baseRevision,
     sourceState: 'feature working tree including WBP-05A changes',
     path: 'production-built Waves browser-story entry with real WaveNav WASM and deterministic local fixture fetch',
     zoomModel:
@@ -258,8 +306,23 @@ try {
   await writeFile(resultPath, `${JSON.stringify(result, null, 2)}\n`);
   console.log('PASS WBP-05A rendered accessibility at default and minimum windows');
   console.log(`RESULT ${resultPath}`);
+} catch (error) {
+  const failurePath = path.join(outputDir, 'rendered-accessibility-failure.json');
+  const failure = {
+    schemaVersion: 1,
+    workItem: 'WBP-05A',
+    capturedAt: new Date().toISOString(),
+    error: {
+      name: error instanceof Error ? error.name : 'Error',
+      message: error instanceof Error ? error.message : String(error)
+    },
+    artifacts: failureArtifacts
+  };
+  await writeFile(failurePath, `${JSON.stringify(failure, null, 2)}\n`);
+  console.error(`FAILURE EVIDENCE ${failurePath}`);
+  throw error;
 } finally {
   await browser?.close();
-  await previewServer.close();
+  await previewServer?.close();
   await rm(tempRoot, { recursive: true, force: true });
 }

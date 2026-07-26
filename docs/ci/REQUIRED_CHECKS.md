@@ -10,6 +10,7 @@ For workflow details, see `docs/ci/CI_SETUP.md`. For immutable release-branch go
 Configure the active `main` ruleset to require these exact GitHub Actions check names:
 
 - `CI Required Gate`
+- `Extended Quality Required Gate`
 - `Dependency Review`
 - `Rust Advisory Audit`
 - `Node Dependency Audit`
@@ -37,6 +38,17 @@ to conclude `success`.
 The security checks come from `.github/workflows/security.yml`. The CodeQL checks come from the
 repository-controlled advanced setup in `.github/workflows/codeql.yml`.
 
+`Extended Quality Required Gate` is the stable aggregate from
+`.github/workflows/extended-quality.yml`. For pull requests and pushes to `main`, it selects:
+
+- `Required - Engine Clippy (path-scoped)` for engine and extended-quality workflow changes.
+- `Required - Rendered Accessibility (path-scoped)` for browser frontend and its
+  engine/contract/build inputs.
+
+The aggregate accepts intentional path-filter skips and fails if any selected gate fails or is
+cancelled. The scheduled/manual `Advisory - Browser Stability Baseline (scheduled/manual)` is not
+part of this aggregate and must not be configured as a required check.
+
 ## Ruleset configuration
 
 In **Settings > Rules > Rulesets > main**:
@@ -44,7 +56,7 @@ In **Settings > Rules > Rulesets > main**:
 1. Keep the ruleset active and targeted at the default branch.
 2. Keep pull requests required and squash as the allowed merge method.
 3. Keep bypass actors empty.
-4. Under required status checks, require the six exact contexts above and select the GitHub
+4. Under required status checks, require the seven exact contexts above and select the GitHub
    Actions app as the expected source.
 5. Enable the strict/up-to-date option if every pull request must be tested against the latest
    `main` before merge.
@@ -98,7 +110,8 @@ only after every required status check and any other ruleset requirement succeed
 
 - `Transport WAP Smoke (Kannel)` is manual and must not be required for pull requests.
 - `Build and Deploy to gh-pages` is deployment-focused and must not be required for code merges.
-- Scheduled/manual fuzzing and release workflows must not be required pull-request checks.
+- Scheduled/manual fuzzing, browser baseline, and release workflows must not be required
+  pull-request checks.
 
 ## Maintenance notes
 
