@@ -339,10 +339,11 @@ if (
   !trnNodeIds.has('work-item:TRN-703') ||
   !trnNodeIds.has('work-item:TRN-706') ||
   !trnNodeIds.has('work-item:TRN-707') ||
-  !trnNodeIds.has('work-item:TRN-708')
+  !trnNodeIds.has('work-item:TRN-708') ||
+  !trnNodeIds.has('work-item:TRN-710')
 ) {
   failures.push(
-    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706/TRN-707/TRN-708 work items'
+    'TRN-7 target must retain the selected Class C profile and adopted TRN-702/TRN-703/TRN-706/TRN-707/TRN-708/TRN-710 work items'
   );
 }
 for (const row of selectedWcmpRows) {
@@ -355,13 +356,13 @@ if (
   !trn703Pack.startsWith('# TRN-703 AI Context Pack') ||
   !trn703Pack.includes('### TRN-703:') ||
   trn703Pack.includes('### TRN-701:') ||
-  !trn703Pack.includes('- Direct normative clauses: 0') ||
-  !trn703Pack.includes('`TRN-703` has no direct clause mapping') ||
-  JSON.stringify(trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-703']) !==
-    JSON.stringify(['wcmp'])
+  !trn703Pack.includes('- Direct normative clauses: 27') ||
+  !trn703Pack.includes('- Capability SCR parents: 4') ||
+  trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-703') ||
+  trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-703']
 ) {
   failures.push(
-    'TRN-703 context rendering must preserve its completed non-IP capability history as an explicit selected-profile mapping gap'
+    'TRN-703 context rendering must preserve its completed non-IP capability history through the 27 direct capability clauses without reopening it'
   );
 }
 const trn702Pack = renderContextPack(trnGraph, 'TRN-702');
@@ -434,18 +435,20 @@ if (
   !trn710Pack.includes('### TRN-710:') ||
   trn710Pack.includes('### TRN-708:') ||
   !trn710Pack.includes('- Selected work items: 1') ||
-  !trn710Pack.includes('- Direct normative clauses: 0') ||
-  !trn710Pack.includes('- Work items without direct clause mappings: 1') ||
-  !trn710Pack.includes('- Work items with unmapped declared normative families: 1') ||
-  !trn710Pack.includes('`TRN-710` has no direct clause mapping') ||
-  !trn710Pack.includes('`TRN-710` declares `wcmp` scope without a direct clause mapping') ||
+  !trn710Pack.includes('- Direct normative clauses: 27') ||
+  !trn710Pack.includes('- Capability SCR parents: 4') ||
+  !trn710Pack.includes('`capability-gated-non-ip-bearer`') ||
+  !trn710Pack.includes('WCMP-CL-GENERAL-NON-IP-SCOPE') ||
+  !trn710Pack.includes('WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS') ||
+  !trn710Pack.includes('`WAP-159-WDPWCMPAdapt`') ||
   !trn710Pack.includes('- Depends on: `TRN-703`, `T0-17`') ||
-  !trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-710') ||
-  JSON.stringify(trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-710']) !==
-    JSON.stringify(['wcmp'])
+  trnGraph.summary.workItemsWithoutDirectClauses.includes('TRN-710') ||
+  JSON.stringify(trnGraph.summary.directClauseFamiliesByWorkItem['TRN-710']) !==
+    JSON.stringify(['wcmp']) ||
+  trnGraph.summary.unmappedNormativeFamiliesByWorkItem['TRN-710']
 ) {
   failures.push(
-    'TRN-710 context rendering must preserve its dependencies and expose both the zero-clause and declared WCMP-family gaps'
+    'TRN-710 context rendering must expose 27 capability-gated WCMP clauses, four capability parents, WAP-159 deferred context, dependencies, and no mapping gap'
   );
 }
 

@@ -1278,7 +1278,7 @@
           ],
           "specReferences": [
             "WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)",
-            "WAP-202-WCMP section 5.4 and 5.5 (general WCMP is the non-IP message branch)",
+            "WAP-202-WCMP sections 5.1, 5.2, and 5.5 (general WCMP scope, conformance, syntax, and behavior)",
             "WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002",
             "WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003",
             "WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)"
@@ -1288,9 +1288,9 @@
             "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json"
           ],
           "acceptance": [
-            "The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the section 5.4 general-WCMP wire format.",
+            "The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the general-WCMP wire format.",
             "Direct fixtures prove ICMPv4 destination-unreachable code 3 (port unreachable), code 4 (fragmentation needed with DF set), and echo request/reply handling at the WDP error boundary for the selected IPv4 bearer.",
-            "The existing WAP-202 section 5.4/5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim.",
+            "The existing WAP-202 sections 5.1, 5.2, and 5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim; section 5.4 bearer encapsulations remain deferred.",
             "No WTP or connection-oriented WSP capability is activated."
           ],
           "evidence": [
@@ -1304,32 +1304,34 @@
         },
         {
           "id": "TRN-710",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["documentation", "spec-processing", "transport-rust", "qa"],
           "sourceFamilies": ["wcmp"],
-          "explicitUnmappedFamilies": ["wcmp"],
           "existingTickets": [],
           "dependsOn": ["TRN-703", "T0-17"],
+          "contextDocuments": ["WAP-159-WDPWCMPAdapt"],
           "notes": [
-            "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability.",
-            "Defer only the mechanical clause mapping while the WML-3 lane edits spec-processing/scripts/generate-wap-selected-normative-clauses.mjs, spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json, spec-processing/scripts/generate-wap-knowledge-graph.mjs, and their generated graph projections."
+            "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability; this mapping does not reopen either work item.",
+            "WAP-202 sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation remain explicitly unimplemented and deferred capability scope."
           ],
           "specReferences": [
-            "WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)",
-            "WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002",
-            "WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses"
+            "WAP-202-WCMP sections 5.1 and 5.2 (general WCMP scope and conformance)",
+            "WAP-202-WCMP sections 5.5.1, 5.5.2, 5.5.3.1, 5.5.3.3, and 5.5.3.5 (general WCMP syntax and supported message behavior)",
+            "WAP-202-WCMP Appendix A rows WCMP-SP-C-002, WCMP-GEN-C-001, WCMP-GEN-C-003, and WCMP-GEN-C-006",
+            "WAP-202-WCMP sections 5.4.1-.7 and WAP-159-WDPWCMPAdapt SMPP adaptation (deferred capability scope)"
           ],
           "outputs": [
             "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability"
           ],
           "acceptance": [
-            "Map the applicable WAP-202 sections 5.4/5.5 and effective adaptation clauses directly to TRN-710, the existing general-WCMP fixtures, and implementation tests without changing TRN-703 status.",
-            "Keep the mapping explicitly outside the selected CDPD/IPv4 profile and do not use it to satisfy the TRN-7-CL-C gate or activate WTP or connection-oriented WSP."
+            "Map the concrete WAP-202 sections 5.1, 5.2, and 5.5 clauses supported by the existing general-WCMP fixtures and implementation tests directly to TRN-710 without changing TRN-703 status.",
+            "Keep WAP-202 sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation explicitly unimplemented and deferred.",
+            "Keep the capability mapping outside the 198 selected parents, the selected CDPD/IPv4 profile, and the TRN-7-CL-C gate; do not activate WTP or connection-oriented WSP."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp",
             "node scripts/check-wap-selected-normative-clauses.mjs",
-            "node scripts/wap-context-pack.mjs TRN-703",
+            "node scripts/wap-context-pack.mjs TRN-710",
             "node scripts/check-wap-knowledge-graph.mjs"
           ]
         }

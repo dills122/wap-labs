@@ -66,10 +66,10 @@ gap.
 
 The 82 work items currently roll up to:
 
-- 24 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, and the frontend production-build defect closure);
+- 26 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801 connectionless matrix, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 10 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 47 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203, `TRN-710` direct general-WCMP clause mapping without reopening TRN-703, and `WML-308` form-control presentation/capability residual closure without preempting the `WML-305` baton.
+- 9 in progress (existing runtime, WAE, transport, and WSP foundations);
+- 46 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without preempting the `WML-305` baton.
 
 New completion claims should follow the machine dependency graph:
 

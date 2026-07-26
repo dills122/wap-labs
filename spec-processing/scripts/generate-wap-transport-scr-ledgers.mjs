@@ -164,7 +164,7 @@ const configs = [
       'WCMP-SP-C-001'
     ],
     selectedPath:
-      'WCMP-C-001 plus the RFC 792 ICMP alternative WCMP-SP-C-001 for CDPD/IPv4. The section 5.4/5.5 general-WCMP alternative remains implemented only as an explicit non-IP bearer capability.',
+      'WCMP-C-001 plus the RFC 792 ICMP alternative WCMP-SP-C-001 for the selected CDPD/IPv4 bearer. The sections 5.1/5.2/5.5 general-WCMP alternative WCMP-SP-C-002 remains implemented only as an explicit non-IP bearer capability; bearer encapsulations in sections 5.4.1-.7 remain deferred.',
     markers: [
       'Appendix A.',
       'Static Conformance Requirements',

@@ -17119,7 +17119,7 @@
       "family": "wcmp",
       "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json",
-      "parentLedgerSha256": "5d45d9e4caa9bce0c89eba65b4033908b6aee314a14a2ff3a006b4ab5e0bf3b0",
+      "parentLedgerSha256": "85ac8f0de5fadc92b34e00fceaf8170839c2e86961a640ce11220032b27f6483",
       "effectiveSequence": [
         "WAP-202-WCMP"
       ],
@@ -17629,6 +17629,1461 @@
             ],
             "parentImplementationSnapshot": {
               "WCMP-SP-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        }
+      ],
+      "capabilityDisposition": "capability-gated-non-ip-bearer",
+      "capabilityParentCount": 4,
+      "capabilityClauseCount": 27,
+      "capabilityParents": [
+        {
+          "id": "WCMP-SP-C-002",
+          "feature": "Does the implementation conform to the",
+          "referencedSection": "5.4, 5.5.1",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+            "WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+            "WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+            "WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+            "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+            "WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+            "WCMP-CL-GENERAL-NON-IP-SCOPE",
+            "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+            "WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+            "WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+            "WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-001",
+          "feature": "WCMP message type Destination",
+          "referencedSection": "5.5.3.1",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+            "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+            "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+            "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+            "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+            "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+            "WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+            "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-003",
+          "feature": "message type Message Too Big",
+          "referencedSection": "5.5.3.3",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+            "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+            "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+            "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+            "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+            "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        },
+        {
+          "id": "WCMP-GEN-C-006",
+          "feature": "message type Echo Reply",
+          "referencedSection": "5.5.3.5",
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "staticConformanceSection": "Appendix A"
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "transport-rust"
+          ],
+          "workItems": [
+            "TRN-703",
+            "T0-17"
+          ],
+          "clauseIds": [
+            "WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+            "WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+            "WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+            "WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+            "WCMP-CL-GENERAL-ECHO-STRUCTURE",
+            "WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+            "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+            "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES"
+          ]
+        }
+      ],
+      "capabilityClauses": [
+        {
+          "id": "WCMP-CL-GENERAL-NON-IP-SCOPE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-NON-IP-SCOPE",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/tests/wcmp_cdpd_icmp_profile.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile general_wcmp_is_available_only_with_the_explicit_non_ip_profile"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not generate a WCMP error message in response to another WCMP error message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Do not generate a WCMP error message in response to another WCMP error message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_suppresses_prohibited_error_responses"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Send no more than one WCMP error message for a fragmented datagram.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Send no more than one WCMP error message for a fragmented datagram.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_suppresses_prohibited_error_responses"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.1",
+            "heading": "5.1. General",
+            "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Require each WCMP message to fit within one bearer-level fragment.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Require each WCMP message to fit within one bearer-level fragment.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::constrained_fragment_and_address_limits_reject_without_truncation"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002",
+            "WCMP-GEN-C-001",
+            "WCMP-GEN-C-003",
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.2",
+            "heading": "5.2. WCMP Conformance",
+            "normalizedTextSha256": "4ef4829fe160989570d2b11816dec8635343b560b06608ed090902caffc99ba7"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::source_derived_fixture_covers_non_ip_general_wcmp_capability_rows"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006",
+              "RQ-TRX-007",
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented",
+              "WCMP-GEN-C-001": "implemented",
+              "WCMP-GEN-C-003": "implemented",
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-NETWORK-BYTE-ORDER",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-TYPE-CLASS-RANGES",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::all_type_octets_have_a_deterministic_classification"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002",
+            "WCMP-GEN-C-001",
+            "WCMP-GEN-C-003",
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.1",
+            "heading": "5.5.1. General Message Structure",
+            "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006",
+              "RQ-TRX-007",
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented",
+              "WCMP-GEN-C-001": "implemented",
+              "WCMP-GEN-C-003": "implemented",
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.2",
+            "heading": "5.5.2. Address Information Formats",
+            "normalizedTextSha256": "e9b34b18c16b0709752f28dd6cbf41b6d6e69a9efa094e586c17a9ed77cc8aaa"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-SP-C-002"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.2",
+            "heading": "5.5.2. Address Information Formats",
+            "normalizedTextSha256": "e9b34b18c16b0709752f28dd6cbf41b6d6e69a9efa094e586c17a9ed77cc8aaa"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode an IP address within WCMP address data with the most significant bit first.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode an IP address within WCMP address data with the most significant bit first.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-SP-C-002": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_maps_remaining_destination_unreachable_failures"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_maps_port_and_buffer_failures_to_selected_messages"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-CONGESTION-SUPPRESSION",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_suppresses_prohibited_error_responses"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::reported_destination_unreachable_maps_remaining_codes_to_wdp_errors"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-001"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.1",
+            "heading": "5.5.3.1. Destination Unreachable",
+            "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Carry the original datagram destination address in a Destination Unreachable message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Carry the original datagram destination address in a Destination Unreachable message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-006"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-001": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::generation_maps_port_and_buffer_failures_to_selected_messages"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-003"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.3",
+            "heading": "5.5.3.3. Message Too Big",
+            "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Carry the original datagram destination address in a Message Too Big message.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Carry the original datagram destination address in a Message Too Big message.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-007"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-003": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-STRUCTURE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-STRUCTURE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::echo_request_generates_exact_reply_and_preserves_correlation"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "explicit-must",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::echo_request_generates_exact_reply_and_preserves_correlation"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::echo_reply_truncates_only_data_to_return_path_fragment_size"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "table",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-TYPE-CODE",
+            "kind": "binary-decoder",
+            "status": "implemented",
+            "assertion": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
+          }
+        },
+        {
+          "id": "WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+          "family": "wcmp",
+          "profileApplicability": "capability-gated-non-ip-bearer",
+          "parentRows": [
+            "WCMP-GEN-C-006"
+          ],
+          "directWorkItems": [
+            "TRN-710"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-202-WCMP",
+            "section": "5.5.3.5",
+            "heading": "5.5.3.5. WCMP Echo Request/Reply",
+            "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+          },
+          "normativeForce": "grammar",
+          "obligationLevel": "required",
+          "obligationSynopsis": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+          "fixturePlan": {
+            "id": "WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS",
+            "kind": "transport-boundary",
+            "status": "implemented",
+            "assertion": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json",
+              "testPath": "transport-rust/src/network/wcmp/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::echo_request_generates_exact_reply_and_preserves_correlation"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "transport-rust"
+            ],
+            "workItems": [
+              "T0-17",
+              "TRN-703",
+              "TRN-710"
+            ],
+            "requirementIds": [
+              "RQ-TRX-008"
+            ],
+            "parentImplementationSnapshot": {
+              "WCMP-GEN-C-006": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

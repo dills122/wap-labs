@@ -59,10 +59,11 @@ details out of the pack. `TRN-706` and `TRN-707` intentionally retain declared W
 while connection-oriented WSP/WTP remains conditional. The `TRN-707` pack also includes the
 explicit WAP-259 successor context linked by that work item. `TRN-708` projects the adopted
 CDPD/IPv4 correction, including its directly mapped WDP and RFC 792 ICMP obligations. The
-focused `TRN-710` target preserves its `TRN-703`/`T0-17` dependencies and exposes both the
-zero-clause and declared-`wcmp` gaps; it does not infer the deferred non-IP WCMP mapping. In
-particular, canonical planning references to WAP-202 section 5.4 bearer encapsulations or
-WAP-159 do not mean those bearer/SMPP clauses are mapped, implemented, or satisfied.
+focused `TRN-710` target preserves its `TRN-703`/`T0-17` dependencies and projects 27 direct
+WAP-202 sections 5.1/5.2/5.5 clauses against four capability SCR parents without changing the
+198 selected-parent total or the TRN-7-CL-C gate. WAP-202 sections 5.4.1-.7 bearer
+encapsulations and WAP-159 SMPP clauses remain unimplemented and deferred context, not mapped
+evidence.
 
 The `WML-3` slice adds the bounded runtime projection needed for variable, task, event, BACK, and
 softkey work. Its focused `WML-302` target exposes the audited variable-store, substitution,

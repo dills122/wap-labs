@@ -144,6 +144,16 @@ const expectedLevelByForce = {
   table: 'required',
   'error-condition': 'required'
 };
+const generalWcmpCapabilityParentIds = ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'];
+const generalWcmpCapabilitySectionCounts = {
+  '5.1': 4,
+  '5.2': 1,
+  '5.5.1': 4,
+  '5.5.2': 2,
+  '5.5.3.1': 6,
+  '5.5.3.3': 4,
+  '5.5.3.5': 6
+};
 const trn702ClauseIds = new Set([
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
   'WDP-CL-IP-MAPPING-FRAGMENTATION',
@@ -740,6 +750,89 @@ for (const family of ledger.families ?? []) {
       })
     ) {
       failures.push('wbxml: direct clause evidence registry is incomplete');
+    }
+  }
+
+  if (family.family === 'wcmp') {
+    const capabilityParents = family.capabilityParents ?? [];
+    const capabilityClauses = family.capabilityClauses ?? [];
+    const capabilityParentById = new Map(generalWcmpCapabilityParentIds.map((parentId) => [
+      parentId,
+      parentLedger.obligations.find((candidate) => candidate.id === parentId)
+    ]));
+    const actualSectionCounts = Object.fromEntries(Object.keys(generalWcmpCapabilitySectionCounts).map((section) => [
+      section,
+      capabilityClauses.filter((candidate) => candidate.sourceAnchor?.section === section).length
+    ]));
+    if (
+      family.capabilityDisposition !== 'capability-gated-non-ip-bearer' ||
+      family.capabilityParentCount !== 4 ||
+      family.capabilityClauseCount !== 27 ||
+      JSON.stringify(capabilityParents.map((parent) => parent.id)) !== JSON.stringify(generalWcmpCapabilityParentIds) ||
+      capabilityClauses.length !== 27 ||
+      JSON.stringify(actualSectionCounts) !== JSON.stringify(generalWcmpCapabilitySectionCounts)
+    ) failures.push('wcmp: general-WCMP capability scope/count drift');
+
+    for (const parent of capabilityParents) {
+      const sourceParent = capabilityParentById.get(parent.id);
+      const expectedClauseIds = capabilityClauses.filter((candidate) => candidate.parentRows.includes(parent.id)).map((candidate) => candidate.id).sort();
+      if (
+        !sourceParent ||
+        sourceParent.disposition?.classCProfile !== 'capability-gated-non-ip-bearer' ||
+        sourceParent.mapping?.implementationStatus !== 'implemented' ||
+        parent.feature !== sourceParent.feature ||
+        parent.referencedSection !== sourceParent.referencedSection ||
+        JSON.stringify(parent.sourceAnchor) !== JSON.stringify(sourceParent.sourceAnchor) ||
+        parent.implementationStatus !== sourceParent.mapping.implementationStatus ||
+        JSON.stringify(parent.ownerLayers) !== JSON.stringify(sourceParent.mapping.ownerLayers) ||
+        JSON.stringify(parent.workItems) !== JSON.stringify(sourceParent.mapping.workItems) ||
+        JSON.stringify(parent.clauseIds) !== JSON.stringify(expectedClauseIds)
+      ) failures.push(`wcmp/${parent.id}: capability parent traceability drift`);
+    }
+
+    const capabilityClauseById = new Map();
+    for (const candidate of capabilityClauses) {
+      const parents = candidate.parentRows.map((parentId) => capabilityParentById.get(parentId)).filter(Boolean);
+      const expectedOwners = [...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))].sort();
+      const expectedWorkItems = [...new Set([...parents.flatMap((parent) => parent.mapping.workItems), 'TRN-710'])].sort();
+      const expectedRequirements = [...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))].sort();
+      const expectedSnapshot = Object.fromEntries(parents.map((parent) => [parent.id, parent.mapping.implementationStatus]));
+      const testFilter = candidate.fixturePlan?.evidence?.command?.split(' ').at(-1);
+      const testName = testFilter?.split('::').at(-1);
+      const testPath = path.join(root, candidate.fixturePlan?.evidence?.testPath ?? '');
+      const tests = fs.existsSync(testPath) ? fs.readFileSync(testPath, 'utf8') : '';
+      if (
+        globalClauseIds.has(candidate.id) ||
+        !candidate.id.startsWith('WCMP-CL-GENERAL-') ||
+        candidate.profileApplicability !== 'capability-gated-non-ip-bearer' ||
+        parents.length !== candidate.parentRows.length ||
+        !candidate.sourceAnchor?.section ||
+        !candidate.sourceAnchor?.heading ||
+        !hashPattern.test(candidate.sourceAnchor?.normalizedTextSha256 ?? '') ||
+        candidate.sourceAnchor?.documentId !== 'WAP-202-WCMP' ||
+        candidate.sourceAnchor?.section === '5.4' ||
+        !allowedForces.has(candidate.normativeForce) ||
+        candidate.obligationLevel !== expectedLevelByForce[candidate.normativeForce] ||
+        typeof candidate.obligationSynopsis !== 'string' ||
+        candidate.obligationSynopsis.length < 20 ||
+        candidate.obligationSynopsis.length > 280 ||
+        candidate.obligationSynopsis.trim().split(/\s+/).length > 45 ||
+        JSON.stringify(candidate.directWorkItems) !== JSON.stringify(['TRN-710']) ||
+        JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
+        JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
+        JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
+        JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !== JSON.stringify(expectedSnapshot) ||
+        candidate.mapping?.clauseImplementationStatus !== 'implemented' ||
+        candidate.fixturePlan?.status !== 'implemented' ||
+        candidate.fixturePlan?.assertion !== candidate.obligationSynopsis ||
+        candidate.fixturePlan?.evidence?.path !== 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
+        !testName || !tests.includes(`fn ${testName}`)
+      ) failures.push(`${candidate.id}: general-WCMP capability mapping drift`);
+      globalClauseIds.add(candidate.id);
+      if (capabilityClauseById.has(candidate.id)) failures.push(`${candidate.id}: duplicate capability clause ID`);
+      capabilityClauseById.set(candidate.id, candidate);
+      if (globalFixtureIds.has(candidate.fixturePlan?.id)) failures.push(`${candidate.id}: duplicate capability fixture ID`);
+      globalFixtureIds.add(candidate.fixturePlan?.id);
     }
   }
 

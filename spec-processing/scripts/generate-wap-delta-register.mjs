@@ -491,10 +491,10 @@ const transportSuccessorAudit = {
         'WCMP-CL-CDPD-USES-ICMP',
         'WCMP-CL-IP-NETWORKS-USE-ICMP'
       ],
-      targetSections: ['5.3', '5.4', '5.5.1', 'Appendix A'],
+      targetSections: ['5.3', 'Appendix A'],
       successorSections: ['4.2.2'],
       finding:
-        'WAP-259 delegates WDP processing-error behavior to WCMP. The TRN-708 correction now follows WAP-202 section 5.3 by selecting RFC 792 ICMP for CDPD/IP and capability-gating the section 5.4/5.5 general-WCMP codec to explicit non-IP bearers.',
+        'WAP-259 delegates WDP processing-error behavior to WCMP. The TRN-708 correction follows WAP-202 section 5.3 by selecting RFC 792 ICMP for CDPD/IP. TRN-710 separately maps the implemented sections 5.1/5.2/5.5 general-WCMP capability while section 5.4 bearer encapsulations remain deferred.',
       implementationEvidence: [
         'transport-rust/src/network/wcmp/profile.rs::WdpControlProfile',
         'transport-rust/src/network/wcmp/icmpv4.rs::decode_icmpv4',
