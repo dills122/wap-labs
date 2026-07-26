@@ -35,14 +35,33 @@ pub enum CardTaskAction {
 }
 
 impl CardTaskAction {
+    // Merges into an existing `WithSetVars` instead of nesting one inside
+    // another, so `WithSetVars.action` is never itself a `WithSetVars`. This
+    // is a structural guarantee, not just a call-site convention: every
+    // `base_and_set_vars()` caller matches out a single non-`WithSetVars`
+    // base action and treats the wrapped case as unreachable, so a nested
+    // wrapper would panic on ordinary WML deck content instead of merely
+    // being unreachable today by coincidence of there being exactly one
+    // `with_set_vars()` call per parsed task element.
     pub fn with_set_vars(self, set_vars: Vec<CardSetVar>) -> Self {
         if set_vars.is_empty() {
-            self
-        } else {
+            return self;
+        }
+        match self {
             Self::WithSetVars {
-                action: Box::new(self),
-                set_vars,
+                action,
+                set_vars: mut existing,
+            } => {
+                existing.extend(set_vars);
+                Self::WithSetVars {
+                    action,
+                    set_vars: existing,
+                }
             }
+            action => Self::WithSetVars {
+                action: Box::new(action),
+                set_vars,
+            },
         }
     }
 
@@ -51,6 +70,57 @@ impl CardTaskAction {
             Self::WithSetVars { action, set_vars } => (action, set_vars),
             action => (action, &[]),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn with_set_vars_merges_instead_of_nesting_when_called_twice() {
+        let action = CardTaskAction::Go {
+            href: "#next".to_string(),
+            method: None,
+            post_fields: Vec::new(),
+        }
+        .with_set_vars(vec![CardSetVar {
+            name: "a".to_string(),
+            value: "1".to_string(),
+        }])
+        .with_set_vars(vec![CardSetVar {
+            name: "b".to_string(),
+            value: "2".to_string(),
+        }]);
+
+        let (base, set_vars) = action.base_and_set_vars();
+        assert_eq!(
+            base,
+            &CardTaskAction::Go {
+                href: "#next".to_string(),
+                method: None,
+                post_fields: Vec::new(),
+            }
+        );
+        assert_eq!(
+            set_vars,
+            &[
+                CardSetVar {
+                    name: "a".to_string(),
+                    value: "1".to_string(),
+                },
+                CardSetVar {
+                    name: "b".to_string(),
+                    value: "2".to_string(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn with_set_vars_is_a_noop_for_an_empty_list() {
+        let action = CardTaskAction::Prev.with_set_vars(Vec::new());
+        assert_eq!(action, CardTaskAction::Prev);
     }
 }
 
