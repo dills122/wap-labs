@@ -20,6 +20,30 @@ repos:
         stages: [pre-push]
         entry: bash -lc 'cd engine-wasm/engine && cargo fmt --check'
 
+      - id: go-fmt-check-wml-origin
+        name: go fmt check (wml-server)
+        language: system
+        pass_filenames: false
+        files: ^wml-server/.*\.go$
+        stages: [pre-push]
+        entry: bash -lc 'test -z "$(find wml-server -name "*.go" -type f -exec gofmt -l {} +)"'
+
+      - id: go-vet-wml-origin
+        name: go vet (wml-server)
+        language: system
+        pass_filenames: false
+        files: ^wml-server/
+        stages: [pre-push]
+        entry: bash -lc 'cd wml-server && go vet ./...'
+
+      - id: go-test-wml-origin
+        name: go test (wml-server)
+        language: system
+        pass_filenames: false
+        files: ^wml-server/
+        stages: [pre-push]
+        entry: bash -lc 'cd wml-server && go test ./...'
+
       - id: rust-clippy-engine
         name: rust clippy (engine-wasm)
         language: system

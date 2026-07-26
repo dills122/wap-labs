@@ -6,7 +6,9 @@ WAP Labs is focused on building a modern, deterministic WAP browser stack:
 - `engine-wasm/`: WaveNav runtime engine (Rust core with wasm + native targets)
 - `transport-rust/`: Lowband transport and WAP/WML handoff pipeline
 
-The legacy/demo stack still exists for compatibility testing (`gateway-kannel/`, `wml-server/`), but it is no longer the primary product focus.
+The Kannel interoperability stack (`gateway-kannel/`, `docker/kannel/`, `wml-server/`) also
+provides the local foundation for the planned desktop-only public WAP lab. It is not embedded in
+the desktop application or connected to the browser-hosted WASM simulator.
 
 ![Waves rendering a WML page with selectable links](images/waves-network-page-with-links.png)
 
@@ -48,7 +50,7 @@ Status source: `docs/waves/wap-1.2.1-compliance-program.json`,
 | WAP evidence program | 31/198 selected parent rows are implemented and 253/762 clauses are directly assessed; Atlas renders the canonical program and active documents | 69 partial and 98 missing parents remain, so the project stays explicitly pre-conformance |
 | Frame-based render/input migration | Additive frame-oriented host commands are already in place for the hot browser paths | Finish the deliberate `M1-09` migration only after the current runtime/debug boundary work settles |
 | Fuzz hardening (`engine-wasm/engine/fuzz`) | Cargo-fuzz scaffold with `engine_wml_fuzzer`, starter corpus seeds, and scheduled weekly CI run | Add target coverage for transport/protocol surfaces, grow dictionaries/corpus, and tune campaign budgets |
-| Legacy/demo stack (`gateway-kannel/`, `wml-server/`) | Still available for compatibility smoke checks | Maintenance only; not the main build track |
+| WAP lab stack (`gateway-kannel/`, `wml-server/`) | Local Kannel smoke and the bounded, standard-library Go WML origin are available with deterministic route/session tests | Production Kannel hardening, OpenTofu infrastructure, external probes, and public exposure remain separate gated work |
 
 ## Repo Map (Product-First)
 
@@ -57,7 +59,7 @@ Status source: `docs/waves/wap-1.2.1-compliance-program.json`,
 - `transport-rust/`: In-process transport library and contract handoff
 - `docs/`: architecture, contracts, traceability, and work boards
 - `gateway-kannel/`, `docker/kannel/`: legacy gateway test environment
-- `wml-server/`: local demo/fixture WML server
+- `wml-server/`: bounded Go WML origin and deterministic lab fixtures
 - `marketing-site/`: project site and hosted simulator entrypoint
 - `spec-processing/`: canonical source-spec processing and provenance
 
@@ -111,7 +113,7 @@ pnpm --dir docs-portal run build
 cd engine-wasm/engine && cargo +nightly fuzz run engine_wml_fuzzer -- -runs=200
 ```
 
-## Quick Commands (Legacy/Compatibility)
+## Quick Commands (Local Kannel/WML Lab)
 
 Legacy stack:
 

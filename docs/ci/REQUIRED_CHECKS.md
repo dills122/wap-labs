@@ -14,8 +14,10 @@ Configure the active `main` ruleset to require these exact GitHub Actions check 
 - `Dependency Review`
 - `Rust Advisory Audit`
 - `Node Dependency Audit`
+- `Go Vulnerability Audit`
 - `Analyze (javascript-typescript)`
 - `Analyze (rust)`
+- `Analyze (go)`
 
 `CI Required Gate` is the stable aggregate from `.github/workflows/ci.yml`. It evaluates:
 
@@ -57,7 +59,7 @@ In **Settings > Rules > Rulesets > main**:
 1. Keep the ruleset active and targeted at the default branch.
 2. Keep pull requests required and squash as the allowed merge method.
 3. Keep bypass actors empty.
-4. Under required status checks, require the seven exact contexts above and select the GitHub
+4. Under required status checks, require the nine exact contexts above and select the GitHub
    Actions app as the expected source.
 5. Enable the strict/up-to-date option if every pull request must be tested against the latest
    `main` before merge.
@@ -65,9 +67,9 @@ In **Settings > Rules > Rulesets > main**:
 The existing required contexts (`Repo Hygiene`, `Rust Engine`, `Rust Transport`, and
 `WaveNav Host Sample Build`) are not renamed by this change. Migrate without a deadlock:
 
-1. Let this workflow run once on a pull request so `CI Required Gate` and both `Analyze (...)`
+1. Let this workflow run once on a pull request so `CI Required Gate` and all three `Analyze (...)`
    contexts exist.
-2. Add the six new required contexts.
+2. Add the current required contexts.
 3. Confirm the aggregate and security/CodeQL checks pass on that pull request.
 4. Remove the four legacy individual CI contexts from the ruleset. They are redundant once
    `CI Required Gate` is required and would make future path-filter changes harder to manage.

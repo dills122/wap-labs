@@ -36,7 +36,7 @@ STATUS_RESP="$(curl -fsS --connect-timeout 2 --max-time 5 'http://localhost:1300
 echo "$STATUS_RESP" | grep -q 'Status: running'
 
 echo "[2/7] Checking WML home page content type"
-wait_for_http 'http://localhost:3000/health'
+wait_for_http 'http://localhost:3001/health'
 HOME_HEADERS="$(curl -fsSI --connect-timeout 2 --max-time 5 'http://localhost:3000/')"
 echo "$HOME_HEADERS" | grep -qi 'Content-Type: text/vnd.wap.wml'
 
@@ -63,7 +63,7 @@ MESSAGES_RESP="$(curl -fsS --connect-timeout 2 --max-time 5 "http://localhost:30
 echo "$MESSAGES_RESP" | grep -q 'Messages'
 
 echo "[6/7] Checking metrics endpoint"
-METRICS_RESP="$(curl -fsS --connect-timeout 2 --max-time 5 'http://localhost:3000/metrics')"
+METRICS_RESP="$(curl -fsS --connect-timeout 2 --max-time 5 'http://localhost:3001/metrics')"
 echo "$METRICS_RESP" | grep -q '^requests_total '
 
 echo "[7/7] Validating gateway HTTP bridge endpoint"

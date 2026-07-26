@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="home" title="WAP Lab"><p>Local WAP training environment.</p><p><a href="#menu">Open Menu</a></p><do type="accept" label="Menu"><go href="#menu"/></do></card><card id="menu" title="Main Menu"><p><a href="/login">1. Login</a></p><p><a href="/register">2. Register</a></p><p><a href="/about">3. About Stack</a></p><p><a href="/examples/index.wml">4. Static Example</a></p><do type="options" label="About"><go href="/about"/></do><do type="prev" label="Back"><prev/></do></card>
+</wml>

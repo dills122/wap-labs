@@ -56,7 +56,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet; then
-            git add VERSION package.json browser/package.json browser/frontend/package.json browser/src-tauri/Cargo.toml browser/src-tauri/tauri.conf.json engine-wasm/engine/Cargo.toml engine-wasm/host-sample/package.json marketing-site/package.json transport-rust/Cargo.toml wml-server/package.json wml-server/package-lock.json
+            git add VERSION package.json browser/package.json browser/frontend/package.json browser/src-tauri/Cargo.toml browser/src-tauri/tauri.conf.json engine-wasm/engine/Cargo.toml engine-wasm/host-sample/package.json marketing-site/package.json transport-rust/Cargo.toml
             git commit -m "chore(release): cut v${{ inputs.version }}"
           fi
 

@@ -1,6 +1,6 @@
 # Waves Public WAP Lab and Pre-release Plan
 
-Planning status: proposed; confirm owners, access, and release scope at kickoff
+Planning status: Sprint 1 implementation; public exposure remains blocked on Sprint 0 decisions
 
 Research checkpoint: 2026-07-26
 
@@ -54,7 +54,7 @@ The current local assets prove the topology but are not production configuration
 
 - `docker-compose.yml` launches Kannel and the WML origin.
 - `docker/kannel/kannel.conf` enables WDP and maps selected URLs to the origin.
-- `wml-server/server.js` supplies the current route and behavior parity baseline.
+- `wml-server/internal/origin` supplies the tested route, state, and response parity baseline.
 - `scripts/transport-wap-smoke.sh` and native Kannel tests exercise the transport path.
 
 Production work must remove public Kannel administration/internal ports, placeholder secrets,
@@ -62,7 +62,7 @@ source bind mounts, and package installation at container startup.
 
 ## WML origin decision: Go
 
-Replace the Node/Express `wml-server` with a small standard-library Go service. The origin does
+The Node/Express `wml-server` has been replaced with a small standard-library Go service. The origin does
 not own WAP, WSP, WBXML, engine behavior, or a shared Rust contract, so a Rust async framework
 would add complexity without improving the protocol boundary. Go provides a compact static
 binary, simple cross-compilation, deterministic HTTP tests, and a much smaller runtime/container
@@ -97,8 +97,13 @@ wml-server/
   Dockerfile
 ```
 
-Remove the Node package and lockfile only after Compose, bootstrap, CI, release-version,
-dependency-automation, smoke, and documentation references have migrated and Go parity passes.
+The Node package and lockfile are removed only with the Compose, bootstrap, CI, release-version,
+dependency-automation, smoke, and documentation migration. Go parity is enforced through golden,
+state-lifecycle, concurrency, host-profile, route-denial, and internal-observability tests.
+
+`LAB-101` is implemented pending merge evidence. This does not complete `GW-101`, `INF-101`,
+`INF-102`, or any public exposure gate. The logical `home`, `forms`, and `interop` profiles use
+configurable exact hostnames; the final owned names remain a `PRE-002` decision.
 
 ## Public topology
 

@@ -4,7 +4,7 @@ set -eu
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 . "${ROOT_DIR}/scripts/lib/run-and-tee.sh"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
-WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3000/health}"
+WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"

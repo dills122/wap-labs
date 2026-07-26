@@ -58,7 +58,7 @@ const verificationProfiles = [
     name: 'Full',
     command: 'pnpm verify:full',
     scope:
-      'Runs every deterministic offline lane: compliance/status and graph drift; native and WASM engine, contracts, and stories; transport; browser host, frontend, and rendered accessibility; Atlas; marketing; and WML server.'
+      'Runs every deterministic offline lane: compliance/status and graph drift; native and WASM engine, contracts, and stories; transport; browser host, frontend, and rendered accessibility; Atlas; marketing; and Go WML origin checks.'
   },
   {
     name: 'Extended',
@@ -269,12 +269,12 @@ const lanes = [
     title: 'CodeQL and dependency security',
     tags: ['required', 'scheduled', 'on-demand'],
     runs:
-      'Pull requests run JavaScript/TypeScript and Rust CodeQL plus dependency review and Rust/Node advisory audits. Code scanning and audits also run weekly and on demand.',
+      'Pull requests run JavaScript/TypeScript, Rust, and Go CodeQL plus dependency review and Rust, Node, and Go advisory audits. Code scanning and audits also run weekly and on demand.',
     proves:
       'The configured static queries and current advisory databases found no merge-blocking result in the scanned source and dependency graph.',
     doesNot:
       'Absence of vulnerabilities, runtime exploit resistance, or security of excluded generated/build paths and unmodeled environments.',
-    command: 'cargo audit && pnpm audit --audit-level high',
+    command: 'cargo audit && pnpm audit --audit-level high && govulncheck ./...',
     links: [
       ['CodeQL', source('.github/workflows/codeql.yml')],
       ['Dependency security', source('.github/workflows/security.yml')]

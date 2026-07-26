@@ -1,4 +1,4 @@
-# WAP Test Environment (Legacy Stack)
+# Local Kannel and WML Test Environment
 
 This document covers the local test environment for classic WAP gateway/server validation.
 
@@ -6,7 +6,7 @@ For the new browser emulator build, use:
 
 - `docs/browser-emulator/README.md`
 
-Legacy stack path:
+Local interoperability path:
 
 `WAP Client -> WSP/WTP -> Kannel Gateway -> HTTP -> WML Application Server`
 
@@ -17,7 +17,7 @@ This version includes a stateful demo app (register/login/session/portal), smoke
 ```mermaid
 flowchart TD
     A["WAP Browser / Emulator"] -->|"WSP/WTP"| B["Kannel bearerbox + wapbox"]
-    B -->|"HTTP"| C["Node Express WML Server"]
+    B -->|"HTTP"| C["Bounded Go WML Origin"]
     C --> D["WML Decks (cards/forms)"]
 ```
 
@@ -33,13 +33,10 @@ wap-labs/
 ├── scripts/
 │   └── smoke.sh
 ├── wml-server/
-│   ├── package.json
-│   ├── server.js
-│   ├── viewer.html
-│   └── routes/
-│       ├── index.wml
-│       ├── login.wml
-│       └── register.wml
+│   ├── cmd/wml-server/main.go
+│   ├── internal/origin/
+│   ├── go.mod
+│   └── Dockerfile
 ├── docker-compose.yml
 ├── Makefile
 └── README.md
@@ -50,7 +47,7 @@ wap-labs/
 - Kannel gateway with both `bearerbox` and `wapbox`
 - Admin endpoint on port `13000`
 - WAP gateway endpoint on port `13002`
-- Node/Express WML server on port `3000`
+- Standard-library Go WML origin on port `3000`
 - Dynamic WML auth flow:
   - `/register` (POST form)
   - `/login` (POST form)
@@ -63,9 +60,12 @@ wap-labs/
   - `/examples/login.wml`
   - `/examples/register.wml`
 - Basic observability:
-  - request logs with request ID
-  - `/metrics` plain text counters
-  - `/health` JSON health check
+  - redacted structured request logs with request ID
+  - internal `/metrics` plain text counters on port `3001`
+  - internal `/health` JSON health check on port `3001`
+
+The public listener intentionally has no `/gateway`, `/viewer`, or `/emulator` route. The
+browser-hosted simulator remains a separate bundled-example tool and never fetches the web.
 
 ## Gateway Configuration (Kannel)
 
@@ -81,6 +81,8 @@ Configured in `docker/kannel/kannel.conf`:
   - `url = "http://localhost:13002/*"` -> `map-url = "http://wml-server:3000/*"`
   - `url = "http://wap/*"` -> `map-url = "http://wml-server:3000/*"`
   - `url = "http://10.0.2.2/*"` -> `map-url = "http://wml-server:3000/*"`
+  - `home.wap.test`, `forms.wap.test`, and `interop.wap.test` map to private origin profile
+    prefixes because Kannel rewrites the upstream `Host` header.
 
 ## Quickstart (3 Minutes)
 
@@ -105,7 +107,7 @@ make status
 Verify host endpoints in Chrome:
 
 - Kannel admin: `http://localhost:13000/status?password=changeme`
-- WML app health: `http://localhost:3000/health`
+- WML app health: `http://localhost:3001/health`
 - WML app root deck over HTTP: `http://localhost:3000/`
 
 Run smoke test:
@@ -129,28 +131,22 @@ make down
   - `http://localhost:13002`
 - WML server direct HTTP:
   - `http://localhost:3000`
+- WML server internal health and metrics:
+  - `http://localhost:3001/health`
+  - `http://localhost:3001/metrics`
 - Native desktop/browser WAP target:
   - `wap://localhost/`
   - `wap://localhost/login`
-- Browser WML card viewer:
-  - `http://localhost:3000/viewer`
-  - `http://localhost:3000/emulator`
 
 ## macOS ARM Emulator Options
 
-### Option A: Built-in Emulator (Fast HTTP/WML Flow)
+### Option A: Waves Bundled-example Simulator
 
-Use the built-in emulator UI on Apple Silicon (no x86 tooling required):
+Use the repository's browser-hosted simulator for bundled and local WML examples. It is separate
+from this server and intentionally cannot fetch the local gateway, this origin, or the public web.
 
-1. Start stack: `make up`
-2. Open: `http://localhost:3000/emulator`
-3. Keep URL as `/login` (default) for the full register/login/portal/logout flow
-4. Use `Back` and softkey buttons to navigate cards and submit WML form actions
-
-Notes:
-
-- This emulator is HTTP/WML-focused and ideal for quick visual/flow testing.
-- Optional gateway bridge path is available at `/gateway/*` if your environment exposes a reachable HTTP gateway endpoint.
+For real network testing, use the native Waves desktop path or a WAP microbrowser as described
+below. Direct HTTP checks against `http://localhost:3000` are suitable only for origin debugging.
 
 ### Option B: Real WAP 1.x Microbrowser (UTM + Windows XP + WinWAP/Openwave)
 
@@ -158,13 +154,13 @@ This path runs a legacy microbrowser and sends real WSP traffic through Kannel.
 
 Flow:
 
-`WinWAP or Openwave Microbrowser -> WSP/UDP -> Kannel bearerbox (9200) -> wapbox -> HTTP translation -> Node WML server`
+`WinWAP or Openwave Microbrowser -> WSP/UDP -> Kannel bearerbox (9200) -> wapbox -> HTTP translation -> Go WML origin`
 
 #### Prerequisites
 
 Ensure these are running on your Mac:
 
-- Node WML server
+- Go WML origin container
 - Kannel bearerbox
 - Kannel wapbox
 
@@ -384,7 +380,7 @@ You have real WAP 1.x microbrowser emulation when:
 
 1. WAP client requests `http://localhost:13002/login`
 2. `wapbox` maps URL to `http://wml-server:3000/login`
-3. Node app returns WML deck with `Content-Type: text/vnd.wap.wml`
+3. Go origin returns WML with `Content-Type: text/vnd.wap.wml`
 4. Gateway translates WSP/WTP <-> HTTP and returns response to client
 
 ## Demo Flow
@@ -406,15 +402,15 @@ You have real WAP 1.x microbrowser emulation when:
 
 ## Observability
 
-Server logs include request metadata:
+Server logs include only bounded, redacted request metadata:
 
 - request ID
-- timestamp
 - method/path
 - client IP
-- user-agent and accept headers
 
-Metrics endpoint (`/metrics`) exposes:
+Query strings, form bodies, session IDs, user-agent values, and accept values are not logged.
+
+The internal metrics endpoint (`http://localhost:3001/metrics`) exposes:
 
 - `requests_total`
 - `users_total`
@@ -476,11 +472,10 @@ Note: in some environments `http://localhost:13002/` may not return a plain HTTP
 
 ## Lab Exercises
 
-1. Add a `settings` card to portal with user preference toggles.
-2. Add session timeout cleanup in `server.js`.
-3. Add another `map-url` rule that proxies `/legacy/*` to a separate service.
-4. Add request latency metric buckets to `/metrics`.
-5. Build a tiny WMLScript endpoint and call it from a card action.
+1. Add a bounded `settings` card to the Go origin with deterministic tests.
+2. Add an internal request-latency metric without logging sensitive values.
+3. Add a new static example deck and its byte-exact HTTP test.
+4. Build a tiny WMLScript example and call it from a card action.
 
 ## Useful Commands
 

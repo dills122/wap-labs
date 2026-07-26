@@ -95,7 +95,9 @@ Jobs:
 - `Browser Frontend Unit Tests`
   - runs the browser frontend unit suite and coverage gate
 - `WML Server Sanity`
-  - installs `wml-server` deps with lifecycle scripts disabled and runs Node syntax check
+  - installs Go from the module directive
+  - runs `gofmt` drift, `go vet ./...`, and race-enabled Go tests
+  - builds the static non-root container and validates the Compose model
 - `CI Required Gate`
   - runs with `always()` after all validation jobs
   - fails on failed/cancelled prerequisites
@@ -108,7 +110,8 @@ or OS-specific jobs.
 
 Caching:
 
-- pnpm and npm lockfile caches (via `actions/setup-node`)
+- pnpm lockfile caches (via `actions/setup-node`)
+- Go build and module caches (via `actions/setup-go`)
 - Rust build artifact cache (`Swatinem/rust-cache`)
 - `wasm-pack` binary cache (`actions/cache`)
 
@@ -174,13 +177,14 @@ Jobs:
     - `browser/src-tauri`
 - `Node Dependency Audit`
   - runs `pnpm audit --audit-level high`
-  - runs `npm audit --audit-level=high` for `wml-server`
+- `Go Vulnerability Audit`
+  - runs pinned `govulncheck` against the WML origin and selected Go standard library
 
 Caching:
 
 - Rust build artifact cache for audit crates
 - pnpm cache for workspace audit
-- npm cache for `wml-server` audit
+- Go build and module cache for the WML origin audit
 
 ### 4) Release Prepare (`.github/workflows/release-prepare.yml`)
 
@@ -222,7 +226,7 @@ Behavior:
 
 Purpose:
 
-- Repository-controlled advanced CodeQL scanning (SAST) for Rust and JavaScript/TypeScript.
+- Repository-controlled advanced CodeQL scanning (SAST) for Rust, Go, and JavaScript/TypeScript.
 
 Triggers:
 
@@ -239,6 +243,7 @@ Matrix checks:
 Build modes:
 
 - JavaScript/TypeScript uses `none`.
+- Go uses `none`.
 - Rust uses `none`, the only CodeQL build mode supported for Rust. CodeQL extracts the Rust
   source directly, so this workflow does not install Tauri system dependencies or run manual
   Cargo builds. Compilation remains covered by the main CI workflow.
@@ -357,6 +362,7 @@ Configured ecosystems:
 - npm:
   - root workspace (`/`)
   - `/marketing-site`
+- Go modules:
   - `/wml-server`
 - cargo:
   - `/engine-wasm/engine`
@@ -381,8 +387,8 @@ Grouping and cadence:
 - Open-PR limits are set per ecosystem/directory to prevent an update burst from flooding the
   review queue.
 - No multi-ecosystem groups are used. The root pnpm workspace is grouped together because its
-  declared workspaces share `pnpm-lock.yaml`; marketing-site, wml-server, and every Cargo lockfile
-  remain independent.
+  declared workspaces share `pnpm-lock.yaml`; marketing-site, the WML Go module, and every Cargo
+  lockfile remain independent.
 
 Auto-merge behavior:
 
@@ -411,8 +417,8 @@ Lockfile ownership:
 - The former write-back workflow was removed. CI never checks out PR code under
   `pull_request_target`, broadly refreshes unrelated lockfiles, or commits generated lockfile
   changes.
-- pnpm frozen installs, `npm ci`, and `cargo metadata --locked` verify that Dependabot supplied a
-  usable lockfile without mutating the PR.
+- pnpm frozen installs, Go module verification, and `cargo metadata --locked` verify that
+  Dependabot supplied usable dependency metadata without mutating the PR.
 - Node package installation uses `--ignore-scripts` in PR CI. Later build and test commands still
   execute the checked-in project scripts and dependency binaries required for validation, but
   only with read-only job permissions and without persisted checkout credentials.

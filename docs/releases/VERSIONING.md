@@ -23,10 +23,10 @@ These files are managed from that version:
 - `engine-wasm/host-sample/package.json`
 - `marketing-site/package.json`
 - `transport-rust/Cargo.toml`
-- `wml-server/package.json`
-- `wml-server/package-lock.json`
 
 The fuzz harness at `engine-wasm/engine/fuzz/Cargo.toml` is intentionally excluded and remains `0.0.0`.
+The Go WML origin has no independently published package version and follows the repository
+release through the source revision and container release manifest.
 
 ## Semver policy before 1.0
 

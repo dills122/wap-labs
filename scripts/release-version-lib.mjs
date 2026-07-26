@@ -12,7 +12,6 @@ const JSON_VERSION_FILES = [
   "browser/frontend/package.json",
   "engine-wasm/host-sample/package.json",
   "marketing-site/package.json",
-  "wml-server/package.json",
   "browser/src-tauri/tauri.conf.json",
 ];
 
@@ -22,20 +21,7 @@ const CARGO_VERSION_FILES = [
   "browser/src-tauri/Cargo.toml",
 ];
 
-const SPECIAL_HANDLERS = {
-  "wml-server/package-lock.json": {
-    readVersion(payload) {
-      return payload.version;
-    },
-    setVersion(payload, version) {
-      payload.version = version;
-      if (payload.packages?.[""]) {
-        payload.packages[""].version = version;
-      }
-      return payload;
-    },
-  },
-};
+const SPECIAL_HANDLERS = {};
 
 const SEMVER_PATTERN =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9A-Za-z-][0-9A-Za-z-]*)(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
