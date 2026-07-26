@@ -24,7 +24,7 @@ import {
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
-type RunMode = 'local' | 'network';
+export type RunMode = 'local' | 'network';
 
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 

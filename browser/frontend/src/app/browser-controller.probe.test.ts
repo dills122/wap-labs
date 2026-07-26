@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
+import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
 import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
 
@@ -125,7 +126,9 @@ describe('BrowserController startup probe behavior', () => {
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
     let settled = false;
-    const modePromise = (controller as any).setRunMode('network', { loadLocalOnEnter: false });
+    const modePromise = controllerPrivates(controller).setRunMode('network', {
+      loadLocalOnEnter: false
+    });
     void modePromise.then(() => {
       settled = true;
     });
@@ -206,8 +209,8 @@ describe('BrowserController startup probe behavior', () => {
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
-    await (controller as any).setRunMode('network', { loadLocalOnEnter: false });
-    await (controller as any).setRunMode('local', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    await controllerPrivates(controller).setRunMode('local', { loadLocalOnEnter: false });
 
     resolveProbe?.({
       ok: false,

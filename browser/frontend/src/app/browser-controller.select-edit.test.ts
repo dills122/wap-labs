@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
+import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
 import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
 
@@ -147,10 +148,10 @@ describe('BrowserController select edit keyboard routing', () => {
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
-    (controller as any).keyboardIntentRouter.handleWindowKeydown(
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'Enter' })
     );
-    await (controller as any).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
 
     expect(engineBeginFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineCommitFocusedSelectEdit).not.toHaveBeenCalled();
@@ -231,10 +232,10 @@ describe('BrowserController select edit keyboard routing', () => {
     };
 
     const controller = new BrowserController(hostClient as never, presenter, refs);
-    (controller as any).keyboardIntentRouter.handleWindowKeydown(
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'Enter' })
     );
-    await (controller as any).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
 
     expect(engineCommitFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineHandleKey).not.toHaveBeenCalled();
