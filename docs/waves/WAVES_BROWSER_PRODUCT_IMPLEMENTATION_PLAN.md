@@ -502,16 +502,21 @@ The browser-side uplift is MVP-complete when:
 9. Native/WASM parity, browser stories, and real Tauri/Kannel evidence are green.
 10. No browser code has assumed responsibility assigned to the engine or transport layers.
 
-## Recommended Initial Task Batch
+## Current Phase 1 Checkpoint and Next Authorization Gate
 
-After `WBP-00` adoption, start these browser-owned tasks while core work continues:
+`WBP-00` through `WBP-05` are implemented on current `main`: `#348` carries the adoption/baseline
+and shell-integration evidence, while `#344`, `#346`, `#347`, and `#356` carry the visual,
+toolbar, onboarding, and host-accessibility slices. The original integration seams remain useful
+maintenance history, not an initial task batch.
 
-1. `waves-shell-component-foundation` — `WBP-01`
-2. `waves-reference-handset-scaffold` — `WBP-02`
-3. `waves-navigation-toolbar-ia` — `WBP-03`
-4. `waves-welcome-help-minimum` — `WBP-04`
-5. `waves-host-accessibility-baseline` — `WBP-05`
+The checkpoint found one additive `WBP-05A` gap: navigation failures currently reach both the live
+status region and the live alert toast, and rendered accessibility checks unavailable to jsdom still
+need durable evidence. Keep `WBP-05` completed and close that delta through the follow-up on
+`WORK_ITEMS.md`.
 
-Assign `waves-shell-component-foundation` as the integration owner. The other tasks should add leaf
-components and scoped tests, avoiding simultaneous edits to the root template and stylesheet until
-the integration seams land.
+`WBP-06` is merely planning-ready and remains implementation-blocked. A future `WBP-06`/`F0` task is
+authorized only after the canonical compliance program records `WML-2` as `done`, `WML-303` closes
+the engine-owned task/BACK/softkey precedence exposed by the new contract, and `D0-01` settles or
+explicitly sequences its overlapping engine/debug contract edits. The authorized task starts with
+`F0-01`; `F0-02` and `F0-03` follow their declared dependencies. Do not mark `WBP-06` active or
+implement frame/input contracts before that gate.

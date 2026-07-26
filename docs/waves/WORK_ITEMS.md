@@ -129,12 +129,53 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
 | `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
 | `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
-| `WBP-05` | `todo` | Extend host semantics and focus treatment through leaf templates/tests without duplicating the WML runtime model. |
+| `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The additive `WBP-05A` follow-up owns the newly identified single-announcement and rendered-evidence gap. |
 
-`WBP-05` remains available after this gate within the exact seam documented in
-`WAVES_BROWSER_BASELINE.md`. The root shell template, global stylesheet, copy module, and generated
-example manifest remain single-owner integration surfaces. The same document records the seams
-used by landed `WBP-02` through `WBP-04` for future maintenance.
+Phase 1 implementation is complete on current `main`; the original seams remain documented in
+`WAVES_BROWSER_BASELINE.md` for maintenance history. `WBP-06` is merely planning-ready and remains
+implementation-blocked. Do not mark it active or start `F0-01` until all of these prerequisites are
+true in the active authorities:
+
+1. `WML-2` is `done`, including the residual `WML-203`, `WML-204`, and `WML-205` gates.
+2. `WML-303` has closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
+   precedence semantics that the frame contract would expose.
+3. `D0-01` has settled the overlapping debug-contract surface, or an explicit single contract owner
+   has approved a combined sequence that prevents concurrent edits to `wml-engine.ts` and generated
+   host contracts.
+
+Once those gates are recorded, a dedicated `WBP-06`/`F0` task may activate `F0-01`; `F0-02` and
+`F0-03` remain ordered by their declared dependencies. Until then, no frame/input contract should be
+implemented.
+
+### WBP-05A Host accessibility announcement and rendered-evidence closure
+
+1. `Status`: `todo`
+2. `Depends On`: `WBP-05`
+3. `Owner`: `browser`, `qa`
+4. `Files`:
+- browser presenter/controller accessibility tests
+- rendered browser or packaged-Tauri accessibility evidence
+- active browser evidence docs
+5. `Build`:
+- Keep navigation loading and failure presentation visually available while exposing each state
+  change through one live announcement channel. Current main writes the same navigation failure to
+  both the polite status region and the live alert toast.
+- Add rendered evidence for 200 percent zoom, visible focus, target geometry, and color contrast;
+  the current jsdom `axe-core` test necessarily disables its geometry/pixel-dependent rules.
+- Preserve the future engine-derived card/action semantic adapter as `WBP-09` scope.
+6. `Tests`:
+- deterministic loading/failure tests assert one accessible announcement per state change
+- rendered browser checks cover default and minimum window sizes at 200 percent zoom
+- packaged-host keyboard and screen-reader smoke evidence remains explicit where automation cannot
+  cover native macOS presentation
+7. `Accept`:
+- loading and failure state changes have one accessible announcement without losing visual recovery
+  information
+- rendered evidence covers the checks unavailable to jsdom without introducing a browser-authored
+  WML semantic tree
+8. `Notes`:
+- This is an additive evidence/corrective follow-up. `WBP-05` remains `done` under the backlog
+  lifecycle policy.
 
 ## Next In Line (Architecture Maintenance Sprint)
 
