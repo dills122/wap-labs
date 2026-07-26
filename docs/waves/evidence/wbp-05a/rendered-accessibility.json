@@ -1,0 +1,1048 @@
+{
+  "schemaVersion": 1,
+  "workItem": "WBP-05A",
+  "capturedAt": "2026-07-26T13:55:33.100Z",
+  "baseRevision": "7c8216d8778628fdea21d5deeab6e3f8b0207a85",
+  "sourceState": "feature working tree including WBP-05A changes",
+  "path": "production-built Waves browser-story entry with real WaveNav WASM and deterministic local fixture fetch",
+  "zoomModel": "200% browser zoom modeled as half-sized CSS viewport with deviceScaleFactor 2 at each configured physical window size",
+  "environment": {
+    "platform": "darwin",
+    "release": "25.5.0",
+    "architecture": "arm64",
+    "node": "v22.22.1",
+    "chromium": "151.0.7922.34",
+    "headless": true,
+    "reducedMotion": true
+  },
+  "windowEvidence": {
+    "default": {
+      "physicalWindow": {
+        "width": 1024,
+        "height": 768
+      },
+      "cssViewportAt200Percent": {
+        "width": 512,
+        "height": 384
+      },
+      "layout": {
+        "cssViewport": {
+          "width": 512,
+          "height": 384
+        },
+        "document": {
+          "scrollWidth": 512,
+          "scrollHeight": 2487,
+          "horizontalOverflow": false
+        },
+        "actions": [
+          {
+            "id": "btn-reload",
+            "tag": "button",
+            "width": 235,
+            "height": 25,
+            "left": 259,
+            "right": 494
+          },
+          {
+            "id": "run-mode",
+            "tag": "select",
+            "width": 476,
+            "height": 24,
+            "left": 18,
+            "right": 494
+          },
+          {
+            "id": "local-example",
+            "tag": "select",
+            "width": 476,
+            "height": 24,
+            "left": 18,
+            "right": 494
+          },
+          {
+            "id": "btn-load-local",
+            "tag": "button",
+            "width": 476,
+            "height": 25,
+            "left": 18,
+            "right": 494
+          },
+          {
+            "id": "viewport",
+            "tag": "div",
+            "width": 424,
+            "height": 250,
+            "left": 44,
+            "right": 468
+          },
+          {
+            "id": "btn-up",
+            "tag": "button",
+            "width": 137.33,
+            "height": 25,
+            "left": 44,
+            "right": 181.33
+          },
+          {
+            "id": "btn-enter",
+            "tag": "button",
+            "width": 137.33,
+            "height": 25,
+            "left": 187.33,
+            "right": 324.66
+          },
+          {
+            "id": "btn-down",
+            "tag": "button",
+            "width": 137.33,
+            "height": 25,
+            "left": 330.66,
+            "right": 467.98
+          },
+          {
+            "id": "utility-rail-toggle",
+            "tag": "summary",
+            "width": 460,
+            "height": 27,
+            "left": 26,
+            "right": 486
+          },
+          {
+            "id": "welcome-help-toggle",
+            "tag": "summary",
+            "width": 440,
+            "height": 27,
+            "left": 36,
+            "right": 476
+          },
+          {
+            "id": "btn-start-tour",
+            "tag": "button",
+            "width": 103.8,
+            "height": 25,
+            "left": 44,
+            "right": 147.8
+          },
+          {
+            "id": "btn-try-local-examples",
+            "tag": "button",
+            "width": 140.56,
+            "height": 25,
+            "left": 153.8,
+            "right": 294.36
+          },
+          {
+            "id": "btn-connect-network",
+            "tag": "button",
+            "width": 175.89,
+            "height": 25,
+            "left": 44,
+            "right": 219.89
+          },
+          {
+            "id": "viewport-cols",
+            "tag": "input",
+            "width": 444,
+            "height": 24,
+            "left": 34,
+            "right": 478
+          },
+          {
+            "id": "handset-scale-select",
+            "tag": "select",
+            "width": 444,
+            "height": 24,
+            "left": 34,
+            "right": 478
+          },
+          {
+            "id": "local-example-notes-toggle",
+            "tag": "summary",
+            "width": 440,
+            "height": 27,
+            "left": 36,
+            "right": 476
+          },
+          {
+            "id": "dev-drawer-toggle",
+            "tag": "summary",
+            "width": 460,
+            "height": 27,
+            "left": 26,
+            "right": 486
+          },
+          {
+            "id": "btn-health",
+            "tag": "button",
+            "width": 62.55,
+            "height": 25,
+            "left": 34,
+            "right": 96.55
+          },
+          {
+            "id": "btn-render",
+            "tag": "button",
+            "width": 67.73,
+            "height": 25,
+            "left": 102.55,
+            "right": 170.28
+          },
+          {
+            "id": "btn-snapshot",
+            "tag": "button",
+            "width": 80.33,
+            "height": 25,
+            "left": 176.28,
+            "right": 256.61
+          },
+          {
+            "id": "btn-clear-intent",
+            "tag": "button",
+            "width": 145.52,
+            "height": 25,
+            "left": 262.61,
+            "right": 408.13
+          },
+          {
+            "id": "btn-export-timeline",
+            "tag": "button",
+            "width": 115.88,
+            "height": 25,
+            "left": 34,
+            "right": 149.88
+          },
+          {
+            "id": "btn-clear-timeline",
+            "tag": "button",
+            "width": 109.2,
+            "height": 25,
+            "left": 155.88,
+            "right": 265.08
+          },
+          {
+            "id": "debug-raw-mode-toggle",
+            "tag": "summary",
+            "width": 444,
+            "height": 24,
+            "left": 34,
+            "right": 478
+          },
+          {
+            "id": "base-url",
+            "tag": "input",
+            "width": 444,
+            "height": 24,
+            "left": 34,
+            "right": 478
+          },
+          {
+            "id": "wml-input",
+            "tag": "textarea",
+            "width": 444,
+            "height": 220,
+            "left": 34,
+            "right": 478
+          },
+          {
+            "id": "btn-load-context",
+            "tag": "button",
+            "width": 118.83,
+            "height": 25,
+            "left": 34,
+            "right": 152.83
+          },
+          {
+            "id": "timeline",
+            "tag": "pre",
+            "width": 444,
+            "height": 180,
+            "left": 34,
+            "right": 478
+          }
+        ],
+        "liveChannels": [
+          {
+            "id": "live-announcer",
+            "role": "status",
+            "ariaLive": "polite"
+          }
+        ]
+      },
+      "focusEvidence": [
+        {
+          "id": "btn-reload",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "run-mode",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "local-example",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-load-local",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "viewport",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-up",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-enter",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-down",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "utility-rail-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "welcome-help-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-start-tour",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-try-local-examples",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-connect-network",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "viewport-cols",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "handset-scale-select",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "local-example-notes-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "dev-drawer-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-health",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-render",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-snapshot",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-clear-intent",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-export-timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-clear-timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "debug-raw-mode-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "base-url",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "wml-input",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-load-context",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        }
+      ],
+      "axe": {
+        "violations": [],
+        "colorContrastPassNodes": 50,
+        "targetSizePassNodes": 0
+      },
+      "screenshot": "default-window-200-percent.png"
+    },
+    "minimum": {
+      "physicalWindow": {
+        "width": 880,
+        "height": 640
+      },
+      "cssViewportAt200Percent": {
+        "width": 440,
+        "height": 320
+      },
+      "layout": {
+        "cssViewport": {
+          "width": 440,
+          "height": 320
+        },
+        "document": {
+          "scrollWidth": 440,
+          "scrollHeight": 2588,
+          "horizontalOverflow": false
+        },
+        "actions": [
+          {
+            "id": "btn-reload",
+            "tag": "button",
+            "width": 199,
+            "height": 25,
+            "left": 223,
+            "right": 422
+          },
+          {
+            "id": "run-mode",
+            "tag": "select",
+            "width": 404,
+            "height": 24,
+            "left": 18,
+            "right": 422
+          },
+          {
+            "id": "local-example",
+            "tag": "select",
+            "width": 404,
+            "height": 24,
+            "left": 18,
+            "right": 422
+          },
+          {
+            "id": "btn-load-local",
+            "tag": "button",
+            "width": 404,
+            "height": 25,
+            "left": 18,
+            "right": 422
+          },
+          {
+            "id": "viewport",
+            "tag": "div",
+            "width": 352,
+            "height": 250,
+            "left": 44,
+            "right": 396
+          },
+          {
+            "id": "btn-up",
+            "tag": "button",
+            "width": 113.33,
+            "height": 25,
+            "left": 44,
+            "right": 157.33
+          },
+          {
+            "id": "btn-enter",
+            "tag": "button",
+            "width": 113.33,
+            "height": 25,
+            "left": 163.33,
+            "right": 276.66
+          },
+          {
+            "id": "btn-down",
+            "tag": "button",
+            "width": 113.34,
+            "height": 25,
+            "left": 282.66,
+            "right": 396
+          },
+          {
+            "id": "utility-rail-toggle",
+            "tag": "summary",
+            "width": 388,
+            "height": 27,
+            "left": 26,
+            "right": 414
+          },
+          {
+            "id": "welcome-help-toggle",
+            "tag": "summary",
+            "width": 368,
+            "height": 27,
+            "left": 36,
+            "right": 404
+          },
+          {
+            "id": "btn-start-tour",
+            "tag": "button",
+            "width": 103.8,
+            "height": 25,
+            "left": 44,
+            "right": 147.8
+          },
+          {
+            "id": "btn-try-local-examples",
+            "tag": "button",
+            "width": 140.56,
+            "height": 25,
+            "left": 153.8,
+            "right": 294.36
+          },
+          {
+            "id": "btn-connect-network",
+            "tag": "button",
+            "width": 175.89,
+            "height": 25,
+            "left": 44,
+            "right": 219.89
+          },
+          {
+            "id": "viewport-cols",
+            "tag": "input",
+            "width": 372,
+            "height": 24,
+            "left": 34,
+            "right": 406
+          },
+          {
+            "id": "handset-scale-select",
+            "tag": "select",
+            "width": 372,
+            "height": 24,
+            "left": 34,
+            "right": 406
+          },
+          {
+            "id": "local-example-notes-toggle",
+            "tag": "summary",
+            "width": 368,
+            "height": 27,
+            "left": 36,
+            "right": 404
+          },
+          {
+            "id": "dev-drawer-toggle",
+            "tag": "summary",
+            "width": 388,
+            "height": 27,
+            "left": 26,
+            "right": 414
+          },
+          {
+            "id": "btn-health",
+            "tag": "button",
+            "width": 62.55,
+            "height": 25,
+            "left": 34,
+            "right": 96.55
+          },
+          {
+            "id": "btn-render",
+            "tag": "button",
+            "width": 67.73,
+            "height": 25,
+            "left": 102.55,
+            "right": 170.28
+          },
+          {
+            "id": "btn-snapshot",
+            "tag": "button",
+            "width": 80.33,
+            "height": 25,
+            "left": 176.28,
+            "right": 256.61
+          },
+          {
+            "id": "btn-clear-intent",
+            "tag": "button",
+            "width": 145.52,
+            "height": 25,
+            "left": 34,
+            "right": 179.52
+          },
+          {
+            "id": "btn-export-timeline",
+            "tag": "button",
+            "width": 115.88,
+            "height": 25,
+            "left": 185.52,
+            "right": 301.39
+          },
+          {
+            "id": "btn-clear-timeline",
+            "tag": "button",
+            "width": 109.2,
+            "height": 25,
+            "left": 34,
+            "right": 143.2
+          },
+          {
+            "id": "debug-raw-mode-toggle",
+            "tag": "summary",
+            "width": 372,
+            "height": 24,
+            "left": 34,
+            "right": 406
+          },
+          {
+            "id": "base-url",
+            "tag": "input",
+            "width": 372,
+            "height": 24,
+            "left": 34,
+            "right": 406
+          },
+          {
+            "id": "wml-input",
+            "tag": "textarea",
+            "width": 372,
+            "height": 220,
+            "left": 34,
+            "right": 406
+          },
+          {
+            "id": "btn-load-context",
+            "tag": "button",
+            "width": 118.83,
+            "height": 25,
+            "left": 34,
+            "right": 152.83
+          },
+          {
+            "id": "timeline",
+            "tag": "pre",
+            "width": 372,
+            "height": 180,
+            "left": 34,
+            "right": 406
+          }
+        ],
+        "liveChannels": [
+          {
+            "id": "live-announcer",
+            "role": "status",
+            "ariaLive": "polite"
+          }
+        ]
+      },
+      "focusEvidence": [
+        {
+          "id": "btn-reload",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "run-mode",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "local-example",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-load-local",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "viewport",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-up",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-enter",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-down",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "utility-rail-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "welcome-help-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-start-tour",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-try-local-examples",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-connect-network",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "viewport-cols",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "handset-scale-select",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "local-example-notes-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "dev-drawer-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-health",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-render",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-snapshot",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-clear-intent",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-export-timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-clear-timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "debug-raw-mode-toggle",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "base-url",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "wml-input",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "btn-load-context",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        },
+        {
+          "id": "timeline",
+          "focusVisible": true,
+          "outlineStyle": "solid",
+          "outlineWidth": 2,
+          "outlineColor": "rgb(0, 0, 0)",
+          "outlineOffset": 2,
+          "boxShadow": "rgb(255, 255, 255) 0px 0px 0px 4px"
+        }
+      ],
+      "axe": {
+        "violations": [],
+        "colorContrastPassNodes": 50,
+        "targetSizePassNodes": 0
+      },
+      "screenshot": "minimum-window-200-percent.png"
+    }
+  }
+}

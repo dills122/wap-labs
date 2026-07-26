@@ -509,10 +509,12 @@ and shell-integration evidence, while `#344`, `#346`, `#347`, and `#356` carry t
 toolbar, onboarding, and host-accessibility slices. The original integration seams remain useful
 maintenance history, not an initial task batch.
 
-The checkpoint found one additive `WBP-05A` gap: navigation failures currently reach both the live
-status region and the live alert toast, and rendered accessibility checks unavailable to jsdom still
-need durable evidence. Keep `WBP-05` completed and close that delta through the follow-up on
-`WORK_ITEMS.md`.
+The additive `WBP-05A` checkpoint gap is closed. Navigation loading and failure changes now use one
+shell-owned live-announcement channel while visual status/recovery surfaces remain available.
+Production-built Chromium evidence covers full axe, 200 percent zoom/reflow, focus visibility,
+target geometry, and contrast at both configured window sizes. The accepted artifacts and explicit
+packaged macOS VoiceOver manual-only smoke are recorded in
+`WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`; `WBP-05` remains completed history.
 
 `WBP-06` is merely planning-ready and remains implementation-blocked. A future `WBP-06`/`F0` task is
 authorized only after the canonical compliance program records `WML-2` as `done`, `WML-303` closes

@@ -48,7 +48,7 @@ export class WvSurfacePanel extends LitElement {
   override render() {
     return html`
       <section class="panel">
-        ${this.heading ? html`<h3 class="heading">${this.heading}</h3>` : null}
+        ${this.heading ? html`<h2 class="heading">${this.heading}</h2>` : null}
         <div class="body">
           <slot></slot>
         </div>

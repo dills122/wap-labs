@@ -85,7 +85,12 @@ export class BrowserController {
         },
         onTransportResponse: (response) => this.presenter.setTransportResponse(response),
         onNetworkUnavailable: () => {
-          this.presenter.showToast(WAVES_COPY.status.networkUnavailableToast, 'error');
+          this.presenter.showToast(
+            WAVES_COPY.status.networkUnavailableToast,
+            'error',
+            WAVES_CONFIG.toastTtlMs,
+            false
+          );
         },
         onNavigationError: (message, kind) => {
           this.lastNavigationErrorKind = kind;
@@ -93,7 +98,9 @@ export class BrowserController {
             kind === 'parse'
               ? WAVES_COPY.status.deckParseFailed(message)
               : WAVES_COPY.status.fetchFailed(message),
-            'error'
+            'error',
+            WAVES_CONFIG.toastTtlMs,
+            false
           );
         },
         onStateEvent: (action, details) => {
@@ -120,7 +127,8 @@ export class BrowserController {
       recordTimeline: (action, details) => this.presenter.recordTimeline(action, 'state', details),
       setStatus: (message) => this.presenter.setStatus(message),
       patchSessionState: (patch) => this.presenter.patchSessionState(patch),
-      showToast: (message, tone) => this.presenter.showToast(message, tone),
+      showToast: (message, tone) =>
+        this.presenter.showToast(message, tone, WAVES_CONFIG.toastTtlMs, false),
       createHeaders: () => this.defaultNavigationHeaders(),
       wait
     });

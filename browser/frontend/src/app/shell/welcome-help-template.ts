@@ -15,9 +15,9 @@ export const welcomeHelpTemplate = () => `
           ${WAVES_COPY.shell.connectToServer}
         </button>
       </div>
-      <h3>${WAVES_COPY.shell.controlsReferenceTitle}</h3>
+      <h2>${WAVES_COPY.shell.controlsReferenceTitle}</h2>
       <p>${WAVES_COPY.shell.controlsReferenceBody}</p>
-      <h3>${WAVES_COPY.shell.troubleshootingTitle}</h3>
+      <h2>${WAVES_COPY.shell.troubleshootingTitle}</h2>
       <p>${WAVES_COPY.shell.troubleshootingBody}</p>
     </div>
   </details>

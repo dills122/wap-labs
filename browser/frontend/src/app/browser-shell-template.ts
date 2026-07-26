@@ -16,7 +16,7 @@ const browserShellTemplate = () => `
   <div class="browser-shell card square wv-shell-window">
     <header class="browser-chrome card-header icon">
       <div class="title-row">
-        <div class="brand">${WAVES_COPY.app.brand}</div>
+        <h1 class="brand">${WAVES_COPY.app.brand}</h1>
         <div class="caption">${WAVES_COPY.app.tagline}</div>
       </div>
       ${navigationToolbarTemplate()}
@@ -30,6 +30,14 @@ const browserShellTemplate = () => `
     <div class="phase-bar-slot" hidden aria-hidden="true"></div>
 
     ${developerDrawerTemplate()}
+
+    <div
+      id="live-announcer"
+      class="visually-hidden"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
   </div>
 `;
 
@@ -47,6 +55,7 @@ export interface BrowserShellRefs {
   activeUrlLabelEl: HTMLSpanElement;
   devDrawerEl: HTMLDetailsElement;
   toastEl: HTMLDivElement;
+  liveAnnouncerEl: HTMLDivElement;
   runModeSelectEl: HTMLSelectElement;
   localExampleSelectEl: HTMLSelectElement;
   loadLocalBtnEl: HTMLButtonElement;
@@ -95,6 +104,7 @@ export const mountBrowserShell = (
   const activeUrlLabelEl = document.querySelector<HTMLSpanElement>('#active-url-label');
   const devDrawerEl = document.querySelector<HTMLDetailsElement>('#dev-drawer');
   const toastEl = document.querySelector<HTMLDivElement>('#toast');
+  const liveAnnouncerEl = document.querySelector<HTMLDivElement>('#live-announcer');
   const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
   const localExampleSelectEl = document.querySelector<HTMLSelectElement>('#local-example');
   const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
@@ -124,6 +134,7 @@ export const mountBrowserShell = (
     !activeUrlLabelEl ||
     !devDrawerEl ||
     !toastEl ||
+    !liveAnnouncerEl ||
     !runModeSelectEl ||
     !localExampleSelectEl ||
     !loadLocalBtnEl ||
@@ -186,6 +197,7 @@ export const mountBrowserShell = (
     activeUrlLabelEl,
     devDrawerEl,
     toastEl,
+    liveAnnouncerEl,
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,

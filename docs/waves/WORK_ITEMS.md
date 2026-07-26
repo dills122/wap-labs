@@ -118,15 +118,13 @@ Planning assessment:
 
 ### WML-203A Legacy local-example standalone-document migration
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `WML-203`
 3. `Owner`: `engine-wasm`, `browser`, `qa`
-4. `Scope`: Add source-authentic XML declarations and explicit canonical or
-   alternate external DTD identities to the remaining 8 legacy local examples
-   that predate strict standalone-document validation, then repair any
-   selected-DTD content-model violations without changing their intended
-   runtime stories. The WML-203 CI corrective slice migrated the 23 stable
-   boot and executable-story examples first.
+4. `Scope`: Migrated all 31 legacy local examples that predated strict
+   standalone-document validation to source-authentic XML declarations and
+   explicit canonical or alternate external DTD identities, and repaired their
+   selected-DTD content models without changing intended runtime stories.
 5. `Evidence`: `pnpm test:story all`, example manifest drift checks, and
    browser local-example tests.
 6. `Boundary`: This is additive compatibility-corpus cleanup. It does not
@@ -143,7 +141,7 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
 | `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
 | `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
-| `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The additive `WBP-05A` follow-up owns the newly identified single-announcement and rendered-evidence gap. |
+| `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
 
 Phase 1 implementation is complete on current `main`; the original seams remain documented in
 `WAVES_BROWSER_BASELINE.md` for maintenance history. `WBP-06` is merely planning-ready and remains
@@ -163,7 +161,7 @@ implemented.
 
 ### WBP-05A Host accessibility announcement and rendered-evidence closure
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `WBP-05`
 3. `Owner`: `browser`, `qa`
 4. `Files`:
@@ -190,6 +188,17 @@ implemented.
 8. `Notes`:
 - This is an additive evidence/corrective follow-up. `WBP-05` remains `done` under the backlog
   lifecycle policy.
+- The host now owns one visually hidden, polite, atomic announcement channel. Navigation loading
+  and failure status changes write it once; the visual status panel and recovery toast retain their
+  presentation without becoming parallel live regions. Toast-only script/dialog events reuse the
+  same channel.
+- `browser/frontend/src/app/navigation-announcement.test.ts` deterministically counts one live
+  mutation for loading and failure. `pnpm --dir browser/frontend test:accessibility:rendered`
+  production-builds the browser-story entry and checks default/minimum windows at effective 200
+  percent zoom with full rendered axe, 24 by 24 target geometry, focus visibility, and overflow.
+- Accepted machine-readable evidence and screenshots are recorded in
+  `WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`. Packaged macOS VoiceOver announcement timing remains an
+  explicit manual-only smoke; no browser-authored WML semantic tree was added.
 
 ## Next In Line (Architecture Maintenance Sprint)
 

@@ -32,11 +32,13 @@ describe('mountBrowserShell', () => {
     const handsetStage = document.querySelector('section.handset-stage');
     const utilityRail = document.querySelector('aside.utility-rail');
     const devDrawerSection = document.querySelector('section.developer-drawer-section');
+    const primaryHeading = document.querySelector('h1.brand');
 
     expect(nav?.getAttribute('aria-label')).toBeTruthy();
     expect(handsetStage?.getAttribute('aria-label')).toBeTruthy();
     expect(utilityRail?.getAttribute('aria-label')).toBeTruthy();
     expect(devDrawerSection?.getAttribute('aria-label')).toBeTruthy();
+    expect(primaryHeading?.textContent).toBeTruthy();
 
     // Handset stage still owns the engine viewport adapter directly.
     expect(handsetStage?.querySelector('#viewport')).not.toBeNull();
@@ -151,5 +153,7 @@ describe('mountBrowserShell', () => {
     expect(document.querySelector('#local-example-notes-toggle')).not.toBeNull();
     expect(document.querySelector('#dev-drawer-toggle')).not.toBeNull();
     expect(document.querySelector('#debug-raw-mode-toggle')).not.toBeNull();
+    expect(document.querySelector('#wml-input')?.getAttribute('aria-label')).toBeTruthy();
+    expect(document.querySelector('#timeline')?.getAttribute('tabindex')).toBe('0');
   });
 });

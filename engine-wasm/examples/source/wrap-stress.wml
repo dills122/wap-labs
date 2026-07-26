@@ -10,13 +10,17 @@ testing-ac:
 - Press Enter on "Continue" and confirm activeCardId transitions to next.
 - Press Enter on "Back" and confirm return to home.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="home">
-    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>
-    <a href="#next">Continue</a>
+    <p>
+      supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis
+      <a href="#next">Continue</a>
+    </p>
   </card>
   <card id="next">
-    <p>Wrap test complete.</p>
-    <a href="#home">Back</a>
+    <p>Wrap test complete. <a href="#home">Back</a></p>
   </card>
 </wml>

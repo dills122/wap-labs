@@ -31,22 +31,18 @@ export const utilityRailTemplate = () => `
         <wv-surface-panel heading="${WAVES_COPY.shell.status}">
           <wv-status-panel id="status"></wv-status-panel>
         </wv-surface-panel>
-        <details
-          id="local-example-notes"
-          class="local-example-notes chrome-disclosure"
-          aria-live="polite"
-        >
+        <details id="local-example-notes" class="local-example-notes chrome-disclosure">
           <summary id="local-example-notes-toggle">${WAVES_COPY.shell.localExampleNotes}</summary>
           <div class="local-example-notes-body">
             <p id="local-example-coverage" class="local-example-notes-coverage"></p>
             <p id="local-example-description"></p>
             <p id="local-example-goal"></p>
-            <h3>${WAVES_COPY.shell.localExampleTestingAc}</h3>
+            <h2>${WAVES_COPY.shell.localExampleTestingAc}</h2>
             <ul id="local-example-testing-ac"></ul>
           </div>
         </details>
       </div>
     </details>
-    <div id="toast" class="toast toast-hidden" role="alert" aria-live="polite"></div>
+    <div id="toast" class="toast toast-hidden"></div>
   </aside>
 `;

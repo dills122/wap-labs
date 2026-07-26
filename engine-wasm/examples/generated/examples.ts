@@ -99,6 +99,71 @@ export const EXAMPLES: HostExample[] = [
       "Confirm action fails and activeCardId remains accept-broken.",
       "Press Back and confirm activeCardId returns to home."
     ],
+    "flows": [
+      {
+        "id": "failed-accept-go-rolls-back",
+        "title": "Failed accept go action does not partially mutate runtime state",
+        "target": "host-sample",
+        "workItems": [
+          "R0-02"
+        ],
+        "specItems": [
+          "WML-18",
+          "WML-R-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-broken",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "accept-broken",
+                "focusedLinkIndex": 0
+              },
+              "statusIncludes": "Card id not found"
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Rollback demo. <a href=\"#accept-broken\">To broken accept</a></p>\n  </card>\n\n  <card id=\"accept-broken\">\n    <do type=\"accept\"><go href=\"#missing\"/></do>\n    <p>Accept action should fail and keep this card active.</p>\n  </card>\n</wml>\n"
   },
   {
@@ -245,7 +310,47 @@ export const EXAMPLES: HostExample[] = [
       "Confirm onenterforward on trigger executes immediately and activeCardId becomes final.",
       "Confirm externalNavigationIntent remains (none) through the flow."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <do type=\"accept\">\n      <go href=\"#trigger\"/>\n    </do>\n    <p>Press Enter to run the accept action.</p>\n  </card>\n  <card id=\"trigger\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#final\"/>\n    </onevent>\n    <p>This card should auto-forward to final.</p>\n  </card>\n  <card id=\"final\">\n    <p>Final card reached via onenterforward.</p>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "accept-then-onenterforward-chain",
+        "title": "Accept action then onenterforward chain to the final card",
+        "target": "host-sample",
+        "workItems": [
+          "W0-01"
+        ],
+        "specItems": [
+          "RQ-WMLS-018"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "final",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <do type=\"accept\">\n      <go href=\"#trigger\"/>\n    </do>\n    <p>Press Enter to run the accept action.</p>\n  </card>\n  <card id=\"trigger\">\n    <onevent type=\"onenterforward\">\n      <go href=\"#final\"/>\n    </onevent>\n    <p>This card should auto-forward to final.</p>\n  </card>\n  <card id=\"final\">\n    <p>Final card reached via onenterforward. <a href=\"#home\">Back home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsPrevTaskModel",
@@ -264,7 +369,122 @@ export const EXAMPLES: HostExample[] = [
       "From home, Enter \"To middle\", then Enter \"To next\".",
       "Press Back once; activeCardId should become home because middle runs onenterbackward prev."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Prev task demo.</p>\n    <a href=\"#mid-accept\">To middle (accept prev)</a>\n    <a href=\"#mid-back\">To middle (onenterbackward prev)</a>\n  </card>\n\n  <card id=\"mid-accept\">\n    <do type=\"accept\"><prev/></do>\n    <p>No links on this card; Enter should invoke accept prev.</p>\n  </card>\n\n  <card id=\"mid-back\">\n    <onevent type=\"onenterbackward\"><prev/></onevent>\n    <a href=\"#next\">To next</a>\n  </card>\n\n  <card id=\"next\">\n    <p>Use host Back to trigger onenterbackward prev in mid-back.</p>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "accept-and-onenterbackward-prev",
+        "title": "Both accept-prev and onenterbackward-prev navigate deterministically",
+        "target": "host-sample",
+        "workItems": [
+          "A5-02"
+        ],
+        "specItems": [
+          "WML-R-012",
+          "WML-R-015"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "mid-accept",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "mid-back",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Prev task demo.\n      <a href=\"#mid-accept\">To middle (accept prev)</a>\n      <a href=\"#mid-back\">To middle (onenterbackward prev)</a>\n    </p>\n  </card>\n\n  <card id=\"mid-accept\">\n    <do type=\"accept\"><prev/></do>\n    <p>No links on this card; Enter should invoke accept prev.</p>\n  </card>\n\n  <card id=\"mid-back\">\n    <onevent type=\"onenterbackward\"><prev/></onevent>\n    <p><a href=\"#next\">To next</a></p>\n  </card>\n\n  <card id=\"next\">\n    <p>Use host Back to trigger onenterbackward prev in mid-back.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsRefreshRollback",
@@ -284,7 +504,101 @@ export const EXAMPLES: HostExample[] = [
       "Press Back; activeCardId should return to home.",
       "Press Down then Enter on \"Broken forward entry\"; load should fail and activeCardId should remain home."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Refresh + rollback demo.</p>\n    <a href=\"#refresh-card\">To refresh card</a>\n    <a href=\"#broken-forward\">Broken forward entry</a>\n  </card>\n\n  <card id=\"refresh-card\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter invokes refresh and stays on this card.</p>\n  </card>\n\n  <card id=\"broken-forward\">\n    <onevent type=\"onenterforward\"><go href=\"#missing\"/></onevent>\n    <p>This card should never become active because entry action fails.</p>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "refresh-stays-and-failed-entry-rolls-back",
+        "title": "Refresh stays on the current card and a failed entry task rolls back",
+        "target": "host-sample",
+        "workItems": [
+          "A5-02"
+        ],
+        "specItems": [
+          "WML-R-012",
+          "WML-R-015",
+          "WML-R-017"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-card",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "refresh-card",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_REFRESH"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              },
+              "statusIncludes": "Card id not found"
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Refresh + rollback demo.\n      <a href=\"#refresh-card\">To refresh card</a>\n      <a href=\"#broken-forward\">Broken forward entry</a>\n    </p>\n  </card>\n\n  <card id=\"refresh-card\">\n    <do type=\"accept\"><refresh/></do>\n    <p>Enter invokes refresh and stays on this card.</p>\n  </card>\n\n  <card id=\"broken-forward\">\n    <onevent type=\"onenterforward\"><go href=\"#missing\"/></onevent>\n    <p>This card should never become active because entry action fails.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "actionsTaskOrderRollback",
@@ -852,7 +1166,104 @@ export const EXAMPLES: HostExample[] = [
       "Press Down then Enter on \"Absolute external link\" and confirm intent is exactly https://example.org/absolute.",
       "Press Down then Enter on \"Internal fragment link\" and confirm activeCardId becomes details."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>External intent demo</p>\n    <p>Enter on first link emits host intent only.</p>\n    <a href=\"next.wml?from=home\">Relative external link</a>\n    <br/>\n    <a href=\"https://example.org/absolute\">Absolute external link</a>\n    <br/>\n    <a href=\"#details\">Internal fragment link</a>\n  </card>\n  <card id=\"details\">\n    <p>Fragment navigation still changes active card.</p>\n    <a href=\"#home\">Back home</a>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "relative-absolute-and-fragment-links",
+        "title": "Relative and absolute external links emit intent while fragment nav stays separate",
+        "target": "host-sample",
+        "workItems": [
+          "A2-02"
+        ],
+        "specItems": [
+          "WML-R-007"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": "http://local.test/next.wml?from=home"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_EXTERNAL"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": "https://example.org/absolute"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_EXTERNAL"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "details",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": "https://example.org/absolute"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>External intent demo</p>\n    <p>Enter on first link emits host intent only.</p>\n    <p>\n      <a href=\"next.wml?from=home\">Relative external link</a>\n      <br/>\n      <a href=\"https://example.org/absolute\">Absolute external link</a>\n      <br/>\n      <a href=\"#details\">Internal fragment link</a>\n    </p>\n  </card>\n  <card id=\"details\">\n    <p>Fragment navigation still changes active card. <a href=\"#home\">Back home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "fieldOpenwave2011Navigation",
@@ -872,6 +1283,76 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Here\" and confirm activeCardId transitions to content.",
       "Use Down and Enter on one of the external service links and verify activeCardId remains content.",
       "Confirm runtime-state externalNavigationIntent updates when entering an external service link."
+    ],
+    "flows": [
+      {
+        "id": "legacy-content-fragment-and-external-links",
+        "title": "Legacy-style source ordering keeps fragment and external navigation deterministic",
+        "target": "host-sample",
+        "workItems": [
+          "A1-03",
+          "A2-01"
+        ],
+        "specItems": [
+          "WML-R-002",
+          "WML-R-006"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "content",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "content",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "content",
+                "focusedLinkIndex": 1,
+                "externalNavigationIntent": "http://local.test/Lectures.wml"
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_EXTERNAL"
+              ]
+            }
+          }
+        ]
+      }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//OPENWAVE.COM//DTD WML 1.3//EN\"\n\"http://www.openwave.com/dtd/wml13.dtd\">\n<wml>\n  <card id=\"main\" title=\"Wireless Programming\">\n    <p align=\"center\" mode=\"wrap\">\n      Welcome to our <em>Online Mobile Course</em><br/>\n      <big><strong>Wireless Programming</strong></big>\n    </p>\n    <p>To Continue Click <a href=\"#content\">Here</a></p>\n  </card>\n  <card id=\"content\" title=\"Services\">\n    <p>\n      List of our services<br/>\n      <a href=\"dictionary.wml\">WAP Dictionary</a><br/>\n      <a href=\"Lectures.wml\">WAP Lectures</a><br/>\n      <a href=\"Quizes.wml\">WAP Quizes</a><br/>\n      <a href=\"Assignments.wml\">WAP Assignments</a><br/>\n      <a href=\"FAQ.wml\">WAP FAQ</a><br/>\n    </p>\n  </card>\n</wml>\n"
   },
@@ -893,9 +1374,174 @@ export const EXAMPLES: HostExample[] = [
       "Load the example in Waves local mode and verify the default selected country is rendered.",
       "Focus the Country select, press Enter, then ArrowDown to cycle through options.",
       "Press Escape once and confirm the select returns to the original committed option.",
-      "Re-enter select edit, cycle to a new option, press Enter to commit, then submit and confirm local mode captures the external intent."
+      "Re-enter select edit, cycle to a new option, and press Enter to commit.",
+      "Move focus to the Notes field and press Enter to submit; confirm local mode captures the external intent with the committed Country value."
     ],
-    "wml": "<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n      </go>\n    </do>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "select-cycle-cancel-commit-and-submit",
+        "title": "Select edit cycles deterministically, survives cancel, and feeds a local submit intent",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "A5-05",
+          "A5-06"
+        ],
+        "specItems": [
+          "WML-R-019",
+          "RQ-RMK-003",
+          "RQ-RMK-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "profile",
+            "focusedLinkIndex": 0,
+            "focusedSelectEditName": null
+          },
+          "render": {
+            "textIncludes": [
+              "Jordan"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "Jordan"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "France"
+              },
+              "render": {
+                "textIncludes": [
+                  "France"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Escape"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": null,
+                "focusedSelectEditValue": null
+              },
+              "render": {
+                "textIncludes": [
+                  "Jordan"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "Jordan"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": "Country",
+                "focusedSelectEditValue": "France"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedSelectEditName": null,
+                "focusedSelectEditValue": null,
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "SELECT_EDIT_COMMIT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "France"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "externalNavigationIntent": "http://local.test/profile",
+                "externalNavigationRequestPolicy": {
+                  "refererUrl": "http://local.test/examples/formsSelectLocal.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "Country=France&notes="
+                  }
+                }
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "runMode": "local",
+                "navigationStatus": "loaded",
+                "externalNavigationIntent": "http://local.test/profile"
+              },
+              "statusIncludes": "Local mode captured external intent"
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"notes\" value=\"$(notes)\"/>\n      </go>\n    </do>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <p>Notes: <input name=\"notes\" value=\"\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "formsSelectNavigationLocal",
@@ -1601,7 +2247,75 @@ export const EXAMPLES: HostExample[] = [
       "Press Back once; activeCardId should become rewind (not middle) because mid defines onenterbackward.",
       "Confirm runtime trace includes ACTION_BACK followed by ACTION_FRAGMENT for rewind."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>Start card.</p>\n    <a href=\"#mid\">To middle</a>\n  </card>\n  <card id=\"mid\">\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Middle card runs backward-entry action.</p>\n    <a href=\"#next\">To next</a>\n  </card>\n  <card id=\"next\">\n    <p>Reached from middle.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached via onenterbackward.</p>\n    <a href=\"#home\">Return home</a>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "backward-entry-redirects-past-middle",
+        "title": "Backward navigation triggers onenterbackward before the user resumes input",
+        "target": "host-sample",
+        "workItems": [
+          "A2-03"
+        ],
+        "specItems": [
+          "WML-R-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "mid",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "rewind",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_BACK",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Start card. <a href=\"#mid\">To middle</a></p>\n  </card>\n  <card id=\"mid\">\n    <onevent type=\"onenterbackward\">\n      <go href=\"#rewind\"/>\n    </onevent>\n    <p>Middle card runs backward-entry action. <a href=\"#next\">To next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Reached from middle.</p>\n  </card>\n  <card id=\"rewind\">\n    <p>Reached via onenterbackward. <a href=\"#home\">Return home</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "parserRobustness",
@@ -1622,7 +2336,62 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Next\" and confirm transition to next works.",
       "Press Enter on \"Back\" and confirm transition to home works."
     ],
-    "wml": "<wml>\n  <cardinal id=\"noise\">Ignore me</cardinal>\n  <card id=\"home\">\n    <p>Hello <a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Still works.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "unsupported-tag-ignored-and-navigable",
+        "title": "Unsupported node is ignored while valid cards remain navigable",
+        "target": "host-sample",
+        "workItems": [
+          "A1-01",
+          "A1-03"
+        ],
+        "specItems": [
+          "WML-R-001",
+          "WML-R-020"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <cardinal id=\"noise\">Ignore me</cardinal>\n  <card id=\"home\">\n    <p>Hello <a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Still works. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "scriptLinkExecution",
@@ -3207,7 +3976,60 @@ export const EXAMPLES: HostExample[] = [
       "Press Enter on \"Continue\" and confirm activeCardId transitions to next.",
       "Press Enter on \"Back\" and confirm return to home."
     ],
-    "wml": "<wml>\n  <card id=\"home\">\n    <p>supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis</p>\n    <a href=\"#next\">Continue</a>\n  </card>\n  <card id=\"next\">\n    <p>Wrap test complete.</p>\n    <a href=\"#home\">Back</a>\n  </card>\n</wml>\n"
+    "flows": [
+      {
+        "id": "long-token-navigation-stays-usable",
+        "title": "Long unbroken token wraps and navigation remains usable",
+        "target": "host-sample",
+        "workItems": [
+          "A3-01"
+        ],
+        "specItems": [
+          "WML-R-004"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      supercalifragilisticpseudopneumonoultramicroscopicsilicovolcanoconiosis\n      <a href=\"#next\">Continue</a>\n    </p>\n  </card>\n  <card id=\"next\">\n    <p>Wrap test complete. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "yourFirstDeck",

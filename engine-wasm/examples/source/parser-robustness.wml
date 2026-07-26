@@ -10,13 +10,15 @@ testing-ac:
 - Press Enter on "Next" and confirm transition to next works.
 - Press Enter on "Back" and confirm transition to home works.
 -->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 PLUS//EN"
+  "http://vendor.test/wml13-plus.dtd">
 <wml>
   <cardinal id="noise">Ignore me</cardinal>
   <card id="home">
     <p>Hello <a href="#next">Next</a></p>
   </card>
   <card id="next">
-    <p>Still works.</p>
-    <a href="#home">Back</a>
+    <p>Still works. <a href="#home">Back</a></p>
   </card>
 </wml>

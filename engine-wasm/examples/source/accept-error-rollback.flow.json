@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "example": "acceptErrorRollback",
+  "flows": [
+    {
+      "id": "failed-accept-go-rolls-back",
+      "title": "Failed accept go action does not partially mutate runtime state",
+      "workItems": ["R0-02"],
+      "specItems": ["WML-18", "WML-R-017"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-broken", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "accept-broken", "focusedLinkIndex": 0 },
+            "statusIncludes": "Card id not found"
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_BACK"]
+          }
+        }
+      ]
+    }
+  ]
+}
