@@ -10,6 +10,20 @@ use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
 use tauri::Emitter;
 
 #[cfg(not(test))]
+macro_rules! handler_from_command_contract {
+    ($(
+        $command:ident => {
+            client: $client:literal,
+            parameter: $parameter:expr,
+            response: $response:expr,
+            facade: $facade:expr
+        };
+    )*) => {
+        tauri::generate_handler![$(crate::$command),*]
+    };
+}
+
+#[cfg(not(test))]
 fn preflight_wbxml_decoder_available() -> Result<(), String> {
     let backend = preflight_wbxml_decoder()?;
     println!("WBXML decoder backend: {backend}");
@@ -125,43 +139,9 @@ pub fn run() {
             preflight_wbxml_decoder_available()?;
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![
-            crate::health,
-            crate::fetch_deck,
-            crate::engine_load_deck,
-            crate::engine_load_deck_context,
-            crate::engine_load_deck_context_frame,
-            crate::engine_render,
-            crate::engine_render_frame,
-            crate::engine_handle_key,
-            crate::engine_handle_key_frame,
-            crate::engine_navigate_to_card,
-            crate::engine_navigate_to_card_frame,
-            crate::engine_navigate_back,
-            crate::engine_navigate_back_frame,
-            crate::engine_set_viewport_cols,
-            crate::engine_advance_time_ms,
-            crate::engine_advance_time_ms_frame,
-            crate::engine_snapshot,
-            crate::engine_clear_external_navigation_intent,
-            crate::engine_clear_external_navigation_intent_frame,
-            crate::engine_begin_focused_input_edit,
-            crate::engine_begin_focused_input_edit_frame,
-            crate::engine_set_focused_input_edit_draft,
-            crate::engine_set_focused_input_edit_draft_frame,
-            crate::engine_commit_focused_input_edit,
-            crate::engine_commit_focused_input_edit_frame,
-            crate::engine_cancel_focused_input_edit,
-            crate::engine_cancel_focused_input_edit_frame,
-            crate::engine_begin_focused_select_edit,
-            crate::engine_begin_focused_select_edit_frame,
-            crate::engine_move_focused_select_edit,
-            crate::engine_move_focused_select_edit_frame,
-            crate::engine_commit_focused_select_edit,
-            crate::engine_commit_focused_select_edit_frame,
-            crate::engine_cancel_focused_select_edit,
-            crate::engine_cancel_focused_select_edit_frame
-        ])
+        .invoke_handler(crate::command_contract::with_tauri_commands!(
+            handler_from_command_contract
+        ))
         .run(tauri::generate_context!())
         .expect(waves_config::RUN_ERROR_CONTEXT);
 }

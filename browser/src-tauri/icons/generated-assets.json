@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm --dir browser run tauri:icons",
+  "source": "browser/src-tauri/icons/waves.svg",
+  "tauriCli": "2.10.0",
+  "committedOutputs": [
+    "32x32.png",
+    "128x128.png",
+    "128x128@2x.png",
+    "icon.png",
+    "icon.ico"
+  ],
+  "semanticOnlyOutput": "icon.icns",
+  "note": "ICNS bytes from tauri-cli 2.10.0 are nondeterministic; normal generation validates but does not replace the committed ICNS. Use tauri:icons:refresh-icns only for an intentional package-asset refresh."
+}

@@ -177,6 +177,432 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the engine_advance_time_ms command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-advance-time-ms",
+          "markdownDescription": "Enables the engine_advance_time_ms command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_advance_time_ms_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-advance-time-ms-frame",
+          "markdownDescription": "Enables the engine_advance_time_ms_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_begin_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-begin-focused-input-edit",
+          "markdownDescription": "Enables the engine_begin_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_begin_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-begin-focused-input-edit-frame",
+          "markdownDescription": "Enables the engine_begin_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_begin_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-begin-focused-select-edit",
+          "markdownDescription": "Enables the engine_begin_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_begin_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-begin-focused-select-edit-frame",
+          "markdownDescription": "Enables the engine_begin_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_cancel_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-cancel-focused-input-edit",
+          "markdownDescription": "Enables the engine_cancel_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_cancel_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-cancel-focused-input-edit-frame",
+          "markdownDescription": "Enables the engine_cancel_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_cancel_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-cancel-focused-select-edit",
+          "markdownDescription": "Enables the engine_cancel_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_cancel_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-cancel-focused-select-edit-frame",
+          "markdownDescription": "Enables the engine_cancel_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_clear_external_navigation_intent command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-clear-external-navigation-intent",
+          "markdownDescription": "Enables the engine_clear_external_navigation_intent command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_clear_external_navigation_intent_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-clear-external-navigation-intent-frame",
+          "markdownDescription": "Enables the engine_clear_external_navigation_intent_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_commit_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-commit-focused-input-edit",
+          "markdownDescription": "Enables the engine_commit_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_commit_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-commit-focused-input-edit-frame",
+          "markdownDescription": "Enables the engine_commit_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_commit_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-commit-focused-select-edit",
+          "markdownDescription": "Enables the engine_commit_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_commit_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-commit-focused-select-edit-frame",
+          "markdownDescription": "Enables the engine_commit_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_handle_key command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-handle-key",
+          "markdownDescription": "Enables the engine_handle_key command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_handle_key_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-handle-key-frame",
+          "markdownDescription": "Enables the engine_handle_key_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_load_deck command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-load-deck",
+          "markdownDescription": "Enables the engine_load_deck command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_load_deck_context command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-load-deck-context",
+          "markdownDescription": "Enables the engine_load_deck_context command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_load_deck_context_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-load-deck-context-frame",
+          "markdownDescription": "Enables the engine_load_deck_context_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_move_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-move-focused-select-edit",
+          "markdownDescription": "Enables the engine_move_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_move_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-move-focused-select-edit-frame",
+          "markdownDescription": "Enables the engine_move_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_navigate_back command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-navigate-back",
+          "markdownDescription": "Enables the engine_navigate_back command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_navigate_back_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-navigate-back-frame",
+          "markdownDescription": "Enables the engine_navigate_back_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_navigate_to_card command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-navigate-to-card",
+          "markdownDescription": "Enables the engine_navigate_to_card command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_navigate_to_card_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-navigate-to-card-frame",
+          "markdownDescription": "Enables the engine_navigate_to_card_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_render command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-render",
+          "markdownDescription": "Enables the engine_render command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_render_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-render-frame",
+          "markdownDescription": "Enables the engine_render_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_set_focused_input_edit_draft command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-set-focused-input-edit-draft",
+          "markdownDescription": "Enables the engine_set_focused_input_edit_draft command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_set_focused_input_edit_draft_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-set-focused-input-edit-draft-frame",
+          "markdownDescription": "Enables the engine_set_focused_input_edit_draft_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_set_viewport_cols command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-set-viewport-cols",
+          "markdownDescription": "Enables the engine_set_viewport_cols command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-snapshot",
+          "markdownDescription": "Enables the engine_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the fetch_deck command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-fetch-deck",
+          "markdownDescription": "Enables the fetch_deck command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the health command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-health",
+          "markdownDescription": "Enables the health command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_advance_time_ms command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-advance-time-ms",
+          "markdownDescription": "Denies the engine_advance_time_ms command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_advance_time_ms_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-advance-time-ms-frame",
+          "markdownDescription": "Denies the engine_advance_time_ms_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_begin_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-begin-focused-input-edit",
+          "markdownDescription": "Denies the engine_begin_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_begin_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-begin-focused-input-edit-frame",
+          "markdownDescription": "Denies the engine_begin_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_begin_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-begin-focused-select-edit",
+          "markdownDescription": "Denies the engine_begin_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_begin_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-begin-focused-select-edit-frame",
+          "markdownDescription": "Denies the engine_begin_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_cancel_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-cancel-focused-input-edit",
+          "markdownDescription": "Denies the engine_cancel_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_cancel_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-cancel-focused-input-edit-frame",
+          "markdownDescription": "Denies the engine_cancel_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_cancel_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-cancel-focused-select-edit",
+          "markdownDescription": "Denies the engine_cancel_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_cancel_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-cancel-focused-select-edit-frame",
+          "markdownDescription": "Denies the engine_cancel_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_clear_external_navigation_intent command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-clear-external-navigation-intent",
+          "markdownDescription": "Denies the engine_clear_external_navigation_intent command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_clear_external_navigation_intent_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-clear-external-navigation-intent-frame",
+          "markdownDescription": "Denies the engine_clear_external_navigation_intent_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_commit_focused_input_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-commit-focused-input-edit",
+          "markdownDescription": "Denies the engine_commit_focused_input_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_commit_focused_input_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-commit-focused-input-edit-frame",
+          "markdownDescription": "Denies the engine_commit_focused_input_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_commit_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-commit-focused-select-edit",
+          "markdownDescription": "Denies the engine_commit_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_commit_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-commit-focused-select-edit-frame",
+          "markdownDescription": "Denies the engine_commit_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_handle_key command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-handle-key",
+          "markdownDescription": "Denies the engine_handle_key command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_handle_key_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-handle-key-frame",
+          "markdownDescription": "Denies the engine_handle_key_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_load_deck command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-load-deck",
+          "markdownDescription": "Denies the engine_load_deck command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_load_deck_context command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-load-deck-context",
+          "markdownDescription": "Denies the engine_load_deck_context command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_load_deck_context_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-load-deck-context-frame",
+          "markdownDescription": "Denies the engine_load_deck_context_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_move_focused_select_edit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-move-focused-select-edit",
+          "markdownDescription": "Denies the engine_move_focused_select_edit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_move_focused_select_edit_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-move-focused-select-edit-frame",
+          "markdownDescription": "Denies the engine_move_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_navigate_back command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-navigate-back",
+          "markdownDescription": "Denies the engine_navigate_back command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_navigate_back_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-navigate-back-frame",
+          "markdownDescription": "Denies the engine_navigate_back_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_navigate_to_card command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-navigate-to-card",
+          "markdownDescription": "Denies the engine_navigate_to_card command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_navigate_to_card_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-navigate-to-card-frame",
+          "markdownDescription": "Denies the engine_navigate_to_card_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_render command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-render",
+          "markdownDescription": "Denies the engine_render command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_render_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-render-frame",
+          "markdownDescription": "Denies the engine_render_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_set_focused_input_edit_draft command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-set-focused-input-edit-draft",
+          "markdownDescription": "Denies the engine_set_focused_input_edit_draft command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_set_focused_input_edit_draft_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-set-focused-input-edit-draft-frame",
+          "markdownDescription": "Denies the engine_set_focused_input_edit_draft_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_set_viewport_cols command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-set-viewport-cols",
+          "markdownDescription": "Denies the engine_set_viewport_cols command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-snapshot",
+          "markdownDescription": "Denies the engine_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the fetch_deck command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-fetch-deck",
+          "markdownDescription": "Denies the fetch_deck command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the health command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-health",
+          "markdownDescription": "Denies the health command without any pre-configured scope."
+        },
+        {
+          "description": "Allows the browser frontend to invoke the complete generated Waves host command contract.",
+          "type": "string",
+          "const": "waves-host-commands",
+          "markdownDescription": "Allows the browser frontend to invoke the complete generated Waves host command contract."
+        },
+        {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",
           "type": "string",
           "const": "core:default",

@@ -1,0 +1,549 @@
+{
+  "commands": [
+    {
+      "clientMethod": "health",
+      "command": "health",
+      "facadeMethod": null,
+      "parameter": null,
+      "response": {
+        "name": "string",
+        "source": "primitive"
+      }
+    },
+    {
+      "clientMethod": "fetchDeck",
+      "command": "fetch_deck",
+      "facadeMethod": {
+        "facade": "transport",
+        "method": "fetchDeck"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "FetchDeckRequest",
+          "source": "transport"
+        }
+      },
+      "response": {
+        "name": "FetchDeckResponse",
+        "source": "transport"
+      }
+    },
+    {
+      "clientMethod": "engineLoadDeck",
+      "command": "engine_load_deck",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "loadDeck"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "LoadDeckRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineLoadDeckContext",
+      "command": "engine_load_deck_context",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "loadDeckContext"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "LoadDeckContextRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineLoadDeckContextFrame",
+      "command": "engine_load_deck_context_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "loadDeckContextFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "LoadDeckContextRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineRender",
+      "command": "engine_render",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "render"
+      },
+      "parameter": null,
+      "response": {
+        "name": "RenderList",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineRenderFrame",
+      "command": "engine_render_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "renderFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineHandleKey",
+      "command": "engine_handle_key",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "handleKey"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "HandleKeyRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineHandleKeyFrame",
+      "command": "engine_handle_key_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "handleKeyFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "HandleKeyRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineNavigateToCard",
+      "command": "engine_navigate_to_card",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "navigateToCard"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "NavigateToCardRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineNavigateToCardFrame",
+      "command": "engine_navigate_to_card_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "navigateToCardFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "NavigateToCardRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineNavigateBack",
+      "command": "engine_navigate_back",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "navigateBack"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineNavigateBackFrame",
+      "command": "engine_navigate_back_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "navigateBackFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineSetViewportCols",
+      "command": "engine_set_viewport_cols",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "setViewportCols"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "SetViewportColsRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineAdvanceTimeMs",
+      "command": "engine_advance_time_ms",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "advanceTimeMs"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "AdvanceTimeRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineAdvanceTimeMsFrame",
+      "command": "engine_advance_time_ms_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "advanceTimeMsFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "AdvanceTimeRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineSnapshot",
+      "command": "engine_snapshot",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "snapshot"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineClearExternalNavigationIntent",
+      "command": "engine_clear_external_navigation_intent",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "clearExternalNavigationIntent"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineClearExternalNavigationIntentFrame",
+      "command": "engine_clear_external_navigation_intent_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "clearExternalNavigationIntentFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineBeginFocusedInputEdit",
+      "command": "engine_begin_focused_input_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "beginFocusedInputEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineBeginFocusedInputEditFrame",
+      "command": "engine_begin_focused_input_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "beginFocusedInputEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineSetFocusedInputEditDraft",
+      "command": "engine_set_focused_input_edit_draft",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "setFocusedInputEditDraft"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "SetFocusedInputEditDraftRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineSetFocusedInputEditDraftFrame",
+      "command": "engine_set_focused_input_edit_draft_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "setFocusedInputEditDraftFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "SetFocusedInputEditDraftRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCommitFocusedInputEdit",
+      "command": "engine_commit_focused_input_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "commitFocusedInputEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCommitFocusedInputEditFrame",
+      "command": "engine_commit_focused_input_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "commitFocusedInputEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCancelFocusedInputEdit",
+      "command": "engine_cancel_focused_input_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "cancelFocusedInputEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCancelFocusedInputEditFrame",
+      "command": "engine_cancel_focused_input_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "cancelFocusedInputEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineBeginFocusedSelectEdit",
+      "command": "engine_begin_focused_select_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "beginFocusedSelectEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineBeginFocusedSelectEditFrame",
+      "command": "engine_begin_focused_select_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "beginFocusedSelectEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineMoveFocusedSelectEdit",
+      "command": "engine_move_focused_select_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "moveFocusedSelectEdit"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "MoveFocusedSelectEditRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineMoveFocusedSelectEditFrame",
+      "command": "engine_move_focused_select_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "moveFocusedSelectEditFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "MoveFocusedSelectEditRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCommitFocusedSelectEdit",
+      "command": "engine_commit_focused_select_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "commitFocusedSelectEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCommitFocusedSelectEditFrame",
+      "command": "engine_commit_focused_select_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "commitFocusedSelectEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCancelFocusedSelectEdit",
+      "command": "engine_cancel_focused_select_edit",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "cancelFocusedSelectEdit"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineRuntimeSnapshot",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineCancelFocusedSelectEditFrame",
+      "command": "engine_cancel_focused_select_edit_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "cancelFocusedSelectEditFrame"
+      },
+      "parameter": null,
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    }
+  ],
+  "generatedBy": "cargo run --bin generate_contracts",
+  "schemaVersion": 1,
+  "source": "browser/src-tauri/src/command_contract.rs"
+}

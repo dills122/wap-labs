@@ -37,6 +37,23 @@ ensure_rust_tool() {
   eval "${install_cmd}"
 }
 
+ensure_tauri_cli() {
+  local expected_version="2.10.0"
+  local actual_version=""
+  if command -v cargo-tauri >/dev/null 2>&1; then
+    actual_version="$(cargo tauri --version 2>/dev/null || true)"
+  fi
+  if [[ "${actual_version}" == "tauri-cli ${expected_version}" ]]; then
+    return 0
+  fi
+  if [[ "${AUTO_INSTALL_RUST_TOOLS}" != "1" ]]; then
+    warn "tauri-cli ${expected_version} required (found: ${actual_version:-missing}; set AUTO_INSTALL_RUST_TOOLS=1 to install)"
+    return 0
+  fi
+  log "installing tauri-cli ${expected_version}"
+  cargo install tauri-cli --version "${expected_version}" --locked --force
+}
+
 log "repo root: ${ROOT_DIR}"
 
 need_cmd node || true
@@ -45,7 +62,7 @@ need_cmd cargo || true
 
 if command -v cargo >/dev/null 2>&1; then
   ensure_rust_tool wasm-pack "cargo install wasm-pack --locked"
-  ensure_rust_tool cargo-tauri "cargo install tauri-cli --version '^2.0' --locked"
+  ensure_tauri_cli
 fi
 
 if [[ "${SKIP_NODE_INSTALLS}" != "1" ]]; then

@@ -74,6 +74,72 @@ function ensureRequired(name, values, required) {
   }
 }
 
+function loadCommandContract(filePath) {
+  const contract = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  if (contract.schemaVersion !== 1 || !Array.isArray(contract.commands)) {
+    throw new Error('tauri-command-contract.json has an unsupported schema');
+  }
+
+  const commandNames = new Set();
+  const clientMethods = new Set();
+  const facadeMethods = new Set();
+  const validSources = new Set(['primitive', 'engine', 'transport']);
+  for (const command of contract.commands) {
+    if (!command.command || !command.clientMethod || !command.response) {
+      throw new Error('tauri-command-contract.json contains an incomplete command');
+    }
+    if (commandNames.has(command.command)) {
+      throw new Error(`duplicate Tauri command: ${command.command}`);
+    }
+    if (clientMethods.has(command.clientMethod)) {
+      throw new Error(`duplicate Tauri client method: ${command.clientMethod}`);
+    }
+    if (!validSources.has(command.response.source)) {
+      throw new Error(`unsupported response type source: ${command.response.source}`);
+    }
+    if (command.parameter && !validSources.has(command.parameter.type?.source)) {
+      throw new Error(`unsupported parameter type source for ${command.command}`);
+    }
+    if (command.facadeMethod) {
+      const facadeKey = `${command.facadeMethod.facade}:${command.facadeMethod.method}`;
+      if (!['engine', 'transport'].includes(command.facadeMethod.facade)) {
+        throw new Error(`unsupported facade for ${command.command}`);
+      }
+      if (facadeMethods.has(facadeKey)) {
+        throw new Error(`duplicate facade method: ${facadeKey}`);
+      }
+      facadeMethods.add(facadeKey);
+    }
+    commandNames.add(command.command);
+    clientMethods.add(command.clientMethod);
+  }
+  return contract.commands;
+}
+
+function commandMethodSpec(command, methodName = command.clientMethod) {
+  return {
+    name: methodName,
+    command: command.command,
+    returns: command.response.name,
+    param: command.parameter
+      ? { name: command.parameter.name, type: command.parameter.type.name }
+      : undefined
+  };
+}
+
+function typeImportsFor(commands, source) {
+  const imports = new Set();
+  for (const command of commands) {
+    if (command.response.source === source) {
+      imports.add(command.response.name);
+    }
+    if (command.parameter?.type.source === source) {
+      imports.add(command.parameter.type.name);
+    }
+  }
+  return [...imports].sort();
+}
+
 function writeIfChanged(filePath, content) {
   const current = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
   if (current !== content) {
@@ -83,7 +149,13 @@ function writeIfChanged(filePath, content) {
 }
 
 function printStatements(statements) {
-  const sourceFile = ts.createSourceFile('generated.ts', '', ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
+  const sourceFile = ts.createSourceFile(
+    'generated.ts',
+    '',
+    ts.ScriptTarget.Latest,
+    false,
+    ts.ScriptKind.TS
+  );
   const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
   const generated = factory.createSourceFile(
     statements,
@@ -154,7 +226,9 @@ function exportTypeFrom(names, modulePath) {
   return factory.createExportDeclaration(
     undefined,
     true,
-    factory.createNamedExports(names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))),
+    factory.createNamedExports(
+      names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))
+    ),
     factory.createStringLiteral(modulePath),
     undefined
   );
@@ -164,7 +238,9 @@ function exportValueFrom(names, modulePath) {
   return factory.createExportDeclaration(
     undefined,
     false,
-    factory.createNamedExports(names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))),
+    factory.createNamedExports(
+      names.map((name) => factory.createExportSpecifier(false, undefined, id(name)))
+    ),
     factory.createStringLiteral(modulePath),
     undefined
   );
@@ -221,11 +297,7 @@ function createInvokeMethodProperty(spec) {
       parameters,
       undefined,
       factory.createToken(ts.SyntaxKind.EqualsGreaterThanToken),
-      factory.createCallExpression(
-        id('invokeFn'),
-        [typeRef(spec.returns)],
-        invokeArgs
-      )
+      factory.createCallExpression(id('invokeFn'), [typeRef(spec.returns)], invokeArgs)
     )
   );
 }
@@ -236,66 +308,19 @@ function createTypeOnlyImport(names, modulePath) {
     factory.createImportClause(
       false,
       undefined,
-      factory.createNamedImports(names.map((name) => factory.createImportSpecifier(true, undefined, id(name))))
+      factory.createNamedImports(
+        names.map((name) => factory.createImportSpecifier(true, undefined, id(name)))
+      )
     ),
     factory.createStringLiteral(modulePath),
     undefined
   );
 }
 
-function generateTauriClient(filePath) {
-  const engineImports = [
-    'AdvanceTimeRequest',
-    'EngineFrame',
-    'EngineRuntimeSnapshot',
-    'HandleKeyRequest',
-    'LoadDeckContextRequest',
-    'LoadDeckRequest',
-    'MoveFocusedSelectEditRequest',
-    'NavigateToCardRequest',
-    'RenderList',
-    'SetFocusedInputEditDraftRequest',
-    'SetViewportColsRequest'
-  ];
-  const transportImports = ['FetchDeckRequest', 'FetchDeckResponse'];
-
-  const methods = [
-    { name: 'health', command: 'health', returns: 'string' },
-    { name: 'fetchDeck', command: 'fetch_deck', returns: 'FetchDeckResponse', param: { name: 'request', type: 'FetchDeckRequest' } },
-    { name: 'engineLoadDeck', command: 'engine_load_deck', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckRequest' } },
-    { name: 'engineLoadDeckContext', command: 'engine_load_deck_context', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckContextRequest' } },
-    { name: 'engineLoadDeckContextFrame', command: 'engine_load_deck_context_frame', returns: 'EngineFrame', param: { name: 'request', type: 'LoadDeckContextRequest' } },
-    { name: 'engineRender', command: 'engine_render', returns: 'RenderList' },
-    { name: 'engineRenderFrame', command: 'engine_render_frame', returns: 'EngineFrame' },
-    { name: 'engineHandleKey', command: 'engine_handle_key', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'HandleKeyRequest' } },
-    { name: 'engineHandleKeyFrame', command: 'engine_handle_key_frame', returns: 'EngineFrame', param: { name: 'request', type: 'HandleKeyRequest' } },
-    { name: 'engineNavigateToCard', command: 'engine_navigate_to_card', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'NavigateToCardRequest' } },
-    { name: 'engineNavigateToCardFrame', command: 'engine_navigate_to_card_frame', returns: 'EngineFrame', param: { name: 'request', type: 'NavigateToCardRequest' } },
-    { name: 'engineNavigateBack', command: 'engine_navigate_back', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineNavigateBackFrame', command: 'engine_navigate_back_frame', returns: 'EngineFrame' },
-    { name: 'engineSetViewportCols', command: 'engine_set_viewport_cols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
-    { name: 'engineAdvanceTimeMs', command: 'engine_advance_time_ms', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
-    { name: 'engineAdvanceTimeMsFrame', command: 'engine_advance_time_ms_frame', returns: 'EngineFrame', param: { name: 'request', type: 'AdvanceTimeRequest' } },
-    { name: 'engineSnapshot', command: 'engine_snapshot', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineClearExternalNavigationIntent', command: 'engine_clear_external_navigation_intent', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineClearExternalNavigationIntentFrame', command: 'engine_clear_external_navigation_intent_frame', returns: 'EngineFrame' },
-    { name: 'engineBeginFocusedInputEdit', command: 'engine_begin_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineBeginFocusedInputEditFrame', command: 'engine_begin_focused_input_edit_frame', returns: 'EngineFrame' },
-    { name: 'engineSetFocusedInputEditDraft', command: 'engine_set_focused_input_edit_draft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
-    { name: 'engineSetFocusedInputEditDraftFrame', command: 'engine_set_focused_input_edit_draft_frame', returns: 'EngineFrame', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
-    { name: 'engineCommitFocusedInputEdit', command: 'engine_commit_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCommitFocusedInputEditFrame', command: 'engine_commit_focused_input_edit_frame', returns: 'EngineFrame' },
-    { name: 'engineCancelFocusedInputEdit', command: 'engine_cancel_focused_input_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCancelFocusedInputEditFrame', command: 'engine_cancel_focused_input_edit_frame', returns: 'EngineFrame' },
-    { name: 'engineBeginFocusedSelectEdit', command: 'engine_begin_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineBeginFocusedSelectEditFrame', command: 'engine_begin_focused_select_edit_frame', returns: 'EngineFrame' },
-    { name: 'engineMoveFocusedSelectEdit', command: 'engine_move_focused_select_edit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
-    { name: 'engineMoveFocusedSelectEditFrame', command: 'engine_move_focused_select_edit_frame', returns: 'EngineFrame', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
-    { name: 'engineCommitFocusedSelectEdit', command: 'engine_commit_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCommitFocusedSelectEditFrame', command: 'engine_commit_focused_select_edit_frame', returns: 'EngineFrame' },
-    { name: 'engineCancelFocusedSelectEdit', command: 'engine_cancel_focused_select_edit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'engineCancelFocusedSelectEditFrame', command: 'engine_cancel_focused_select_edit_frame', returns: 'EngineFrame' }
-  ];
+function generateTauriClient(filePath, commands) {
+  const engineImports = typeImportsFor(commands, 'engine');
+  const transportImports = typeImportsFor(commands, 'transport');
+  const methods = commands.map((command) => commandMethodSpec(command));
 
   const tauriInvoke = factory.createTypeAliasDeclaration(
     [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -304,13 +329,23 @@ function generateTauriClient(filePath) {
     factory.createFunctionTypeNode(
       [typeParam('T')],
       [
-        factory.createParameterDeclaration(undefined, undefined, id('command'), undefined, keyword(ts.SyntaxKind.StringKeyword), undefined),
+        factory.createParameterDeclaration(
+          undefined,
+          undefined,
+          id('command'),
+          undefined,
+          keyword(ts.SyntaxKind.StringKeyword),
+          undefined
+        ),
         factory.createParameterDeclaration(
           undefined,
           undefined,
           id('args'),
           factory.createToken(ts.SyntaxKind.QuestionToken),
-          typeRef('Record', [keyword(ts.SyntaxKind.StringKeyword), keyword(ts.SyntaxKind.UnknownKeyword)]),
+          typeRef('Record', [
+            keyword(ts.SyntaxKind.StringKeyword),
+            keyword(ts.SyntaxKind.UnknownKeyword)
+          ]),
           undefined
         )
       ],
@@ -318,11 +353,14 @@ function generateTauriClient(filePath) {
     )
   );
 
-  const tauriHostClient = makeInterface('TauriHostClient', methods.map((method) => ({
-    name: method.name,
-    returns: method.returns,
-    param: method.param
-  })));
+  const tauriHostClient = makeInterface(
+    'TauriHostClient',
+    methods.map((method) => ({
+      name: method.name,
+      returns: method.returns,
+      param: method.param
+    }))
+  );
 
   const createClient = factory.createVariableStatement(
     [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -365,10 +403,7 @@ function generateTauriClient(filePath) {
 
   writeIfChanged(
     filePath,
-    withHeader(
-      printStatements(statements),
-      'node ./scripts/generate-contract-wrappers.mjs'
-    )
+    withHeader(printStatements(statements), 'node ./scripts/generate-contract-wrappers.mjs')
   );
 }
 
@@ -441,12 +476,16 @@ fs.mkdirSync(contractsDir, { recursive: true });
 const engineGeneratedPath = path.join(generatedDir, 'engine-host.ts');
 const transportGeneratedPath = path.join(generatedDir, 'transport-host.ts');
 const tauriClientPath = path.join(generatedDir, 'tauri-host-client.ts');
+const tauriCommandContractPath = path.join(generatedDir, 'tauri-command-contract.json');
 const engineWrapperPath = path.join(contractsDir, 'engine.ts');
 const transportWrapperPath = path.join(contractsDir, 'transport.ts');
 
 const engineExportedTypes = collectExportedTypeNames(engineGeneratedPath);
 const engineExportedValues = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypes = collectExportedTypeNames(transportGeneratedPath);
+const commands = loadCommandContract(tauriCommandContractPath);
+const commandEngineTypes = typeImportsFor(commands, 'engine');
+const commandTransportTypes = typeImportsFor(commands, 'transport');
 
 ensureRequired('engine-host.ts', engineExportedTypes, [
   'EngineFrame',
@@ -456,57 +495,32 @@ ensureRequired('engine-host.ts', engineExportedTypes, [
 ]);
 ensureRequired('engine-host.ts values', engineExportedValues, ['SCRIPT_ERROR_CATEGORY_LABELS']);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);
+ensureRequired('engine-host.ts command types', engineExportedTypes, commandEngineTypes);
+ensureRequired('transport-host.ts command types', transportExportedTypes, commandTransportTypes);
 
 appendInterfaces(engineGeneratedPath, [
-  makeInterface('EngineHostClient', [
-    { name: 'loadDeck', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckRequest' } },
-    { name: 'loadDeckContext', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'LoadDeckContextRequest' } },
-    { name: 'loadDeckContextFrame', returns: 'EngineFrame', param: { name: 'request', type: 'LoadDeckContextRequest' } },
-    { name: 'render', returns: 'RenderList' },
-    { name: 'renderFrame', returns: 'EngineFrame' },
-    { name: 'handleKey', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'HandleKeyRequest' } },
-    { name: 'handleKeyFrame', returns: 'EngineFrame', param: { name: 'request', type: 'HandleKeyRequest' } },
-    { name: 'navigateToCard', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'NavigateToCardRequest' } },
-    { name: 'navigateToCardFrame', returns: 'EngineFrame', param: { name: 'request', type: 'NavigateToCardRequest' } },
-    { name: 'navigateBack', returns: 'EngineRuntimeSnapshot' },
-    { name: 'navigateBackFrame', returns: 'EngineFrame' },
-    { name: 'setViewportCols', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetViewportColsRequest' } },
-    { name: 'advanceTimeMs', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'AdvanceTimeRequest' } },
-    { name: 'advanceTimeMsFrame', returns: 'EngineFrame', param: { name: 'request', type: 'AdvanceTimeRequest' } },
-    { name: 'snapshot', returns: 'EngineRuntimeSnapshot' },
-    { name: 'clearExternalNavigationIntent', returns: 'EngineRuntimeSnapshot' },
-    { name: 'clearExternalNavigationIntentFrame', returns: 'EngineFrame' },
-    { name: 'beginFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'beginFocusedInputEditFrame', returns: 'EngineFrame' },
-    { name: 'setFocusedInputEditDraft', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
-    { name: 'setFocusedInputEditDraftFrame', returns: 'EngineFrame', param: { name: 'request', type: 'SetFocusedInputEditDraftRequest' } },
-    { name: 'commitFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'commitFocusedInputEditFrame', returns: 'EngineFrame' },
-    { name: 'cancelFocusedInputEdit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'cancelFocusedInputEditFrame', returns: 'EngineFrame' },
-    { name: 'beginFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'beginFocusedSelectEditFrame', returns: 'EngineFrame' },
-    { name: 'moveFocusedSelectEdit', returns: 'EngineRuntimeSnapshot', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
-    { name: 'moveFocusedSelectEditFrame', returns: 'EngineFrame', param: { name: 'request', type: 'MoveFocusedSelectEditRequest' } },
-    { name: 'commitFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' },
-    { name: 'commitFocusedSelectEditFrame', returns: 'EngineFrame' },
-    { name: 'cancelFocusedSelectEdit', returns: 'EngineRuntimeSnapshot' }
-    ,
-    { name: 'cancelFocusedSelectEditFrame', returns: 'EngineFrame' }
-  ])
+  makeInterface(
+    'EngineHostClient',
+    commands
+      .filter((command) => command.facadeMethod?.facade === 'engine')
+      .map((command) => commandMethodSpec(command, command.facadeMethod.method))
+  )
 ]);
 
 appendInterfaces(transportGeneratedPath, [
-  makeInterface('TransportClient', [
-    { name: 'fetchDeck', returns: 'FetchDeckResponse', param: { name: 'request', type: 'FetchDeckRequest' } }
-  ])
+  makeInterface(
+    'TransportClient',
+    commands
+      .filter((command) => command.facadeMethod?.facade === 'transport')
+      .map((command) => commandMethodSpec(command, command.facadeMethod.method))
+  )
 ]);
 
 const engineExportedTypesWithInterfaces = collectExportedTypeNames(engineGeneratedPath);
 const engineExportedValuesWithInterfaces = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypesWithInterfaces = collectExportedTypeNames(transportGeneratedPath);
 
-generateTauriClient(tauriClientPath);
+generateTauriClient(tauriClientPath, commands);
 generateEngineWrapper(
   engineWrapperPath,
   engineExportedTypesWithInterfaces,
