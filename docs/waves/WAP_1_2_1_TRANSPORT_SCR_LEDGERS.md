@@ -158,9 +158,10 @@ history and adds nine direct comparison clauses under `TRN-707`:
 The WDP comparisons are compatible with the existing target-era fixtures.
 TRN-708 closes the WCMP mismatch exposed by the comparison: WAP-202 section
 5.3 assigns CDPD and other IP bearers to ICMP, and the strict profile now
-selects that path. The completed TRN-703 section 5.4/5.5 general-WCMP work is
-capability-gated for non-IP use. TRN-703/T0-17 remain canonical history and
-are not reopened.
+selects that path. TRN-710 maps the completed TRN-703 WAP-202 sections
+5.1/5.2/5.5 general-WCMP capability for non-IP use. Sections 5.4.1-.7 bearer
+encapsulations and WAP-159 SMPP adaptation remain unimplemented and deferred;
+TRN-703/T0-17 remain canonical history and are not reopened.
 
 This is not a whole-document equivalence finding: WAP-259 predates the final
 WAP-200_005 overlay, and only the mapped observable assumptions are
@@ -245,6 +246,9 @@ adapter.
   remains explicit.
 - `TRN-708`: complete; the strict CDPD/IPv4 profile selects WAP-202 section
   5.3 ICMPv4 and the completed general-WCMP branch is explicit non-IP only.
+- `TRN-710`: complete for direct evidence mapping of the supported WAP-202
+  sections 5.1/5.2/5.5 general-WCMP capability; sections 5.4.1-.7 and
+  WAP-159 SMPP adaptation remain deferred, and TRN-703 is not reopened.
 - `WSP-801`: complete for the 35-clause connectionless PDU, primitive, method,
   transaction, status, URI/body, and exact-byte matrix.
 - `WSP-802`, `WSP-804`, `WSP-805`: retain generic header/encoding-version

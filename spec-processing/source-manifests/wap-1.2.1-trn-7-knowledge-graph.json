@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "07f1dfc99e11e291298f7f07f7e156c2e3054ba6468758cb09a74c9564946f19"
+        "sha256": "6242255f0cfdc1209b12c447dce36217acb5fa36e360c9155db1ee87cea1eaec"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,25 +25,25 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "10f4c5ac6224b1571ed5a388a8509cb2c866c6ebd552ecbd3f53b3ad37727e75"
+        "sha256": "e50b22c69a179894253fd43166fd9f0649c29436a7e3b06d3ce38e7192b93559"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "7bc698d4b4e7d0a510375434045a6fd4a679370d4cdd82829042c175b24a3e4f"
+        "sha256": "68266ffe01105d2afd46c96e04c10327703a50836739576127dd84e151a1bf95"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 176,
-    "edgeCount": 552,
+    "nodeCount": 234,
+    "edgeCount": 733,
     "nodesByType": {
-      "clause": 58,
-      "fixture": 58,
+      "clause": 85,
+      "fixture": 85,
       "legacy-ticket": 6,
       "owner-layer": 4,
       "profile": 1,
       "requirement": 6,
-      "scr-row": 11,
+      "scr-row": 15,
       "source-document": 17,
       "source-family": 4,
       "sprint": 2,
@@ -52,33 +52,33 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 11,
+      "belongs-to": 15,
       "contains": 9,
       "covers-family": 15,
       "depends-on": 1,
       "effective-document": 12,
-      "maps-to": 109,
+      "maps-to": 140,
       "owned-by": 22,
-      "planned-by": 102,
-      "refines": 126,
+      "planned-by": 160,
+      "refines": 159,
       "relates-to": 8,
       "requires-family": 2,
       "selected-from": 1,
-      "sourced-from": 58,
+      "sourced-from": 85,
       "targets-profile": 1,
-      "uses-context": 1,
-      "verified-by": 58
+      "uses-context": 2,
+      "verified-by": 85
     },
     "directClauseCountsByWorkItem": {
       "TRN-701": 49,
       "TRN-702": 9,
-      "TRN-703": 0,
+      "TRN-703": 27,
       "TRN-704": 0,
       "TRN-705": 0,
       "TRN-706": 11,
       "TRN-707": 9,
       "TRN-708": 13,
-      "TRN-710": 0
+      "TRN-710": 27
     },
     "directClauseFamiliesByWorkItem": {
       "TRN-701": [
@@ -87,7 +87,9 @@
       "TRN-702": [
         "wdp"
       ],
-      "TRN-703": [],
+      "TRN-703": [
+        "wcmp"
+      ],
       "TRN-704": [],
       "TRN-705": [],
       "TRN-706": [
@@ -101,7 +103,9 @@
         "wcmp",
         "wdp"
       ],
-      "TRN-710": []
+      "TRN-710": [
+        "wcmp"
+      ]
     },
     "directScrRowCountsByWorkItem": {
       "TRN-701": 0,
@@ -126,24 +130,16 @@
       "TRN-710": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "TRN-703": [
-        "wcmp"
-      ],
       "TRN-706": [
         "wtp"
       ],
       "TRN-707": [
         "wtp"
-      ],
-      "TRN-710": [
-        "wcmp"
       ]
     },
     "workItemsWithoutDirectClauses": [
-      "TRN-703",
       "TRN-704",
-      "TRN-705",
-      "TRN-710"
+      "TRN-705"
     ]
   },
   "nodes": [
@@ -178,6 +174,988 @@
           "RQ-TRX-006",
           "RQ-TRX-007",
           "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "key": "WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "type": "clause",
+      "title": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.2",
+          "heading": "5.5.2. Address Information Formats",
+          "normalizedTextSha256": "e9b34b18c16b0709752f28dd6cbf41b6d6e69a9efa094e586c17a9ed77cc8aaa"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "key": "WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "type": "clause",
+      "title": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "key": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "type": "clause",
+      "title": "Carry the original datagram destination address in a Destination Unreachable message.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Carry the original datagram destination address in a Destination Unreachable message.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "key": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "type": "clause",
+      "title": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "key": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "type": "clause",
+      "title": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "key": "WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "type": "clause",
+      "title": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "key": "WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "type": "clause",
+      "title": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "key": "WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "type": "clause",
+      "title": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "key": "WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "type": "clause",
+      "title": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "explicit-may",
+        "obligationLevel": "permitted",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "key": "WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "type": "clause",
+      "title": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "key": "WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "type": "clause",
+      "title": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "key": "WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "type": "clause",
+      "title": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.5",
+          "heading": "5.5.3.5. WCMP Echo Request/Reply",
+          "normalizedTextSha256": "a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "key": "WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "type": "clause",
+      "title": "Do not generate a WCMP error message in response to another WCMP error message.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.1",
+          "heading": "5.1. General",
+          "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Do not generate a WCMP error message in response to another WCMP error message.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "key": "WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "type": "clause",
+      "title": "Send no more than one WCMP error message for a fragmented datagram.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.1",
+          "heading": "5.1. General",
+          "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Send no more than one WCMP error message for a fragmented datagram.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "key": "WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "type": "clause",
+      "title": "Encode an IP address within WCMP address data with the most significant bit first.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.2",
+          "heading": "5.5.2. Address Information Formats",
+          "normalizedTextSha256": "e9b34b18c16b0709752f28dd6cbf41b6d6e69a9efa094e586c17a9ed77cc8aaa"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode an IP address within WCMP address data with the most significant bit first.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "key": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "type": "clause",
+      "title": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-003"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.3",
+          "heading": "5.5.3.3. Message Too Big",
+          "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-007"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "key": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "type": "clause",
+      "title": "Carry the original datagram destination address in a Message Too Big message.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-003"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.3",
+          "heading": "5.5.3.3. Message Too Big",
+          "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Carry the original datagram destination address in a Message Too Big message.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-007"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "key": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "type": "clause",
+      "title": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-003"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.3",
+          "heading": "5.5.3.3. Message Too Big",
+          "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-007"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "key": "WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "type": "clause",
+      "title": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-003"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.3",
+          "heading": "5.5.3.3. Message Too Big",
+          "normalizedTextSha256": "36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-007"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "key": "WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "type": "clause",
+      "title": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002",
+          "WCMP-GEN-C-001",
+          "WCMP-GEN-C-003",
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.2",
+          "heading": "5.2. WCMP Conformance",
+          "normalizedTextSha256": "4ef4829fe160989570d2b11816dec8635343b560b06608ed090902caffc99ba7"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006",
+          "RQ-TRX-007",
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "key": "WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "type": "clause",
+      "title": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.1",
+          "heading": "5.5.1. General Message Structure",
+          "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "key": "WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "type": "clause",
+      "title": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.1",
+          "heading": "5.1. General",
+          "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "key": "WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "type": "clause",
+      "title": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-GEN-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.3.1",
+          "heading": "5.5.3.1. Destination Unreachable",
+          "normalizedTextSha256": "4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "key": "WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "type": "clause",
+      "title": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002",
+          "WCMP-GEN-C-001",
+          "WCMP-GEN-C-003",
+          "WCMP-GEN-C-006"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.1",
+          "heading": "5.5.1. General Message Structure",
+          "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006",
+          "RQ-TRX-007",
+          "RQ-TRX-008"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "key": "WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "type": "clause",
+      "title": "Require each WCMP message to fit within one bearer-level fragment.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.1",
+          "heading": "5.1. General",
+          "normalizedTextSha256": "539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Require each WCMP message to fit within one bearer-level fragment.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "key": "WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "type": "clause",
+      "title": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.1",
+          "heading": "5.5.1. General Message Structure",
+          "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "key": "WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "type": "clause",
+      "title": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+      "properties": {
+        "family": "wcmp",
+        "parentRows": [
+          "WCMP-SP-C-002"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "section": "5.5.1",
+          "heading": "5.5.1. General Message Structure",
+          "normalizedTextSha256": "a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "profileApplicability": "capability-gated-non-ip-bearer",
+        "obligationSynopsis": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+        "workItems": [
+          "T0-17",
+          "TRN-703",
+          "TRN-710"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-TRX-006"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -2275,6 +3253,330 @@
       }
     },
     {
+      "id": "fixture:WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "key": "WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "type": "fixture",
+      "title": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-CONGESTION-SUPPRESSION",
+      "key": "WCMP-FX-GENERAL-CONGESTION-SUPPRESSION",
+      "type": "fixture",
+      "title": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Do not generate Destination Unreachable when datagram delivery fails because of congestion.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "key": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "type": "fixture",
+      "title": "Carry the original datagram destination address in a Destination Unreachable message.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Carry the original datagram destination address in a Destination Unreachable message.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "key": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "type": "fixture",
+      "title": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "key": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "type": "fixture",
+      "title": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "key": "WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "type": "fixture",
+      "title": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS",
+      "key": "WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS",
+      "type": "fixture",
+      "title": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "key": "WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "type": "fixture",
+      "title": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "key": "WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "type": "fixture",
+      "title": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED",
+      "key": "WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED",
+      "type": "fixture",
+      "title": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-STRUCTURE",
+      "key": "WCMP-FX-GENERAL-ECHO-STRUCTURE",
+      "type": "fixture",
+      "title": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ECHO-TYPE-CODE",
+      "key": "WCMP-FX-GENERAL-ECHO-TYPE-CODE",
+      "type": "fixture",
+      "title": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "key": "WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "type": "fixture",
+      "title": "Do not generate a WCMP error message in response to another WCMP error message.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Do not generate a WCMP error message in response to another WCMP error message.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "key": "WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "type": "fixture",
+      "title": "Send no more than one WCMP error message for a fragmented datagram.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Send no more than one WCMP error message for a fragmented datagram.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "key": "WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "type": "fixture",
+      "title": "Encode an IP address within WCMP address data with the most significant bit first.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode an IP address within WCMP address data with the most significant bit first.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "key": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "type": "fixture",
+      "title": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "key": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "type": "fixture",
+      "title": "Carry the original datagram destination address in a Message Too Big message.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Carry the original datagram destination address in a Message Too Big message.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "key": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "type": "fixture",
+      "title": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "key": "WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "type": "fixture",
+      "title": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Use Type 60 and Code 0 for a general-WCMP Message Too Big message.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "key": "WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "type": "fixture",
+      "title": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-NETWORK-BYTE-ORDER",
+      "key": "WCMP-FX-GENERAL-NETWORK-BYTE-ORDER",
+      "type": "fixture",
+      "title": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-NON-IP-SCOPE",
+      "key": "WCMP-FX-GENERAL-NON-IP-SCOPE",
+      "type": "fixture",
+      "title": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "key": "WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "type": "fixture",
+      "title": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "key": "WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "type": "fixture",
+      "title": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "key": "WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "type": "fixture",
+      "title": "Require each WCMP message to fit within one bearer-level fragment.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Require each WCMP message to fit within one bearer-level fragment.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-TYPE-CLASS-RANGES",
+      "key": "WCMP-FX-GENERAL-TYPE-CLASS-RANGES",
+      "type": "fixture",
+      "title": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "key": "WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "type": "fixture",
+      "title": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WCMP-FX-ICMPV4-CHECKSUM",
       "key": "WCMP-FX-ICMPV4-CHECKSUM",
       "type": "fixture",
@@ -3162,6 +4464,75 @@
       }
     },
     {
+      "id": "scr-row:WCMP-GEN-C-001",
+      "key": "WCMP-GEN-C-001",
+      "type": "scr-row",
+      "title": "WCMP message type Destination",
+      "properties": {
+        "family": "wcmp",
+        "referencedSection": "5.5.3.1",
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "staticConformanceSection": "Appendix A"
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-003",
+      "key": "WCMP-GEN-C-003",
+      "type": "scr-row",
+      "title": "message type Message Too Big",
+      "properties": {
+        "family": "wcmp",
+        "referencedSection": "5.5.3.3",
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "staticConformanceSection": "Appendix A"
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-006",
+      "key": "WCMP-GEN-C-006",
+      "type": "scr-row",
+      "title": "message type Echo Reply",
+      "properties": {
+        "family": "wcmp",
+        "referencedSection": "5.5.3.5",
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "staticConformanceSection": "Appendix A"
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "scr-row:WCMP-SP-C-001",
       "key": "WCMP-SP-C-001",
       "type": "scr-row",
@@ -3179,6 +4550,29 @@
         ],
         "workItems": [
           "TRN-708"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WCMP-SP-C-002",
+      "key": "WCMP-SP-C-002",
+      "type": "scr-row",
+      "title": "Does the implementation conform to the",
+      "properties": {
+        "family": "wcmp",
+        "referencedSection": "5.4, 5.5.1",
+        "sourceAnchor": {
+          "documentId": "WAP-202-WCMP",
+          "staticConformanceSection": "Appendix A"
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "TRN-703",
+          "T0-17"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4050,7 +5444,7 @@
         ],
         "specReferences": [
           "WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)",
-          "WAP-202-WCMP section 5.4 and 5.5 (general WCMP is the non-IP message branch)",
+          "WAP-202-WCMP sections 5.1, 5.2, and 5.5 (general WCMP scope, conformance, syntax, and behavior)",
           "WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002",
           "WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003",
           "WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)"
@@ -4061,9 +5455,9 @@
           "transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json"
         ],
         "acceptance": [
-          "The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the section 5.4 general-WCMP wire format.",
+          "The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the general-WCMP wire format.",
           "Direct fixtures prove ICMPv4 destination-unreachable code 3 (port unreachable), code 4 (fragmentation needed with DF set), and echo request/reply handling at the WDP error boundary for the selected IPv4 bearer.",
-          "The existing WAP-202 section 5.4/5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim.",
+          "The existing WAP-202 sections 5.1, 5.2, and 5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim; section 5.4 bearer encapsulations remain deferred.",
           "No WTP or connection-oriented WSP capability is activated."
         ],
         "evidence": [
@@ -4083,7 +5477,7 @@
       "type": "work-item",
       "title": "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability",
       "properties": {
-        "status": "todo",
+        "status": "done",
         "ownerLayers": [
           "documentation",
           "spec-processing",
@@ -4093,34 +5487,36 @@
         "sourceFamilies": [
           "wcmp"
         ],
-        "explicitUnmappedFamilies": [
-          "wcmp"
+        "contextDocuments": [
+          "WAP-159-WDPWCMPAdapt"
         ],
         "dependsOn": [
           "TRN-703",
           "T0-17"
         ],
         "notes": [
-          "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability.",
-          "Defer only the mechanical clause mapping while the WML-3 lane edits spec-processing/scripts/generate-wap-selected-normative-clauses.mjs, spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json, spec-processing/scripts/generate-wap-knowledge-graph.mjs, and their generated graph projections."
+          "Additive evidence correction only. Preserve completed TRN-703/T0-17 as the canonical history of the implemented non-IP general-WCMP capability; this mapping does not reopen either work item.",
+          "WAP-202 sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation remain explicitly unimplemented and deferred capability scope."
         ],
         "specReferences": [
-          "WAP-202-WCMP sections 5.4 and 5.5 (general WCMP message format and behavior for non-IP networks)",
-          "WAP-202-WCMP Appendix A rows WCMP-C-001 and WCMP-SP-C-002",
-          "WAP-159-WDPWCMPAdapt effective non-IP bearer adaptation clauses"
+          "WAP-202-WCMP sections 5.1 and 5.2 (general WCMP scope and conformance)",
+          "WAP-202-WCMP sections 5.5.1, 5.5.2, 5.5.3.1, 5.5.3.3, and 5.5.3.5 (general WCMP syntax and supported message behavior)",
+          "WAP-202-WCMP Appendix A rows WCMP-SP-C-002, WCMP-GEN-C-001, WCMP-GEN-C-003, and WCMP-GEN-C-006",
+          "WAP-202-WCMP sections 5.4.1-.7 and WAP-159-WDPWCMPAdapt SMPP adaptation (deferred capability scope)"
         ],
         "existingTickets": [],
         "outputs": [
           "Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability"
         ],
         "acceptance": [
-          "Map the applicable WAP-202 sections 5.4/5.5 and effective adaptation clauses directly to TRN-710, the existing general-WCMP fixtures, and implementation tests without changing TRN-703 status.",
-          "Keep the mapping explicitly outside the selected CDPD/IPv4 profile and do not use it to satisfy the TRN-7-CL-C gate or activate WTP or connection-oriented WSP."
+          "Map the concrete WAP-202 sections 5.1, 5.2, and 5.5 clauses supported by the existing general-WCMP fixtures and implementation tests directly to TRN-710 without changing TRN-703 status.",
+          "Keep WAP-202 sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation explicitly unimplemented and deferred.",
+          "Keep the capability mapping outside the 198 selected parents, the selected CDPD/IPv4 profile, and the TRN-7-CL-C gate; do not activate WTP or connection-oriented WSP."
         ],
         "evidence": [
           "cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp",
           "node scripts/check-wap-selected-normative-clauses.mjs",
-          "node scripts/wap-context-pack.mjs TRN-703",
+          "node scripts/wap-context-pack.mjs TRN-710",
           "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
@@ -4205,6 +5601,1554 @@
       "from": "clause:WCMP-CL-CDPD-USES-ICMP",
       "relation": "verified-by",
       "to": "fixture:WCMP-FX-CDPD-USES-ICMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE|verified-by|fixture:WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "from": "clause:WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION|verified-by|fixture:WCMP-FX-GENERAL-CONGESTION-SUPPRESSION",
+      "from": "clause:WCMP-CL-GENERAL-CONGESTION-SUPPRESSION",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-CONGESTION-SUPPRESSION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS|verified-by|fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES|verified-by|fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION|verified-by|fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE|verified-by|fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "from": "clause:WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS|verified-by|fixture:WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP|verified-by|fixture:WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION|verified-by|fixture:WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED|verified-by|fixture:WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE|verified-by|fixture:WCMP-FX-GENERAL-ECHO-STRUCTURE",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE|verified-by|fixture:WCMP-FX-GENERAL-ECHO-TYPE-CODE",
+      "from": "clause:WCMP-CL-GENERAL-ECHO-TYPE-CODE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ECHO-TYPE-CODE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION|verified-by|fixture:WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "from": "clause:WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE|verified-by|fixture:WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "from": "clause:WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER|verified-by|fixture:WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "from": "clause:WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL|verified-by|fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS|verified-by|fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE|verified-by|fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE|verified-by|fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "from": "clause:WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET|verified-by|fixture:WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "from": "clause:WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER|verified-by|fixture:WCMP-FX-GENERAL-NETWORK-BYTE-ORDER",
+      "from": "clause:WCMP-CL-GENERAL-NETWORK-BYTE-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-NETWORK-BYTE-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE|verified-by|fixture:WCMP-FX-GENERAL-NON-IP-SCOPE",
+      "from": "clause:WCMP-CL-GENERAL-NON-IP-SCOPE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-NON-IP-SCOPE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION|verified-by|fixture:WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "from": "clause:WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|maps-to|requirement:RQ-TRX-007",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|maps-to|requirement:RQ-TRX-008",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-008",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|refines|scr-row:WCMP-GEN-C-001",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|refines|scr-row:WCMP-GEN-C-003",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|refines|scr-row:WCMP-GEN-C-006",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-GEN-C-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES|verified-by|fixture:WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "from": "clause:WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT|verified-by|fixture:WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "from": "clause:WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES|verified-by|fixture:WCMP-FX-GENERAL-TYPE-CLASS-RANGES",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CLASS-RANGES",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-TYPE-CLASS-RANGES",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|maps-to|requirement:RQ-TRX-006",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-TRX-006",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|planned-by|work-item:TRN-703",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|planned-by|work-item:TRN-710",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:TRN-710",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|refines|scr-row:WCMP-SP-C-002",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WCMP-SP-C-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|sourced-from|source-document:WAP-202-WCMP",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-202-WCMP",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE|verified-by|fixture:WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "from": "clause:WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8152,6 +11096,60 @@
       ]
     },
     {
+      "id": "scr-row:WCMP-GEN-C-001|belongs-to|source-family:wcmp",
+      "from": "scr-row:WCMP-GEN-C-001",
+      "relation": "belongs-to",
+      "to": "source-family:wcmp",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-001|planned-by|work-item:TRN-703",
+      "from": "scr-row:WCMP-GEN-C-001",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-003|belongs-to|source-family:wcmp",
+      "from": "scr-row:WCMP-GEN-C-003",
+      "relation": "belongs-to",
+      "to": "source-family:wcmp",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-003|planned-by|work-item:TRN-703",
+      "from": "scr-row:WCMP-GEN-C-003",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-006|belongs-to|source-family:wcmp",
+      "from": "scr-row:WCMP-GEN-C-006",
+      "relation": "belongs-to",
+      "to": "source-family:wcmp",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-GEN-C-006|planned-by|work-item:TRN-703",
+      "from": "scr-row:WCMP-GEN-C-006",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WCMP-SP-C-001|belongs-to|source-family:wcmp",
       "from": "scr-row:WCMP-SP-C-001",
       "relation": "belongs-to",
@@ -8165,6 +11163,24 @@
       "from": "scr-row:WCMP-SP-C-001",
       "relation": "planned-by",
       "to": "work-item:TRN-708",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-SP-C-002|belongs-to|source-family:wcmp",
+      "from": "scr-row:WCMP-SP-C-002",
+      "relation": "belongs-to",
+      "to": "source-family:wcmp",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WCMP-SP-C-002|planned-by|work-item:TRN-703",
+      "from": "scr-row:WCMP-SP-C-002",
+      "relation": "planned-by",
+      "to": "work-item:TRN-703",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9096,6 +12112,16 @@
       "to": "owner-layer:transport-rust",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:TRN-710|uses-context|source-document:WAP-159-WDPWCMPAdapt",
+      "from": "work-item:TRN-710",
+      "relation": "uses-context",
+      "to": "source-document:WAP-159-WDPWCMPAdapt",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json",
+        "spec-processing/source-manifests/wap-1.2.1-release.json"
       ]
     }
   ]

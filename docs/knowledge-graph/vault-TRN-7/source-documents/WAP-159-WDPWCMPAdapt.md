@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `effective-document` ← [[source-families/wdp-wcmp-adaptation|wdp-wcmp-adaptation]]
+- `uses-context` ← [[work-items/TRN-710|TRN-710]]
 
 ## Data
 

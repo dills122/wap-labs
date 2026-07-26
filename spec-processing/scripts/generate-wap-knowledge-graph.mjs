@@ -201,7 +201,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       };
     });
   const allClauses = clauseManifest.families.flatMap((family) =>
-    family.clauses.map((clause) => ({
+    [...family.clauses, ...(family.capabilityClauses ?? [])].map((clause) => ({
       ...clause,
       manifestFamily: family.family
     }))
@@ -211,7 +211,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   );
   const selectedParentIds = new Set(selectedClauses.flatMap((clause) => clause.parentRows));
   const selectedParents = clauseManifest.families.flatMap((family) =>
-    family.parents
+    [...family.parents, ...(family.capabilityParents ?? [])]
       .filter((parent) => selectedParentIds.has(parent.id))
       .map((parent) => ({
         ...parent,
@@ -453,26 +453,45 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
     }
     for (const documentId of workItem.contextDocuments ?? []) {
       const authority = successorAuthorities.get(documentId);
-      if (!authority) {
-        throw new Error(`${workItem.id}: unknown successor context document ${documentId}`);
+      const releaseMember = releaseMembers.get(documentId);
+      if (!authority && !releaseMember) {
+        throw new Error(`${workItem.id}: unknown context document ${documentId}`);
       }
-      const documentNode = addNode(
-        'source-document',
-        authority.documentId,
-        authority.title ?? authority.documentId,
-        {
-          family: authority.family,
-          filename: authority.filename,
-          role: authority.role,
-          sha256: authority.sha256,
-          targetNormative: authority.targetNormative,
-          source: INPUT_PATHS.successorDelta
-        }
-      );
-      addEdge(workItemNode, 'uses-context', documentNode, [
-        programRef,
-        INPUT_PATHS.successorDelta
-      ]);
+      let documentNode = nodeId('source-document', documentId);
+      let contextSource = releaseRef;
+      if (authority) {
+        documentNode = addNode(
+          'source-document',
+          authority.documentId,
+          authority.title ?? authority.documentId,
+          {
+            family: authority.family,
+            filename: authority.filename,
+            role: authority.role,
+            sha256: authority.sha256,
+            targetNormative: authority.targetNormative,
+            source: INPUT_PATHS.successorDelta
+          }
+        );
+        contextSource = INPUT_PATHS.successorDelta;
+      } else if (!nodes.has(documentNode)) {
+        documentNode = addNode(
+          'source-document',
+          releaseMember.documentId,
+          releaseMember.title ?? releaseMember.documentId,
+          {
+            family: releaseMember.family,
+            filename: releaseMember.filename,
+            publicationStatus: releaseMember.publicationStatus,
+            publishedOn: releaseMember.publishedOn,
+            sha256: releaseMember.sha256,
+            authorityUrl: releaseMember.individualSourceUrl,
+            role: 'deferred-capability-context',
+            source: releaseRef
+          }
+        );
+      }
+      addEdge(workItemNode, 'uses-context', documentNode, [programRef, contextSource]);
     }
     for (const layer of workItem.ownerLayers) {
       const layerNode = addNode('owner-layer', layer, layer, {
@@ -577,6 +596,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       sourceAnchor: clause.sourceAnchor,
       normativeForce: clause.normativeForce,
       obligationLevel: clause.obligationLevel,
+      profileApplicability: clause.profileApplicability,
       obligationSynopsis: clause.obligationSynopsis,
       workItems: clause.mapping.workItems,
       ownerLayers: clause.mapping.ownerLayers,
@@ -940,6 +960,11 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     .sort((left, right) => left.key.localeCompare(right.key));
   const workItemSections = workItems.map((workItem) => {
     const directClauses = directClausesForWorkItem(graph, workItem.key);
+    const capabilityOnly =
+      directClauses.length > 0 &&
+      directClauses.every(
+        (clause) => clause.properties.profileApplicability === 'capability-gated-non-ip-bearer'
+      );
     const directScrRows = directScrRowsForWorkItem(graph, workItem.key);
     const directParentIds = sortedUnique(
       directClauses.flatMap((clause) => clause.properties.parentRows)
@@ -963,7 +988,7 @@ export function renderContextPack(graph, focusWorkItemId = null) {
             .join(', ')})`
         : ''
     }
-- Selected SCR parents: ${directParentIds.length}${
+- ${capabilityOnly ? 'Capability' : 'Selected'} SCR parents: ${directParentIds.length}${
       directParentIds.length
         ? ` (${directParentIds.map((item) => `\`${item}\``).join(', ')})`
         : ''
@@ -1059,7 +1084,11 @@ ${lines.join('\n')}
         return `- **${clause.key}** — ${clause.properties.obligationSynopsis}
   - Family: \`${clause.properties.family}\`; force: \`${
           clause.properties.normativeForce
-        }\`; level: \`${clause.properties.obligationLevel}\`
+        }\`; level: \`${clause.properties.obligationLevel}\`${
+          clause.properties.profileApplicability
+            ? `\n  - Applicability: \`${clause.properties.profileApplicability}\``
+            : ''
+        }
   - Source: \`${clause.properties.sourceAnchor.documentId}\` §${
           clause.properties.sourceAnchor.section
         } (${clause.properties.sourceAnchor.heading})

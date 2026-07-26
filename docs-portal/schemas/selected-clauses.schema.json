@@ -205,6 +205,23 @@
           "type": "array",
           "items": { "$ref": "#/$defs/clause" }
         },
+        "capabilityDisposition": {
+          "const": "capability-gated-non-ip-bearer"
+        },
+        "capabilityParentCount": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonNegativeInteger"
+        },
+        "capabilityClauseCount": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonNegativeInteger"
+        },
+        "capabilityParents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/parent" }
+        },
+        "capabilityClauses": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/clause" }
+        },
         "directEvidence": {
           "$ref": "#/$defs/directEvidence"
         }
@@ -340,6 +357,9 @@
         "id": { "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier" },
         "family": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+        },
+        "profileApplicability": {
+          "const": "capability-gated-non-ip-bearer"
         },
         "parentRows": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"

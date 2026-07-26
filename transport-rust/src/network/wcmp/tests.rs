@@ -92,7 +92,7 @@ fn source_derived_fixture_covers_non_ip_general_wcmp_capability_rows() {
     assert_eq!(fixture.source_document_id, "WAP-202-WCMP");
     assert_eq!(
         fixture.source_sections,
-        ["5.1", "5.2", "5.4", "5.5.1", "5.5.2", "5.5.3.1", "5.5.3.3", "5.5.3.5"]
+        ["5.1", "5.2", "5.5.1", "5.5.2", "5.5.3.1", "5.5.3.3", "5.5.3.5"]
     );
     assert_eq!(
         fixture.capability_rows,

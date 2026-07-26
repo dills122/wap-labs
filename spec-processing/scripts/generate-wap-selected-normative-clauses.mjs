@@ -195,6 +195,49 @@ const strictWcmpClauseIds = new Set(
     (definition) => `WCMP-CL-${definition.key.toUpperCase().replaceAll('_', '-')}`
   )
 );
+const generalWcmpSourceAnchors = {
+  '5.1': { documentId: 'WAP-202-WCMP', section: '5.1', heading: '5.1. General', normalizedTextSha256: '539f883bd387e0817c44f6f18d88a599de8b4194d7c9f262f7c25fb888f632f3' },
+  '5.2': { documentId: 'WAP-202-WCMP', section: '5.2', heading: '5.2. WCMP Conformance', normalizedTextSha256: '4ef4829fe160989570d2b11816dec8635343b560b06608ed090902caffc99ba7' },
+  '5.5.1': { documentId: 'WAP-202-WCMP', section: '5.5.1', heading: '5.5.1. General Message Structure', normalizedTextSha256: 'a1a35edc0fc680fbd95779324d810e465dd3a131a3004e5ae7e0629d575fcd3a' },
+  '5.5.2': { documentId: 'WAP-202-WCMP', section: '5.5.2', heading: '5.5.2. Address Information Formats', normalizedTextSha256: 'e9b34b18c16b0709752f28dd6cbf41b6d6e69a9efa094e586c17a9ed77cc8aaa' },
+  '5.5.3.1': { documentId: 'WAP-202-WCMP', section: '5.5.3.1', heading: '5.5.3.1. Destination Unreachable', normalizedTextSha256: '4f499fabe3ce55ed88651b5aa782c6b232673082e1b94417cce0f69f54e28588' },
+  '5.5.3.3': { documentId: 'WAP-202-WCMP', section: '5.5.3.3', heading: '5.5.3.3. Message Too Big', normalizedTextSha256: '36ac87bfe1bdd8b7b2f428fc520e26a3646e24adf4187e5859974e97aca383b8' },
+  '5.5.3.5': { documentId: 'WAP-202-WCMP', section: '5.5.3.5', heading: '5.5.3.5. WCMP Echo Request/Reply', normalizedTextSha256: 'a8b2ea352f2db3a3d2bf71eaea6b0fed94a858c3b3adac0488cc7839f061593f' }
+};
+const generalWcmpClauseDefinitions = [
+  ['non_ip_scope', ['WCMP-SP-C-002'], '5.1', 'explicit-must', 'transport-boundary', 'general_wcmp_is_available_only_with_the_explicit_non_ip_profile', 'Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.'],
+  ['error_response_suppression', ['WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'generation_suppresses_prohibited_error_responses', 'Do not generate a WCMP error message in response to another WCMP error message.'],
+  ['fragment_error_single_response', ['WCMP-SP-C-002'], '5.1', 'explicit-must', 'error-policy', 'generation_suppresses_prohibited_error_responses', 'Send no more than one WCMP error message for a fragmented datagram.'],
+  ['single_bearer_fragment', ['WCMP-SP-C-002'], '5.1', 'explicit-must', 'transport-boundary', 'constrained_fragment_and_address_limits_reject_without_truncation', 'Require each WCMP message to fit within one bearer-level fragment.'],
+  ['minimum_client_message_set', ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.2', 'table', 'transport-boundary', 'source_derived_fixture_covers_non_ip_general_wcmp_capability_rows', 'Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.'],
+  ['network_byte_order', ['WCMP-SP-C-002'], '5.5.1', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.'],
+  ['type_code_data_structure', ['WCMP-SP-C-002'], '5.5.1', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.'],
+  ['type_class_ranges', ['WCMP-SP-C-002'], '5.5.1', 'table', 'binary-decoder', 'all_type_octets_have_a_deterministic_classification', 'Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.'],
+  ['selected_type_code_values', ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'], '5.5.1', 'table', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.'],
+  ['address_information_structure', ['WCMP-SP-C-002'], '5.5.2', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.'],
+  ['ip_address_bit_order', ['WCMP-SP-C-002'], '5.5.2', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode an IP address within WCMP address data with the most significant bit first.'],
+  ['destination_unreachable_structure', ['WCMP-GEN-C-001'], '5.5.3.1', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.'],
+  ['destination_unreachable_generation', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-should', 'error-policy', 'generation_maps_remaining_destination_unreachable_failures', 'Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.'],
+  ['port_unreachable_generation', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'generation_maps_port_and_buffer_failures_to_selected_messages', 'Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.'],
+  ['congestion_suppression', ['WCMP-GEN-C-001'], '5.5.3.1', 'explicit-must', 'error-policy', 'generation_suppresses_prohibited_error_responses', 'Do not generate Destination Unreachable when datagram delivery fails because of congestion.'],
+  ['destination_unreachable_codes', ['WCMP-GEN-C-001'], '5.5.3.1', 'table', 'error-policy', 'reported_destination_unreachable_maps_remaining_codes_to_wdp_errors', 'Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.'],
+  ['destination_unreachable_address', ['WCMP-GEN-C-001'], '5.5.3.1', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Carry the original datagram destination address in a Destination Unreachable message.'],
+  ['message_too_big_structure', ['WCMP-GEN-C-003'], '5.5.3.3', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.'],
+  ['message_too_big_buffer_signal', ['WCMP-GEN-C-003'], '5.5.3.3', 'explicit-must', 'error-policy', 'generation_maps_port_and_buffer_failures_to_selected_messages', 'Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.'],
+  ['message_too_big_type_code', ['WCMP-GEN-C-003'], '5.5.3.3', 'table', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Use Type 60 and Code 0 for a general-WCMP Message Too Big message.'],
+  ['message_too_big_destination_address', ['WCMP-GEN-C-003'], '5.5.3.3', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Carry the original datagram destination address in a Message Too Big message.'],
+  ['echo_structure', ['WCMP-GEN-C-006'], '5.5.3.5', 'grammar', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.'],
+  ['echo_reply_required', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'transport-boundary', 'echo_request_generates_exact_reply_and_preserves_correlation', 'Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.'],
+  ['echo_data_roundtrip', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-must', 'transport-boundary', 'echo_request_generates_exact_reply_and_preserves_correlation', 'Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.'],
+  ['echo_path_mtu_truncation', ['WCMP-GEN-C-006'], '5.5.3.5', 'explicit-may', 'transport-boundary', 'echo_reply_truncates_only_data_to_return_path_fragment_size', 'Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.'],
+  ['echo_type_code', ['WCMP-GEN-C-006'], '5.5.3.5', 'table', 'binary-decoder', 'selected_messages_preserve_exact_wap_1_2_1_bytes_and_roundtrip', 'Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.'],
+  ['echo_correlation_fields', ['WCMP-GEN-C-006'], '5.5.3.5', 'grammar', 'transport-boundary', 'echo_request_generates_exact_reply_and_preserves_correlation', 'Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.']
+].map(([key, parentRows, section, normativeForce, fixtureKind, test, obligationSynopsis]) => ({ key, parentRows, section, sourceAnchor: generalWcmpSourceAnchors[section], normativeForce, fixtureKind, test, obligationSynopsis }));
+const generalWcmpClauseIds = new Set(
+  generalWcmpClauseDefinitions.map(
+    (definition) => `WCMP-CL-GENERAL-${definition.key.toUpperCase().replaceAll('_', '-')}`
+  )
+);
 const directWorkItemClauseIds = new Map([
   [
     'WML-202',
@@ -376,6 +419,10 @@ const directWorkItemClauseIds = new Map([
       'WDP-CL-CDPD-UDP-IP-PROFILE',
       'WDP-CL-IPV4-DONT-FRAGMENT'
     ])
+  ],
+  [
+    'TRN-710',
+    generalWcmpClauseIds
   ]
 ]);
 const implementedWml202ClauseIds = new Set(
@@ -626,6 +673,63 @@ function refreshStrictWcmpFamily(manifest) {
     };
   });
 
+  const capabilityParentIds = ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'];
+  const capabilityParents = capabilityParentIds.map((parentId) => {
+    const parent = parentLedger.obligations.find((candidate) => candidate.id === parentId);
+    if (!parent) throw new Error(`general WCMP capability parent ${parentId} is missing`);
+    return parent;
+  });
+  const capabilityParentById = new Map(capabilityParents.map((parent) => [parent.id, parent]));
+  const capabilityClauses = generalWcmpClauseDefinitions.map((definition) => {
+    const id = `WCMP-CL-GENERAL-${definition.key.toUpperCase().replaceAll('_', '-')}`;
+    const parents = definition.parentRows.map((parentId) => {
+      const parent = capabilityParentById.get(parentId);
+      if (!parent) throw new Error(`${id}: capability parent ${parentId} is missing`);
+      return parent;
+    });
+    const directWorkItems = directWorkItemsForClause(id);
+    const integrationProfileTest = definition.test === 'general_wcmp_is_available_only_with_the_explicit_non_ip_profile';
+    const testPath = integrationProfileTest
+      ? 'transport-rust/tests/wcmp_cdpd_icmp_profile.rs'
+      : 'transport-rust/src/network/wcmp/tests.rs';
+    return {
+      id,
+      family: 'wcmp',
+      profileApplicability: 'capability-gated-non-ip-bearer',
+      parentRows: definition.parentRows,
+      directWorkItems,
+      sourceAnchor: definition.sourceAnchor,
+      normativeForce: definition.normativeForce,
+      obligationLevel: definition.normativeForce === 'explicit-should'
+        ? 'recommended'
+        : definition.normativeForce === 'explicit-may'
+          ? 'permitted'
+          : 'required',
+      obligationSynopsis: definition.obligationSynopsis,
+      fixturePlan: {
+        id: `WCMP-FX-GENERAL-${definition.key.toUpperCase().replaceAll('_', '-')}`,
+        kind: definition.fixtureKind,
+        status: 'implemented',
+        assertion: definition.obligationSynopsis,
+        evidence: {
+          path: 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json',
+          testPath,
+          command: integrationProfileTest
+            ? `cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile ${definition.test}`
+            : `cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp::tests::${definition.test}`
+        }
+      },
+      mapping: {
+        ownerLayers: [...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))].sort(),
+        workItems: [...new Set([...parents.flatMap((parent) => parent.mapping.workItems), ...directWorkItems])].sort(),
+        requirementIds: [...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))].sort(),
+        parentImplementationSnapshot: Object.fromEntries(parents.map((parent) => [parent.id, parent.mapping.implementationStatus])),
+        clauseImplementationStatus: 'implemented',
+        evidenceGate: 'A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.'
+      }
+    };
+  });
+
   wcmpFamily.status = strictWcmpImplemented
     ? 'nested-clauses-fixture-backed'
     : 'nested-clauses-partially-fixture-backed';
@@ -658,6 +762,20 @@ function refreshStrictWcmpFamily(manifest) {
       .sort()
   }));
   wcmpFamily.clauses = clauses;
+  wcmpFamily.capabilityDisposition = 'capability-gated-non-ip-bearer';
+  wcmpFamily.capabilityParentCount = capabilityParents.length;
+  wcmpFamily.capabilityClauseCount = capabilityClauses.length;
+  wcmpFamily.capabilityParents = capabilityParents.map((parent) => ({
+    id: parent.id,
+    feature: parent.feature,
+    referencedSection: parent.referencedSection,
+    sourceAnchor: parent.sourceAnchor,
+    implementationStatus: parent.mapping.implementationStatus,
+    ownerLayers: parent.mapping.ownerLayers,
+    workItems: parent.mapping.workItems,
+    clauseIds: capabilityClauses.filter((candidate) => candidate.parentRows.includes(parent.id)).map((candidate) => candidate.id).sort()
+  }));
+  wcmpFamily.capabilityClauses = capabilityClauses;
 }
 
 function refreshManifestTotals(manifest) {
@@ -1320,6 +1438,7 @@ const sectionDefinitions = {
         '5.5.1. General Message Structure',
         '5.5.2. Address Information Formats'
       ],
+      '5.5.2': ['5.5.2. Address Information Formats', '5.5.3. WCMP Messages'],
       '5.5.3.1': [
         '5.5.3.1. Destination Unreachable',
         '5.5.3.2. Parameter Problem'

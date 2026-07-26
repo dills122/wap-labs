@@ -538,18 +538,50 @@ if (
   !wcmpIpProfileCorrection?.evidence?.includes(
     'node scripts/wap-context-pack.mjs TRN-708'
   ) ||
-  wcmpClauseMappingFollowUp?.status !== 'todo' ||
+  wcmpClauseMappingFollowUp?.status !== 'done' ||
   JSON.stringify(wcmpClauseMappingFollowUp?.dependsOn) !==
     JSON.stringify(['TRN-703', 'T0-17']) ||
-  JSON.stringify(wcmpClauseMappingFollowUp?.explicitUnmappedFamilies) !==
-    JSON.stringify(['wcmp']) ||
+  wcmpClauseMappingFollowUp?.explicitUnmappedFamilies !== undefined ||
+  JSON.stringify(wcmpClauseMappingFollowUp?.contextDocuments) !==
+    JSON.stringify(['WAP-159-WDPWCMPAdapt']) ||
   !wcmpClauseMappingFollowUp?.notes?.some(
     (line) =>
       line.includes('Preserve completed TRN-703/T0-17') &&
       line.includes('canonical history')
   ) ||
-  !wcmpClauseMappingFollowUp?.notes?.some((line) =>
-    line.includes('generate-wap-selected-normative-clauses.mjs')
+  !wcmpClauseMappingFollowUp?.notes?.some(
+    (line) =>
+      line.includes('5.4.1-.7') &&
+      line.includes('WAP-159 SMPP') &&
+      line.includes('unimplemented') &&
+      line.includes('deferred')
+  ) ||
+  !wcmpClauseMappingFollowUp?.specReferences?.some((line) =>
+    line.includes('sections 5.1 and 5.2')
+  ) ||
+  !wcmpClauseMappingFollowUp?.specReferences?.some(
+    (line) => line.includes('5.5.1') && line.includes('5.5.3.5')
+  ) ||
+  !wcmpClauseMappingFollowUp?.acceptance?.some(
+    (line) =>
+      line.includes('sections 5.1, 5.2, and 5.5') &&
+      line.includes('TRN-710')
+  ) ||
+  !wcmpClauseMappingFollowUp?.acceptance?.some(
+    (line) =>
+      line.includes('5.4.1-.7') &&
+      line.includes('WAP-159 SMPP') &&
+      line.includes('unimplemented') &&
+      line.includes('deferred')
+  ) ||
+  !wcmpClauseMappingFollowUp?.acceptance?.some(
+    (line) =>
+      line.includes('198 selected parents') &&
+      line.includes('TRN-7-CL-C') &&
+      line.includes('WTP')
+  ) ||
+  !wcmpClauseMappingFollowUp?.evidence?.includes(
+    'node scripts/wap-context-pack.mjs TRN-710'
   ) ||
   connectionlessTransportGate?.status !== 'done' ||
   connectionlessTransportGate?.profile !== 'class-c-data-client' ||

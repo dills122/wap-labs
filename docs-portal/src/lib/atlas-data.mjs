@@ -425,6 +425,67 @@ function validateReferencesAndOrder(input, failures) {
         assessedClauseCount += 1;
       }
     }
+    if (family.capabilityParents || family.capabilityClauses) {
+      const capabilityParents = family.capabilityParents ?? [];
+      const capabilityClauses = family.capabilityClauses ?? [];
+      const capabilityParentIds = uniqueIndex(
+        capabilityParents,
+        (parent) => parent.id,
+        `${family.family} capability parent`,
+        failures
+      );
+      const capabilityClauseIds = uniqueIndex(
+        capabilityClauses,
+        (clause) => clause.id,
+        `${family.family} capability clause`,
+        failures
+      );
+      if (family.capabilityDisposition !== 'capability-gated-non-ip-bearer') {
+        failures.push(`${family.family}.capabilityDisposition is not capability-gated`);
+      }
+      if (family.capabilityParentCount !== capabilityParents.length) {
+        failures.push(`${family.family}.capabilityParentCount does not match capabilityParents.length`);
+      }
+      if (family.capabilityClauseCount !== capabilityClauses.length) {
+        failures.push(`${family.family}.capabilityClauseCount does not match capabilityClauses.length`);
+      }
+      for (const parent of capabilityParents) {
+        if (globalParentIds.has(parent.id)) {
+          failures.push(`selected clauses repeat parent ${parent.id}`);
+        }
+        globalParentIds.add(parent.id);
+        for (const id of parent.clauseIds) {
+          if (!capabilityClauseIds.has(id)) {
+            failures.push(`${parent.id}.clauseIds references unknown capability clause ${id}`);
+          }
+        }
+      }
+      for (const clause of capabilityClauses) {
+        if (globalClauseIds.has(clause.id)) {
+          failures.push(`selected clauses repeat clause ${clause.id}`);
+        }
+        globalClauseIds.add(clause.id);
+        if (clause.family !== family.family) {
+          failures.push(`${clause.id}.family is ${clause.family}, expected ${family.family}`);
+        }
+        if (clause.profileApplicability !== family.capabilityDisposition) {
+          failures.push(`${clause.id}.profileApplicability does not match capabilityDisposition`);
+        }
+        if (!clauseSourceIds.has(clause.sourceAnchor.documentId)) {
+          failures.push(`${clause.id}.sourceAnchor references undeclared source ${clause.sourceAnchor.documentId}`);
+        }
+        for (const parentId of clause.parentRows) {
+          if (!capabilityParentIds.has(parentId)) {
+            failures.push(`${clause.id}.parentRows references unknown capability parent ${parentId}`);
+          }
+        }
+        for (const workItemId of clause.directWorkItems ?? []) {
+          if (!workItemIds.has(workItemId)) {
+            failures.push(`${clause.id}.directWorkItems references unknown work item ${workItemId}`);
+          }
+        }
+      }
+    }
     if (family.directEvidence) {
       for (const clauseId of family.directEvidence.implementedClauseIds) {
         if (!clauseIds.has(clauseId)) {

@@ -34,9 +34,10 @@ Capture transport-adjacent requirements that affect Waves interoperability bound
 For the strict WAP 1.2.1 Class C target, the exact WCMP authority is
 `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`. The selected
 CDPD/IPv4 dependency path contains `WCMP-C-001` and `WCMP-SP-C-001`; both and
-their nine RFC 792/WAP-202 clauses have direct fixture evidence. The section
-5.4/5.5 general-message rows remain implemented only as an explicit non-IP
-capability. The `RQ-TRX-006..008` groups below are thematic owners, not
+their nine RFC 792/WAP-202 clauses have direct fixture evidence. WAP-202
+sections 5.1/5.2/5.5 are directly mapped as an explicit non-IP general-WCMP
+capability; sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation
+remain unimplemented and deferred. The `RQ-TRX-006..008` groups below are thematic owners, not
 substitutes for the selected source rows.
 
 ## Requirements matrix
@@ -192,7 +193,9 @@ Legend:
 ## Migration coupling
 
 - `TRN-703` preserves the five-row general-WCMP capability for explicit
-  non-IP bearers; `TRN-708` owns the selected two-row ICMP-backed path.
+  non-IP bearers; `TRN-708` owns the selected two-row ICMP-backed path, and
+  `TRN-710` maps the supported WAP-202 sections 5.1/5.2/5.5 clauses without
+  claiming sections 5.4.1-.7 or WAP-159 SMPP adaptation.
 - `RQ-TRX-009` posture declaration is recorded via `T0-12`; protocol-level implementation beyond delegated/deferred posture remains gated by `T0-14` profile decisions.
 - `RQ-TRX-010` scope is explicitly `deferred` in `T0-13`; any future in-scope activation requires a follow-on ticket with adapter fixtures before code-path enablement.
 - `T0-17` remains the final scope lock so adjacent behavior cannot enter profile migration without explicit ticketing.
