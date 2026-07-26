@@ -789,6 +789,45 @@ fn invoke_script_ref_fatal_trap_after_go_discards_deferred_navigation_effects() 
 }
 
 #[test]
+fn invoke_script_ref_go_to_missing_card_reports_failure_not_stale_success() {
+    // The VM itself halts cleanly here (no trap) — the failure is entirely in
+    // applying the deferred `go()` navigation effect against a target that
+    // doesn't exist. `last_script_outcome` must reflect that failure, not the
+    // script's own successful execution, or `lastScriptExecutionOk()` would
+    // contradict the `Err` this call returns.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home"><p>Home</p></card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+
+    let mut unit = Vec::new();
+    push_string(&mut unit, "#missing");
+    unit.push(0x20);
+    unit.push(0x03);
+    unit.push(0x01); // go("#missing")
+    unit.push(0x00);
+    engine.register_script_unit("bad-nav.wmlsc".to_string(), unit);
+
+    let err = engine
+        .invoke_script_ref_internal("bad-nav.wmlsc", "main", &[])
+        .expect_err("navigation to a missing card must surface as a failure");
+    assert!(err.contains("Card id not found"));
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert_eq!(engine.last_script_execution_ok(), Some(false));
+    assert_eq!(
+        engine.last_script_execution_error_class().as_deref(),
+        Some("fatal")
+    );
+    assert_eq!(
+        engine.last_script_execution_trap().as_deref(),
+        Some("Card id not found")
+    );
+}
+
+#[test]
 fn fatal_invocation_failure_keeps_engine_recoverable() {
     let mut engine = WmlEngine::new();
     let xml = r##"
