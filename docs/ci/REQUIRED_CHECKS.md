@@ -109,7 +109,12 @@ only after every required status check and any other ruleset requirement succeed
 
 ## Manual and deployment workflows
 
-- `Transport WAP Smoke (Kannel)` is manual and must not be required for pull requests.
+- `Transport WAP Smoke (Kannel)` is a path-scoped PR/manual signal. Do not configure it as a
+  global required context because it intentionally does not run on unrelated pull requests.
+- `Native Tauri UI through Kannel (pilot)` only self-validates pilot implementation changes in PRs
+  and otherwise runs scheduled/manual. It must not be required until the promotion criteria in
+  `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are satisfied and the follow-up widens its
+  stable PR paths to relevant product changes.
 - `Build and Deploy to gh-pages` is deployment-focused and must not be required for code merges.
 - Scheduled/manual fuzzing, browser baseline, and release workflows must not be required
   pull-request checks.

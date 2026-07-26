@@ -5,6 +5,14 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const wmlDtdVersion = process.env.WML_DTD_VERSION || '1.1';
+const supportedWmlDtdVersions = new Set(['1.1', '1.2', '1.3']);
+
+if (!supportedWmlDtdVersions.has(wmlDtdVersion)) {
+  throw new Error(
+    `unsupported WML_DTD_VERSION ${JSON.stringify(wmlDtdVersion)}; expected 1.1, 1.2, or 1.3`
+  );
+}
 const gatewayBaseUrls = process.env.GATEWAY_BASE_URL
   ? [process.env.GATEWAY_BASE_URL]
   : ['http://kannel:13002', 'http://localhost:13002'];
@@ -58,7 +66,7 @@ function xmlEscape(value) {
 function sendWml(res, body, statusCode = 200) {
   const document =
     '<?xml version="1.0"?>\n' +
-    '<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">\n' +
+    `<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML ${wmlDtdVersion}//EN" "http://www.wapforum.org/DTD/wml_${wmlDtdVersion}.xml">\n` +
     `<wml>\n${body}\n</wml>\n`;
 
   res.status(statusCode);

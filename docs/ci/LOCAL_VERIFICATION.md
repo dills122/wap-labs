@@ -52,6 +52,12 @@ The full compliance wrapper proves that canonical compliance inputs and generate
 synchronized; implementation conformance still depends on the direct fixtures and evidence named
 by the selected profile.
 
+The extended live-Kannel lane expects the stack to advertise WML 1.3 explicitly at its test
+boundary. Start it with `WML_DTD_VERSION=1.3 docker compose up -d --build kannel wml-server`, run
+`pnpm verify:extended`, and always finish with `docker compose down`. The transport itself sends the
+matching WSP `Encoding-Version: 1.3` request header; neither setting relaxes the production network
+policy or the strict WBXML 1.3 decoder.
+
 ## Automated contract tests
 
 Run the orchestration tests directly with:

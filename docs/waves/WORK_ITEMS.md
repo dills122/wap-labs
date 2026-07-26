@@ -1314,6 +1314,31 @@ Completed `B0` through `B3` tickets are archived in:
 - Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
 - Follow-through landed in `#109` and `#110`: background startup probing, timer/render churn reduction, stale-safe navigation, combined frame-oriented host commands, off-UI-thread fetch execution, and targeted coverage around the affected coordinators.
 
+### A5-08 Native Tauri/Kannel PR-signal promotion
+
+1. `Status`: `todo`
+2. `Depends On`: `T0-26`, `T0-29`, `A5-07`
+3. `Owner`: `browser`, `transport-rust`, `CI`
+4. `Files`:
+- `.github/workflows/native-tauri-kannel-e2e.yml`
+- `scripts/native-tauri-kannel-e2e.sh`
+- `browser/frontend/scripts/native-tauri-kannel-e2e.mjs`
+- `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+5. `Build`:
+- evaluate the scheduled/manual native UI pilot against the scorecard's exact Threshold C
+- preserve schedule/manual and pilot self-validation triggers, widening pull-request coverage to product paths only after the pilot qualifies
+- keep local/private access explicit at the existing host policy boundary with `wap-net-core` and fallback disabled
+6. `Tests`:
+- four consecutive scheduled successes over at least 21 days with no reruns
+- complete fixed-name UI, driver, service, and teardown artifact set for every qualifying run
+- first path-scoped pull-request run succeeds within the 30-minute promotion budget
+7. `Accept`:
+- production Tauri frontend changes have a stable, relevant-PR native Kannel signal
+- no production SSRF, redirect, DNS, payload, or network-profile policy is weakened
+- `G9` advances to `1.0` only after the promoted workflow succeeds
+8. `Notes`:
+- additive follow-up to completed `T0-26`; do not reopen or rewrite its historical acceptance.
+
 ## WAE Selected-Profile Gap Queue
 
 ### WAE-607 HTTP Basic authentication closure

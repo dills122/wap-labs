@@ -1,7 +1,8 @@
 # Transport E2E Readiness Scorecard
 
 Status: active tracking metric  
-Date: 2026-03-06  
+Date: 2026-07-26
+
 Owner: transport-rust + browser + gateway docs
 
 ## Purpose
@@ -13,6 +14,7 @@ Track how close Waves is to a reliable end-to-end test path against:
 3. either:
    - `transport-rust` directly, or
    - browser host flow through `fetchDeck`
+4. production Tauri frontend controls through the native host/engine and transport boundary
 
 This scorecard is not a protocol-conformance replacement. It is a practical execution-readiness metric for local and CI-like E2E validation.
 
@@ -32,7 +34,7 @@ Two roll-up scores are tracked:
 Applicable gates:
 
 1. `transport-to-kannel`: `G1..G6` (`6.0` max)
-2. `browser-to-kannel`: `G1..G8` (`8.0` max)
+2. `browser-to-kannel`: `G1..G9` (`9.0` max)
 
 ## Current score
 
@@ -42,7 +44,7 @@ Score: `6.0 / 6.0` (`100%`)
 
 ### Browser-to-Kannel
 
-Score: `8.0 / 8.0` (`100%`)
+Score: `8.5 / 9.0` (`94%`)
 
 ## Gate table
 
@@ -56,6 +58,7 @@ Score: `8.0 / 8.0` (`100%`)
 | `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](../../scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
 | `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
 | `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](../../browser/src-tauri/tests/kannel_smoke.rs) |
+| `G9` | Production Tauri frontend is driven through native IPC/transport to visible Kannel results | `n/a` | `0.5` | executable Linux pilot in [scripts/native-tauri-kannel-e2e.sh](../../scripts/native-tauri-kannel-e2e.sh) and [browser/frontend/scripts/native-tauri-kannel-e2e.mjs](../../browser/frontend/scripts/native-tauri-kannel-e2e.mjs); the workflow self-validates pilot changes and otherwise runs scheduled/manual, capturing home/menu, invalid-URL, recovery, and teardown evidence, but it does not yet cover product-change PR paths |
 
 ## Interpretation
 
@@ -63,7 +66,9 @@ Score: `8.0 / 8.0` (`100%`)
 
 1. `transport-rust` now has a credible native Kannel smoke gate for both baseline `GET` decks and constrained WML form `POST`.
 2. browser-level real-gateway E2E is credible at the host/engine layer for root/menu navigation and register/login form submission.
-3. protocol-core replay readiness (`T0-22`) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture for the constrained MVP lane.
+3. a runnable native UI pilot now drives visible production frontend controls across Tauri IPC and
+   the real native Kannel path for startup, home render, menu navigation, failure, and recovery.
+4. protocol-core replay readiness (`T0-22`) still exceeds end-user browser realism, but live ingress evidence now matches the active profile posture for the constrained MVP lane.
 
 ### What this score does not mean
 
@@ -71,6 +76,7 @@ Score: `8.0 / 8.0` (`100%`)
 2. it does not prove full WSP/WTP/WDP conformance
 3. it does not guarantee emulator/browser UX correctness
 4. it proves constrained connectionless form `POST`, but it does not prove full connection-oriented WSP/WTP session support
+5. it does not yet make full native UI automation a required or product-change pull-request gate
 
 ## Current evidence base
 
@@ -81,15 +87,16 @@ Score: `8.0 / 8.0` (`100%`)
 3. transport-specific native smoke path exists:
    - [transport-rust/tests/kannel_smoke.rs](../../transport-rust/tests/kannel_smoke.rs)
    - `make smoke-transport-wap`
-4. on-demand CI smoke workflow exists in [docs/ci/CI_SETUP.md](../../docs/ci/CI_SETUP.md)
+4. path-scoped pull-request/manual transport smoke and scheduled/manual native Tauri UI workflows
+   exist in [docs/ci/CI_SETUP.md](../../docs/ci/CI_SETUP.md)
 5. protocol-native replay harness exists in [transport-rust/tests/interop_replay.rs](../../transport-rust/tests/interop_replay.rs)
 
 ### Main gaps
 
-1. the Kannel smoke lane is still ignored/manual rather than part of default local Rust test execution
-2. browser real-gateway coverage still stops at Tauri host + engine render/navigation, not frontend UI automation
-3. smoke artifacts are temp-dir based rather than checked into a durable report format
-4. non-ASCII charset-sensitive form submission is still not a proven smoke path
+1. the underlying live Kannel Rust tests remain ignored outside the provisioned smoke workflows
+2. native frontend UI automation covers pilot implementation PRs plus scheduled/manual runs while
+   Linux runner stability is measured; product-change PR paths remain deferred
+3. non-ASCII charset-sensitive form submission is still not a proven smoke path
 
 ## Recommended next threshold targets
 
@@ -107,17 +114,31 @@ Required moves:
 
 1. met
 
+### Threshold C: promotable native frontend E2E (`G9 = 1.0`)
+
+Current status: `pilot`
+
+Promote the native workflow additively to a path-scoped pull-request signal only when:
+
+1. four consecutive scheduled runs succeed on `ubuntu-latest` over at least 21 days
+2. every qualifying run uploads `evidence.json` with `result: pass`, all five named screenshots,
+   page source, driver/service logs, `gui-cleanup.json`, and empty post-down Compose state
+3. none of the qualifying runs requires a rerun and the slowest completes within 30 minutes
+4. the follow-up preserves the scheduled/manual triggers, read-only permissions, explicit
+   `allow-private` test-boundary opt-in, `wap-net-core`, and disabled fallback
+
 ## Suggested follow-up ticket
 
 Suggested ticket:
 
-- `A5-01` history entry fidelity follow-up
+- `A5-08` native Tauri/Kannel PR-signal promotion
 
 Suggested scope:
 
-1. preserve current native Kannel/browser smoke credibility while tightening history/session fidelity after network navigation
-2. verify browser-visible back/reload behavior stays aligned with engine/runtime history semantics
-3. update this scorecard only if the browser-to-kannel execution posture or signal quality changes materially
+1. evaluate the four-run pilot record against Threshold C without weakening any transport policy
+2. widen path-scoped `pull_request` coverage from pilot files to relevant product changes while
+   preserving schedule/manual
+3. raise `G9` to `1.0` only after the promoted workflow itself succeeds on a qualifying PR
 
 ## Update policy
 

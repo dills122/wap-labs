@@ -5,7 +5,7 @@ PROJECT_DIR := $(CURDIR)
 RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
-.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap init-refresh \
+.PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap smoke-native-tauri-kannel-ui init-refresh \
 	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node \
@@ -42,6 +42,9 @@ smoke-up:
 
 smoke-transport-wap:
 	./scripts/transport-wap-smoke.sh
+
+smoke-native-tauri-kannel-ui:
+	./scripts/native-tauri-kannel-e2e.sh
 
 init-refresh:
 	./scripts/init-refresh.sh

@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:accessibility:rendered": "node ./scripts/check-rendered-accessibility.mjs",
+    "test:native-kannel:ui": "node ./scripts/native-tauri-kannel-e2e.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\"",
@@ -41,6 +42,7 @@
     "globals": "catalog:",
     "jsdom": "^29.1.1",
     "prettier": "catalog:",
+    "selenium-webdriver": "^4.46.0",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "^4.1.10"

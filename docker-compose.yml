@@ -6,6 +6,8 @@ services:
     volumes:
       - ./wml-server:/app
     command: sh -c "npm install && npm start"
+    environment:
+      WML_DTD_VERSION: "${WML_DTD_VERSION:-1.1}"
     expose:
       - "3000"
     ports:
