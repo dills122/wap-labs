@@ -1,0 +1,489 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusPill from '../components/StatusPill.astro';
+import {
+  clauseManifest,
+  effectiveSpec,
+  program,
+  releaseManifest,
+  workItems
+} from '../lib/repository';
+import { route } from '../lib/routes';
+
+const repository = 'https://github.com/dills122/wap-labs';
+const source = (path: string) => `${repository}/blob/main/${path}`;
+const tree = (path: string) => `${repository}/tree/main/${path}`;
+
+const confidenceLevels = [
+  {
+    id: 'regression',
+    label: 'Regression-green',
+    summary:
+      'The required checks for this change passed: repository hygiene, the path-selected layer suites, security review, and CodeQL.',
+    boundary:
+      'It does not mean skipped layers ran, that a real gateway was exercised, or that a standards profile is conformant.'
+  },
+  {
+    id: 'integration',
+    label: 'Integration-green',
+    summary:
+      'The relevant seams passed together: native/WASM boundaries, generated contracts, fixtures or replays, host stories, and—when the claim needs it—the real Kannel stack.',
+    boundary:
+      'It proves only the exercised routes and environments. Deterministic browser adapters are not native Tauri, and Kannel smoke is not broad interoperability.'
+  },
+  {
+    id: 'conformance',
+    label: 'Conformance-green',
+    summary:
+      'A named selected profile or clause set has authoritative provenance, Class C/SCR selection, clause mappings, implementation evidence, and synchronized Atlas/graph projections.',
+    boundary:
+      'This is profile- and clause-scoped. The repository does not claim full WAP 1.2.1 conformance or certification.'
+  }
+];
+
+const verificationProfiles = [
+  {
+    name: 'Fast',
+    command: 'pnpm verify:fast',
+    scope:
+      'Runs the verification-orchestrator tests, Git whitespace check, and managed release-version check.'
+  },
+  {
+    name: 'Change',
+    command: 'pnpm verify · pnpm verify:change',
+    scope:
+      'Runs strict common checks plus every deterministic lane selected by committed, staged, unstaged, and untracked paths relative to origin/main.'
+  },
+  {
+    name: 'Full',
+    command: 'pnpm verify:full',
+    scope:
+      'Runs every deterministic offline lane: compliance/status and graph drift; native and WASM engine, contracts, and stories; transport; browser host, frontend, and rendered accessibility; Atlas; marketing; and WML server.'
+  },
+  {
+    name: 'Extended',
+    command: 'pnpm verify:extended',
+    scope:
+      'Runs Full, then requires the already-running Kannel/WML stack. The repeated browser baseline is reported as advisory, not a release budget.'
+  }
+];
+
+const verificationOutcomes = [
+  ['PASS', 'Every required command in the selected lane passed.'],
+  ['INTENTIONAL EXCLUSION', 'The profile or changed paths deliberately did not select the lane.'],
+  ['UNAVAILABLE PREREQUISITE', 'A selected required tool or dependency is missing; the command fails with remediation.'],
+  ['ADVISORY', 'The lane is intentionally non-blocking whether its evidence passes or fails.'],
+  ['FAILURE', 'A selected required command failed and the overall command exits nonzero.']
+];
+
+const evidenceChain = [
+  {
+    label: 'Specification provenance',
+    detail: `${releaseManifest.summary.memberCount} release members in the validated source manifest`,
+    href: route('sources')
+  },
+  {
+    label: 'Effective specification',
+    detail: `${effectiveSpec.summary.familyCount} base, amendment, SIN, and historical-family resolutions`,
+    href: route('sources')
+  },
+  {
+    label: 'Class C + SCR selection',
+    detail: `${clauseManifest.summary.selectedParentCount} selected SCR parent rows at build time`,
+    href: route('compliance')
+  },
+  {
+    label: 'Normative clauses',
+    detail: `${clauseManifest.summary.clauseCount} selected clauses; status remains clause-specific`,
+    href: route('compliance')
+  },
+  {
+    label: 'Requirements + work',
+    detail: `${workItems.length} program work items mapped from the active compliance plan`,
+    href: route('planning')
+  },
+  {
+    label: 'Implementation',
+    detail: 'Layer-owned Rust, WASM boundary, Tauri host, and frontend code',
+    href: source('AGENTS.md')
+  },
+  {
+    label: 'Executable evidence',
+    detail: 'Unit, fixture, contract, story, replay, smoke, and E2E results',
+    href: source('docs/waves/SPEC_TEST_COVERAGE.md')
+  },
+  {
+    label: 'Projection drift',
+    detail: 'Schema, ledger, knowledge-graph, and Atlas build verification',
+    href: source('docs/knowledge-graph/README.md')
+  }
+];
+
+const lanes = [
+  {
+    title: 'Merge gate and change selection',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'Detect Changed Areas selects layer jobs for ordinary pull requests. Repo Hygiene always runs; CI Required Gate and Extended Quality Required Gate reject failed or cancelled selected prerequisites and accept intentional path skips. Compliance-affecting paths also select WAP Compliance and Status Drift.',
+    proves:
+      'The required repository-wide checks and both aggregate gates ran, and every layer selected for the diff completed successfully.',
+    doesNot:
+      'A skipped layer was retested. Pushes to main, manual CI, and repository-owned Dependabot pull requests deliberately run the full matrix.',
+    command: 'pnpm verify',
+    links: [
+      ['Workflow', source('.github/workflows/ci.yml')],
+      ['Extended quality', source('.github/workflows/extended-quality.yml')],
+      ['Required-check policy', source('docs/ci/REQUIRED_CHECKS.md')]
+    ]
+  },
+  {
+    title: 'Native WaveNav engine',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'Rust parser, runtime, navigation, focus, scripting, layout, render, fixture, and failure-path tests run under the engine coverage gate when engine paths change. The Extended Quality aggregate also selects zero-warning Clippy for engine changes.',
+    proves:
+      'Native engine behavior is deterministic for the tested inputs and meets the configured line and function coverage floors.',
+    doesNot:
+      'The WASM binding, browser host, transport path, or an unselected normative clause behaves correctly.',
+    command: 'cd engine-wasm/engine && cargo test',
+    links: [
+      ['Engine tests', tree('engine-wasm/engine/src/engine_tests')],
+      ['Extended quality', source('.github/workflows/extended-quality.yml')]
+    ]
+  },
+  {
+    title: 'Native/WASM boundary and executable stories',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'wasm-pack boundary tests, Rust-derived DTO drift checks, story-schema tests, and Playwright flows for the host sample and real Waves frontend.',
+    proves:
+      'Selected parity-critical state, render, trace, script, and host-session behavior survives the WASM boundary and works through production-built web surfaces.',
+    doesNot:
+      'Every native API has a live differential twin. Waves stories use a deterministic in-memory fetch adapter, not native Tauri transport or Kannel.',
+    command: 'pnpm test:story all',
+    links: [
+      ['Story runner', source('engine-wasm/host-sample/README.md#executable-stories')],
+      ['Coverage map', source('docs/waves/SPEC_TEST_COVERAGE.md')]
+    ]
+  },
+  {
+    title: 'Transport codecs, fixtures, and replay',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'Lowband unit and integration tests cover WSP/WBXML codecs, deterministic mapped fixtures, constrained WDP delivery, WCMP behavior, and byte-exact interop replay seeds.',
+    proves:
+      'The selected synthetic and source-mapped packets produce fixed outcomes through transport-owned decode, mapping, reassembly, and replay paths.',
+    doesNot:
+      'All bearers, live network timing, general WSP/WTP activation, or full transport conformance. Conditional replay seeds remain scaffolding where the active profile says so.',
+    command: 'make test-rust-transport && make test-transport-fixtures',
+    links: [
+      ['Fixture contract', source('transport-rust/tests/fixtures/transport/README.md')],
+      ['Replay boundary', source('transport-rust/tests/network/interop/README.md')]
+    ]
+  },
+  {
+    title: 'Tauri host and browser frontend',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'Tauri Rust library coverage exercises commands, engine flow, wrappers, and fetch adapters. Local Vitest covers frontend state and presentation; GitHub CI owns the platform-sensitive coverage threshold. Type, lint, format, capability, permission, and command-schema checks guard the host boundary.',
+    proves:
+      'The tested native command adapters and frontend behavior agree with generated contracts and configured coverage floors.',
+    doesNot:
+      'A packaged desktop window, platform accessibility bridge, real remote gateway, or every operating-system integration was exercised.',
+    command: 'pnpm --dir browser run tauri:generated:check && pnpm --dir browser/frontend test',
+    links: [
+      ['Browser host', source('browser/README.md')],
+      ['Frontend checks', source('browser/frontend/README.md')]
+    ]
+  },
+  {
+    title: 'Contracts, schemas, ledgers, and Atlas drift',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'Rust-owned TypeScript projections, Tauri schemas, story manifests, Atlas JSON Schemas, transport evidence references, requirement/status rollups, and the WAP knowledge graph are regenerated or validated against committed inputs. CI exposes a path-aware WAP Compliance and Status Drift job.',
+    proves:
+      'Consumers and projections match their canonical active sources, references resolve, ordering is stable, and generated views have not silently drifted.',
+    doesNot:
+      'A graph edge, passing schema, ticket status, or prose acceptance statement is executable implementation evidence.',
+    command: 'pnpm wap-compliance:check && pnpm --dir docs-portal run test:data',
+    links: [
+      ['Atlas data contract', source('docs-portal/README.md')],
+      ['Knowledge graph contract', source('docs/knowledge-graph/README.md')]
+    ]
+  },
+  {
+    title: 'Kannel real-stack smoke',
+    tags: ['on-demand'],
+    runs:
+      'Extended requires an already-running Kannel/WML stack, then exercises transport and browser-host smoke paths against it. The same real-stack lane is available through a manual GitHub workflow.',
+    proves:
+      'One real gateway path can fetch, hand off, load, render, and navigate the smoke scenario across process and protocol boundaries.',
+    doesNot:
+      'Broad gateway interoperability, production reliability, every transport profile, or a required pull-request gate.',
+    command: 'pnpm verify:extended',
+    links: [['Manual workflow', source('.github/workflows/transport-wap-smoke.yml')]]
+  },
+  {
+    title: 'Engine fuzzing',
+    tags: ['scheduled', 'on-demand'],
+    runs:
+      'A weekly and manually configurable cargo-fuzz lane sends bounded arbitrary WML input to the engine target and retains crash artifacts.',
+    proves:
+      'The executed corpus and mutations did not expose a crash, hang beyond the configured timeout, or sanitizer-detected failure.',
+    doesNot:
+      'Exhaustive safety, semantic correctness, or WAP/WML conformance.',
+    command: 'cd engine-wasm/engine && cargo +nightly fuzz run engine_wml_fuzzer',
+    links: [['Fuzz workflow', source('.github/workflows/engine-fuzz.yml')]]
+  },
+  {
+    title: 'Rendered accessibility',
+    tags: ['required', 'path-scoped'],
+    runs:
+      'The Full and selected Change profiles run production-built Chromium checks for axe, target geometry, visible focus, overflow, and 200 percent layouts. GitHub repeats the gate for browser frontend and its engine, contract, and build inputs.',
+    proves:
+      'The production-built deterministic browser surface meets the asserted web accessibility behaviors at configured window sizes.',
+    doesNot:
+      'Device compatibility, native macOS announcement timing, platform-drawn chrome quality, or an accessibility certification.',
+    command: 'pnpm --dir browser/frontend run test:accessibility:rendered',
+    links: [
+      ['Accessibility evidence', source('docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md')],
+      ['Required workflow', source('.github/workflows/extended-quality.yml')]
+    ]
+  },
+  {
+    title: 'Browser stability baseline',
+    tags: ['scheduled', 'advisory', 'on-demand', 'manual'],
+    runs:
+      'The weekly/manual workflow records startup, input, navigation, window, and keyboard behavior with 20 runs by default. Extended reports a bounded three-run signal as advisory. Packaged macOS VoiceOver remains a separate manual observation.',
+    proves:
+      'Deterministic behavior assertions passed and the run retained reference-environment latency samples and screenshots.',
+    doesNot:
+      'A release performance budget, cross-device timing guarantee, or native accessibility behavior. Recorded latency has no pass/fail threshold.',
+    command: 'WAVES_BASELINE_RUNS=20 pnpm test:baseline:waves',
+    links: [
+      ['Reference baseline', source('docs/waves/WAVES_BROWSER_BASELINE.md')],
+      ['Advisory workflow', source('.github/workflows/extended-quality.yml')]
+    ]
+  },
+  {
+    title: 'CodeQL and dependency security',
+    tags: ['required', 'scheduled', 'on-demand'],
+    runs:
+      'Pull requests run JavaScript/TypeScript and Rust CodeQL plus dependency review and Rust/Node advisory audits. Code scanning and audits also run weekly and on demand.',
+    proves:
+      'The configured static queries and current advisory databases found no merge-blocking result in the scanned source and dependency graph.',
+    doesNot:
+      'Absence of vulnerabilities, runtime exploit resistance, or security of excluded generated/build paths and unmodeled environments.',
+    command: 'cargo audit && pnpm audit --audit-level high',
+    links: [
+      ['CodeQL', source('.github/workflows/codeql.yml')],
+      ['Dependency security', source('.github/workflows/security.yml')]
+    ]
+  },
+  {
+    title: 'Builds, deploys, and releases',
+    tags: ['required', 'path-scoped', 'on-demand'],
+    runs:
+      'Selected pull requests build product surfaces. Main-path changes rebuild and deploy the marketing site, simulator, and Atlas; milestone releases manually rebuild and package source and site artifacts.',
+    proves:
+      'The selected static applications and release bundles assemble successfully from pinned manifests and can be published by the configured workflow.',
+    doesNot:
+      'Passing product behavior, standards conformance, deployment availability after the workflow, or approval to promote a planned profile.',
+    command: 'pnpm build:node && pnpm --dir docs-portal run build',
+    links: [
+      ['Pages deploy', source('.github/workflows/pages.yml')],
+      ['Milestone release', source('.github/workflows/milestone-release.yml')]
+    ]
+  },
+  {
+    title: 'Story coverage advisory and manual evidence',
+    tags: ['advisory', 'manual'],
+    runs:
+      'The story-coverage report names examples without adjacent executable flows but never fails the build. Manual checklists cover only gaps that automation cannot observe and must name their environment and scope.',
+    proves:
+      'Known story gaps are visible, and a recorded manual run can support only the observations it explicitly captured.',
+    doesNot:
+      'Prose testing criteria, a ticket marked done, or an example file by itself is executable coverage. An unrecorded manual intention is no evidence at all.',
+    command: 'pnpm --dir engine-wasm/host-sample run examples:story-coverage',
+    links: [['Evidence policy', source('docs/agents/AGENT_STANDARDS.md#testing-expectations')]]
+  }
+];
+
+const badgeLabel = (tag: string) => tag.replace('-', ' ');
+---
+
+<BaseLayout
+  title="Testing and verification"
+  description="How WAP Labs turns specifications, implementation, and layered test evidence into bounded regression, integration, and conformance claims."
+  section="verification"
+>
+  <header class="page-header page-shell verification-header">
+    <p class="kicker">Evidence before claims</p>
+    <h1>Green has three meanings.</h1>
+    <p>
+      WAP Labs separates code regression confidence, cross-layer integration confidence, and
+      standards evidence. Each level needs its own proof; none silently upgrades into the next.
+    </p>
+  </header>
+
+  <section class="page-shell confidence-grid" aria-labelledby="confidence-heading">
+    <div class="section-heading verification-section-heading">
+      <div>
+        <p class="section-label">Confidence vocabulary</p>
+        <h2 id="confidence-heading">Say exactly what is green.</h2>
+      </div>
+    </div>
+    <div class="confidence-cards">
+      {confidenceLevels.map((level, index) => (
+        <article id={level.id}>
+          <span class="confidence-index">0{index + 1}</span>
+          <h3>{level.label}</h3>
+          <p>{level.summary}</p>
+          <p class="claim-boundary"><strong>Does not mean:</strong> {level.boundary}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="page-shell evidence-flow-section" aria-labelledby="evidence-flow-heading">
+    <div class="section-heading verification-section-heading">
+      <div>
+        <p class="section-label">Traceability chain</p>
+        <h2 id="evidence-flow-heading">From authority to auditable evidence.</h2>
+      </div>
+      <p class="snapshot-note">Build-time values come from validated Atlas inputs.</p>
+    </div>
+    <ol class="evidence-chain" aria-label="Specification-to-evidence verification chain">
+      {evidenceChain.map((step, index) => (
+        <li>
+          <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <h3><a href={step.href}>{step.label}</a></h3>
+          <p>{step.detail}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="evidence-rule">
+      <strong>Executable-evidence rule:</strong> implementation plus a passing, reproducible
+      evidence command may support a claim. Prose, graph edges, an example without a flow, or a
+      ticket status can describe intent and traceability, but never substitutes for execution.
+    </p>
+  </section>
+
+  <section class="page-shell verification-presets" aria-labelledby="presets-heading">
+    <div class="section-heading verification-section-heading">
+      <div>
+        <p class="section-label">Canonical local commands</p>
+        <h2 id="presets-heading">Choose scope without hiding exclusions.</h2>
+      </div>
+      <a href={source('docs/ci/LOCAL_VERIFICATION.md')}>Local verification contract ↗</a>
+    </div>
+    <div class="preset-grid">
+      {verificationProfiles.map((profile) => (
+        <article>
+          <span class="mono-id">{profile.name}</span>
+          <code>{profile.command}</code>
+          <p>{profile.scope}</p>
+        </article>
+      ))}
+    </div>
+    <div class="outcome-panel">
+      <div>
+        <p class="section-label">Result vocabulary</p>
+        <h3>Missing tools never become a silent success.</h3>
+        <p>
+          Full is the strict offline pre-PR profile. Live Kannel is an intentional exclusion there
+          and becomes required only in Extended; fuzzing, GitHub-hosted security/coverage, deploys,
+          releases, and native OS packaging remain separate environments.
+        </p>
+      </div>
+      <dl>
+        {verificationOutcomes.map(([outcome, meaning]) => (
+          <div><dt>{outcome}</dt><dd>{meaning}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="page-shell verification-status" aria-labelledby="status-heading">
+    <div>
+      <p class="section-label">Current claim boundary</p>
+      <h2 id="status-heading">Partial profiles stay partial.</h2>
+      <p>
+        Atlas renders the current compliance program as written. Families and clauses can be
+        selected, planned, partial, or assessed independently. “Conformance-green” is valid only
+        for a named selected slice whose complete evidence chain is green.
+      </p>
+    </div>
+    <dl>
+      <div><dt>Implementation claim</dt><dd>{program.target.implementationClaim}</dd></div>
+      <div><dt>Certification claim</dt><dd>{program.target.certificationClaim}</dd></div>
+      <div>
+        <dt>Assessed selected clauses</dt>
+        <dd>{clauseManifest.summary.assessedClauseCount} / {clauseManifest.summary.clauseCount}</dd>
+      </div>
+    </dl>
+    <ul class="profile-status-list" aria-label="Current compliance profile states">
+      {program.profiles.map((profile) => (
+        <li>
+          <span class="mono-id">{profile.id}</span>
+          <strong>{profile.role.replaceAll('-', ' ')}</strong>
+          <StatusPill status={profile.status} />
+        </li>
+      ))}
+    </ul>
+    <a class="button" href={route('compliance')}>Inspect the selected profile <span>→</span></a>
+  </section>
+
+  <section class="page-shell lane-catalog" aria-labelledby="lane-heading">
+    <div class="section-heading verification-section-heading">
+      <div>
+        <p class="section-label">Lane catalog</p>
+        <h2 id="lane-heading">What runs, and what it proves.</h2>
+      </div>
+    </div>
+    <div class="lane-legend" aria-label="Execution lane labels">
+      {['required', 'path-scoped', 'scheduled', 'advisory', 'on-demand', 'manual'].map((tag) => (
+        <span class:list={['lane-badge', `lane-${tag}`]}>{badgeLabel(tag)}</span>
+      ))}
+    </div>
+    <div class="lane-grid">
+      {lanes.map((lane) => (
+        <article class="lane-card">
+          <div class="lane-card-heading">
+            <h3>{lane.title}</h3>
+            <div class="lane-tags">
+              {lane.tags.map((tag) => (
+                <span class:list={['lane-badge', `lane-${tag}`]}>{badgeLabel(tag)}</span>
+              ))}
+            </div>
+          </div>
+          <p>{lane.runs}</p>
+          <dl class="proof-boundaries">
+            <div><dt>Proves</dt><dd>{lane.proves}</dd></div>
+            <div><dt>Does not prove</dt><dd>{lane.doesNot}</dd></div>
+          </dl>
+          <div class="lane-command"><span>Run locally</span><code>{lane.command}</code></div>
+          <ul class="lane-links">
+            {lane.links.map(([label, href]) => <li><a href={href}>{label} ↗</a></li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="page-shell verification-close">
+    <div>
+      <p class="section-label">Release question</p>
+      <h2>Which claim are we trying to make?</h2>
+    </div>
+    <p>
+      Start with the claim, select the lanes that can actually observe it, preserve their results,
+      and then synchronize the active ledgers and graph. A green check is evidence only within its
+      stated boundary.
+    </p>
+    <div class="hero-actions">
+      <a class="button primary" href={source('docs/ci/CI_SETUP.md')}>Runbook <span>↗</span></a>
+      <a class="button" href={source('docs/waves/SPEC_TEST_COVERAGE.md')}>Coverage ledger</a>
+    </div>
+  </section>
+</BaseLayout>
