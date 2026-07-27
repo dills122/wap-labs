@@ -117,6 +117,9 @@ only after every required status check and any other ruleset requirement succeed
   and otherwise runs scheduled/manual. It must not be required until the promotion criteria in
   `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are satisfied and the follow-up widens its
   stable PR paths to relevant product changes.
+- `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is
+  intentionally path-scoped and must not be a global required context. Live R2 lock and
+  DigitalOcean plan jobs do not exist until protected `PRE-003` access is configured.
 - `Build and Deploy to gh-pages` is deployment-focused and must not be required for code merges.
 - Scheduled/manual fuzzing, browser baseline, and release workflows must not be required
   pull-request checks.

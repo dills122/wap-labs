@@ -1,0 +1,76 @@
+name: OpenTofu Static Validation
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/opentofu.yml'
+      - '.github/dependabot.yml'
+      - '.pre-commit-config.yaml'
+      - '.gitignore'
+      - 'Makefile'
+      - 'infra/network-preview/**'
+      - 'scripts/ci/check-network-preview-r2-lock.sh'
+      - 'scripts/verify-lib.mjs'
+      - 'scripts/tests/verify.test.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/opentofu.yml'
+      - '.github/dependabot.yml'
+      - '.pre-commit-config.yaml'
+      - '.gitignore'
+      - 'Makefile'
+      - 'infra/network-preview/**'
+      - 'scripts/ci/check-network-preview-r2-lock.sh'
+      - 'scripts/verify-lib.mjs'
+      - 'scripts/tests/verify.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: OpenTofu Static Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TF_IN_AUTOMATION: '1'
+      TF_INPUT: '0'
+      TF_VAR_state_encryption_passphrase: offline-validation-only-not-for-state
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup pinned OpenTofu
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
+        with:
+          tofu_version_file: infra/network-preview/.opentofu-version
+          tofu_wrapper: false
+
+      - name: Check OpenTofu formatting
+        run: tofu fmt -check -recursive infra/network-preview
+
+      - name: Initialize without a remote backend
+        working-directory: infra/network-preview/environments/preview
+        run: tofu init -backend=false -lockfile=readonly -no-color
+
+      - name: Validate resource-free preview root
+        working-directory: infra/network-preview/environments/preview
+        run: tofu validate -no-color
+
+      - name: Verify multi-platform provider lock file
+        working-directory: infra/network-preview/environments/preview
+        run: |
+          tofu providers lock \
+            -platform=linux_amd64 \
+            -platform=darwin_arm64 \
+            -platform=darwin_amd64
+          git diff --exit-code -- .terraform.lock.hcl
+
+      - name: Validate R2 lock driver syntax
+        run: |
+          sh -n scripts/ci/check-network-preview-r2-lock.sh
+          shellcheck scripts/ci/check-network-preview-r2-lock.sh

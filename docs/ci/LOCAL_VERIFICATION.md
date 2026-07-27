@@ -3,12 +3,12 @@
 The canonical local verification family is exposed through root `pnpm` scripts and matching Make
 targets:
 
-| Profile  | Command                               | Contract                                                                                                                                                                                                                                         |
-| -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                           |
-| Change   | `pnpm verify` or `pnpm verify:change` | Runs strict common checks plus every deterministic lane selected by changed paths relative to `origin/main`. Override the base with `WAP_VERIFY_BASE=<ref>` or `--base <ref>`.                                                                   |
-| Full     | `pnpm verify:full`                    | Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, and Go WML origin checks. |
-| Extended | `pnpm verify:extended`                | Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.                                                                                                 |
+| Profile  | Command                               | Contract                                                                                                                                                                                                                                                                       |
+| -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                                                         |
+| Change   | `pnpm verify` or `pnpm verify:change` | Runs strict common checks plus every deterministic lane selected by changed paths relative to `origin/main`. Override the base with `WAP_VERIFY_BASE=<ref>` or `--base <ref>`.                                                                                                 |
+| Full     | `pnpm verify:full`                    | Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, Go WML origin, and backend-disabled OpenTofu checks. |
+| Extended | `pnpm verify:extended`                | Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.                                                                                                                               |
 
 Equivalent Make targets are `verify-fast`, `verify-change`, `verify-full`, and `verify-extended`.
 `make ci-local` is retained only as a deprecated compatibility alias. It prints an advisory and
@@ -30,7 +30,9 @@ There is no successful skip for a missing prerequisite in a selected required la
 `./scripts/init-refresh.sh` to refresh workspace dependencies. Install the repository Node/pnpm
 versions first when absent; use `AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh` when the
 pinned `wasm-pack` or Tauri CLI must be installed. Go 1.25 or newer is required when the selected
-lane includes `wml-server/`.
+lane includes `wml-server/`. OpenTofu 1.12.5 is required when the selected lane includes
+`infra/network-preview/`; its static lane never receives cloud credentials or enables the R2
+backend.
 
 ## Selection and evidence boundaries
 
@@ -47,6 +49,8 @@ The `full` profile is the ordinary pre-PR command. It deliberately excludes:
 - fuzz campaigns, which remain explicit time-bounded commands;
 - GitHub-hosted dependency, CodeQL, coverage-threshold, release, deployment, and OS-packaging
   jobs.
+- protected R2 locking and DigitalOcean speculative planning, which remain unavailable until
+  `PRE-001` and `PRE-003` are completed.
 
 These exclusions are visible in command output and do not imply conformance or release readiness.
 The full compliance wrapper proves that canonical compliance inputs and generated projections are

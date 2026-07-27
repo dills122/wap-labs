@@ -1,6 +1,7 @@
 # Waves Public WAP Lab and Pre-release Plan
 
-Planning status: Sprint 1 implementation; public exposure remains blocked on Sprint 0 decisions
+Planning status: Sprint 1 implementation; LAB-101 merged, INF-101 static scaffold in flight, and
+public exposure remains blocked on Sprint 0 decisions
 
 Research checkpoint: 2026-07-26
 
@@ -101,9 +102,9 @@ The Node package and lockfile are removed only with the Compose, bootstrap, CI, 
 dependency-automation, smoke, and documentation migration. Go parity is enforced through golden,
 state-lifecycle, concurrency, host-profile, route-denial, and internal-observability tests.
 
-`LAB-101` is implemented pending merge evidence. This does not complete `GW-101`, `INF-101`,
-`INF-102`, or any public exposure gate. The logical `home`, `forms`, and `interop` profiles use
-configurable exact hostnames; the final owned names remain a `PRE-002` decision.
+`LAB-101` merged in PR #427. This does not complete `GW-101`, `INF-101`, `INF-102`, or any public
+exposure gate. The logical `home`, `forms`, and `interop` profiles use configurable exact
+hostnames; the final owned names remain a `PRE-002` decision.
 
 ## Public topology
 
@@ -175,6 +176,13 @@ deploy/network-preview/
 ```
 
 Create shared OpenTofu modules only after actual repetition justifies them.
+
+The `INF-101` offline scaffold pins OpenTofu 1.12.5 and `digitalocean/digitalocean` 2.96.0,
+defines the partial encrypted R2 backend, commits multi-platform provider checksums, and adds
+secret-free static validation plus an isolated lock-test driver. It creates no resources and does
+not prove live R2 locking or provider planning. `PRE-001` and `PRE-003` remain required before
+the protected lock test, speculative plan, serialized apply, and recovery-copy automation can run
+and complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
 
 ## Security, abuse, and operations
 
@@ -302,9 +310,11 @@ The first public pre-release is allowed only when:
 
 ## Verification to add or standardize
 
-- `tofu fmt -check -recursive infra/network-preview`
-- `tofu init -backend=false` and `tofu validate`
-- provider-backed speculative plan in a protected CI environment
+- `tofu fmt -check -recursive infra/network-preview` (implemented by the static workflow)
+- `tofu init -backend=false -lockfile=readonly` and `tofu validate` (implemented)
+- provider-lock drift for Linux x86_64 and macOS Arm/x86_64 (implemented)
+- R2 lock contention/release/stale recovery (driver implemented; protected execution pending)
+- provider-backed speculative plan in a protected CI environment (pending `PRE-001`/`PRE-003`)
 - image build, vulnerability scan, and SBOM
 - production Compose configuration validation
 - `gofmt -l`, `go vet ./...`, and `go test ./...`
