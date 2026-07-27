@@ -1,0 +1,195 @@
+name: OpenTofu Protected Apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      plan_run_id:
+        description: Successful OpenTofu Protected Plan workflow run ID
+        required: true
+        type: string
+      plan_artifact_id:
+        description: Exact encrypted-plan artifact ID from that run
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+# This exact group is shared with protected plan; queued state operations are never cancelled.
+concurrency:
+  group: opentofu-network-preview-state
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    name: Manually approved network-preview apply
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: network-preview-apply
+    env:
+      TF_IN_AUTOMATION: '1'
+      TF_INPUT: '0'
+      TF_DATA_DIR: ${{ runner.temp }}/network-preview-terraform
+      TF_VAR_state_encryption_passphrase: ${{ secrets.TOFU_ENCRYPTION_PASSPHRASE }}
+      TF_VAR_project_name: ${{ vars.NETWORK_PREVIEW_DO_PROJECT }}
+      TF_VAR_region: ${{ vars.NETWORK_PREVIEW_DO_REGION }}
+      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: auto
+      AWS_DEFAULT_REGION: auto
+      NETWORK_PREVIEW_R2_ACCOUNT_ID: ${{ vars.NETWORK_PREVIEW_R2_ACCOUNT_ID }}
+      NETWORK_PREVIEW_R2_BUCKET: ${{ vars.NETWORK_PREVIEW_R2_BUCKET }}
+      NETWORK_PREVIEW_R2_STATE_KEY: ${{ vars.NETWORK_PREVIEW_R2_STATE_KEY }}
+      NETWORK_PREVIEW_R2_RECOVERY_PREFIX: ${{ vars.NETWORK_PREVIEW_R2_RECOVERY_PREFIX }}
+    steps:
+      - name: Refuse non-main workflow dispatches
+        shell: sh
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "FAIL: protected applies may run only from refs/heads/main" >&2
+            exit 1
+          fi
+
+      - name: Checkout protected source commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Setup pinned OpenTofu
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
+        with:
+          tofu_version_file: infra/network-preview/.opentofu-version
+          tofu_wrapper: false
+
+      - name: Verify trusted provenance and download exact artifact ID
+        id: provenance
+        shell: sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLAN_RUN_ID: ${{ inputs.plan_run_id }}
+          PLAN_ARTIFACT_ID: ${{ inputs.plan_artifact_id }}
+          EXPECTED_SOURCE_COMMIT: ${{ github.sha }}
+          PLAN_DESTINATION: ${{ runner.temp }}/encrypted.tfplan
+        run: scripts/ci/verify-network-preview-plan-provenance.sh
+
+      - name: Write runtime-only partial backend configuration
+        shell: sh
+        run: scripts/ci/write-network-preview-backend-config.sh "$RUNNER_TEMP/backend.hcl"
+
+      - name: Initialize exact source against encrypted R2 backend
+        shell: sh
+        run: |
+          tofu -chdir=infra/network-preview/environments/preview init \
+            -reconfigure \
+            -backend-config="$RUNNER_TEMP/backend.hcl" \
+            -lockfile=readonly \
+            -no-color >/dev/null
+
+      - name: Re-publish sanitized exact-plan summary
+        shell: sh
+        run: |
+          scripts/ci/summarize-network-preview-plan.sh \
+            infra/network-preview/environments/preview \
+            "$RUNNER_TEMP/encrypted.tfplan"
+
+      - name: Prepare and verify encrypted pre-apply recovery copy
+        id: recovery
+        shell: sh
+        env:
+          SOURCE_COMMIT: ${{ steps.provenance.outputs.source_commit }}
+          APPLY_RUN_ID: ${{ github.run_id }}
+          APPLY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          TOFU_ROOT: infra/network-preview/environments/preview
+        run: |
+          RECOVERY_NONCE=$(openssl rand -hex 16)
+          export RECOVERY_NONCE
+          scripts/ci/manage-network-preview-recovery.sh prepare
+
+      - name: Record pre-apply recovery provenance
+        shell: sh
+        env:
+          PLAN_RUN_ID: ${{ inputs.plan_run_id }}
+          PLAN_ARTIFACT_ID: ${{ inputs.plan_artifact_id }}
+          PLAN_DIGEST: ${{ steps.provenance.outputs.plan_digest }}
+          SOURCE_COMMIT: ${{ steps.provenance.outputs.source_commit }}
+          RECOVERY_MODE: ${{ steps.recovery.outputs.recovery_mode }}
+          RECOVERY_KEY: ${{ steps.recovery.outputs.recovery_key }}
+          RECOVERY_SHA256: ${{ steps.recovery.outputs.recovery_sha256 }}
+        run: |
+          {
+            echo
+            echo "## Verified pre-apply provenance"
+            echo
+            echo "- Source commit: \`$SOURCE_COMMIT\`"
+            echo "- Plan run / artifact ID: \`$PLAN_RUN_ID\` / \`$PLAN_ARTIFACT_ID\`"
+            echo "- Encrypted plan SHA-256: \`$PLAN_DIGEST\`"
+            echo "- Recovery mode: \`$RECOVERY_MODE\`"
+            echo "- Recovery key: \`$RECOVERY_KEY\`"
+            echo "- Recovery SHA-256: \`$RECOVERY_SHA256\`"
+            echo "- Apply run ID / attempt: \`$GITHUB_RUN_ID\` / \`$GITHUB_RUN_ATTEMPT\`"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Reconfirm state and recovery immediately before apply
+        shell: sh
+        env:
+          SOURCE_COMMIT: ${{ steps.provenance.outputs.source_commit }}
+          APPLY_RUN_ID: ${{ github.run_id }}
+          APPLY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          TOFU_ROOT: infra/network-preview/environments/preview
+          RECOVERY_MODE: ${{ steps.recovery.outputs.recovery_mode }}
+          RECOVERY_KEY: ${{ steps.recovery.outputs.recovery_key }}
+          RECOVERY_SHA256: ${{ steps.recovery.outputs.recovery_sha256 }}
+        run: scripts/ci/manage-network-preview-recovery.sh assert
+
+      - name: Apply exact encrypted reviewed plan without re-planning
+        shell: sh
+        run: |
+          if ! tofu -chdir=infra/network-preview/environments/preview apply \
+            -input=false \
+            -no-color \
+            "$RUNNER_TEMP/encrypted.tfplan" >/dev/null 2>&1; then
+            echo "FAIL: exact reviewed-plan apply failed; decrypted output remains suppressed" >&2
+            exit 1
+          fi
+
+      - name: Verify current state and enforce recovery retention
+        id: finalize
+        shell: sh
+        env:
+          SOURCE_COMMIT: ${{ steps.provenance.outputs.source_commit }}
+          APPLY_RUN_ID: ${{ github.run_id }}
+          APPLY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          TOFU_ROOT: infra/network-preview/environments/preview
+          RECOVERY_MODE: ${{ steps.recovery.outputs.recovery_mode }}
+          RECOVERY_KEY: ${{ steps.recovery.outputs.recovery_key }}
+          RECOVERY_SHA256: ${{ steps.recovery.outputs.recovery_sha256 }}
+        run: scripts/ci/manage-network-preview-recovery.sh finalize
+
+      - name: Record successful state verification
+        shell: sh
+        env:
+          CURRENT_STATE_SHA256: ${{ steps.finalize.outputs.current_state_sha256 }}
+          RECOVERY_RETAINED_COUNT: ${{ steps.finalize.outputs.recovery_retained_count }}
+        run: |
+          {
+            echo
+            echo "## Post-apply verification"
+            echo
+            echo "- Current encrypted state SHA-256: \`$CURRENT_STATE_SHA256\`"
+            echo "- Verified recovery objects retained: \`$RECOVERY_RETAINED_COUNT\`"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Remove local runtime material
+        if: always()
+        shell: sh
+        run: |
+          rm -f "$RUNNER_TEMP/backend.hcl" "$RUNNER_TEMP/encrypted.tfplan"
+          rm -f infra/network-preview/environments/preview/errored.tfstate
+          rm -f infra/network-preview/environments/preview/errored.tfstate.*
+          case "$TF_DATA_DIR" in
+            "$RUNNER_TEMP"/*) rm -rf "$TF_DATA_DIR" ;;
+            *) echo "WARN: refusing to remove unexpected TF_DATA_DIR: $TF_DATA_DIR" >&2 ;;
+          esac

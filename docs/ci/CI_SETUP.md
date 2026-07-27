@@ -130,14 +130,41 @@ Behavior:
 - validates the root with a non-secret, validation-only encryption sentinel;
 - regenerates the `linux_amd64`, `darwin_arm64`, and `darwin_amd64` provider checksums and fails
   on lock-file drift;
-- checks the future R2 lock driver's POSIX syntax and runs `shellcheck`;
+- checks every network-preview CI helper's POSIX syntax, runs `shellcheck`, and exercises the
+  protected workflow contracts without credentials;
 - has only `contents: read`, does not persist checkout credentials, and receives no repository or
   environment secrets.
 
 This workflow does not contact R2 or DigitalOcean, produce a speculative plan, create a GitHub
-environment, or run `tofu apply`. Live R2 locking and provider planning remain blocked by
-`PRE-001`/`PRE-003` and require a separate protected environment before activation. Do not make
-this path-triggered job a global required context; ordinary PRs outside its paths do not create it.
+environment, or run `tofu apply`. It also proves locally that enforced plan encryption produces an
+opaque saved plan and runs contract tests over the protected workflow definitions. Live R2
+locking and provider planning remain blocked by `PRE-001`/`PRE-003` and require separately
+protected environments before activation. Do not make this path-triggered job a global required
+context; ordinary PRs outside its paths do not create it.
+
+### OpenTofu Protected Plan and Apply
+
+`.github/workflows/opentofu-protected-plan.yml` and
+`.github/workflows/opentofu-protected-apply.yml` are manual-only access-backed workflows. They:
+
+- run only from `main` through the `network-preview-plan` and `network-preview-apply`
+  environments;
+- share `opentofu-network-preview-state` concurrency with `cancel-in-progress: false`;
+- generate an encrypted plan whose SHA-256 is bound into its GitHub artifact name alongside the
+  source commit and run attempt;
+- let apply accept only the plan run ID and exact artifact ID, then verify the repository,
+  workflow identity/ref, successful conclusion, source commit, artifact ownership, and digest via
+  GitHub's read-only Actions API;
+- reject a reviewed plan when `main` advanced, and apply the downloaded encrypted plan without
+  generating a replacement;
+- create and verify an encrypted pre-apply R2 recovery object, reconfirm source/lock/copy state
+  immediately before apply, and retain at most the five newest verified recovery objects only
+  after successful apply and current-state verification.
+
+All external actions are full-SHA pinned. Decrypted plan/state content is neither logged nor
+retained; workflow summaries contain only sanitized action/address/count data and provenance
+digests. These workflow definitions must not be enabled or run until `PRE-001`/`PRE-003`, protected
+environment review, real credential scope, and exact operation authority are complete.
 
 Caching:
 

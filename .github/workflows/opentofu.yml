@@ -4,24 +4,30 @@ on:
   pull_request:
     paths:
       - '.github/workflows/opentofu.yml'
+      - '.github/workflows/opentofu-protected-apply.yml'
+      - '.github/workflows/opentofu-protected-plan.yml'
       - '.github/dependabot.yml'
       - '.pre-commit-config.yaml'
       - '.gitignore'
       - 'Makefile'
       - 'infra/network-preview/**'
-      - 'scripts/ci/check-network-preview-r2-lock.sh'
+      - 'scripts/ci/*network-preview*.sh'
+      - 'scripts/tests/network-preview-protected.test.mjs'
       - 'scripts/verify-lib.mjs'
       - 'scripts/tests/verify.test.mjs'
   push:
     branches: [main]
     paths:
       - '.github/workflows/opentofu.yml'
+      - '.github/workflows/opentofu-protected-apply.yml'
+      - '.github/workflows/opentofu-protected-plan.yml'
       - '.github/dependabot.yml'
       - '.pre-commit-config.yaml'
       - '.gitignore'
       - 'Makefile'
       - 'infra/network-preview/**'
-      - 'scripts/ci/check-network-preview-r2-lock.sh'
+      - 'scripts/ci/*network-preview*.sh'
+      - 'scripts/tests/network-preview-protected.test.mjs'
       - 'scripts/verify-lib.mjs'
       - 'scripts/tests/verify.test.mjs'
   workflow_dispatch:
@@ -76,7 +82,13 @@ jobs:
             -platform=darwin_amd64
           git diff --exit-code -- .terraform.lock.hcl
 
-      - name: Validate R2 lock driver syntax
+      - name: Validate network-preview CI scripts
         run: |
-          sh -n scripts/ci/check-network-preview-r2-lock.sh
-          shellcheck scripts/ci/check-network-preview-r2-lock.sh
+          sh -n scripts/ci/*network-preview*.sh
+          shellcheck -x scripts/ci/*network-preview*.sh
+
+      - name: Prove enforced offline plan encryption
+        run: scripts/ci/check-network-preview-encrypted-plan.sh
+
+      - name: Test protected workflow contracts
+        run: node --test scripts/tests/network-preview-protected.test.mjs

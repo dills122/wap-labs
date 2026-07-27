@@ -51,7 +51,9 @@ test('change selects backend-disabled OpenTofu checks for network preview infras
       'OpenTofu formatting',
       'backend-disabled initialization',
       'OpenTofu validation',
-      'R2 lock driver POSIX syntax'
+      'network-preview script POSIX syntax',
+      'encrypted offline plan check',
+      'protected workflow contract tests'
     ]
   );
   assert.equal(

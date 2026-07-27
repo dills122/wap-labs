@@ -1,0 +1,137 @@
+name: OpenTofu Protected Plan
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Plan and apply both contact the same encrypted state and must never overlap or be cancelled.
+concurrency:
+  group: opentofu-network-preview-state
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    name: Protected network-preview plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: network-preview-plan
+    env:
+      TF_IN_AUTOMATION: '1'
+      TF_INPUT: '0'
+      TF_DATA_DIR: ${{ runner.temp }}/network-preview-terraform
+      TF_VAR_state_encryption_passphrase: ${{ secrets.TOFU_ENCRYPTION_PASSPHRASE }}
+      TF_VAR_project_name: ${{ vars.NETWORK_PREVIEW_DO_PROJECT }}
+      TF_VAR_region: ${{ vars.NETWORK_PREVIEW_DO_REGION }}
+      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: auto
+      AWS_DEFAULT_REGION: auto
+      NETWORK_PREVIEW_R2_ACCOUNT_ID: ${{ vars.NETWORK_PREVIEW_R2_ACCOUNT_ID }}
+      NETWORK_PREVIEW_R2_BUCKET: ${{ vars.NETWORK_PREVIEW_R2_BUCKET }}
+      NETWORK_PREVIEW_R2_STATE_KEY: ${{ vars.NETWORK_PREVIEW_R2_STATE_KEY }}
+      NETWORK_PREVIEW_R2_RECOVERY_PREFIX: ${{ vars.NETWORK_PREVIEW_R2_RECOVERY_PREFIX }}
+    steps:
+      - name: Refuse non-main workflow dispatches
+        shell: sh
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "FAIL: protected plans may run only from refs/heads/main" >&2
+            exit 1
+          fi
+
+      - name: Checkout protected source commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Setup pinned OpenTofu
+        uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
+        with:
+          tofu_version_file: infra/network-preview/.opentofu-version
+          tofu_wrapper: false
+
+      - name: Write runtime-only partial backend configuration
+        shell: sh
+        run: scripts/ci/write-network-preview-backend-config.sh "$RUNNER_TEMP/backend.hcl"
+
+      - name: Initialize encrypted R2 backend with native locking
+        shell: sh
+        run: |
+          tofu -chdir=infra/network-preview/environments/preview init \
+            -reconfigure \
+            -backend-config="$RUNNER_TEMP/backend.hcl" \
+            -lockfile=readonly \
+            -no-color >/dev/null
+
+      - name: Create encrypted speculative plan without logging decrypted content
+        shell: sh
+        run: |
+          if ! tofu -chdir=infra/network-preview/environments/preview plan \
+            -lock-timeout=5m \
+            -input=false \
+            -no-color \
+            -out="$RUNNER_TEMP/encrypted.tfplan" >/dev/null 2>&1; then
+            echo "FAIL: protected OpenTofu plan failed; decrypted plan output remains suppressed" >&2
+            exit 1
+          fi
+
+      - name: Publish sanitized reviewed-plan summary
+        shell: sh
+        run: |
+          scripts/ci/summarize-network-preview-plan.sh \
+            infra/network-preview/environments/preview \
+            "$RUNNER_TEMP/encrypted.tfplan"
+
+      - name: Bind plan digest to trusted artifact name
+        id: provenance
+        shell: sh
+        run: |
+          . scripts/ci/network-preview-lib.sh
+          plan_digest=$(network_preview_sha256_file "$RUNNER_TEMP/encrypted.tfplan")
+          artifact_name="network-preview-plan-v1-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}-${plan_digest}"
+          network_preview_write_output plan_digest "$plan_digest"
+          network_preview_write_output artifact_name "$artifact_name"
+
+      - name: Upload exact encrypted reviewed plan
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ steps.provenance.outputs.artifact_name }}
+          path: ${{ runner.temp }}/encrypted.tfplan
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+      - name: Record trusted plan-run provenance
+        shell: sh
+        env:
+          PLAN_ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          PLAN_DIGEST: ${{ steps.provenance.outputs.plan_digest }}
+          PLAN_ARTIFACT_NAME: ${{ steps.provenance.outputs.artifact_name }}
+        run: |
+          {
+            echo
+            echo "## Trusted plan provenance"
+            echo
+            echo "- Repository: \`$GITHUB_REPOSITORY\`"
+            echo "- Workflow ref: \`$GITHUB_WORKFLOW_REF\`"
+            echo "- Source commit: \`$GITHUB_SHA\`"
+            echo "- Run ID / attempt: \`$GITHUB_RUN_ID\` / \`$GITHUB_RUN_ATTEMPT\`"
+            echo "- Artifact ID: \`$PLAN_ARTIFACT_ID\`"
+            echo "- Artifact name: \`$PLAN_ARTIFACT_NAME\`"
+            echo "- Encrypted plan SHA-256: \`$PLAN_DIGEST\`"
+          } >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Remove local runtime material
+        if: always()
+        shell: sh
+        run: |
+          rm -f "$RUNNER_TEMP/backend.hcl" "$RUNNER_TEMP/encrypted.tfplan"
+          case "$TF_DATA_DIR" in
+            "$RUNNER_TEMP"/*) rm -rf "$TF_DATA_DIR" ;;
+            *) echo "WARN: refusing to remove unexpected TF_DATA_DIR: $TF_DATA_DIR" >&2 ;;
+          esac
