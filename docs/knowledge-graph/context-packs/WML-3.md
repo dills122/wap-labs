@@ -13,13 +13,13 @@
 
 ## Graph summary
 
-- Nodes: 303
-- Edges: 795
+- Nodes: 332
+- Edges: 884
 - Selected work items: 8
-- Direct SCR rows: 0
-- Direct normative clauses: 108
-- Work items without direct clause mappings: 2
-- Work items with unmapped declared normative families: 4
+- Direct SCR rows: 5
+- Direct normative clauses: 123
+- Work items without direct clause mappings: 1
+- Work items with unmapped declared normative families: 3
 
 ## Execution target
 
@@ -137,15 +137,15 @@ Evidence commands:
 
 ### WML-304: GET/POST/postfield/form commit pipeline
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `transport-rust`, `browser`, `qa`
-- Source families: `wml`, `wae`
+- Source families: `wml`
 - Existing tickets: `R0-06`, `T0-30`, `C5-05`
-- Direct SCR rows: 0
-- Selected SCR parents: 2 (`WML-C-14`, `WML-C-21`)
-- Direct normative clauses: 8
-- Requirements: `RQ-RMK-001`, `RQ-RMK-011`
-- Spec references: None
+- Direct SCR rows: 5 (5 `direct-test-linked`)
+- Selected SCR parents: 5 (`WML-C-07`, `WML-C-14`, `WML-C-29`, `WML-C-37`, `WML-C-38`)
+- Direct normative clauses: 15
+- Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-011`, `RQ-WAE-016`
+- Spec references: `WAP-191_104-WML sections 9.2, 9.3, and 9.5.1 as amended by WAP-191_105-WML section 4.3`
 - Follow-up work items: None
 - Depends on: None
 
@@ -159,9 +159,13 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
-- `cargo test --manifest-path transport-rust/Cargo.toml`
-- `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304`
+- `wasm-pack test --node engine-wasm/engine`
+- `pnpm --dir engine-wasm/host-sample run contracts:check`
+- `pnpm test:story WML-304`
+- `node scripts/wap-context-pack.mjs WML-304`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ### WML-305: Native WML timer lifecycle
 
@@ -203,9 +207,9 @@ Evidence commands:
 - Source families: `wml`, `wae`
 - Existing tickets: `R0-07`
 - Direct SCR rows: 0
-- Selected SCR parents: 0
-- Direct normative clauses: 0
-- Requirements: None
+- Selected SCR parents: 2 (`WML-C-14`, `WML-C-21`)
+- Direct normative clauses: 8
+- Requirements: `RQ-RMK-001`, `RQ-RMK-011`
 - Spec references: None
 - Follow-up work items: None
 - Depends on: None
@@ -281,7 +285,49 @@ Evidence commands:
 
 ## Direct SCR evidence
 
-- No direct SCR matrix rows are mapped for this selection.
+### WML-304
+
+- **WML-C-07** — History
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.2 (SCR §15.1.2)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#navigate_back_internal`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_back_restores_previous_card` (`cd engine-wasm/engine && cargo test navigate_back_restores_previous_card`)
+  - Work items: `R0-01`, `R0-03`, `WML-304`
+  - Assessment note: WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.
+- **WML-C-14** — Deck access control
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §12.1 (SCR §15.1.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
+  - Work items: `R0-01`, `R0-07`, `WML-304`
+  - Assessment note: Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.
+- **WML-C-29** — go
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.5.1 (SCR §15.1.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
+  - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-304`
+  - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.
+- **WML-C-37** — postfield
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.3 (SCR §15.1.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#collect_post_fields_xml`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#resolve_post_fields`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`)
+  - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-304`
+  - Assessment note: Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.
+- **WML-C-38** — prev
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.5.2 (SCR §15.1.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`)
+  - Work items: `R0-01`, `R0-02`, `WML-304`
+  - Assessment note: Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.
+
 ## Direct normative obligations
 
 ### WML-301
@@ -697,54 +743,96 @@ Evidence commands:
 
 ### WML-304
 
-- **WML-CL-ACCESS-ABSENT-ALLOWS** — When no access element is present, allow referrals from any deck.
+- **WML-CL-GO-ACCEPT-CHARSET** — Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `planned`)
+- **WML-CL-GO-ENCTYPE-SUPPORT** — Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.
   - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-ABSENT-ALLOWS` (`security-policy`, `implemented`)
-- **WML-CL-ACCESS-COMPONENT-MATCH** — Match domains by complete suffix components and paths by complete prefix components.
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `planned`)
+- **WML-CL-GO-FORM-URLENCODING** — URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.
   - Family: `wml`; force: `explicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-COMPONENT-MATCH` (`security-policy`, `implemented`)
-- **WML-CL-ACCESS-DEFAULTS** — Default an omitted access domain to the current deck domain and an omitted path to slash.
-  - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-DEFAULTS` (`security-policy`, `implemented`)
-- **WML-CL-ACCESS-REFERRER-MATCH** — Require a referring URI to satisfy each declared domain and path restriction.
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`, `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `planned`)
+- **WML-CL-GO-GET-QUERY-MERGE** — For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.
   - Family: `wml`; force: `explicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-REFERRER-MATCH` (`security-policy`, `implemented`)
-- **WML-CL-ACCESS-RELATIVE-PATH** — Resolve a relative access path to an absolute path before applying the prefix check.
-  - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-RELATIVE-PATH` (`security-policy`, `implemented`)
-- **WML-CL-ACCESS-SINGLE-ELEMENT** — Reject a deck containing more than one access element.
-  - Family: `wml`; force: `error-condition`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `implemented`)
-- **WML-CL-ACCESS-URL-CASE-RULES** — Apply URL component capitalization rules when evaluating domain and path restrictions.
-  - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
-  - Parents: `WML-C-21`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-ACCESS-URL-CASE-RULES` (`security-policy`, `implemented`)
-- **WML-CL-DECK-ACCESS-REQUIRED** — Enforce deck-level access control using access, sendreferer, domain, and path semantics.
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `planned`)
+- **WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION** — Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.
   - Family: `wml`; force: `explicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §12.1 (12.1 Deck Access Control)
-  - Parents: `WML-C-14`, `WML-C-21`
-  - Requirements: `RQ-RMK-001`, `RQ-RMK-011`
-  - Fixture: `WML-FX-DECK-ACCESS-REQUIRED` (`security-policy`, `planned`)
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION` (`runtime`, `implemented`)
+- **WML-CL-GO-METHOD** — Map get and post method values to the corresponding request operation.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `planned`)
+- **WML-CL-GO-NO-CACHE** — For cache-control no-cache, reload from the origin and send the matching request cache-control value.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `planned`)
+- **WML-CL-GO-PART-CONTENT-TYPE** — Provide a content type for each multipart part and a charset when its content is not US-ASCII.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `planned`)
+- **WML-CL-GO-POST-CONTENT-TYPE-CHARSET** — For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `planned`)
+- **WML-CL-GO-REFERER** — When sendreferer is true, transmit the smallest usable relative URI for the referring deck.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-14`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-011`
+  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `planned`)
+- **WML-CL-GO-STRUCTURE** — Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-GO-SUBMISSION-ORDER** — Substitute variables, transcode fields, then serialize postfields in document order.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`, `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `planned`)
+- **WML-CL-HISTORY-POST-REPLAY** — When a prior deck must be fetched again, replay the original POST data values associated with that history entry.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`, `WML-C-38`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-POST-REPLAY` (`transport-boundary`, `planned`)
+- **WML-CL-POSTFIELD-REQUEST-PAIR** — Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
+  - Parents: `WML-C-37`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `planned`)
+- **WML-CL-POSTFIELD-STRUCTURE** — Require postfield name and value attributes and treat both as variable-bearing data.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
+  - Parents: `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-POSTFIELD-STRUCTURE` (`parser`, `implemented`)
 
 ### WML-305
 
@@ -808,6 +896,57 @@ Evidence commands:
   - Parents: `WML-C-48`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-004`
   - Fixture: `WML-FX-TIMER-UNITS` (`runtime`, `implemented`)
+
+### WML-306
+
+- **WML-CL-ACCESS-ABSENT-ALLOWS** — When no access element is present, allow referrals from any deck.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-ABSENT-ALLOWS` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-COMPONENT-MATCH** — Match domains by complete suffix components and paths by complete prefix components.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-COMPONENT-MATCH` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-DEFAULTS** — Default an omitted access domain to the current deck domain and an omitted path to slash.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-DEFAULTS` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-REFERRER-MATCH** — Require a referring URI to satisfy each declared domain and path restriction.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-REFERRER-MATCH` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-RELATIVE-PATH** — Resolve a relative access path to an absolute path before applying the prefix check.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-RELATIVE-PATH` (`security-policy`, `implemented`)
+- **WML-CL-ACCESS-SINGLE-ELEMENT** — Reject a deck containing more than one access element.
+  - Family: `wml`; force: `error-condition`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-SINGLE-ELEMENT` (`parser`, `implemented`)
+- **WML-CL-ACCESS-URL-CASE-RULES** — Apply URL component capitalization rules when evaluating domain and path restrictions.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.3.1 (11.3.1 The Access Element)
+  - Parents: `WML-C-21`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-ACCESS-URL-CASE-RULES` (`security-policy`, `implemented`)
+- **WML-CL-DECK-ACCESS-REQUIRED** — Enforce deck-level access control using access, sendreferer, domain, and path semantics.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.1 (12.1 Deck Access Control)
+  - Parents: `WML-C-14`, `WML-C-21`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-011`
+  - Fixture: `WML-FX-DECK-ACCESS-REQUIRED` (`security-policy`, `planned`)
 
 ### WML-308
 
@@ -952,13 +1091,11 @@ Evidence commands:
 
 ## Explicit mapping gaps
 
-- `WML-306` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 - `WML-307` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
 
 Declared-family gaps:
 
-- `WML-304` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `WML-306` declares `wae`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `WML-306` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-307` declares `wbxml`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-308` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 

@@ -378,11 +378,26 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: []
     },
     'WML-C-14': {
-      status: 'missing',
+      status: 'partial',
       note:
-        'Deck access, domain, path, and sendreferer enforcement is not implemented.',
-      implementationEvidence: [],
-      testEvidence: []
+        'Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.',
+      implementationEvidence: [
+        codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'allows_referring_uri'),
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'wml_go_request_policy'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_202_residual.rs',
+          'wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+          'wml_304_post_intent_carries_request_attributes_without_constructing_multipart'
+        )
+      ]
     },
     'WML-C-16': {
       status: 'implemented',
@@ -484,7 +499,7 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-21': {
       status: 'partial',
       note:
-        'The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.',
+        'The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/head.rs',
@@ -492,7 +507,11 @@ const mandatoryImplementationAudit = new Map(
         ),
         codeEvidence(
           'engine-wasm/engine/src/runtime/deck.rs',
-          'DeckAccessControl'
+          'allows_referring_uri'
+        ),
+        codeEvidence(
+          'browser/frontend/src/app/navigation-state.ts',
+          'loadTransportUrl'
         )
       ],
       testEvidence: [
@@ -501,8 +520,8 @@ const mandatoryImplementationAudit = new Map(
           'wml_202_retains_access_and_ordered_meta_for_the_whole_deck'
         ),
         engineTest(
-          'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'wml_202_rejects_invalid_head_access_and_meta_structure_deterministically'
+          'engine-wasm/engine/src/engine_tests/wml_202_residual.rs',
+          'wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules'
         )
       ]
     },
@@ -576,17 +595,25 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-29': {
       status: 'partial',
       note:
-        'Fragment, external, GET/POST, and script href paths exist, but the complete section 12.5 go process is not implemented.',
+        'The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
-          'execute_action_href'
+          'wml_go_request_policy'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
+          'parse_go_request_xml'
         )
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'fixture_accept_go_trace_order_is_deterministic'
+          'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+          'wml_304_get_intent_preserves_order_without_claiming_query_merge'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+          'wml_304_post_intent_carries_request_attributes_without_constructing_multipart'
         )
       ]
     },
@@ -740,17 +767,21 @@ const mandatoryImplementationAudit = new Map(
     'WML-C-37': {
       status: 'partial',
       note:
-        'Postfield name/value collection and URL-form payload generation exist, but complete variable-conversion, ordering, and task-failure semantics are not closed.',
+        'Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
           'collect_post_fields_xml'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'resolve_post_fields'
         )
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
-          'enter_accept_post_action_sets_external_navigation_post_context'
+          'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+          'wml_304_get_intent_preserves_order_without_claiming_query_merge'
         )
       ]
     },
@@ -1210,7 +1241,7 @@ function mappingFor(row) {
     workItems.push('WML-203');
   }
   if (number === 21) {
-    workItems.push('WML-304');
+    workItems.push('WML-306');
   }
   if (number === 25) {
     workItems.push('WML-301');

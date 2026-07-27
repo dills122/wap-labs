@@ -1153,3 +1153,67 @@ fn wasm_wml_302_variable_render_and_task_snapshot_match_native() {
         Some("https://example.test/decks/next/old%20value")
     );
 }
+
+#[wasm_bindgen_test]
+fn wasm_wml_304_request_intent_matches_native_serialization() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r##"<wml><card id="home"><do type="accept"><go href="/submit" method="post"
+              sendreferer="true" cache-control="no-cache" accept-charset="utf-8">
+              <postfield name="first" value="1"/><postfield name="second" value="2"/>
+              </go></do></card></wml>"##,
+            "https://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("WML-304 deck should load through WASM");
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("go should execute through WASM");
+
+    let policy = engine
+        .external_navigation_request_policy_wasm()
+        .expect("request policy should serialize through serde-wasm-bindgen");
+    let intent =
+        Reflect::get(&policy, &JsValue::from_str("requestIntent")).expect("requestIntent field");
+    assert_eq!(
+        Reflect::get(&intent, &JsValue::from_str("method"))
+            .expect("method field")
+            .as_string()
+            .as_deref(),
+        Some("post")
+    );
+    assert_eq!(
+        Reflect::get(&intent, &JsValue::from_str("enctype"))
+            .expect("enctype field")
+            .as_string()
+            .as_deref(),
+        Some("application/x-www-form-urlencoded")
+    );
+    assert_eq!(
+        Reflect::get(&intent, &JsValue::from_str("sendReferer"))
+            .expect("sendReferer field")
+            .as_bool(),
+        Some(true)
+    );
+    let fields = Array::from(
+        &Reflect::get(&intent, &JsValue::from_str("postFields")).expect("postFields field"),
+    );
+    assert_eq!(fields.length(), 2);
+    assert_eq!(
+        Reflect::get(&fields.get(0), &JsValue::from_str("name"))
+            .expect("first postfield name")
+            .as_string()
+            .as_deref(),
+        Some("first")
+    );
+    assert_eq!(
+        Reflect::get(&policy, &JsValue::from_str("cacheControl"))
+            .expect("cacheControl field")
+            .as_string()
+            .as_deref(),
+        Some("no-cache")
+    );
+}

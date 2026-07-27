@@ -110,9 +110,9 @@ Current priority order is:
    action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
    while `WSP-8` remains behind `WAE-6`. Preserve WML-301's implemented
-   context/history subset and WMLS-501's merged decoder/verifier, then advance
-   graph-first `WML-304` request intent and bounded WMLS-501 runtime routing in
-   parallel. Preserve the completed `D0-01` contract
+   context/history subset and WMLS-501's merged decoder/verifier plus verified-unit
+   runtime routing, then advance graph-first `WML-304` request intent alongside
+   bounded `WMLS-502` and public-preview decision work. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -134,15 +134,16 @@ Current parallel batch:
 2. `WML-301`: completed the 20-clause source audit and implemented the 12-clause
    context/history/process-order subset with native/WASM/browser/story evidence; the aggregate
    item remains in progress while the explicit table-boundary and broad WAE delegates stay planned.
-3. `WMLS-501`: the bounded WAP-193 bytecode decoder and structural verifier are
-   merged; route verified units into execution without claiming WMLS-502
-   operator, dataflow, or library closure.
-4. Public preview: repair and semantically lint the protected OpenTofu
-   workflows; `PRE-001`/`PRE-003` still gate live provider/R2 evidence, and
+3. `WMLS-501`: the bounded WAP-193 bytecode decoder, structural verifier, and
+   verified-unit runtime routing are merged; the next script baton is a bounded
+   `WMLS-502` operator/dataflow decision without claiming library closure.
+4. Public preview: the protected OpenTofu workflow repair and semantic linting
+   are merged; `PRE-001`/`PRE-003` still gate live provider/R2 evidence, and
    `GW-101` remains at readiness until `PRE-004` threat/data-policy acceptance.
-5. `WML-304`: adopt the correct request-pipeline graph projection first, then
-   define GET/POST/postfield request intent without reopening completed WML
-   history; native serialization and POST replay follow sequentially.
+5. `WML-304`: the 15-clause/five-parent request-pipeline graph projection is the
+   active compliance baton; land the native/WASM/Tauri-host GET/POST/postfield
+   request-intent contract without reopening completed WML history; native transport
+   request application and POST replay follow sequentially.
 
 ### WML-203A Legacy local-example standalone-document migration
 

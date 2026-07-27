@@ -57,8 +57,7 @@ fn wml_303_retains_do_identity_metadata_and_orders_active_actions() {
         deck.active_do_action_by_name(0, "template-help"),
         Some(&CardTaskAction::Go {
             href: "#help".to_string(),
-            method: None,
-            post_fields: Vec::new(),
+            request: crate::runtime::card::CardGoRequest::default(),
         })
     );
 }

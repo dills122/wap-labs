@@ -155,6 +155,32 @@ pub enum ExternalNavigationCacheControlPolicySnapshot {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "lowercase")]
+pub enum ExternalNavigationMethodSnapshot {
+    Get,
+    Post,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct ExternalNavigationPostFieldSnapshot {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct ExternalNavigationRequestIntentSnapshot {
+    pub method: ExternalNavigationMethodSnapshot,
+    pub enctype: String,
+    pub send_referer: bool,
+    #[ts(optional)]
+    pub accept_charset: Option<String>,
+    pub same_deck: bool,
+    pub post_fields: Vec<ExternalNavigationPostFieldSnapshot>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct ExternalNavigationPostContextSnapshot {
     #[ts(optional)]
@@ -174,6 +200,8 @@ pub struct ExternalNavigationRequestPolicySnapshot {
     pub referer_url: Option<String>,
     #[ts(optional)]
     pub post_context: Option<ExternalNavigationPostContextSnapshot>,
+    #[ts(optional)]
+    pub request_intent: Option<ExternalNavigationRequestIntentSnapshot>,
 }
 
 #[derive(Clone, Debug, Serialize, TS)]
@@ -238,6 +266,9 @@ impl From<engine::ScriptNavigationRequestPolicyLiteral>
             post_context: value
                 .post_context
                 .map(ExternalNavigationPostContextSnapshot::from),
+            request_intent: value
+                .request_intent
+                .map(ExternalNavigationRequestIntentSnapshot::from),
         }
     }
 }
@@ -259,6 +290,43 @@ impl From<engine::ScriptNavigationPostContextLiteral> for ExternalNavigationPost
             same_deck: value.same_deck,
             content_type: value.content_type,
             payload: value.payload,
+        }
+    }
+}
+
+impl From<engine::ScriptNavigationRequestIntentLiteral>
+    for ExternalNavigationRequestIntentSnapshot
+{
+    fn from(value: engine::ScriptNavigationRequestIntentLiteral) -> Self {
+        Self {
+            method: ExternalNavigationMethodSnapshot::from(value.method),
+            enctype: value.enctype,
+            send_referer: value.send_referer,
+            accept_charset: value.accept_charset,
+            same_deck: value.same_deck,
+            post_fields: value
+                .post_fields
+                .into_iter()
+                .map(ExternalNavigationPostFieldSnapshot::from)
+                .collect(),
+        }
+    }
+}
+
+impl From<engine::ScriptNavigationMethodLiteral> for ExternalNavigationMethodSnapshot {
+    fn from(value: engine::ScriptNavigationMethodLiteral) -> Self {
+        match value {
+            engine::ScriptNavigationMethodLiteral::Get => Self::Get,
+            engine::ScriptNavigationMethodLiteral::Post => Self::Post,
+        }
+    }
+}
+
+impl From<engine::ScriptNavigationPostFieldLiteral> for ExternalNavigationPostFieldSnapshot {
+    fn from(value: engine::ScriptNavigationPostFieldLiteral) -> Self {
+        Self {
+            name: value.name,
+            value: value.value,
         }
     }
 }

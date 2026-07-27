@@ -69,18 +69,27 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Fragment, external, GET/POST, and script href paths exist, but the complete section 12.5 go process is not implemented.",
+  "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
-      "symbol": "execute_action_href"
+      "symbol": "wml_go_request_policy"
+    },
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+      "symbol": "parse_go_request_xml"
     }
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "fixture_accept_go_trace_order_is_deterministic",
-      "command": "cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic"
+      "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+      "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+      "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+      "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+      "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
     }
   ],
   "ownerLayers": [

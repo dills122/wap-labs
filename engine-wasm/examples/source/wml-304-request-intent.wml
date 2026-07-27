@@ -1,0 +1,26 @@
+<!--
+label: WML-304 Request Intent Contract
+work-items: WML-304
+spec-items: WML-CL-HISTORY-POST-REPLAY,WML-CL-POSTFIELD-STRUCTURE,WML-CL-POSTFIELD-REQUEST-PAIR,WML-CL-GO-STRUCTURE,WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION,WML-CL-GO-REFERER,WML-CL-GO-METHOD,WML-CL-GO-NO-CACHE,WML-CL-GO-ENCTYPE-SUPPORT,WML-CL-GO-PART-CONTENT-TYPE,WML-CL-GO-ACCEPT-CHARSET,WML-CL-GO-SUBMISSION-ORDER,WML-CL-GO-GET-QUERY-MERGE,WML-CL-GO-POST-CONTENT-TYPE-CHARSET,WML-CL-GO-FORM-URLENCODING
+description: Captures the bounded WML go request intent without performing network fetch or transport serialization.
+goal: Verify method, ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification at the engine boundary.
+testing-ac:
+- Activate Submit and inspect the ordered POST request intent emitted by the engine.
+- Confirm sendreferer, no-cache, enctype, accept-charset, and same-deck values are serialized identically for native and WASM hosts.
+- Treat transport encoding, GET query merge, multipart construction, and POST history replay as explicit follow-up work.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <do type="accept" label="Submit">
+      <go href="/submit" method="post" sendreferer="true"
+          cache-control="no-cache" accept-charset="utf-8">
+        <postfield name="first" value="one"/>
+        <postfield name="second" value="two"/>
+      </go>
+    </do>
+    <p>Activate Submit to capture the WML request intent.</p>
+  </card>
+</wml>

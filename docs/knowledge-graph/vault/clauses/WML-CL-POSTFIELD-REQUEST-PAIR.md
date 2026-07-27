@@ -44,7 +44,8 @@ tags:
     "R0-01",
     "R0-02",
     "R0-06",
-    "WML-201"
+    "WML-201",
+    "WML-304"
   ],
   "ownerLayers": [
     "browser",

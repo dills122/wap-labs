@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-RMK-002|RQ-RMK-002]]
 - `planned-by` → [[work-items/WML-303|WML-303]]
+- `planned-by` → [[work-items/WML-304|WML-304]]
 - `refines` → [[scr-rows/WML-C-29|WML-C-29]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-GO-STRUCTURE|WML-FX-GO-STRUCTURE]]
@@ -44,7 +45,8 @@ tags:
     "R0-06",
     "WML-201",
     "WML-203",
-    "WML-303"
+    "WML-303",
+    "WML-304"
   ],
   "ownerLayers": [
     "browser",

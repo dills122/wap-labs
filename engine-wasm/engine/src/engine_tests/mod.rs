@@ -119,5 +119,6 @@ mod wml_203_validation;
 mod wml_301_context_history;
 mod wml_302_variables;
 mod wml_303_actions;
+mod wml_304_request_intent;
 mod wml_305_timers;
 mod wml_load_errors;

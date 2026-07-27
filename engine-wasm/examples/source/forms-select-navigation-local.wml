@@ -17,7 +17,7 @@ testing-ac:
 <wml>
   <card id="profile" title="Select Navigation">
     <do type="accept">
-      <go method="post" href="/profile">
+      <go method="post" href="/profile" sendreferer="true">
         <postfield name="Country" value="$(Country)"/>
         <postfield name="pin" value="$(pin)"/>
       </go>

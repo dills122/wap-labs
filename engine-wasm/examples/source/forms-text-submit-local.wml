@@ -16,7 +16,7 @@ testing-ac:
 <wml>
   <card id="login" title="Local Login">
     <do type="accept">
-      <go method="post" href="/login">
+      <go method="post" href="/login" sendreferer="true">
         <postfield name="username" value="$(username)"/>
         <postfield name="pin" value="$(pin)"/>
       </go>

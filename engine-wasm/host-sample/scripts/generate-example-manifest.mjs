@@ -222,7 +222,7 @@ function parseExpectedState(value, filename, location) {
       const policy = requireRecord(expected, filename, `${location}.${key}`);
       validateKeys(
         policy,
-        new Set(['cacheControl', 'refererUrl', 'postContext']),
+        new Set(['cacheControl', 'refererUrl', 'postContext', 'requestIntent']),
         filename,
         `${location}.${key}`
       );
@@ -257,6 +257,59 @@ function parseExpectedState(value, filename, location) {
               `${filename}: ${location}.${key}.postContext.${field} must be a string`
             );
           }
+        }
+      }
+      if (policy.requestIntent !== undefined) {
+        const requestIntent = requireRecord(
+          policy.requestIntent,
+          filename,
+          `${location}.${key}.requestIntent`
+        );
+        validateKeys(
+          requestIntent,
+          new Set([
+            'method',
+            'enctype',
+            'sendReferer',
+            'acceptCharset',
+            'sameDeck',
+            'postFields'
+          ]),
+          filename,
+          `${location}.${key}.requestIntent`
+        );
+        if (!['get', 'post'].includes(requestIntent.method)) {
+          throw new Error(`${filename}: ${location}.${key}.requestIntent.method must be get or post`);
+        }
+        if (typeof requestIntent.enctype !== 'string') {
+          throw new Error(`${filename}: ${location}.${key}.requestIntent.enctype must be a string`);
+        }
+        for (const field of ['sendReferer', 'sameDeck']) {
+          if (typeof requestIntent[field] !== 'boolean') {
+            throw new Error(`${filename}: ${location}.${key}.requestIntent.${field} must be boolean`);
+          }
+        }
+        if (
+          requestIntent.acceptCharset !== undefined &&
+          typeof requestIntent.acceptCharset !== 'string'
+        ) {
+          throw new Error(
+            `${filename}: ${location}.${key}.requestIntent.acceptCharset must be a string`
+          );
+        }
+        if (
+          !Array.isArray(requestIntent.postFields) ||
+          requestIntent.postFields.some(
+            (field) =>
+              !isRecord(field) ||
+              typeof field.name !== 'string' ||
+              typeof field.value !== 'string' ||
+              Object.keys(field).some((fieldKey) => !['name', 'value'].includes(fieldKey))
+          )
+        ) {
+          throw new Error(
+            `${filename}: ${location}.${key}.requestIntent.postFields must contain name/value pairs`
+          );
         }
       }
       continue;
@@ -570,6 +623,14 @@ export interface StoryStateExpectation {
     cacheControl?: 'default' | 'no-cache';
     refererUrl?: string;
     postContext?: { sameDeck?: boolean; contentType?: string; payload?: string };
+    requestIntent?: {
+      method: 'get' | 'post';
+      enctype: string;
+      sendReferer: boolean;
+      acceptCharset?: string;
+      sameDeck: boolean;
+      postFields: Array<{ name: string; value: string }>;
+    };
   } | null;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }

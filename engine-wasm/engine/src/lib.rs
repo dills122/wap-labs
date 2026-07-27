@@ -64,8 +64,10 @@ pub use engine_script_types::{
     EngineTraceEntry, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptExecutionOutcome, ScriptInvocationOutcome,
     ScriptNavigationCacheControlPolicyLiteral, ScriptNavigationIntentLiteral,
-    ScriptNavigationPostContextLiteral, ScriptNavigationRequestPolicyLiteral,
-    ScriptTimerRequestLiteral, ScriptValueLiteral, SCRIPT_ERROR_CATEGORY_METADATA,
+    ScriptNavigationMethodLiteral, ScriptNavigationPostContextLiteral,
+    ScriptNavigationPostFieldLiteral, ScriptNavigationRequestIntentLiteral,
+    ScriptNavigationRequestPolicyLiteral, ScriptTimerRequestLiteral, ScriptValueLiteral,
+    SCRIPT_ERROR_CATEGORY_METADATA,
 };
 pub use engine_wml_types::{
     WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,

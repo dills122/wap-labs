@@ -399,6 +399,38 @@ pub enum ScriptNavigationCacheControlPolicyLiteral {
     NoCache,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoMethod"))]
+#[serde(rename_all = "lowercase")]
+pub enum ScriptNavigationMethodLiteral {
+    Get,
+    Post,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoPostField"))]
+#[serde(rename_all = "camelCase")]
+pub struct ScriptNavigationPostFieldLiteral {
+    pub name: String,
+    pub value: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoRequestIntent"))]
+#[serde(rename_all = "camelCase")]
+pub struct ScriptNavigationRequestIntentLiteral {
+    pub method: ScriptNavigationMethodLiteral,
+    pub enctype: String,
+    pub send_referer: bool,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
+    pub accept_charset: Option<String>,
+    pub same_deck: bool,
+    pub post_fields: Vec<ScriptNavigationPostFieldLiteral>,
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
 #[cfg_attr(feature = "contract-codegen", ts(rename = "WmlGoPostContext"))]
@@ -423,6 +455,8 @@ pub struct ScriptNavigationRequestPolicyLiteral {
     pub referer_url: Option<String>,
     #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub post_context: Option<ScriptNavigationPostContextLiteral>,
+    #[cfg_attr(feature = "contract-codegen", ts(optional))]
+    pub request_intent: Option<ScriptNavigationRequestIntentLiteral>,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

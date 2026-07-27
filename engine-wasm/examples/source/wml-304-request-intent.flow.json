@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "example": "wml304RequestIntent",
+  "flows": [
+    {
+      "id": "host-wml-304-request-intent",
+      "title": "Host sample captures the bounded ordered WML go request intent",
+      "workItems": ["WML-304"],
+      "specItems": [
+        "WML-CL-HISTORY-POST-REPLAY",
+        "WML-CL-POSTFIELD-STRUCTURE",
+        "WML-CL-POSTFIELD-REQUEST-PAIR",
+        "WML-CL-GO-STRUCTURE",
+        "WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+        "WML-CL-GO-REFERER",
+        "WML-CL-GO-METHOD",
+        "WML-CL-GO-NO-CACHE",
+        "WML-CL-GO-ENCTYPE-SUPPORT",
+        "WML-CL-GO-PART-CONTENT-TYPE",
+        "WML-CL-GO-ACCEPT-CHARSET",
+        "WML-CL-GO-SUBMISSION-ORDER",
+        "WML-CL-GO-GET-QUERY-MERGE",
+        "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+        "WML-CL-GO-FORM-URLENCODING"
+      ],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "externalNavigationIntent": null,
+          "externalNavigationRequestPolicy": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "externalNavigationIntent": "http://local.test/submit",
+              "externalNavigationRequestPolicy": {
+                "cacheControl": "no-cache",
+                "refererUrl": "http://local.test/deck.wml",
+                "postContext": {
+                  "sameDeck": false,
+                  "contentType": "application/x-www-form-urlencoded",
+                  "payload": "first=one&second=two"
+                },
+                "requestIntent": {
+                  "method": "post",
+                  "enctype": "application/x-www-form-urlencoded",
+                  "sendReferer": true,
+                  "acceptCharset": "utf-8",
+                  "sameDeck": false,
+                  "postFields": [
+                    { "name": "first", "value": "one" },
+                    { "name": "second", "value": "two" }
+                  ]
+                }
+              }
+            },
+            "traceKinds": ["KEY", "ACTION_ACCEPT", "ACTION_EXTERNAL"]
+          }
+        }
+      ]
+    }
+  ]
+}

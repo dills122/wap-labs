@@ -49,18 +49,22 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Postfield name/value collection and URL-form payload generation exist, but complete variable-conversion, ordering, and task-failure semantics are not closed.",
+  "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
       "symbol": "collect_post_fields_xml"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+      "symbol": "resolve_post_fields"
     }
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-      "test": "enter_accept_post_action_sets_external_navigation_post_context",
-      "command": "cd engine-wasm/engine && cargo test enter_accept_post_action_sets_external_navigation_post_context"
+      "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+      "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+      "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
     }
   ],
   "ownerLayers": [

@@ -230,8 +230,8 @@ if (
   ) ||
   JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
     JSON.stringify({
-      'direct-test-linked': 31,
-      'gap-work-item-mapped': 16,
+      'direct-test-linked': 32,
+      'gap-work-item-mapped': 15,
       'optional-not-assessed': 29
     }) ||
   graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
@@ -240,8 +240,8 @@ if (
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
   !wml201Pack.includes('- Direct normative clauses: 178') ||
-  !wml201Pack.includes('31 `direct-test-linked`') ||
-  !wml201Pack.includes('16 `gap-work-item-mapped`') ||
+  !wml201Pack.includes('32 `direct-test-linked`') ||
+  !wml201Pack.includes('15 `gap-work-item-mapped`') ||
   !wml201Pack.includes('29 `optional-not-assessed`') ||
   !wml201Pack.includes('**WML-C-01**') ||
   !wml201Pack.includes('**WML-C-76**')
@@ -361,16 +361,24 @@ if (
   !wml304Pack.includes('### WML-304:') ||
   wml304Pack.includes('### WML-305:') ||
   !wml304Pack.includes('- Selected work items: 1') ||
-  !wml304Pack.includes('- Selected SCR parents: 2') ||
-  !wml304Pack.includes('- Direct normative clauses: 8') ||
-  !wml304Pack.includes('**WML-CL-DECK-ACCESS-REQUIRED**') ||
-  !wml304Pack.includes('`WML-304` declares `wae` scope without a direct clause mapping') ||
+  !wml304Pack.includes('- Direct SCR rows: 5') ||
+  !wml304Pack.includes('- Selected SCR parents: 5') ||
+  !wml304Pack.includes('- Direct normative clauses: 15') ||
+  !wml304Pack.includes('**WML-CL-GO-METHOD**') ||
+  !wml304Pack.includes('**WML-CL-GO-SUBMISSION-ORDER**') ||
+  !wml304Pack.includes('**WML-CL-GO-REFERER**') ||
+  !wml304Pack.includes('**WML-CL-GO-NO-CACHE**') ||
+  !wml304Pack.includes('**WML-CL-GO-ENCTYPE-SUPPORT**') ||
+  !wml304Pack.includes('**WML-CL-GO-ACCEPT-CHARSET**') ||
+  !wml304Pack.includes('**WML-CL-GO-GET-QUERY-MERGE**') ||
+  !wml304Pack.includes('**WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION**') ||
+  !wml304Pack.includes('**WML-CL-HISTORY-POST-REPLAY**') ||
+  wml304Pack.includes('**WML-CL-DECK-ACCESS-REQUIRED**') ||
   wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-304') ||
-  JSON.stringify(wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-304']) !==
-    JSON.stringify(['wae'])
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-304']
 ) {
   failures.push(
-    'WML-304 context rendering must expose its eight current mappings, two selected parents, and explicit WAE-family gap without implying readiness'
+    'WML-304 context rendering must expose its 15 request-intent clauses, five direct SCR rows, effective WML source order, and conservative residuals without a mapping gap'
   );
 }
 

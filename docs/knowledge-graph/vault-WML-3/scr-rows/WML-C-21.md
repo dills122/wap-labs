@@ -16,7 +16,7 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
-- `planned-by` → [[work-items/WML-304|WML-304]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` ← [[clauses/WML-CL-ACCESS-ABSENT-ALLOWS|WML-CL-ACCESS-ABSENT-ALLOWS]]
 - `refines` ← [[clauses/WML-CL-ACCESS-COMPONENT-MATCH|WML-CL-ACCESS-COMPONENT-MATCH]]
 - `refines` ← [[clauses/WML-CL-ACCESS-DEFAULTS|WML-CL-ACCESS-DEFAULTS]]
@@ -46,7 +46,7 @@ tags:
     "R0-01",
     "R0-04",
     "C5-03",
-    "WML-304"
+    "WML-306"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }
