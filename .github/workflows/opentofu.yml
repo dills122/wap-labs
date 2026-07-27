@@ -92,6 +92,9 @@ jobs:
         working-directory: infra/network-preview/environments/preview
         run: tofu validate -no-color
 
+      - name: Validate rendered cloud-init semantics
+        run: scripts/ci/check-network-preview-cloud-init.sh
+
       - name: Verify multi-platform provider lock file
         working-directory: infra/network-preview/environments/preview
         run: |

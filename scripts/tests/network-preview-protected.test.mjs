@@ -71,10 +71,18 @@ test('staged local infrastructure fails closed before explicit publication', () 
   assert.match(userData, /PasswordAuthentication no/);
   assert.match(variables, /variable "tailscale_auth_key"[\s\S]*?sensitive\s+=\s+true/);
   assert.match(userData, /path: \/run\/waves-tailscale-auth-key[\s\S]*?permissions: "0600"/);
+  assert.match(userData, /content: \|\n      \$\{bootstrap_script\}/);
   assert.match(bootstrap, /--auth-key="file:\$tailscale_auth_file"/);
   assert.match(bootstrap, /--advertise-tags=tag:waves-preview/);
   assert.match(bootstrap, /ufw allow in on tailscale0 to any port 22 proto tcp/);
   assert.doesNotMatch(bootstrap, /tailscale (?:up|set)[^\n]*--ssh/);
+});
+
+test('static workflow semantically validates fully rendered cloud-init', () => {
+  assert.match(staticWorkflow, /run: scripts\/ci\/check-network-preview-cloud-init\.sh/);
+  const fixture = read('infra/network-preview/tests/cloud-init-render/main.tf');
+  assert.match(fixture, /cloud_config\s+=\s+yamldecode\(local\.user_data\)/);
+  assert.match(fixture, /startswith\(local\.bootstrap_file\.content, "#!\/usr\/bin\/env sh\\n"\)/);
 });
 
 test('protected workflows carry every staged provider input without exposing it in commands', () => {

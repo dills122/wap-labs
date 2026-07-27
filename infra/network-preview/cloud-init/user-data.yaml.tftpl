@@ -77,7 +77,7 @@ write_files:
     owner: root:root
     permissions: "0750"
     content: |
-${bootstrap_script}
+      ${bootstrap_script}
 
 runcmd:
   - /usr/local/sbin/waves-bootstrap

@@ -61,8 +61,9 @@ Use OpenTofu 1.12.5 exactly:
 make lint-tofu
 ```
 
-This validates formatting, provider locks, workflow expressions, HCL, shell helpers, and enforced
-plan encryption without contacting R2 or either provider.
+This validates formatting, provider locks, workflow expressions, HCL, the fully rendered
+cloud-init YAML and embedded bootstrap, shell helpers, and enforced plan encryption without
+contacting R2 or either provider.
 
 ## Speculative plan
 

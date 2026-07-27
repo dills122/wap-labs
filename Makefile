@@ -138,6 +138,8 @@ lint-tofu:
 		TF_VAR_tailscale_auth_key=tskey-auth-offline-validation \
 		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview validate -no-color
+	@echo "==> rendered cloud-init semantics (network preview)"
+	@scripts/ci/check-network-preview-cloud-init.sh
 	@echo "==> POSIX syntax (network-preview CI scripts)"
 	@sh -n scripts/ci/*network-preview*.sh
 	@if command -v shellcheck >/dev/null 2>&1; then \
