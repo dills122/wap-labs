@@ -74,6 +74,7 @@ test('change selects backend-disabled OpenTofu checks for network preview infras
       'backend-disabled initialization',
       'OpenTofu validation',
       'network-preview script POSIX syntax',
+      'network-preview local plan helper syntax',
       'encrypted offline plan check',
       'protected workflow contract tests'
     ]

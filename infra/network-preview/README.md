@@ -3,19 +3,23 @@
 This directory owns the OpenTofu configuration for the public WAP network preview described in
 `docs/waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md`.
 
-The current `INF-101` checkpoint is intentionally resource-free. It pins the toolchain and
-DigitalOcean provider, defines the encrypted Cloudflare R2 backend contract, and supplies static
-validation, protected plan/apply workflow definitions, recovery-copy automation, and an isolated
-future lock integration test. It does not create an account, bucket, GitHub environment, DNS
-record, Droplet, firewall, Reserved IP, deployment, or public endpoint. The protected workflows
-remain unusable until `PRE-001` and `PRE-003` establish and independently review their trust
-boundary.
+The configuration defines a staged single-host preview while keeping execution separate from
+authored infrastructure. Its default local deployment creates a hardened Droplet, Reserved IP,
+restricted firewall, default-project verification, and free provider monitoring. Public UDP and the three
+Cloudflare DNS records remain disabled until `publish_preview` is explicitly enabled. No resource
+exists merely because the configuration is checked in, and no apply is authorized by this file.
+
+The initial gate uses the [owner-local deployment path](LOCAL_DEPLOYMENT.md). Protected GitHub
+plan/apply automation remains available for a later shared/public operating model and stays
+blocked until `PRE-003` has an independent reviewer and recovery maintainer.
 
 ## Layout
 
-- `bootstrap/`: manual trust-root and protected-environment prerequisites.
-- `environments/preview/`: the preview root module. `INF-102` will add cloud resources here only
-  after `PRE-001` and `PRE-003` are accepted.
+- `bootstrap/`: manual trust-root and protected-environment prerequisites. Start with the
+  [owner setup guide](bootstrap/OWNER_SETUP.md); it separates account configuration from later
+  workflow execution.
+- `cloud-init/`: deterministic, secret-free host hardening and bootstrap templates.
+- `environments/preview/`: the staged preview root module and exact provider locks.
 - `tests/r2-lock/`: an isolated lock holder used only by the access-backed R2 integration test.
 
 Do not introduce shared modules until a second real environment creates demonstrated repetition.
@@ -24,6 +28,7 @@ Do not introduce shared modules until a second real environment creates demonstr
 
 - OpenTofu: `1.12.5`, from `.opentofu-version`
 - DigitalOcean provider: `2.96.0`
+- Cloudflare provider: `5.22.0`
 - Provider checksums: committed for `linux_amd64`, `darwin_arm64`, and `darwin_amd64`
 
 The local OpenTofu binary must match `.opentofu-version`. Regenerate the provider lock file only
@@ -38,16 +43,28 @@ tofu -chdir=infra/network-preview/environments/preview providers lock \
 
 ## Static validation
 
-Static checks neither contact R2 nor configure the DigitalOcean provider. The passphrase below is
-a non-secret validation sentinel; it must never be used for remote state.
+Static checks neither contact R2 nor configure either cloud provider. The passphrase below is a
+non-secret validation sentinel; it must never be used for remote state.
 
 ```sh
 tofu fmt -check -recursive infra/network-preview
 scripts/ci/check-network-preview-workflows.sh
+TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+TF_VAR_monitoring_alert_email=owner@example.com \
+TF_VAR_project_name=offline-validation \
+TF_VAR_region=nyc3 \
+TF_VAR_ssh_key_name=offline-validation \
 TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+TF_VAR_wap_test_cidrs='[]' \
   tofu -chdir=infra/network-preview/environments/preview \
   init -backend=false -lockfile=readonly
+TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+TF_VAR_monitoring_alert_email=owner@example.com \
+TF_VAR_project_name=offline-validation \
+TF_VAR_region=nyc3 \
+TF_VAR_ssh_key_name=offline-validation \
 TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+TF_VAR_wap_test_cidrs='[]' \
   tofu -chdir=infra/network-preview/environments/preview validate
 sh -n scripts/ci/check-network-preview-r2-lock.sh
 ```
@@ -55,22 +72,24 @@ sh -n scripts/ci/check-network-preview-r2-lock.sh
 Install the pinned semantic workflow linter with
 `go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`. The same contract is available as
 `make lint-tofu` and is enforced by `.github/workflows/opentofu.yml` without repository secrets.
-Passing these checks proves offline workflow validity; it does not configure the `PRE-003`
-environments or prove live R2/provider behavior.
+Passing these checks proves offline configuration and workflow validity; it does not create a
+Droplet, configure the `PRE-003` environments, or prove live R2/provider behavior.
 
 ## Remote backend contract
 
 The `s3` backend is partial. Bucket, key, and endpoint values are supplied only at runtime; R2
 credentials use the standard `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment
-variables. Do not commit backend configuration files, credentials, `.tfvars`, state, or plans.
+variables required by the S3-compatible client. Those values are a Cloudflare R2 Access Key ID
+and Secret Access Key. They do not require or access an AWS account, service, or bill. Do not
+commit backend configuration files, credentials, `.tfvars`, state, or plans.
 Saved plans must live below the environment's ignored `.plans/` directory, for example
 `infra/network-preview/environments/preview/.plans/preview.tfplan`; do not use ad hoc tracked or
 workspace-root plan paths.
 
 The intended state key is `wap-labs/network-preview/preview.tfstate` without a leading slash.
 Native S3 lock-file mode is mandatory. State and plan encryption are enforced with PBKDF2 and
-AES-GCM; the passphrase is provided through `TF_VAR_state_encryption_passphrase` in a protected
-environment.
+AES-GCM; the initial owner-local path reads the passphrase from a mode-`0600` environment file,
+while future shared execution stores the same value in protected environments.
 
 R2 does not provide ordinary S3 bucket versioning. The manually approved apply workflow copies
 the already encrypted state object to the fixed `wap-labs/network-preview/recovery` prefix before
@@ -114,9 +133,9 @@ through manual apply:
   record that bootstrap condition in trusted run metadata, and verify the resulting encrypted
   remote state through a protected backend operation. Any unexpected object fails closed.
 
-The checked-in automation is access-independent readiness evidence, not access-backed acceptance.
-This checkpoint does not create protected environments, handle real credentials, produce a remote
-plan, copy remote state, or run `tofu apply`.
+The checked-in protected automation is access-independent readiness evidence, not access-backed
+acceptance. The owner-local plan path is separate and does not create protected environments, copy
+remote state, or run `tofu apply`.
 
 ## Manual protected flow
 
@@ -151,18 +170,14 @@ group with cancellation disabled. The secret-free static workflow remains separa
 
 ## Access-backed gates
 
-`INF-101` remains incomplete until all of the following are true:
+The restricted owner-local gate may proceed when `PRE-001` is accepted, the private R2 bucket and
+scoped local credentials exist, the billing alert is confirmed, offline verification passes, and
+an exact encrypted plan is separately approved. Its initial settings keep DNS absent and UDP 9200
+limited to the owner's test CIDR. This provides hosted infrastructure evidence without claiming a
+public or shared operating model.
 
-1. `PRE-001` accepts the provider, Toronto region, cost owner, and fallback.
-2. `PRE-003` creates the project, private R2 bucket, least-privilege credentials, protected plan
-   and apply environments, billing alert, and two-maintainer recovery access.
-3. The protected R2 test proves acquisition, contention failure, normal release, stale-lock
-   recovery, and cleanup against a unique non-production key.
-4. A protected DigitalOcean speculative plan succeeds without exposing a plaintext plan or state.
-5. An authorized protected plan/apply run proves exact-plan review, non-cancelable shared-state
-   serialization, verified encrypted recovery copies, and manual apply approval.
-
-Executing a cloud apply remains explicitly out of scope for this offline checkpoint. Implementing
-the serialized, manually approved apply and state-recovery automation is complete at the
-access-independent configuration level; live proof remains part of `INF-101` after `PRE-003`
-supplies its protected trust boundary and explicit authority is granted.
+`PRE-003` and the shared/public `INF-101` acceptance remain incomplete until protected plan and
+apply environments, split credentials, an independent reviewer, two-maintainer recovery access,
+live lock/recovery evidence, and the protected exact-plan flow are proven. Public exposure also
+remains blocked on `PRE-004` and a tested production gateway. Local configuration or an owner-only
+apply must not be reported as that evidence.

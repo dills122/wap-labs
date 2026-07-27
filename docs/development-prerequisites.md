@@ -79,8 +79,12 @@ Environment variables supported by `scripts/init-refresh.sh`:
 - Static checks disable the remote backend and use no cloud credentials.
 - Semantic workflow validity is offline evidence only; it does not configure the protected
   `PRE-003` environments or prove live R2/DigitalOcean behavior.
-- The R2 lock driver is access-backed and must not run before the protected `PRE-003` environment
-  exists; see `infra/network-preview/README.md`.
+- Owners configuring accounts and credentials must follow
+  `infra/network-preview/bootstrap/OWNER_SETUP.md`; the `AWS_*` secret names there contain
+  Cloudflare R2 S3-compatible credentials, not AWS credentials.
+- The initial single-owner hosted test follows `infra/network-preview/LOCAL_DEPLOYMENT.md` and does
+  not require GitHub environments. The R2 lock driver is access-backed and still requires explicit
+  authority for its isolated write/delete test; see `infra/network-preview/README.md`.
 
 ## CI Parity Commands
 

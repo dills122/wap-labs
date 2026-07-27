@@ -33,7 +33,15 @@ jobs:
       TF_VAR_state_encryption_passphrase: ${{ secrets.TOFU_ENCRYPTION_PASSPHRASE }}
       TF_VAR_project_name: ${{ vars.NETWORK_PREVIEW_DO_PROJECT }}
       TF_VAR_region: ${{ vars.NETWORK_PREVIEW_DO_REGION }}
+      TF_VAR_droplet_size: ${{ vars.NETWORK_PREVIEW_DO_DROPLET_SIZE }}
+      TF_VAR_ssh_key_name: ${{ vars.NETWORK_PREVIEW_DO_SSH_KEY_NAME }}
+      TF_VAR_admin_cidrs: ${{ vars.NETWORK_PREVIEW_ADMIN_CIDRS_JSON }}
+      TF_VAR_wap_test_cidrs: ${{ vars.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON }}
+      TF_VAR_monitoring_alert_email: ${{ vars.NETWORK_PREVIEW_ALERT_EMAIL }}
+      TF_VAR_cloudflare_zone_id: ${{ vars.NETWORK_PREVIEW_CLOUDFLARE_ZONE_ID }}
+      TF_VAR_publish_preview: ${{ vars.NETWORK_PREVIEW_PUBLISH_PREVIEW }}
       DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: auto

@@ -119,10 +119,22 @@ lint-tofu:
 	@echo "==> actionlint (network-preview workflows)"
 	@scripts/ci/check-network-preview-workflows.sh
 	@echo "==> tofu init -backend=false -lockfile=readonly (network preview)"
-	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+	@TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+		TF_VAR_monitoring_alert_email=owner@example.com \
+		TF_VAR_project_name=offline-validation \
+		TF_VAR_region=nyc3 \
+		TF_VAR_ssh_key_name=offline-validation \
+		TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview init -backend=false -lockfile=readonly -no-color >/dev/null
 	@echo "==> tofu validate (network preview)"
-	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+	@TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+		TF_VAR_monitoring_alert_email=owner@example.com \
+		TF_VAR_project_name=offline-validation \
+		TF_VAR_region=nyc3 \
+		TF_VAR_ssh_key_name=offline-validation \
+		TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview validate -no-color
 	@echo "==> POSIX syntax (network-preview CI scripts)"
 	@sh -n scripts/ci/*network-preview*.sh
@@ -132,6 +144,8 @@ lint-tofu:
 	else \
 		echo "skip: shellcheck not found (network-preview CI scripts)"; \
 	fi
+	@echo "==> Node syntax (network-preview local plan helper)"
+	@node --check scripts/network-preview-local-plan.mjs
 	@echo "==> encrypted offline plan check (network preview)"
 	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
 		scripts/ci/check-network-preview-encrypted-plan.sh

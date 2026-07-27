@@ -49,6 +49,42 @@ test('static validation runs pinned semantic workflow lint', () => {
   assert.match(staticWorkflow, /run: scripts\/ci\/check-network-preview-workflows\.sh/);
 });
 
+test('staged local infrastructure fails closed before explicit publication', () => {
+  const main = read('infra/network-preview/environments/preview/main.tf');
+  const dns = read('infra/network-preview/environments/preview/dns.tf');
+  const variables = read('infra/network-preview/environments/preview/variables.tf');
+  const userData = read('infra/network-preview/cloud-init/user-data.yaml.tftpl');
+
+  assert.match(variables, /variable "publish_preview"[\s\S]*?default\s+=\s+false/);
+  assert.match(
+    main,
+    /source_addresses = var\.publish_preview \? \["0\.0\.0\.0\/0"\] : var\.wap_test_cidrs/
+  );
+  assert.match(dns, /for_each = var\.publish_preview \? local\.preview_hostnames : toset\(\[\]\)/);
+  assert.match(variables, /cidr != "0\.0\.0\.0\/0"/);
+  assert.match(userData, /disable_root: true/);
+  assert.match(userData, /ssh_pwauth: false/);
+  assert.match(userData, /PermitRootLogin no/);
+  assert.match(userData, /PasswordAuthentication no/);
+});
+
+test('protected workflows carry every staged provider input without exposing it in commands', () => {
+  for (const workflow of [planWorkflow, applyWorkflow]) {
+    for (const variable of [
+      'TF_VAR_admin_cidrs',
+      'TF_VAR_cloudflare_zone_id',
+      'TF_VAR_droplet_size',
+      'TF_VAR_monitoring_alert_email',
+      'TF_VAR_publish_preview',
+      'TF_VAR_ssh_key_name',
+      'TF_VAR_wap_test_cidrs'
+    ]) {
+      assert.match(workflow, new RegExp(`\\s${variable}:`));
+    }
+    assert.match(workflow, /CLOUDFLARE_API_TOKEN: \$\{\{ secrets\.CLOUDFLARE_API_TOKEN \}\}/);
+  }
+});
+
 test('protected workflows pin every external action to a full commit SHA', () => {
   for (const [workflowPath, workflow] of [
     [planWorkflowPath, planWorkflow],
@@ -78,7 +114,11 @@ test('shell run blocks do not interpolate GitHub expressions', () => {
         if (next.trim() && next.search(/\S/) <= indentation) break;
         block.push(next);
       }
-      assert.doesNotMatch(block.join('\n'), /\$\{\{/u, `${workflowPath} has run-time expression injection`);
+      assert.doesNotMatch(
+        block.join('\n'),
+        /\$\{\{/u,
+        `${workflowPath} has run-time expression injection`
+      );
     }
   }
 });
@@ -125,7 +165,10 @@ test('backend and recovery contracts enforce encryption, native locking, and ret
 test('partial backend writer accepts only the fixed preview state and recovery keys', () => {
   const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wap-labs-backend-test-'));
   const outputPath = path.join(temporaryRoot, 'backend.hcl');
-  const scriptPath = path.join(repositoryRoot, 'scripts/ci/write-network-preview-backend-config.sh');
+  const scriptPath = path.join(
+    repositoryRoot,
+    'scripts/ci/write-network-preview-backend-config.sh'
+  );
   const baseEnvironment = {
     ...process.env,
     NETWORK_PREVIEW_R2_ACCOUNT_ID: '0123456789abcdef0123456789abcdef',

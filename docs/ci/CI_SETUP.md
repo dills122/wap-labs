@@ -113,8 +113,8 @@ or OS-specific jobs.
 
 Purpose:
 
-- Validate the resource-free `INF-101` network-preview scaffold without cloud credentials or a
-  remote backend.
+- Validate the staged network-preview infrastructure without cloud credentials or a remote
+  backend.
 
 Triggers:
 
@@ -133,8 +133,8 @@ Behavior:
 - installs pinned actionlint 1.7.12 through Go 1.25 and semantically validates the static,
   protected-plan, and protected-apply workflow definitions, including expression-context
   availability;
-- checks every network-preview CI helper's POSIX syntax, runs `shellcheck`, and exercises the
-  protected workflow contracts without credentials;
+- checks every network-preview CI helper's POSIX syntax, runs `shellcheck`, validates the local
+  plan helper, and exercises the protected workflow contracts without credentials;
 - has only `contents: read`, does not persist checkout credentials, and receives no repository or
   environment secrets.
 
@@ -142,9 +142,10 @@ This workflow does not contact R2 or DigitalOcean, produce a speculative plan, c
 environment, or run `tofu apply`. It proves that the workflow definitions pass the pinned offline
 GitHub Actions validator, proves locally that enforced plan encryption produces an opaque saved
 plan, and runs contract tests over the protected workflow definitions. That validation is distinct
-from operational readiness: live R2 locking and provider planning remain blocked by
-`PRE-001`/`PRE-003` and require separately protected environments before activation. Do not make
-this path-triggered job a global required context; ordinary PRs outside its paths do not create it.
+from operational readiness. An owner-local provider plan follows
+`infra/network-preview/LOCAL_DEPLOYMENT.md`; protected shared/public execution remains blocked by
+`PRE-003`. Do not make this path-triggered job a global required context; ordinary PRs outside its
+paths do not create it.
 
 ### OpenTofu Protected Plan and Apply
 
@@ -169,6 +170,12 @@ All external actions are full-SHA pinned. Decrypted plan/state content is neithe
 retained; workflow summaries contain only sanitized action/address/count data and provenance
 digests. These workflow definitions must not be enabled or run until `PRE-001`/`PRE-003`, protected
 environment review, real credential scope, and exact operation authority are complete.
+
+For the owner-local plan and later protected-environment sequences, use
+`infra/network-preview/LOCAL_DEPLOYMENT.md` and `infra/network-preview/bootstrap/OWNER_SETUP.md`.
+In those guides and these workflows,
+`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` contain Cloudflare R2 S3-compatible credentials;
+they are not AWS credentials and do not require an AWS account.
 
 Caching:
 
