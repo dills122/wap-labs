@@ -116,6 +116,8 @@ lint-tofu:
 	fi
 	@echo "==> tofu fmt -check -recursive (network preview)"
 	@tofu fmt -check -recursive infra/network-preview
+	@echo "==> actionlint (network-preview workflows)"
+	@scripts/ci/check-network-preview-workflows.sh
 	@echo "==> tofu init -backend=false -lockfile=readonly (network preview)"
 	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
 		tofu -chdir=infra/network-preview/environments/preview init -backend=false -lockfile=readonly -no-color >/dev/null
