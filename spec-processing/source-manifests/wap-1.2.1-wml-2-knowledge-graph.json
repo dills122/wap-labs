@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "50f83b4efc4dd834b2e0074d4c2999759348c786e8b4f138e5c718e5d74a0e5a"
+        "sha256": "4e2900efd178a032376639907e35fd225584d041e09c4923eef8248da0a41dbf"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "66bfc975911f8e2f4159dc91b72528bc4677cc98a60c90c791236ff097d2b7c9"
+        "sha256": "9c65c15b52802517ca6c2601eb06a050c85dea82cf79e2fc956a708fa3dd28a5"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "f53c2aa7da81e1ec152c33cb653feb78cdbb9bdf55590834df1ba8557165c761"
+        "sha256": "0bdf0789b74c0d77b1896eafd3ffc579d30427b0d4dd2f2eaddadc1041e79a61"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -13397,8 +13397,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
-            "test": "active_do_order_retains_metadata_effective_identity_and_optional_policy",
-            "command": "cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy"
+            "test": "wml_303_retains_do_identity_metadata_and_orders_active_actions",
+            "command": "cd engine-wasm/engine && cargo test wml_303_retains_do_identity_metadata_and_orders_active_actions"
           }
         ],
         "ownerLayers": [
@@ -14212,8 +14212,8 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
-            "test": "option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict",
-            "command": "cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict"
+            "test": "wml_303_option_onevent_onpick_executes_in_immediate_option_scope",
+            "command": "cd engine-wasm/engine && cargo test wml_303_option_onevent_onpick_executes_in_immediate_option_scope"
           }
         ],
         "ownerLayers": [
@@ -14836,7 +14836,7 @@
           },
           {
             "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
-            "test": "EngineTimerRuntime exact wakeup scheduling",
+            "test": "schedules only the exact native timer wakeup and stops it cleanly",
             "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
           }
         ],

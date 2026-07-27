@@ -59,8 +59,8 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
-      "test": "option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict",
-      "command": "cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict"
+      "test": "wml_303_option_onevent_onpick_executes_in_immediate_option_scope",
+      "command": "cd engine-wasm/engine && cargo test wml_303_option_onevent_onpick_executes_in_immediate_option_scope"
     }
   ],
   "ownerLayers": [

@@ -53,8 +53,10 @@ The `full` profile is the ordinary pre-PR command. It deliberately excludes:
   `PRE-001` and `PRE-003` are completed.
 
 These exclusions are visible in command output and do not imply conformance or release readiness.
-The full compliance wrapper proves that canonical compliance inputs and generated projections are
-synchronized; implementation conformance still depends on the direct fixtures and evidence named
+The full compliance wrapper proves that canonical compliance inputs, the family-wide WML evidence
+ledger, successor-delta crosswalk, and generated projections are synchronized. It validates Rust,
+TypeScript/Vitest, and executable-story evidence according to their supported runners;
+implementation conformance still depends on those direct fixtures and the release evidence named
 by the selected profile.
 
 The extended live-Kannel lane expects the stack to advertise WML 1.3 explicitly at its test

@@ -92,7 +92,7 @@ tags:
     },
     {
       "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
-      "test": "EngineTimerRuntime exact wakeup scheduling",
+      "test": "schedules only the exact native timer wakeup and stops it cleanly",
       "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
     }
   ],

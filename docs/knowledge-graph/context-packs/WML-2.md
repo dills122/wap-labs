@@ -413,7 +413,7 @@ Evidence commands:
   - Spec: `WAP-191_104-WML` §9.7 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_do_binding`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::active_do_order_retains_metadata_effective_identity_and_optional_policy` (`cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy`)
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::wml_303_retains_do_identity_metadata_and_orders_active_actions` (`cd engine-wasm/engine && cargo test wml_303_retains_do_identity_metadata_and_orders_active_actions`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
   - Assessment note: Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.
 - **WML-C-27** — em
@@ -517,7 +517,7 @@ Evidence commands:
   - Spec: `WAP-191_104-WML` §9.10.1 (SCR §15.1.5)
   - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_onevent_binding`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict` (`cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict`)
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::wml_303_option_onevent_onpick_executes_in_immediate_option_scope` (`cd engine-wasm/engine && cargo test wml_303_option_onevent_onpick_executes_in_immediate_option_scope`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
   - Assessment note: Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, execute with immediate-parent scope and shadowing, and include completed timer lifecycle evidence.
 - **WML-C-40** — optgroup
@@ -589,7 +589,7 @@ Evidence commands:
   - Spec: `WAP-191_104-WML` §11.7 (SCR §15.1.5)
   - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_timer_xml`, `engine-wasm/engine/src/engine_runtime_internal/timers.rs#advance_time_ms_internal`, `engine-wasm/engine/src/engine_public_api.rs#next_timer_wakeup_ms`, `browser/frontend/src/app/engine-timer-runtime.ts#scheduleNextWakeup`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_305_timers.rs::wml_305_dispatches_only_when_positive_timer_transitions_to_zero` (`cd engine-wasm/engine && cargo test wml_305_dispatches_only_when_positive_timer_transitions_to_zero`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wml_305_named_timer_lifecycle_matches_native_boundary` (`cd engine-wasm/engine && cargo test wasm_wml_305_named_timer_lifecycle_matches_native_boundary`), `engine-wasm/examples/source/wml-305-timer-lifecycle.flow.json::WML-305 executable stories` (`pnpm test:story WML-305`), `browser/frontend/src/app/engine-timer-runtime.test.ts::EngineTimerRuntime exact wakeup scheduling` (`pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts`)
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_305_timers.rs::wml_305_dispatches_only_when_positive_timer_transitions_to_zero` (`cd engine-wasm/engine && cargo test wml_305_dispatches_only_when_positive_timer_transitions_to_zero`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wml_305_named_timer_lifecycle_matches_native_boundary` (`cd engine-wasm/engine && cargo test wasm_wml_305_named_timer_lifecycle_matches_native_boundary`), `engine-wasm/examples/source/wml-305-timer-lifecycle.flow.json::WML-305 executable stories` (`pnpm test:story WML-305`), `browser/frontend/src/app/engine-timer-runtime.test.ts::schedules only the exact native timer wakeup and stops it cleanly` (`pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts`)
   - Work items: `R0-01`, `R0-04`, `WML-201`, `WML-305`
   - Assessment note: WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.
 - **WML-C-49** — td

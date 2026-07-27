@@ -114,8 +114,8 @@ evidence count.
 
 WML-201 directly maps all 175 selected WML clauses for family ownership and
 retrieval. That mapping is not fixture evidence: clause assessment remains
-unchanged, and the canonical 76-row SCR ledger now distinguishes 30 rows
-with direct code/test links from 17 mapped mandatory gaps and 29 optional
+unchanged, and the canonical 76-row SCR ledger now distinguishes 31 rows
+with direct code/test links from 16 mapped mandatory gaps and 29 optional
 rows that have not been assessed.
 
 ## Redistribution boundary

@@ -2,11 +2,32 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { WAVES_BASELINE_MIN_RUNS } from '../../engine-wasm/host-sample/scripts/waves-baseline-run-policy.mjs';
+import { hasDeclaredJavaScriptTest } from '../lib/test-evidence.mjs';
 import { buildPlan, executePlan, OUTCOMES } from '../verify-lib.mjs';
 
 function byId(plan, id) {
   return plan.find((lane) => lane.id === id);
 }
+
+test('JavaScript evidence requires the exact declared test name', () => {
+  const source = `
+    describe('EngineTimerRuntime', () => {
+      it('schedules only the exact native timer wakeup and stops it cleanly', () => {});
+    });
+  `;
+
+  assert.equal(
+    hasDeclaredJavaScriptTest(
+      source,
+      'schedules only the exact native timer wakeup and stops it cleanly'
+    ),
+    true
+  );
+  assert.equal(
+    hasDeclaredJavaScriptTest(source, 'EngineTimerRuntime exact wakeup scheduling'),
+    false
+  );
+});
 
 test('fast selects only strict portable smoke lanes', () => {
   const plan = buildPlan('fast', []);
@@ -182,6 +203,8 @@ test('unselected lane is reported as an intentional exclusion', () => {
 test('root compliance wrapper and CI enforce program and requirement status drift', () => {
   const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
   assert.match(packageJson.scripts['wap-compliance:check'], /check-wap-compliance-program\.mjs/);
+  assert.match(packageJson.scripts['wap-compliance:check'], /check-wap-conformance-ledger\.mjs/);
+  assert.match(packageJson.scripts['wap-compliance:check'], /check-wap-delta-register\.mjs/);
   assert.match(packageJson.scripts['wap-compliance:check'], /check-requirement-status-drift\.mjs/);
 
   const workflow = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
