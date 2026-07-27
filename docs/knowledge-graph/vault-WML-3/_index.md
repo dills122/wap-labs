@@ -14,16 +14,16 @@ Target: [[sprints/WML-3|WML-3]]
 
 ## Graph summary
 
-- Nodes: 279
-- Edges: 728
+- Nodes: 303
+- Edges: 795
 
-- `clause`: 96
-- `fixture`: 96
+- `clause`: 107
+- `fixture`: 107
 - `legacy-ticket`: 14
 - `owner-layer`: 4
 - `profile`: 1
 - `requirement`: 12
-- `scr-row`: 26
+- `scr-row`: 28
 - `source-document`: 13
 - `source-family`: 3
 - `sprint`: 6

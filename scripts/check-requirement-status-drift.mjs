@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 175,
-    expectedStatus: { implemented: 9, partial: 21, missing: 9 },
+    expectedStatus: { implemented: 16, partial: 15, missing: 8 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 28, blocked: 1, 'in-progress': 9, todo: 44 })
+  JSON.stringify({ done: 28, blocked: 1, 'in-progress': 10, todo: 43 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 33, partial: 76, missing: 89 })
+  JSON.stringify({ implemented: 40, partial: 70, missing: 88 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '275 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
+      `${selectedClauses.summary.assessedClauseCount} WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed`
     ]
   ],
   [
@@ -368,14 +368,14 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
       'WMLScript Libraries: 80 selected parents / 211 clauses',
-      '253 fixture-backed clauses assessed'
+      '265 fixture-backed clauses assessed'
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **33** | **76** | **89** |',
+      '| **Total** | **198** | **762** | **40** | **70** | **88** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]
@@ -390,8 +390,8 @@ const requiredDocumentFragments = new Map([
   [
     'README.md',
     [
-      '31/198 selected parent rows are implemented',
-      '253/762 clauses are directly assessed'
+      '38/198 selected parent rows are implemented',
+      '265/762 clauses are directly assessed'
     ]
   ]
 ]);

@@ -36,6 +36,38 @@ impl WmlEngine {
         .map_err(as_js_err)
     }
 
+    #[wasm_bindgen(js_name = loadDeckContextForNavigation)]
+    pub fn load_deck_context_for_navigation_wasm(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+        referring_url: Option<String>,
+        navigation_url: Option<String>,
+        navigation_kind: Option<String>,
+    ) -> Result<(), JsValue> {
+        let navigation_kind = match navigation_kind.as_deref() {
+            None | Some("independent") => DeckNavigationKind::Independent,
+            Some("forward") => DeckNavigationKind::Forward,
+            Some("backward") => DeckNavigationKind::Backward,
+            Some("reload") => DeckNavigationKind::Reload,
+            Some(value) => return Err(as_js_err(format!("Unknown deck navigation kind: {value}"))),
+        };
+        self.load_deck_context_for_navigation(
+            wml_xml,
+            base_url,
+            content_type,
+            raw_bytes_base64,
+            DeckNavigationContext::new(
+                referring_url.as_deref(),
+                navigation_url.as_deref(),
+                navigation_kind,
+            ),
+        )
+        .map_err(as_js_err)
+    }
+
     #[wasm_bindgen(js_name = getVar)]
     pub fn get_var_wasm(&self, name: String) -> Option<String> {
         self.get_var(name)
@@ -164,6 +196,11 @@ impl WmlEngine {
     #[wasm_bindgen(js_name = contentType)]
     pub fn content_type_wasm(&self) -> String {
         self.content_type()
+    }
+
+    #[wasm_bindgen(js_name = browserContextEpoch)]
+    pub fn browser_context_epoch_wasm(&self) -> u32 {
+        self.browser_context_epoch()
     }
 
     #[wasm_bindgen(js_name = deckLanguage)]

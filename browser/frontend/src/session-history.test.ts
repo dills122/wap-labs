@@ -5,6 +5,7 @@ import {
   createHostHistoryState,
   peekHistoryBack,
   pushHostHistoryEntry,
+  resetHostHistoryState,
   updateCurrentHistoryCard
 } from './session-history';
 
@@ -61,7 +62,7 @@ describe('session-history', () => {
     expect(state.index).toBe(-1);
   });
 
-  it('deduplicates current URL and merges latest card/source', () => {
+  it('pushes every explicit access even when the request identity is duplicated', () => {
     const state = createHostHistoryState();
     pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {
       requestedUrl: 'http://local.test/a',
@@ -75,8 +76,15 @@ describe('session-history', () => {
       }
     });
 
-    expect(state.index).toBe(0);
+    expect(state.index).toBe(1);
     expect(state.entries).toEqual([
+      {
+        url: 'http://local.test/a',
+        requestedUrl: 'http://local.test/a',
+        method: 'GET',
+        activeCardId: 'home',
+        source: 'user'
+      },
       {
         url: 'http://local.test/a',
         requestedUrl: 'http://local.test/a',
@@ -88,6 +96,16 @@ describe('session-history', () => {
         source: 'reload'
       }
     ]);
+  });
+
+  it('resets the stack for a new browser context', () => {
+    const state = createHostHistoryState();
+    pushHostHistoryEntry(state, 'http://local.test/a', 'a');
+    pushHostHistoryEntry(state, 'http://local.test/b', 'b');
+
+    resetHostHistoryState(state);
+
+    expect(state).toEqual({ entries: [], index: -1 });
   });
 
   it('keeps separate entries when method or post payload differs', () => {

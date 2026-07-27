@@ -16,8 +16,13 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
+- `refines` ← [[clauses/WML-CL-GO-HISTORY-PUSH|WML-CL-GO-HISTORY-PUSH]]
+- `refines` ← [[clauses/WML-CL-HISTORY-DUPLICATE-PUSH|WML-CL-HISTORY-DUPLICATE-PUSH]]
+- `refines` ← [[clauses/WML-CL-HISTORY-ENTRY-FIELDS|WML-CL-HISTORY-ENTRY-FIELDS]]
+- `refines` ← [[clauses/WML-CL-HISTORY-EXCLUDES-CONTENT|WML-CL-HISTORY-EXCLUDES-CONTENT]]
 - `refines` ← [[clauses/WML-CL-HISTORY-PREV-POP|WML-CL-HISTORY-PREV-POP]]
 - `refines` ← [[clauses/WML-CL-HISTORY-RESOLVES-VARIABLES|WML-CL-HISTORY-RESOLVES-VARIABLES]]
+- `refines` ← [[clauses/WML-CL-HISTORY-STACK-MODEL|WML-CL-HISTORY-STACK-MODEL]]
 
 ## Data
 

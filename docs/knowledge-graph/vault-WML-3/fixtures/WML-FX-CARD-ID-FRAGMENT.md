@@ -4,7 +4,7 @@ key: "WML-FX-CARD-ID-FRAGMENT"
 type: "fixture"
 generated: true
 slice: "WML-3"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "state-machine",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Use a card id as its fragment-navigation anchor.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

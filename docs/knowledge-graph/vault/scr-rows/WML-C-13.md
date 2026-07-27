@@ -45,11 +45,22 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "missing",
-  "evidenceState": "gap-work-item-mapped",
-  "assessmentNote": "Independent user navigation does not establish a separately modeled WML browser context.",
-  "implementationEvidence": [],
-  "testEvidence": [],
+  "implementationStatus": "implemented",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "WML-301 establishes a new observable browser context for independent navigation and elects the permitted old-context termination behavior.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_public_api.rs",
+      "symbol": "load_deck_context_for_navigation"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "browser/frontend/src/app/navigation-state.load.test.ts",
+      "test": "clears prior host history when the engine establishes a new browser context",
+      "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts"
+    }
+  ],
   "ownerLayers": [
     "engine-wasm",
     "browser"

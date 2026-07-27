@@ -4,7 +4,7 @@ key: "WML-FX-HISTORY-ENTRY-FIELDS"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "state-machine",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Record the absolute card URL, request method, submitted fields, and request headers in each history entry.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

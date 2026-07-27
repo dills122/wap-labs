@@ -7,6 +7,7 @@ import type {
 } from '../../../contracts/transport';
 import type {
   AdvanceTimeRequest,
+  DeckNavigationKind,
   EngineFrame,
   EngineRuntimeSnapshot,
   HandleKeyRequest,
@@ -20,6 +21,7 @@ import {
   createHostHistoryState,
   peekHistoryBack,
   pushHostHistoryEntry,
+  resetHostHistoryState,
   updateCurrentHistoryCard,
   type HostHistoryState
 } from '../session-history';
@@ -75,6 +77,7 @@ export interface NavigationHooks {
 
 export interface LoadTransportOptions {
   url: string;
+  navigationUrl?: string;
   method?: string;
   headers?: Record<string, string>;
   source: HostNavigationSource;
@@ -106,6 +109,7 @@ export const createNavigationStateMachine = (
     requestedUrl: initialRequestedUrl.trim()
   };
   let activeNavigationGeneration = 0;
+  let observedBrowserContextEpoch: number | undefined;
 
   const emitSession = (): void => {
     hooks.onSessionState?.(hostSessionState);
@@ -156,6 +160,31 @@ export const createNavigationStateMachine = (
   const isCurrentNavigation = (generation: number): boolean =>
     generation === activeNavigationGeneration;
 
+  const observeBrowserContext = (snapshot: EngineRuntimeSnapshot): boolean => {
+    if (snapshot.browserContextEpoch === undefined) {
+      return false;
+    }
+    const changed =
+      observedBrowserContextEpoch !== undefined &&
+      observedBrowserContextEpoch !== snapshot.browserContextEpoch;
+    observedBrowserContextEpoch = snapshot.browserContextEpoch;
+    return changed;
+  };
+
+  const resetHistoryToCurrentCard = (snapshot: EngineRuntimeSnapshot): void => {
+    const current = hostHistory.entries[hostHistory.index];
+    resetHostHistoryState(hostHistory);
+    if (!current) {
+      return;
+    }
+    pushHostHistoryEntry(hostHistory, current.url, snapshot.activeCardId, current.source, {
+      requestedUrl: current.requestedUrl,
+      method: current.method,
+      headers: current.headers,
+      requestPolicy: current.requestPolicy
+    });
+  };
+
   const cancelPendingNavigation = (): void => {
     activeNavigationGeneration += 1;
   };
@@ -166,6 +195,7 @@ export const createNavigationStateMachine = (
   ): Promise<EngineRuntimeSnapshot | null> => {
     activeNavigationGeneration = generation;
     const requestedUrl = options.url.trim();
+    const navigationUrl = options.navigationUrl?.trim() || requestedUrl;
     if (!requestedUrl) {
       throw new Error(WAVES_COPY.errors.urlRequired);
     }
@@ -257,7 +287,9 @@ export const createNavigationStateMachine = (
         baseUrl: deckInput.baseUrl,
         contentType: deckInput.contentType,
         rawBytesBase64: deckInput.rawBytesBase64,
-        referringUrl
+        referringUrl,
+        navigationUrl,
+        navigationKind: navigationKindForSource(options.source)
       });
     } catch (error) {
       if (!isCurrentNavigation(generation)) {
@@ -273,6 +305,13 @@ export const createNavigationStateMachine = (
     }
     if (!isCurrentNavigation(generation)) {
       return null;
+    }
+    const browserContextChanged = observeBrowserContext(frame.snapshot);
+    if (browserContextChanged) {
+      resetHostHistoryState(hostHistory);
+      hooks.onStateEvent?.('browser-context-reset', {
+        browserContextEpoch: frame.snapshot.browserContextEpoch
+      });
     }
     hooks.onStateEvent?.('engine-load-deck-context', {
       activeCardId: frame.snapshot.activeCardId,
@@ -343,18 +382,38 @@ export const createNavigationStateMachine = (
   };
 
   const applyEngineKey = async (key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot> => {
+    const previousCardId = hostSessionState.activeCardId;
     const frame = await hostClient.engineHandleKeyFrame({ key });
-    updateCurrentHistoryCard(hostHistory, frame.snapshot.activeCardId);
+    if (observeBrowserContext(frame.snapshot)) {
+      resetHistoryToCurrentCard(frame.snapshot);
+    } else if (frame.snapshot.activeCardId && frame.snapshot.activeCardId !== previousCardId) {
+      pushCurrentRequestHistoryCard(frame.snapshot.activeCardId);
+    } else {
+      updateCurrentHistoryCard(hostHistory, frame.snapshot.activeCardId);
+    }
     applyFrame(frame);
     return frame.snapshot;
   };
 
   const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot> => {
+    const previousCardId = hostSessionState.activeCardId;
     const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    const browserContextChanged = observeBrowserContext(snapshot);
+    if (browserContextChanged) {
+      resetHistoryToCurrentCard(snapshot);
+    }
     if (!shouldRenderTimerSnapshot(snapshot, hostSessionState)) {
       return snapshot;
     }
-    updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
+    if (
+      !browserContextChanged &&
+      snapshot.activeCardId &&
+      snapshot.activeCardId !== previousCardId
+    ) {
+      pushCurrentRequestHistoryCard(snapshot.activeCardId);
+    } else {
+      updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
+    }
     await renderSnapshot(snapshot);
     return snapshot;
   };
@@ -362,9 +421,26 @@ export const createNavigationStateMachine = (
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
     const afterFrame = await hostClient.engineNavigateBackFrame();
     const after = afterFrame.snapshot;
+    const browserContextChanged = observeBrowserContext(after);
+    if (browserContextChanged) {
+      resetHistoryToCurrentCard(after);
+    }
 
     if (after.lastBackNavigationHandled) {
-      updateCurrentHistoryCard(hostHistory, after.activeCardId);
+      const current = hostHistory.entries[hostHistory.index];
+      const previous = peekHistoryBack(hostHistory);
+      if (
+        !browserContextChanged &&
+        hostSessionState.activeCardId !== after.activeCardId &&
+        current &&
+        previous &&
+        previous.activeCardId === after.activeCardId &&
+        sameHistoryDocument(current.url, previous.url)
+      ) {
+        commitHistoryBack(hostHistory);
+      } else {
+        updateCurrentHistoryCard(hostHistory, after.activeCardId);
+      }
       applyFrame(afterFrame);
       return 'engine';
     }
@@ -374,6 +450,7 @@ export const createNavigationStateMachine = (
       if (previous?.url) {
         const prevSnapshot = await loadTransportUrl({
           url: previous.requestedUrl ?? previous.url,
+          navigationUrl: historyNavigationUrl(previous.url, previous.activeCardId),
           method: previous.method ?? 'GET',
           headers: previous.headers,
           source: 'history-back',
@@ -412,6 +489,19 @@ export const createNavigationStateMachine = (
     return 'none';
   };
 
+  function pushCurrentRequestHistoryCard(activeCardId: string): void {
+    const current = hostHistory.entries[hostHistory.index];
+    if (!current) {
+      return;
+    }
+    pushHostHistoryEntry(hostHistory, current.url, activeCardId, current.source, {
+      requestedUrl: current.requestedUrl,
+      method: current.method,
+      headers: current.headers,
+      requestPolicy: current.requestPolicy
+    });
+  }
+
   emitSession();
 
   return {
@@ -424,6 +514,22 @@ export const createNavigationStateMachine = (
     getHistoryState: () => hostHistory
   };
 };
+
+const historyNavigationUrl = (url: string, activeCardId?: string): string => {
+  if (!activeCardId) {
+    return url;
+  }
+  try {
+    const parsed = new URL(url);
+    parsed.hash = activeCardId;
+    return parsed.toString();
+  } catch {
+    return `${url.split('#', 1)[0]}#${encodeURIComponent(activeCardId)}`;
+  }
+};
+
+const sameHistoryDocument = (left: string, right: string): boolean =>
+  left.split('#', 1)[0] === right.split('#', 1)[0];
 
 export const defaultRequestPolicyForSource = (
   source: HostNavigationSource,
@@ -438,6 +544,21 @@ export const defaultRequestPolicyForSource = (
     return { refererUrl, uaCapabilityProfile };
   }
   return { uaCapabilityProfile };
+};
+
+const navigationKindForSource = (source: HostNavigationSource): DeckNavigationKind => {
+  switch (source) {
+    case 'external-intent':
+      return 'forward';
+    case 'history-back':
+    case 'engine-back':
+      return 'backward';
+    case 'reload':
+      return 'reload';
+    case 'user':
+    case 'keyboard':
+      return 'independent';
+  }
 };
 
 const normalizeMethod = (method?: string): string => {

@@ -33,6 +33,33 @@ pub struct LoadDeckContextRequest {
     #[serde(default)]
     #[ts(optional)]
     pub referring_url: Option<String>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub navigation_url: Option<String>,
+    #[serde(default)]
+    #[ts(optional)]
+    pub navigation_kind: Option<DeckNavigationKind>,
+}
+
+#[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, TS)]
+#[serde(rename_all = "kebab-case")]
+pub enum DeckNavigationKind {
+    #[default]
+    Independent,
+    Forward,
+    Backward,
+    Reload,
+}
+
+impl From<DeckNavigationKind> for engine::DeckNavigationKind {
+    fn from(value: DeckNavigationKind) -> Self {
+        match value {
+            DeckNavigationKind::Independent => Self::Independent,
+            DeckNavigationKind::Forward => Self::Forward,
+            DeckNavigationKind::Backward => Self::Backward,
+            DeckNavigationKind::Reload => Self::Reload,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS)]
@@ -167,6 +194,8 @@ pub struct EngineRuntimeSnapshot {
     pub focused_select_edit_value: Option<String>,
     pub base_url: String,
     pub content_type: String,
+    #[ts(optional)]
+    pub browser_context_epoch: Option<u32>,
     #[ts(optional)]
     pub deck_language: Option<String>,
     #[ts(optional)]

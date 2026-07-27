@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "7945a1acfac3cadb456cd6fa5bb6ead3ea453265c305ffac45acbfebbb15cf31"
+        "sha256": "ffe48727ff30ef807cfa7396b1b37243799e83d8dff3d45474874fdc635e376c"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "887630e78e2de01dd91fb8d3705c79dca95bf98a25648f1ea88a2de17dddecbf"
+        "sha256": "50f83b4efc4dd834b2e0074d4c2999759348c786e8b4f138e5c718e5d74a0e5a"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "66bfc975911f8e2f4159dc91b72528bc4677cc98a60c90c791236ff097d2b7c9"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "25f8386771c805dbd92e3174c9a043de8aa5622a525f2f03ef119bf18690c316"
+        "sha256": "f53c2aa7da81e1ec152c33cb653feb78cdbb9bdf55590834df1ba8557165c761"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -106,8 +106,8 @@
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WML-201": {
-        "direct-test-linked": 30,
-        "gap-work-item-mapped": 17,
+        "direct-test-linked": 31,
+        "gap-work-item-mapped": 16,
         "optional-not-assessed": 29
       },
       "WML-202": {},
@@ -2741,7 +2741,7 @@
           "RQ-RMK-001",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2847,7 +2847,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2856,7 +2857,7 @@
         "requirementIds": [
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2883,7 +2884,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2892,7 +2894,7 @@
         "requirementIds": [
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3485,7 +3487,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -3494,7 +3497,7 @@
         "requirementIds": [
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3521,7 +3524,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -3530,7 +3534,7 @@
         "requirementIds": [
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3796,7 +3800,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -3806,7 +3811,7 @@
           "RQ-RMK-002",
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3874,7 +3879,8 @@
           "R0-02",
           "R0-03",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -3885,7 +3891,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4411,7 +4417,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -4421,7 +4428,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4448,7 +4455,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -4458,7 +4466,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4485,7 +4493,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -4495,7 +4504,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4641,7 +4650,8 @@
         "workItems": [
           "R0-01",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -4651,7 +4661,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5439,7 +5449,8 @@
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-201"
+          "WML-201",
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -5448,7 +5459,7 @@
         "requirementIds": [
           "RQ-RMK-003"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9504,7 +9515,7 @@
       "title": "Use a card id as its fragment-navigation anchor.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use a card id as its fragment-navigation anchor.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9540,7 +9551,7 @@
       "title": "Store WML runtime state in one browser-context scope.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Store WML runtime state in one browser-context scope.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9552,7 +9563,7 @@
       "title": "Keep variables, navigation history, and implementation-dependent session state in the browser context.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Keep variables, navigation history, and implementation-dependent session state in the browser context.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9744,7 +9755,7 @@
       "title": "Establish a new browser context when navigation is initiated independently of the current content.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Establish a new browser context when navigation is initiated independently of the current content.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9756,7 +9767,7 @@
       "title": "The user agent may terminate the old context before establishing a context for external navigation.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "The user agent may terminate the old context before establishing a context for external navigation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9840,7 +9851,7 @@
       "title": "Choose the named card when a fragment matches; otherwise choose the first card in the fetched deck.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Choose the named card when a fragment matches; otherwise choose the first card in the fetched deck.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9864,7 +9875,7 @@
       "title": "Push the destination request identity onto history after destination context initialization.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Push the destination request identity onto history after destination context initialization.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10032,7 +10043,7 @@
       "title": "Push an entry for each explicit card access even when it duplicates the newest history entry.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Push an entry for each explicit card access even when it duplicates the newest history entry.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10044,7 +10055,7 @@
       "title": "Record the absolute card URL, request method, submitted fields, and request headers in each history entry.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Record the absolute card URL, request method, submitted fields, and request headers in each history entry.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10056,7 +10067,7 @@
       "title": "Do not store card content in history entries.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not store card content in history entries.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10104,7 +10115,7 @@
       "title": "Maintain navigational history as an ordered stack of visited card request identities.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Maintain navigational history as an ordered stack of visited card request identities.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10356,7 +10367,7 @@
       "title": "Implement inter-card traversal with behavior indistinguishable from the WML reference process.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement inter-card traversal with behavior indistinguishable from the WML reference process.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12205,7 +12216,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card history push/pop and deterministic empty-history behavior exist; full WML request identity and context semantics remain broader than the engine stack.",
+        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -12334,9 +12345,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.",
+        "assessmentNote": "Card/template onenterforward, onenterbackward, ontimer, and option onpick bindings have direct action, control, and timer evidence across every nested intrinsic-event clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -12394,9 +12405,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.",
+        "assessmentNote": "WML-301 keeps variables, request-shaped navigation history, and runtime session state in one observable browser-context scope across native and WASM adapters.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/lib.rs",
@@ -12515,9 +12526,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.",
+        "assessmentNote": "WML-302 and WML-204 directly cover variable definition, substitution locations, conversions, escaping, validation, snapshots, and control commit ordering across every nested clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_public_api.rs",
@@ -12585,11 +12596,22 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "missing",
-        "evidenceState": "gap-work-item-mapped",
-        "assessmentNote": "Independent user navigation does not establish a separately modeled WML browser context.",
-        "implementationEvidence": [],
-        "testEvidence": [],
+        "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "WML-301 establishes a new observable browser context for independent navigation and elects the permitted old-context termination behavior.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_public_api.rs",
+            "symbol": "load_deck_context_for_navigation"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "browser/frontend/src/app/navigation-state.load.test.ts",
+            "test": "clears prior host history when the engine establishes a new browser context",
+            "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
@@ -12873,9 +12895,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Covered go/prev/noop/refresh and rollback paths are ordered deterministically, but setvar, access, newcontext, fetched-deck, and complete fragment-fallback steps remain open.",
+        "assessmentNote": "WML-202/301/302/303/305 jointly provide direct evidence for access, newcontext, variables, go/prev/refresh ordering, fetched-deck fragment selection, timers, and rollback across every nested inter-card clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -14120,7 +14142,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Prev pops card history and executes backward-entry behavior; originating setvar and full fetched-resource identity semantics are absent.",
+        "assessmentNote": "Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -14178,9 +14200,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.",
+        "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, execute with immediate-parent scope and shadowing, and include completed timer lifecycle evidence.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -14382,9 +14404,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.",
+        "assessmentNote": "Refresh assignments, variable snapshots, redisplay, timer restart, and named-timer resume have direct WML-302/303/305 evidence across every nested clause.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",

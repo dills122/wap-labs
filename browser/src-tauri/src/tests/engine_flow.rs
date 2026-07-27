@@ -11,6 +11,8 @@ fn smoke_load_render_and_snapshot() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -41,6 +43,8 @@ fn smoke_key_navigation_and_back_stack() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -82,6 +86,8 @@ fn advance_time_command_expires_timer_card_deterministically() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -113,6 +119,8 @@ fn smoke_external_intent_set_and_clear() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -160,6 +168,8 @@ fn snapshot_exposes_script_dialog_and_timer_requests() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -230,6 +240,8 @@ fn snapshot_exposes_script_error_class_and_category() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -404,4 +416,46 @@ fn browser_fixture_load_navigate_and_external_intent_flow_is_deterministic() {
     assert_eq!(repeat_snapshot.focused_link_index, 1);
     assert_eq!(repeat_snapshot.external_navigation_intent, None);
     assert_eq!(repeat_snapshot.external_navigation_request_policy, None);
+}
+
+#[test]
+fn wml_301_adapter_preserves_context_and_fragment_for_forward_deck_load() {
+    let mut engine = WmlEngine::new();
+    let source = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(r#"<wml><card id="source"><p>Source</p></card></wml>"#),
+            base_url: "http://example.test/source.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: Some("http://example.test/source.wml".to_string()),
+            navigation_kind: Some(DeckNavigationKind::Independent),
+        },
+    )
+    .expect("source should load");
+    assert!(engine.set_var("token".to_string(), "kept".to_string()));
+
+    let destination = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(
+                r#"<wml><card id="fallback"><p>Fallback</p></card><card id="target"><p>Target</p></card></wml>"#,
+            ),
+            base_url: "http://example.test/destination.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: Some("http://example.test/source.wml".to_string()),
+            navigation_url: Some("http://example.test/destination.wml#target".to_string()),
+            navigation_kind: Some(DeckNavigationKind::Forward),
+        },
+    )
+    .expect("forward destination should load");
+
+    assert_eq!(destination.active_card_id.as_deref(), Some("target"));
+    assert_eq!(
+        destination.browser_context_epoch,
+        source.browser_context_epoch
+    );
+    assert_eq!(engine.get_var("token".to_string()).as_deref(), Some("kept"));
 }

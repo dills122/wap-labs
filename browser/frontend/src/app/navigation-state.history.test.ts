@@ -250,13 +250,17 @@ describe('navigation-state history behavior', () => {
       followExternalIntent: false
     });
 
-    expect(machine.getHistoryState().entries[0]?.activeCardId).toBe('details-a');
+    expect(machine.getHistoryState().entries.map((entry) => entry.activeCardId)).toEqual([
+      'home-a',
+      'details-a',
+      'home-b'
+    ]);
 
     const mode = await machine.navigateBackWithFallback();
     expect(mode).toBe('host');
     expect(navigateToCardCalls).toEqual(['details-a']);
     expect(machine.getSessionState().activeCardId).toBe('details-a');
-    expect(machine.getHistoryState().index).toBe(0);
+    expect(machine.getHistoryState().index).toBe(1);
     expect(loadCount).toBe(3);
   });
 
@@ -347,5 +351,164 @@ describe('navigation-state history behavior', () => {
     expect(events).toContain('host-history-back');
     expect(events.indexOf('load-transport-url')).toBeLessThan(events.indexOf('host-history-back'));
     expect(events.indexOf('fetch-deck-response')).toBeLessThan(events.indexOf('host-history-back'));
+  });
+
+  it('keeps duplicate explicit URL accesses as separate history entries', async () => {
+    const machine = createNavigationStateMachine(createHostClientMock(), 'http://seed.test');
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/repeat.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/repeat.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState().entries).toHaveLength(2);
+    expect(machine.getHistoryState().index).toBe(1);
+  });
+
+  it('preserves every same-deck card access across a cross-deck round trip', async () => {
+    const navigationUrls: Array<string | undefined> = [];
+    const cardTransitions = ['a-2', 'a-3'];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="a-1"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }),
+        engineLoadDeckContextFrame: async (request) => {
+          navigationUrls.push(request.navigationUrl);
+          const fragment = request.navigationUrl
+            ? new URL(request.navigationUrl).hash.slice(1)
+            : '';
+          const activeCardId = fragment || (request.baseUrl.includes('/b.wml') ? 'b-1' : 'a-1');
+          return frame({ activeCardId, baseUrl: request.baseUrl, browserContextEpoch: 1 });
+        },
+        engineHandleKeyFrame: async () =>
+          frame({
+            activeCardId: cardTransitions.shift() ?? 'a-3',
+            baseUrl: 'http://example.test/a.wml',
+            browserContextEpoch: 1
+          }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: machine.getSessionState().activeCardId,
+            baseUrl: machine.getSessionState().finalUrl,
+            browserContextEpoch: 1,
+            lastBackNavigationHandled: false
+          })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+    await machine.applyEngineKey('enter');
+    await machine.loadTransportUrl({
+      url: 'http://example.test/b.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState().entries.map((entry) => entry.activeCardId)).toEqual([
+      'a-1',
+      'a-2',
+      'a-3',
+      'b-1'
+    ]);
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a-3');
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a-2');
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a-1');
+    expect(navigationUrls.slice(-3)).toEqual([
+      'http://example.test/a.wml#a-3',
+      'http://example.test/a.wml#a-2',
+      'http://example.test/a.wml#a-1'
+    ]);
+  });
+
+  it('keeps host history synchronized when engine back pops a same-deck card', async () => {
+    const backCards = ['a-2', 'a-1'];
+    const cardTransitions = ['a-2', 'a-3'];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineLoadDeckContextFrame: async () =>
+          frame({ activeCardId: 'a-1', browserContextEpoch: 1 }),
+        engineHandleKeyFrame: async () =>
+          frame({ activeCardId: cardTransitions.shift() ?? 'a-3', browserContextEpoch: 1 }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: backCards.shift() ?? 'a-1',
+            browserContextEpoch: 1,
+            lastBackNavigationHandled: true
+          })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+    await machine.applyEngineKey('enter');
+
+    expect(await machine.navigateBackWithFallback()).toBe('engine');
+    expect(machine.getHistoryState().index).toBe(1);
+    expect(await machine.navigateBackWithFallback()).toBe('engine');
+    expect(machine.getHistoryState().index).toBe(0);
+  });
+
+  it('resets host history to the current card after same-deck newcontext', async () => {
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }),
+        engineLoadDeckContextFrame: async () =>
+          frame({ activeCardId: 'home', browserContextEpoch: 1 }),
+        engineHandleKeyFrame: async () => frame({ activeCardId: 'fresh', browserContextEpoch: 2 })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/context.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+
+    expect(machine.getHistoryState()).toEqual({
+      entries: [
+        expect.objectContaining({
+          url: 'http://example.test/context.wml',
+          activeCardId: 'fresh'
+        })
+      ],
+      index: 0
+    });
   });
 });

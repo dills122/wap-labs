@@ -44,7 +44,7 @@ Exit gates:
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-01`
-- Direct SCR rows: 76 (30 `direct-test-linked`, 17 `gap-work-item-mapped`, 29 `optional-not-assessed`)
+- Direct SCR rows: 76 (31 `direct-test-linked`, 16 `gap-work-item-mapped`, 29 `optional-not-assessed`)
 - Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
 - Direct normative clauses: 178
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
@@ -263,7 +263,7 @@ Evidence commands:
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#navigate_back_internal`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_back_restores_previous_card` (`cd engine-wasm/engine && cargo test navigate_back_restores_previous_card`)
   - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: Card history push/pop and deterministic empty-history behavior exist; full WML request identity and context semantics remain broader than the engine stack.
+  - Assessment note: WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.
 - **WML-C-08** — Card/Deck task shadowing
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.6 (SCR §15.1.2)
@@ -275,19 +275,19 @@ Evidence commands:
 - **WML-C-09** — Intrinsic Events
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.10 (SCR §15.1.2)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_onevent_binding`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_runs_onenterforward_action` (`cd engine-wasm/engine && cargo test navigate_runs_onenterforward_action`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.
+  - Assessment note: Card/template onenterforward, onenterbackward, ontimer, and option onpick bindings have direct action, control, and timer evidence across every nested intrinsic-event clause.
 - **WML-C-10** — Browser context
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.1 (SCR §15.1.3)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/lib.rs#WmlEngine`
   - Tests: `engine-wasm/engine/src/engine_tests/traces_public_api.rs::m1_02_load_deck_context_public_api_sets_metadata_and_state` (`cd engine-wasm/engine && cargo test m1_02_load_deck_context_public_api_sets_metadata_and_state`)
   - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.
+  - Assessment note: WML-301 keeps variables, request-shaped navigation history, and runtime session state in one observable browser-context scope across native and WASM adapters.
 - **WML-C-11** — Initialisation (newcontext)
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.2 (SCR §15.1.3)
@@ -299,19 +299,19 @@ Evidence commands:
 - **WML-C-12** — Variables
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.3 (SCR §15.1.3)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_public_api.rs#set_var`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_card_task_action`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::focused_input_edit_commit_updates_render_and_runtime_var` (`cd engine-wasm/engine && cargo test focused_input_edit_commit_updates_render_and_runtime_var`), `engine-wasm/engine/src/engine_tests/actions_timers.rs::wml_fx_variable_commit_before_task_commits_active_input_before_accept` (`cd engine-wasm/engine && cargo test wml_fx_variable_commit_before_task_commits_active_input_before_accept`)
   - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.
+  - Assessment note: WML-302 and WML-204 directly cover variable definition, substitution locations, conversions, escaping, validation, snapshots, and control commit ordering across every nested clause.
 - **WML-C-13** — Context restrictions
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §10.4 (SCR §15.1.3)
-  - Assessment: `missing`; evidence `gap-work-item-mapped`
-  - Code: None; the evidence state remains explicit.
-  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_public_api.rs#load_deck_context_for_navigation`
+  - Tests: `browser/frontend/src/app/navigation-state.load.test.ts::clears prior host history when the engine establishes a new browser context` (`pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts`)
   - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: Independent user navigation does not establish a separately modeled WML browser context.
+  - Assessment note: WML-301 establishes a new observable browser context for independent navigation and elects the permitted old-context termination behavior.
 - **WML-C-14** — Deck access control
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.1 (SCR §15.1.4)
@@ -347,11 +347,11 @@ Evidence commands:
 - **WML-C-18** — Inter-card navigation
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.5 (SCR §15.1.4)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_card_task_action`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::fixture_accept_go_trace_order_is_deterministic` (`cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Covered go/prev/noop/refresh and rollback paths are ordered deterministically, but setvar, access, newcontext, fetched-deck, and complete fragment-fallback steps remain open.
+  - Assessment note: WML-202/301/302/303/305 jointly provide direct evidence for access, newcontext, variables, go/prev/refresh ordering, fetched-deck fragment selection, timers, and rollback across every nested inter-card clause.
 - **WML-C-19** — a
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.9 (SCR §15.1.5)
@@ -511,15 +511,15 @@ Evidence commands:
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Prev pops card history and executes backward-entry behavior; originating setvar and full fetched-resource identity semantics are absent.
+  - Assessment note: Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.
 - **WML-C-39** — onevent
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.10.1 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#push_onevent_binding`
   - Tests: `engine-wasm/engine/src/engine_tests/wml_303_actions.rs::option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict` (`cd engine-wasm/engine && cargo test option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.
+  - Assessment note: Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, execute with immediate-parent scope and shadowing, and include completed timer lifecycle evidence.
 - **WML-C-40** — optgroup
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.6.2.3 (SCR §15.1.5)
@@ -539,11 +539,11 @@ Evidence commands:
 - **WML-C-42** — refresh
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.3 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
+  - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Refresh`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_refresh_action_keeps_current_card_and_history` (`cd engine-wasm/engine && cargo test enter_accept_refresh_action_keeps_current_card_and_history`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.
+  - Assessment note: Refresh assignments, variable snapshots, redisplay, timer restart, and named-timer resume have direct WML-302/303/305 evidence across every nested clause.
 - **WML-C-43** — select
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.6.2.1 (SCR §15.1.5)
@@ -958,7 +958,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-18`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
-  - Fixture: `WML-FX-CARD-ID-FRAGMENT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-CARD-ID-FRAGMENT` (`state-machine`, `implemented`)
 - **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
@@ -976,13 +976,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
   - Parents: `WML-C-10`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-CONTEXT-SINGLE-SCOPE` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-CONTEXT-SINGLE-SCOPE` (`state-machine`, `implemented`)
 - **WML-CL-CONTEXT-STATE-MEMBERS** — Keep variables, navigation history, and implementation-dependent session state in the browser context.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
   - Parents: `WML-C-10`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-CONTEXT-STATE-MEMBERS` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-CONTEXT-STATE-MEMBERS` (`state-machine`, `implemented`)
 - **WML-CL-DECK-ACCESS-REQUIRED** — Enforce deck-level access control using access, sendreferer, domain, and path semantics.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.1 (12.1 Deck Access Control)
@@ -1078,13 +1078,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §10.4 (10.4 Context Restrictions)
   - Parents: `WML-C-13`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-NEW-CONTEXT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-NEW-CONTEXT` (`state-machine`, `implemented`)
 - **WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT** — The user agent may terminate the old context before establishing a context for external navigation.
   - Family: `wml`; force: `explicit-may`; level: `permitted`
   - Source: `WAP-191_104-WML` §10.4 (10.4 Context Restrictions)
   - Parents: `WML-C-13`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-OLD-CONTEXT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-OLD-CONTEXT` (`state-machine`, `implemented`)
 - **WML-CL-GO-ACCEPT-CHARSET** — Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1126,7 +1126,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
-  - Fixture: `WML-FX-GO-FRAGMENT-FALLBACK` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-FRAGMENT-FALLBACK` (`state-machine`, `implemented`)
 - **WML-CL-GO-GET-QUERY-MERGE** — For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1138,7 +1138,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
   - Parents: `WML-C-07`, `WML-C-18`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-GO-HISTORY-PUSH` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-GO-HISTORY-PUSH` (`state-machine`, `implemented`)
 - **WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION** — Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1222,19 +1222,19 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`
   - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-DUPLICATE-PUSH` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-DUPLICATE-PUSH` (`state-machine`, `implemented`)
 - **WML-CL-HISTORY-ENTRY-FIELDS** — Record the absolute card URL, request method, submitted fields, and request headers in each history entry.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`
   - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-ENTRY-FIELDS` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-ENTRY-FIELDS` (`state-machine`, `implemented`)
 - **WML-CL-HISTORY-EXCLUDES-CONTENT** — Do not store card content in history entries.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`
   - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-EXCLUDES-CONTENT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-EXCLUDES-CONTENT` (`state-machine`, `implemented`)
 - **WML-CL-HISTORY-POST-REPLAY** — When a prior deck must be fetched again, replay the original POST data values associated with that history entry.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
@@ -1258,7 +1258,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`
   - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-STACK-MODEL` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-HISTORY-STACK-MODEL` (`state-machine`, `implemented`)
 - **WML-CL-IMAGE-ALT-FALLBACK** — Render alt text when the image cannot be displayed because support, local data, or fetched content is unavailable.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.9 (11.9 Images)
@@ -1384,7 +1384,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.5 (12.5 Reference Processing Behaviour - Inter-card Navigation)
   - Parents: `WML-C-18`
   - Requirements: `RQ-RMK-003`
-  - Fixture: `WML-FX-NAVIGATION-REFERENCE-MODEL` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-NAVIGATION-REFERENCE-MODEL` (`state-machine`, `implemented`)
 - **WML-CL-NEWCONTEXT-CLEAR-HISTORY** — On newcontext initialization, clear navigation history.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.2 (10.2 The Newcontext Attribute)

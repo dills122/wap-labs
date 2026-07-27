@@ -230,8 +230,8 @@ if (
   ) ||
   JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
     JSON.stringify({
-      'direct-test-linked': 30,
-      'gap-work-item-mapped': 17,
+      'direct-test-linked': 31,
+      'gap-work-item-mapped': 16,
       'optional-not-assessed': 29
     }) ||
   graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
@@ -240,8 +240,8 @@ if (
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
   !wml201Pack.includes('- Direct normative clauses: 178') ||
-  !wml201Pack.includes('30 `direct-test-linked`') ||
-  !wml201Pack.includes('17 `gap-work-item-mapped`') ||
+  !wml201Pack.includes('31 `direct-test-linked`') ||
+  !wml201Pack.includes('16 `gap-work-item-mapped`') ||
   !wml201Pack.includes('29 `optional-not-assessed`') ||
   !wml201Pack.includes('**WML-C-01**') ||
   !wml201Pack.includes('**WML-C-76**')
@@ -272,14 +272,25 @@ if (
   !wml301Pack.includes('### WML-301:') ||
   wml301Pack.includes('### WML-302:') ||
   !wml301Pack.includes('- Selected work items: 1') ||
-  !wml301Pack.includes('- Selected SCR parents: 7') ||
-  !wml301Pack.includes('- Direct normative clauses: 9') ||
+  !wml301Pack.includes('- Selected SCR parents: 11') ||
+  !wml301Pack.includes('- Direct normative clauses: 20') ||
   !wml301Pack.includes('**WML-CL-CARD-ID-FRAGMENT**') ||
+  !wml301Pack.includes('**WML-CL-HISTORY-STACK-MODEL**') ||
+  !wml301Pack.includes('**WML-CL-HISTORY-DUPLICATE-PUSH**') ||
+  !wml301Pack.includes('**WML-CL-HISTORY-ENTRY-FIELDS**') ||
+  !wml301Pack.includes('**WML-CL-HISTORY-EXCLUDES-CONTENT**') ||
+  !wml301Pack.includes('**WML-CL-CONTEXT-SINGLE-SCOPE**') ||
+  !wml301Pack.includes('**WML-CL-CONTEXT-STATE-MEMBERS**') ||
+  !wml301Pack.includes('**WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT**') ||
+  !wml301Pack.includes('**WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT**') ||
+  !wml301Pack.includes('**WML-CL-NAVIGATION-REFERENCE-MODEL**') ||
+  !wml301Pack.includes('**WML-CL-GO-FRAGMENT-FALLBACK**') ||
+  !wml301Pack.includes('**WML-CL-GO-HISTORY-PUSH**') ||
   wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-301') ||
   wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-301']
 ) {
   failures.push(
-    'WML-301 context rendering must expose its nine current context/card mappings and seven selected parents without inferring implementation readiness'
+    'WML-301 context rendering must expose its 20 source-audited context/history/navigation mappings and 11 selected parents without inferring implementation readiness'
   );
 }
 const wml302Pack = renderContextPack(wml3Graph, 'WML-302');

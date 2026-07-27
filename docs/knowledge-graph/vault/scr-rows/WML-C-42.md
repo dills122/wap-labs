@@ -48,9 +48,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.",
+  "assessmentNote": "Refresh assignments, variable snapshots, redisplay, timer restart, and named-timer resume have direct WML-302/303/305 evidence across every nested clause.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",

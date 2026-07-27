@@ -27,6 +27,8 @@ fn apply_load_deck_context_rejects_oversized_wml_payload() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("oversized wml should fail");
@@ -46,6 +48,8 @@ fn apply_load_deck_context_rejects_oversized_raw_payload() {
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("oversized raw payload should fail");
@@ -65,6 +69,8 @@ fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomicall
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("stable deck should load");
@@ -81,6 +87,8 @@ fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomicall
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: Some("https://attacker.test/source.wml".to_string()),
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("mismatched referring URI must be denied");
@@ -102,6 +110,8 @@ fn apply_navigate_to_card_returns_error_for_unknown_card() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -167,6 +177,8 @@ fn apply_set_viewport_cols_clamps_to_minimum_one() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -199,6 +211,8 @@ fn apply_navigate_back_on_empty_history_keeps_state() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -225,6 +239,8 @@ fn wml_303_back_override_handled_state_crosses_the_native_host_contract() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -245,6 +261,8 @@ fn command_engine_wrappers_drive_state_transitions() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load deck context should succeed");
@@ -307,6 +325,8 @@ fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some(raw),
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("oversized raw payload should fail");
@@ -324,6 +344,8 @@ fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("deck should load");
@@ -509,6 +531,8 @@ fn command_engine_advance_time_ms_is_callable() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");

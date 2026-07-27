@@ -35,8 +35,9 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 31 implemented, 69 partial, and 98 missing parent rows; clause-level
-assessment is 253/762 after WML-302 closed 18 newly implemented clauses,
+is 40 implemented, 70 partial, and 88 missing parent rows; clause-level
+assessment is 265/762 after WML-301 closed 12 context/history/process-order clauses,
+WML-302 closed 18 newly implemented clauses,
 retained 2 already implemented shared clauses, WSP-801 directly closed its
 35-clause connectionless matrix, and WML-305 closed its 10 directly mapped
 timer clauses and completed parent row WML-C-48.

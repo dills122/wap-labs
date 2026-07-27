@@ -98,6 +98,7 @@ export type WmlEngineDebugClose = (
 ) => Promise<EngineDebugCloseSessionOutcome>;
 
 export type EngineKey = 'up' | 'down' | 'enter';
+export type DeckNavigationKind = 'independent' | 'forward' | 'backward' | 'reload';
 
 export interface WmlDeckInput {
   // Normalized textual WML payload passed into engine runtime.
@@ -110,6 +111,10 @@ export interface WmlDeckInput {
   rawBytesBase64?: string;
   // Referring deck URI supplied by the host for destination access checks.
   referringUrl?: string;
+  // URL that initiated this traversal, including any destination fragment.
+  navigationUrl?: string;
+  // Relationship to the active WML browser context and entry-event direction.
+  navigationKind?: DeckNavigationKind;
 }
 
 export type ScriptCallSite =
@@ -175,6 +180,7 @@ export interface WmlEngineCommon {
   focusedLinkIndex(): number;
   baseUrl(): string;
   contentType(): string;
+  browserContextEpoch(): number;
   deckLanguage(): string | undefined;
   activeCardLanguage(): string | undefined;
   getVar(name: string): string | undefined;
@@ -233,6 +239,15 @@ export interface WmlEngineWasm extends WmlEngineCommon {
     contentType: string,
     rawBytesBase64?: string,
     referringUrl?: string
+  ): void;
+  loadDeckContextForNavigation(
+    wmlXml: string,
+    baseUrl: string,
+    contentType: string,
+    rawBytesBase64?: string,
+    referringUrl?: string,
+    navigationUrl?: string,
+    navigationKind?: DeckNavigationKind
   ): void;
 }
 

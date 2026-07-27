@@ -27,19 +27,6 @@ export const pushHostHistoryEntry = (
     return;
   }
   const normalizedIdentity = normalizeRequestIdentity(requestIdentity);
-  if (
-    state.index >= 0 &&
-    isSameHistoryIdentity(state.entries[state.index], normalized, normalizedIdentity)
-  ) {
-    if (activeCardId) {
-      state.entries[state.index].activeCardId = activeCardId;
-    }
-    if (source) {
-      state.entries[state.index].source = source;
-    }
-    mergeRequestIdentity(state.entries[state.index], normalizedIdentity);
-    return;
-  }
   if (state.index < state.entries.length - 1) {
     state.entries.splice(state.index + 1);
   }
@@ -53,6 +40,11 @@ export const pushHostHistoryEntry = (
     source
   });
   state.index = state.entries.length - 1;
+};
+
+export const resetHostHistoryState = (state: HostHistoryState): void => {
+  state.entries.splice(0);
+  state.index = -1;
 };
 
 export const updateCurrentHistoryCard = (state: HostHistoryState, activeCardId?: string): void => {
@@ -95,44 +87,6 @@ const normalizeRequestIdentity = (
   };
 };
 
-const isSameHistoryIdentity = (
-  current: HostHistoryEntry | undefined,
-  url: string,
-  requestIdentity: HostHistoryRequestIdentity
-): boolean => {
-  if (!current || current.url !== url) {
-    return false;
-  }
-  return (
-    (current.requestedUrl ?? undefined) === requestIdentity.requestedUrl &&
-    (normalizeMethod(current.method) ?? undefined) === requestIdentity.method &&
-    headerSignature(current.headers) === headerSignature(requestIdentity.headers) &&
-    requestPolicySignature(current.requestPolicy) ===
-      requestPolicySignature(requestIdentity.requestPolicy)
-  );
-};
-
-const mergeRequestIdentity = (
-  entry: HostHistoryEntry,
-  requestIdentity: HostHistoryRequestIdentity
-): void => {
-  if (requestIdentity.requestedUrl) {
-    entry.requestedUrl = requestIdentity.requestedUrl;
-  }
-  if (requestIdentity.method) {
-    entry.method = requestIdentity.method;
-  }
-  if (requestIdentity.headers) {
-    entry.headers = cloneHeaders(requestIdentity.headers);
-  }
-  if (requestIdentity.requestPolicy) {
-    entry.requestPolicy = cloneRequestPolicy(requestIdentity.requestPolicy);
-  }
-};
-
-const normalizeMethod = (method?: string): string | undefined =>
-  method?.trim().toUpperCase() || undefined;
-
 const normalizeHeaders = (headers?: Record<string, string>): Record<string, string> | undefined => {
   if (!headers) {
     return undefined;
@@ -145,34 +99,6 @@ const normalizeHeaders = (headers?: Record<string, string>): Record<string, stri
     return undefined;
   }
   return Object.fromEntries(entries);
-};
-
-const headerSignature = (headers?: Record<string, string>): string =>
-  headers
-    ? Object.entries(headers)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([name, value]) => `${name}:${value}`)
-        .join('\n')
-    : '';
-
-const requestPolicySignature = (policy?: FetchRequestPolicy): string => {
-  if (!policy) {
-    return '';
-  }
-  const identity = {
-    refererUrl: policy.refererUrl,
-    postContext: policy.postContext
-      ? {
-          sameDeck: policy.postContext.sameDeck,
-          contentType: policy.postContext.contentType,
-          payload: policy.postContext.payload
-        }
-      : undefined
-  };
-  if (!identity.refererUrl && !identity.postContext) {
-    return '';
-  }
-  return JSON.stringify(identity);
 };
 
 const cloneHeaders = (headers?: Record<string, string>): Record<string, string> | undefined =>

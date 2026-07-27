@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 279
-- Edges: 728
+- Nodes: 303
+- Edges: 795
 - Selected work items: 8
 - Direct SCR rows: 0
-- Direct normative clauses: 97
+- Direct normative clauses: 108
 - Work items without direct clause mappings: 2
 - Work items with unmapped declared normative families: 4
 
@@ -40,15 +40,15 @@ Exit gates:
 
 ### WML-301: Deck/card context, history, newcontext, and inter-card process-order closure
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`, `wae`
 - Existing tickets: `R0-02`, `R0-03`, `A5-01`
 - Direct SCR rows: 0
-- Selected SCR parents: 7 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-11`, `WML-C-18`, `WML-C-25`, `WML-C-46`)
-- Direct normative clauses: 9
-- Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
-- Spec references: None
+- Selected SCR parents: 11 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-07`, `WML-C-10`, `WML-C-11`, `WML-C-13`, `WML-C-18`, `WML-C-25`, `WML-C-29`, `WML-C-46`)
+- Direct normative clauses: 20
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
+- Spec references: `WAP-191_104-WML sections 9.2, 10.1, 10.4, 11.5.2, 12.5, and 12.5.1`
 - Follow-up work items: None
 - Depends on: None
 
@@ -64,6 +64,12 @@ Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `pnpm --dir browser/frontend test`
+- `wasm-pack test --node engine-wasm/engine`
+- `pnpm test:story WML-301`
+- `node scripts/wap-context-pack.mjs WML-301`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ### WML-302: Variable store and substitution closure
 
@@ -321,7 +327,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-18`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
-  - Fixture: `WML-FX-CARD-ID-FRAGMENT` (`state-machine`, `planned`)
+  - Fixture: `WML-FX-CARD-ID-FRAGMENT` (`state-machine`, `implemented`)
 - **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
@@ -334,6 +340,72 @@ Evidence commands:
   - Parents: `WML-C-25`, `WML-C-46`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `planned`)
+- **WML-CL-CONTEXT-SINGLE-SCOPE** — Store WML runtime state in one browser-context scope.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
+  - Parents: `WML-C-10`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-CONTEXT-SINGLE-SCOPE` (`state-machine`, `implemented`)
+- **WML-CL-CONTEXT-STATE-MEMBERS** — Keep variables, navigation history, and implementation-dependent session state in the browser context.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
+  - Parents: `WML-C-10`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-CONTEXT-STATE-MEMBERS` (`state-machine`, `implemented`)
+- **WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT** — Establish a new browser context when navigation is initiated independently of the current content.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §10.4 (10.4 Context Restrictions)
+  - Parents: `WML-C-13`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-NEW-CONTEXT` (`state-machine`, `implemented`)
+- **WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT** — The user agent may terminate the old context before establishing a context for external navigation.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §10.4 (10.4 Context Restrictions)
+  - Parents: `WML-C-13`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-EXTERNAL-NAVIGATION-OLD-CONTEXT` (`state-machine`, `implemented`)
+- **WML-CL-GO-FRAGMENT-FALLBACK** — Choose the named card when a fragment matches; otherwise choose the first card in the fetched deck.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`
+  - Fixture: `WML-FX-GO-FRAGMENT-FALLBACK` (`state-machine`, `implemented`)
+- **WML-CL-GO-HISTORY-PUSH** — Push the destination request identity onto history after destination context initialization.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-07`, `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-GO-HISTORY-PUSH` (`state-machine`, `implemented`)
+- **WML-CL-HISTORY-DUPLICATE-PUSH** — Push an entry for each explicit card access even when it duplicates the newest history entry.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`
+  - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-DUPLICATE-PUSH` (`state-machine`, `implemented`)
+- **WML-CL-HISTORY-ENTRY-FIELDS** — Record the absolute card URL, request method, submitted fields, and request headers in each history entry.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`
+  - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-ENTRY-FIELDS` (`state-machine`, `implemented`)
+- **WML-CL-HISTORY-EXCLUDES-CONTENT** — Do not store card content in history entries.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`
+  - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-EXCLUDES-CONTENT` (`state-machine`, `implemented`)
+- **WML-CL-HISTORY-STACK-MODEL** — Maintain navigational history as an ordered stack of visited card request identities.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.2 (9.2 History)
+  - Parents: `WML-C-07`
+  - Requirements: `RQ-RMK-003`, `RQ-WAE-016`
+  - Fixture: `WML-FX-HISTORY-STACK-MODEL` (`state-machine`, `implemented`)
+- **WML-CL-NAVIGATION-REFERENCE-MODEL** — Implement inter-card traversal with behavior indistinguishable from the WML reference process.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5 (12.5 Reference Processing Behaviour - Inter-card Navigation)
+  - Parents: `WML-C-18`
+  - Requirements: `RQ-RMK-003`
+  - Fixture: `WML-FX-NAVIGATION-REFERENCE-MODEL` (`state-machine`, `implemented`)
 
 ### WML-302
 

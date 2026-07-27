@@ -174,6 +174,63 @@ const trn702ClauseIds = new Set([
   'WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY',
   'WDP-CL-IPV4-DONT-FRAGMENT'
 ]);
+const wml301ClauseIds = new Set([
+  'WML-CL-HISTORY-STACK-MODEL',
+  'WML-CL-HISTORY-DUPLICATE-PUSH',
+  'WML-CL-HISTORY-ENTRY-FIELDS',
+  'WML-CL-HISTORY-EXCLUDES-CONTENT',
+  'WML-CL-CONTEXT-SINGLE-SCOPE',
+  'WML-CL-CONTEXT-STATE-MEMBERS',
+  'WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT',
+  'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT',
+  'WML-CL-NAVIGATION-REFERENCE-MODEL',
+  'WML-CL-GO-FRAGMENT-FALLBACK',
+  'WML-CL-GO-HISTORY-PUSH',
+  'WML-CL-CARD-ID-FRAGMENT'
+]);
+const wml301EvidenceByClauseId = new Map([
+  ...[
+    'WML-CL-HISTORY-STACK-MODEL',
+    'WML-CL-HISTORY-DUPLICATE-PUSH',
+    'WML-CL-HISTORY-ENTRY-FIELDS',
+    'WML-CL-HISTORY-EXCLUDES-CONTENT'
+  ].map((id) => [
+    id,
+    {
+      path: 'browser/frontend/src/session-history.test.ts',
+      command: 'pnpm --dir browser/frontend test -- src/session-history.test.ts'
+    }
+  ]),
+  ...[
+    'WML-CL-CONTEXT-SINGLE-SCOPE',
+    'WML-CL-CONTEXT-STATE-MEMBERS',
+    'WML-CL-NAVIGATION-REFERENCE-MODEL',
+    'WML-CL-GO-HISTORY-PUSH'
+  ].map((id) => [
+    id,
+    {
+      path: 'engine-wasm/examples/source/wml-301-context-history.flow.json',
+      command: 'pnpm test:story WML-301'
+    }
+  ]),
+  ...[
+    'WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT',
+    'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT'
+  ].map((id) => [
+    id,
+    {
+      path: 'browser/frontend/src/app/navigation-state.load.test.ts',
+      command: 'pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts'
+    }
+  ]),
+  ...['WML-CL-GO-FRAGMENT-FALLBACK', 'WML-CL-CARD-ID-FRAGMENT'].map((id) => [
+    id,
+    {
+      path: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301'
+    }
+  ])
+]);
 const wml302ClauseIds = new Set([
   'WML-CL-GO-ASSIGNMENT-ORDER',
   'WML-CL-GO-SETVAR-SNAPSHOT',
@@ -376,6 +433,7 @@ const implementedWmlClauseIds = new Set([
   ...wml203ClauseIds,
   ...wml204ClauseIds,
   ...wml205ClauseIds,
+  ...wml301ClauseIds,
   ...wml302ClauseIds,
   ...wml303ClauseIds,
   ...wml305ClauseIds,
@@ -641,6 +699,7 @@ for (const family of ledger.families ?? []) {
         ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
         ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
         ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
+        ...(wml301ClauseIds.has(candidate.id) ? ['WML-301'] : []),
         ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
         ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
@@ -656,6 +715,7 @@ for (const family of ledger.families ?? []) {
       ...(wml203ClauseIds.has(candidate.id) ? ['WML-203'] : []),
       ...(wml204ClauseIds.has(candidate.id) ? ['WML-204'] : []),
       ...(wml205ClauseIds.has(candidate.id) ? ['WML-205'] : []),
+      ...(wml301ClauseIds.has(candidate.id) ? ['WML-301'] : []),
       ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
       ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
@@ -725,11 +785,16 @@ for (const family of ledger.families ?? []) {
       (implementedWmlClauseIds.has(candidate.id) &&
         (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
           !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
-          !candidate.fixturePlan.evidence?.command?.includes(
-            candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
-              ? 'pnpm test:story WML-205'
-              : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
-          ))) ||
+          (wml301EvidenceByClauseId.has(candidate.id)
+            ? candidate.fixturePlan.evidence?.path !==
+                wml301EvidenceByClauseId.get(candidate.id).path ||
+              candidate.fixturePlan.evidence?.command !==
+                wml301EvidenceByClauseId.get(candidate.id).command
+            : !candidate.fixturePlan.evidence?.command?.includes(
+                candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
+                  ? 'pnpm test:story WML-205'
+                  : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
+              )))) ||
       (implementedWsp801ClauseIds.has(candidate.id) &&
         (implementedWsp801ClauseIds.size !== 35 ||
           candidate.fixturePlan.evidence?.path !== wsp801FixturePath ||

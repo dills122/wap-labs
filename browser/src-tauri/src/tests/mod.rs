@@ -1,7 +1,7 @@
 pub(super) use super::health;
 pub(super) use crate::contract_types::{
-    AdvanceTimeRequest, DrawCmd, EngineKey, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
+    AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineKey, HandleKeyRequest,
+    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
     ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
     SetViewportColsRequest,
 };
@@ -167,6 +167,8 @@ fn load_transport_response_into_engine(
             content_type: deck.content_type,
             raw_bytes_base64: deck.raw_bytes_base64,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
 }

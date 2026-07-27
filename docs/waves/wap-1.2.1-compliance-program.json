@@ -536,7 +536,7 @@
       "workItems": [
         {
           "id": "WML-301",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "browser", "qa"],
           "sourceFamilies": ["wml", "wae"],
           "existingTickets": ["R0-02", "R0-03", "A5-01"],
@@ -548,7 +548,22 @@
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "wasm-pack test --node engine-wasm/engine",
+            "pnpm test:story WML-301",
+            "node scripts/wap-context-pack.mjs WML-301",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 9.2, 10.1, 10.4, 11.5.2, 12.5, and 12.5.1"
+          ],
+          "notes": [
+            "The source-audited WML-301 graph boundary directly maps 20 clauses across 11 selected parents. The implemented direct-fixture set closes history stack order, duplicate access, request-identity fields without card content, browser-context scope/state, independent-navigation context replacement, card-fragment selection/fallback, and destination history push/process ordering.",
+            "WML-301 consumes WML-302 variable resolution, WML-303 action/BACK ordering, and WML-305 timer ordering as regression evidence without taking over those completed slices. WML-202 newcontext, WML-204 control/vdata commit, and WML-205 atomic failure behavior remain preserved.",
+            "WML-304 exclusively owns GET/POST request construction, postfield serialization, and POST replay. WML-301 limits HISTORY-ENTRY-FIELDS evidence to the request identity already handed across the engine/browser boundary. The user agent elects the permitted old-context termination behavior for independent navigation and exposes that choice through a monotonic context epoch.",
+            "CARD-TABLE-BOUNDARIES and the broad WAE delegation clauses in the focused pack remain planned and visible. They are not context/history/process-order obligations, are not inferred closed by this implementation, and keep the aggregate WML-301 work item in progress."
           ]
         },
         {
