@@ -5,8 +5,11 @@ This directory owns the OpenTofu configuration for the public WAP network previe
 
 The current `INF-101` checkpoint is intentionally resource-free. It pins the toolchain and
 DigitalOcean provider, defines the encrypted Cloudflare R2 backend contract, and supplies static
-validation plus an isolated future lock integration test. It does not create an account, bucket,
-GitHub environment, DNS record, Droplet, firewall, Reserved IP, deployment, or public endpoint.
+validation, protected plan/apply workflow definitions, recovery-copy automation, and an isolated
+future lock integration test. It does not create an account, bucket, GitHub environment, DNS
+record, Droplet, firewall, Reserved IP, deployment, or public endpoint. The protected workflows
+remain unusable until `PRE-001` and `PRE-003` establish and independently review their trust
+boundary.
 
 ## Layout
 
@@ -65,15 +68,18 @@ Native S3 lock-file mode is mandatory. State and plan encryption are enforced wi
 AES-GCM; the passphrase is provided through `TF_VAR_state_encryption_passphrase` in a protected
 environment.
 
-R2 does not provide ordinary S3 bucket versioning. A future manually approved apply workflow must
-copy the already encrypted state object to a timestamped recovery prefix before changing cloud
-resources. That protected workflow remains unfinished `INF-101` acceptance scope; it is not
-implemented or executed by this offline checkpoint.
+R2 does not provide ordinary S3 bucket versioning. The manually approved apply workflow copies
+the already encrypted state object to the fixed `wap-labs/network-preview/recovery` prefix before
+changing cloud resources. Its conditional write refuses an existing destination; object metadata
+records the source key and SHA-256, source commit, apply run ID/attempt, and creation time. The
+workflow downloads and compares the source and recovery digests, then rechecks them immediately
+before apply. This automation is implemented but intentionally has not been executed against R2.
 
-## Protected plan and apply contract
+## Protected plan and apply automation
 
-The access-backed `INF-101` automation must preserve one exact reviewed plan from planning through
-manual apply:
+`.github/workflows/opentofu-protected-plan.yml` and
+`.github/workflows/opentofu-protected-apply.yml` preserve one exact reviewed plan from planning
+through manual apply:
 
 - protected plan and apply jobs share one preview-state concurrency group with
   `cancel-in-progress: false`; this is intentionally distinct from the cancelable, secret-free
@@ -95,17 +101,49 @@ manual apply:
   It refuses a pre-existing destination, downloads the encrypted source and recovery objects, and
   requires their SHA-256 digests to match. It then rechecks the encrypted source digest before
   continuing so the recovery copy cannot silently represent stale state;
-- retain the five most recent verified pre-apply recovery objects. Prune older objects only after
-  a successful apply and verification of the current encrypted state, and never remove the last
-  known-good recovery object;
+- retain the five most recent verified pre-apply recovery objects. The finalizer decrypts current
+  state only through `tofu state pull` with output discarded, verifies every recovery object's
+  metadata and downloaded SHA-256, and prunes older objects only after successful apply. An apply
+  failure leaves every recovery object untouched;
 - for the first resource-creating apply only, when no state exists to copy, the serialized apply
   job must prove both the configured state and lock keys are absent immediately before applying,
   record that bootstrap condition in trusted run metadata, and verify the resulting encrypted
   remote state through a protected backend operation. Any unexpected object fails closed.
 
-These controls are unfinished, access-backed `INF-101` acceptance. This checkpoint documents the
-contract but does not create protected environments, handle credentials, produce a remote plan,
-copy state, or run `tofu apply`.
+The checked-in automation is access-independent readiness evidence, not access-backed acceptance.
+This checkpoint does not create protected environments, handle real credentials, produce a remote
+plan, copy remote state, or run `tofu apply`.
+
+## Manual protected flow
+
+After `PRE-001` and `PRE-003` are accepted and an exact operation is authorized:
+
+1. Dispatch **OpenTofu Protected Plan** from `main`. Review its sanitized action/address/count
+   summary and record the run ID and artifact ID from the trusted run summary.
+2. Dispatch **OpenTofu Protected Apply** from the same current `main` commit with only those two
+   IDs. The workflow obtains the commit, run attempt, and plan digest from GitHub's workflow and
+   artifact APIs; no digest or commit is accepted from the operator.
+3. The apply fails closed if `main` advanced after planning, the run/workflow/repository/ref or
+   artifact identity differs, the encrypted plan digest differs, or the seven-day artifact has
+   expired. Create and review a new plan instead of bypassing a stale-plan failure.
+4. Approve the `network-preview-apply` environment only after independently matching the plan run,
+   artifact ID, source commit, and sanitized review. The apply never re-plans.
+
+The plan and apply workflows use the exact shared `opentofu-network-preview-state` concurrency
+group with cancellation disabled. The secret-free static workflow remains separately cancelable.
+
+## Failure and recovery behavior
+
+- Before a non-bootstrap apply, the recovery object key contains the source commit, apply run ID,
+  run attempt, and a 128-bit nonce. A failed apply or failed post-apply verification performs no
+  retention deletion.
+- On the first resource-creating apply only, the workflow records a bootstrap mode after proving
+  both the state and native `.tflock` keys absent, and reconfirms absence immediately before apply.
+- After successful apply, the finalizer requires a decryptable current state, no remaining lock,
+  and a downloadable encrypted current-state object before it considers retention.
+- Recovery restoration, lock removal, destroy, and force-unlock are intentionally not automated by
+  these workflows. They are separate state mutations requiring exact authorization and a reviewed
+  runbook decision. The newest verified pre-apply copy remains the rollback source.
 
 ## Access-backed gates
 
@@ -117,9 +155,10 @@ copy state, or run `tofu apply`.
 3. The protected R2 test proves acquisition, contention failure, normal release, stale-lock
    recovery, and cleanup against a unique non-production key.
 4. A protected DigitalOcean speculative plan succeeds without exposing a plaintext plan or state.
-5. The protected plan/apply path proves exact-plan review, non-cancelable shared-state
+5. An authorized protected plan/apply run proves exact-plan review, non-cancelable shared-state
    serialization, verified encrypted recovery copies, and manual apply approval.
 
 Executing a cloud apply remains explicitly out of scope for this offline checkpoint. Implementing
-the serialized, manually approved apply and state-recovery automation remains part of `INF-101`
-after `PRE-003` supplies its protected trust boundary.
+the serialized, manually approved apply and state-recovery automation is complete at the
+access-independent configuration level; live proof remains part of `INF-101` after `PRE-003`
+supplies its protected trust boundary and explicit authority is granted.

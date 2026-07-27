@@ -312,11 +312,21 @@ export const LANES = Object.freeze([
     paths: [
       'infra/network-preview/',
       'scripts/ci/check-network-preview-r2-lock.sh',
-      '.github/workflows/opentofu.yml'
+      'scripts/ci/check-network-preview-encrypted-plan.sh',
+      'scripts/ci/manage-network-preview-recovery.sh',
+      'scripts/ci/network-preview-lib.sh',
+      'scripts/ci/summarize-network-preview-plan.sh',
+      'scripts/ci/verify-network-preview-plan-provenance.sh',
+      'scripts/ci/write-network-preview-backend-config.sh',
+      'scripts/tests/network-preview-protected.test.mjs',
+      '.github/workflows/opentofu.yml',
+      '.github/workflows/opentofu-protected-apply.yml',
+      '.github/workflows/opentofu-protected-plan.yml'
     ],
     prerequisites: [
       prerequisite('tofu', 'install OpenTofu 1.12.5'),
-      prerequisite('sh', 'install a POSIX shell')
+      prerequisite('sh', 'install a POSIX shell'),
+      prerequisite('node', 'install the repository Node version')
     ],
     commands: [
       command('OpenTofu formatting', 'tofu', [
@@ -346,9 +356,29 @@ export const LANES = Object.freeze([
           TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
         }
       }),
-      command('R2 lock driver POSIX syntax', 'sh', [
+      command('network-preview script POSIX syntax', 'sh', [
         '-n',
-        'scripts/ci/check-network-preview-r2-lock.sh'
+        'scripts/ci/check-network-preview-r2-lock.sh',
+        'scripts/ci/check-network-preview-encrypted-plan.sh',
+        'scripts/ci/manage-network-preview-recovery.sh',
+        'scripts/ci/network-preview-lib.sh',
+        'scripts/ci/summarize-network-preview-plan.sh',
+        'scripts/ci/verify-network-preview-plan-provenance.sh',
+        'scripts/ci/write-network-preview-backend-config.sh'
+      ]),
+      command(
+        'encrypted offline plan check',
+        'scripts/ci/check-network-preview-encrypted-plan.sh',
+        [],
+        {
+          env: {
+            TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
+          }
+        }
+      ),
+      command('protected workflow contract tests', 'node', [
+        '--test',
+        'scripts/tests/network-preview-protected.test.mjs'
       ])
     ]
   },

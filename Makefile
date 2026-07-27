@@ -122,14 +122,19 @@ lint-tofu:
 	@echo "==> tofu validate (network preview)"
 	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
 		tofu -chdir=infra/network-preview/environments/preview validate -no-color
-	@echo "==> POSIX syntax (R2 lock driver)"
-	@sh -n scripts/ci/check-network-preview-r2-lock.sh
+	@echo "==> POSIX syntax (network-preview CI scripts)"
+	@sh -n scripts/ci/*network-preview*.sh
 	@if command -v shellcheck >/dev/null 2>&1; then \
-		echo "==> shellcheck (R2 lock driver)"; \
-		shellcheck scripts/ci/check-network-preview-r2-lock.sh; \
+		echo "==> shellcheck (network-preview CI scripts)"; \
+		shellcheck -x scripts/ci/*network-preview*.sh; \
 	else \
-		echo "skip: shellcheck not found (R2 lock driver)"; \
+		echo "skip: shellcheck not found (network-preview CI scripts)"; \
 	fi
+	@echo "==> encrypted offline plan check (network preview)"
+	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		scripts/ci/check-network-preview-encrypted-plan.sh
+	@echo "==> protected workflow contract tests (network preview)"
+	@node --test scripts/tests/network-preview-protected.test.mjs
 
 test-rust:
 	@$(MAKE) test-rust-engine

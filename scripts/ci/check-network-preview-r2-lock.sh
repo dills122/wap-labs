@@ -1,24 +1,12 @@
 #!/usr/bin/env sh
 set -eu
 
-require_command() {
-  if ! command -v "$1" >/dev/null 2>&1; then
-    echo "FAIL: required command not found: $1" >&2
-    exit 1
-  fi
-}
-
-require_value() {
-  variable_name=$1
-  eval "variable_value=\${$variable_name:-}"
-  if [ -z "$variable_value" ]; then
-    echo "FAIL: required environment variable is unset: $variable_name" >&2
-    exit 1
-  fi
-}
+script_directory=$(CDPATH='' cd "$(dirname "$0")" && pwd)
+# shellcheck source=scripts/ci/network-preview-lib.sh
+. "$script_directory/network-preview-lib.sh"
 
 for command_name in tofu aws jq mktemp cp kill sleep grep; do
-  require_command "$command_name"
+  network_preview_require_command "$command_name"
 done
 
 for variable_name in \
@@ -30,7 +18,7 @@ for variable_name in \
   AWS_ACCESS_KEY_ID \
   AWS_SECRET_ACCESS_KEY \
   TOFU_ENCRYPTION_PASSPHRASE; do
-  require_value "$variable_name"
+  network_preview_require_value "$variable_name"
 done
 
 case "$NETWORK_PREVIEW_R2_TEST_PREFIX" in
@@ -41,17 +29,9 @@ case "$NETWORK_PREVIEW_R2_TEST_PREFIX" in
     ;;
 esac
 
-if [ "${#NETWORK_PREVIEW_R2_ACCOUNT_ID}" -ne 32 ] ||
-  ! printf '%s\n' "$NETWORK_PREVIEW_R2_ACCOUNT_ID" | grep -Eq '^[0-9a-f]{32}$'; then
-  echo "FAIL: NETWORK_PREVIEW_R2_ACCOUNT_ID must be a 32-character lowercase hexadecimal ID" >&2
-  exit 1
-fi
-
-if ! printf '%s\n' "$NETWORK_PREVIEW_R2_BUCKET" |
-  grep -Eq '^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$'; then
-  echo "FAIL: NETWORK_PREVIEW_R2_BUCKET must be a 3-63 character lowercase bucket name" >&2
-  exit 1
-fi
+network_preview_validate_account_id
+network_preview_validate_bucket
+network_preview_validate_state_key
 
 test_run_id=$NETWORK_PREVIEW_R2_TEST_RUN_ID
 if ! printf '%s\n' "$test_run_id" |
