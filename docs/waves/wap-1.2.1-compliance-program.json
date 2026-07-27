@@ -851,10 +851,14 @@
       "workItems": [
         {
           "id": "WMLS-501",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "qa"],
           "sourceFamilies": ["wmlscript"],
           "existingTickets": ["W1-02"],
+          "scrMatrix": {
+            "family": "wmlscript",
+            "scope": "selected-clause-parents"
+          },
           "outputs": [
             "Complete bytecode decoder and structural verifier"
           ],
@@ -862,7 +866,8 @@
             "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
           ]
         },
         {

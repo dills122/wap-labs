@@ -3,3 +3,4 @@ pub(crate) mod opcodes;
 pub mod stdlib;
 pub mod value;
 pub mod vm;
+pub mod wap_decoder;

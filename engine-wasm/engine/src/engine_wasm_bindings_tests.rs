@@ -3,6 +3,8 @@ use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
+use crate::wavescript::wap_decoder::{decode_wap_compilation_unit, WapDecodeError};
+
 const SAMPLE: &str = r##"
 <wml>
   <card id="home">
@@ -17,6 +19,36 @@ const FIXTURE_BASIC_TWO_CARD: &str = include_str!("../tests/fixtures/phase-a/bas
 const FIXTURE_MISSING_FRAGMENT: &str =
     include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
 const WML_203_DTD_FAMILY: &str = include_str!("../../examples/source/wml-203-dtd-family.wml");
+const WMLS_501_MINIMAL_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
+
+fn wmls_501_fixture_bytes() -> Vec<u8> {
+    WMLS_501_MINIMAL_UNIT
+        .split_ascii_whitespace()
+        .map(|token| u8::from_str_radix(token, 16).expect("fixture must contain hex bytes"))
+        .collect()
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics() {
+    let fixture = wmls_501_fixture_bytes();
+    let decoded = decode_wap_compilation_unit(&fixture).expect("WAP-193 fixture must decode");
+    assert_eq!(decoded.version, 0x01);
+    assert_eq!(decoded.charset_mib_enum, 106);
+    assert_eq!(decoded.function_names[0].name, "main");
+    assert_eq!(decoded.functions[0].code, [0x3b]);
+
+    let mut unknown_opcode = fixture;
+    *unknown_opcode.last_mut().expect("fixture has an opcode") = 0x78;
+    assert!(matches!(
+        decode_wap_compilation_unit(&unknown_opcode),
+        Err(WapDecodeError::UnsupportedOpcode {
+            function: 0,
+            pc: 0,
+            opcode: 0x78,
+        })
+    ));
+}
 
 fn draw_len(render_value: &JsValue) -> u32 {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");

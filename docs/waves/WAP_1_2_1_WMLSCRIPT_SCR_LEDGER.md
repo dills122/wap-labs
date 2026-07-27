@@ -59,38 +59,39 @@ The optional interpreter rows are `WMLS-C-071` (floating-point size),
 | Result | Rows |
 |---|---:|
 | Implemented | 0 |
-| Partial | 23 |
-| Missing | 18 |
-| Direct normative tests | 0 |
-| Provisional local-test links | 23 |
+| Partial | 32 |
+| Missing | 9 |
+| Direct structural tests | 21 |
+| Provisional local-test links | 11 |
 
 These counts describe exact selected SCR rows, not a compliance percentage.
 “Partial” means related behavior exists but the repository has not proved the
-complete WAP-193 requirement. No selected row is marked implemented while the
-binary format and direct source-derived fixtures remain unverified. All 41
+complete WAP-193 requirement. No selected row is marked implemented. All 41
 selected rows now map to 107 deduplicated normative clauses: 105 required and
 two recommended.
 
 ### Partial foundations
 
-- a bounded decoder rejects unknown/truncated project-specific instructions;
+- a bounded strict decoder parses the WAP-193 header, multibyte fields, constant,
+  pragma, and function pools, and every effective instruction encoding;
+- structural verification rejects malformed/truncated/reserved encodings and invalid
+  local, constant, local-function, function-boundary, and jump references;
+- a byte-exact source-derived fixture has native/WASM parity coverage;
 - a small VM supports local call/return frames, integer addition, strings,
   locals, a host-call boundary, and execution limits;
 - scalar values and one string-coercion helper exist;
 - fatal/non-fatal host-visible outcomes and recovery tests exist.
 
-This is useful architecture and safety evidence. It is not evidence for a
-WAP-193 compilation unit:
+This is direct structural WAP-193 evidence, but it is not full WMLScript execution evidence:
 
 - the VM recognizes only nine project-specific opcodes;
-- operands use fixed one-byte fields rather than the effective binary format;
-- the WAP header, constant pool, pragma pool, and function pool are absent;
-- most control-flow, arithmetic, bitwise, comparison, logical, stack, operand,
-  and debug instructions are absent;
+- the legacy VM is not yet connected to the strict compilation-unit representation;
+- opcode execution semantics and stack dataflow are not verified;
+- standard-library index validity remains deferred;
 - URL-based external invocation, fragments, relative resolution, pragmas, and
   access control are absent;
 - the complete conversion and chapter 12 error rules are not proven;
-- there is no source-derived conforming `.wmlsc` fixture corpus.
+- the fixture corpus is intentionally minimal and needs compiler-produced additions.
 
 ## Work closure
 
@@ -106,9 +107,9 @@ The ledger maps every row to existing requirement and sprint lanes:
 - `WMLS-506` / `W1-01`: WMLScript media types and cross-layer handoff;
 - `W1-05`: machine-ledger and CI closure.
 
-The next implementation pass must execute the planned source-derived binary fixtures
-and the actual WAP-193 data structures. Extending the current custom bytecode
-without a WAP compatibility boundary would deepen the gap.
+The next additive pass should connect only verified WAP compilation units to execution and
+close library-index and stack-dataflow verification without replacing the isolated legacy
+stream used by current host examples.
 
 ## Enhancement policy
 

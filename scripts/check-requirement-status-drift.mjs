@@ -56,7 +56,7 @@ const familyDefinitions = [
     expectedRows: 112,
     expectedSelected: 41,
     expectedClauses: 107,
-    expectedStatus: { implemented: 0, partial: 23, missing: 18 },
+    expectedStatus: { implemented: 0, partial: 32, missing: 9 },
     activeDoc: 'docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 28, blocked: 1, 'in-progress': 8, todo: 45 })
+  JSON.stringify({ done: 28, blocked: 1, 'in-progress': 9, todo: 44 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 33, partial: 67, missing: 98 })
+  JSON.stringify({ implemented: 33, partial: 76, missing: 89 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -375,7 +375,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **31** | **69** | **98** |',
+      '| **Total** | **198** | **762** | **33** | **76** | **89** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]

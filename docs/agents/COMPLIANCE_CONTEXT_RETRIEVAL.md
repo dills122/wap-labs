@@ -48,6 +48,13 @@ The WML-3 focused targets are `WML-301` through `WML-305`. Use `WML-3` only for 
 runtime planning. A focused pack exposes the canonical mappings and gaps that exist now; it does
 not by itself establish implementation readiness or complete a source audit.
 
+For the WMLScript bytecode decoder/verifier lane, use `WMLS-501`. Use `WMLS-5` only for
+sprint-wide WMLScript planning:
+
+```sh
+node scripts/wap-context-pack.mjs WMLS-501
+```
+
 ## Retrieval workflow
 
 1. Identify the sprint or work-item ID from the request and active planning documents.

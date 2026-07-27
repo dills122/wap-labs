@@ -81,11 +81,11 @@ Status: Active
 - Ledgers:
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
   - 112 rows and 41 selected Class C interpreter rows
-  - selected audit: 0 implemented, 23 partial, 18 missing
+  - selected audit: 0 implemented, 32 partial, 9 missing
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
   - 95 rows and 80 selected Class C interpreter rows
   - selected audit: 0 implemented, 14 partial, 66 missing
-  - direct normative test evidence: 0/121 selected rows
+  - direct structural test evidence: 21/121 selected rows
 
 3. WAE user-agent behavior and media framework
 - Doc: `docs/waves/WAE_SPEC_TRACEABILITY.md`
