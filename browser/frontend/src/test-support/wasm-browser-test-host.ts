@@ -28,6 +28,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     focusedSelectEditValue: engine.focusedSelectEditValue(),
     baseUrl: engine.baseUrl(),
     contentType: engine.contentType(),
+    browserContextEpoch: engine.browserContextEpoch(),
     lastBackNavigationHandled: engine.lastBackNavigationHandled(),
     externalNavigationIntent: engine.externalNavigationIntent(),
     externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy(),
@@ -182,6 +183,18 @@ const loadDeckContext = (
   engine: WmlEngineWasm,
   request: Parameters<TauriHostClient['engineLoadDeckContext']>[0]
 ): void => {
+  if (request.navigationUrl !== undefined || request.navigationKind !== undefined) {
+    engine.loadDeckContextForNavigation(
+      request.wmlXml,
+      request.baseUrl,
+      request.contentType,
+      request.rawBytesBase64,
+      request.referringUrl,
+      request.navigationUrl,
+      request.navigationKind
+    );
+    return;
+  }
   engine.loadDeckContext(
     request.wmlXml,
     request.baseUrl,

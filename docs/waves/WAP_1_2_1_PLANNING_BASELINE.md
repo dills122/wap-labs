@@ -28,7 +28,7 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
 | Nested clauses | The 198 parents expand into 762 clauses: 722 required, 29 recommended, and 11 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 762 clause fixtures have target locations; 275 clauses now have direct conformance assessment and 487 remain unassessed |
+| Fixtures | All 762 clause fixtures have target locations; 287 clauses now have direct conformance assessment and 475 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 82 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
@@ -46,7 +46,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 175 | 9 | 21 | 9 |
+| WML | 39 | 175 | 16 | 15 | 8 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 32 | 9 |
@@ -54,10 +54,10 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | Caching | 5 | 68 | 0 | 3 | 2 |
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
-| WSP | 8 | 57 | 6 | 2 | 0 |
-| **Total** | **198** | **762** | **33** | **76** | **89** |
+| WSP | 8 | 57 | 8 | 0 | 0 |
+| **Total** | **198** | **762** | **40** | **70** | **88** |
 
-Parent-row status is not a substitute for direct clause evidence. With 275 of
+Parent-row status is not a substitute for direct clause evidence. With 287 of
 762 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
@@ -66,10 +66,10 @@ gap.
 
 The 82 work items currently roll up to:
 
-- 27 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801 connectionless matrix, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
+- 28 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801/WSP-802 connectionless matrices, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 10 in progress (existing runtime, WAE, transport, WSP, and WMLS-501 foundations);
-- 44 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
+- 10 in progress (existing runtime, WML-301 context/history follow-through, WAE, transport, WSP, and WMLS-501 foundations);
+- 43 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
 
 New completion claims should follow the machine dependency graph:
 
@@ -112,8 +112,8 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 76 partial and 89 missing parent rows;
-2. implement and assess the remaining 487 direct clause fixtures;
+1. close or correct the 70 partial and 88 missing parent rows;
+2. implement and assess the remaining 475 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

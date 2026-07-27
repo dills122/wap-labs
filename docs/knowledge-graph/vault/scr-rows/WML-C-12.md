@@ -54,9 +54,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.",
+  "assessmentNote": "WML-302 and WML-204 directly cover variable definition, substitution locations, conversions, escaping, validation, snapshots, and control commit ordering across every nested clause.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_public_api.rs",

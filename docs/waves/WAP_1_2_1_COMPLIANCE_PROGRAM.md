@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 31 implemented, 69 partial, and 98
+- the selected implementation audit is 38 implemented, 63 partial, and 97
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows

@@ -166,6 +166,49 @@ struct SelectEditState {
     draft_index: usize,
 }
 
+/// Host-authored relationship between the active browser context and a deck
+/// being loaded. The transport remains outside the runtime; this value only
+/// selects the WML context and card-entry semantics applied after parsing.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum DeckNavigationKind {
+    /// A bookmark, URL entry, or other navigation independent of the current
+    /// WML content establishes a fresh browser context.
+    #[default]
+    Independent,
+    /// A WML `go` crossing a deck boundary preserves the current context and
+    /// enters the destination through `onenterforward` processing.
+    Forward,
+    /// A host-history pop preserves the current context and enters the
+    /// destination through `onenterbackward` processing.
+    Backward,
+    /// Re-fetch the current request without changing context or history.
+    Reload,
+}
+
+/// Host-resolved URLs and relationship used when loading a fetched deck into
+/// the active WML browser context.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct DeckNavigationContext<'a> {
+    referring_url: Option<&'a str>,
+    navigation_url: Option<&'a str>,
+    kind: DeckNavigationKind,
+}
+
+impl<'a> DeckNavigationContext<'a> {
+    /// Describe how the fetched deck relates to the current browser context.
+    pub fn new(
+        referring_url: Option<&'a str>,
+        navigation_url: Option<&'a str>,
+        kind: DeckNavigationKind,
+    ) -> Self {
+        Self {
+            referring_url,
+            navigation_url,
+            kind,
+        }
+    }
+}
+
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
     deck: Option<Deck>,
@@ -194,6 +237,7 @@ pub struct WmlEngine {
     active_select_edit: Option<SelectEditState>,
     last_back_navigation_handled: bool,
     last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
+    browser_context_epoch: u32,
 }
 
 impl Default for WmlEngine {

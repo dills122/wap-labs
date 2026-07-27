@@ -5,7 +5,7 @@ use crate::contract_types::{
     SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use std::sync::Mutex;
-use wavenav_engine::WmlEngine;
+use wavenav_engine::{DeckNavigationContext, WmlEngine};
 
 pub struct AppState {
     pub(crate) engine: Mutex<WmlEngine>,
@@ -30,6 +30,7 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         focused_select_edit_value: engine.focused_select_edit_value(),
         base_url: engine.base_url(),
         content_type: engine.content_type(),
+        browser_context_epoch: Some(engine.browser_context_epoch()),
         deck_language: engine.deck_language(),
         active_card_language: engine.active_card_language(),
         last_back_navigation_handled: engine.last_back_navigation_handled(),
@@ -95,12 +96,16 @@ pub fn apply_load_deck_context(
     engine: &mut WmlEngine,
     request: LoadDeckContextRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.load_deck_context_with_referring_url(
+    engine.load_deck_context_for_navigation(
         &request.wml_xml,
         &request.base_url,
         &request.content_type,
         request.raw_bytes_base64,
-        request.referring_url.as_deref(),
+        DeckNavigationContext::new(
+            request.referring_url.as_deref(),
+            request.navigation_url.as_deref(),
+            request.navigation_kind.unwrap_or_default().into(),
+        ),
     )?;
     Ok(snapshot(engine))
 }
@@ -183,12 +188,16 @@ pub fn apply_load_deck_context_frame(
     engine: &mut WmlEngine,
     request: LoadDeckContextRequest,
 ) -> Result<EngineFrame, String> {
-    engine.load_deck_context_with_referring_url(
+    engine.load_deck_context_for_navigation(
         &request.wml_xml,
         &request.base_url,
         &request.content_type,
         request.raw_bytes_base64,
-        request.referring_url.as_deref(),
+        DeckNavigationContext::new(
+            request.referring_url.as_deref(),
+            request.navigation_url.as_deref(),
+            request.navigation_kind.unwrap_or_default().into(),
+        ),
     )?;
     frame(engine)
 }

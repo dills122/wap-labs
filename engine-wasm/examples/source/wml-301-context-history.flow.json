@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "example": "wml301ContextHistory",
+  "flows": [
+    {
+      "id": "cross-deck-context-duplicate-history-and-reset",
+      "title": "Cross-deck context survives forward/back traversal and newcontext resets history",
+      "target": "waves-browser",
+      "setup": { "runMode": "network" },
+      "workItems": ["WML-301"],
+      "specItems": [
+        "WML-CL-CARD-CONTEXT-ATTRIBUTE",
+        "WML-CL-CARD-ID-FRAGMENT",
+        "WML-CL-CONTEXT-SINGLE-SCOPE",
+        "WML-CL-CONTEXT-STATE-MEMBERS",
+        "WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
+        "WML-CL-GO-FRAGMENT-FALLBACK",
+        "WML-CL-GO-HISTORY-PUSH",
+        "WML-CL-HISTORY-DUPLICATE-PUSH",
+        "WML-CL-HISTORY-STACK-MODEL",
+        "WML-CL-NAVIGATION-REFERENCE-MODEL"
+      ],
+      "initial": {
+        "state": {
+          "activeCardId": "source",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "session": {
+          "runMode": "network",
+          "navigationStatus": "loaded",
+          "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "source", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "target",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+            },
+            "render": { "textIncludes": ["Target context: kept. Entry: forward."] },
+            "traceKinds": ["ACTION_EXTERNAL", "LOAD_DECK", "ACTION_REFRESH"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "target", "focusedLinkIndex": 0 },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+            }
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "target", "focusedLinkIndex": 0 },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+            }
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "source", "focusedLinkIndex": 0 },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "source", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "source", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "fresh", "focusedLinkIndex": 0 },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryFresh.wml"
+            },
+            "render": { "textIncludes": ["Fresh context value: ."] }
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "fresh", "focusedLinkIndex": 0 },
+            "statusIncludes": "no back history"
+          }
+        }
+      ]
+    }
+  ]
+}

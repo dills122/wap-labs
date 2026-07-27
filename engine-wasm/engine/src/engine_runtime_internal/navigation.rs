@@ -133,7 +133,8 @@ impl WmlEngine {
         Ok(())
     }
 
-    fn reset_browser_context_for_newcontext(&mut self) {
+    pub(crate) fn reset_browser_context_for_newcontext(&mut self) {
+        self.browser_context_epoch = self.browser_context_epoch.saturating_add(1);
         self.vars.clear();
         self.nav_stack.clear();
         self.focused_link_idx = 0;
@@ -495,6 +496,7 @@ struct NavStateRollback {
     last_script_outcome: Option<ScriptExecutionOutcome>,
     last_script_dialog_requests: Vec<ScriptDialogRequest>,
     last_script_timer_requests: Vec<ScriptTimerRequest>,
+    browser_context_epoch: u32,
 }
 
 impl NavStateRollback {
@@ -513,6 +515,7 @@ impl NavStateRollback {
             last_script_outcome: engine.last_script_outcome.clone(),
             last_script_dialog_requests: engine.last_script_dialog_requests.clone(),
             last_script_timer_requests: engine.last_script_timer_requests.clone(),
+            browser_context_epoch: engine.browser_context_epoch,
         }
     }
 
@@ -530,6 +533,7 @@ impl NavStateRollback {
         engine.last_script_outcome = self.last_script_outcome;
         engine.last_script_dialog_requests = self.last_script_dialog_requests;
         engine.last_script_timer_requests = self.last_script_timer_requests;
+        engine.browser_context_epoch = self.browser_context_epoch;
     }
 }
 

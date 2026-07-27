@@ -3922,6 +3922,247 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n        <a href=\"http://fixtures.test/examples/wml205MissingTarget.wml\">Missing target</a>\n        <a href=\"http://fixtures.test/examples/wml202TemplateShadowing.wml\">Restricted target</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml301ContextHistoryFresh",
+    "label": "WML-301 Fresh Context Target",
+    "description": "Supporting newcontext destination for the WML-301 executable network story.",
+    "goal": "Demonstrate that destination newcontext clears variables and prior navigation history.",
+    "workItems": [
+      "WML-301"
+    ],
+    "specItems": [
+      "WML-CL-CARD-CONTEXT-ATTRIBUTE",
+      "WML-CL-CONTEXT-SINGLE-SCOPE",
+      "WML-CL-CONTEXT-STATE-MEMBERS",
+      "WML-CL-GO-HISTORY-PUSH"
+    ],
+    "testingAc": [
+      "Loaded by the WML-301 context/history story as a deterministic supporting resource."
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"fresh\" newcontext=\"true\">\n    <p>Fresh context value: $(contextValue).</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "wml301ContextHistoryTarget",
+    "label": "WML-301 Context and History Target",
+    "description": "Supporting destination deck for the WML-301 executable network story.",
+    "goal": "Expose preserved context after forward entry and permit a duplicate explicit URL access.",
+    "workItems": [
+      "WML-301"
+    ],
+    "specItems": [
+      "WML-CL-CONTEXT-STATE-MEMBERS",
+      "WML-CL-GO-HISTORY-PUSH",
+      "WML-CL-HISTORY-DUPLICATE-PUSH",
+      "WML-CL-NAVIGATION-REFERENCE-MODEL"
+    ],
+    "testingAc": [
+      "Loaded by the WML-301 context/history story as a deterministic supporting resource."
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"fallback\">\n    <p>Fragment fallback card.</p>\n  </card>\n  <card id=\"target\">\n    <onevent type=\"onenterforward\">\n      <refresh><setvar name=\"entryDirection\" value=\"forward\"/></refresh>\n    </onevent>\n    <p>\n      Target context: $(contextValue). Entry: $(entryDirection).\n      <a href=\"wml301ContextHistoryTarget.wml#target\">Repeat target URL</a>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "wml301ContextHistory",
+    "label": "WML-301 Context and History",
+    "description": "Crosses deck boundaries, repeats an explicit URL, restores history, and enters a newcontext destination.",
+    "goal": "Verify browser-context preservation/reset, fragment selection, duplicate history pushes, and forward/back process order.",
+    "workItems": [
+      "WML-301"
+    ],
+    "specItems": [
+      "WML-CL-CARD-CONTEXT-ATTRIBUTE",
+      "WML-CL-CARD-ID-FRAGMENT",
+      "WML-CL-CONTEXT-SINGLE-SCOPE",
+      "WML-CL-CONTEXT-STATE-MEMBERS",
+      "WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
+      "WML-CL-GO-FRAGMENT-FALLBACK",
+      "WML-CL-GO-HISTORY-PUSH",
+      "WML-CL-HISTORY-DUPLICATE-PUSH",
+      "WML-CL-HISTORY-STACK-MODEL",
+      "WML-CL-NAVIGATION-REFERENCE-MODEL"
+    ],
+    "testingAc": [
+      "Follow the first link into a second deck and confirm the source context variable is visible after onenterforward processing.",
+      "Access the same target URL again, then press Back twice and confirm both duplicate target and source entries are restored in order.",
+      "Follow the newcontext link and confirm the variable and previous history are cleared."
+    ],
+    "flows": [
+      {
+        "id": "cross-deck-context-duplicate-history-and-reset",
+        "title": "Cross-deck context survives forward/back traversal and newcontext resets history",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "network"
+        },
+        "workItems": [
+          "WML-301"
+        ],
+        "specItems": [
+          "WML-CL-CARD-CONTEXT-ATTRIBUTE",
+          "WML-CL-CARD-ID-FRAGMENT",
+          "WML-CL-CONTEXT-SINGLE-SCOPE",
+          "WML-CL-CONTEXT-STATE-MEMBERS",
+          "WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
+          "WML-CL-GO-FRAGMENT-FALLBACK",
+          "WML-CL-GO-HISTORY-PUSH",
+          "WML-CL-HISTORY-DUPLICATE-PUSH",
+          "WML-CL-HISTORY-STACK-MODEL",
+          "WML-CL-NAVIGATION-REFERENCE-MODEL"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "source",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "network",
+            "navigationStatus": "loaded",
+            "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "source",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "target",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "ACTION_EXTERNAL",
+                "LOAD_DECK",
+                "ACTION_REFRESH"
+              ],
+              "session": {
+                "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+              },
+              "render": {
+                "textIncludes": [
+                  "Target context: kept. Entry: forward."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "target",
+                "focusedLinkIndex": 0
+              },
+              "session": {
+                "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "target",
+                "focusedLinkIndex": 0
+              },
+              "session": {
+                "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "source",
+                "focusedLinkIndex": 0
+              },
+              "session": {
+                "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "source",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "source",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "fresh",
+                "focusedLinkIndex": 0
+              },
+              "session": {
+                "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryFresh.wml"
+              },
+              "render": {
+                "textIncludes": [
+                  "Fresh context value: ."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "fresh",
+                "focusedLinkIndex": 0
+              },
+              "statusIncludes": "no back history"
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"source\">\n    <p>\n      <input name=\"contextValue\" value=\"kept\"/>\n      <a href=\"wml301ContextHistoryTarget.wml#target\">Open target</a>\n      <a href=\"wml301ContextHistoryFresh.wml#fresh\">Reset context</a>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml302VariableSubstitution",
     "label": "WML-302 Variable Store and Substitution",
     "description": "Exercises task-snapshot setvars, literal-dollar handling, text and HREF substitution, context persistence, and prev assignment order.",

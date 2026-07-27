@@ -1,0 +1,17 @@
+<!--
+label: WML-301 Fresh Context Target
+description: Supporting newcontext destination for the WML-301 executable network story.
+goal: Demonstrate that destination newcontext clears variables and prior navigation history.
+work-items: WML-301
+spec-items: WML-CL-CARD-CONTEXT-ATTRIBUTE,WML-CL-CONTEXT-SINGLE-SCOPE,WML-CL-CONTEXT-STATE-MEMBERS,WML-CL-GO-HISTORY-PUSH
+testing-ac:
+- Loaded by the WML-301 context/history story as a deterministic supporting resource.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="fresh" newcontext="true">
+    <p>Fresh context value: $(contextValue).</p>
+  </card>
+</wml>

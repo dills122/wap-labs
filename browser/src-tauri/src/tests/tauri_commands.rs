@@ -17,6 +17,8 @@ fn tauri_command_wrappers_drive_managed_state_roundtrip() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -62,6 +64,8 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("frame load should succeed");
@@ -184,6 +188,8 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -245,6 +251,8 @@ fn tauri_command_wrappers_handle_external_intent_and_timer_paths() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -279,6 +287,8 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("oversized xml should fail");
@@ -292,6 +302,8 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
             content_type: "application/vnd.wap.wmlc".to_string(),
             raw_bytes_base64: Some("A".repeat((1024 * 1024) + 1)),
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect_err("oversized raw payload should fail");
@@ -317,6 +329,8 @@ fn tauri_command_wrappers_handle_focused_input_edit_commands() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -375,6 +389,8 @@ fn tauri_frame_command_wrappers_handle_focused_input_edit_commands() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -437,6 +453,8 @@ fn tauri_command_wrappers_handle_focused_select_edit_commands() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -498,6 +516,8 @@ fn tauri_frame_command_wrappers_handle_focused_select_edit_commands() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -558,6 +578,8 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");
@@ -636,6 +658,8 @@ fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_templates() {
             content_type: "text/vnd.wap.wml".to_string(),
             raw_bytes_base64: None,
             referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
         },
     )
     .expect("load should succeed");

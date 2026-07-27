@@ -214,6 +214,46 @@ fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_301_forward_deck_load_preserves_context_and_selects_fragment() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r#"<wml><card id="source"><p>Source</p></card></wml>"#,
+            "http://example.test/source.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("source deck should load through the legacy-compatible boundary");
+    assert_eq!(engine.browser_context_epoch_wasm(), 1);
+    assert!(engine.set_var_wasm("account".to_string(), "Ada".to_string()));
+
+    engine
+        .load_deck_context_for_navigation_wasm(
+            r#"<wml><card id="first"><p>First</p></card><card id="target"><p>Target</p></card></wml>"#,
+            "http://example.test/target.wml",
+            "text/vnd.wap.wml",
+            None,
+            Some("http://example.test/source.wml".to_string()),
+            Some("http://example.test/target.wml#target".to_string()),
+            Some("forward".to_string()),
+        )
+        .expect("forward navigation should load through the navigation boundary");
+
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("target card should be active"),
+        "target"
+    );
+    assert_eq!(
+        engine.get_var_wasm("account".to_string()).as_deref(),
+        Some("Ada")
+    );
+    assert_eq!(engine.browser_context_epoch_wasm(), 1);
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior() {
     let valid = r#"
         <wml>

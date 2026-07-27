@@ -51,4 +51,15 @@ describe('deterministic browser fixture fetch', () => {
       status: 404
     });
   });
+
+  it('uses a fragment to select a card without sending it to fixture retrieval', async () => {
+    const fetchFixture = createDeterministicFixtureFetch([example]);
+    const deckUrl = fixtureUrlForExample(example.key);
+
+    await expect(fetchFixture({ url: `${deckUrl}#target` })).resolves.toMatchObject({
+      ok: true,
+      finalUrl: deckUrl,
+      engineDeckInput: { baseUrl: deckUrl }
+    });
+  });
 });

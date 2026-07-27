@@ -47,9 +47,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.",
+  "assessmentNote": "Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, execute with immediate-parent scope and shadowing, and include completed timer lifecycle evidence.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",

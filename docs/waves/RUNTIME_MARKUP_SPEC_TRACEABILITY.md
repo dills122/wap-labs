@@ -77,9 +77,9 @@ Legend:
   - `WAP-191*` card attributes + navigation semantics
 - AC:
   - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_202_residual.rs` proves newcontext defaults, go-only variable/history/private-state reset, direct-navigation exclusion, and rollback-safe state; `pnpm test:story WML-202` proves empty history after the stable newcontext flow.
-  - [x] `#cardId` resolution is deterministic and missing target handling is explicit in the existing navigation tests.
-  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` is closed for variable resolution here; WML-301 still owns the broader deck/card history model and WML-304 owns request serialization/postfield history identity.
-  - [x] History behavior is stable across forward/back transitions and refresh paths for the covered card-context lane; broader request identity remains tracked separately.
+  - Evidence: [x] WML-301 closes card-id selection, missing-fragment first-card fallback, forward/backward/reload entry order, context preservation/reset, duplicate explicit history pushes, and context-initialization-before-history order in `engine-wasm/engine/src/engine_tests/wml_301_context_history.rs`, the native/WASM host adapters, browser history tests, and `engine-wasm/examples/source/wml-301-context-history.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301`, `wasm-pack test --node engine-wasm/engine`, `pnpm --dir browser/frontend test`, and `pnpm test:story WML-301`.
+  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` remains owned by WML-302; WML-304 retains GET/POST request construction, postfield serialization, and POST replay.
+  - [x] A monotonic engine context epoch makes newcontext and independent-navigation replacement observable so the host discards the old history without moving runtime semantics out of Rust.
 
 ### RQ-RMK-004 Event and timer lifecycle
 

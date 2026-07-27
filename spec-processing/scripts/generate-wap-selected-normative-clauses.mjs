@@ -335,6 +335,23 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-301',
+    new Set([
+      'WML-CL-HISTORY-STACK-MODEL',
+      'WML-CL-HISTORY-DUPLICATE-PUSH',
+      'WML-CL-HISTORY-ENTRY-FIELDS',
+      'WML-CL-HISTORY-EXCLUDES-CONTENT',
+      'WML-CL-CONTEXT-SINGLE-SCOPE',
+      'WML-CL-CONTEXT-STATE-MEMBERS',
+      'WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT',
+      'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT',
+      'WML-CL-NAVIGATION-REFERENCE-MODEL',
+      'WML-CL-GO-FRAGMENT-FALLBACK',
+      'WML-CL-GO-HISTORY-PUSH',
+      'WML-CL-CARD-ID-FRAGMENT'
+    ])
+  ],
+  [
     'WML-302',
     new Set([
       'WML-CL-GO-ASSIGNMENT-ORDER',
@@ -476,6 +493,9 @@ const implementedWml204ClauseIds = new Set(
 );
 const implementedWml205ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-205')
+);
+const implementedWml301ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-301')
 );
 const implementedWml303ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-303')
@@ -636,6 +656,47 @@ function wml205FixtureEvidence(clauseId) {
     path: 'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
     testPath: 'engine-wasm/engine/src/engine_tests/wml_load_errors.rs',
     command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205'
+  };
+}
+
+function wml301FixtureEvidence(clauseId) {
+  if (
+    [
+      'WML-CL-HISTORY-STACK-MODEL',
+      'WML-CL-HISTORY-DUPLICATE-PUSH',
+      'WML-CL-HISTORY-ENTRY-FIELDS',
+      'WML-CL-HISTORY-EXCLUDES-CONTENT'
+    ].includes(clauseId)
+  ) {
+    return {
+      path: 'browser/frontend/src/session-history.test.ts',
+      testPath: 'browser/frontend/src/session-history.test.ts',
+      command: 'pnpm --dir browser/frontend test -- src/session-history.test.ts'
+    };
+  }
+  if (
+    [
+      'WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT',
+      'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT'
+    ].includes(clauseId)
+  ) {
+    return {
+      path: 'browser/frontend/src/app/navigation-state.load.test.ts',
+      testPath: 'browser/frontend/src/app/navigation-state.load.test.ts',
+      command: 'pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts'
+    };
+  }
+  if (['WML-CL-GO-FRAGMENT-FALLBACK', 'WML-CL-CARD-ID-FRAGMENT'].includes(clauseId)) {
+    return {
+      path: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      testPath: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301'
+    };
+  }
+  return {
+    path: 'engine-wasm/examples/source/wml-301-context-history.flow.json',
+    testPath: 'engine-wasm/examples/source/wml-301-context-history.flow.json',
+    command: 'pnpm test:story WML-301'
   };
 }
 
@@ -1039,6 +1100,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml205ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml205FixtureEvidence(candidate.id);
+      } else if (implementedWml301ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml301FixtureEvidence(candidate.id);
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
@@ -1971,6 +2035,7 @@ function clause(
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId) ||
     implementedWml205ClauseIds.has(clauseId) ||
+    implementedWml301ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
     implementedWsp802ClauseIds.has(clauseId) ||
@@ -1992,6 +2057,8 @@ function clause(
       ? wml204FixtureEvidence(clauseId)
       : implementedWml205ClauseIds.has(clauseId)
       ? wml205FixtureEvidence(clauseId)
+      : implementedWml301ClauseIds.has(clauseId)
+      ? wml301FixtureEvidence(clauseId)
       : implementedWml303ClauseIds.has(clauseId)
       ? wml303FixtureEvidence
       : implementedWsp801ClauseIds.has(clauseId)

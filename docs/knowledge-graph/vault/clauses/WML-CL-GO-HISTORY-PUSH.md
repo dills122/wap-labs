@@ -49,7 +49,8 @@ tags:
     "R0-02",
     "R0-03",
     "R0-06",
-    "WML-201"
+    "WML-201",
+    "WML-301"
   ],
   "ownerLayers": [
     "browser",
@@ -60,7 +61,7 @@ tags:
     "RQ-RMK-003",
     "RQ-WAE-016"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

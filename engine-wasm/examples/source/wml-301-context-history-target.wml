@@ -1,0 +1,26 @@
+<!--
+label: WML-301 Context and History Target
+description: Supporting destination deck for the WML-301 executable network story.
+goal: Expose preserved context after forward entry and permit a duplicate explicit URL access.
+work-items: WML-301
+spec-items: WML-CL-CONTEXT-STATE-MEMBERS,WML-CL-GO-HISTORY-PUSH,WML-CL-HISTORY-DUPLICATE-PUSH,WML-CL-NAVIGATION-REFERENCE-MODEL
+testing-ac:
+- Loaded by the WML-301 context/history story as a deterministic supporting resource.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="fallback">
+    <p>Fragment fallback card.</p>
+  </card>
+  <card id="target">
+    <onevent type="onenterforward">
+      <refresh><setvar name="entryDirection" value="forward"/></refresh>
+    </onevent>
+    <p>
+      Target context: $(contextValue). Entry: $(entryDirection).
+      <a href="wml301ContextHistoryTarget.wml#target">Repeat target URL</a>
+    </p>
+  </card>
+</wml>

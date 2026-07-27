@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createNavigationStateMachine } from './navigation-state';
-import { createHostClientMock, fetchOk, snapshot } from './navigation-state.test-helpers';
+import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-state.test-helpers';
 
 describe('navigation-state load behavior', () => {
   it('transitions idle -> loading -> loaded on successful user load', async () => {
@@ -598,5 +598,90 @@ describe('navigation-state load behavior', () => {
 
     expect(renderCount).toBe(renderCountAfterLoad);
     expect(stateEvents.length).toBe(stateEventsAfterLoad);
+  });
+
+  it('passes navigation relationship and fragment URL to the engine boundary', async () => {
+    const loads: Array<{ navigationKind?: string; navigationUrl?: string }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => fetchOk({ finalUrl: request.url.split('#')[0] }),
+        engineLoadDeckContextFrame: async (request) => {
+          loads.push(request);
+          return frame({ activeCardId: 'target', browserContextEpoch: 1 });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/source.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/destination.wml#target',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(
+      loads.map(({ navigationKind, navigationUrl }) => ({ navigationKind, navigationUrl }))
+    ).toEqual([
+      {
+        navigationKind: 'independent',
+        navigationUrl: 'http://example.test/source.wml'
+      },
+      {
+        navigationKind: 'forward',
+        navigationUrl: 'http://example.test/destination.wml#target'
+      }
+    ]);
+  });
+
+  it('clears prior host history when the engine establishes a new browser context', async () => {
+    let epoch = 1;
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }),
+        engineLoadDeckContextFrame: async (request) => {
+          if (request.baseUrl.endsWith('/fresh.wml')) {
+            epoch += 1;
+          }
+          return frame({ activeCardId: 'home', browserContextEpoch: epoch });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/source.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/next.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+    expect(machine.getHistoryState().entries).toHaveLength(2);
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/fresh.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState()).toEqual({
+      entries: [expect.objectContaining({ url: 'http://example.test/fresh.wml' })],
+      index: 0
+    });
   });
 });

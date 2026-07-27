@@ -57,7 +57,7 @@ const resolveFixture = (
   } catch {
     return null;
   }
-  if (!FIXTURE_ORIGINS.has(parsed.origin) || parsed.search || parsed.hash) {
+  if (!FIXTURE_ORIGINS.has(parsed.origin) || parsed.search) {
     return null;
   }
   const match = parsed.pathname.match(/^\/examples\/([^/]+)\.wml$/);
@@ -71,5 +71,6 @@ const resolveFixture = (
     return null;
   }
   const example = examplesByKey.get(key);
+  parsed.hash = '';
   return example ? { example, url: parsed.toString() } : null;
 };

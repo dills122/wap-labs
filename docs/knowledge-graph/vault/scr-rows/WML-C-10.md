@@ -45,9 +45,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.",
+  "assessmentNote": "WML-301 keeps variables, request-shaped navigation history, and runtime session state in one observable browser-context scope across native and WASM adapters.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/lib.rs",

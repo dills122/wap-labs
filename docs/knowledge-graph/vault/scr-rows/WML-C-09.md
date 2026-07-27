@@ -54,9 +54,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.",
+  "assessmentNote": "Card/template onenterforward, onenterbackward, ontimer, and option onpick bindings have direct action, control, and timer evidence across every nested intrinsic-event clause.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",

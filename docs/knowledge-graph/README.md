@@ -66,8 +66,9 @@ encapsulations and WAP-159 SMPP clauses remain unimplemented and deferred contex
 evidence.
 
 The `WML-3` slice adds the bounded runtime projection needed for context, variable, task, event,
-BACK, form-request, and timer work. Its focused `WML-301` target exposes the currently mapped
-deck/card context obligations; `WML-302` exposes the audited variable-store, substitution,
+BACK, form-request, and timer work. Its focused `WML-301` target exposes the source-audited
+20-clause history, browser-context, deck/card navigation, and inter-card process-order boundary;
+`WML-302` exposes the audited variable-store, substitution,
 setvar-ordering, and history-resolution obligations; and `WML-303` exposes only directly mapped
 action/event clauses, their selected SCR parents and planned fixtures, the effective WML
 amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. The

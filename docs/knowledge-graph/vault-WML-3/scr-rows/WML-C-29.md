@@ -18,6 +18,8 @@ tags:
 - `belongs-to` → [[source-families/wml|wml]]
 - `refines` ← [[clauses/WML-CL-GO-ASSIGNMENT-ORDER|WML-CL-GO-ASSIGNMENT-ORDER]]
 - `refines` ← [[clauses/WML-CL-GO-ENTRY-EVENT-PRECEDENCE|WML-CL-GO-ENTRY-EVENT-PRECEDENCE]]
+- `refines` ← [[clauses/WML-CL-GO-FRAGMENT-FALLBACK|WML-CL-GO-FRAGMENT-FALLBACK]]
+- `refines` ← [[clauses/WML-CL-GO-HISTORY-PUSH|WML-CL-GO-HISTORY-PUSH]]
 - `refines` ← [[clauses/WML-CL-GO-SETVAR-SNAPSHOT|WML-CL-GO-SETVAR-SNAPSHOT]]
 - `refines` ← [[clauses/WML-CL-GO-STRUCTURE|WML-CL-GO-STRUCTURE]]
 - `refines` ← [[clauses/WML-CL-GO-TARGET-RESOLUTION|WML-CL-GO-TARGET-RESOLUTION]]

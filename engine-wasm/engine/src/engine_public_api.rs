@@ -29,6 +29,7 @@ impl WmlEngine {
             active_select_edit: None,
             last_back_navigation_handled: false,
             last_wml_load_diagnostics: Vec::new(),
+            browser_context_epoch: 0,
         }
     }
 
@@ -68,13 +69,39 @@ impl WmlEngine {
         raw_bytes_base64: Option<String>,
         referring_url: Option<&str>,
     ) -> Result<(), String> {
+        self.load_deck_context_for_navigation(
+            wml_xml,
+            base_url,
+            content_type,
+            raw_bytes_base64,
+            DeckNavigationContext::new(
+                referring_url,
+                Some(base_url),
+                DeckNavigationKind::Independent,
+            ),
+        )
+    }
+
+    /// Load a deck using the host-resolved navigation relationship.
+    ///
+    /// The host owns fetching and request-shaped history. The engine owns WML
+    /// browser-context preservation, fragment selection, and destination card
+    /// entry ordering. Existing load APIs remain independent navigations.
+    pub fn load_deck_context_for_navigation(
+        &mut self,
+        wml_xml: &str,
+        base_url: &str,
+        content_type: &str,
+        raw_bytes_base64: Option<String>,
+        navigation: DeckNavigationContext<'_>,
+    ) -> Result<(), String> {
         let result = match catch_engine_panic(|| {
             self.load_deck_context_bounded(
                 wml_xml,
                 base_url,
                 content_type,
                 raw_bytes_base64,
-                referring_url,
+                navigation,
             )
         }) {
             Ok(result) => result,
@@ -97,7 +124,7 @@ impl WmlEngine {
         base_url: &str,
         content_type: &str,
         raw_bytes_base64: Option<String>,
-        referring_url: Option<&str>,
+        navigation: DeckNavigationContext<'_>,
     ) -> Result<(), WmlLoadDiagnostic> {
         if wml_xml.len() > MAX_DECK_WML_XML_BYTES {
             return Err(WmlLoadDiagnostic::invalid(format!(
@@ -124,27 +151,74 @@ impl WmlEngine {
         let parsed = parse_wml_report_for_content_type(wml_xml, content_type)?;
         let access_allowed = parsed
             .deck
-            .allows_referring_uri(base_url, referring_url)
+            .allows_referring_uri(base_url, navigation.referring_url)
             .map_err(WmlLoadDiagnostic::invalid)?;
         if !access_allowed {
             return Err(WmlLoadDiagnostic::invalid(
                 "Deck access denied for referring URI",
             ));
         }
+        let previous_context_epoch = self.browser_context_epoch;
         let mut next = WmlEngine::new();
         next.viewport_cols = self.viewport_cols;
+        if navigation.kind == DeckNavigationKind::Independent {
+            next.browser_context_epoch = previous_context_epoch.saturating_add(1);
+        } else {
+            next.browser_context_epoch = previous_context_epoch;
+            next.vars = self.vars.clone();
+            next.script_units = self.script_units.clone();
+            next.script_entrypoints = self.script_entrypoints.clone();
+            next.trace_entries = self.trace_entries.clone();
+            next.next_trace_seq = self.next_trace_seq;
+        }
         next.deck = Some(parsed.deck);
         next.base_url = base_url.to_string();
         next.content_type = content_type.to_string();
         next.raw_bytes_base64 = raw_bytes_base64;
         next.last_wml_load_diagnostics = parsed.diagnostics;
+        next.active_card_idx =
+            next.destination_card_index(navigation.navigation_url.unwrap_or(base_url));
+        let reset_context = navigation.kind == DeckNavigationKind::Forward
+            && next
+                .deck
+                .as_ref()
+                .and_then(|deck| deck.cards.get(next.active_card_idx))
+                .is_some_and(|card| card.new_context);
+        if reset_context {
+            next.reset_browser_context_for_newcontext();
+            next.push_trace(
+                "NEWCONTEXT",
+                format!("target={}", next.active_card_id().unwrap_or_default()),
+            );
+        }
         next.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         next.initialize_controls_on_active_card()
             .map_err(WmlLoadDiagnostic::invalid)?;
-        next.start_timer_for_active_card()
-            .map_err(WmlLoadDiagnostic::invalid)?;
+        let entry_handled = match navigation.kind {
+            DeckNavigationKind::Forward => next
+                .run_onenterforward_for_active_card()
+                .map_err(WmlLoadDiagnostic::invalid)?,
+            DeckNavigationKind::Backward => next
+                .run_onenterbackward_for_active_card()
+                .map_err(WmlLoadDiagnostic::invalid)?,
+            DeckNavigationKind::Independent | DeckNavigationKind::Reload => false,
+        };
+        if !entry_handled {
+            next.start_timer_for_active_card()
+                .map_err(WmlLoadDiagnostic::invalid)?;
+        }
         *self = next;
         Ok(())
+    }
+
+    fn destination_card_index(&self, navigation_url: &str) -> usize {
+        let fragment = navigation_url
+            .split_once('#')
+            .map(|(_, fragment)| fragment)
+            .filter(|fragment| !fragment.is_empty());
+        fragment
+            .and_then(|fragment| self.deck.as_ref()?.card_index(fragment))
+            .unwrap_or(0)
     }
 
     /// Diagnostics emitted by the most recent WML load attempt.
@@ -380,6 +454,13 @@ impl WmlEngine {
     /// Get content type metadata from last `loadDeckContext`.
     pub fn content_type(&self) -> String {
         self.content_type.clone()
+    }
+
+    /// Monotonic identifier for the active WML browser context. Hosts use it
+    /// to keep request-shaped history synchronized with engine newcontext and
+    /// independent-navigation resets.
+    pub fn browser_context_epoch(&self) -> u32 {
+        self.browser_context_epoch
     }
 
     /// Get authored deck-level `xml:lang` metadata.

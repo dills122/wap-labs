@@ -131,8 +131,9 @@ Current parallel batch:
 
 1. `WSP-802`: completed the source-scope audit and connectionless header,
    assigned-number, code-page, and encoding-version matrix.
-2. `WML-301`: audit the focused context/history clause boundary before closing
-   deck/card context and inter-card process ordering.
+2. `WML-301`: completed the 20-clause source audit and implemented the 12-clause
+   context/history/process-order subset with native/WASM/browser/story evidence; the aggregate
+   item remains in progress while the explicit table-boundary and broad WAE delegates stay planned.
 3. `WMLS-501`: adopt a focused `WMLS-5` graph slice, then implement the bounded
    bytecode decoder and structural verifier.
 4. Public preview: finish only access-independent `INF-101` evidence while
