@@ -42,8 +42,9 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 ## Current implementation posture
 
 - Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
-- Existing implementation is a project-specific nine-opcode progression
-  baseline, not a WAP-193 compilation-unit decoder.
+- The existing execution path remains a project-specific nine-opcode progression baseline.
+  A separate strict WAP-193 compilation-unit decoder now parses headers, constants, pragmas,
+  functions, and all effective instruction encodings without widening that legacy VM boundary.
 - Exact machine-readable authority:
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
@@ -51,9 +52,9 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
   - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
   - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
 - Selected-row audit:
-  - WMLScript: 41 required, 23 partial / 18 missing / 0 implemented;
+  - WMLScript: 41 required, 32 partial / 9 missing / 0 implemented;
   - Libraries: 80 required, 14 partial / 66 missing / 0 implemented;
-  - direct normative tests: 0.
+  - WMLScript direct structural tests: 21; remaining evidence stays provisional or mapped-gap.
 - Nested-clause plan:
   - WMLScript: all 41 selected parents / 107 deduplicated clauses;
   - WMLScript Libraries: all 80 selected parents / 211 deduplicated clauses.
@@ -171,15 +172,15 @@ Legend:
   - `WAP-193_101` 9.2..9.6, 10
   - SCRs: `WMLS-C-088..094 (M)`, `WMLS-C-095..106 (M)`
 - AC:
-  - Evidence: [ ] Add source-derived WAP-193 `.wmlsc` fixtures and direct
+  - Evidence: [x] Add source-derived WAP-193 `.wmlsc` fixtures and direct
     tests for the header, constant pool, pragma pool, function pool, and
     effective instruction encoding.
-  - [ ] Known-good WAP `.wmlsc` fixtures decode to stable internal representation.
-  - [ ] Unsupported/reserved WAP types fail verification before execution.
-  - [ ] WAP function and instruction boundaries are validated.
-  - Provisional evidence only: current decoder tests reject malformed input
-    in the project-specific nine-opcode format. They do not parse WAP-193
-    compilation units and therefore do not close `WMLS-C-088..108`.
+  - [x] The byte-exact `wap-193-minimal-return-es.wmlsc.hex` fixture decodes to a stable
+    internal representation in native Rust and WASM.
+  - [x] Unsupported/reserved WAP types and opcodes fail structural verification.
+  - [x] WAP function and instruction boundaries are validated.
+  - Scope note: this direct evidence advances `WMLS-C-088..108` to partial. It does not
+    connect compiled-unit routing to the legacy VM or close opcode execution semantics.
 
 ### RQ-WMLS-009: Bytecode verification gates
 
@@ -189,11 +190,11 @@ Legend:
   - `WAP-193_101` 11.1, 11.2
   - SCRs: `WMLS-C-107 (M)`, `WMLS-C-108 (M)`
 - AC:
-  - Evidence: [ ] Link direct WAP-193 integrity/runtime-validity fixtures;
-    local decoder/VM bounds tests are provisional architecture evidence.
-  - [ ] Version/size/pool-count checks enforced.
-  - [ ] WAP jump targets are verified to instruction boundaries within function bounds.
-  - [ ] Invalid WAP local/constant/library/function indexes trap deterministically.
+  - Evidence: [x] Link direct WAP-193 structural integrity/runtime-validity fixtures.
+  - [x] Version/size/pool-count checks enforced by the strict decoder.
+  - [x] WAP jump targets are verified to instruction boundaries within function bounds.
+  - [ ] Invalid WAP local/constant/function indexes fail deterministically; standard-library
+    index validation and stack dataflow remain additive follow-ups.
 
 ### RQ-WMLS-010: Error detection and handling model
 

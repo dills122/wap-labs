@@ -1,0 +1,87 @@
+---
+id: "scr-row:WMLS-C-101"
+key: "WMLS-C-101"
+type: "scr-row"
+generated: true
+slice: "WMLS-5"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/scr-row"
+---
+
+# Comparison instructions
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `belongs-to` → [[source-families/wmlscript|wmlscript]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `refines` ← [[clauses/WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX|WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX]]
+- `refines` ← [[clauses/WMLSCRIPT-CL-COMPARISON-INVALID-RESULT|WMLSCRIPT-CL-COMPARISON-INVALID-RESULT]]
+- `refines` ← [[clauses/WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM|WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM]]
+- `refines` ← [[clauses/WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY|WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY]]
+- `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
+
+## Data
+
+```json
+{
+  "family": "wmlscript",
+  "ordinal": 101,
+  "actor": "wmlscript-interpreter",
+  "referencedSection": "Comparison instructions",
+  "specificationStatus": "mandatory",
+  "dependencyExpression": {
+    "type": "none",
+    "scrIds": []
+  },
+  "sourceAnchor": {
+    "documentId": "WAP-193_101-WMLScript",
+    "staticConformanceSection": "15.2.5"
+  },
+  "disposition": {
+    "strict": "required-for-claimed-actor",
+    "classCProfile": "required-by-class-c-client-mcf",
+    "enhancementMayReplaceStrictBehavior": false
+  },
+  "reviewState": "source-extracted-class-c-applied-direct-test-linked",
+  "implementationStatus": "partial",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+      "symbol": "decode_wap_compilation_unit"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+      "test": "decodes_constant_pragma_function_and_instruction_pools",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+      "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+      "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+      "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+      "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+    }
+  ],
+  "ownerLayers": [
+    "engine-wasm"
+  ],
+  "requirementIds": [
+    "RQ-WMLS-008"
+  ],
+  "matrixWorkItems": [
+    "WMLS-501"
+  ],
+  "workItems": [
+    "W1-02",
+    "WMLS-501"
+  ],
+  "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+}
+```

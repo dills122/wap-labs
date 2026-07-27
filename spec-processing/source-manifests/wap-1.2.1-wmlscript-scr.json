@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "releaseId": "wap-1.2.1",
   "family": "wmlscript",
-  "recordedOn": "2026-07-24",
+  "recordedOn": "2026-07-26",
   "target": {
     "stack": "WAP 1.2.1",
     "markup": "WML 1.3",
@@ -72,11 +72,11 @@
       "interpreter-instruction-set": 12
     },
     "selectedImplementationStatus": {
-      "missing": 18,
-      "partial": 23
+      "missing": 9,
+      "partial": 32
     },
-    "selectedDirectNormativeTestEvidenceCount": 0,
-    "selectedProvisionalTestEvidenceCount": 23
+    "selectedDirectNormativeTestEvidenceCount": 21,
+    "selectedProvisionalTestEvidenceCount": 11
   },
   "obligations": [
     {
@@ -3790,7 +3790,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -3804,25 +3804,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -3846,7 +3849,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -3859,11 +3862,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -3887,7 +3908,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -3901,25 +3922,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -3943,7 +3967,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -3956,11 +3980,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -3984,7 +4026,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -3997,11 +4039,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4025,7 +4085,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -4038,11 +4098,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4066,7 +4144,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-binary-format",
         "ownerLayers": [
@@ -4079,11 +4157,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4107,7 +4203,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4121,25 +4217,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4163,7 +4262,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4177,25 +4276,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4219,7 +4321,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4233,25 +4335,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4275,7 +4380,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4289,25 +4394,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4331,7 +4439,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4345,25 +4453,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4387,7 +4498,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4400,11 +4511,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4428,7 +4557,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4441,11 +4570,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4469,7 +4616,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4482,11 +4629,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4510,7 +4675,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4524,25 +4689,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4566,7 +4734,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4580,25 +4748,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4622,7 +4793,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4636,25 +4807,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4678,7 +4852,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "interpreter-instruction-set",
         "ownerLayers": [
@@ -4691,11 +4865,29 @@
           "WMLS-501",
           "W1-02"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4719,7 +4911,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "error-handling",
         "ownerLayers": [
@@ -4733,25 +4925,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -4775,7 +4970,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "error-handling",
         "ownerLayers": [
@@ -4789,25 +4984,28 @@
           "W1-02"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
         "implementationEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "symbol": "decode_compilation_unit_with_limits"
-          },
-          {
-            "path": "engine-wasm/engine/src/wavescript/vm.rs",
-            "symbol": "Vm"
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "decode_wap_compilation_unit"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/wavescript/decoder.rs",
-            "test": "decode_rejects_unknown_opcode",
-            "limitation": "The decoder verifies a project-specific nine-opcode skeleton, not the WAP-193 header, pools, multi-byte fields, or instruction encoding."
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "decodes_constant_pragma_function_and_instruction_pools",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM decoder parity without changing the host-visible script execution contract."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {

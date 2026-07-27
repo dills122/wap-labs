@@ -49,13 +49,13 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WML | 39 | 175 | 9 | 21 | 9 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
-| WMLScript | 41 | 107 | 0 | 23 | 18 |
+| WMLScript | 41 | 107 | 0 | 32 | 9 |
 | WMLScript Libraries | 80 | 211 | 0 | 14 | 66 |
 | Caching | 5 | 68 | 0 | 3 | 2 |
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 6 | 2 | 0 |
-| **Total** | **198** | **762** | **31** | **69** | **98** |
+| **Total** | **198** | **762** | **33** | **76** | **89** |
 
 Parent-row status is not a substitute for direct clause evidence. With 275 of
 762 clauses assessed, the project remains `pre-conformance` until every
@@ -68,8 +68,8 @@ The 82 work items currently roll up to:
 
 - 27 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801 connectionless matrix, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 9 in progress (existing runtime, WAE, transport, and WSP foundations);
-- 45 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
+- 10 in progress (existing runtime, WAE, transport, WSP, and WMLS-501 foundations);
+- 44 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
 
 New completion claims should follow the machine dependency graph:
 
@@ -112,7 +112,7 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 67 partial and 98 missing parent rows;
+1. close or correct the 76 partial and 89 missing parent rows;
 2. implement and assess the remaining 487 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;

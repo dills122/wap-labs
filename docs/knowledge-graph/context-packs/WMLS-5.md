@@ -1,0 +1,2736 @@
+# WMLS-5 AI Context Pack
+
+> Generated from the WAP 1.2.1 knowledge graph slice. Canonical manifests remain authoritative.
+
+## Retrieval contract
+
+- Target: `WMLS-5`
+- Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
+- Compatibility floor: `strict-historical-observable-behavior`
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
+- Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
+
+## Graph summary
+
+- Nodes: 846
+- Edges: 2869
+- Selected work items: 6
+- Direct SCR rows: 28
+- Direct normative clauses: 376
+- Work items without direct clause mappings: 1
+- Work items with unmapped declared normative families: 2
+
+## Execution target
+
+### WMLS-5: WMLScript language, bytecode, VM, and libraries
+
+- Status: `in-progress`
+- Goal: Close the mandatory Class C script engine and standard-library behavior with bounded deterministic execution.
+- Depends on: `CONF-1`, `WML-3`
+- Direct downstream sprints: `INT-9`, `WAE-6`
+
+Exit gates:
+
+- Mandatory WMLScript and library SCR lines have executable evidence.
+- Malformed bytecode cannot reach execution.
+- Native/WASM and host capability outcomes are equivalent.
+
+## Work items
+
+### WMLS-501: Complete bytecode decoder and structural verifier
+
+- Status: `in-progress`
+- Owner layers: `engine-wasm`, `qa`
+- Source families: `wmlscript`
+- Existing tickets: `W1-02`
+- Direct SCR rows: 28 (21 `direct-test-linked`, 2 `gap-work-item-mapped`, 5 `provisional-non-normative-test-linked`)
+- Selected SCR parents: 31 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-069`, `WMLS-C-077`, `WMLS-C-079`, `WMLS-C-085`, `WMLS-C-087`, `WMLS-C-088`, `WMLS-C-089`, `WMLS-C-090`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`, `WMLS-C-111`)
+- Direct normative clauses: 69
+- Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Complete bytecode decoder and structural verifier
+
+Acceptance:
+
+- The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+
+### WMLS-502: Language operation and conversion parity
+
+- Status: `todo`
+- Owner layers: `engine-wasm`, `qa`
+- Source families: `wmlscript`
+- Existing tickets: `W1-04`
+- Direct SCR rows: 0
+- Selected SCR parents: 17 (`WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`, `WMLS-C-077`, `WMLS-C-083`, `WMLS-C-084`, `WMLS-C-085`, `WMLS-C-086`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-105`, `WMLS-C-111`)
+- Direct normative clauses: 25
+- Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Language operation and conversion parity
+
+Acceptance:
+
+- Types, conversions, operators, calls, locals, return values, control flow, and invalid-operation semantics match the effective specification.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+
+### WMLS-503: Extern, pragma, URL invocation, and access-control closure
+
+- Status: `todo`
+- Owner layers: `engine-wasm`, `qa`
+- Source families: `wmlscript`, `wmlscript-libraries`
+- Existing tickets: `W1-03`, `W0-08`
+- Direct SCR rows: 0
+- Selected SCR parents: 11 (`WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`, `WMLS-C-078`, `WMLS-C-079`, `WMLS-C-080`, `WMLS-C-081`, `WMLS-C-082`, `WMLS-C-087`, `WMLS-C-093`, `WMLS-C-094`)
+- Direct normative clauses: 20
+- Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`, `RQ-WMLS-011`
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Extern, pragma, URL invocation, and access-control closure
+
+Acceptance:
+
+- Script loading and invocation respect content identity, access domains/paths, pragmas, argument binding, and deterministic failure.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+
+### WMLS-504: Complete standard-library conformance matrix and implementation
+
+- Status: `in-progress`
+- Owner layers: `engine-wasm`, `qa`
+- Source families: `wmlscript-libraries`
+- Existing tickets: `W1-05`
+- Direct SCR rows: 0
+- Selected SCR parents: 81 (`WMLS-C-070`, `WMLSSL-014`, `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-018`, `WMLSSL-019`, `WMLSSL-020`, `WMLSSL-021`, `WMLSSL-022`, `WMLSSL-023`, `WMLSSL-024`, `WMLSSL-025`, `WMLSSL-026`, `WMLSSL-027`, `WMLSSL-028`, `WMLSSL-029`, `WMLSSL-030`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-046`, `WMLSSL-047`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`, `WMLSSL048`)
+- Direct normative clauses: 212
+- Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Complete standard-library conformance matrix and implementation
+- spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json
+
+Acceptance:
+
+- All 80 mandatory WMLScriptLibs:MCF rows map to exact source IDs, implementation status, open work, and deterministic tests; Lang, Float, String, URL, WMLBrowser, and Dialogs close their nested clauses; optional immediate refresh is declared.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `node scripts/check-wap-conformance-ledger.mjs`
+- `node scripts/check-wap-wmlscript-conformance-ledger.mjs`
+
+### WMLS-505: Host capability and script error boundary closure
+
+- Status: `todo`
+- Owner layers: `engine-wasm`, `browser`, `qa`
+- Source families: `wmlscript`, `wmlscript-libraries`
+- Existing tickets: `W0-05`, `W1-06`, `W1-07`
+- Direct SCR rows: 0
+- Selected SCR parents: 76 (`WMLS-C-073`, `WMLS-C-077`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-103`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-109`, `WMLS-C-110`, `WMLS-C-111`, `WMLSSL-014`, `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`, `WMLSSL048`)
+- Direct normative clauses: 50
+- Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Host capability and script error boundary closure
+
+Acceptance:
+
+- Dialogs, timers, navigation effects, fatal/non-fatal errors, resource limits, and post-invocation effect ordering are deterministic.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+
+### WMLS-506: WMLScript source/compiled content routing
+
+- Status: `todo`
+- Owner layers: `transport-rust`, `browser`, `engine-wasm`, `qa`
+- Source families: `wmlscript`, `wbxml`
+- Existing tickets: `W1-01`
+- Direct SCR rows: 0
+- Selected SCR parents: 0
+- Direct normative clauses: 0
+- Requirements: None
+- Spec references: None
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- WMLScript source/compiled content routing
+
+Acceptance:
+
+- MIME handling, compiled-script decode, cache identity, fetch ownership, and engine invocation preserve layer boundaries.
+
+Evidence commands:
+
+- `cargo test --manifest-path transport-rust/Cargo.toml`
+- `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+
+## Direct SCR evidence
+
+### WMLS-501
+
+- **WMLS-C-069** — Interpret WMLScript bytecode
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Interpret WMLScript bytecode (SCR §15.2.1)
+  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/decoder.rs#decode_compilation_unit_with_limits`, `engine-wasm/engine/src/wavescript/vm.rs#Vm`
+  - Tests: `engine-wasm/engine/src/wavescript/decoder.rs::decode_rejects_unknown_opcode` (`undefined`)
+  - Work items: `W1-05`, `WMLS-501`
+  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+- **WMLS-C-077** — Operator data-type conversion rules
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Operator data-type conversion rules (SCR §15.2.2)
+  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs#coerce_to_string`, `engine-wasm/engine/src/wavescript/value.rs#ScriptValue`
+  - Tests: `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser_tests.rs::string_coercion_is_deterministic_for_scalars` (`undefined`)
+  - Work items: `W1-04`, `WMLS-501`, `WMLS-502`
+  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+- **WMLS-C-079** — Fragment anchors
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Fragment anchors (SCR §15.2.3)
+  - Assessment: `missing`; evidence `gap-work-item-mapped`
+  - Code: None; the evidence state remains explicit.
+  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
+  - Work items: `W0-08`, `W1-03`, `WMLS-501`, `WMLS-503`
+  - Assessment note: No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.
+- **WMLS-C-085** — Automatic function return value
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Automatic function return value (SCR §15.2.3)
+  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/vm.rs#Vm::execute_from_pc_with_locals_and_host`
+  - Tests: `engine-wasm/engine/src/wavescript/vm_tests.rs::execute_call_and_return_with_arg_local_flow` (`undefined`)
+  - Work items: `W1-04`, `WMLS-501`, `WMLS-502`
+  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+- **WMLS-C-087** — Access control
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Access control (SCR §15.2.3)
+  - Assessment: `missing`; evidence `gap-work-item-mapped`
+  - Code: None; the evidence state remains explicit.
+  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
+  - Work items: `W0-08`, `W1-03`, `WMLS-501`, `WMLS-503`
+  - Assessment note: No implementation and direct normative test evidence currently closes this selected WAP-193 interpreter requirement.
+- **WMLS-C-088** — Binary-format data types
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Binary-format data types (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-089** — Multi-byte integer format
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Multi-byte integer format (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-090** — Character encoding
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Character encoding (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-091** — Bytecode header
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Bytecode header (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-092** — Constant pool
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Constant pool (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-093** — Pragma pool
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Pragma pool (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-094** — Function pool
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Function pool (SCR §15.2.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+- **WMLS-C-095** — Control-flow instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Control-flow instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-096** — Function-call instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Function-call instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-097** — Variable access and manipulation
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Variable access and manipulation (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-098** — Access to constants
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Access to constants (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-099** — Arithmetic instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Arithmetic instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-100** — Bitwise instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Bitwise instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-101** — Comparison instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Comparison instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-102** — Logical instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Logical instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-103** — Stack instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Stack instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-104** — Access to operand type
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Access to operand type (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-105** — Function-return instructions
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Function-return instructions (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-106** — Debug instruction
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Debug instruction (SCR §15.2.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+- **WMLS-C-107** — Bytecode integrity verification
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Bytecode integrity verification (SCR §15.2.6)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.
+- **WMLS-C-108** — Runtime validity checks
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Runtime validity checks (SCR §15.2.6)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.
+- **WMLS-C-110** — Fatal error handling
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Fatal error handling (SCR §15.2.6)
+  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
+  - Code: `engine-wasm/engine/src/engine_script_types.rs#ScriptExecutionOutcome`
+  - Tests: `engine-wasm/engine/src/engine_tests/script_runtime.rs::vm_trap_error_category_matrix_is_explicit` (`undefined`)
+  - Work items: `W1-06`, `W1-07`, `WMLS-501`, `WMLS-505`
+  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+- **WMLS-C-111** — Non-fatal error handling
+  - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-193_101-WMLScript` §Non-fatal error handling (SCR §15.2.6)
+  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
+  - Code: `engine-wasm/engine/src/engine_script_types.rs#ScriptExecutionOutcome`
+  - Tests: `engine-wasm/engine/src/engine_tests/script_runtime.rs::vm_trap_error_category_matrix_is_explicit` (`undefined`)
+  - Work items: `W1-06`, `W1-07`, `WMLS-501`, `WMLS-505`
+  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+
+## Direct normative obligations
+
+### WMLS-501
+
+- **WAE-CL-WML-LANGUAGE-DELEGATE** — Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.5 (5.1.5 Wireless Markup Language)
+  - Parents: `WAESpec-C-015`, `WAESpec-C-017`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
+  - Fixture: `WAE-FX-WML-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+- **WAE-CL-WML-USER-AGENT-COMPOSITION** — Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.7.2 (5.1.7.2 WML User Agent)
+  - Parents: `WAESpec-C-017`
+  - Requirements: `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
+  - Fixture: `WAE-FX-WML-USER-AGENT-COMPOSITION` (`runtime`, `planned`)
+- **WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE** — Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.6 (5.1.6 WMLScript)
+  - Parents: `WAESpec-C-016`, `WAESpec-C-017`
+  - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
+  - Fixture: `WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX** — Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-099`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY** — Decode every defined bit, byte, signed, unsigned, multi-byte integer, and float32 field type with its specified width and representation.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.1 (9.1.1 Used Data Types)
+  - Parents: `WMLS-C-088`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BINARY-DATA-TYPE-REGISTRY` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BINARY-NETWORK-ORDER** — Decode multi-byte integers and bit fields in most-significant-first network order.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.1 (9.1.1 Used Data Types)
+  - Parents: `WMLS-C-088`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BINARY-NETWORK-ORDER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX** — Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-100`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS** — Convert bitwise operands to integers and return invalid when an integer conversion is illegal.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-100`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT** — Accept compiled WMLScript compilation units in the effective chapter 9 binary format rather than treating source text or project bytecode as WAP bytecode.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8 (8. WMLSCRIPT BYTECODE INTERPRETER)
+  - Parents: `WMLS-C-069`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BYTECODE-COMPILATION-UNIT` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BYTECODE-HEADER-CODE-SIZE** — Interpret CodeSize as the exact byte count following the version and encoded size field.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.3 (9.3 Bytecode Header)
+  - Parents: `WMLS-C-091`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BYTECODE-HEADER-CODE-SIZE` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BYTECODE-HEADER-VERSION** — Decode the version byte as major-minus-one and minor nibbles, with effective version 1.1 encoded as 0x01.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.3 (9.3 Bytecode Header)
+  - Parents: `WMLS-C-091`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BYTECODE-HEADER-VERSION` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-BYTECODE-SECTION-ORDER** — Decode each compilation unit in header, constant pool, pragma pool, then function pool order.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.2 (9.2 WMLScript Bytecode)
+  - Parents: `WMLS-C-069`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BYTECODE-SECTION-ORDER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CHARACTER-SET-MIBENUM** — Interpret encoded character-set identities as IANA MIBenum values.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.3 (9.1.3 Character Encoding)
+  - Parents: `WMLS-C-090`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CHARACTER-SET-MIBENUM` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CHARACTER-SET-NATIVE-EXECUTION** — Perform all WMLScript string operations in one native interpreter character set, transcoding only at input or output boundaries.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.2 (8.2 Character Set)
+  - Parents: `WMLS-C-069`, `WMLS-C-090`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CHARACTER-SET-NATIVE-EXECUTION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CHARACTER-STRING-BYTE-LENGTHS** — Interpret encoded string lengths as byte counts in the declared transfer encoding rather than character counts.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.3 (9.1.3 Character Encoding)
+  - Parents: `WMLS-C-090`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CHARACTER-STRING-BYTE-LENGTHS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX** — Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-101`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-COMPARISON-INVALID-RESULT** — Return invalid rather than true or false when a comparison operand conversion or value is invalid.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-101`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-EMBEDDED-NULL** — Preserve embedded null characters inside length-delimited WMLScript string constants.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-EMBEDDED-NULL` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS** — Reject an indexed constant load that references outside the constant pool or an unsupported constant type.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX** — Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
+  - Parents: `WMLS-C-069`, `WMLS-C-098`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INTEGER-WIDTHS** — Decode signed integer constants in the selected 8-bit, 16-bit, or 32-bit two-complement representation.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INTEGER-WIDTHS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-POOL-CHARSET** — Use the constant-pool character-set MIBenum for string constants encoded with the external character definition.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-090`, `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-POOL-CHARSET` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-POOL-COUNT** — Decode exactly NumberOfConstants sequential entries and assign zero-based indexes by pool order.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-POOL-COUNT` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-STRING-LENGTHS** — Decode length-prefixed UTF-8 and externally encoded string constants without requiring a terminating null octet.
+  - Family: `wmlscript`; force: `grammar`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-090`, `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-STRING-LENGTHS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-TYPE-REGISTRY** — Decode constant types 0 through 6 as signed integers, float32, UTF-8 string, empty string, or externally encoded string, and reject reserved types.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
+  - Parents: `WMLS-C-092`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-TYPE-REGISTRY` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX** — Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-095`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX** — Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.12 (10.5.12 Miscellaneous Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-106`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-BYTECODE-ERROR-MATRIX` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES** — Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX** — Implement every local, library, and URL call opcode variant with its index widths, argument count, stack effect, result, and errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-096`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-NAME-TABLE** — Store only external function names in the name table and preserve their function-pool order.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-079`, `WMLS-C-087`, `WMLS-C-094`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-NAME-TABLE` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-POOL-COUNT** — Decode the declared function count, external function-name table, and exactly that many function records.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-094`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-POOL-COUNT` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-POOL-INDEXES** — Assign zero-based function indexes by function-pool order for local call instructions.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-094`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-POOL-INDEXES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES** — Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`
+  - Requirements: `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-BEFORE-EXECUTION` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK** — Require the declared bytecode size to match the available compilation-unit bytes.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-CODE-SIZE-CHECK` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE** — Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FAILURE-QUARANTINE` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES** — Require every declared function code size to fit wholly inside the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FUNCTION-SIZES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM** — Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-INSTRUCTION-STREAM` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS** — Require constant, pragma, function-name, and function counts to match the records encoded in their pools.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-POOL-COUNTS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK** — Require matching major bytecode versions and a bytecode minor version no greater than the interpreter-supported minor version.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-VERSION-CHECK` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTERPRETER-CALL-RESULT** — Return control and the function return value to the caller after normal WMLScript function completion.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.1 (8.1 Interpreter Architecture)
+  - Parents: `WMLS-C-069`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-INTERPRETER-CALL-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-INTERPRETER-EXECUTION-STATE** — Maintain an instruction pointer, function variables, operand stack, and function-call stack while executing a WMLScript function.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.1 (8.1 Interpreter Architecture)
+  - Parents: `WMLS-C-069`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-INTERPRETER-EXECUTION-STATE` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION** — Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-102`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX** — Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-102`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION** — Decode multi-byte integers from seven-bit groups whose high bit is set on every non-final octet and clear on the final octet.
+  - Family: `wmlscript`; force: `grammar`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.2 (9.1.2 Multi-byte Integer Format)
+  - Parents: `WMLS-C-089`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-MULTIBYTE-INTEGER-CONTINUATION` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-MULTIBYTE-INTEGER-ORDER** — Combine multi-byte integer octets and value bits in most-significant-group-first order.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.2 (9.1.2 Multi-byte Integer Format)
+  - Parents: `WMLS-C-089`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-MULTIBYTE-INTEGER-ORDER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-MULTIBYTE-INTEGER-UNUSED-ZERO** — Require unused value bits in the initial multi-byte integer octet to be zero.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.1.2 (9.1.2 Multi-byte Integer Format)
+  - Parents: `WMLS-C-089`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-MULTIBYTE-INTEGER-UNUSED-ZERO` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX** — Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-098`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONSTANT-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX** — Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
+  - Parents: `WMLS-C-069`, `WMLS-C-104`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION** — Inspect the evaluated operand type without performing an automatic data conversion.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
+  - Parents: `WMLS-C-104`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS** — Allow at most one access-domain and one access-path pragma in a compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
+  - Parents: `WMLS-C-087`, `WMLS-C-093`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-PRAGMA-ACCESS-UNIQUENESS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-PRAGMA-POOL-COUNT** — Decode exactly NumberOfPragmas sequential pragma records.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
+  - Parents: `WMLS-C-093`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-PRAGMA-POOL-COUNT` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-PRAGMA-STRING-INDEXES** — Require access and meta pragma indexes to reference string constants of the permitted constant types.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
+  - Parents: `WMLS-C-093`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-PRAGMA-STRING-INDEXES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-PRAGMA-TYPE-REGISTRY** — Decode pragma types 0 through 3 as access domain, access path, user-agent property, or user-agent property with scheme, and reject reserved types.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
+  - Parents: `WMLS-C-093`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-PRAGMA-TYPE-REGISTRY` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX** — Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-105`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY** — Return the selected value to the host caller when leaving the top-level invoked WMLScript function.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
+  - Parents: `WMLS-C-085`, `WMLS-C-105`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY** — Validate every constant index and required constant type before loading or using it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-FUNCTION-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY** — Require every taken jump target to fall on an instruction boundary within the current function.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY** — Validate every variable index against the current function frame before reading or writing it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX** — Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-103`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
+  - Parents: `WMLS-C-103`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS** — Reject a variable instruction whose index is outside the current function argument-and-local variable range.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX** — Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
+  - Parents: `WMLS-C-069`, `WMLS-C-097`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+
+### WMLS-502
+
+- **WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE** — Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.6 (5.1.6 WMLScript)
+  - Parents: `WAESpec-C-016`, `WAESpec-C-017`
+  - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
+  - Fixture: `WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARGUMENT-CALL-INITIALIZATION** — Pop call arguments and use them to initialize the matching callee argument variables without reordering.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.4.1 (8.4.1 Passing of Function Arguments)
+  - Parents: `WMLS-C-083`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-CALL-INITIALIZATION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARGUMENT-STACK-ORDER** — Push function arguments onto the operand stack in declaration order, beginning with the first argument.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.4.1 (8.4.1 Passing of Function Arguments)
+  - Parents: `WMLS-C-083`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-STACK-ORDER` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARGUMENT-VARIABLE-INDEXES** — Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.4.2 (8.4.2 Allocation of Variable Indexes)
+  - Parents: `WMLS-C-084`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-VARIABLE-INDEXES` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-AUTOMATIC-EMPTY-RETURN** — Return an empty string when execution reaches a function end without a return instruction.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.4.3 (8.4.3 Automatic Function Return Value)
+  - Parents: `WMLS-C-085`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS** — Convert bitwise operands to integers and return invalid when an integer conversion is illegal.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-100`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-COMPARISON-INVALID-RESULT** — Return invalid rather than true or false when a comparison operand conversion or value is invalid.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-101`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-BOOLEAN-MATRIX** — Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.5 (6.8.5 Conversions to Boolean)
+  - Parents: `WMLS-C-075`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-BOOLEAN-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-INTEGER-MATRIX** — Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.3 (6.8.3 Conversions to Integer)
+  - Parents: `WMLS-C-073`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-INTEGER-STRING-GRAMMAR** — Convert a string to integer only when the entire string is a valid decimal integer representation.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.3 (6.8.3 Conversions to Integer)
+  - Parents: `WMLS-C-073`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-STRING-GRAMMAR` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-INVALID-PROHIBITED** — Do not convert another data type into invalid; create invalid only as a literal or operation-error result.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.6 (6.8.6 Conversions to Invalid)
+  - Parents: `WMLS-C-076`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROHIBITED` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-INVALID-PROPAGATION** — Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.6 (6.8.6 Conversions to Invalid)
+  - Parents: `WMLS-C-076`, `WMLS-C-077`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROPAGATION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-STRING-MATRIX** — Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.2 (6.8.2 Conversions to String)
+  - Parents: `WMLS-C-072`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-STRING-NUMERIC-GRAMMAR** — Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.2 (6.8.2 Conversions to String)
+  - Parents: `WMLS-C-072`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-NUMERIC-GRAMMAR` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONVERSION-SUMMARY-MATRIX** — Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.8.7 (6.8.7 Summary)
+  - Parents: `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-SUMMARY-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOCAL-EMPTY-INITIALIZATION** — Initialize every function local variable to an empty string before executing the function body.
+  - Family: `wmlscript`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-193_101-WMLScript` §8.4.4 (8.4.4 Initialisation of Variables)
+  - Parents: `WMLS-C-086`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-LOCAL-EMPTY-INITIALIZATION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOCAL-VARIABLE-INDEXES** — Allocate local-variable indexes consecutively after the final argument index and match the declared local count.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.4.2 (8.4.2 Allocation of Variable Indexes)
+  - Parents: `WMLS-C-084`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
+  - Fixture: `WMLSCRIPT-FX-LOCAL-VARIABLE-INDEXES` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION** — Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-102`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONVERSION-MATRIX** — Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-073`, `WMLS-C-077`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERATOR-CONVERSION-ATOMICITY** — Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
+  - Parents: `WMLS-C-077`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ATOMICITY` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERATOR-CONVERSION-ORDER** — Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
+  - Parents: `WMLS-C-077`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ORDER` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERATOR-CONVERSION-RESULT-INVALID** — Return invalid when a selected legal conversion itself produces invalid.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
+  - Parents: `WMLS-C-077`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-RESULT-INVALID` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERATOR-NUMERIC-PRECEDENCE** — Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
+  - Parents: `WMLS-C-077`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-NUMERIC-PRECEDENCE` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY** — Return the selected value to the host caller when leaving the top-level invoked WMLScript function.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
+  - Parents: `WMLS-C-085`, `WMLS-C-105`
+  - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `planned`)
+
+### WMLS-503
+
+- **WAE-CL-MEDIA-PUSH-FALLBACK** — When pushed content has no defined push behavior, take no action beyond discarding it or placing it in cache.
+  - Family: `wae`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-190-WAESpec` §5.1.8 (5.1.8 WAE Media Types)
+  - Parents: `WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`
+  - Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-011`
+  - Fixture: `WAE-FX-MEDIA-PUSH-FALLBACK` (`security-policy`, `planned`)
+- **WAE-CL-MEDIA-TYPE-DISPATCH** — Dispatch WAE content according to its media type so the responsible decoder or interpreter applies that format structure and semantics.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.8 (5.1.8 WAE Media Types)
+  - Parents: `WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`
+  - Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-011`
+  - Fixture: `WAE-FX-MEDIA-TYPE-DISPATCH` (`transport-boundary`, `planned`)
+- **WAE-CL-WMLSCRIPTC-MEDIA-TYPE** — Recognize application/vnd.wap.wmlscriptc as encoded WMLScript and route its bytecode to the WMLScript interpreter.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.8.2 (5.1.8.2 Encoded WMLScript format)
+  - Parents: `WAESpec-C-021`
+  - Requirements: `RQ-WAE-003`, `RQ-WMLS-011`
+  - Fixture: `WAE-FX-WMLSCRIPTC-MEDIA-TYPE` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-CL-ACCESS-DENIAL-ERROR** — Reject a protected compilation-unit call as an access violation without executing the target function.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.5 (8.5 Access Control)
+  - Parents: `WMLS-C-087`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`
+  - Fixture: `WMLSCRIPT-FX-ACCESS-DENIAL-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-ACCESS-DOMAIN-PATH-GATE** — Permit an external call only when its caller matches the compilation unit access-domain and access-path restrictions.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.5 (8.5 Access Control)
+  - Parents: `WMLS-C-087`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`
+  - Fixture: `WMLSCRIPT-FX-ACCESS-DOMAIN-PATH-GATE` (`security-policy`, `planned`)
+- **WMLSCRIPT-CL-EXTERNAL-KEYWORD-GATE** — Permit calls from another compilation unit only to functions marked external.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.5 (8.5 Access Control)
+  - Parents: `WMLS-C-087`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`
+  - Fixture: `WMLSCRIPT-FX-EXTERNAL-KEYWORD-GATE` (`security-policy`, `planned`)
+- **WMLSCRIPT-CL-FRAGMENT-DOCUMENT-FORM** — Parse a function fragment after a hash mark appended to the compilation-unit URL.
+  - Family: `wmlscript`; force: `grammar`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.2 (8.3.2 Fragment Anchors)
+  - Parents: `WMLS-C-079`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-FRAGMENT-DOCUMENT-FORM` (`parser`, `planned`)
+- **WMLSCRIPT-CL-FRAGMENT-FUNCTION-IDENTITY** — Resolve a URL fragment identifier as the external function name within the referenced WMLScript compilation unit.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.2 (8.3.2 Fragment Anchors)
+  - Parents: `WMLS-C-079`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-FRAGMENT-FUNCTION-IDENTITY` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-NAME-TABLE** — Store only external function names in the name table and preserve their function-pool order.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-079`, `WMLS-C-087`, `WMLS-C-094`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-NAME-TABLE` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS** — Allow at most one access-domain and one access-path pragma in a compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
+  - Parents: `WMLS-C-087`, `WMLS-C-093`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-PRAGMA-ACCESS-UNIQUENESS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-RELATIVE-URL-RESOLUTION** — Resolve relative compilation-unit URLs using RFC 2396 rules and the current compilation-unit URL as base.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.6 (8.3.6 Relative URLs)
+  - Parents: `WMLS-C-082`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-RELATIVE-URL-RESOLUTION` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-ACCESS-FIRST** — Perform compilation-unit access control before matching or invoking the requested external function.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
+  - Parents: `WMLS-C-081`, `WMLS-C-087`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-ACCESS-FIRST` (`security-policy`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-EXTERNAL-MATCH** — Match the fragment function name only against externally callable functions and fail when no match exists.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
+  - Parents: `WMLS-C-079`, `WMLS-C-081`, `WMLS-C-087`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-EXTERNAL-MATCH` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-GRAMMAR** — Parse URL-call fragments as a function name followed by parentheses containing zero or more comma-separated literal arguments.
+  - Family: `wmlscript`; force: `grammar`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.3 (8.3.3 URL Call Syntax)
+  - Parents: `WMLS-C-080`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-GRAMMAR` (`parser`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-INVALID-PARAMETERS** — Fail a URL call when its parameter list has invalid syntax or does not match the target function arity.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
+  - Parents: `WMLS-C-080`, `WMLS-C-081`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-INVALID-PARAMETERS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-LITERAL-ONLY** — Reject expressions and nested function calls in URL-call argument lists; accept only the defined invalid, boolean, numeric, and string literals.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.3 (8.3.3 URL Call Syntax)
+  - Parents: `WMLS-C-080`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-LITERAL-ONLY` (`parser`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-TYPED-ARGUMENTS** — Parse each fragment literal into its corresponding WMLScript data type and pass arguments in source order.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
+  - Parents: `WMLS-C-081`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-TYPED-ARGUMENTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-URL-CALL-UNESCAPE-BEFORE-PARSE** — Apply URL and containing-content unescaping before parsing the URL-call fragment grammar.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.5 (8.3.5 Character Escaping)
+  - Parents: `WMLS-C-080`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-CALL-UNESCAPE-BEFORE-PARSE` (`parser`, `planned`)
+- **WMLSCRIPT-CL-URL-NAMED-COMPILATION-UNITS** — Name and fetch WMLScript compilation units by URL using a protocol with HTTP semantics.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3 (8.3 WMLScript and URLs)
+  - Parents: `WMLS-C-078`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-NAMED-COMPILATION-UNITS` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-CL-URL-SCHEME-SUPPORT** — Support the URL schemes required by the selected WAE profile.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §8.3.1 (8.3.1 URL Schemes)
+  - Parents: `WMLS-C-078`
+  - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
+  - Fixture: `WMLSCRIPT-FX-URL-SCHEME-SUPPORT` (`transport-boundary`, `planned`)
+
+### WMLS-504
+
+- **WMLSCRIPT-CL-STANDARD-LIBRARY-BOUNDARY** — Expose every required WMLScript standard library through the interpreter call boundary defined by the separate selected library ledger.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §6.6.1 (6.6.1 Standard Libraries)
+  - Parents: `WMLS-C-070`
+  - Requirements: `RQ-WMLS-012`
+  - Fixture: `WMLSCRIPT-FX-STANDARD-LIBRARY-BOUNDARY` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-ANY-PARAMETER-UNION** — Interpret an Any parameter as accepting every supported WMLScript value type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-ANY-PARAMETER-UNION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-AUTOMATIC-ARGUMENT-CONVERSION** — Apply WMLScript automatic data conversions when an argument does not already have the required parameter type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.2 (6.2   Data Type Conversions)
+  - Parents: `WMLSSL-015`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-AUTOMATIC-ARGUMENT-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-ALERT-BEHAVIOR** — Display the message, block until user confirmation, and then return an empty string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.3 (12.3 alert)
+  - Parents: `WMLSSL-094`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-ALERT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-ALERT-SIGNATURE** — Implement Dialogs.alert(message) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.3 (12.3 alert)
+  - Parents: `WMLSSL-094`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-ALERT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-BEHAVIOR** — Display two alternatives, wait for selection, and return true for ok or false for cancel.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-DEFAULT-LABELS** — Use implementation-dependent default label text when either supplied alternative label is empty.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-DEFAULT-LABELS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-SIGNATURE** — Implement Dialogs.confirm(message, ok, cancel) for three String arguments, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS** — Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-023`, `WMLSSL-030`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER** — Map the dialogs standard library to encoded library identifier 5.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-023`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-017`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-SURFACE** — Expose the complete dialogs standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12 (12.   DIALOGS)
+  - Parents: `WMLSSL-023`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-PROMPT-BEHAVIOR** — Display the message with the supplied initial input, wait for user input, and return the entered string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.1 (12.1 prompt)
+  - Parents: `WMLSSL-092`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-PROMPT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-PROMPT-SIGNATURE** — Implement Dialogs.prompt(message, defaultInput) for two String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.1 (12.1 prompt)
+  - Parents: `WMLSSL-092`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-PROMPT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-CEIL-BEHAVIOR** — Return the smallest integer not less than the argument, or return an Integer argument unchanged.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.3 (8.3   ceil)
+  - Parents: `WMLSSL-049`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-CEIL-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-CEIL-SIGNATURE** — Implement Float.ceil(value) for a Number argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.3 (8.3   ceil)
+  - Parents: `WMLSSL-049`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-CEIL-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-FLOOR-BEHAVIOR** — Return the greatest integer not greater than the argument, or return an Integer argument unchanged.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.2 (8.2   floor)
+  - Parents: `WMLSSL048`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FLOOR-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-FLOOR-SIGNATURE** — Implement Float.floor(value) for a Number argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.2 (8.2   floor)
+  - Parents: `WMLSSL048`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FLOOR-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS** — Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-019`, `WMLSSL-026`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-INT-BEHAVIOR** — Return the integer part by truncating a Float toward zero, or return an Integer argument unchanged.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.1 (8.1   int)
+  - Parents: `WMLSSL-047`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-INT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-INT-SIGNATURE** — Implement Float.int(value) for a Number argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.1 (8.1   int)
+  - Parents: `WMLSSL-047`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-INT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER** — Map the float standard library to encoded library identifier 1.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-019`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-INTEGER-ONLY-RESULT** — Return invalid from every Float library function when floating-point operations are unavailable.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8 (8.    FLOAT)
+  - Parents: `WMLSSL-046`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-INTEGER-ONLY-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-SURFACE** — Expose the complete float standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8 (8.    FLOAT)
+  - Parents: `WMLSSL-019`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-MAX-BEHAVIOR** — Return the IEEE 754 single-precision maximum value 3.40282347E+38.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.7 (8.7   maxFloat)
+  - Parents: `WMLSSL-053`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-MAX-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-MAX-SIGNATURE** — Implement zero-argument Float.maxFloat(), returning a Float.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.7 (8.7   maxFloat)
+  - Parents: `WMLSSL-053`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-MAX-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-MIN-BEHAVIOR** — Return the smallest supported nonzero single-precision value, no greater than 1.17549435E-38.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.8 (8.8   minFloat)
+  - Parents: `WMLSSL-054`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-MIN-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-MIN-SIGNATURE** — Implement zero-argument Float.minFloat(), returning a Float.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.8 (8.8   minFloat)
+  - Parents: `WMLSSL-054`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-MIN-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-POW-BEHAVIOR** — Return an implementation-dependent approximation of the first argument raised to the power of the second.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.4 (8.4   pow)
+  - Parents: `WMLSSL-050`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-POW-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-POW-DOMAIN** — Return invalid for zero raised to a negative power or a negative base raised to a non-integer power.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.4 (8.4   pow)
+  - Parents: `WMLSSL-050`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-POW-DOMAIN` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-POW-SIGNATURE** — Implement Float.pow(value1, value2) for two Number arguments, returning Float or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.4 (8.4   pow)
+  - Parents: `WMLSSL-050`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-POW-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-ROUND-BEHAVIOR** — Return the closest mathematical integer, choosing the larger integer on an exact tie, or return an Integer argument unchanged.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.5 (8.5   round)
+  - Parents: `WMLSSL-051`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-ROUND-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-ROUND-SIGNATURE** — Implement Float.round(value) for a Number argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.5 (8.5   round)
+  - Parents: `WMLSSL-051`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-ROUND-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-SQRT-BEHAVIOR** — Return an implementation-dependent approximation of the square root.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.6 (8.6   sqrt)
+  - Parents: `WMLSSL-052`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-SQRT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-SQRT-NEGATIVE** — Return invalid for a negative argument.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.6 (8.6   sqrt)
+  - Parents: `WMLSSL-052`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-SQRT-NEGATIVE` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-SQRT-SIGNATURE** — Implement Float.sqrt(value) for a Float argument, returning Float or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §8.6 (8.6   sqrt)
+  - Parents: `WMLSSL-052`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-SQRT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FUNCTION-SPECIFIC-ERROR-RESULT** — Represent each function-specific exception using the return value or error code declared by that function definition.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FUNCTION-SPECIFIC-ERROR-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-INTEGER-ONLY-ARGUMENT-TYPES** — On an integer-only device, accept only Boolean, Integer, String, and Invalid library arguments and ignore floating-point conversion rules.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.4 (6.4   Support for Integer-Only Devices)
+  - Parents: `WMLSSL-014`, `WMLSSL-015`
+  - Requirements: `RQ-WMLS-012`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-INTEGER-ONLY-ARGUMENT-TYPES` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-INVALID-ARGUMENT-RESULT** — Return invalid without other side effects when a function receives an invalid argument, except where its definition explicitly specifies another outcome.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-INVALID-ARGUMENT-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-ABORT-BEHAVIOR** — Abort bytecode interpretation as an abnormal exit and return the error description to the interpreter caller.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.12 (7.12 abort)
+  - Parents: `WMLSSL-042`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABORT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-ABORT-INVALID-DESCRIPTION** — Use the literal string invalid as the error description when the supplied description value is invalid.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.12 (7.12 abort)
+  - Parents: `WMLSSL-042`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABORT-INVALID-DESCRIPTION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-ABORT-SIGNATURE** — Implement Lang.abort(errorDescription) for a String argument with no local return.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.12 (7.12 abort)
+  - Parents: `WMLSSL-042`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABORT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-ABS-BEHAVIOR** — Return the absolute magnitude while preserving whether the input was Integer or Float.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.1 (7.1     abs)
+  - Parents: `WMLSSL-031`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE** — Implement Lang.abs(value) for a Number argument, returning Number or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.1 (7.1     abs)
+  - Parents: `WMLSSL-031`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-CHARACTER-SET-BEHAVIOR** — Return the IANA MIBenum identifier for the character set used by the WMLScript interpreter.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.15 (7.15 characterSet)
+  - Parents: `WMLSSL-045`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-CHARACTER-SET-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-CHARACTER-SET-SIGNATURE** — Implement zero-argument Lang.characterSet(), returning an Integer.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.15 (7.15 characterSet)
+  - Parents: `WMLSSL-045`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-CHARACTER-SET-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-EXIT-BEHAVIOR** — End normal bytecode interpretation immediately and return the supplied value and control to the interpreter caller.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.11 (7.11 exit)
+  - Parents: `WMLSSL-041`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-EXIT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-EXIT-SIGNATURE** — Implement Lang.exit(value) for an Any argument with no local return.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.11 (7.11 exit)
+  - Parents: `WMLSSL-041`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-EXIT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-FLOAT-BEHAVIOR** — Return true when floating-point operations are supported and false on an integer-only device.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.10 (7.10 float)
+  - Parents: `WMLSSL-040`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FLOAT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-FLOAT-SIGNATURE** — Implement zero-argument Lang.float(), returning a Boolean.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.10 (7.10 float)
+  - Parents: `WMLSSL-040`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FLOAT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS** — Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-018`, `WMLSSL-025`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-IS-FLOAT-BEHAVIOR** — Return true exactly when Lang.parseFloat can convert the value, false for a non-convertible non-invalid value, and invalid for invalid input.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.7 (7.7   isFloat)
+  - Parents: `WMLSSL-037`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-IS-FLOAT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-IS-FLOAT-SIGNATURE** — Implement Lang.isFloat(value) for an Any argument, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.7 (7.7   isFloat)
+  - Parents: `WMLSSL-037`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-IS-FLOAT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-IS-FLOAT-UNSUPPORTED** — Return invalid when floating-point operations are unavailable.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.7 (7.7   isFloat)
+  - Parents: `WMLSSL-037`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-IS-FLOAT-UNSUPPORTED` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-IS-INT-BEHAVIOR** — Return true exactly when Lang.parseInt can convert the value, false for a non-convertible non-invalid value, and invalid for invalid input.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.6 (7.6   isInt)
+  - Parents: `WMLSSL-036`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-IS-INT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-IS-INT-SIGNATURE** — Implement Lang.isInt(value) for an Any argument, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.6 (7.6   isInt)
+  - Parents: `WMLSSL-036`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-IS-INT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER** — Map the lang standard library to encoded library identifier 0.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-018`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-013`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-SURFACE** — Expose the complete lang standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7 (7.      LANG)
+  - Parents: `WMLSSL-018`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MAX-BEHAVIOR** — Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.3 (7.3   max)
+  - Parents: `WMLSSL-033`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MAX-INT-BEHAVIOR** — Return the maximum WMLScript Integer value 2147483647.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.8 (7.8   maxInt)
+  - Parents: `WMLSSL-038`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-INT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MAX-INT-SIGNATURE** — Implement zero-argument Lang.maxInt(), returning an Integer.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.8 (7.8   maxInt)
+  - Parents: `WMLSSL-038`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-INT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MAX-SIGNATURE** — Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.3 (7.3   max)
+  - Parents: `WMLSSL-033`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR** — Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.2 (7.2     min)
+  - Parents: `WMLSSL-032`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-INT-BEHAVIOR** — Return the minimum WMLScript Integer value -2147483648.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.9 (7.9   minInt)
+  - Parents: `WMLSSL-039`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-INT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-INT-SIGNATURE** — Implement zero-argument Lang.minInt(), returning an Integer.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.9 (7.9   minInt)
+  - Parents: `WMLSSL-039`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-INT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-SIGNATURE** — Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.2 (7.2     min)
+  - Parents: `WMLSSL-032`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-FLOAT-BEHAVIOR** — Parse a legal leading decimal floating-point representation and stop at the first character that cannot continue it.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.5 (7.5   parseFloat)
+  - Parents: `WMLSSL-035`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-FLOAT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-FLOAT-ERROR** — Return invalid for malformed floating-point syntax or when floating-point operations are unavailable.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.5 (7.5   parseFloat)
+  - Parents: `WMLSSL-035`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-FLOAT-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-FLOAT-SIGNATURE** — Implement Lang.parseFloat(value) for a String argument, returning Float or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.5 (7.5   parseFloat)
+  - Parents: `WMLSSL-035`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-FLOAT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-INT-BEHAVIOR** — Parse a leading signed decimal integer and stop before the first character that is neither the leading sign nor a decimal digit.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.4 (7.4   parseInt)
+  - Parents: `WMLSSL-034`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-INT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-INT-ERROR** — Return invalid when the input has no legal leading decimal-integer representation.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.4 (7.4   parseInt)
+  - Parents: `WMLSSL-034`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-INT-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-INT-SIGNATURE** — Implement Lang.parseInt(value) for a String argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.4 (7.4   parseInt)
+  - Parents: `WMLSSL-034`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-PARSE-INT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-RANDOM-BEHAVIOR** — Return an approximately uniformly selected integer between zero and the nonnegative bound, inclusive, using an implementation-dependent random strategy.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.13 (7.13 random)
+  - Parents: `WMLSSL-043`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-RANDOM-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-RANDOM-BOUNDS** — Return zero for a zero bound and invalid for a negative bound.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.13 (7.13 random)
+  - Parents: `WMLSSL-043`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-RANDOM-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-RANDOM-FLOAT-BOUND** — Convert a Float bound through Float.int before selecting the random value.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.13 (7.13 random)
+  - Parents: `WMLSSL-043`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-RANDOM-FLOAT-BOUND` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-RANDOM-SIGNATURE** — Implement Lang.random(value) for a Number argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.13 (7.13 random)
+  - Parents: `WMLSSL-043`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-RANDOM-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-SEED-BEHAVIOR** — Use a nonnegative integer seed to create a repeatable pseudo-random sequence and a negative seed to request system-dependent non-repeatable initialization.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.14 (7.14 seed)
+  - Parents: `WMLSSL-044`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-SEED-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-SEED-FLOAT-SEED** — Convert a Float seed through Float.int before initializing the sequence.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.14 (7.14 seed)
+  - Parents: `WMLSSL-044`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-SEED-FLOAT-SEED` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-SEED-INVALID-SEED** — Return invalid and preserve the current seed when the argument is nonnumeric.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.14 (7.14 seed)
+  - Parents: `WMLSSL-044`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-SEED-INVALID-SEED` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-SEED-SIGNATURE** — Implement Lang.seed(value) for a Number argument, returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §7.14 (7.14 seed)
+  - Parents: `WMLSSL-044`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-SEED-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-NUMBER-PARAMETER-UNION** — Interpret a Number parameter as accepting either an Integer or Float value.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-NUMBER-PARAMETER-UNION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-OPERATOR-CONVERSION-DEFAULT** — Use WMLScript operator conversion rules unless an individual library function explicitly defines another conversion.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.2 (6.2   Data Type Conversions)
+  - Parents: `WMLSSL-015`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-OPERATOR-CONVERSION-DEFAULT` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-CHAR-AT-BEHAVIOR** — Convert a Float index through Float.int and return the one-character string at the resulting zero-based index.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.3 (9.3   charAt)
+  - Parents: `WMLSSL-057`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-CHAR-AT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-CHAR-AT-OUT-OF-RANGE** — Return an empty string when the index is outside the string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.3 (9.3   charAt)
+  - Parents: `WMLSSL-057`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-CHAR-AT-OUT-OF-RANGE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-CHAR-AT-SIGNATURE** — Implement String.charAt(string, index) for String and Number arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.3 (9.3   charAt)
+  - Parents: `WMLSSL-057`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-CHAR-AT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-COMPARE-BEHAVIOR** — Compare native character codes lexicographically and return -1, 0, or 1 for less-than, identical, or greater-than.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.14 (9.14 compare)
+  - Parents: `WMLSSL-068`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-COMPARE-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-COMPARE-SIGNATURE** — Implement String.compare(string1, string2) for two String arguments, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.14 (9.14 compare)
+  - Parents: `WMLSSL-068`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-COMPARE-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENT-AT-BEHAVIOR** — Use the separator first character, convert Float index through Float.int, and clamp indexes below or above range to the first or last element.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.8 (9.8   elementAt)
+  - Parents: `WMLSSL-062`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENT-AT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENT-AT-EMPTY-INPUTS** — Return an empty string for empty input text and invalid for an empty separator.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.8 (9.8   elementAt)
+  - Parents: `WMLSSL-062`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENT-AT-EMPTY-INPUTS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENT-AT-SIGNATURE** — Implement String.elementAt(string, index, separator) for String, Number, and String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.8 (9.8   elementAt)
+  - Parents: `WMLSSL-062`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENT-AT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENTS-BEHAVIOR** — Use the separator first character and count every separated element, including empty elements, so the result is always positive.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.7 (9.7   elements)
+  - Parents: `WMLSSL-061`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENTS-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENTS-EMPTY-SEPARATOR** — Return invalid when the separator string is empty.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.7 (9.7   elements)
+  - Parents: `WMLSSL-061`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENTS-EMPTY-SEPARATOR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-ELEMENTS-SIGNATURE** — Implement String.elements(string, separator) for two String arguments, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.7 (9.7   elements)
+  - Parents: `WMLSSL-061`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-ELEMENTS-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FIND-BEHAVIOR** — Return the first exact representation-sensitive, case-sensitive match index, or -1 when no match exists.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.5 (9.5   find)
+  - Parents: `WMLSSL-059`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FIND-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FIND-EMPTY-NEEDLE** — Return invalid when the requested substring is empty.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.5 (9.5   find)
+  - Parents: `WMLSSL-059`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FIND-EMPTY-NEEDLE` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FIND-SIGNATURE** — Implement String.find(string, subString) for two String arguments, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.5 (9.5   find)
+  - Parents: `WMLSSL-059`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FIND-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-BEHAVIOR** — Parse percent, optional nonnegative width, optional precision, and required d, f, or s type fields, plus doubled-percent literals.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-CONVERSION** — Convert the value to the selected type using WMLScript rules, with Float.int used for Float-to-d conversion.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-ERRORS** — Return invalid for an illegal format or an f conversion when floating-point operations are unavailable.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-ERRORS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-FLOAT-PRECISION** — For f, round to the requested fractional digits, default to six, and omit the decimal point at zero precision.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-FLOAT-PRECISION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-INTEGER-PRECISION** — For d, zero-pad to precision, default precision to one, and produce empty output for zero with zero precision.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-INTEGER-PRECISION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-SIGNATURE** — Implement String.format(format, value) for String and Any arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-SPECIFIER-SELECTION** — Use only the leftmost format specifier and replace every later specifier with an empty string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-SPECIFIER-SELECTION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-STRING-PRECISION** — For s, truncate to the maximum character count when precision is specified.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-STRING-PRECISION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FORMAT-WIDTH** — Left-pad to minimum width without truncating; ignore string width when it exceeds string precision.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.16 (9.16 format)
+  - Parents: `WMLSSL-070`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FORMAT-WIDTH` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS** — Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-020`, `WMLSSL-027`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-INSERT-AT-BEHAVIOR** — Insert the element and needed separator at the converted index, clamping negative index to zero and appending beyond the final element.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.11 (9.11 insertAt)
+  - Parents: `WMLSSL-065`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-INSERT-AT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-INSERT-AT-EMPTY-INPUTS** — Return the inserted element for empty input text and invalid for an empty separator.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.11 (9.11 insertAt)
+  - Parents: `WMLSSL-065`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-INSERT-AT-EMPTY-INPUTS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-INSERT-AT-SIGNATURE** — Implement String.insertAt(string, element, index, separator) for String, String, Number, and String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.11 (9.11 insertAt)
+  - Parents: `WMLSSL-065`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-INSERT-AT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-IS-EMPTY-BEHAVIOR** — Return true exactly when the converted string contains zero characters.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.2 (9.2   isEmpty)
+  - Parents: `WMLSSL-056`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-IS-EMPTY-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-IS-EMPTY-SIGNATURE** — Implement String.isEmpty(string) for a String argument, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.2 (9.2   isEmpty)
+  - Parents: `WMLSSL-056`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-IS-EMPTY-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-LENGTH-BEHAVIOR** — Return the number of characters in the converted string, with an empty string having length zero.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.1 (9.1   length)
+  - Parents: `WMLSSL-055`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LENGTH-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-LENGTH-SIGNATURE** — Implement String.length(string) for a String argument, returning Integer or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.1 (9.1   length)
+  - Parents: `WMLSSL-055`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LENGTH-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER** — Map the string standard library to encoded library identifier 2.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-020`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-015`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-SURFACE** — Expose the complete string standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9 (9. STRING)
+  - Parents: `WMLSSL-020`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REMOVE-AT-BEHAVIOR** — Remove the selected element and its corresponding separator, converting Float index and clamping indexes to the first or last element.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.9 (9.9   removeAt)
+  - Parents: `WMLSSL-063`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REMOVE-AT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REMOVE-AT-EMPTY-INPUTS** — Return an empty string for empty input text and invalid for an empty separator.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.9 (9.9   removeAt)
+  - Parents: `WMLSSL-063`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REMOVE-AT-EMPTY-INPUTS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REMOVE-AT-SIGNATURE** — Implement String.removeAt(string, index, separator) for String, Number, and String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.9 (9.9   removeAt)
+  - Parents: `WMLSSL-063`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REMOVE-AT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-AT-BEHAVIOR** — Replace the selected element, converting Float index and clamping indexes outside range to the first or last element.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.10 (9.10 replaceAt)
+  - Parents: `WMLSSL-064`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-AT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-AT-EMPTY-INPUTS** — Return the replacement element for empty input text and invalid for an empty separator.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.10 (9.10 replaceAt)
+  - Parents: `WMLSSL-064`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-AT-EMPTY-INPUTS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-AT-SIGNATURE** — Implement String.replaceAt(string, element, index, separator) for String, String, Number, and String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.10 (9.10 replaceAt)
+  - Parents: `WMLSSL-064`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-AT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-BEHAVIOR** — Replace every exact representation-sensitive, case-sensitive occurrence of the old substring with the new substring.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.6 (9.6   replace)
+  - Parents: `WMLSSL-060`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-EMPTY-NEEDLE** — Return invalid when the old substring is empty.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.6 (9.6   replace)
+  - Parents: `WMLSSL-060`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-EMPTY-NEEDLE` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-REPLACE-SIGNATURE** — Implement String.replace(string, oldSubString, newSubString) for three String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.6 (9.6   replace)
+  - Parents: `WMLSSL-060`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-REPLACE-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-SQUEEZE-BEHAVIOR** — Replace each consecutive run of TAB, VT, FF, space, LF, or CR characters with one space without trimming the string ends.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.12 (9.12 squeeze)
+  - Parents: `WMLSSL-066`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-SQUEEZE-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-SQUEEZE-SIGNATURE** — Implement String.squeeze(string) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.12 (9.12 squeeze)
+  - Parents: `WMLSSL-066`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-SQUEEZE-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-SUB-STRING-BEHAVIOR** — Convert Float indexes through Float.int, clamp a negative start to zero, and clamp length to the available suffix.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.4 (9.4   subString)
+  - Parents: `WMLSSL-058`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-SUB-STRING-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-SUB-STRING-EMPTY-RESULT** — Return an empty string when start is beyond the final character or requested length is nonpositive.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.4 (9.4   subString)
+  - Parents: `WMLSSL-058`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-SUB-STRING-EMPTY-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-SUB-STRING-SIGNATURE** — Implement String.subString(string, startIndex, length) for String and Number arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.4 (9.4   subString)
+  - Parents: `WMLSSL-058`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-SUB-STRING-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-TO-STRING-BEHAVIOR** — Apply WMLScript Boolean, Integer, Float, and String conversions, but convert Invalid to the literal string invalid.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.15 (9.15 toString)
+  - Parents: `WMLSSL-069`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-TO-STRING-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-TO-STRING-SIGNATURE** — Implement String.toString(value) for an Any argument, always returning a String.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.15 (9.15 toString)
+  - Parents: `WMLSSL-069`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-TO-STRING-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-TRIM-BEHAVIOR** — Remove every leading and trailing TAB, VT, FF, space, LF, and CR while preserving internal whitespace.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.13 (9.13 trim)
+  - Parents: `WMLSSL-067`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-TRIM-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-TRIM-SIGNATURE** — Implement String.trim(string) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §9.13 (9.13 trim)
+  - Parents: `WMLSSL-067`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-TRIM-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-SUPPORTED-VALUE-TYPES** — Accept Boolean, Integer, Float, String, and Invalid values wherever a standard-library signature names those WMLScript types.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-SUPPORTED-VALUE-TYPES` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-UNCONVERTIBLE-ARGUMENT-RESULT** — Return invalid without side effects when an argument cannot be converted to its required parameter type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-UNCONVERTIBLE-ARGUMENT-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-ESCAPE-STRING-BEHAVIOR** — Percent-encode control, space, reserved, unwise, delimiter, and non-US-ASCII native-byte characters using two hexadecimal digits without parsing as a URL.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.12 (10.12   escapeString)
+  - Parents: `WMLSSL-082`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-ESCAPE-STRING-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-ESCAPE-STRING-NATIVE-CODES** — Use native character-set codes when escaping non-US-ASCII characters.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.12 (10.12   escapeString)
+  - Parents: `WMLSSL-082`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-ESCAPE-STRING-NATIVE-CODES` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-ESCAPE-STRING-RANGE-ERROR** — Return invalid when a character code exceeds hexadecimal FF.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.12 (10.12   escapeString)
+  - Parents: `WMLSSL-082`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-ESCAPE-STRING-RANGE-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-ESCAPE-STRING-SIGNATURE** — Implement URL.escapeString(string) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.12 (10.12   escapeString)
+  - Parents: `WMLSSL-082`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-ESCAPE-STRING-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS** — Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-021`, `WMLSSL-028`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-BASE-BEHAVIOR** — Return the absolute URL of the current compilation unit with its fragment removed.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.9 (10.9 getBase)
+  - Parents: `WMLSSL-079`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-BASE-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-BASE-SIGNATURE** — Implement zero-argument URL.getBase(), returning a String.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.9 (10.9 getBase)
+  - Parents: `WMLSSL-079`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-BASE-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-FRAGMENT-BEHAVIOR** — Return the fragment text or empty string when absent, without resolving relative references.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.8 (10.8 getFragment)
+  - Parents: `WMLSSL-078`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-FRAGMENT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-FRAGMENT-SIGNATURE** — Implement URL.getFragment(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.8 (10.8 getFragment)
+  - Parents: `WMLSSL-078`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-FRAGMENT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-FRAGMENT-SYNTAX-ERROR** — Return invalid when fragment extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.8 (10.8 getFragment)
+  - Parents: `WMLSSL-078`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-FRAGMENT-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-HOST-BEHAVIOR** — Return the host without resolving a relative reference, or empty string when no host is present.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.3 (10.3 getHost)
+  - Parents: `WMLSSL-073`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-HOST-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-HOST-SIGNATURE** — Implement URL.getHost(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.3 (10.3 getHost)
+  - Parents: `WMLSSL-073`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-HOST-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-HOST-SYNTAX-ERROR** — Return invalid when host extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.3 (10.3 getHost)
+  - Parents: `WMLSSL-073`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-HOST-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PARAMETERS-BEHAVIOR** — Return only the parameters attached to the final path segment, or empty string when none are present, without resolving relatives.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.6 (10.6 getParameters)
+  - Parents: `WMLSSL-076`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PARAMETERS-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PARAMETERS-SIGNATURE** — Implement URL.getParameters(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.6 (10.6 getParameters)
+  - Parents: `WMLSSL-076`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PARAMETERS-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PARAMETERS-SYNTAX-ERROR** — Return invalid when parameter extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.6 (10.6 getParameters)
+  - Parents: `WMLSSL-076`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PARAMETERS-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PATH-BEHAVIOR** — Return the absolute or unresolved-relative path while omitting parameters attached to its path segments.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.5 (10.5 getPath)
+  - Parents: `WMLSSL-075`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PATH-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PATH-SIGNATURE** — Implement URL.getPath(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.5 (10.5 getPath)
+  - Parents: `WMLSSL-075`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PATH-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PATH-SYNTAX-ERROR** — Return invalid when path extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.5 (10.5 getPath)
+  - Parents: `WMLSSL-075`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PATH-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PORT-BEHAVIOR** — Return the explicit port text without applying a scheme default, or empty string when no port is present.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.4 (10.4 getPort)
+  - Parents: `WMLSSL-074`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PORT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PORT-SIGNATURE** — Implement URL.getPort(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.4 (10.4 getPort)
+  - Parents: `WMLSSL-074`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PORT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-PORT-SYNTAX-ERROR** — Return invalid when port extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.4 (10.4 getPort)
+  - Parents: `WMLSSL-074`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-PORT-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-QUERY-BEHAVIOR** — Return the query text or empty string when absent, without resolving relative references.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.7 (10.7 getQuery)
+  - Parents: `WMLSSL-077`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-QUERY-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-QUERY-SIGNATURE** — Implement URL.getQuery(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.7 (10.7 getQuery)
+  - Parents: `WMLSSL-077`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-QUERY-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-QUERY-SYNTAX-ERROR** — Return invalid when query extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.7 (10.7 getQuery)
+  - Parents: `WMLSSL-077`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-QUERY-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-REFERER-BEHAVIOR** — Return the shortest URL relative to the compilation-unit base for the resource that invoked the unit, or empty string when absent.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.10 (10.10   getReferer)
+  - Parents: `WMLSSL-080`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-REFERER-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-REFERER-LOCAL-CALL** — Do not change the referer when execution crosses a local function call.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.10 (10.10   getReferer)
+  - Parents: `WMLSSL-080`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-REFERER-LOCAL-CALL` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-REFERER-SIGNATURE** — Implement zero-argument URL.getReferer(), returning a String.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.10 (10.10   getReferer)
+  - Parents: `WMLSSL-080`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-REFERER-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-SCHEME-BEHAVIOR** — Return the scheme from an absolute reference or empty string from a relative reference without resolving it.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.2 (10.2 getScheme)
+  - Parents: `WMLSSL-072`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-SCHEME-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-SCHEME-SIGNATURE** — Implement URL.getScheme(url) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.2 (10.2 getScheme)
+  - Parents: `WMLSSL-072`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-SCHEME-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-GET-SCHEME-SYNTAX-ERROR** — Return invalid when scheme extraction encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.2 (10.2 getScheme)
+  - Parents: `WMLSSL-072`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-GET-SCHEME-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-IS-VALID-BEHAVIOR** — Validate absolute or relative RFC 2396 syntax without resolving a relative reference, returning true only for valid syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.1 (10.1 isValid)
+  - Parents: `WMLSSL-071`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-IS-VALID-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-IS-VALID-SIGNATURE** — Implement URL.isValid(url) for a String argument, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.1 (10.1 isValid)
+  - Parents: `WMLSSL-071`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-IS-VALID-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER** — Map the url standard library to encoded library identifier 3.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-021`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-016`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-SURFACE** — Expose the complete url standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10 (10.   URL)
+  - Parents: `WMLSSL-021`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-ACCEPT-HEADER** — Send an Accept header containing only the supplied content type and expect text content regardless of other user-agent capabilities.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-ACCEPT-HEADER` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-BEHAVIOR** — Load the absolute URL with user-agent defaults and return decoded text only when the response content type matches the requested content type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-CONTENT-TYPE-GRAMMAR** — Require exactly one complete content type beginning with text/ and reject leading, trailing, or additional content-type text.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-CONTENT-TYPE-GRAMMAR` (`parser`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-LOAD-ERROR** — Return a scheme-specific integer error code for load failure or response-type mismatch, using HTTP status codes for HTTP or WSP.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-LOAD-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-SIGNATURE** — Implement URL.loadString(url, contentType) for two String arguments, returning String, Integer, or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LOAD-STRING-TYPE-ERROR** — Return invalid for an erroneous requested content type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.14 (10.14   loadString)
+  - Parents: `WMLSSL-084`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LOAD-STRING-TYPE-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-RESOLVE-BEHAVIOR** — Resolve a relative embedded URL against the base using RFC 2396, treating an empty base path as one slash and returning an absolute embedded URL unchanged.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.11 (10.11   resolve)
+  - Parents: `WMLSSL-081`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-RESOLVE-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-RESOLVE-RFC-ALGORITHM** — Apply the RFC 2396 section 5.2 component-inheritance, path merge, dot-segment, query, and fragment resolution algorithm.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `rfc-2396` §5.2 (5.2. Resolving Relative References to Absolute Form)
+  - Parents: `WMLSSL-081`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-RESOLVE-RFC-ALGORITHM` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-RESOLVE-SIGNATURE** — Implement URL.resolve(baseUrl, embeddedUrl) for two String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.11 (10.11   resolve)
+  - Parents: `WMLSSL-081`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-RESOLVE-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-RESOLVE-SYNTAX-ERROR** — Return invalid when resolution encounters invalid URL syntax.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.11 (10.11   resolve)
+  - Parents: `WMLSSL-081`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-RESOLVE-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-UNESCAPE-STRING-ASCII-ERROR** — Return invalid when the input contains a non-US-ASCII character.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.13 (10.13   unescapeString)
+  - Parents: `WMLSSL-083`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-UNESCAPE-STRING-ASCII-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-UNESCAPE-STRING-BEHAVIOR** — Replace percent escape sequences with represented characters without parsing the value as a URL.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.13 (10.13   unescapeString)
+  - Parents: `WMLSSL-083`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-UNESCAPE-STRING-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-UNESCAPE-STRING-SIGNATURE** — Implement URL.unescapeString(string) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §10.13 (10.13   unescapeString)
+  - Parents: `WMLSSL-083`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-UNESCAPE-STRING-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-BEHAVIOR** — Return the shortest current-card URL relative to the compilation-unit base, using absolute form when the deck base differs.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-MISSING-CARD** — Return invalid when there is no current WML card.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-MISSING-CARD` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-SIGNATURE** — Implement zero-argument WMLBrowser.getCurrentCard(), returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS** — Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-022`, `WMLSSL-029`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-BEHAVIOR** — Return the named current-context variable value, or empty string when the variable does not exist.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-NAME-ERROR** — Validate the WML variable-name grammar and return invalid for an illegal name.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-NAME-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-SIGNATURE** — Implement WMLBrowser.getVar(name) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-BEHAVIOR** — Queue WML GO-equivalent navigation until script control returns, using the current card as referrer and as base for a relative URL.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-EMPTY-CANCELS** — Treat a final go with empty URL as canceling every pending go or prev request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-EMPTY-CANCELS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-FATAL-CANCELS** — Cancel pending go navigation when Lang.abort or another fatal WMLScript error terminates the invocation.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-FATAL-CANCELS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-LAST-REQUEST-WINS** — Let the final go or prev call replace every earlier pending navigation request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-LAST-REQUEST-WINS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-SIGNATURE** — Implement WMLBrowser.go(url) for a String argument, returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER** — Map the wmlbrowser standard library to encoded library identifier 4.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-022`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-SURFACE** — Expose the complete wmlbrowser standard-library namespace and its selected functions through the WMLScript library-call boundary.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11 (11.   WMLBROWSER)
+  - Parents: `WMLSSL-022`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-SURFACE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-BEHAVIOR** — Clear all WML context variables and history entries except the current card before returning to the caller.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-NAVIGATION-INTERACTION** — Preserve a pending go request while ensuring any previous or subsequent prev request has no effect.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-NAVIGATION-INTERACTION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-SIGNATURE** — Implement zero-argument WMLBrowser.newContext(), returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-BEHAVIOR** — Queue WML PREV-equivalent navigation until script control returns to the WML browser.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-FATAL-CANCELS** — Cancel pending prev navigation when Lang.abort or another fatal WMLScript error terminates the invocation.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-FATAL-CANCELS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-LAST-REQUEST-WINS** — Let the final prev or go call replace every earlier pending navigation request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-LAST-REQUEST-WINS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-SIGNATURE** — Implement zero-argument WMLBrowser.prev(), returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-REFRESH-BEHAVIOR** — For supported immediate refresh, synchronously apply WML refresh steps to the current card without restarting a suspended timer.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.7 (11.7 refresh)
+  - Parents: `WMLSSL-091`
+  - Requirements: `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-REFRESH-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-REFRESH-DEFERRED-FALLBACK** — When immediate refresh is unsupported, still refresh the card after control returns to the WML user agent.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.7 (11.7 refresh)
+  - Parents: `WMLSSL-091`
+  - Requirements: `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-REFRESH-DEFERRED-FALLBACK` (`rendering`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-REFRESH-INITIAL-RENDER** — Render the current card when it had not been rendered before refresh was invoked.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.7 (11.7 refresh)
+  - Parents: `WMLSSL-091`
+  - Requirements: `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-REFRESH-INITIAL-RENDER` (`rendering`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-REFRESH-RESULT** — Return empty string on success, a non-empty implementation-dependent diagnostic on failure, or invalid when immediate refresh is unsupported.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.7 (11.7 refresh)
+  - Parents: `WMLSSL-091`
+  - Requirements: `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-REFRESH-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-REFRESH-SIGNATURE** — Implement zero-argument WMLBrowser.refresh(), returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.7 (11.7 refresh)
+  - Parents: `WMLSSL-091`
+  - Requirements: `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-REFRESH-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-BEHAVIOR** — Set the current-context variable and return true on success or false when the legal assignment cannot be completed.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-SIGNATURE** — Implement WMLBrowser.setVar(name, value) for two String arguments, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-SYNTAX-ERROR** — Require a legal WML variable name and XML CDATA value, returning invalid when either syntax is illegal.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-UNAVAILABLE** — When no WML browser is available or it did not invoke the interpreter, return invalid from every WMLBrowser function without WML-context side effects.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11 (11.   WMLBROWSER)
+  - Parents: `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`
+  - Requirements: `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-UNAVAILABLE` (`error-policy`, `planned`)
+
+### WMLS-505
+
+- **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
+  - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ERROR-ABORT-LAST-RESORT** — Use invocation abort only when the error cannot be represented by a specified non-fatal result.
+  - Family: `wmlscript`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-193_101-WMLScript` §12.2 (12.2 Error Handling)
+  - Parents: `WMLS-C-109`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ERROR-ABORT-LAST-RESORT` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-ERROR-CLASSIFICATION** — Classify each specified runtime error as fatal or non-fatal and apply its defined caller-visible outcome.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.2 (12.2 Error Handling)
+  - Parents: `WMLS-C-109`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ERROR-CLASSIFICATION` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-ERROR-DETECTION-TOOLS** — Expose value/type validation through standard library predicates plus typeof and isvalid so scripts can avoid predictable errors.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.1 (12.1 Error Detection)
+  - Parents: `WMLS-C-109`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-ERROR-DETECTION-TOOLS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL** — Abort the current WMLScript program on a fatal error and signal failure to the calling user agent.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-110`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-ABORT-AND-SIGNAL` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-BYTECODE-ERROR-MATRIX` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX** — Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-110`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-RESOURCE-ERROR-MATRIX` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE** — Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FAILURE-QUARANTINE` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX** — Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-098`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONSTANT-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONTINUE-WITH-RESULT** — Represent each non-fatal error by its specified invalid or zero result and allow the program to continue.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-111`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONTINUE-WITH-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONVERSION-MATRIX** — Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-073`, `WMLS-C-077`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
+  - Parents: `WMLS-C-103`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-ANY-PARAMETER-UNION** — Interpret an Any parameter as accepting every supported WMLScript value type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-ANY-PARAMETER-UNION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-AUTOMATIC-ARGUMENT-CONVERSION** — Apply WMLScript automatic data conversions when an argument does not already have the required parameter type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.2 (6.2   Data Type Conversions)
+  - Parents: `WMLSSL-015`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-AUTOMATIC-ARGUMENT-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-ALERT-BEHAVIOR** — Display the message, block until user confirmation, and then return an empty string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.3 (12.3 alert)
+  - Parents: `WMLSSL-094`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-ALERT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-ALERT-SIGNATURE** — Implement Dialogs.alert(message) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.3 (12.3 alert)
+  - Parents: `WMLSSL-094`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-ALERT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-BEHAVIOR** — Display two alternatives, wait for selection, and return true for ok or false for cancel.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-DEFAULT-LABELS** — Use implementation-dependent default label text when either supplied alternative label is empty.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-DEFAULT-LABELS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-CONFIRM-SIGNATURE** — Implement Dialogs.confirm(message, ok, cancel) for three String arguments, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.2 (12.2 confirm)
+  - Parents: `WMLSSL-093`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-CONFIRM-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-PROMPT-BEHAVIOR** — Display the message with the supplied initial input, wait for user input, and return the entered string.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.1 (12.1 prompt)
+  - Parents: `WMLSSL-092`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-PROMPT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-PROMPT-SIGNATURE** — Implement Dialogs.prompt(message, defaultInput) for two String arguments, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §12.1 (12.1 prompt)
+  - Parents: `WMLSSL-092`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-PROMPT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-FUNCTION-SPECIFIC-ERROR-RESULT** — Represent each function-specific exception using the return value or error code declared by that function definition.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FUNCTION-SPECIFIC-ERROR-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-INVALID-ARGUMENT-RESULT** — Return invalid without other side effects when a function receives an invalid argument, except where its definition explicitly specifies another outcome.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-INVALID-ARGUMENT-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-NUMBER-PARAMETER-UNION** — Interpret a Number parameter as accepting either an Integer or Float value.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-NUMBER-PARAMETER-UNION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-OPERATOR-CONVERSION-DEFAULT** — Use WMLScript operator conversion rules unless an individual library function explicitly defines another conversion.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.2 (6.2   Data Type Conversions)
+  - Parents: `WMLSSL-015`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-OPERATOR-CONVERSION-DEFAULT` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-SUPPORTED-VALUE-TYPES** — Accept Boolean, Integer, Float, String, and Invalid values wherever a standard-library signature names those WMLScript types.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)
+  - Parents: `WMLSSL-014`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-SUPPORTED-VALUE-TYPES` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-UNCONVERTIBLE-ARGUMENT-RESULT** — Return invalid without side effects when an argument cannot be converted to its required parameter type.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §6.3 (6.3   Error Handling)
+  - Parents: `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL048`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-UNCONVERTIBLE-ARGUMENT-RESULT` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-BEHAVIOR** — Return the shortest current-card URL relative to the compilation-unit base, using absolute form when the deck base differs.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-MISSING-CARD** — Return invalid when there is no current WML card.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-MISSING-CARD` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-CURRENT-CARD-SIGNATURE** — Implement zero-argument WMLBrowser.getCurrentCard(), returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.6 (11.6 getCurrentCard)
+  - Parents: `WMLSSL-090`
+  - Requirements: `RQ-WMLS-020`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-CURRENT-CARD-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-BEHAVIOR** — Return the named current-context variable value, or empty string when the variable does not exist.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-NAME-ERROR** — Validate the WML variable-name grammar and return invalid for an illegal name.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-NAME-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-SIGNATURE** — Implement WMLBrowser.getVar(name) for a String argument, returning String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
+  - Parents: `WMLSSL-085`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GET-VAR-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-BEHAVIOR** — Queue WML GO-equivalent navigation until script control returns, using the current card as referrer and as base for a relative URL.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-EMPTY-CANCELS** — Treat a final go with empty URL as canceling every pending go or prev request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-EMPTY-CANCELS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-FATAL-CANCELS** — Cancel pending go navigation when Lang.abort or another fatal WMLScript error terminates the invocation.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-FATAL-CANCELS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-LAST-REQUEST-WINS** — Let the final go or prev call replace every earlier pending navigation request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-LAST-REQUEST-WINS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GO-SIGNATURE** — Implement WMLBrowser.go(url) for a String argument, returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.3 (11.3 go)
+  - Parents: `WMLSSL-087`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-GO-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-BEHAVIOR** — Clear all WML context variables and history entries except the current card before returning to the caller.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-NAVIGATION-INTERACTION** — Preserve a pending go request while ensuring any previous or subsequent prev request has no effect.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-NAVIGATION-INTERACTION` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-NEW-CONTEXT-SIGNATURE** — Implement zero-argument WMLBrowser.newContext(), returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.5 (11.5 newContext)
+  - Parents: `WMLSSL-089`
+  - Requirements: `RQ-WMLS-019`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-NEW-CONTEXT-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-BEHAVIOR** — Queue WML PREV-equivalent navigation until script control returns to the WML browser.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-FATAL-CANCELS** — Cancel pending prev navigation when Lang.abort or another fatal WMLScript error terminates the invocation.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-FATAL-CANCELS` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-LAST-REQUEST-WINS** — Let the final prev or go call replace every earlier pending navigation request.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-LAST-REQUEST-WINS` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-PREV-SIGNATURE** — Implement zero-argument WMLBrowser.prev(), returning empty String or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.4 (11.4 prev)
+  - Parents: `WMLSSL-088`
+  - Requirements: `RQ-WMLS-018`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-PREV-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-BEHAVIOR** — Set the current-context variable and return true on success or false when the legal assignment cannot be completed.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-BEHAVIOR` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-SIGNATURE** — Implement WMLBrowser.setVar(name, value) for two String arguments, returning Boolean or invalid.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-SIGNATURE` (`runtime`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-SET-VAR-SYNTAX-ERROR** — Require a legal WML variable name and XML CDATA value, returning invalid when either syntax is illegal.
+  - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11.2 (11.2 setVar)
+  - Parents: `WMLSSL-086`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-SET-VAR-SYNTAX-ERROR` (`error-policy`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-UNAVAILABLE** — When no WML browser is available or it did not invoke the interpreter, return invalid from every WMLBrowser function without WML-context side effects.
+  - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §11 (11.   WMLBROWSER)
+  - Parents: `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`
+  - Requirements: `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-UNAVAILABLE` (`error-policy`, `planned`)
+
+## Explicit mapping gaps
+
+- `WMLS-506` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
+
+Declared-family gaps:
+
+- `WMLS-503` declares `wmlscript-libraries` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `WMLS-506` declares `wbxml`, `wmlscript` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+
+## Effective source order
+
+- `wae`: `WAP-190-WAESpec` -> `WAP-190_101-WAESpec` -> `WAP-190_102-WAESpec` -> `WAP-190_103-WAESpec` -> `WAP-190_104-WAE-Spec`
+- `wbxml`: `WAP-192-WBXML` -> `WAP-192_105-WBXML`
+- `wmlscript`: `WAP-193-WMLScript` -> `WAP-193_101-WMLScript`
+- `wmlscript-libraries`: `WAP-194-WMLScriptLibraries` -> `WAP-194_103-WMLScriptLibraries`
+
+## Source documents
+
+- `rfc-2396`: rfc-2396
+- `WAP-190_101-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf
+- `WAP-190_102-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf
+- `WAP-190_103-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf
+- `WAP-190_104-WAE-Spec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_104-WAE-Spec-20010731-a.pdf
+- `WAP-190-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190-WAESpec-20000329-a.pdf
+- `WAP-192_105-WBXML`: Binary XML Content Format — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192_105-WBXML-20011015-a.pdf
+- `WAP-192-WBXML`: Binary XML Content Format — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-192-WBXML-20010725-a.pdf
+- `WAP-193_101-WMLScript`: WMLScript Language — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-193_101-WMLScript-20010928-a.pdf
+- `WAP-193-WMLScript`: WMLScript Language — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-193-WMLScript-20001025-a.pdf
+- `WAP-194_103-WMLScriptLibraries`: WMLScript Standard Libraries — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-194_103-WMLScriptLibraries-20020318-a.pdf
+- `WAP-194-WMLScriptLibraries`: WMLScript Standard Libraries — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-194-WMLScriptLibraries-20000925-a.pdf
+- `WAP-215-ClassConform-20001213-a`: Class Conformance Requirements — https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf

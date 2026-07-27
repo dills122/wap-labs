@@ -47,6 +47,7 @@ const artifacts = buildGeneratedArtifacts(root, 'WML-2');
 const trnArtifacts = buildGeneratedArtifacts(root, 'TRN-7');
 const wml3Artifacts = buildGeneratedArtifacts(root, 'WML-3');
 const wspArtifacts = buildGeneratedArtifacts(root, 'WSP-8');
+const wmlsArtifacts = buildGeneratedArtifacts(root, 'WMLS-5');
 const { graph } = artifacts;
 const failures = [];
 const nodeIds = new Set(graph.nodes.map((node) => node.id));
@@ -262,6 +263,7 @@ failures.push(...checkGeneratedArtifacts(root, artifacts));
 failures.push(...checkGeneratedArtifacts(root, trnArtifacts));
 failures.push(...checkGeneratedArtifacts(root, wml3Artifacts));
 failures.push(...checkGeneratedArtifacts(root, wspArtifacts));
+failures.push(...checkGeneratedArtifacts(root, wmlsArtifacts));
 
 const wml3Graph = wml3Artifacts.graph;
 const wml301Pack = renderContextPack(wml3Graph, 'WML-301');
@@ -543,6 +545,31 @@ if (
 ) {
   failures.push(
     'WSP-802 context rendering must expose its 25 mapped WSP clauses, six direct parents, effective WSP source order, and no declared-family gap'
+  );
+}
+
+const wmlsGraph = wmlsArtifacts.graph;
+const wmls501Pack = renderContextPack(wmlsGraph, 'WMLS-501');
+if (
+  wmlsGraph.target.sprint !== 'WMLS-5' ||
+  wmlsGraph.target.profile !== 'CCR-CLASSC-C-001' ||
+  !wmls501Pack.startsWith('# WMLS-501 AI Context Pack') ||
+  !wmls501Pack.includes('### WMLS-501:') ||
+  wmls501Pack.includes('### WMLS-502:') ||
+  !wmls501Pack.includes('- Selected work items: 1') ||
+  !wmls501Pack.includes('- Direct SCR rows: 28') ||
+  !wmls501Pack.includes('21 `direct-test-linked`') ||
+  !wmls501Pack.includes('5 `provisional-non-normative-test-linked`') ||
+  !wmls501Pack.includes('2 `gap-work-item-mapped`') ||
+  !wmls501Pack.includes('- Selected SCR parents: 31') ||
+  !wmls501Pack.includes('- Direct normative clauses: 69') ||
+  !wmls501Pack.includes('**WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT**') ||
+  !wmls501Pack.includes('**WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM**') ||
+  wmlsGraph.summary.workItemsWithoutDirectClauses.includes('WMLS-501') ||
+  wmlsGraph.summary.unmappedNormativeFamiliesByWorkItem['WMLS-501']
+) {
+  failures.push(
+    'WMLS-501 context rendering must expose its 28 direct SCR rows, 69 mapped bytecode/interpreter clauses, 31 selected parents, and explicit in-progress evidence without a declared-family gap'
   );
 }
 

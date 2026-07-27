@@ -44,6 +44,19 @@ export const TARGET_CONFIGS = {
     contextPackOutput: 'docs/knowledge-graph/context-packs/WSP-8.md',
     vaultOutput: 'docs/knowledge-graph/vault-WSP-8',
     title: 'WAP 1.2.1 WSP-8 Knowledge Graph Slice'
+  },
+  'WMLS-5': {
+    graphId: 'wap-1.2.1-wmls-5-slice',
+    graphOutput: 'spec-processing/source-manifests/wap-1.2.1-wmls-5-knowledge-graph.json',
+    contextPackOutput: 'docs/knowledge-graph/context-packs/WMLS-5.md',
+    vaultOutput: 'docs/knowledge-graph/vault-WMLS-5',
+    title: 'WAP 1.2.1 WMLS-5 Knowledge Graph Slice',
+    familyLedgerInputs: {
+      wmlscript: 'wmlscriptScr'
+    },
+    inputPaths: {
+      wmlscriptScr: 'spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json'
+    }
   }
 };
 
@@ -181,25 +194,6 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   }
 
   const targetWorkItemIds = new Set(targetSprint.workItems.map((workItem) => workItem.id));
-  const scrMatrices = targetSprint.workItems
-    .filter((workItem) => workItem.scrMatrix)
-    .map((workItem) => {
-      const { family, scope } = workItem.scrMatrix;
-      const inputKey = targetConfig.familyLedgerInputs?.[family];
-      const ledgerInput = inputKey ? inputs[inputKey] : undefined;
-      if (!ledgerInput || ledgerInput.data.family !== family) {
-        throw new Error(`${workItem.id}: no canonical ${family} SCR ledger input`);
-      }
-      if (scope !== 'all-effective-rows') {
-        throw new Error(`${workItem.id}: unsupported SCR matrix scope ${scope}`);
-      }
-      return {
-        workItemId: workItem.id,
-        family,
-        sourceRef: ledgerInput.relativePath,
-        rows: ledgerInput.data.obligations
-      };
-    });
   const allClauses = clauseManifest.families.flatMap((family) =>
     [...family.clauses, ...(family.capabilityClauses ?? [])].map((clause) => ({
       ...clause,
@@ -209,6 +203,35 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   const selectedClauses = allClauses.filter((clause) =>
     clause.mapping.workItems.some((workItem) => targetWorkItemIds.has(workItem))
   );
+  const scrMatrices = targetSprint.workItems
+    .filter((workItem) => workItem.scrMatrix)
+    .map((workItem) => {
+      const { family, scope } = workItem.scrMatrix;
+      const inputKey = targetConfig.familyLedgerInputs?.[family];
+      const ledgerInput = inputKey ? inputs[inputKey] : undefined;
+      if (!ledgerInput || ledgerInput.data.family !== family) {
+        throw new Error(`${workItem.id}: no canonical ${family} SCR ledger input`);
+      }
+      let rows;
+      if (scope === 'all-effective-rows') {
+        rows = ledgerInput.data.obligations;
+      } else if (scope === 'selected-clause-parents') {
+        const selectedParentIds = new Set(
+          allClauses
+            .filter((clause) => clause.mapping.workItems.includes(workItem.id))
+            .flatMap((clause) => clause.parentRows)
+        );
+        rows = ledgerInput.data.obligations.filter((row) => selectedParentIds.has(row.id));
+      } else {
+        throw new Error(`${workItem.id}: unsupported SCR matrix scope ${scope}`);
+      }
+      return {
+        workItemId: workItem.id,
+        family,
+        sourceRef: ledgerInput.relativePath,
+        rows
+      };
+    });
   const selectedParentIds = new Set(selectedClauses.flatMap((clause) => clause.parentRows));
   const selectedParents = clauseManifest.families.flatMap((family) =>
     [...family.parents, ...(family.capabilityParents ?? [])]

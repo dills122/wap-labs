@@ -24893,7 +24893,7 @@
       "family": "wmlscript",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json",
-      "parentLedgerSha256": "4a608689f598683b6d3e24d9bf87cbc157c6d074e524f9c5c9543bdc8453e76b",
+      "parentLedgerSha256": "43a900970f32178860d30ab76e211cbe4a2e1d8cb75cf80494196324703a69a8",
       "effectiveSequence": [
         "WAP-193-WMLScript",
         "WAP-193_101-WMLScript"
@@ -25338,7 +25338,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.4"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25384,7 +25384,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.4"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25408,7 +25408,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.4"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25435,7 +25435,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.4"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25460,7 +25460,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.4"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25606,7 +25606,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25629,7 +25629,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25652,7 +25652,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -25744,7 +25744,7 @@
             "documentId": "WAP-193_101-WMLScript",
             "staticConformanceSection": "15.2.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -27509,7 +27509,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-089": "missing"
+              "WMLS-C-089": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27548,7 +27548,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-089": "missing"
+              "WMLS-C-089": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27587,7 +27587,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-089": "missing"
+              "WMLS-C-089": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27752,10 +27752,10 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-069": "partial",
-              "WMLS-C-091": "missing",
-              "WMLS-C-092": "missing",
-              "WMLS-C-093": "missing",
-              "WMLS-C-094": "missing"
+              "WMLS-C-091": "partial",
+              "WMLS-C-092": "partial",
+              "WMLS-C-093": "partial",
+              "WMLS-C-094": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27794,7 +27794,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-091": "missing"
+              "WMLS-C-091": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27833,7 +27833,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-091": "missing"
+              "WMLS-C-091": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27872,7 +27872,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27913,7 +27913,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-090": "partial",
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27952,7 +27952,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -27991,7 +27991,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28032,7 +28032,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-090": "partial",
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28071,7 +28071,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-092": "missing"
+              "WMLS-C-092": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28110,7 +28110,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-093": "missing"
+              "WMLS-C-093": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28149,7 +28149,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-093": "missing"
+              "WMLS-C-093": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28195,7 +28195,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-087": "missing",
-              "WMLS-C-093": "missing"
+              "WMLS-C-093": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28234,7 +28234,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-093": "missing"
+              "WMLS-C-093": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28273,7 +28273,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-094": "missing"
+              "WMLS-C-094": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28312,7 +28312,7 @@
               "RQ-WMLS-008"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-094": "missing"
+              "WMLS-C-094": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28361,7 +28361,7 @@
             "parentImplementationSnapshot": {
               "WMLS-C-079": "missing",
               "WMLS-C-087": "missing",
-              "WMLS-C-094": "missing"
+              "WMLS-C-094": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28402,7 +28402,7 @@
               "RQ-WMLS-009"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-094": "missing",
+              "WMLS-C-094": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -28874,7 +28874,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-069": "partial",
-              "WMLS-C-100": "missing"
+              "WMLS-C-100": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28919,7 +28919,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial",
-              "WMLS-C-100": "missing"
+              "WMLS-C-100": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -28961,7 +28961,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-069": "partial",
-              "WMLS-C-101": "missing"
+              "WMLS-C-101": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -29006,7 +29006,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial",
-              "WMLS-C-101": "missing"
+              "WMLS-C-101": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -29048,7 +29048,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-069": "partial",
-              "WMLS-C-102": "missing"
+              "WMLS-C-102": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -29093,7 +29093,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial",
-              "WMLS-C-102": "missing"
+              "WMLS-C-102": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -29390,7 +29390,7 @@
             ],
             "parentImplementationSnapshot": {
               "WMLS-C-069": "partial",
-              "WMLS-C-106": "missing"
+              "WMLS-C-106": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -29470,7 +29470,7 @@
               "RQ-WMLS-009"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-091": "missing",
+              "WMLS-C-091": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -29512,7 +29512,7 @@
               "RQ-WMLS-009"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-091": "missing",
+              "WMLS-C-091": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -29556,9 +29556,9 @@
               "RQ-WMLS-009"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-092": "missing",
-              "WMLS-C-093": "missing",
-              "WMLS-C-094": "missing",
+              "WMLS-C-092": "partial",
+              "WMLS-C-093": "partial",
+              "WMLS-C-094": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -29600,7 +29600,7 @@
               "RQ-WMLS-009"
             ],
             "parentImplementationSnapshot": {
-              "WMLS-C-094": "missing",
+              "WMLS-C-094": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -29658,13 +29658,13 @@
               "WMLS-C-097": "partial",
               "WMLS-C-098": "partial",
               "WMLS-C-099": "partial",
-              "WMLS-C-100": "missing",
-              "WMLS-C-101": "missing",
-              "WMLS-C-102": "missing",
+              "WMLS-C-100": "partial",
+              "WMLS-C-101": "partial",
+              "WMLS-C-102": "partial",
               "WMLS-C-103": "partial",
               "WMLS-C-104": "partial",
               "WMLS-C-105": "partial",
-              "WMLS-C-106": "missing",
+              "WMLS-C-106": "partial",
               "WMLS-C-107": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -29932,9 +29932,9 @@
               "WMLS-C-096": "partial",
               "WMLS-C-097": "partial",
               "WMLS-C-099": "partial",
-              "WMLS-C-100": "missing",
-              "WMLS-C-101": "missing",
-              "WMLS-C-102": "missing",
+              "WMLS-C-100": "partial",
+              "WMLS-C-101": "partial",
+              "WMLS-C-102": "partial",
               "WMLS-C-103": "partial",
               "WMLS-C-104": "partial",
               "WMLS-C-105": "partial",

@@ -1770,15 +1770,15 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W1-02 Bytecode structural verification (header/pools/indexes/jumps)
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `W0-06`
 3. `Files`:
-- `engine-wasm/engine/src/wavescript/decoder.rs`
-- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/wap_decoder.rs`
+- `engine-wasm/engine/tests/fixtures/wmlscript/`
 - `engine-wasm/engine/src/lib.rs`
 4. `Build`:
-- Replace or front the project-specific byte stream with the effective
-  WAP-193 compilation-unit format.
+- Add a strict decoder for the effective WAP-193 compilation-unit format
+  alongside the unchanged project-specific execution stream.
 - Implement pre-execution verification gates for WAP header, constant pool,
   pragma pool, function pool, instruction stream, and references.
 - Keep trap taxonomy deterministic and host-safe.
@@ -1790,6 +1790,12 @@ Completed `W0-01` through `W0-04` are archived in:
 - Invalid bytecode fails before execution, with deterministic trap class.
 7. `Spec`:
 - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+8. `Notes`:
+- The bounded WMLS-501 tranche directly covers WAP-193 compilation-unit framing, pools,
+  instruction decoding, and local/constant/function/jump structural references with native/WASM
+  fixture parity.
+- Additive follow-ups retain compiled-unit execution routing, opcode semantics,
+  standard-library indexes, stack dataflow, and full chapter 12 closure.
 
 ### W1-03 Extern/pragma/access-control conformance
 
@@ -1859,11 +1865,11 @@ Completed `W0-01` through `W0-04` are archived in:
 - `RQ-WMLS-001..022` (mandatory subsets first)
 8. `Notes`:
 - Current audit is intentionally conservative:
-  - WMLScript: 23 partial / 18 missing / 0 implemented;
+  - WMLScript: 32 partial / 9 missing / 0 implemented;
   - Libraries: 14 partial / 66 missing / 0 implemented;
-  - direct normative tests: 0.
-- Existing custom-VM tests are provisional links only. They cannot close
-  WAP-193 binary-format or standard-library identifier rows.
+  - WMLScript direct structural tests: 21.
+- Strict decoder tests directly evidence the structural tranche; custom-VM tests remain
+  provisional for execution semantics and cannot close standard-library identifier rows.
 
 ### W1-06 Fatal/non-fatal script error taxonomy closure
 

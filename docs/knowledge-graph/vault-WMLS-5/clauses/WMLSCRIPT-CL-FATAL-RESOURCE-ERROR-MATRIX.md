@@ -1,0 +1,56 @@
+---
+id: "clause:WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX"
+key: "WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX"
+type: "clause"
+generated: true
+slice: "WMLS-5"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/clause"
+---
+
+# Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `maps-to` → [[requirements/RQ-WMLS-010|RQ-WMLS-010]]
+- `planned-by` → [[work-items/WMLS-505|WMLS-505]]
+- `refines` → [[scr-rows/WMLS-C-110|WMLS-C-110]]
+- `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
+- `verified-by` → [[fixtures/WMLSCRIPT-FX-FATAL-RESOURCE-ERROR-MATRIX|WMLSCRIPT-FX-FATAL-RESOURCE-ERROR-MATRIX]]
+
+## Data
+
+```json
+{
+  "family": "wmlscript",
+  "parentRows": [
+    "WMLS-C-110"
+  ],
+  "sourceAnchor": {
+    "documentId": "WAP-193_101-WMLScript",
+    "section": "12.3",
+    "heading": "12.3 Fatal Errors",
+    "normalizedTextSha256": "efe1ca5f21c501f5bf6da981ce26419b385b6ecf3f9b78318618e322b0b131cf"
+  },
+  "normativeForce": "table",
+  "obligationLevel": "required",
+  "obligationSynopsis": "Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.",
+  "workItems": [
+    "W1-06",
+    "W1-07",
+    "WMLS-505"
+  ],
+  "ownerLayers": [
+    "engine-wasm"
+  ],
+  "requirementIds": [
+    "RQ-WMLS-010"
+  ],
+  "implementationStatus": "not-assessed",
+  "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

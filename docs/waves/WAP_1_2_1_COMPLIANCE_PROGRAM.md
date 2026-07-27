@@ -82,8 +82,8 @@ All nine selected Class C family increments are complete at SCR level:
   outside the selected client profile.
 - 112 effective WMLScript rows are extracted from the consolidated
   WAP-193_101 table; `WMLScript:MCF` selects 41 mandatory interpreter rows;
-- the selected WMLScript audit is 0 implemented, 23 partial, and 18 missing,
-  with zero direct normative WAP bytecode tests;
+- the selected WMLScript audit is 0 implemented, 32 partial, and 9 missing,
+  with direct structural WAP bytecode evidence linked to 21 rows;
 - all 41 selected WMLScript language rows expand into 107 anchored clauses,
   with 105 required and two recommended behaviors;
 - 95 effective WMLScript Libraries rows are extracted after adding optional

@@ -27,8 +27,12 @@ const ledgers = [
       selected: 41,
       selectedOptional: 3,
       notApplicable: 68,
-      partial: 23,
-      missing: 18
+      partial: 32,
+      missing: 9
+    },
+    expectedEvidenceCounts: {
+      direct: 21,
+      provisional: 11
     },
     expectedActors: new Set([
       'wmlscript-encoder',
@@ -59,6 +63,10 @@ const ledgers = [
       notApplicable: 13,
       partial: 14,
       missing: 66
+    },
+    expectedEvidenceCounts: {
+      direct: 0,
+      provisional: 14
     },
     expectedActors: new Set([
       'wmlscript-library-encoder',
@@ -376,7 +384,10 @@ for (const config of ledgers) {
   }
 
   if (
-    ledger.summary?.selectedDirectNormativeTestEvidenceCount !== 0 ||
+    ledger.summary?.selectedDirectNormativeTestEvidenceCount !==
+      config.expectedEvidenceCounts.direct ||
+    ledger.summary?.selectedProvisionalTestEvidenceCount !==
+      config.expectedEvidenceCounts.provisional ||
     ledger.summary?.selectedImplementationStatus?.partial !==
       config.expectedCounts.partial ||
     ledger.summary?.selectedImplementationStatus?.missing !==

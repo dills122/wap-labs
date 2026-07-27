@@ -87,6 +87,17 @@ exposes the connectionless PDU, primitive, and method obligations and their sele
 unrelated `general-formats` family declaration because WAP-188 contains no WSP header grammar.
 The canonical WSP SCR ledger remains authoritative.
 
+The `WMLS-5` slice is the adoption checkpoint for WMLScript language, bytecode, VM, and library
+work:
+
+- `spec-processing/source-manifests/wap-1.2.1-wmls-5-knowledge-graph.json`;
+- `docs/knowledge-graph/vault-WMLS-5/`;
+- `docs/knowledge-graph/context-packs/WMLS-5.md`.
+
+Its focused `WMLS-501` target exposes the canonical bytecode/interpreter clause mappings and
+selected SCR parents while preserving the work item's in-progress state. Decoder evidence does
+not imply closure of deferred execution, standard-library-index, or stack-dataflow families.
+
 ## Commands
 
 Generate all committed projections:
@@ -115,7 +126,7 @@ node scripts/wap-context-pack.mjs WML-203
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
 through `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
-`WSP-8`, `WSP-801`, and `WSP-802`. A work-item target keeps sprint dependencies and conformance
+`WSP-8`, `WSP-801`, `WSP-802`, `WMLS-5`, and `WMLS-501`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice
 starts, so graph expansion is explicit and reviewable.
