@@ -3,6 +3,7 @@ package origin
 import (
 	"context"
 	"crypto/rand"
+	"crypto/subtle"
 	"embed"
 	"encoding/hex"
 	"errors"
@@ -318,7 +319,7 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 	a.mu.Lock()
 	account, found := a.users[username]
 	a.mu.Unlock()
-	if !found || account.PIN != pin {
+	if !found || subtle.ConstantTimeCompare([]byte(account.PIN), []byte(pin)) != 1 {
 		a.counts.loginFailure.Add(1)
 		a.sendWML(w, renderLoginDeck(username, "Invalid username or PIN."), http.StatusOK)
 		return
