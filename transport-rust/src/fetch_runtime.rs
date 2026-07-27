@@ -10,8 +10,8 @@ use crate::native_fetch::{
 use crate::request_meta::{log_transport_event, normalized_request_id};
 use crate::responses::{invalid_request_response, transport_unavailable_response};
 use crate::{
-    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchTransportProfile,
-    MAX_URI_OCTETS,
+    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy,
+    FetchTransportProfile, MAX_URI_OCTETS,
 };
 use url::Url;
 
@@ -85,7 +85,7 @@ pub(crate) fn fetch_deck_in_process_impl(
         &url,
         serde_json::json!({
             "method": method,
-            "requestPolicy": request_policy,
+            "requestPolicy": redacted_request_policy_for_log(request_policy.as_ref()),
             "destinationPolicy": destination_policy,
             "suppressedSameDeckPostContext": suppressed_same_deck_post_context,
             "uaCapabilityProfileApplied": applied_ua_capability_profile
@@ -192,6 +192,33 @@ fn extract_native_post_context(
 
 fn parsed_scheme(url: &str) -> Option<&str> {
     url.split_once(':').map(|(scheme, _)| scheme)
+}
+
+/// Builds an explicit, allowlisted view of `FetchRequestPolicy` for transport logging.
+///
+/// `post_context.payload` carries the raw POST body (e.g. WML login form fields such as a
+/// PIN), so it must never be serialized into the log verbatim -- only its presence/length is
+/// reported. Fields are named individually (rather than serializing `FetchRequestPolicy`
+/// directly and stripping a key) so a future secret-bearing field added to the struct doesn't
+/// silently leak into logs by default.
+fn redacted_request_policy_for_log(
+    request_policy: Option<&FetchRequestPolicy>,
+) -> serde_json::Value {
+    let Some(policy) = request_policy else {
+        return serde_json::Value::Null;
+    };
+    serde_json::json!({
+        "destinationPolicy": policy.destination_policy,
+        "cacheControl": policy.cache_control,
+        "hasRefererUrl": policy.referer_url.is_some(),
+        "postContext": policy.post_context.as_ref().map(|post_context| serde_json::json!({
+            "sameDeck": post_context.same_deck,
+            "contentType": post_context.content_type,
+            "hasPayload": post_context.payload.is_some(),
+            "payloadLen": post_context.payload.as_ref().map(|payload| payload.len()),
+        })),
+        "uaCapabilityProfile": policy.ua_capability_profile,
+    })
 }
 
 #[cfg(test)]
