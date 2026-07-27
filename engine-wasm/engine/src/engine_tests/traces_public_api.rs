@@ -114,7 +114,7 @@ fn trace_entries_include_script_error_taxonomy_for_ok() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit("ok.wmlsc".to_string(), vec![0x01, 4, 0x01, 8, 0x02, 0x00]);
+    register_legacy_script_fixture(&mut engine, "ok.wmlsc", vec![0x01, 4, 0x01, 8, 0x02, 0x00]);
 
     engine
         .handle_key("enter".to_string())
@@ -147,7 +147,7 @@ fn trace_entries_include_script_error_taxonomy_for_fatal() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
+    register_legacy_script_fixture(&mut engine, "fatal.wmlsc", vec![0xff]);
 
     let err = engine
         .handle_key_internal("enter")
@@ -372,7 +372,7 @@ fn m1_02_handle_key_render_and_navigate_back_public_api_flow() {
 fn m1_02_script_invocation_public_outcome_regression() {
     let mut engine = WmlEngine::new();
     engine.load_deck(SAMPLE).expect("sample deck should load");
-    engine.register_script_unit("noop.wmlsc".to_string(), vec![0x00]);
+    register_legacy_script_fixture(&mut engine, "noop.wmlsc", vec![0x00]);
 
     let invocation = engine
         .invoke_script_ref("noop.wmlsc".to_string())

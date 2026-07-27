@@ -105,6 +105,21 @@ Derived implementation standards for Waves WaveScript VM runtime:
 
 ## Architecture
 
+### WMLS-501 registered-unit routing boundary
+
+- `registerScriptUnit` stores raw bytes. When invoked without manual PC metadata, the engine
+  decodes the bytes with `decode_wap_compilation_unit`, verifies every pool/function/reference,
+  resolves the requested external name from the decoded function-name table, and only then enters
+  the bounded WAP executor.
+- The bounded executor currently implements only WAP-193 `RETURN_ES`. Structurally valid but
+  unsupported opcodes return fatal/host-binding outcomes; verification failures return
+  fatal/integrity outcomes. Both remain observable through native/WASM invocation and trace state.
+- `registerScriptEntryPoint` is the explicit compatibility opt-in for the project-specific
+  nine-opcode fixture VM. Manual PCs are not part of the WAP-193 function-name model and must not
+  be treated as normative evidence.
+- This slice does not implement WMLS-502 operators/conversions, standard-library identifiers,
+  stack dataflow, access control, URL fetch, or complete chapter 12 behavior.
+
 ### Components
 
 1. WaveScript loader  
@@ -301,10 +316,12 @@ Execution guardrails required from first runnable VM:
 4. Optional differential testing:
 - compare navigation/variable traces against reference emulators where feasible
 
-## Repository module targets (planned)
+## Repository module targets
 
 - `engine-wasm/engine/src/wavescript/decoder.rs`
 - `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/wap_decoder.rs`
+- `engine-wasm/engine/src/wavescript/wap_runtime.rs`
 - `engine-wasm/engine/src/wavescript/value.rs`
 - `engine-wasm/engine/src/wavescript/stdlib/*`
 - `engine-wasm/engine/src/runtime/events.rs`

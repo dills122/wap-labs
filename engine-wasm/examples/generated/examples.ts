@@ -2397,18 +2397,20 @@ export const EXAMPLES: HostExample[] = [
   {
     "key": "scriptLinkExecution",
     "label": "Script Link Execution",
-    "description": "Runs a registered script unit through a script href and exposes execution outcome in runtime state.",
-    "goal": "Validate runtime routes script href actions into engine VM execution path.",
+    "description": "Runs a registered, verified WAP-193 compilation unit through a script href and exposes execution outcome in runtime state.",
+    "goal": "Validate runtime routes a named WAP-193 function through verification and bounded execution.",
     "workItems": [
       "W0-01",
-      "W0-03"
+      "W0-03",
+      "WMLS-501"
     ],
     "specItems": [
       "RQ-WMLS-001",
-      "RQ-WMLS-008"
+      "RQ-WMLS-008",
+      "RQ-WMLS-009"
     ],
     "testingAc": [
-      "Load the example and press Enter on \"Run calc script\"; activeCardId should stay home.",
+      "Load the example and press Enter on \"Run WAP-193 script\"; activeCardId should stay home.",
       "Confirm runtime-state lastScriptExecutionOk becomes true.",
       "Confirm runtime-state lastScriptExecutionTrap remains (none)."
     ],
@@ -2419,11 +2421,13 @@ export const EXAMPLES: HostExample[] = [
         "target": "host-sample",
         "workItems": [
           "W0-01",
-          "W0-03"
+          "W0-03",
+          "WMLS-501"
         ],
         "specItems": [
           "RQ-WMLS-001",
-          "RQ-WMLS-008"
+          "RQ-WMLS-008",
+          "RQ-WMLS-009"
         ],
         "initial": {
           "state": {
@@ -2483,7 +2487,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:calc.wmlsc#main\">Run calc script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:wap-193-minimal-return-es.wmlsc#main\">Run WAP-193 script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerHostClockLifecycle",

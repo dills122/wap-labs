@@ -14,7 +14,10 @@ Purpose: define mandatory safety controls for executing WaveScript bytecode in `
 ## Mandatory Guardrails
 
 1. Verification before execution
-- Bytecode decode gate runs before VM execute.
+- Registered WAP-193 units are decoded and fully verified before external name lookup or bounded
+  execution. A structural failure in any function quarantines the complete unit.
+- Manual entry-point PCs explicitly select the legacy nine-opcode fixture decoder/VM; that
+  compatibility lane is not normative WAP-193 evidence.
 - Empty/oversized units fail deterministically.
 
 2. Bounded execution

@@ -33,6 +33,24 @@ const FIXTURE_TASK_ACTION_ORDER: &str =
     include_str!("../../tests/fixtures/phase-a/task-action-order.wml");
 const WML_204_CONTROL_VALIDATION_EXAMPLE: &str =
     include_str!("../../../examples/source/wml-204-control-validation.wml");
+const WMLS_501_MINIMAL_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
+const WMLS_501_NAMED_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
+const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
+
+fn wmls_501_fixture_bytes(fixture: &str) -> Vec<u8> {
+    fixture
+        .split_ascii_whitespace()
+        .map(|token| u8::from_str_radix(token, 16).expect("fixture must contain hex bytes"))
+        .collect()
+}
+
+fn register_legacy_script_fixture(engine: &mut WmlEngine, src: &str, bytes: Vec<u8>) {
+    engine.register_script_unit(src.to_string(), bytes);
+    engine.register_script_entry_point(src.to_string(), "main".to_string(), 0);
+}
 
 fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
     engine

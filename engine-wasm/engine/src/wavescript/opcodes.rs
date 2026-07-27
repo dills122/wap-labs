@@ -1,8 +1,9 @@
-//! Single source of truth for WMLScript bytecode opcode values.
+//! Single source of truth for the legacy nine-opcode fixture values.
 //!
 //! Both the structural decoder (`super::decoder`) and the interpreter
 //! (`super::vm`) dispatch on these numbers, so they are defined once here to
-//! keep the two in lockstep.
+//! keep the compatibility path in lockstep. These values are not WAP-193
+//! instruction encodings.
 
 pub(crate) const HALT_OPCODE: u8 = 0x00;
 pub(crate) const PUSH_INT8_OPCODE: u8 = 0x01;
