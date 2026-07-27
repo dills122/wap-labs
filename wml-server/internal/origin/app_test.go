@@ -191,6 +191,30 @@ func TestRegistrationLoginAndProtectedRoutes(t *testing.T) {
 	}
 }
 
+func TestLoginRejectsUnknownUserAndWrongPIN(t *testing.T) {
+	app, _ := newTestApp(t, nil)
+	handler := app.Handler()
+
+	register := perform(handler, http.MethodPost, "/register", "username=demo&pin=1234", "application/x-www-form-urlencoded")
+	if register.Code != http.StatusOK || !strings.Contains(register.Body.String(), `id="register-ok"`) {
+		t.Fatalf("register = %d %s", register.Code, register.Body.String())
+	}
+
+	for name, body := range map[string]string{
+		"unknown user": "username=nobody&pin=1234",
+		"wrong pin":    "username=demo&pin=9999",
+		"shorter pin":  "username=demo&pin=123",
+		"longer pin":   "username=demo&pin=12345",
+	} {
+		t.Run(name, func(t *testing.T) {
+			response := perform(handler, http.MethodPost, "/login", body, "application/x-www-form-urlencoded")
+			if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Invalid username or PIN") {
+				t.Fatalf("login(%s) = %d %s", body, response.Code, response.Body.String())
+			}
+		})
+	}
+}
+
 func TestValidationAndEscaping(t *testing.T) {
 	app, _ := newTestApp(t, nil)
 	handler := app.Handler()
