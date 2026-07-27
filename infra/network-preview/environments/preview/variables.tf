@@ -1,6 +1,11 @@
 variable "project_name" {
   description = "Accepted DigitalOcean project name from PRE-003."
   type        = string
+
+  validation {
+    condition     = length(trimspace(var.project_name)) > 0
+    error_message = "project_name must not be empty"
+  }
 }
 
 variable "region" {
