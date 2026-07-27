@@ -29,6 +29,12 @@ on:
 permissions:
   contents: read
 
+# This workflow is secret-free and backend-disabled, so replacing an older static run is safe.
+# Future shared-state plan/apply workflows must use a different, non-cancelable concurrency group.
+concurrency:
+  group: opentofu-static-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: OpenTofu Static Validation

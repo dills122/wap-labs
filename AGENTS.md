@@ -130,6 +130,10 @@ Prefer work that improves:
 ## Additional standards
 
 - Use `docs/agents/AGENT_STANDARDS.md` for repository-wide contributor and architecture standards.
+- For `infra/network-preview/` and its related workflows, scripts, and active documentation, use
+  `.codex/steering/infrastructure-opentofu-steering.md`. Root and nearer `AGENTS.md` instructions
+  take precedence; the infrastructure steering narrows them for this repository and overrides
+  generic external or installed infrastructure guidance when they conflict.
 - Use `docs/agents/RUST_ENGINE_STEERING.md` for WaveNav engine Rust rules.
 - Use `docs/agents/RUST_TRANSPORT_STEERING.md` for Lowband transport Rust rules.
 - Use `docs/agents/SHELL_STEERING.md` and `docs/agents/SCRIPTING_STEERING.md` for reusable shell/script guidance (POSIX-first, Alpine-compatible where possible, reuse existing tools before custom scripting).

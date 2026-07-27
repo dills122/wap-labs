@@ -182,8 +182,13 @@ infra/network-preview/**/.terraform/
 infra/network-preview/**/*.tfstate
 infra/network-preview/**/*.tfstate.*
 infra/network-preview/**/*.tfplan
+infra/network-preview/**/tfplan
+infra/network-preview/**/.plans/
 infra/network-preview/**/backend.hcl
+infra/network-preview/**/*.backend.hcl
 infra/network-preview/**/*.tfvars
 infra/network-preview/**/*.auto.tfvars
+infra/network-preview/**/*.tfvars.json
+infra/network-preview/**/*.auto.tfvars.json
 infra/network-preview/**/crash.log
 infra/network-preview/**/crash.*.log
