@@ -35,6 +35,19 @@ const workspaceDependencies = {
   remediation: 'run ./scripts/init-refresh.sh'
 };
 
+const offlineTofuEnv = Object.freeze({
+  TF_IN_AUTOMATION: '1',
+  TF_INPUT: '0',
+  TF_VAR_admin_cidrs: '[]',
+  TF_VAR_monitoring_alert_email: 'owner@example.com',
+  TF_VAR_project_name: 'offline-validation',
+  TF_VAR_region: 'nyc3',
+  TF_VAR_ssh_key_name: 'offline-validation',
+  TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state',
+  TF_VAR_tailscale_auth_key: 'tskey-auth-offline-validation',
+  TF_VAR_wap_test_cidrs: '[]'
+});
+
 const playwrightChromium = (packageDirectory) => ({
   kind: 'playwright-chromium',
   value: packageDirectory,
@@ -319,6 +332,7 @@ export const LANES = Object.freeze([
       'scripts/ci/summarize-network-preview-plan.sh',
       'scripts/ci/verify-network-preview-plan-provenance.sh',
       'scripts/ci/write-network-preview-backend-config.sh',
+      'scripts/network-preview-local-plan.mjs',
       'scripts/tests/network-preview-protected.test.mjs',
       '.github/workflows/opentofu.yml',
       '.github/workflows/opentofu-protected-apply.yml',
@@ -351,20 +365,12 @@ export const LANES = Object.freeze([
         ['init', '-backend=false', '-lockfile=readonly', '-no-color'],
         {
           cwd: 'infra/network-preview/environments/preview',
-          env: {
-            TF_IN_AUTOMATION: '1',
-            TF_INPUT: '0',
-            TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
-          }
+          env: offlineTofuEnv
         }
       ),
       command('OpenTofu validation', 'tofu', ['validate', '-no-color'], {
         cwd: 'infra/network-preview/environments/preview',
-        env: {
-          TF_IN_AUTOMATION: '1',
-          TF_INPUT: '0',
-          TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
-        }
+        env: offlineTofuEnv
       }),
       command('network-preview script POSIX syntax', 'sh', [
         '-n',
@@ -376,6 +382,10 @@ export const LANES = Object.freeze([
         'scripts/ci/summarize-network-preview-plan.sh',
         'scripts/ci/verify-network-preview-plan-provenance.sh',
         'scripts/ci/write-network-preview-backend-config.sh'
+      ]),
+      command('network-preview local plan helper syntax', 'node', [
+        '--check',
+        'scripts/network-preview-local-plan.mjs'
       ]),
       command(
         'encrypted offline plan check',

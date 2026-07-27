@@ -120,10 +120,10 @@ only after every required status check and any other ruleset requirement succeed
 - `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is
   intentionally path-scoped and must not be a global required context. Its pinned actionlint gate
   proves offline semantic validity for the static and protected workflow definitions; it does not
-  configure their protected environments or prove provider/R2 access. Manual OpenTofu protected
-  plan/apply workflows remain access-backed operational gates rather than merge-required checks
-  and must not run until protected `PRE-003` access is configured and the exact operation is
-  authorized.
+  configure their protected environments or prove provider/R2 access. The owner-local plan path is
+  documented separately and is not a required check. Manual OpenTofu protected plan/apply
+  workflows remain access-backed operational gates rather than merge-required checks and must not
+  run until protected `PRE-003` access is configured and the exact operation is authorized.
 - `Build and Deploy to gh-pages` is deployment-focused and must not be required for code merges.
 - Scheduled/manual fuzzing, browser baseline, and release workflows must not be required
   pull-request checks.

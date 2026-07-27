@@ -4,7 +4,7 @@ Planning status: Sprint 1 implementation; LAB-101 and the access-independent INF
 protected-workflow contract are merged, while public exposure remains blocked on Sprint 0
 decisions and live infrastructure evidence
 
-Research checkpoint: 2026-07-26
+Research checkpoint: 2026-07-27
 
 ## Outcome
 
@@ -25,22 +25,29 @@ known limitations.
 
 ## Hosting and cost decision
 
-Start with one DigitalOcean Basic Droplet in Toronto (`tor1`): 1 shared vCPU, 512 MiB RAM,
-x86_64, and a bounded 1 GiB swap file. Provision it with OpenTofu and attach a free assigned
-Reserved IP, Cloud Firewall, DNS records, and provider monitoring.
+Start with one DigitalOcean Basic Droplet in a Northeast-US New York region: 1 shared vCPU,
+512 MiB RAM, x86_64, and a bounded 1 GiB swap file. Prefer `nyc3`, then `nyc1`, but accept the
+exact region only after the account's authenticated size catalog confirms that the
+`s-1vcpu-512mb-10gb` size is available there. Provision it with OpenTofu and attach a free
+assigned Reserved IP, Cloud Firewall, DNS records, and provider monitoring.
 
 The expected infrastructure cost is **US$4/month**, plus domain registration and tax. Resize to
-the **US$6/month** 1 GiB size only when the required memory soak test demonstrates sustained
-pressure, restart, latency, or swap-budget failure. Do not add a paid backup, load balancer,
-database, edge proxy, object store, or monitoring product for the first preview. Build images in
-CI, keep the host disposable, and recover by rebuilding and moving the Reserved IP.
+the **US$6/month** 1 GiB size only when the 512 MiB size is unavailable in the accepted New York
+regions or the required memory soak test demonstrates sustained pressure, restart, latency, or
+swap-budget failure. If the size is unavailable, the documented fallback is 1 GiB in `nyc3`;
+retaining `tor1` instead would reopen `PRE-001` and require a new owner decision. Automation must
+not silently substitute either location or size. Do not add a paid backup, load balancer, database,
+edge proxy, object store, or monitoring product for the first preview. Build images in CI, keep the
+host disposable, and recover by rebuilding and moving the Reserved IP.
 
-DigitalOcean is the initial recommendation because Toronto is close to likely first testers, the
-low-end plan is pay-as-you-go, and the provider exposes mature OpenTofu/Terraform, firewall,
-Reserved IP, and monitoring surfaces. Hetzner is the leading alternative for a Europe-hosted lab:
-its EU CX23 offers materially more memory for roughly EUR 5.49/month plus IPv4 and tax, but its
-low-cost CX line is not available in North America. Lightsail, IONOS, and OVHcloud remain account
-or regional fallbacks rather than the default.
+DigitalOcean is the initial recommendation because New York is close to the first Northeast-US
+operator/tester, the low-end plan is pay-as-you-go, and the provider exposes mature
+OpenTofu/Terraform, firewall, Reserved IP, and monitoring surfaces. DigitalOcean publishes region
+and size availability through its authenticated `/v2/regions` and `/v2/sizes` APIs, so account
+evidence, not this planning assumption, decides the exact region. Hetzner is the leading
+alternative for a Europe-hosted lab: its EU CX23 offers materially more memory for roughly EUR
+5.49/month plus IPv4 and tax, but its low-cost CX line is not available in North America.
+Lightsail, IONOS, and OVHcloud remain account or regional fallbacks rather than the default.
 
 Keep the first Kannel image on x86_64. Multi-architecture images should be a deliberate later
 slice backed by image and end-to-end tests, not a launch-time variable.
@@ -104,8 +111,10 @@ dependency-automation, smoke, and documentation migration. Go parity is enforced
 state-lifecycle, concurrency, host-profile, route-denial, and internal-observability tests.
 
 `LAB-101` merged in PR #427. This does not complete `GW-101`, `INF-101`, `INF-102`, or any public
-exposure gate. The logical `home`, `forms`, and `interop` profiles use configurable exact
-hostnames; the final owned names remain a `PRE-002` decision.
+exposure gate. The owner selected the Cloudflare-managed `shrimpworks.dev` zone for `PRE-002`:
+`home.shrimpworks.dev`, `forms.shrimpworks.dev`, and `interop.shrimpworks.dev`. Use exact DNS-only
+records rather than a wildcard record, and defer a second apex until a cross-registrable-domain
+test proves subdomains insufficient.
 
 ## Public topology
 
@@ -149,6 +158,15 @@ Use a private Cloudflare R2 Standard bucket for encrypted OpenTofu state. Its fr
 for this workload. Before adoption, a bootstrap integration test must prove lock acquisition,
 contention failure, release, and stale-lock recovery with the S3 backend's native lock-file mode.
 
+For the initial single-owner infrastructure test, a local exact-plan/apply path is acceptable. It
+uses the existing default DigitalOcean project, a mode-`0600` local environment file, scoped
+provider credentials, encrypted R2 state, and an explicit owner approval between plan and apply.
+The first stage keeps Cloudflare DNS absent and closes public SSH and UDP 9200. Routine OpenSSH
+administration uses the existing owner Tailscale network and the host's `tailscale0` interface. A
+temporary reviewed public SSH `/32` rule remains break-glass only.
+This restricted host does not close `PRE-003`, authorize public exposure, or replace the protected
+workflow before a shared operating model exists.
+
 The apply workflow must:
 
 - serialize all applies;
@@ -185,6 +203,12 @@ driver, and codifies the protected reviewed-plan/apply/recovery workflow contrac
 resources and does not prove live R2 locking, provider planning, or recovery against the selected
 accounts. `PRE-001` and `PRE-003` remain required before those access-backed checks can run and
 complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
+
+The staged `INF-102` root may be authored and locally planned while shared/public `PRE-003` is
+open. Its default must fail closed: no DNS records, no public UDP ingress, no public SSH ingress,
+Tailscale-only administration, and no
+application deployment. Enabling public UDP/DNS still depends on the production gateway,
+`PRE-003`, `PRE-004`, and a separately reviewed plan.
 
 ## Security, abuse, and operations
 
@@ -229,13 +253,13 @@ An implementation item enters a sprint only when:
 
 Target: 1-2 days before implementation.
 
-| ID        | Work item                        | Estimate | Depends on         | Acceptance                                                                                                                         |
-| --------- | -------------------------------- | -------: | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `PRE-001` | Provider/location decision       |        2 | none               | Accept DigitalOcean Toronto or record an alternative's cost, latency, state, and support tradeoffs                                 |
-| `PRE-002` | Domain/hostname decision         |        1 | none               | Approve the owned zone and three hosts; explicitly defer or justify cross-apex testing                                             |
-| `PRE-003` | Cloud/GitHub access bootstrap    |        2 | `PRE-001`          | Create project, least-privilege provider/R2 credentials, protected environments, billing alert, and two-maintainer recovery access |
-| `PRE-004` | Preview threat model/data policy |        3 | this plan          | Accept UDP abuse, open-proxy, logging, test-data, kill-switch, and incident ownership controls                                     |
-| `PRE-005` | Release-scope decision           |        2 | current-main audit | Fix supported OS/architectures, preview label, WTLS warning, Class C claim language, and go/no-go owner                            |
+| ID        | Work item                        | Estimate | Depends on         | Acceptance                                                                                                                                             |
+| --------- | -------------------------------- | -------: | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PRE-001` | Provider/location decision       |        2 | none               | Accept an account-verified DigitalOcean New York region/size and cost fallback, or record an alternative's cost, latency, state, and support tradeoffs |
+| `PRE-002` | Domain/hostname decision         |        1 | none               | Approve the owned zone and three hosts; explicitly defer or justify cross-apex testing                                                                 |
+| `PRE-003` | Cloud/GitHub access bootstrap    |        2 | `PRE-001`          | Create project, least-privilege provider/R2 credentials, protected environments, billing alert, and two-maintainer recovery access                     |
+| `PRE-004` | Preview threat model/data policy |        3 | this plan          | Accept UDP abuse, open-proxy, logging, test-data, kill-switch, and incident ownership controls                                                         |
+| `PRE-005` | Release-scope decision           |        2 | current-main audit | Fix supported OS/architectures, preview label, WTLS warning, Class C claim language, and go/no-go owner                                                |
 
 `PRE-003` and `PRE-004` block public exposure.
 

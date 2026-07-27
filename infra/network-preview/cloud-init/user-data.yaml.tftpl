@@ -1,0 +1,85 @@
+#cloud-config
+package_update: true
+package_upgrade: false
+packages:
+  - ca-certificates
+  - curl
+  - docker.io
+  - docker-compose-v2
+  - fail2ban
+  - unattended-upgrades
+  - ufw
+
+users:
+  - default
+  - name: waves
+    gecos: Waves network preview operator
+    groups:
+      - adm
+      - docker
+      - sudo
+    lock_passwd: true
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${admin_public_key}
+
+disable_root: true
+ssh_pwauth: false
+
+write_files:
+  - path: /run/waves-tailscale-auth-key
+    owner: root:root
+    permissions: "0600"
+    content: ${tailscale_auth_key}
+  - path: /etc/docker/daemon.json
+    owner: root:root
+    permissions: "0644"
+    content: |
+      {
+        "live-restore": true,
+        "log-driver": "json-file",
+        "log-opts": {
+          "max-file": "3",
+          "max-size": "10m"
+        },
+        "no-new-privileges": true,
+        "userland-proxy": false
+      }
+  - path: /etc/ssh/sshd_config.d/60-waves-hardening.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      AllowUsers waves
+      KbdInteractiveAuthentication no
+      MaxAuthTries 3
+      PasswordAuthentication no
+      PermitRootLogin no
+      X11Forwarding no
+  - path: /etc/sysctl.d/60-waves-hardening.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      fs.protected_fifos = 2
+      fs.protected_hardlinks = 1
+      fs.protected_regular = 2
+      fs.protected_symlinks = 1
+      kernel.kptr_restrict = 2
+      kernel.unprivileged_bpf_disabled = 1
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv4.conf.all.rp_filter = 1
+      net.ipv4.conf.all.send_redirects = 0
+      net.ipv4.conf.default.accept_redirects = 0
+      net.ipv4.conf.default.rp_filter = 1
+      net.ipv4.conf.default.send_redirects = 0
+      net.ipv4.tcp_syncookies = 1
+  - path: /usr/local/sbin/waves-bootstrap
+    owner: root:root
+    permissions: "0750"
+    content: |
+      ${bootstrap_script}
+
+runcmd:
+  - /usr/local/sbin/waves-bootstrap
+
+final_message: Waves network preview host bootstrap complete
