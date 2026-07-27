@@ -1,4 +1,4 @@
-use crate::runtime::card::{CardPostField, CardTaskAction};
+use crate::runtime::card::CardTaskAction;
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
@@ -471,8 +471,7 @@ fn parse_option_onpick_action(
 ) -> Result<Option<CardTaskAction>, String> {
     let mut action = option.attr("onpick").map(|href| CardTaskAction::Go {
         href: href.to_string(),
-        method: None,
-        post_fields: Vec::<CardPostField>::new(),
+        request: crate::runtime::card::CardGoRequest::default(),
     });
     for child in &option.children {
         let XmlNode::Element(onevent) = child else {

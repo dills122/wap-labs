@@ -97,6 +97,16 @@
                   "sameDeck": false,
                   "contentType": "application/x-www-form-urlencoded",
                   "payload": "Country=France&pin=12"
+                },
+                "requestIntent": {
+                  "method": "post",
+                  "enctype": "application/x-www-form-urlencoded",
+                  "sendReferer": true,
+                  "sameDeck": false,
+                  "postFields": [
+                    { "name": "Country", "value": "France" },
+                    { "name": "pin", "value": "12" }
+                  ]
                 }
               }
             },

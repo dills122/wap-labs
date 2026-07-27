@@ -36,7 +36,13 @@ export const TARGET_CONFIGS = {
     graphOutput: 'spec-processing/source-manifests/wap-1.2.1-wml-3-knowledge-graph.json',
     contextPackOutput: 'docs/knowledge-graph/context-packs/WML-3.md',
     vaultOutput: 'docs/knowledge-graph/vault-WML-3',
-    title: 'WAP 1.2.1 WML-3 Knowledge Graph Slice'
+    title: 'WAP 1.2.1 WML-3 Knowledge Graph Slice',
+    familyLedgerInputs: {
+      wml: 'wmlScr'
+    },
+    inputPaths: {
+      wmlScr: 'spec-processing/source-manifests/wap-1.2.1-wml-scr.json'
+    }
   },
   'WSP-8': {
     graphId: 'wap-1.2.1-wsp-8-slice',

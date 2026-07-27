@@ -44,7 +44,7 @@ Exit gates:
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-01`
-- Direct SCR rows: 76 (31 `direct-test-linked`, 16 `gap-work-item-mapped`, 29 `optional-not-assessed`)
+- Direct SCR rows: 76 (32 `direct-test-linked`, 15 `gap-work-item-mapped`, 29 `optional-not-assessed`)
 - Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
 - Direct normative clauses: 178
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
@@ -315,11 +315,11 @@ Evidence commands:
 - **WML-C-14** — Deck access control
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.1 (SCR §15.1.4)
-  - Assessment: `missing`; evidence `gap-work-item-mapped`
-  - Code: None; the evidence state remains explicit.
-  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
   - Work items: `R0-01`, `R0-07`, `WML-201`
-  - Assessment note: Deck access, domain, path, and sendreferer enforcement is not implemented.
+  - Assessment note: Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.
 - **WML-C-15** — Low-memory behaviour
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §12.2 (SCR §15.1.4)
@@ -374,8 +374,8 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
   - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`)
-  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`, `WML-304`
-  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`, `WML-306`
+  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.
 - **WML-C-22** — b
   - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
   - Spec: `WAP-191_104-WML` §11.8.2 (SCR §15.1.5)
@@ -436,10 +436,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.1 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_action_href`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::fixture_accept_go_trace_order_is_deterministic` (`cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic`)
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
   - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-201`
-  - Assessment note: Fragment, external, GET/POST, and script href paths exist, but the complete section 12.5 go process is not implemented.
+  - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.
 - **WML-C-30** — head
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3 (SCR §15.1.5)
@@ -500,10 +500,10 @@ Evidence commands:
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.3 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#collect_post_fields_xml`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_post_action_sets_external_navigation_post_context` (`cd engine-wasm/engine && cargo test enter_accept_post_action_sets_external_navigation_post_context`)
+  - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#collect_post_fields_xml`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#resolve_post_fields`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`)
   - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-201`
-  - Assessment note: Postfield name/value collection and URL-form payload generation exist, but complete variable-conversion, ordering, and task-failure semantics are not closed.
+  - Assessment note: Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.
 - **WML-C-38** — prev
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.2 (SCR §15.1.5)
@@ -1144,7 +1144,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION` (`runtime`, `planned`)
+  - Fixture: `WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION` (`runtime`, `implemented`)
 - **WML-CL-GO-METHOD** — Map get and post method values to the corresponding request operation.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)

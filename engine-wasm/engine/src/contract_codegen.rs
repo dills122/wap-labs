@@ -17,9 +17,11 @@ use crate::{
     RenderList, ScriptCallArgLiteral, ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral,
     ScriptErrorClassLiteral, ScriptExecutionOutcome, ScriptInvocationOutcome,
     ScriptNavigationCacheControlPolicyLiteral, ScriptNavigationIntentLiteral,
-    ScriptNavigationPostContextLiteral, ScriptNavigationRequestPolicyLiteral,
-    ScriptTimerRequestLiteral, ScriptValueLiteral, WmlLoadDiagnostic,
-    WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral, WmlLoadDiagnosticOutcomeLiteral,
+    ScriptNavigationMethodLiteral, ScriptNavigationPostContextLiteral,
+    ScriptNavigationPostFieldLiteral, ScriptNavigationRequestIntentLiteral,
+    ScriptNavigationRequestPolicyLiteral, ScriptTimerRequestLiteral, ScriptValueLiteral,
+    WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,
+    WmlLoadDiagnosticOutcomeLiteral,
 };
 
 const GENERATED_HEADER: &str = concat!(
@@ -45,6 +47,9 @@ pub fn render_runtime_contract() -> String {
     push_decl::<ScriptErrorCategoryLiteral>(&mut output);
     push_decl::<ScriptNavigationIntentLiteral>(&mut output);
     push_decl::<ScriptNavigationCacheControlPolicyLiteral>(&mut output);
+    push_decl::<ScriptNavigationMethodLiteral>(&mut output);
+    push_decl::<ScriptNavigationPostFieldLiteral>(&mut output);
+    push_decl::<ScriptNavigationRequestIntentLiteral>(&mut output);
     push_decl::<ScriptNavigationPostContextLiteral>(&mut output);
     push_decl::<ScriptNavigationRequestPolicyLiteral>(&mut output);
     push_decl::<ScriptValueLiteral>(&mut output);

@@ -22,3 +22,9 @@ serialization. Optional Rust values use the existing `serde_wasm_bindgen` bounda
 (`undefined` for missing values), represented as optional TypeScript properties. Trace sequence
 numbers stay JavaScript `number` values because the boundary uses the default safe-integer
 serializer rather than BigInt mode.
+
+`WmlGoRequestPolicy.requestIntent` is the WML-304 engine handoff for method, ordered resolved
+postfields, `sendreferer`, `cache-control`, `enctype`, `accept-charset`, and same-deck
+classification. The native Rust and WASM serializers expose the same shape. This contract does
+not perform a fetch, merge GET fields into a query, construct multipart content, choose a wire
+charset, or replay POST history; those remain host/transport follow-ups.

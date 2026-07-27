@@ -1,4 +1,4 @@
-use crate::runtime::card::{CardPostField, CardSetVar};
+use crate::runtime::card::{CardGoRequest, CardPostField, CardSetVar};
 use crate::runtime::variable::is_valid_name;
 use crate::*;
 use url::Url;
@@ -252,14 +252,10 @@ impl WmlEngine {
         let assignments = self.snapshot_set_vars(set_vars)?;
 
         match action {
-            CardTaskAction::Go {
-                href,
-                method,
-                post_fields,
-            } => {
+            CardTaskAction::Go { href, request } => {
                 let href = evaluate_href(href, &self.vars)?;
                 self.apply_set_var_assignments(&assignments);
-                self.execute_prepared_action_href(&href, method.as_deref(), post_fields)
+                self.execute_prepared_action_href(&href, request)
             }
             CardTaskAction::Prev => {
                 self.push_trace("ACTION_PREV", String::new());
@@ -284,12 +280,7 @@ impl WmlEngine {
         }
     }
 
-    pub(crate) fn execute_action_href(
-        &mut self,
-        href: &str,
-        method: Option<&str>,
-        post_fields: &[CardPostField],
-    ) -> Result<(), String> {
+    pub(crate) fn execute_action_href(&mut self, href: &str) -> Result<(), String> {
         if self.active_input_edit.is_some() {
             self.commit_focused_input_edit_internal()?;
         }
@@ -299,14 +290,13 @@ impl WmlEngine {
         self.sync_all_select_variables_on_active_card()?;
 
         let href = evaluate_href(href, &self.vars)?;
-        self.execute_prepared_action_href(&href, method, post_fields)
+        self.execute_prepared_action_href(&href, &CardGoRequest::default())
     }
 
     fn execute_prepared_action_href(
         &mut self,
         href: &str,
-        method: Option<&str>,
-        post_fields: &[CardPostField],
+        request: &CardGoRequest,
     ) -> Result<(), String> {
         if let Some(script_ref) = parse_script_href(href) {
             let function_name = script_ref.function_name.unwrap_or("main");
@@ -325,6 +315,16 @@ impl WmlEngine {
         }
 
         if let Some(card_id) = href.strip_prefix('#') {
+            if request.cache_control.as_deref() == Some("no-cache") {
+                let resolved_href = self.resolve_external_href(href);
+                self.push_trace("ACTION_EXTERNAL", resolved_href.clone());
+                self.external_nav_intent = Some(resolved_href.clone());
+                self.external_nav_request_policy =
+                    Some(self.wml_go_request_policy(&resolved_href, request)?);
+                self.active_input_edit = None;
+                self.active_select_edit = None;
+                return Ok(());
+            }
             self.push_trace("ACTION_FRAGMENT", card_id.to_string());
             self.navigate_to_card_internal(card_id)?;
             return Ok(());
@@ -334,11 +334,7 @@ impl WmlEngine {
         let resolved_href = self.resolve_external_href(href);
         self.external_nav_intent = Some(resolved_href.clone());
         self.external_nav_request_policy =
-            Some(self.default_external_navigation_request_policy_with_post(
-                &resolved_href,
-                method,
-                post_fields,
-            ));
+            Some(self.wml_go_request_policy(&resolved_href, request)?);
         self.active_input_edit = None;
         self.active_select_edit = None;
         Ok(())
@@ -382,62 +378,101 @@ impl WmlEngine {
     pub(crate) fn default_external_navigation_request_policy(
         &self,
     ) -> ScriptNavigationRequestPolicyLiteral {
-        self.default_external_navigation_request_policy_with_post("", None, &[])
+        ScriptNavigationRequestPolicyLiteral {
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            request_intent: None,
+        }
     }
 
-    pub(crate) fn default_external_navigation_request_policy_with_post(
+    fn wml_go_request_policy(
         &self,
         resolved_href: &str,
-        method: Option<&str>,
-        post_fields: &[CardPostField],
-    ) -> ScriptNavigationRequestPolicyLiteral {
-        let referer_url = if self.base_url.trim().is_empty() {
+        request: &CardGoRequest,
+    ) -> Result<ScriptNavigationRequestPolicyLiteral, String> {
+        let method = if request.method.eq_ignore_ascii_case("POST") {
+            ScriptNavigationMethodLiteral::Post
+        } else {
+            ScriptNavigationMethodLiteral::Get
+        };
+        let enctype = evaluate_vdata(&request.enctype, &self.vars)?;
+        let same_deck = self.is_same_document_navigation(resolved_href);
+        let post_fields = self.resolve_post_fields(&request.post_fields)?;
+        let referer_url = if !request.send_referer || self.base_url.trim().is_empty() {
             None
         } else {
             Some(self.base_url.clone())
         };
-        let post_context = if matches!(method, Some(value) if value.eq_ignore_ascii_case("POST")) {
+        let post_context = if method == ScriptNavigationMethodLiteral::Post
+            && enctype == "application/x-www-form-urlencoded"
+        {
             Some(ScriptNavigationPostContextLiteral {
-                same_deck: Some(self.is_same_document_navigation(resolved_href)),
-                content_type: Some("application/x-www-form-urlencoded".to_string()),
-                payload: Some(self.encode_post_fields(post_fields)),
+                same_deck: Some(same_deck),
+                content_type: Some(enctype.clone()),
+                payload: Some(Self::encode_post_fields(&post_fields)),
             })
         } else {
             None
         };
-        ScriptNavigationRequestPolicyLiteral {
-            cache_control: None,
+        Ok(ScriptNavigationRequestPolicyLiteral {
+            cache_control: match request.cache_control.as_deref() {
+                Some("no-cache") => Some(ScriptNavigationCacheControlPolicyLiteral::NoCache),
+                _ => None,
+            },
             referer_url,
             post_context,
-        }
+            request_intent: Some(ScriptNavigationRequestIntentLiteral {
+                method,
+                enctype,
+                send_referer: request.send_referer,
+                accept_charset: request.accept_charset.clone(),
+                same_deck,
+                post_fields,
+            }),
+        })
     }
 
-    fn encode_post_fields(&self, post_fields: &[CardPostField]) -> String {
+    fn resolve_post_fields(
+        &self,
+        post_fields: &[CardPostField],
+    ) -> Result<Vec<ScriptNavigationPostFieldLiteral>, String> {
+        post_fields
+            .iter()
+            .map(|field| {
+                let name = evaluate_vdata(&field.name, &self.vars)?;
+                let value = if field.value.is_empty() {
+                    self.resolve_post_field_name_fallback(&name)
+                } else if let Some(variable_name) = field
+                    .value
+                    .strip_prefix("$(")
+                    .and_then(|value| value.strip_suffix(')'))
+                {
+                    let resolved = self.resolve_post_field_name_fallback(variable_name.trim());
+                    if resolved.is_empty() {
+                        self.resolve_post_field_name_fallback(&name)
+                    } else {
+                        resolved
+                    }
+                } else {
+                    let resolved = evaluate_vdata(&field.value, &self.vars)?;
+                    if resolved.is_empty() {
+                        self.resolve_post_field_name_fallback(&name)
+                    } else {
+                        resolved
+                    }
+                };
+                Ok(ScriptNavigationPostFieldLiteral { name, value })
+            })
+            .collect()
+    }
+
+    fn encode_post_fields(post_fields: &[ScriptNavigationPostFieldLiteral]) -> String {
         let mut serializer = url::form_urlencoded::Serializer::new(String::new());
         for field in post_fields {
-            let value = if field.value.is_empty() {
-                self.resolve_post_field_name_fallback(&field.name)
-            } else {
-                let resolved = self.resolve_post_field_value(&field.value);
-                if resolved.is_empty() {
-                    self.resolve_post_field_name_fallback(&field.name)
-                } else {
-                    resolved
-                }
-            };
-            serializer.append_pair(&field.name, &value);
+            serializer.append_pair(&field.name, &field.value);
         }
         serializer.finish()
-    }
-
-    fn resolve_post_field_value(&self, raw: &str) -> String {
-        if let Some(name) = raw
-            .strip_prefix("$(")
-            .and_then(|value| value.strip_suffix(')'))
-        {
-            return self.resolve_post_field_name_fallback(name.trim());
-        }
-        raw.to_string()
     }
 
     fn resolve_post_field_name_fallback(&self, name: &str) -> String {

@@ -14,6 +14,14 @@ export interface StoryStateExpectation {
     cacheControl?: 'default' | 'no-cache';
     refererUrl?: string;
     postContext?: { sameDeck?: boolean; contentType?: string; payload?: string };
+    requestIntent?: {
+      method: 'get' | 'post';
+      enctype: string;
+      sendReferer: boolean;
+      acceptCharset?: string;
+      sameDeck: boolean;
+      postFields: Array<{ name: string; value: string }>;
+    };
   } | null;
   lastScriptDialogRequests?: Array<
     | { type: 'alert'; message: string }
@@ -1524,6 +1532,22 @@ export const EXAMPLES: HostExample[] = [
                     "sameDeck": false,
                     "contentType": "application/x-www-form-urlencoded",
                     "payload": "Country=France&notes="
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "Country",
+                        "value": "France"
+                      },
+                      {
+                        "name": "notes",
+                        "value": ""
+                      }
+                    ]
                   }
                 }
               },
@@ -1542,7 +1566,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"notes\" value=\"$(notes)\"/>\n      </go>\n    </do>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <p>Notes: <input name=\"notes\" value=\"\"/></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Local Select\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\" sendreferer=\"true\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"notes\" value=\"$(notes)\"/>\n      </go>\n    </do>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n      </select>\n    </p>\n    <p>Notes: <input name=\"notes\" value=\"\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "formsSelectNavigationLocal",
@@ -1702,6 +1726,22 @@ export const EXAMPLES: HostExample[] = [
                     "sameDeck": false,
                     "contentType": "application/x-www-form-urlencoded",
                     "payload": "Country=France&pin=12"
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "Country",
+                        "value": "France"
+                      },
+                      {
+                        "name": "pin",
+                        "value": "12"
+                      }
+                    ]
                   }
                 }
               },
@@ -1726,7 +1766,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"profile\" title=\"Select Navigation\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/profile\" sendreferer=\"true\">\n        <postfield name=\"Country\" value=\"$(Country)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p><a href=\"#help\">Help</a></p>\n    <p>\n      Country:\n      <select name=\"Country\" title=\"Country\">\n        <option value=\"Jordan\">Jordan</option>\n        <option value=\"France\">France</option>\n        <option value=\"Germany\">Germany</option>\n        <option value=\"Japan\">Japan</option>\n      </select>\n    </p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n    <p><a href=\"#review\">Review</a></p>\n  </card>\n  <card id=\"help\" title=\"Help\">\n    <p>Use Enter to begin or commit select edit.</p>\n    <p>Use Escape to cancel select edit.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n  <card id=\"review\" title=\"Review\">\n    <p>Review card reached through normal focus navigation.</p>\n    <p><a href=\"#profile\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "formsTextSubmitLocal",
@@ -1852,6 +1892,22 @@ export const EXAMPLES: HostExample[] = [
                     "sameDeck": false,
                     "contentType": "application/x-www-form-urlencoded",
                     "payload": "username=AHMEDBOB&pin=42"
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "username",
+                        "value": "AHMEDBOB"
+                      },
+                      {
+                        "name": "pin",
+                        "value": "42"
+                      }
+                    ]
                   }
                 }
               },
@@ -1877,7 +1933,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"login\" title=\"Local Login\">\n    <do type=\"accept\">\n      <go method=\"post\" href=\"/login\" sendreferer=\"true\">\n        <postfield name=\"username\" value=\"$(username)\"/>\n        <postfield name=\"pin\" value=\"$(pin)\"/>\n      </go>\n    </do>\n    <p>User: <input name=\"username\" value=\"AHMED\" type=\"text\"/></p>\n    <p>PIN: <input name=\"pin\" value=\"\" type=\"password\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "historyBackProcessOrder",
@@ -4636,6 +4692,117 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <template>\n    <do name=\"back\" type=\"prev\" label=\"Template back\">\n      <go href=\"#template-wins\"/>\n    </do>\n  </template>\n\n  <card id=\"home\">\n    <p>\n      WML action precedence.\n      <a href=\"#ordered\">First precedence</a>\n      <a href=\"#masked\">Noop mask</a>\n    </p>\n  </card>\n\n  <card id=\"ordered\">\n    <do name=\"optional-prev\" type=\"prev\" label=\"Optional\" optional=\"true\">\n      <go href=\"#optional-wins\"/>\n    </do>\n    <do name=\"card-first\" type=\"prev\" label=\"Card back\">\n      <go href=\"#card-wins\"/>\n    </do>\n    <do name=\"card-second\" type=\"prev\" label=\"Second card back\">\n      <go href=\"#second-wins\"/>\n    </do>\n    <p>Back resolves the first active card binding.</p>\n  </card>\n\n  <card id=\"masked\">\n    <do name=\"back\" type=\"prev\"><noop/></do>\n    <p>Back ignores the masked template action and pops history.</p>\n  </card>\n\n  <card id=\"card-wins\"><p>First card BACK binding won.</p></card>\n  <card id=\"second-wins\"><p>The second card binding must not win.</p></card>\n  <card id=\"template-wins\"><p>The template binding must not win.</p></card>\n  <card id=\"optional-wins\"><p>The optional binding must not be presented.</p></card>\n</wml>\n"
+  },
+  {
+    "key": "wml304RequestIntent",
+    "label": "WML-304 Request Intent Contract",
+    "description": "Captures the bounded WML go request intent without performing network fetch or transport serialization.",
+    "goal": "Verify method, ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification at the engine boundary.",
+    "workItems": [
+      "WML-304"
+    ],
+    "specItems": [
+      "WML-CL-HISTORY-POST-REPLAY",
+      "WML-CL-POSTFIELD-STRUCTURE",
+      "WML-CL-POSTFIELD-REQUEST-PAIR",
+      "WML-CL-GO-STRUCTURE",
+      "WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "WML-CL-GO-REFERER",
+      "WML-CL-GO-METHOD",
+      "WML-CL-GO-NO-CACHE",
+      "WML-CL-GO-ENCTYPE-SUPPORT",
+      "WML-CL-GO-PART-CONTENT-TYPE",
+      "WML-CL-GO-ACCEPT-CHARSET",
+      "WML-CL-GO-SUBMISSION-ORDER",
+      "WML-CL-GO-GET-QUERY-MERGE",
+      "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "WML-CL-GO-FORM-URLENCODING"
+    ],
+    "testingAc": [
+      "Activate Submit and inspect the ordered POST request intent emitted by the engine.",
+      "Confirm sendreferer, no-cache, enctype, accept-charset, and same-deck values are serialized identically for native and WASM hosts.",
+      "Treat transport encoding, GET query merge, multipart construction, and POST history replay as explicit follow-up work."
+    ],
+    "flows": [
+      {
+        "id": "host-wml-304-request-intent",
+        "title": "Host sample captures the bounded ordered WML go request intent",
+        "target": "host-sample",
+        "workItems": [
+          "WML-304"
+        ],
+        "specItems": [
+          "WML-CL-HISTORY-POST-REPLAY",
+          "WML-CL-POSTFIELD-STRUCTURE",
+          "WML-CL-POSTFIELD-REQUEST-PAIR",
+          "WML-CL-GO-STRUCTURE",
+          "WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+          "WML-CL-GO-REFERER",
+          "WML-CL-GO-METHOD",
+          "WML-CL-GO-NO-CACHE",
+          "WML-CL-GO-ENCTYPE-SUPPORT",
+          "WML-CL-GO-PART-CONTENT-TYPE",
+          "WML-CL-GO-ACCEPT-CHARSET",
+          "WML-CL-GO-SUBMISSION-ORDER",
+          "WML-CL-GO-GET-QUERY-MERGE",
+          "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+          "WML-CL-GO-FORM-URLENCODING"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "externalNavigationIntent": null,
+            "externalNavigationRequestPolicy": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "externalNavigationIntent": "http://local.test/submit",
+                "externalNavigationRequestPolicy": {
+                  "cacheControl": "no-cache",
+                  "refererUrl": "http://local.test/deck.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "first=one&second=two"
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "acceptCharset": "utf-8",
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "first",
+                        "value": "one"
+                      },
+                      {
+                        "name": "second",
+                        "value": "two"
+                      }
+                    ]
+                  }
+                }
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <do type=\"accept\" label=\"Submit\">\n      <go href=\"/submit\" method=\"post\" sendreferer=\"true\"\n          cache-control=\"no-cache\" accept-charset=\"utf-8\">\n        <postfield name=\"first\" value=\"one\"/>\n        <postfield name=\"second\" value=\"two\"/>\n      </go>\n    </do>\n    <p>Activate Submit to capture the WML request intent.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml305TimerLifecycle",

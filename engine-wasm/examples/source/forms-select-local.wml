@@ -17,7 +17,7 @@ testing-ac:
 <wml>
   <card id="profile" title="Local Select">
     <do type="accept">
-      <go method="post" href="/profile">
+      <go method="post" href="/profile" sendreferer="true">
         <postfield name="Country" value="$(Country)"/>
         <postfield name="notes" value="$(notes)"/>
       </go>

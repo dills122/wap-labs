@@ -53,7 +53,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.",
+  "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -95,7 +95,7 @@ tags:
     "R0-01",
     "R0-04",
     "WML-201",
-    "WML-304"
+    "WML-306"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

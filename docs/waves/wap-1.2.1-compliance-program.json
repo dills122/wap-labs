@@ -642,9 +642,13 @@
         },
         {
           "id": "WML-304",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "transport-rust", "browser", "qa"],
-          "sourceFamilies": ["wml", "wae"],
+          "sourceFamilies": ["wml"],
+          "scrMatrix": {
+            "family": "wml",
+            "scope": "selected-clause-parents"
+          },
           "existingTickets": ["R0-06", "T0-30", "C5-05"],
           "outputs": [
             "GET/POST/postfield/form commit pipeline"
@@ -653,9 +657,21 @@
             "Field commit, postfield generation, same-deck suppression, accept-charset, URL encoding, multipart optionality, referer, and no-cache behavior follow SIN 105."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-            "cargo test --manifest-path transport-rust/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304",
+            "wasm-pack test --node engine-wasm/engine",
+            "pnpm --dir engine-wasm/host-sample run contracts:check",
+            "pnpm test:story WML-304",
+            "node scripts/wap-context-pack.mjs WML-304",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 9.2, 9.3, and 9.5.1 as amended by WAP-191_105-WML section 4.3"
+          ],
+          "notes": [
+            "The source-audited WML-304 graph boundary directly maps 15 WML clauses across WML-C-07, WML-C-14, WML-C-29, WML-C-37, and WML-C-38. The unrelated WAE family declaration and WML-C-21 access-control inheritance were removed; access/error policy remains WML-306.",
+            "This first slice defines the Rust-owned go request intent and its native/WASM/Tauri-host serialized contract. It does not claim native transport request application, GET query merge, multipart body construction, charset selection, origin reload behavior, or POST history replay completion.",
+            "WML-301 request-shaped history, WML-302 variable resolution, WML-303 task rollback, and WML-305 timer ordering remain preserved regression evidence."
           ]
         },
         {

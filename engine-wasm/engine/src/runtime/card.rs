@@ -13,6 +13,29 @@ pub struct CardPostField {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct CardGoRequest {
+    pub method: String,
+    pub send_referer: bool,
+    pub cache_control: Option<String>,
+    pub enctype: String,
+    pub accept_charset: Option<String>,
+    pub post_fields: Vec<CardPostField>,
+}
+
+impl Default for CardGoRequest {
+    fn default() -> Self {
+        Self {
+            method: "GET".to_string(),
+            send_referer: false,
+            cache_control: None,
+            enctype: "application/x-www-form-urlencoded".to_string(),
+            accept_charset: None,
+            post_fields: Vec::new(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CardSetVar {
     pub name: String,
     pub value: String,
@@ -28,8 +51,7 @@ pub struct CardTimer {
 pub enum CardTaskAction {
     Go {
         href: String,
-        method: Option<String>,
-        post_fields: Vec<CardPostField>,
+        request: CardGoRequest,
     },
     Prev,
     Refresh,
@@ -87,8 +109,7 @@ mod tests {
     fn with_set_vars_merges_instead_of_nesting_when_called_twice() {
         let action = CardTaskAction::Go {
             href: "#next".to_string(),
-            method: None,
-            post_fields: Vec::new(),
+            request: CardGoRequest::default(),
         }
         .with_set_vars(vec![CardSetVar {
             name: "a".to_string(),
@@ -104,8 +125,7 @@ mod tests {
             base,
             &CardTaskAction::Go {
                 href: "#next".to_string(),
-                method: None,
-                post_fields: Vec::new(),
+                request: CardGoRequest::default(),
             }
         );
         assert_eq!(

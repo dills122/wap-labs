@@ -16,38 +16,96 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wml|wml]]
+- `planned-by` → [[work-items/WML-304|WML-304]]
+- `refines` ← [[clauses/WML-CL-GO-ACCEPT-CHARSET|WML-CL-GO-ACCEPT-CHARSET]]
 - `refines` ← [[clauses/WML-CL-GO-ASSIGNMENT-ORDER|WML-CL-GO-ASSIGNMENT-ORDER]]
+- `refines` ← [[clauses/WML-CL-GO-ENCTYPE-SUPPORT|WML-CL-GO-ENCTYPE-SUPPORT]]
 - `refines` ← [[clauses/WML-CL-GO-ENTRY-EVENT-PRECEDENCE|WML-CL-GO-ENTRY-EVENT-PRECEDENCE]]
+- `refines` ← [[clauses/WML-CL-GO-FORM-URLENCODING|WML-CL-GO-FORM-URLENCODING]]
 - `refines` ← [[clauses/WML-CL-GO-FRAGMENT-FALLBACK|WML-CL-GO-FRAGMENT-FALLBACK]]
+- `refines` ← [[clauses/WML-CL-GO-GET-QUERY-MERGE|WML-CL-GO-GET-QUERY-MERGE]]
 - `refines` ← [[clauses/WML-CL-GO-HISTORY-PUSH|WML-CL-GO-HISTORY-PUSH]]
+- `refines` ← [[clauses/WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION]]
+- `refines` ← [[clauses/WML-CL-GO-METHOD|WML-CL-GO-METHOD]]
+- `refines` ← [[clauses/WML-CL-GO-NO-CACHE|WML-CL-GO-NO-CACHE]]
+- `refines` ← [[clauses/WML-CL-GO-PART-CONTENT-TYPE|WML-CL-GO-PART-CONTENT-TYPE]]
+- `refines` ← [[clauses/WML-CL-GO-POST-CONTENT-TYPE-CHARSET|WML-CL-GO-POST-CONTENT-TYPE-CHARSET]]
+- `refines` ← [[clauses/WML-CL-GO-REFERER|WML-CL-GO-REFERER]]
 - `refines` ← [[clauses/WML-CL-GO-SETVAR-SNAPSHOT|WML-CL-GO-SETVAR-SNAPSHOT]]
 - `refines` ← [[clauses/WML-CL-GO-STRUCTURE|WML-CL-GO-STRUCTURE]]
+- `refines` ← [[clauses/WML-CL-GO-SUBMISSION-ORDER|WML-CL-GO-SUBMISSION-ORDER]]
 - `refines` ← [[clauses/WML-CL-GO-TARGET-RESOLUTION|WML-CL-GO-TARGET-RESOLUTION]]
 - `refines` ← [[clauses/WML-CL-GO-TIMER-THEN-DISPLAY|WML-CL-GO-TIMER-THEN-DISPLAY]]
+- `refines` ← [[clauses/WML-CL-POSTFIELD-REQUEST-PAIR|WML-CL-POSTFIELD-REQUEST-PAIR]]
 - `refines` ← [[clauses/WML-CL-TASK-FAILURE-ATOMICITY|WML-CL-TASK-FAILURE-ATOMICITY]]
 - `refines` ← [[clauses/WML-CL-VARIABLE-TASK-SNAPSHOT|WML-CL-VARIABLE-TASK-SNAPSHOT]]
+- `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 
 ## Data
 
 ```json
 {
   "family": "wml",
+  "ordinal": 29,
+  "actor": "wml-user-agent",
   "referencedSection": "9.5.1",
+  "specificationStatus": "mandatory",
+  "dependencyExpression": {
+    "type": "none",
+    "scrIds": []
+  },
   "sourceAnchor": {
     "documentId": "WAP-191_104-WML",
     "staticConformanceSection": "15.1.5",
     "changeSection": null
   },
+  "disposition": {
+    "strict": "required-for-claimed-actor",
+    "classCProfile": "required-by-class-c-client-mcf",
+    "enhancementMayReplaceStrictBehavior": false
+  },
+  "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+      "symbol": "wml_go_request_policy"
+    },
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+      "symbol": "parse_go_request_xml"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+      "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+      "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+      "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+      "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+    }
+  ],
   "ownerLayers": [
     "engine-wasm",
     "browser"
   ],
+  "requirementIds": [
+    "RQ-RMK-002"
+  ],
+  "matrixWorkItems": [
+    "WML-304"
+  ],
   "workItems": [
     "R0-01",
     "R0-02",
-    "R0-06"
+    "R0-06",
+    "WML-304"
   ],
-  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+  "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }
 ```

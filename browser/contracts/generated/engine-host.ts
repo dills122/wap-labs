@@ -27,9 +27,15 @@ export type ScriptTimerRequestSnapshot = { "type": "schedule", delayMs: number, 
 
 export type ExternalNavigationCacheControlPolicySnapshot = "default" | "no-cache";
 
+export type ExternalNavigationMethodSnapshot = "get" | "post";
+
+export type ExternalNavigationPostFieldSnapshot = { name: string, value: string, };
+
+export type ExternalNavigationRequestIntentSnapshot = { method: ExternalNavigationMethodSnapshot, enctype: string, sendReferer: boolean, acceptCharset?: string, sameDeck: boolean, postFields: Array<ExternalNavigationPostFieldSnapshot>, };
+
 export type ExternalNavigationPostContextSnapshot = { sameDeck?: boolean, contentType?: string, payload?: string, };
 
-export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalNavigationCacheControlPolicySnapshot, refererUrl?: string, postContext?: ExternalNavigationPostContextSnapshot, };
+export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalNavigationCacheControlPolicySnapshot, refererUrl?: string, postContext?: ExternalNavigationPostContextSnapshot, requestIntent?: ExternalNavigationRequestIntentSnapshot, };
 
 export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, nextTimerWakeupMs?: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, browserContextEpoch?: number, deckLanguage?: string, activeCardLanguage?: string, lastBackNavigationHandled: boolean, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 

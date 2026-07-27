@@ -1,7 +1,8 @@
 use std::collections::HashSet;
 
 use crate::runtime::card::{
-    CardEventBinding, CardEventBindingKind, CardPostField, CardSetVar, CardTaskAction, CardTimer,
+    CardEventBinding, CardEventBindingKind, CardGoRequest, CardPostField, CardSetVar,
+    CardTaskAction, CardTimer,
 };
 
 use super::nodes::validate_nmtoken;
@@ -108,8 +109,7 @@ fn parse_intrinsic_attributes(
             event_type.to_string(),
             CardTaskAction::Go {
                 href: href.to_string(),
-                method: None,
-                post_fields: Vec::new(),
+                request: CardGoRequest::default(),
             },
             bindings,
             event_types,
@@ -138,8 +138,7 @@ fn push_do_binding(
     let action = if let Some(href) = element.attr("href").filter(|href| !href.is_empty()) {
         CardTaskAction::Go {
             href: href.to_string(),
-            method: parse_go_method_xml(element),
-            post_fields: parse_post_fields_xml(&element.children),
+            request: parse_go_request_xml(element),
         }
     } else {
         parse_first_task_action_xml(&element.children, budget, 0)?.ok_or_else(|| {
@@ -214,8 +213,7 @@ pub(super) fn parse_first_task_action_xml(
                     return Ok(Some(
                         CardTaskAction::Go {
                             href: href.to_string(),
-                            method: parse_go_method_xml(element),
-                            post_fields: parse_post_fields_xml(&element.children),
+                            request: parse_go_request_xml(element),
                         }
                         .with_set_vars(parse_set_vars_xml(&element.children)),
                     ));
@@ -289,8 +287,18 @@ fn parse_timer_xml(
     None
 }
 
-fn parse_go_method_xml(element: &XmlElement) -> Option<String> {
-    normalize_go_method(element.attr("method"))
+fn parse_go_request_xml(element: &XmlElement) -> CardGoRequest {
+    CardGoRequest {
+        method: normalize_go_method(element.attr("method")),
+        send_referer: element.attr("sendreferer") == Some("true"),
+        cache_control: element.attr("cache-control").map(str::to_string),
+        enctype: element
+            .attr("enctype")
+            .unwrap_or("application/x-www-form-urlencoded")
+            .to_string(),
+        accept_charset: element.attr("accept-charset").map(str::to_string),
+        post_fields: parse_post_fields_xml(&element.children),
+    }
 }
 
 fn parse_post_fields_xml(nodes: &[XmlNode]) -> Vec<CardPostField> {
@@ -316,10 +324,6 @@ fn collect_post_fields_xml(nodes: &[XmlNode], out: &mut Vec<CardPostField>) {
     }
 }
 
-fn normalize_go_method(method: Option<&str>) -> Option<String> {
-    let method = method?.trim();
-    if method.is_empty() {
-        return None;
-    }
-    Some(method.to_ascii_uppercase())
+fn normalize_go_method(method: Option<&str>) -> String {
+    method.unwrap_or("get").to_ascii_uppercase()
 }

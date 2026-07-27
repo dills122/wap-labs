@@ -59,7 +59,10 @@ fn enter_accept_post_action_sets_external_navigation_post_context() {
     let policy = engine
         .external_navigation_request_policy()
         .expect("post action should emit request policy");
-    assert_eq!(policy.referer_url.as_deref(), Some("wap://localhost/"));
+    assert_eq!(
+        policy.referer_url, None,
+        "WML sendreferer defaults to false"
+    );
     let post_context = policy
         .post_context
         .expect("post action should populate post context");

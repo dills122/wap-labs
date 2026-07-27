@@ -24,10 +24,12 @@ use wavenav_host_lib::contract_types::{
     EngineDebugSnapshot, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
     EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue, EngineFrame, EngineKey,
     EngineRuntimeSnapshot, ExternalNavigationCacheControlPolicySnapshot,
-    ExternalNavigationPostContextSnapshot, ExternalNavigationRequestPolicySnapshot,
-    HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
-    NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
-    SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    ExternalNavigationMethodSnapshot, ExternalNavigationPostContextSnapshot,
+    ExternalNavigationPostFieldSnapshot, ExternalNavigationRequestIntentSnapshot,
+    ExternalNavigationRequestPolicySnapshot, HandleKeyRequest, LoadDeckContextRequest,
+    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
+    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
+    SetViewportColsRequest,
 };
 
 fn push_decl<T: TS>(out: &mut String) {
@@ -138,6 +140,9 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<ScriptDialogRequestSnapshot>(&mut output);
     push_decl::<ScriptTimerRequestSnapshot>(&mut output);
     push_decl::<ExternalNavigationCacheControlPolicySnapshot>(&mut output);
+    push_decl::<ExternalNavigationMethodSnapshot>(&mut output);
+    push_decl::<ExternalNavigationPostFieldSnapshot>(&mut output);
+    push_decl::<ExternalNavigationRequestIntentSnapshot>(&mut output);
     push_decl::<ExternalNavigationPostContextSnapshot>(&mut output);
     push_decl::<ExternalNavigationRequestPolicySnapshot>(&mut output);
     push_decl::<EngineRuntimeSnapshot>(&mut output);

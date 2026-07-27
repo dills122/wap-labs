@@ -16,7 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
-- `planned-by` → [[work-items/WML-304|WML-304]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` → [[scr-rows/WML-C-21|WML-C-21]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-ACCESS-RELATIVE-PATH|WML-FX-ACCESS-RELATIVE-PATH]]
@@ -44,7 +44,7 @@ tags:
     "R0-04",
     "WML-201",
     "WML-202",
-    "WML-304"
+    "WML-306"
   ],
   "ownerLayers": [
     "browser",

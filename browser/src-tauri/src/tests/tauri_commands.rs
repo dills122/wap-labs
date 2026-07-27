@@ -708,3 +708,56 @@ fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_templates() {
         Some("username=tester&pin=1220")
     );
 }
+
+#[test]
+fn wml_304_tauri_snapshot_preserves_engine_request_intent() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml><card id="home"><do type="accept"><go href="/submit" method="post"
+      sendreferer="true" cache-control="no-cache" accept-charset="utf-8">
+      <postfield name="first" value="1"/><postfield name="second" value="2"/>
+    </go></do></card></wml>
+    "##;
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(wml),
+            base_url: "https://example.test/deck.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("load should succeed");
+
+    let submitted = super::super::engine_handle_key(
+        borrowed_state(&state),
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("enter should execute accept action");
+    let policy = submitted
+        .external_navigation_request_policy
+        .expect("submit should emit a request policy");
+    let intent = policy
+        .request_intent
+        .expect("native host snapshot should preserve request intent");
+    assert!(matches!(
+        intent.method,
+        crate::contract_types::ExternalNavigationMethodSnapshot::Post
+    ));
+    assert_eq!(intent.enctype, "application/x-www-form-urlencoded");
+    assert!(intent.send_referer);
+    assert_eq!(intent.accept_charset.as_deref(), Some("utf-8"));
+    assert_eq!(
+        intent
+            .post_fields
+            .iter()
+            .map(|field| field.name.as_str())
+            .collect::<Vec<_>>(),
+        ["first", "second"]
+    );
+}

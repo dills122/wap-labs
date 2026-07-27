@@ -409,6 +409,26 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-304',
+    new Set([
+      'WML-CL-HISTORY-POST-REPLAY',
+      'WML-CL-POSTFIELD-STRUCTURE',
+      'WML-CL-POSTFIELD-REQUEST-PAIR',
+      'WML-CL-GO-STRUCTURE',
+      'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+      'WML-CL-GO-REFERER',
+      'WML-CL-GO-METHOD',
+      'WML-CL-GO-NO-CACHE',
+      'WML-CL-GO-ENCTYPE-SUPPORT',
+      'WML-CL-GO-PART-CONTENT-TYPE',
+      'WML-CL-GO-ACCEPT-CHARSET',
+      'WML-CL-GO-SUBMISSION-ORDER',
+      'WML-CL-GO-GET-QUERY-MERGE',
+      'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+      'WML-CL-GO-FORM-URLENCODING'
+    ])
+  ],
+  [
     'WML-305',
     new Set([
       'WML-CL-GO-TIMER-THEN-DISPLAY',
@@ -500,6 +520,9 @@ const implementedWml301ClauseIds = new Set(
 const implementedWml303ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-303')
 );
+const implementedWml304ClauseIds = new Set([
+  'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION'
+]);
 const implementedWsp801ClauseIds = new Set([
   'WSP-CL-COMMUNICATION-FAILURE-LOCAL',
   'WSP-CL-CONNECTIONLESS-METHOD-FACILITY',
@@ -704,6 +727,12 @@ const wml303FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
+};
+
+const wml304FixtureEvidence = {
+  path: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304'
 };
 
 const wsp801FixtureEvidence = {
@@ -1106,6 +1135,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (implementedWml304ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml304FixtureEvidence;
       } else if (implementedWsp801ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wsp801FixtureEvidence;
@@ -2037,6 +2069,7 @@ function clause(
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml301ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
+    implementedWml304ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
     implementedWsp802ClauseIds.has(clauseId) ||
     implementedWml305ClauseIds.has(clauseId);
@@ -2061,6 +2094,8 @@ function clause(
       ? wml301FixtureEvidence(clauseId)
       : implementedWml303ClauseIds.has(clauseId)
       ? wml303FixtureEvidence
+      : implementedWml304ClauseIds.has(clauseId)
+      ? wml304FixtureEvidence
       : implementedWsp801ClauseIds.has(clauseId)
       ? wsp801FixtureEvidence
       : implementedWsp802ClauseIds.has(clauseId)

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "ffe48727ff30ef807cfa7396b1b37243799e83d8dff3d45474874fdc635e376c"
+        "sha256": "7894d3660502d5584bbbb63953b7b9d8f8457820f038db3aea69e29b66befb6d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "4e2900efd178a032376639907e35fd225584d041e09c4923eef8248da0a41dbf"
+        "sha256": "f3bea7e28ab4cd1236e3ed21fec9ea82e9668744f981ac0c197e12313721d5cd"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "9c65c15b52802517ca6c2601eb06a050c85dea82cf79e2fc956a708fa3dd28a5"
+        "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "0bdf0789b74c0d77b1896eafd3ffc579d30427b0d4dd2f2eaddadc1041e79a61"
+        "sha256": "5b3b3599aaa8dc57da87d5c189f57f64edbec1245c25de1f8b0e5cc59a72993e"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -106,8 +106,8 @@
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WML-201": {
-        "direct-test-linked": 31,
-        "gap-work-item-mapped": 16,
+        "direct-test-linked": 32,
+        "gap-work-item-mapped": 15,
         "optional-not-assessed": 29
       },
       "WML-202": {},
@@ -2121,7 +2121,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2160,7 +2160,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2199,7 +2199,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2238,7 +2238,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2277,7 +2277,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2316,7 +2316,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2355,7 +2355,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -2925,7 +2925,7 @@
           "R0-04",
           "R0-07",
           "WML-201",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -3562,7 +3562,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3682,7 +3683,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3762,7 +3764,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3839,7 +3842,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3919,7 +3923,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3928,7 +3933,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3956,7 +3961,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -3993,7 +3999,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4030,7 +4037,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4067,7 +4075,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4106,7 +4115,8 @@
           "R0-02",
           "R0-06",
           "R0-07",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4186,7 +4196,8 @@
           "R0-06",
           "WML-201",
           "WML-203",
-          "WML-303"
+          "WML-303",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4224,7 +4235,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -4533,7 +4545,8 @@
           "R0-01",
           "R0-02",
           "R0-03",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -6103,7 +6116,8 @@
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-201"
+          "WML-201",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -6141,7 +6155,8 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -9887,7 +9902,7 @@
       "title": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12656,11 +12671,31 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "missing",
-        "evidenceState": "gap-work-item-mapped",
-        "assessmentNote": "Deck access, domain, path, and sendreferer enforcement is not implemented.",
-        "implementationEvidence": [],
-        "testEvidence": [],
+        "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "allows_referring_uri"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "wml_go_request_policy"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
+            "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+            "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
@@ -13066,7 +13101,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial only because the broader DECK-ACCESS-REQUIRED clause, including sendreferer behavior assigned to WML-304, remains not assessed.",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -13108,7 +13143,7 @@
           "R0-01",
           "R0-04",
           "WML-201",
-          "WML-304"
+          "WML-306"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -13544,18 +13579,27 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Fragment, external, GET/POST, and script href paths exist, but the complete section 12.5 go process is not implemented.",
+        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
-            "symbol": "execute_action_href"
+            "symbol": "wml_go_request_policy"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_go_request_xml"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "fixture_accept_go_trace_order_is_deterministic",
-            "command": "cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic"
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+            "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+            "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
           }
         ],
         "ownerLayers": [
@@ -14081,18 +14125,22 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Postfield name/value collection and URL-form payload generation exist, but complete variable-conversion, ordering, and task-failure semantics are not closed.",
+        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
             "symbol": "collect_post_fields_xml"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "resolve_post_fields"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
-            "test": "enter_accept_post_action_sets_external_navigation_post_context",
-            "command": "cd engine-wasm/engine && cargo test enter_accept_post_action_sets_external_navigation_post_context"
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+            "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
           }
         ],
         "ownerLayers": [

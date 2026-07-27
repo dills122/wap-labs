@@ -142,7 +142,7 @@ fn smoke_external_intent_set_and_clear() {
             .external_navigation_request_policy
             .as_ref()
             .and_then(|policy| policy.referer_url.as_deref()),
-        Some("http://local.test/dir/start.wml")
+        None
     );
 
     let after_clear = apply_clear_external_navigation_intent(&mut engine);
@@ -407,7 +407,7 @@ fn browser_fixture_load_navigate_and_external_intent_flow_is_deterministic() {
             .external_navigation_request_policy
             .as_ref()
             .and_then(|policy| policy.referer_url.as_deref()),
-        Some("http://example.test/fixtures/load-nav-external.wml")
+        None
     );
 
     let after_clear = apply_clear_external_navigation_intent(&mut engine);

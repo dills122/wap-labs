@@ -282,7 +282,7 @@ impl WmlEngine {
                     FocusTarget::Link(href) => {
                         self.active_input_edit = None;
                         self.active_select_edit = None;
-                        self.execute_action_href(href, None, &[])?;
+                        self.execute_action_href(href)?;
                     }
                 }
             }

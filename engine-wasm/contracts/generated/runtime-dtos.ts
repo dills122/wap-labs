@@ -19,9 +19,15 @@ export type ScriptNavigationIntent = { "type": "none" } | { "type": "go", href: 
 
 export type WmlGoCacheControlPolicy = "default" | "no-cache";
 
+export type WmlGoMethod = "get" | "post";
+
+export type WmlGoPostField = { name: string, value: string, };
+
+export type WmlGoRequestIntent = { method: WmlGoMethod, enctype: string, sendReferer: boolean, acceptCharset?: string, sameDeck: boolean, postFields: Array<WmlGoPostField>, };
+
 export type WmlGoPostContext = { sameDeck?: boolean, contentType?: string, payload?: string, };
 
-export type WmlGoRequestPolicy = { cacheControl?: WmlGoCacheControlPolicy, refererUrl?: string, postContext?: WmlGoPostContext, };
+export type WmlGoRequestPolicy = { cacheControl?: WmlGoCacheControlPolicy, refererUrl?: string, postContext?: WmlGoPostContext, requestIntent?: WmlGoRequestIntent, };
 
 export type ScriptValueLiteral = boolean | number | string | { invalid: boolean, };
 

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "ffe48727ff30ef807cfa7396b1b37243799e83d8dff3d45474874fdc635e376c"
+        "sha256": "7894d3660502d5584bbbb63953b7b9d8f8457820f038db3aea69e29b66befb6d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,25 +25,28 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "4e2900efd178a032376639907e35fd225584d041e09c4923eef8248da0a41dbf"
+        "sha256": "f3bea7e28ab4cd1236e3ed21fec9ea82e9668744f981ac0c197e12313721d5cd"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "9c65c15b52802517ca6c2601eb06a050c85dea82cf79e2fc956a708fa3dd28a5"
+        "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
+      },
+      "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
+        "sha256": "5b3b3599aaa8dc57da87d5c189f57f64edbec1245c25de1f8b0e5cc59a72993e"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 303,
-    "edgeCount": 795,
+    "nodeCount": 332,
+    "edgeCount": 884,
     "nodesByType": {
-      "clause": 107,
-      "fixture": 107,
+      "clause": 121,
+      "fixture": 121,
       "legacy-ticket": 14,
       "owner-layer": 4,
       "profile": 1,
       "requirement": 12,
-      "scr-row": 28,
+      "scr-row": 29,
       "source-document": 13,
       "source-family": 3,
       "sprint": 6,
@@ -52,30 +55,30 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 28,
+      "belongs-to": 29,
       "contains": 8,
-      "covers-family": 13,
+      "covers-family": 12,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 180,
+      "maps-to": 197,
       "owned-by": 24,
-      "planned-by": 116,
-      "refines": 158,
+      "planned-by": 136,
+      "refines": 177,
       "relates-to": 16,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 107,
+      "sourced-from": 126,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 107
+      "verified-by": 121
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 20,
       "WML-302": 20,
       "WML-303": 27,
-      "WML-304": 8,
+      "WML-304": 15,
       "WML-305": 10,
-      "WML-306": 0,
+      "WML-306": 8,
       "WML-307": 0,
       "WML-308": 23
     },
@@ -96,7 +99,9 @@
       "WML-305": [
         "wml"
       ],
-      "WML-306": [],
+      "WML-306": [
+        "wml"
+      ],
       "WML-307": [],
       "WML-308": [
         "wml"
@@ -106,7 +111,7 @@
       "WML-301": 0,
       "WML-302": 0,
       "WML-303": 0,
-      "WML-304": 0,
+      "WML-304": 5,
       "WML-305": 0,
       "WML-306": 0,
       "WML-307": 0,
@@ -116,19 +121,17 @@
       "WML-301": {},
       "WML-302": {},
       "WML-303": {},
-      "WML-304": {},
+      "WML-304": {
+        "direct-test-linked": 5
+      },
       "WML-305": {},
       "WML-306": {},
       "WML-307": {},
       "WML-308": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "WML-304": [
-        "wae"
-      ],
       "WML-306": [
-        "wae",
-        "wml"
+        "wae"
       ],
       "WML-307": [
         "wbxml",
@@ -139,7 +142,6 @@
       ]
     },
     "workItemsWithoutDirectClauses": [
-      "WML-306",
       "WML-307"
     ]
   },
@@ -298,7 +300,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -337,7 +339,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -376,7 +378,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -415,7 +417,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -454,7 +456,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -493,7 +495,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -532,7 +534,7 @@
           "R0-04",
           "WML-201",
           "WML-202",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -885,7 +887,7 @@
           "R0-04",
           "R0-07",
           "WML-201",
-          "WML-304"
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -1204,6 +1206,44 @@
       }
     },
     {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "key": "WML-CL-GO-ACCEPT-CHARSET",
+      "type": "clause",
+      "title": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
       "key": "WML-CL-GO-ASSIGNMENT-ORDER",
       "type": "clause",
@@ -1239,6 +1279,44 @@
           "RQ-RMK-003"
         ],
         "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "key": "WML-CL-GO-ENCTYPE-SUPPORT",
+      "type": "clause",
+      "title": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1286,6 +1364,45 @@
       }
     },
     {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING",
+      "key": "WML-CL-GO-FORM-URLENCODING",
+      "type": "clause",
+      "title": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29",
+          "WML-C-37"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-GO-FRAGMENT-FALLBACK",
       "key": "WML-CL-GO-FRAGMENT-FALLBACK",
       "type": "clause",
@@ -1321,6 +1438,44 @@
           "RQ-RMK-003"
         ],
         "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "key": "WML-CL-GO-GET-QUERY-MERGE",
+      "type": "clause",
+      "title": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1364,6 +1519,237 @@
           "RQ-WAE-016"
         ],
         "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "key": "WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "type": "clause",
+      "title": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD",
+      "key": "WML-CL-GO-METHOD",
+      "type": "clause",
+      "title": "Map get and post method values to the corresponding request operation.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Map get and post method values to the corresponding request operation.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE",
+      "key": "WML-CL-GO-NO-CACHE",
+      "type": "clause",
+      "title": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "key": "WML-CL-GO-PART-CONTENT-TYPE",
+      "type": "clause",
+      "title": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "key": "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "type": "clause",
+      "title": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER",
+      "key": "WML-CL-GO-REFERER",
+      "type": "clause",
+      "title": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-14",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "R0-07",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-011"
+        ],
+        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1433,7 +1819,8 @@
           "R0-06",
           "WML-201",
           "WML-203",
-          "WML-303"
+          "WML-303",
+          "WML-304"
         ],
         "ownerLayers": [
           "browser",
@@ -1443,6 +1830,45 @@
           "RQ-RMK-002"
         ],
         "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "key": "WML-CL-GO-SUBMISSION-ORDER",
+      "type": "clause",
+      "title": "Substitute variables, transcode fields, then serialize postfields in document order.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-29",
+          "WML-C-37"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.5.1",
+          "heading": "9.5.1 The Go Element",
+          "normalizedTextSha256": "90342941a32689afb2592233c1c1b0fd9f613ff59ef884eebbce0c792feedc12"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Substitute variables, transcode fields, then serialize postfields in document order.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1641,6 +2067,47 @@
           "RQ-WAE-016"
         ],
         "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "key": "WML-CL-HISTORY-POST-REPLAY",
+      "type": "clause",
+      "title": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-07",
+          "WML-C-38"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.2",
+          "heading": "9.2 History",
+          "normalizedTextSha256": "ddb05258d93542ece6bbeec4487a59dfc0da1b1afbf8a2979f59d5db6e8f8cf4"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-03",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-WAE-016"
+        ],
+        "implementationStatus": "not-assessed",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2558,6 +3025,84 @@
         ],
         "requirementIds": [
           "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "key": "WML-CL-POSTFIELD-REQUEST-PAIR",
+      "type": "clause",
+      "title": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-37",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.3",
+          "heading": "9.3 The Postfield Element",
+          "normalizedTextSha256": "6be6258eb35f3be917c7f3de2cddaeec4cf313cec93eb5cdfce07f49b400f9a6"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "key": "WML-CL-POSTFIELD-STRUCTURE",
+      "type": "clause",
+      "title": "Require postfield name and value attributes and treat both as variable-bearing data.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-37"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.3",
+          "heading": "9.3 The Postfield Element",
+          "normalizedTextSha256": "6be6258eb35f3be917c7f3de2cddaeec4cf313cec93eb5cdfce07f49b400f9a6"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Require postfield name and value attributes and treat both as variable-bearing data.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-201",
+          "WML-203",
+          "WML-304"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -4636,6 +5181,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-GO-ACCEPT-CHARSET",
+      "key": "WML-FX-GO-ACCEPT-CHARSET",
+      "type": "fixture",
+      "title": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-GO-ASSIGNMENT-ORDER",
       "key": "WML-FX-GO-ASSIGNMENT-ORDER",
       "type": "fixture",
@@ -4644,6 +5201,18 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "Apply temporary setvar assignments before newcontext processing and history insertion.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-ENCTYPE-SUPPORT",
+      "key": "WML-FX-GO-ENCTYPE-SUPPORT",
+      "type": "fixture",
+      "title": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -4660,6 +5229,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-GO-FORM-URLENCODING",
+      "key": "WML-FX-GO-FORM-URLENCODING",
+      "type": "fixture",
+      "title": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-GO-FRAGMENT-FALLBACK",
       "key": "WML-FX-GO-FRAGMENT-FALLBACK",
       "type": "fixture",
@@ -4672,6 +5253,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-GO-GET-QUERY-MERGE",
+      "key": "WML-FX-GO-GET-QUERY-MERGE",
+      "type": "fixture",
+      "title": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-GO-HISTORY-PUSH",
       "key": "WML-FX-GO-HISTORY-PUSH",
       "type": "fixture",
@@ -4680,6 +5273,78 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "Push the destination request identity onto history after destination context initialization.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "key": "WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "type": "fixture",
+      "title": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
+      "properties": {
+        "kind": "runtime",
+        "status": "implemented",
+        "assertion": "Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-METHOD",
+      "key": "WML-FX-GO-METHOD",
+      "type": "fixture",
+      "title": "Map get and post method values to the corresponding request operation.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Map get and post method values to the corresponding request operation.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-NO-CACHE",
+      "key": "WML-FX-GO-NO-CACHE",
+      "type": "fixture",
+      "title": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-PART-CONTENT-TYPE",
+      "key": "WML-FX-GO-PART-CONTENT-TYPE",
+      "type": "fixture",
+      "title": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-POST-CONTENT-TYPE-CHARSET",
+      "key": "WML-FX-GO-POST-CONTENT-TYPE-CHARSET",
+      "type": "fixture",
+      "title": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-REFERER",
+      "key": "WML-FX-GO-REFERER",
+      "type": "fixture",
+      "title": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -4704,6 +5369,18 @@
         "kind": "parser",
         "status": "implemented",
         "assertion": "Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-SUBMISSION-ORDER",
+      "key": "WML-FX-GO-SUBMISSION-ORDER",
+      "type": "fixture",
+      "title": "Substitute variables, transcode fields, then serialize postfields in document order.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Substitute variables, transcode fields, then serialize postfields in document order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -4764,6 +5441,18 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "Do not store card content in history entries.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-HISTORY-POST-REPLAY",
+      "key": "WML-FX-HISTORY-POST-REPLAY",
+      "type": "fixture",
+      "title": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -5052,6 +5741,30 @@
         "kind": "runtime",
         "status": "implemented",
         "assertion": "Evaluate option value variable references before assigning the containing select name variable.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-POSTFIELD-REQUEST-PAIR",
+      "key": "WML-FX-POSTFIELD-REQUEST-PAIR",
+      "type": "fixture",
+      "title": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "planned",
+        "assertion": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-POSTFIELD-STRUCTURE",
+      "key": "WML-FX-POSTFIELD-STRUCTURE",
+      "type": "fixture",
+      "title": "Require postfield name and value attributes and treat both as variable-bearing data.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Require postfield name and value attributes and treat both as variable-bearing data.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -5991,22 +6704,58 @@
       "title": "History",
       "properties": {
         "family": "wml",
+        "ordinal": 7,
+        "actor": "wml-user-agent",
         "referencedSection": "9.2",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.2",
           "changeSection": null
         },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "navigate_back_internal"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "navigate_back_restores_previous_card",
+            "command": "cd engine-wasm/engine && cargo test navigate_back_restores_previous_card"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-003",
+          "RQ-WAE-016"
+        ],
+        "matrixWorkItems": [
+          "WML-304"
+        ],
         "workItems": [
           "R0-01",
-          "R0-03"
+          "R0-03",
+          "WML-304"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -6168,22 +6917,66 @@
       "title": "Deck access control",
       "properties": {
         "family": "wml",
+        "ordinal": 14,
+        "actor": "wml-user-agent",
         "referencedSection": "12.1",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.4",
           "changeSection": null
         },
-        "implementationStatus": "missing",
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "allows_referring_uri"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "wml_go_request_policy"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
+            "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+            "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-011"
+        ],
+        "matrixWorkItems": [
+          "WML-304"
+        ],
         "workItems": [
           "R0-01",
-          "R0-07"
+          "R0-07",
+          "WML-304"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -6258,7 +7051,7 @@
           "R0-01",
           "R0-04",
           "C5-03",
-          "WML-304"
+          "WML-306"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6321,23 +7114,67 @@
       "title": "go",
       "properties": {
         "family": "wml",
+        "ordinal": 29,
+        "actor": "wml-user-agent",
         "referencedSection": "9.5.1",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.5",
           "changeSection": null
         },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "wml_go_request_policy"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "parse_go_request_xml"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+            "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
+            "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "matrixWorkItems": [
+          "WML-304"
+        ],
         "workItems": [
           "R0-01",
           "R0-02",
-          "R0-06"
+          "R0-06",
+          "WML-304"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -6392,28 +7229,128 @@
       }
     },
     {
+      "id": "scr-row:WML-C-37",
+      "key": "WML-C-37",
+      "type": "scr-row",
+      "title": "postfield",
+      "properties": {
+        "family": "wml",
+        "ordinal": 37,
+        "actor": "wml-user-agent",
+        "referencedSection": "9.3",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.5",
+          "changeSection": null
+        },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
+            "symbol": "collect_post_fields_xml"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "resolve_post_fields"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
+            "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
+            "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+          }
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "matrixWorkItems": [
+          "WML-304"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "WML-304"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      }
+    },
+    {
       "id": "scr-row:WML-C-38",
       "key": "WML-C-38",
       "type": "scr-row",
       "title": "prev",
       "properties": {
         "family": "wml",
+        "ordinal": 38,
+        "actor": "wml-user-agent",
         "referencedSection": "9.5.2",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.5",
           "changeSection": null
         },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "CardTaskAction::Prev"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "enter_accept_prev_action_navigates_back_when_history_exists",
+            "command": "cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "matrixWorkItems": [
+          "WML-304"
+        ],
         "workItems": [
           "R0-01",
-          "R0-02"
+          "R0-02",
+          "WML-304"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -7130,7 +8067,7 @@
       "type": "work-item",
       "title": "GET/POST/postfield/form commit pipeline",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "transport-rust",
@@ -7138,8 +8075,19 @@
           "qa"
         ],
         "sourceFamilies": [
-          "wml",
-          "wae"
+          "wml"
+        ],
+        "notes": [
+          "The source-audited WML-304 graph boundary directly maps 15 WML clauses across WML-C-07, WML-C-14, WML-C-29, WML-C-37, and WML-C-38. The unrelated WAE family declaration and WML-C-21 access-control inheritance were removed; access/error policy remains WML-306.",
+          "This first slice defines the Rust-owned go request intent and its native/WASM/Tauri-host serialized contract. It does not claim native transport request application, GET query merge, multipart body construction, charset selection, origin reload behavior, or POST history replay completion.",
+          "WML-301 request-shaped history, WML-302 variable resolution, WML-303 task rollback, and WML-305 timer ordering remain preserved regression evidence."
+        ],
+        "scrMatrix": {
+          "family": "wml",
+          "scope": "selected-clause-parents"
+        },
+        "specReferences": [
+          "WAP-191_104-WML sections 9.2, 9.3, and 9.5.1 as amended by WAP-191_105-WML section 4.3"
         ],
         "existingTickets": [
           "R0-06",
@@ -7153,9 +8101,13 @@
           "Field commit, postfield generation, same-deck suppression, accept-charset, URL encoding, multipart optionality, referer, and no-cache behavior follow SIN 105."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-          "cargo test --manifest-path transport-rust/Cargo.toml",
-          "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304",
+          "wasm-pack test --node engine-wasm/engine",
+          "pnpm --dir engine-wasm/host-sample run contracts:check",
+          "pnpm test:story WML-304",
+          "node scripts/wap-context-pack.mjs WML-304",
+          "pnpm wap-compliance:check",
+          "pnpm wap-graph:check"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -7562,10 +8514,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-ABSENT-ALLOWS|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-ABSENT-ALLOWS|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-ABSENT-ALLOWS",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7607,10 +8559,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-COMPONENT-MATCH|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-COMPONENT-MATCH|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-COMPONENT-MATCH",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7652,10 +8604,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-DEFAULTS|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-DEFAULTS|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-DEFAULTS",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7697,10 +8649,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-REFERRER-MATCH|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-REFERRER-MATCH|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-REFERRER-MATCH",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7742,10 +8694,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-RELATIVE-PATH|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-RELATIVE-PATH|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-RELATIVE-PATH",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7787,10 +8739,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-SINGLE-ELEMENT|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-SINGLE-ELEMENT|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-SINGLE-ELEMENT",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -7832,10 +8784,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-ACCESS-URL-CASE-RULES|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-ACCESS-URL-CASE-RULES|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-ACCESS-URL-CASE-RULES",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8291,10 +9243,10 @@
       ]
     },
     {
-      "id": "clause:WML-CL-DECK-ACCESS-REQUIRED|planned-by|work-item:WML-304",
+      "id": "clause:WML-CL-DECK-ACCESS-REQUIRED|planned-by|work-item:WML-306",
       "from": "clause:WML-CL-DECK-ACCESS-REQUIRED",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8714,6 +9666,51 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCEPT-CHARSET|verified-by|fixture:WML-FX-GO-ACCEPT-CHARSET",
+      "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-ACCEPT-CHARSET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-ASSIGNMENT-ORDER|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
       "relation": "maps-to",
@@ -8772,6 +9769,51 @@
       "from": "clause:WML-CL-GO-ASSIGNMENT-ORDER",
       "relation": "verified-by",
       "to": "fixture:WML-FX-GO-ASSIGNMENT-ORDER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ENCTYPE-SUPPORT|verified-by|fixture:WML-FX-GO-ENCTYPE-SUPPORT",
+      "from": "clause:WML-CL-GO-ENCTYPE-SUPPORT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-ENCTYPE-SUPPORT",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8858,6 +9900,60 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|refines|scr-row:WML-C-37",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "refines",
+      "to": "scr-row:WML-C-37",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-FORM-URLENCODING|verified-by|fixture:WML-FX-GO-FORM-URLENCODING",
+      "from": "clause:WML-CL-GO-FORM-URLENCODING",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-FORM-URLENCODING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-FRAGMENT-FALLBACK|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-GO-FRAGMENT-FALLBACK",
       "relation": "maps-to",
@@ -8916,6 +10012,51 @@
       "from": "clause:WML-CL-GO-FRAGMENT-FALLBACK",
       "relation": "verified-by",
       "to": "fixture:WML-FX-GO-FRAGMENT-FALLBACK",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-GET-QUERY-MERGE|verified-by|fixture:WML-FX-GO-GET-QUERY-MERGE",
+      "from": "clause:WML-CL-GO-GET-QUERY-MERGE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-GET-QUERY-MERGE",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9002,6 +10143,294 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION|verified-by|fixture:WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "from": "clause:WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-INTERNAL-POSTFIELD-SUPPRESSION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-METHOD",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-METHOD",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-METHOD",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-METHOD",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-METHOD|verified-by|fixture:WML-FX-GO-METHOD",
+      "from": "clause:WML-CL-GO-METHOD",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-METHOD",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-NO-CACHE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-NO-CACHE",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-NO-CACHE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-NO-CACHE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-NO-CACHE|verified-by|fixture:WML-FX-GO-NO-CACHE",
+      "from": "clause:WML-CL-GO-NO-CACHE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-NO-CACHE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-PART-CONTENT-TYPE|verified-by|fixture:WML-FX-GO-PART-CONTENT-TYPE",
+      "from": "clause:WML-CL-GO-PART-CONTENT-TYPE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-PART-CONTENT-TYPE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET|verified-by|fixture:WML-FX-GO-POST-CONTENT-TYPE-CHARSET",
+      "from": "clause:WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-POST-CONTENT-TYPE-CHARSET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|maps-to|requirement:RQ-RMK-011",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-011",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|refines|scr-row:WML-C-14",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-14",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-REFERER|verified-by|fixture:WML-FX-GO-REFERER",
+      "from": "clause:WML-CL-GO-REFERER",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-REFERER",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-SETVAR-SNAPSHOT|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-GO-SETVAR-SNAPSHOT",
       "relation": "maps-to",
@@ -9083,6 +10512,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-GO-STRUCTURE|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-GO-STRUCTURE|refines|scr-row:WML-C-29",
       "from": "clause:WML-CL-GO-STRUCTURE",
       "relation": "refines",
@@ -9105,6 +10543,60 @@
       "from": "clause:WML-CL-GO-STRUCTURE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-GO-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|refines|scr-row:WML-C-37",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "refines",
+      "to": "scr-row:WML-C-37",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-SUBMISSION-ORDER|verified-by|fixture:WML-FX-GO-SUBMISSION-ORDER",
+      "from": "clause:WML-CL-GO-SUBMISSION-ORDER",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-SUBMISSION-ORDER",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9420,6 +10912,78 @@
       "from": "clause:WML-CL-HISTORY-EXCLUDES-CONTENT",
       "relation": "verified-by",
       "to": "fixture:WML-FX-HISTORY-EXCLUDES-CONTENT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|maps-to|requirement:RQ-WAE-016",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-016",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|refines|scr-row:WML-C-07",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-07",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|refines|scr-row:WML-C-38",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-38",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-HISTORY-POST-REPLAY|verified-by|fixture:WML-FX-HISTORY-POST-REPLAY",
+      "from": "clause:WML-CL-HISTORY-POST-REPLAY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-HISTORY-POST-REPLAY",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -10689,6 +12253,105 @@
       "from": "clause:WML-CL-OPTION-VALUE-EVALUATION",
       "relation": "verified-by",
       "to": "fixture:WML-FX-OPTION-VALUE-EVALUATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|refines|scr-row:WML-C-37",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "refines",
+      "to": "scr-row:WML-C-37",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-REQUEST-PAIR|verified-by|fixture:WML-FX-POSTFIELD-REQUEST-PAIR",
+      "from": "clause:WML-CL-POSTFIELD-REQUEST-PAIR",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-POSTFIELD-REQUEST-PAIR",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|planned-by|work-item:WML-304",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|refines|scr-row:WML-C-37",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-37",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-POSTFIELD-STRUCTURE|verified-by|fixture:WML-FX-POSTFIELD-STRUCTURE",
+      "from": "clause:WML-CL-POSTFIELD-STRUCTURE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-POSTFIELD-STRUCTURE",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -13345,7 +15008,27 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-07|planned-by|work-item:WML-304",
+      "from": "scr-row:WML-C-07",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-07|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-07",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -13408,7 +15091,27 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-14|planned-by|work-item:WML-304",
+      "from": "scr-row:WML-C-14",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-14|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-14",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -13439,10 +15142,10 @@
       ]
     },
     {
-      "id": "scr-row:WML-C-21|planned-by|work-item:WML-304",
+      "id": "scr-row:WML-C-21|planned-by|work-item:WML-306",
       "from": "scr-row:WML-C-21",
       "relation": "planned-by",
-      "to": "work-item:WML-304",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -13480,7 +15183,27 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-29|planned-by|work-item:WML-304",
+      "from": "scr-row:WML-C-29",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-29|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-29",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -13511,12 +15234,61 @@
       ]
     },
     {
+      "id": "scr-row:WML-C-37|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-37",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-37|planned-by|work-item:WML-304",
+      "from": "scr-row:WML-C-37",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-37|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-37",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WML-C-38|belongs-to|source-family:wml",
       "from": "scr-row:WML-C-38",
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-38|planned-by|work-item:WML-304",
+      "from": "scr-row:WML-C-38",
+      "relation": "planned-by",
+      "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-38|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-38",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -14167,15 +15939,6 @@
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json",
         "spec-processing/source-manifests/wap-1.2.1-successor-delta.json"
-      ]
-    },
-    {
-      "id": "work-item:WML-304|covers-family|source-family:wae",
-      "from": "work-item:WML-304",
-      "relation": "covers-family",
-      "to": "source-family:wae",
-      "sourceRefs": [
-        "docs/waves/wap-1.2.1-compliance-program.json"
       ]
     },
     {

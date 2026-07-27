@@ -118,6 +118,13 @@ test('parses script outcomes and structured external request policy expectations
                 sameDeck: false,
                 contentType: 'application/x-www-form-urlencoded',
                 payload: 'username=BOB'
+              },
+              requestIntent: {
+                method: 'post',
+                enctype: 'application/x-www-form-urlencoded',
+                sendReferer: true,
+                sameDeck: false,
+                postFields: [{ name: 'username', value: 'BOB' }]
               }
             }
           }
@@ -136,6 +143,10 @@ test('parses script outcomes and structured external request policy expectations
     parsed.flows[0].steps[0].expect.state.externalNavigationRequestPolicy.postContext.payload,
     'username=BOB'
   );
+  assert.deepEqual(
+    parsed.flows[0].steps[0].expect.state.externalNavigationRequestPolicy.requestIntent.postFields,
+    [{ name: 'username', value: 'BOB' }]
+  );
 });
 
 test('rejects malformed structured external request policy expectations', () => {
@@ -153,6 +164,30 @@ test('rejects malformed structured external request policy expectations', () => 
   assert.throws(
     () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
     /postContext\.sameDeck must be boolean/
+  );
+});
+
+test('rejects malformed WML go request intent expectations', () => {
+  const document = validFlow({
+    initial: {
+      state: {
+        activeCardId: 'home',
+        externalNavigationRequestPolicy: {
+          requestIntent: {
+            method: 'put',
+            enctype: 'application/x-www-form-urlencoded',
+            sendReferer: false,
+            sameDeck: false,
+            postFields: []
+          }
+        }
+      }
+    }
+  });
+
+  assert.throws(
+    () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
+    /requestIntent\.method must be get or post/
   );
 });
 

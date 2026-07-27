@@ -67,6 +67,16 @@
                   "sameDeck": false,
                   "contentType": "application/x-www-form-urlencoded",
                   "payload": "username=AHMEDBOB&pin=42"
+                },
+                "requestIntent": {
+                  "method": "post",
+                  "enctype": "application/x-www-form-urlencoded",
+                  "sendReferer": true,
+                  "sameDeck": false,
+                  "postFields": [
+                    { "name": "username", "value": "AHMEDBOB" },
+                    { "name": "pin", "value": "42" }
+                  ]
                 }
               }
             },

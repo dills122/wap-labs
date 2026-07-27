@@ -282,6 +282,23 @@ const wml303ClauseIds = new Set([
   'WML-CL-TEMPLATE-APPLIES-ALL-CARDS',
   'WML-CL-TEMPLATE-STRUCTURE'
 ]);
+const wml304ClauseIds = new Set([
+  'WML-CL-HISTORY-POST-REPLAY',
+  'WML-CL-POSTFIELD-STRUCTURE',
+  'WML-CL-POSTFIELD-REQUEST-PAIR',
+  'WML-CL-GO-STRUCTURE',
+  'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+  'WML-CL-GO-REFERER',
+  'WML-CL-GO-METHOD',
+  'WML-CL-GO-NO-CACHE',
+  'WML-CL-GO-ENCTYPE-SUPPORT',
+  'WML-CL-GO-PART-CONTENT-TYPE',
+  'WML-CL-GO-ACCEPT-CHARSET',
+  'WML-CL-GO-SUBMISSION-ORDER',
+  'WML-CL-GO-GET-QUERY-MERGE',
+  'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+  'WML-CL-GO-FORM-URLENCODING'
+]);
 const wml305ClauseIds = new Set([
   'WML-CL-GO-TIMER-THEN-DISPLAY',
   'WML-CL-REFRESH-TIMER-RESTART',
@@ -430,6 +447,7 @@ const wml203ClauseIds = new Set([
 const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
+  'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
   ...wml203ClauseIds,
   ...wml204ClauseIds,
   ...wml205ClauseIds,
@@ -702,6 +720,7 @@ for (const family of ledger.families ?? []) {
         ...(wml301ClauseIds.has(candidate.id) ? ['WML-301'] : []),
         ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
         ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
+        ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
@@ -718,6 +737,7 @@ for (const family of ledger.families ?? []) {
       ...(wml301ClauseIds.has(candidate.id) ? ['WML-301'] : []),
       ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
       ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
+      ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),

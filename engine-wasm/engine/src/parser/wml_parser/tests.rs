@@ -1,28 +1,71 @@
 use super::{parse_wml, parse_wml_report_for_content_type, parse_xml_root, MAX_PARSE_TREE_DEPTH};
-use crate::runtime::card::{Card, CardEventBindingKind, CardPostField, CardTaskAction, CardTimer};
+use crate::runtime::card::{
+    Card, CardEventBindingKind, CardGoRequest, CardPostField, CardTaskAction, CardTimer,
+};
 use crate::runtime::deck::DeckMetaProperty;
 use crate::runtime::node::{InlineNode, Node};
 
 fn go_action(href: &str) -> CardTaskAction {
     CardTaskAction::Go {
         href: href.to_string(),
-        method: None,
-        post_fields: Vec::new(),
+        request: CardGoRequest::default(),
     }
 }
 
 fn post_go_action(href: &str, fields: &[(&str, &str)]) -> CardTaskAction {
     CardTaskAction::Go {
         href: href.to_string(),
-        method: Some("POST".to_string()),
-        post_fields: fields
-            .iter()
-            .map(|(name, value)| CardPostField {
-                name: (*name).to_string(),
-                value: (*value).to_string(),
-            })
-            .collect(),
+        request: CardGoRequest {
+            method: "POST".to_string(),
+            post_fields: fields
+                .iter()
+                .map(|(name, value)| CardPostField {
+                    name: (*name).to_string(),
+                    value: (*value).to_string(),
+                })
+                .collect(),
+            ..CardGoRequest::default()
+        },
     }
+}
+
+#[test]
+fn wml_304_parser_preserves_go_request_attributes_and_postfield_order() {
+    let deck = parse_wml(
+        r##"
+        <wml><card id="home"><do type="accept"><go href="/submit" method="post"
+          sendreferer="true" cache-control="no-cache" enctype="multipart/form-data"
+          accept-charset="utf-8 iso-8859-1">
+          <postfield name="first" value="1"/>
+          <postfield name="second" value="2"/>
+        </go></do></card></wml>
+        "##,
+    )
+    .expect("WML-304 request fixture should parse");
+
+    assert_eq!(
+        card_do_action(&deck.cards[0], "accept"),
+        Some(CardTaskAction::Go {
+            href: "/submit".to_string(),
+            request: CardGoRequest {
+                method: "POST".to_string(),
+                send_referer: true,
+                cache_control: Some("no-cache".to_string()),
+                enctype: "multipart/form-data".to_string(),
+                accept_charset: Some("utf-8 iso-8859-1".to_string()),
+                post_fields: vec![
+                    CardPostField {
+                        name: "first".to_string(),
+                        value: "1".to_string(),
+                    },
+                    CardPostField {
+                        name: "second".to_string(),
+                        value: "2".to_string(),
+                    },
+                ],
+            },
+        })
+    );
 }
 
 fn card_do_action(card: &Card, do_type: &str) -> Option<CardTaskAction> {
