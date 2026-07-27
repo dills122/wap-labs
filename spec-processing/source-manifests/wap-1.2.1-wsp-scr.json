@@ -81,11 +81,10 @@
     "mandatoryClientCount": 20,
     "selectedClassCTransportPathCount": 8,
     "selectedImplementationStatus": {
-      "implemented": 6,
-      "partial": 2
+      "implemented": 8
     },
-    "selectedDirectNormativeTestEvidenceCount": 7,
-    "selectedProvisionalTestEvidenceCount": 1,
+    "selectedDirectNormativeTestEvidenceCount": 8,
+    "selectedProvisionalTestEvidenceCount": 0,
     "orderedIdsSha256": "5efb3b964986398370e16e9ae556a9fab455af7e8c1846880b868792d1d55584"
   },
   "obligations": [
@@ -107,7 +106,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-mode-profile",
         "ownerLayers": [
@@ -121,7 +120,7 @@
           "T0-09"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.",
+        "assessmentNote": "The strict Class C connectionless profile maps role-legal non-confirmed WSP primitives directly to one Unitdata request and one canonical transaction-ID-prefixed PDU without WSP session state.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wsp_connectionless_primitive_profile.rs",
@@ -141,7 +140,7 @@
             "limitation": "Closes only the selected non-confirmed Class C connectionless primitive/PDU path; connection-oriented WSP and WTP remain inactive."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -162,7 +161,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -176,7 +175,7 @@
           "T0-09"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native fetch and session types support a connectionless path, but the strict Class C mode capability and its WDP dependency closure are not yet machine-declared.",
+        "assessmentNote": "The strict Class C connectionless profile maps role-legal non-confirmed WSP primitives directly to one Unitdata request and one canonical transaction-ID-prefixed PDU without WSP session state.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wsp_connectionless_primitive_profile.rs",
@@ -196,7 +195,7 @@
             "limitation": "Closes only the selected non-confirmed Class C connectionless primitive/PDU path; connection-oriented WSP and WTP remain inactive."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -1775,7 +1774,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -1788,8 +1787,8 @@
           "WSP-802",
           "T0-20"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Header and encoding-version modules provide substantial behavior, but their tables/defaults are successor-oriented and lack WAP-203 effective-source vectors.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "The WSP-801 byte-exact matrix and WSP-802 header fixture jointly close integer order, Content-Type seams, generic header framing, the effective registry, code pages, and fallback policy.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/connectionless.rs",
@@ -1806,10 +1805,17 @@
             "test": "source_linked_get_post_and_reply_pdus_are_byte_exact_roundtrips",
             "fixture": "transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json",
             "evidenceClass": "direct-normative",
-            "limitation": "Directly closes only WSP-801 integer ordering and POST/Reply Content-Type framing; generic header registry, Encoding-Version, code pages, and unknown/fallback policy remain WSP-802 residuals."
+            "limitation": "Preserves the completed WSP-801 byte-exact PDU and Content-Type framing evidence."
+          },
+          {
+            "path": "transport-rust/tests/wsp_header_grammar.rs",
+            "test": "effective_default_header_registry_is_complete_and_versioned",
+            "fixture": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Detailed Content-Type media and charset ownership remains on the shared WML-304 seam."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -1830,7 +1836,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -1847,7 +1853,7 @@
           "T0-30"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "assessmentNote": "The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/connectionless.rs",
@@ -1867,7 +1873,7 @@
             "limitation": "Closes only the selected WSP-801 GET/POST/Reply and primitive matrix; header registry/version closure remains WSP-802 and no connection-oriented path is claimed."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -1888,7 +1894,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -1905,7 +1911,7 @@
           "T0-30"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "assessmentNote": "The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/connectionless.rs",
@@ -1925,7 +1931,7 @@
             "limitation": "Closes only the selected WSP-801 GET/POST/Reply and primitive matrix; header registry/version closure remains WSP-802 and no connection-oriented path is claimed."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -1946,7 +1952,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -1963,7 +1969,7 @@
           "T0-30"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "assessmentNote": "The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/connectionless.rs",
@@ -1983,7 +1989,7 @@
             "limitation": "Closes only the selected WSP-801 GET/POST/Reply and primitive matrix; header registry/version closure remains WSP-802 and no connection-oriented path is claimed."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -2004,7 +2010,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -2021,7 +2027,7 @@
           "T0-30"
         ],
         "implementationStatus": "implemented",
-        "assessmentNote": "Native connectionless GET/POST/REPLY encoding exists with synthetic tests, but exact WAP-203 PDU, primitive, status, and assigned-number coverage is incomplete.",
+        "assessmentNote": "The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/connectionless.rs",
@@ -2041,7 +2047,7 @@
             "limitation": "Closes only the selected WSP-801 GET/POST/Reply and primitive matrix; header registry/version closure remains WSP-802 and no connection-oriented path is claimed."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {
@@ -2554,7 +2560,7 @@
         "classCProfile": "required-by-selected-class-c-transport-path",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-path-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-path-implemented-direct-evidence",
       "mapping": {
         "implementationDomain": "wsp-connectionless",
         "ownerLayers": [
@@ -2567,8 +2573,8 @@
           "WSP-802",
           "T0-20"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Header and encoding-version modules provide substantial behavior, but their tables/defaults are successor-oriented and lack WAP-203 effective-source vectors.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "The WSP-802 header fixture directly closes Encoding-Version defaults, selection, extension pages, caching, hop-by-hop behavior, and compatible retry policy.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/network/wsp/header_block.rs",
@@ -2581,12 +2587,14 @@
         ],
         "testEvidence": [
           {
-            "path": "transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json",
-            "test": "reply-encoding-version-header-and-body",
-            "limitation": "Synthetic fixture; WAP-203/SIN-005 header-table identity is not proven."
+            "path": "transport-rust/tests/wsp_header_grammar.rs",
+            "test": "mapped_header_sections_decode_with_explicit_unknown_policy",
+            "fixture": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+            "evidenceClass": "direct-normative",
+            "limitation": "Connection-oriented capability negotiation remains WSP-803 ownership."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-normative-test-linked"
       }
     },
     {

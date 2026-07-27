@@ -107,7 +107,7 @@ const familyDefinitions = [
     expectedRows: 109,
     expectedSelected: 8,
     expectedClauses: 57,
-    expectedStatus: { implemented: 6, partial: 2, missing: 0 },
+    expectedStatus: { implemented: 8, partial: 0, missing: 0 },
     activeDoc: 'docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md'
   }
 ];
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 27, blocked: 1, 'in-progress': 9, todo: 45 })
+  JSON.stringify({ done: 28, blocked: 1, 'in-progress': 8, todo: 45 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 31, partial: 69, missing: 98 })
+  JSON.stringify({ implemented: 33, partial: 67, missing: 98 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      '253 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
+      '275 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed'
     ]
   ],
   [
@@ -383,8 +383,8 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/TRANSPORT_SPEC_TRACEABILITY.md',
     [
-      '17 implemented / 2 partial / 0 missing',
-      '18/19 direct normative tests'
+      '19 implemented / 0 partial / 0 missing',
+      '19/19 direct normative tests'
     ]
   ],
   [

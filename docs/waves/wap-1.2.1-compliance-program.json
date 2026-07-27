@@ -1383,7 +1383,7 @@
             "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
           ],
           "acceptance": [
-            "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals."
+            "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents keep their byte-exact evidence, and WSP-802 closes the delegated WSP-CL-C-003 and WSP-CL-C-020 header residuals without changing that matrix."
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
@@ -1394,20 +1394,24 @@
         },
         {
           "id": "WSP-802",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["transport-rust", "qa"],
-          "sourceFamilies": ["wsp", "general-formats"],
-          "explicitUnmappedFamilies": ["general-formats"],
+          "sourceFamilies": ["wsp"],
           "existingTickets": ["T0-10", "T0-20"],
           "outputs": [
-            "WSP header/assigned-number/encoding-version closure"
+            "WSP header/assigned-number/encoding-version closure",
+            "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+            "docs/waves/WSP_802_HEADER_ENCODING_EVIDENCE.md"
           ],
           "acceptance": [
             "Known tokens, code pages, text fallbacks, unknown policy, encoding versions, and round trips match the WAP 1.2.1 effective set."
           ],
           "evidence": [
+            "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar",
+            "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
             "cargo test --manifest-path transport-rust/Cargo.toml",
-            "node scripts/check-wap-transport-conformance-ledgers.mjs"
+            "node scripts/check-wap-transport-conformance-ledgers.mjs",
+            "node scripts/wap-context-pack.mjs WSP-802"
           ]
         },
         {

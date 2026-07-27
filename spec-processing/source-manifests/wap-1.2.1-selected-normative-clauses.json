@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 253
+    "assessedClauseCount": 275
   },
   "families": [
     {
@@ -11976,7 +11976,7 @@
     },
     {
       "family": "wbxml",
-      "status": "nested-clauses-partially-fixture-backed",
+      "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
       "parentLedgerSha256": "28934f63b284ce6e6fc130a97be4c93b563cb454ffc08b281eeb3ab4a62a7421",
       "effectiveSequence": [
@@ -19153,9 +19153,9 @@
     },
     {
       "family": "wsp",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json",
-      "parentLedgerSha256": "0c33a4f492b109897f6802a4ac146368f5a328167dea2a3070ff1e0a3bb70cff",
+      "parentLedgerSha256": "3ad4a5bf37c3ac0c4c7b8f9602408209bb8ead7b4d6fa6d6aae44706979e69ba",
       "effectiveSequence": [
         "WAP-203-WSP",
         "WAP-203_001-WSP",
@@ -19243,7 +19243,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -19423,7 +19423,7 @@
             "documentId": "WAP-203_003-WSP",
             "staticConformanceSection": "Appendix D"
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "transport-rust"
           ],
@@ -20358,7 +20358,7 @@
             ],
             "parentImplementationSnapshot": {
               "WSP-CL-C-001": "implemented",
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -20904,7 +20904,7 @@
             ],
             "parentImplementationSnapshot": {
               "WSP-CL-C-006": "implemented",
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -21103,7 +21103,7 @@
             "parentImplementationSnapshot": {
               "WSP-CL-C-005": "implemented",
               "WSP-CL-C-007": "implemented",
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -21176,8 +21176,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-HTTP-COMPATIBILITY",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1."
+            "status": "implemented",
+            "assertion": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21191,9 +21196,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21215,8 +21220,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-COMPACTION-FORMS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics."
+            "status": "implemented",
+            "assertion": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21230,9 +21240,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21255,8 +21265,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-NAME-VERSION-CHOICE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text."
+            "status": "implemented",
+            "assertion": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21270,10 +21285,10 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial",
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-003": "implemented",
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21295,8 +21310,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-DEFAULT-PAGE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Start every header set on default code page 1 and keep a shifted page active only through that header set."
+            "status": "implemented",
+            "assertion": "Start every header set on default code page 1 and keep a shifted page active only through that header set.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21310,9 +21330,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21334,8 +21354,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-CODE-PAGE-RANGES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use."
+            "status": "implemented",
+            "assertion": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21349,9 +21374,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21373,8 +21398,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-EXTENSION-PAGE-AGREEMENT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names."
+            "status": "implemented",
+            "assertion": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21388,9 +21418,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21412,8 +21442,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-VALUE-ENCODING-CHOICE",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text."
+            "status": "implemented",
+            "assertion": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21427,9 +21462,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21451,8 +21486,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-VALUE-LENGTH-PREFIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value."
+            "status": "implemented",
+            "assertion": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21466,9 +21506,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21490,8 +21530,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-UNKNOWN-VALUE-SKIP",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax."
+            "status": "implemented",
+            "assertion": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21505,9 +21550,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21529,8 +21574,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-LIST-EXPANSION",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule."
+            "status": "implemented",
+            "assertion": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21544,9 +21594,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21568,8 +21618,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-SYNTAX-REGISTRY",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding."
+            "status": "implemented",
+            "assertion": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21583,9 +21638,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21608,8 +21663,13 @@
           "fixturePlan": {
             "id": "WSP-FX-HEADER-FIELD-ASSIGNMENTS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments."
+            "status": "implemented",
+            "assertion": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21623,10 +21683,10 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial",
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-003": "implemented",
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21648,8 +21708,13 @@
           "fixturePlan": {
             "id": "WSP-FX-EXPECT-SIN-ENCODING",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding."
+            "status": "implemented",
+            "assertion": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21663,9 +21728,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial"
+              "WSP-CL-C-003": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21687,8 +21752,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-REQUIRED",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply."
+            "status": "implemented",
+            "assertion": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21702,9 +21772,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21726,8 +21796,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-ABSENT-DEFAULT",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page."
+            "status": "implemented",
+            "assertion": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21741,9 +21816,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21765,8 +21840,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-CLIENT-SELECTION",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Send the highest encoding version the client implements that does not exceed the known server maximum."
+            "status": "implemented",
+            "assertion": "Send the highest encoding version the client implements that does not exceed the known server maximum.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21780,9 +21860,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21804,8 +21884,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-NO-OVERCLAIM",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Never advertise or emit a binary encoding version for which the sending peer is not compliant."
+            "status": "implemented",
+            "assertion": "Never advertise or emit a binary encoding version for which the sending peer is not compliant.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21819,9 +21904,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21843,8 +21928,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-EXTENSION-PAGES",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Send a dedicated Encoding-Version value for each used extended header code page."
+            "status": "implemented",
+            "assertion": "Send a dedicated Encoding-Version value for each used extended header code page.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21858,9 +21948,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21882,8 +21972,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-PEER-CACHE",
             "kind": "state-machine",
-            "status": "planned",
-            "assertion": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests."
+            "status": "implemented",
+            "assertion": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21897,9 +21992,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21922,8 +22017,13 @@
           "fixturePlan": {
             "id": "WSP-FX-UNSUPPORTED-ENCODING-RETRY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information."
+            "status": "implemented",
+            "assertion": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21937,10 +22037,10 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-003": "partial",
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-003": "implemented",
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -21962,8 +22062,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-TEXT-FORM",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules."
+            "status": "implemented",
+            "assertion": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -21977,9 +22082,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -22001,8 +22106,13 @@
           "fixturePlan": {
             "id": "WSP-FX-ENCODING-VERSION-HOP-BY-HOP",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header."
+            "status": "implemented",
+            "assertion": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+              "testPath": "transport-rust/tests/wsp_header_grammar.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -22016,9 +22126,9 @@
               "RQ-TRN-014"
             ],
             "parentImplementationSnapshot": {
-              "WSP-CL-C-020": "partial"
+              "WSP-CL-C-020": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         }

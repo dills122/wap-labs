@@ -4,7 +4,7 @@ key: "WSP-FX-HEADER-HTTP-COMPATIBILITY"
 type: "fixture"
 generated: true
 slice: "WSP-8"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

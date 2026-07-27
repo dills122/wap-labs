@@ -7,8 +7,11 @@ use crate::network::wsp::connectionless::{
     decode_connectionless_reply, encode_connectionless_request, WspConnectionlessEncodeError,
     WspConnectionlessMethod, WspConnectionlessRequest,
 };
-use crate::network::wsp::header_block::{WspHeaderBlock, WspHeaderField, WspHeaderNameEncoding};
+use crate::network::wsp::header_block::{
+    prepare_connectionless_header_block, WspHeaderBlock, WspHeaderField, WspHeaderNameEncoding,
+};
 use crate::network::wsp::header_registry::DEFAULT_HEADER_CODE_PAGE;
+use crate::network::wsp::WspEncodingVersion;
 use crate::request_meta::log_transport_event;
 use crate::responses::{
     invalid_request_response, map_success_payload_response, map_terminal_send_error,
@@ -46,8 +49,6 @@ pub(crate) struct NativeFetchPlan {
 
 /// Media type this transport negotiates when the caller sends no `Accept`.
 const DEFAULT_ACCEPT_MEDIA: &str = "application/vnd.wap.wmlc";
-/// WSP/WBXML version supported by the selected WML 1.3 native profile.
-const NATIVE_WSP_ENCODING_VERSION: &str = "1.3";
 
 /// Failure while building the connectionless request for a native fetch plan.
 #[derive(Debug)]
@@ -465,14 +466,7 @@ fn connectionless_request_headers(headers: &HashMap<String, String>) -> WspHeade
             },
         });
     }
-    block.headers.push(WspHeaderField {
-        name: "Encoding-Version".to_string(),
-        value: NATIVE_WSP_ENCODING_VERSION.to_string(),
-        name_encoding: WspHeaderNameEncoding::Binary {
-            page: DEFAULT_HEADER_CODE_PAGE,
-        },
-    });
-    block
+    prepare_connectionless_header_block(&block, WspEncodingVersion::V1_3, &[])
 }
 
 fn hex_bytes(bytes: &[u8]) -> String {
@@ -883,7 +877,7 @@ mod tests {
         )]));
         assert_eq!(headers.headers.len(), 1);
         assert_eq!(headers.headers[0].name, "Encoding-Version");
-        assert_eq!(headers.headers[0].value, NATIVE_WSP_ENCODING_VERSION);
+        assert_eq!(headers.headers[0].value, "1.3");
     }
 
     #[test]

@@ -116,8 +116,8 @@ const configs = [
       serverCount: 53,
       mandatoryClientCount: 20,
       selectedClassCTransportPathCount: 8,
-      selectedDirectNormativeTestEvidenceCount: 7,
-      selectedProvisionalTestEvidenceCount: 1,
+      selectedDirectNormativeTestEvidenceCount: 8,
+      selectedProvisionalTestEvidenceCount: 0,
       orderedIdsSha256:
         '5efb3b964986398370e16e9ae556a9fab455af7e8c1846880b868792d1d55584'
     },
@@ -131,7 +131,7 @@ const configs = [
       'WSP-CL-C-007',
       'WSP-CL-C-020'
     ],
-    selectedStatus: { implemented: 6, partial: 2 }
+    selectedStatus: { implemented: 8 }
   }
 ];
 

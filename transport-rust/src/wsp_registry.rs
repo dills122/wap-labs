@@ -231,7 +231,7 @@ mod tests {
         let encoded =
             encode_header_field_name_bytes("X-Wap-Ack", HeaderEncodePolicy::STRICT_BINARY)
                 .expect("known extension headers should encode");
-        assert_eq!(encoded, vec![HEADER_CODE_PAGE_SHIFT, 0x40, 0x10]);
+        assert_eq!(encoded, vec![HEADER_CODE_PAGE_SHIFT, 0x40, 0x90]);
     }
 
     #[test]

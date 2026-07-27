@@ -635,7 +635,7 @@ if (
     (line) =>
       line.includes('35 WSP-801 clauses') &&
       line.includes('seven selected parents') &&
-      line.includes('WSP-802 residuals')
+      line.includes('WSP-802 closes')
   ) ||
   !wspMatrix?.evidence?.includes(
     'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'
@@ -643,8 +643,12 @@ if (
   !wspMatrix?.evidence?.includes(
     'node scripts/check-wap-transport-conformance-ledgers.mjs'
   ) ||
-  JSON.stringify(wspHeaders?.explicitUnmappedFamilies) !==
-    JSON.stringify(['general-formats']) ||
+  wspHeaders?.status !== 'done' ||
+  JSON.stringify(wspHeaders?.sourceFamilies) !== JSON.stringify(['wsp']) ||
+  wspHeaders?.explicitUnmappedFamilies ||
+  !wspHeaders?.outputs?.includes(
+    'transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json'
+  ) ||
   !wspPost?.acceptance?.some(
     (line) =>
       line.includes('connectionless WSP') &&
@@ -652,7 +656,7 @@ if (
   )
 ) {
   failures.push(
-    'WSP-8 must retain the exact connectionless Class C path, general-formats mapping gap, and WTP capability gate'
+    'WSP-8 must retain the exact connectionless Class C path, completed WSP-802 evidence, and WTP capability gate'
   );
 }
 const integrationSprint = program.sprints.find((sprint) => sprint.id === 'INT-9');

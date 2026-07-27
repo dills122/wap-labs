@@ -1,4 +1,7 @@
-use crate::network::wsp::header_registry::is_negotiated_extension_page;
+use crate::network::wsp::header_registry::{
+    default_header_definitions, is_negotiated_extension_page,
+};
+use std::collections::BTreeMap;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct WspEncodingVersion {
@@ -7,6 +10,7 @@ pub struct WspEncodingVersion {
 }
 
 impl WspEncodingVersion {
+    pub const V1_1: Self = Self { major: 1, minor: 1 };
     pub const V1_2: Self = Self { major: 1, minor: 2 };
     pub const V1_3: Self = Self { major: 1, minor: 3 };
     pub const V1_4: Self = Self { major: 1, minor: 4 };
@@ -53,6 +57,37 @@ pub struct WspEncodingVersionHeader {
 pub struct WspEncodingVersionErrorResponse {
     pub status_code: u16,
     pub supported_header: WspEncodingVersionHeader,
+}
+
+/// Hop-local cache of the highest header encoding version advertised by a peer.
+///
+/// Keys are caller-owned peer identities (for example an origin or gateway
+/// socket). The cache deliberately contains no persistence or network behavior.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct WspPeerEncodingVersionCache {
+    peers: BTreeMap<String, WspEncodingVersion>,
+}
+
+impl WspPeerEncodingVersionCache {
+    pub fn remember(&mut self, peer: impl Into<String>, advertised: WspEncodingVersion) {
+        self.peers.insert(peer.into(), advertised);
+    }
+
+    pub fn forget(&mut self, peer: &str) {
+        self.peers.remove(peer);
+    }
+
+    pub fn supported_version(
+        &self,
+        peer: &str,
+        policy: WspEncodingVersionPolicy,
+    ) -> WspEncodingVersion {
+        self.peers
+            .get(peer)
+            .copied()
+            .unwrap_or(policy.default_peer_version)
+            .min(policy.server_max_version)
+    }
 }
 
 pub fn choose_response_encoding_version(
@@ -139,16 +174,14 @@ fn minimum_binary_version_for_header(
         return policy.default_extension_page_version;
     }
 
-    match header_name {
-        "Profile" | "Profile-Diff" | "Profile-Warning-Deprecated" => WspEncodingVersion::V1_2,
-        "Expect" | "TE" | "Trailer" | "Accept-Charset" | "Accept-Encoding" | "Cache-Control"
-        | "Content-Range" | "X-Wap-Tod" | "Content-ID" | "Set-Cookie" | "Cookie"
-        | "Encoding-Version" => WspEncodingVersion::V1_3,
-        "Profile-Warning" | "Content-Disposition" | "X-WAP-Security" | "Cache-Control-1.4" => {
-            WspEncodingVersion::V1_4
-        }
-        _ => WspEncodingVersion::V1_2,
-    }
+    default_header_definitions()
+        .iter()
+        .rev()
+        .find(|definition| {
+            !definition.deprecated && definition.name.eq_ignore_ascii_case(header_name)
+        })
+        .map(|definition| definition.minimum_version)
+        .unwrap_or(WspEncodingVersion::V1_2)
 }
 
 #[cfg(test)]
@@ -217,9 +250,9 @@ mod tests {
         let policy = WspEncodingVersionPolicy::default();
         assert_eq!(
             incoming_binary_header_status(
-                "Content-Disposition",
+                "Expect",
                 0x01,
-                Some(WspEncodingVersion::V1_3),
+                Some(WspEncodingVersion::V1_2),
                 &[],
                 policy,
             ),
@@ -229,7 +262,7 @@ mod tests {
             incoming_binary_header_status(
                 "X-App-Trace",
                 0x10,
-                Some(WspEncodingVersion::V1_4),
+                Some(WspEncodingVersion::V1_2),
                 &[],
                 policy,
             ),
@@ -258,6 +291,33 @@ mod tests {
                 code_page: Some(0x40),
                 version: None,
             }
+        );
+    }
+
+    #[test]
+    fn peer_cache_defaults_caps_updates_and_forgets() {
+        let policy = WspEncodingVersionPolicy::default();
+        let mut cache = WspPeerEncodingVersionCache::default();
+        assert_eq!(
+            cache.supported_version("gateway", policy),
+            WspEncodingVersion::V1_2
+        );
+
+        cache.remember("gateway", WspEncodingVersion { major: 2, minor: 0 });
+        assert_eq!(
+            cache.supported_version("gateway", policy),
+            WspEncodingVersion::V1_4
+        );
+
+        cache.remember("gateway", WspEncodingVersion::V1_3);
+        assert_eq!(
+            cache.supported_version("gateway", policy),
+            WspEncodingVersion::V1_3
+        );
+        cache.forget("gateway");
+        assert_eq!(
+            cache.supported_version("gateway", policy),
+            WspEncodingVersion::V1_2
         );
     }
 }

@@ -44,9 +44,10 @@ The register identifies 17 successor-derived implementation foundations:
 Of the 17 successor-derived foundations, 15 require strict correction and two
 are compatible planning classifications.
 
-This is a planning classification, not conformance evidence. Clause
-implementation remains `not-assessed` until direct target-era fixtures and
-code/test review establish the strict outcome.
+This is a planning classification, not conformance evidence. Current clause
+implementation status comes from the target-family ledgers; a correction-required
+classification remains as historical delta context after direct target-era fixtures
+and code/test review establish the strict outcome.
 
 ## Family posture
 
@@ -58,9 +59,10 @@ code/test review establish the strict outcome.
   full-validation gaps keep its WML2 compatibility behavior contextual. The
   other selected rows have no identified successor-derived implementation
   basis.
-- WSP: all eight selected partial rows use successor-oriented tables or
-  synthetic cases and require correction against effective WAP-203/SIN
-  clauses.
+- WSP: all eight selected foundations were classified as successor-oriented
+  tables or synthetic cases requiring correction against effective WAP-203/SIN
+  clauses. WSP-801 and WSP-802 now provide the target-era corrections and direct
+  fixtures; the classification remains historical delta context.
 - WDP and WCMP: WAP-259 remains family delta context. Existing WDP UDP/IP
   foundations are target-version-neutral; the selected WAP-202 section 5.3
   ICMP path is direct-fixture-backed, while general-WCMP and optional/server

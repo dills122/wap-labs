@@ -4,7 +4,7 @@ key: "WSP-FX-ENCODING-VERSION-EXTENSION-PAGES"
 type: "fixture"
 generated: true
 slice: "WSP-8"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Send a dedicated Encoding-Version value for each used extended header code page.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

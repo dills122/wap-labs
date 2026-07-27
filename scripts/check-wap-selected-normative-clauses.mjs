@@ -21,6 +21,15 @@ const wsp801FixturePath =
 const wsp801TestPath = 'transport-rust/tests/wsp_connectionless_matrix.rs';
 const wsp801Fixture = readJson(path.join(root, wsp801FixturePath));
 const implementedWsp801ClauseIds = new Set(wsp801Fixture.clauseIds ?? []);
+const implementedWsp802ClauseIds = new Set(
+  ledger.families
+    .flatMap((family) => family.clauses ?? [])
+    .filter((clause) => clause.mapping?.workItems?.includes('WSP-802'))
+    .map((clause) => clause.id)
+);
+const wsp802FixturePath =
+  'transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json';
+const wsp802TestPath = 'transport-rust/tests/wsp_header_grammar.rs';
 
 function readJson(filename) {
   return JSON.parse(fs.readFileSync(filename, 'utf8'));
@@ -457,8 +466,11 @@ for (const family of ledger.families ?? []) {
   const effectiveFamily = effectiveSpec.families.find(
     (candidate) => candidate.family === family.family
   );
-  const expectedFamilyStatus =
-    family.family === 'wcmp'
+  const expectedFamilyStatus = family.clauses?.every(
+    (candidate) => candidate.fixturePlan?.status === 'implemented'
+  )
+    ? 'nested-clauses-fixture-backed'
+    : family.family === 'wcmp'
       ? family.clauses?.every((candidate) => candidate.fixturePlan?.status === 'implemented')
         ? 'nested-clauses-fixture-backed'
         : 'nested-clauses-partially-fixture-backed'
@@ -665,7 +677,8 @@ for (const family of ledger.families ?? []) {
       (candidate.family === 'wbxml' &&
         !deferredWbxmlClauseIds.has(candidate.id)) ||
       implementedWmlClauseIds.has(candidate.id) ||
-      implementedWsp801ClauseIds.has(candidate.id));
+      implementedWsp801ClauseIds.has(candidate.id) ||
+      implementedWsp802ClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -723,7 +736,15 @@ for (const family of ledger.families ?? []) {
           candidate.fixturePlan.evidence?.testPath !== wsp801TestPath ||
           !fs.existsSync(path.join(root, wsp801TestPath)) ||
           candidate.fixturePlan.evidence?.command !==
-            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'))
+            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix')) ||
+      (implementedWsp802ClauseIds.has(candidate.id) &&
+        !implementedWsp801ClauseIds.has(candidate.id) &&
+        (implementedWsp802ClauseIds.size !== 25 ||
+          candidate.fixturePlan.evidence?.path !== wsp802FixturePath ||
+          candidate.fixturePlan.evidence?.testPath !== wsp802TestPath ||
+          !fs.existsSync(path.join(root, wsp802TestPath)) ||
+          candidate.fixturePlan.evidence?.command !==
+            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar'))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }

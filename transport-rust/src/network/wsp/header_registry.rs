@@ -1,3 +1,5 @@
+use crate::network::wsp::encoding_version::WspEncodingVersion;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WspAssignedNumberKind {
     PduType,
@@ -70,6 +72,92 @@ pub struct WspHeaderCodePage {
     pub headers: &'static [(u8, &'static str)],
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WspHeaderCodePageClass {
+    Default,
+    WapReserved,
+    Application,
+    FutureReserved,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WspHeaderValueGrammar {
+    Accept,
+    AcceptCharset,
+    AcceptEncoding,
+    AcceptLanguage,
+    AcceptRanges,
+    Age,
+    Allow,
+    Authorization,
+    CacheControl,
+    Connection,
+    ContentBase,
+    ContentEncoding,
+    ContentLanguage,
+    ContentLength,
+    ContentLocation,
+    ContentMd5,
+    ContentRange,
+    ContentType,
+    Date,
+    Etag,
+    Expires,
+    From,
+    Host,
+    IfModifiedSince,
+    IfMatch,
+    IfNoneMatch,
+    IfRange,
+    IfUnmodifiedSince,
+    Location,
+    LastModified,
+    MaxForwards,
+    Pragma,
+    ProxyAuthenticate,
+    ProxyAuthorization,
+    Public,
+    Range,
+    Referer,
+    RetryAfter,
+    Server,
+    TransferEncoding,
+    Upgrade,
+    UserAgent,
+    Vary,
+    Via,
+    Warning,
+    WwwAuthenticate,
+    ContentDisposition,
+    ApplicationId,
+    ContentUri,
+    InitiatorUri,
+    AcceptApplication,
+    BearerIndication,
+    PushFlag,
+    Profile,
+    ProfileDiff,
+    ProfileWarning,
+    ExpectSin001,
+    Te,
+    Trailer,
+    XWapTod,
+    ContentId,
+    SetCookie,
+    Cookie,
+    EncodingVersion,
+    ApplicationSpecific,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct WspHeaderFieldDefinition {
+    pub code: u8,
+    pub name: &'static str,
+    pub minimum_version: WspEncodingVersion,
+    pub grammar: WspHeaderValueGrammar,
+    pub deprecated: bool,
+}
+
 pub const DEFAULT_HEADER_CODE_PAGE: u8 = 0x01;
 pub const HEADER_CODE_PAGE_SHIFT: u8 = 0x7F;
 
@@ -109,6 +197,18 @@ pub fn decode_header_field_name_on_page(
     code: u8,
     policy: WspAssignedNumberPolicy,
 ) -> Result<Option<&'static str>, WspAssignedNumberError> {
+    if page == DEFAULT_HEADER_CODE_PAGE {
+        if let Some(definition) = default_header_definition(code) {
+            return Ok(Some(definition.name));
+        }
+        return match policy.behavior_for(WspAssignedNumberKind::HeaderFieldName) {
+            UnknownAssignedNumberBehavior::Ignore => Ok(None),
+            UnknownAssignedNumberBehavior::Error => Err(WspAssignedNumberError {
+                kind: WspAssignedNumberKind::HeaderFieldName,
+                code,
+            }),
+        };
+    }
     let headers = match header_code_page(page) {
         Some(page) => page.headers,
         None => {
@@ -139,10 +239,44 @@ pub fn encode_well_known_parameter(name: &str) -> Option<u8> {
 }
 
 pub fn encode_header_field_name_on_page(name: &str, page: u8) -> Option<u8> {
+    if page == DEFAULT_HEADER_CODE_PAGE {
+        return default_header_definition_for_encoding(name, WspEncodingVersion::V1_4)
+            .map(|definition| definition.code);
+    }
     header_code_page(page).and_then(|page| encode_assigned_number(name, page.headers))
 }
 
+pub fn default_header_definitions() -> &'static [WspHeaderFieldDefinition] {
+    DEFAULT_HEADER_FIELD_DEFINITIONS
+}
+
+pub fn default_header_definition(code: u8) -> Option<&'static WspHeaderFieldDefinition> {
+    DEFAULT_HEADER_FIELD_DEFINITIONS
+        .iter()
+        .find(|definition| definition.code == code)
+}
+
+pub fn default_header_definition_for_encoding(
+    name: &str,
+    recipient_version: WspEncodingVersion,
+) -> Option<&'static WspHeaderFieldDefinition> {
+    DEFAULT_HEADER_FIELD_DEFINITIONS
+        .iter()
+        .rev()
+        .find(|definition| {
+            !definition.deprecated
+                && definition.name.eq_ignore_ascii_case(name)
+                && definition.minimum_version <= recipient_version
+        })
+}
+
 pub fn resolve_header_field_page(name: &str) -> Option<u8> {
+    if DEFAULT_HEADER_FIELD_DEFINITIONS
+        .iter()
+        .any(|definition| definition.name.eq_ignore_ascii_case(name))
+    {
+        return Some(DEFAULT_HEADER_CODE_PAGE);
+    }
     HEADER_CODE_PAGES
         .iter()
         .find(|page| {
@@ -158,7 +292,19 @@ pub fn header_code_page_name(page: u8) -> Option<&'static str> {
 }
 
 pub fn is_negotiated_extension_page(page: u8) -> bool {
-    page >= 0x10
+    matches!(
+        header_code_page_class(page),
+        WspHeaderCodePageClass::Application
+    )
+}
+
+pub const fn header_code_page_class(page: u8) -> WspHeaderCodePageClass {
+    match page {
+        DEFAULT_HEADER_CODE_PAGE => WspHeaderCodePageClass::Default,
+        0x02..=0x0F => WspHeaderCodePageClass::WapReserved,
+        0x10..=0x7F => WspHeaderCodePageClass::Application,
+        _ => WspHeaderCodePageClass::FutureReserved,
+    }
 }
 
 fn header_code_page(page: u8) -> Option<&'static WspHeaderCodePage> {
@@ -259,79 +405,99 @@ const WELL_KNOWN_PARAMETERS: &[(u8, &str)] = &[
     (0x1D, "Path"),
 ];
 
-const DEFAULT_HEADER_FIELD_NAMES: &[(u8, &str)] = &[
-    (0x00, "Accept"),
-    (0x01, "Accept-Charset-Deprecated"),
-    (0x02, "Accept-Encoding-Deprecated"),
-    (0x03, "Accept-Language"),
-    (0x04, "Accept-Ranges"),
-    (0x05, "Age"),
-    (0x06, "Allow"),
-    (0x07, "Authorization"),
-    (0x08, "Cache-Control-Deprecated"),
-    (0x09, "Connection"),
-    (0x0A, "Content-Base-Deprecated"),
-    (0x0B, "Content-Encoding"),
-    (0x0C, "Content-Language"),
-    (0x0D, "Content-Length"),
-    (0x0E, "Content-Location"),
-    (0x0F, "Content-MD5"),
-    (0x10, "Content-Range-Deprecated"),
-    (0x11, "Content-Type"),
-    (0x12, "Date"),
-    (0x13, "Etag"),
-    (0x14, "Expires"),
-    (0x15, "From"),
-    (0x16, "Host"),
-    (0x17, "If-Modified-Since"),
-    (0x18, "If-Match"),
-    (0x19, "If-None-Match"),
-    (0x1A, "If-Range"),
-    (0x1B, "If-Unmodified-Since"),
-    (0x1C, "Location"),
-    (0x1D, "Last-Modified"),
-    (0x1E, "Max-Forwards"),
-    (0x1F, "Pragma"),
-    (0x20, "Proxy-Authenticate"),
-    (0x21, "Proxy-Authorization"),
-    (0x22, "Public"),
-    (0x23, "Range"),
-    (0x24, "Referer"),
-    (0x25, "Retry-After"),
-    (0x26, "Server"),
-    (0x27, "Transfer-Encoding"),
-    (0x28, "Upgrade"),
-    (0x29, "User-Agent"),
-    (0x2A, "Vary"),
-    (0x2B, "Via"),
-    (0x2C, "Warning"),
-    (0x2D, "WWW-Authenticate"),
-    (0x2F, "X-Wap-Application-Id"),
-    (0x30, "X-Wap-Content-URI"),
-    (0x31, "X-Wap-Initiator-URI"),
-    (0x32, "Accept-Application"),
-    (0x33, "Bearer-Indication"),
-    (0x34, "Push-Flag"),
-    (0x35, "Profile"),
-    (0x36, "Profile-Diff"),
-    (0x37, "Profile-Warning-Deprecated"),
-    (0x38, "Expect"),
-    (0x39, "TE"),
-    (0x3A, "Trailer"),
-    (0x3B, "Accept-Charset"),
-    (0x3C, "Accept-Encoding"),
-    (0x3D, "Cache-Control"),
-    (0x3E, "Content-Range"),
-    (0x3F, "X-Wap-Tod"),
-    (0x40, "Content-ID"),
-    (0x41, "Set-Cookie"),
-    (0x42, "Cookie"),
-    (0x43, "Encoding-Version"),
-    (0x44, "Profile-Warning"),
-    (0x45, "Content-Disposition"),
-    (0x46, "X-WAP-Security"),
-    (0x47, "Cache-Control-1.4"),
+macro_rules! header_definition {
+    ($code:literal, $name:literal, $version:ident, $grammar:ident) => {
+        WspHeaderFieldDefinition {
+            code: $code,
+            name: $name,
+            minimum_version: WspEncodingVersion::$version,
+            grammar: WspHeaderValueGrammar::$grammar,
+            deprecated: false,
+        }
+    };
+    ($code:literal, $name:literal, $version:ident, $grammar:ident, deprecated) => {
+        WspHeaderFieldDefinition {
+            code: $code,
+            name: $name,
+            minimum_version: WspEncodingVersion::$version,
+            grammar: WspHeaderValueGrammar::$grammar,
+            deprecated: true,
+        }
+    };
+}
+
+const DEFAULT_HEADER_FIELD_DEFINITIONS: &[WspHeaderFieldDefinition] = &[
+    header_definition!(0x00, "Accept", V1_1, Accept),
+    header_definition!(0x01, "Accept-Charset", V1_1, AcceptCharset, deprecated),
+    header_definition!(0x02, "Accept-Encoding", V1_1, AcceptEncoding, deprecated),
+    header_definition!(0x03, "Accept-Language", V1_1, AcceptLanguage),
+    header_definition!(0x04, "Accept-Ranges", V1_1, AcceptRanges),
+    header_definition!(0x05, "Age", V1_1, Age),
+    header_definition!(0x06, "Allow", V1_1, Allow),
+    header_definition!(0x07, "Authorization", V1_1, Authorization),
+    header_definition!(0x08, "Cache-Control", V1_1, CacheControl, deprecated),
+    header_definition!(0x09, "Connection", V1_1, Connection),
+    header_definition!(0x0A, "Content-Base", V1_1, ContentBase),
+    header_definition!(0x0B, "Content-Encoding", V1_1, ContentEncoding),
+    header_definition!(0x0C, "Content-Language", V1_1, ContentLanguage),
+    header_definition!(0x0D, "Content-Length", V1_1, ContentLength),
+    header_definition!(0x0E, "Content-Location", V1_1, ContentLocation),
+    header_definition!(0x0F, "Content-MD5", V1_1, ContentMd5),
+    header_definition!(0x10, "Content-Range", V1_1, ContentRange, deprecated),
+    header_definition!(0x11, "Content-Type", V1_1, ContentType),
+    header_definition!(0x12, "Date", V1_1, Date),
+    header_definition!(0x13, "Etag", V1_1, Etag),
+    header_definition!(0x14, "Expires", V1_1, Expires),
+    header_definition!(0x15, "From", V1_1, From),
+    header_definition!(0x16, "Host", V1_1, Host),
+    header_definition!(0x17, "If-Modified-Since", V1_1, IfModifiedSince),
+    header_definition!(0x18, "If-Match", V1_1, IfMatch),
+    header_definition!(0x19, "If-None-Match", V1_1, IfNoneMatch),
+    header_definition!(0x1A, "If-Range", V1_1, IfRange),
+    header_definition!(0x1B, "If-Unmodified-Since", V1_1, IfUnmodifiedSince),
+    header_definition!(0x1C, "Location", V1_1, Location),
+    header_definition!(0x1D, "Last-Modified", V1_1, LastModified),
+    header_definition!(0x1E, "Max-Forwards", V1_1, MaxForwards),
+    header_definition!(0x1F, "Pragma", V1_1, Pragma),
+    header_definition!(0x20, "Proxy-Authenticate", V1_1, ProxyAuthenticate),
+    header_definition!(0x21, "Proxy-Authorization", V1_1, ProxyAuthorization),
+    header_definition!(0x22, "Public", V1_1, Public),
+    header_definition!(0x23, "Range", V1_1, Range),
+    header_definition!(0x24, "Referer", V1_1, Referer),
+    header_definition!(0x25, "Retry-After", V1_1, RetryAfter),
+    header_definition!(0x26, "Server", V1_1, Server),
+    header_definition!(0x27, "Transfer-Encoding", V1_1, TransferEncoding),
+    header_definition!(0x28, "Upgrade", V1_1, Upgrade),
+    header_definition!(0x29, "User-Agent", V1_1, UserAgent),
+    header_definition!(0x2A, "Vary", V1_1, Vary),
+    header_definition!(0x2B, "Via", V1_1, Via),
+    header_definition!(0x2C, "Warning", V1_1, Warning),
+    header_definition!(0x2D, "WWW-Authenticate", V1_1, WwwAuthenticate),
+    header_definition!(0x2E, "Content-Disposition", V1_1, ContentDisposition),
+    header_definition!(0x2F, "X-Wap-Application-Id", V1_2, ApplicationId),
+    header_definition!(0x30, "X-Wap-Content-URI", V1_2, ContentUri),
+    header_definition!(0x31, "X-Wap-Initiator-URI", V1_2, InitiatorUri),
+    header_definition!(0x32, "Accept-Application", V1_2, AcceptApplication),
+    header_definition!(0x33, "Bearer-Indication", V1_2, BearerIndication),
+    header_definition!(0x34, "Push-Flag", V1_2, PushFlag),
+    header_definition!(0x35, "Profile", V1_2, Profile),
+    header_definition!(0x36, "Profile-Diff", V1_2, ProfileDiff),
+    header_definition!(0x37, "Profile-Warning", V1_2, ProfileWarning),
+    header_definition!(0x38, "Expect", V1_3, ExpectSin001),
+    header_definition!(0x39, "TE", V1_3, Te),
+    header_definition!(0x3A, "Trailer", V1_3, Trailer),
+    header_definition!(0x3B, "Accept-Charset", V1_3, AcceptCharset),
+    header_definition!(0x3C, "Accept-Encoding", V1_3, AcceptEncoding),
+    header_definition!(0x3D, "Cache-Control", V1_3, CacheControl),
+    header_definition!(0x3E, "Content-Range", V1_3, ContentRange),
+    header_definition!(0x3F, "X-Wap-Tod", V1_3, XWapTod),
+    header_definition!(0x40, "Content-ID", V1_3, ContentId),
+    header_definition!(0x41, "Set-Cookie", V1_3, SetCookie),
+    header_definition!(0x42, "Cookie", V1_3, Cookie),
+    header_definition!(0x43, "Encoding-Version", V1_3, EncodingVersion),
 ];
+
+const DEFAULT_HEADER_FIELD_NAMES: &[(u8, &str)] = &[];
 
 const APP_HEADER_FIELD_NAMES: &[(u8, &str)] = &[(0x10, "X-App-Trace"), (0x11, "X-App-Checksum")];
 

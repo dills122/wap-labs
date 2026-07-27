@@ -500,7 +500,6 @@ if (
     JSON.stringify(['WSP-803', 'WSP-806']) ||
   JSON.stringify(wspGraph.summary.unmappedNormativeFamiliesByWorkItem) !==
     JSON.stringify({
-      'WSP-802': ['general-formats'],
       'WSP-803': ['wsp'],
       'WSP-804': ['wdp'],
       'WSP-805': ['wae', 'wdp', 'wml'],
@@ -537,14 +536,13 @@ if (
   !wsp802Pack.includes('- Selected SCR parents: 6') ||
   !wsp802Pack.includes('- Direct normative clauses: 25') ||
   !wsp802Pack.includes('**WSP-CL-HEADER-HTTP-COMPATIBILITY**') ||
-  !wsp802Pack.includes('`general-formats`: `WAP-188-WAPGenFormats`') ||
-  !wsp802Pack.includes('`WSP-802` declares `general-formats` scope without a direct clause mapping') ||
+  wsp802Pack.includes('`general-formats`: `WAP-188-WAPGenFormats`') ||
+  wsp802Pack.includes('declares `general-formats` scope') ||
   wspGraph.summary.workItemsWithoutDirectClauses.includes('WSP-802') ||
-  JSON.stringify(wspGraph.summary.unmappedNormativeFamiliesByWorkItem['WSP-802']) !==
-    JSON.stringify(['general-formats'])
+  wspGraph.summary.unmappedNormativeFamiliesByWorkItem['WSP-802']
 ) {
   failures.push(
-    'WSP-802 context rendering must expose its 25 mapped WSP clauses, six direct parents, effective source order, and the general-formats family gap'
+    'WSP-802 context rendering must expose its 25 mapped WSP clauses, six direct parents, effective WSP source order, and no declared-family gap'
   );
 }
 

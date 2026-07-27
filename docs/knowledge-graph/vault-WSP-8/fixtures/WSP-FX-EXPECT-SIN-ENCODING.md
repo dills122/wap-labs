@@ -4,7 +4,7 @@ key: "WSP-FX-EXPECT-SIN-ENCODING"
 type: "fixture"
 generated: true
 slice: "WSP-8"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

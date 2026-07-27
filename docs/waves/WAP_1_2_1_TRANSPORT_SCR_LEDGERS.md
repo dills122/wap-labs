@@ -68,8 +68,8 @@ This produces 19 selected-path rows:
 |---|---:|---|---:|
 | WDP | 9 | 9 implemented / 0 partial / 0 missing | 9 |
 | WCMP | 2 | 2 implemented / 0 partial / 0 missing | 2 |
-| WSP | 8 | 6 implemented / 2 partial / 0 missing | 7 |
-| **Total** | **19** | **17 implemented / 2 partial / 0 missing** | **18** |
+| WSP | 8 | 8 implemented / 0 partial / 0 missing | 8 |
+| **Total** | **19** | **19 implemented / 0 partial / 0 missing** | **19** |
 
 The two optional WDP rows and three optional WCMP/WSP root-dependency rows are
 required by the selected alternatives. Their source `O` status is preserved;
@@ -180,11 +180,10 @@ headers. A stateless primitive adapter enforces client/server role legality and
 maps each request directly to one WDP or security-SAP Unitdata operation.
 
 The source-linked `wsp_connectionless_matrix` fixture directly assesses all 35
-WSP-801 clauses and seven selected parents. Six selected rows are implemented;
-`WSP-CL-C-003` remains partial because WSP-801 closes only its integer-order and
-Content-Type framing seams, while `WSP-CL-C-020` remains wholly within WSP-802.
-Generic header registry, Encoding-Version, code-page, and unknown/fallback
-closure therefore remains explicit follow-on work.
+WSP-801 clauses and preserves its seven selected parents byte-for-byte. The
+WSP-802 header fixture supplies additive direct evidence for generic framing,
+the effective registry, Encoding-Version, code pages, and unknown/fallback
+policy, closing `WSP-CL-C-003` and `WSP-CL-C-020` without changing WSP-801.
 
 `CONF-003` retains 57 WSP clauses overall. The WSP-801 evidence does not
 activate connection-oriented WSP or WTP, and it does not claim the parent
@@ -251,8 +250,9 @@ adapter.
   WAP-159 SMPP adaptation remain deferred, and TRN-703 is not reopened.
 - `WSP-801`: complete for the 35-clause connectionless PDU, primitive, method,
   transaction, status, URI/body, and exact-byte matrix.
-- `WSP-802`, `WSP-804`, `WSP-805`: retain generic header/encoding-version
-  closure and browser GET/POST ingress without widening the WTP boundary.
+- `WSP-802`: complete for generic header/Encoding-Version closure; `WSP-804`
+  and `WSP-805` retain browser GET/POST ingress without widening the WTP
+  boundary.
 - `SRC-005`: complete; preserve the normalized `TIAEIA-732` dependency and
   licensed-access boundary.
 - `CONF-003`: promote direct normative fixtures for the completed WDP, WCMP,

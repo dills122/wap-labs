@@ -1,0 +1,37 @@
+name = "wsp-802-header-grammar"
+description = "Effective WAP-203 plus SIN 001/003/005 header grammar, registry, code-page, fallback, and Encoding-Version evidence."
+mode = "mapped"
+work_items = ["WSP-802"]
+spec_items = [
+  "WSP-CL-ENCODING-VERSION-ABSENT-DEFAULT",
+  "WSP-CL-ENCODING-VERSION-CLIENT-SELECTION",
+  "WSP-CL-ENCODING-VERSION-EXTENSION-PAGES",
+  "WSP-CL-ENCODING-VERSION-HOP-BY-HOP",
+  "WSP-CL-ENCODING-VERSION-NO-OVERCLAIM",
+  "WSP-CL-ENCODING-VERSION-PEER-CACHE",
+  "WSP-CL-ENCODING-VERSION-REQUIRED",
+  "WSP-CL-ENCODING-VERSION-TEXT-FORM",
+  "WSP-CL-EXPECT-SIN-ENCODING",
+  "WSP-CL-HEADER-CODE-PAGE-RANGES",
+  "WSP-CL-HEADER-COMPACTION-FORMS",
+  "WSP-CL-HEADER-DEFAULT-PAGE",
+  "WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT",
+  "WSP-CL-HEADER-FIELD-ASSIGNMENTS",
+  "WSP-CL-HEADER-HTTP-COMPATIBILITY",
+  "WSP-CL-HEADER-LIST-EXPANSION",
+  "WSP-CL-HEADER-NAME-VERSION-CHOICE",
+  "WSP-CL-HEADER-SYNTAX-REGISTRY",
+  "WSP-CL-HEADER-UNKNOWN-VALUE-SKIP",
+  "WSP-CL-HEADER-VALUE-ENCODING-CHOICE",
+  "WSP-CL-HEADER-VALUE-LENGTH-PREFIX",
+  "WSP-CL-INTEGER-NETWORK-ORDER",
+  "WSP-CL-POST-CONTENT-TYPE",
+  "WSP-CL-REPLY-CONTENT-TYPE",
+  "WSP-CL-UNSUPPORTED-ENCODING-RETRY",
+]
+testing_ac = [
+  "Covers all 68 effective Table 39 default-page assignments from 0x00 through 0x43 and excludes successor-only tokens.",
+  "Exercises short and uintvar value lengths, text and short-integer values, default/application/reserved page handling, and explicit error/preserve/skip behavior.",
+  "Uses the SIN 001 length-delimited Expect expression and compact Encoding-Version forms, including extension-page identity.",
+  "Keeps connectionless Content-Type framing on the existing WSP-801 seam and re-runs its byte-exact fixture independently.",
+]

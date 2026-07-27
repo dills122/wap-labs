@@ -26,33 +26,34 @@
     { "code": 17, "name": "Content-Type" },
     { "code": 36, "name": "Referer" },
     { "code": 41, "name": "User-Agent" },
+    { "code": 46, "name": "Content-Disposition" },
     { "code": 47, "name": "X-Wap-Application-Id" },
-    { "code": 67, "name": "Encoding-Version" },
-    { "code": 71, "name": "Cache-Control-1.4" }
+    { "code": 56, "name": "Expect" },
+    { "code": 67, "name": "Encoding-Version" }
   ],
   "unknown_cases": [
     { "category": "pduType", "code": 16, "policy": "strict", "expected": "error" },
     { "category": "abortReason", "code": 239, "policy": "strict", "expected": "error" },
     { "category": "wellKnownParameter", "code": 4, "policy": "strict", "expected": "error" },
-    { "category": "headerFieldName", "code": 46, "policy": "strict", "expected": "error" },
+    { "category": "headerFieldName", "code": 68, "policy": "strict", "expected": "error" },
     { "category": "headerFieldName", "code": 127, "policy": "header-lenient", "expected": "ignored" }
   ],
   "code_page_cases": [
     {
       "name": "default-page-headers",
-      "input": [0, 17, 36],
+      "input": [128, 145, 164],
       "policy": "strict",
       "expected": ["Accept", "Content-Type", "Referer"]
     },
     {
       "name": "known-extension-page-shift",
-      "input": [127, 64, 16, 17],
+      "input": [127, 64, 144, 145],
       "policy": "strict",
       "expected": ["X-Wap-Ack", "X-Wap-Ack-Id"]
     },
     {
       "name": "unsupported-extension-page-lenient-fallback",
-      "input": [127, 65, 16, 17, 127, 1, 41],
+      "input": [127, 65, 144, 145, 1, 169],
       "policy": "header-lenient",
       "expected": ["User-Agent"]
     }

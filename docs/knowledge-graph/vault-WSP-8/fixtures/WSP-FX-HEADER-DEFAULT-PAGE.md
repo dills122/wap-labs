@@ -4,7 +4,7 @@ key: "WSP-FX-HEADER-DEFAULT-PAGE"
 type: "fixture"
 generated: true
 slice: "WSP-8"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Start every header set on default code page 1 and keep a shifted page active only through that header set.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

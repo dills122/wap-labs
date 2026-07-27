@@ -20,7 +20,7 @@ Status: Active
   - nine mandatory feature families
   - 712 effective source rows
   - 198 selected strict rows
-  - implementation audit: 31 implemented, 69 partial, 98 missing
+  - implementation audit: 33 implemented, 67 partial, 98 missing
   - all 198 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
@@ -117,10 +117,10 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wsp-scr.json`
   - 317 source rows and 19 selected connectionless Class C rows
-  - selected audit: 11 implemented, 8 partial, 0 missing
-  - direct normative evidence: 11/19 across the selected WAP-200 WDP and
-    WAP-202 WCMP paths
-  - direct normative test evidence: 11/19
+  - selected audit: 19 implemented, 0 partial, 0 missing
+  - direct normative evidence: 19/19 across the selected WAP-200 WDP,
+    WAP-202 WCMP, and WAP-203 WSP paths
+  - direct normative test evidence: 19/19
 - Conditional target source:
   - `WAP-201-WTP` plus approved SINs, only when connection-oriented WSP is
     claimed
