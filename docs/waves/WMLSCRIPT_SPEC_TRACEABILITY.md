@@ -1,6 +1,6 @@
 # Waves WMLScript Spec Traceability
 
-Version: v0.4
+Version: v0.5
 Status: Active thematic baseline; all selected SCR and nested clauses authoritative
 
 ## Purpose
@@ -42,9 +42,12 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 ## Current implementation posture
 
 - Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
-- The existing execution path remains a project-specific nine-opcode progression baseline.
-  A separate strict WAP-193 compilation-unit decoder now parses headers, constants, pragmas,
-  functions, and all effective instruction encodings without widening that legacy VM boundary.
+- Registered units without manual entry-point PCs now route through the strict WAP-193
+  compilation-unit decoder, whole-unit verification, and external function-name table. The
+  executable subset is intentionally limited to `RETURN_ES`; every other structurally valid
+  opcode returns a deterministic typed unsupported-execution failure.
+- The project-specific nine-opcode VM remains an explicit fixture compatibility boundary selected
+  only by registering manual entry-point PCs. It is not WAP-193 evidence.
 - Exact machine-readable authority:
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json`
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
@@ -175,12 +178,17 @@ Legend:
   - Evidence: [x] Add source-derived WAP-193 `.wmlsc` fixtures and direct
     tests for the header, constant pool, pragma pool, function pool, and
     effective instruction encoding.
-  - [x] The byte-exact `wap-193-minimal-return-es.wmlsc.hex` fixture decodes to a stable
-    internal representation in native Rust and WASM.
+  - [x] The byte-exact `wap-193-minimal-return-es.wmlsc.hex`,
+    `wap-193-named-functions.wmlsc.hex`, and `wap-193-invalid-function-ref.wmlsc.hex` fixtures
+    decode to stable internal representations in native Rust and WASM.
   - [x] Unsupported/reserved WAP types and opcodes fail structural verification.
   - [x] WAP function and instruction boundaries are validated.
-  - Scope note: this direct evidence advances `WMLS-C-088..108` to partial. It does not
-    connect compiled-unit routing to the legacy VM or close opcode execution semantics.
+  - [x] Registered units resolve external names from the decoded function table and execute the
+    bounded WAP `RETURN_ES` subset with native/WASM and executable-story parity.
+  - Scope note: this direct evidence keeps `WMLS-C-088..108` partial and makes
+    `WMLS-C-069`, `WMLS-C-079`, `WMLS-C-094`, and `WMLS-C-105` executable-evidence
+    candidates. It does not close either return opcode as a family, other opcode semantics,
+    operators, conversions, or libraries.
 
 ### RQ-WMLS-009: Bytecode verification gates
 
@@ -193,8 +201,9 @@ Legend:
   - Evidence: [x] Link direct WAP-193 structural integrity/runtime-validity fixtures.
   - [x] Version/size/pool-count checks enforced by the strict decoder.
   - [x] WAP jump targets are verified to instruction boundaries within function bounds.
-  - [ ] Invalid WAP local/constant/function indexes fail deterministically; standard-library
-    index validation and stack dataflow remain additive follow-ups.
+  - [x] Invalid WAP local/constant/function references fail deterministically before any selected
+    function executes, including invalid references in an unselected function.
+  - [ ] Standard-library index validation and stack dataflow remain additive follow-ups.
 
 ### RQ-WMLS-010: Error detection and handling model
 
@@ -204,7 +213,10 @@ Legend:
   - `WAP-193_101` 12
   - SCRs: `WMLS-C-109 (M)`, `WMLS-C-110 (M)`, `WMLS-C-111 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - Evidence: [x] `registered_wap_unit_verifies_every_function_before_selected_execution` and
+    `wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace` prove that a
+    WAP verification failure aborts invocation with fatal/integrity taxonomy before execution;
+    full chapter 12 remains open.
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.

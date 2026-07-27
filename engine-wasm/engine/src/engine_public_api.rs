@@ -494,7 +494,12 @@ impl WmlEngine {
         self.external_nav_request_policy = None;
     }
 
-    /// Execute a raw bytecode unit with no runtime host bindings.
+    /// Execute a raw project-specific nine-opcode compatibility fixture with
+    /// no runtime host bindings.
+    ///
+    /// This entry point does not accept normative WAP-193 compilation units;
+    /// use [`Self::register_script_unit`] and invoke a decoded external name
+    /// for that path.
     ///
     /// Wrapped in the same panic-containment boundary as every other
     /// script-execution entry point (see [`Self::execute_script_contained`]),
@@ -506,7 +511,12 @@ impl WmlEngine {
             .unwrap_or_else(contained_panic_script_outcome)
     }
 
-    /// Register a bytecode unit by source key.
+    /// Register a WAP-193 bytecode unit by source key.
+    ///
+    /// A unit with no manual entry-point metadata is decoded and verified as
+    /// a WAP-193 compilation unit when executed. Existing project-specific
+    /// nine-opcode fixtures remain available only through the explicit
+    /// compatibility boundary established by [`Self::register_script_entry_point`].
     pub fn register_script_unit(&mut self, src: String, bytes: Vec<u8>) {
         self.script_units.insert(src, bytes);
     }
@@ -517,7 +527,12 @@ impl WmlEngine {
         self.script_entrypoints.clear();
     }
 
-    /// Register an entry point program counter for `src#function_name`.
+    /// Register a legacy-fixture entry point program counter.
+    ///
+    /// Manual PCs are not part of WAP-193's external function-name table.
+    /// Calling this method explicitly opts `src` into the project-specific
+    /// nine-opcode compatibility VM; strict WAP units resolve names from their
+    /// decoded function pool and must not register manual PCs.
     pub fn register_script_entry_point(
         &mut self,
         src: String,

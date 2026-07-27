@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt;
 
 pub const WAP_BYTECODE_VERSION: u8 = 0x01;
 pub const MAX_WAP_COMPILATION_UNIT_BYTES: usize = 64 * 1024;
@@ -102,6 +103,128 @@ pub enum WapDecodeError {
         pc: usize,
         target: usize,
     },
+}
+
+impl fmt::Display for WapDecodeError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::EmptyUnit => write!(formatter, "empty compilation unit"),
+            Self::UnitTooLarge { size, limit } => {
+                write!(formatter, "unit too large (size={size}, limit={limit})")
+            }
+            Self::Truncated { offset, field } => {
+                write!(formatter, "truncated {field} at offset={offset}")
+            }
+            Self::InvalidMultiByteInteger { offset, field } => {
+                write!(formatter, "invalid multi-byte integer for {field} at offset={offset}")
+            }
+            Self::UnsupportedVersion { version } => {
+                write!(formatter, "unsupported version 0x{version:02x}")
+            }
+            Self::CodeSizeMismatch { declared, actual } => {
+                write!(formatter, "code size mismatch (declared={declared}, actual={actual})")
+            }
+            Self::UnsupportedConstantType {
+                offset,
+                constant_type,
+            } => write!(
+                formatter,
+                "unsupported constant type {constant_type} at offset={offset}"
+            ),
+            Self::InvalidUtf8 { offset, field } => {
+                write!(formatter, "invalid UTF-8 for {field} at offset={offset}")
+            }
+            Self::UnsupportedPragmaType {
+                offset,
+                pragma_type,
+            } => write!(
+                formatter,
+                "unsupported pragma type {pragma_type} at offset={offset}"
+            ),
+            Self::DuplicateAccessPragma { pragma_type } => {
+                write!(formatter, "duplicate access pragma type {pragma_type}")
+            }
+            Self::InvalidConstantIndex { offset, index } => {
+                write!(formatter, "invalid constant index {index} at offset={offset}")
+            }
+            Self::InvalidConstantType { offset, index } => write!(
+                formatter,
+                "invalid constant type at index {index} referenced from offset={offset}"
+            ),
+            Self::InvalidFunctionNameCount { count } => {
+                write!(formatter, "invalid function-name count {count}")
+            }
+            Self::InvalidFunctionIndex { offset, index } => {
+                write!(formatter, "invalid function index {index} at offset={offset}")
+            }
+            Self::FunctionNamesOutOfOrder {
+                offset,
+                previous,
+                index,
+            } => write!(
+                formatter,
+                "function names out of order at offset={offset} (previous={previous}, index={index})"
+            ),
+            Self::InvalidFunctionName { offset } => {
+                write!(formatter, "invalid function name at offset={offset}")
+            }
+            Self::InvalidFrameSize { function, size } => {
+                write!(formatter, "invalid frame size {size} in function {function}")
+            }
+            Self::TrailingBytes { offset, count } => {
+                write!(formatter, "{count} trailing bytes at offset={offset}")
+            }
+            Self::UnsupportedOpcode {
+                function,
+                pc,
+                opcode,
+            } => write!(
+                formatter,
+                "unsupported opcode 0x{opcode:02x} in function {function} at pc={pc}"
+            ),
+            Self::TruncatedInstruction {
+                function,
+                pc,
+                opcode,
+            } => write!(
+                formatter,
+                "truncated instruction 0x{opcode:02x} in function {function} at pc={pc}"
+            ),
+            Self::InvalidVariableIndex {
+                function,
+                pc,
+                index,
+                limit,
+            } => write!(
+                formatter,
+                "invalid variable index {index} in function {function} at pc={pc} (limit={limit})"
+            ),
+            Self::InvalidConstantReference {
+                function,
+                pc,
+                index,
+            } => write!(
+                formatter,
+                "invalid constant reference {index} in function {function} at pc={pc}"
+            ),
+            Self::InvalidFunctionReference {
+                function,
+                pc,
+                index,
+            } => write!(
+                formatter,
+                "invalid function reference {index} in function {function} at pc={pc}"
+            ),
+            Self::InvalidJumpTarget {
+                function,
+                pc,
+                target,
+            } => write!(
+                formatter,
+                "invalid jump target {target} in function {function} at pc={pc}"
+            ),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

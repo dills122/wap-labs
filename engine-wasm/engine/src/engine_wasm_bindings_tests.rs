@@ -21,9 +21,13 @@ const FIXTURE_MISSING_FRAGMENT: &str =
 const WML_203_DTD_FAMILY: &str = include_str!("../../examples/source/wml-203-dtd-family.wml");
 const WMLS_501_MINIMAL_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
+const WMLS_501_NAMED_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
+const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
 
-fn wmls_501_fixture_bytes() -> Vec<u8> {
-    WMLS_501_MINIMAL_UNIT
+fn wmls_501_fixture_bytes(fixture: &str) -> Vec<u8> {
+    fixture
         .split_ascii_whitespace()
         .map(|token| u8::from_str_radix(token, 16).expect("fixture must contain hex bytes"))
         .collect()
@@ -31,7 +35,7 @@ fn wmls_501_fixture_bytes() -> Vec<u8> {
 
 #[wasm_bindgen_test]
 fn wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics() {
-    let fixture = wmls_501_fixture_bytes();
+    let fixture = wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT);
     let decoded = decode_wap_compilation_unit(&fixture).expect("WAP-193 fixture must decode");
     assert_eq!(decoded.version, 0x01);
     assert_eq!(decoded.charset_mib_enum, 106);
@@ -48,6 +52,101 @@ fn wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics() {
             opcode: 0x78,
         })
     ));
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r##"<wml><card id="home"><a href="script:minimal.wmlsc#main">Run</a></card></wml>"##,
+        )
+        .expect("deck should load");
+    engine.register_script_unit_wasm(
+        "minimal.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT),
+    );
+
+    let ok = engine
+        .execute_script_ref_function_wasm("minimal.wmlsc".to_string(), "main".to_string())
+        .expect("verified function outcome should serialize");
+    assert_eq!(
+        Reflect::get(&ok, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
+    );
+    assert_eq!(
+        Reflect::get(&ok, &JsValue::from_str("result"))
+            .expect("result field")
+            .as_string()
+            .as_deref(),
+        Some("")
+    );
+    engine
+        .invoke_script_ref_function_wasm("minimal.wmlsc".to_string(), "main".to_string())
+        .expect("verified RETURN_ES function should invoke through WASM");
+
+    engine.register_script_unit_wasm(
+        "named.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_NAMED_UNIT),
+    );
+    let unsupported = engine
+        .execute_script_ref_function_wasm("named.wmlsc".to_string(), "todo".to_string())
+        .expect("typed unsupported outcome should serialize");
+    assert_eq!(
+        Reflect::get(&unsupported, &JsValue::from_str("errorClass"))
+            .expect("errorClass field")
+            .as_string()
+            .as_deref(),
+        Some("fatal")
+    );
+    assert_eq!(
+        Reflect::get(&unsupported, &JsValue::from_str("errorCategory"))
+            .expect("errorCategory field")
+            .as_string()
+            .as_deref(),
+        Some("host-binding")
+    );
+
+    engine.register_script_unit_wasm(
+        "invalid-ref.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_INVALID_FUNCTION_REF_UNIT),
+    );
+    let invalid = engine
+        .execute_script_ref_function_wasm("invalid-ref.wmlsc".to_string(), "main".to_string())
+        .expect("typed verification outcome should serialize");
+    assert_eq!(
+        Reflect::get(&invalid, &JsValue::from_str("errorCategory"))
+            .expect("errorCategory field")
+            .as_string()
+            .as_deref(),
+        Some("integrity")
+    );
+    let invocation_error = engine
+        .invoke_script_ref_function_wasm("invalid-ref.wmlsc".to_string(), "main".to_string())
+        .expect_err("whole-unit verification failure must abort WASM invocation");
+    assert_eq!(
+        invocation_error.as_string().as_deref(),
+        Some("wap decode: invalid function reference 2 in function 1 at pc=0")
+    );
+
+    engine.clear_trace_entries_wasm();
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("verified WAP action should execute through WASM");
+    let traces = engine
+        .trace_entries_wasm()
+        .expect("trace entries should serialize");
+    let trace_kinds: Vec<String> = Array::from(&traces)
+        .iter()
+        .filter_map(|entry| {
+            Reflect::get(&entry, &JsValue::from_str("kind"))
+                .ok()
+                .and_then(|kind| kind.as_string())
+        })
+        .collect();
+    assert!(trace_kinds.ends_with(&["ACTION_SCRIPT".to_string(), "SCRIPT_OK".to_string()]));
 }
 
 fn draw_len(render_value: &JsValue) -> u32 {
@@ -414,6 +513,7 @@ fn wasm_m1_02_invoke_script_ref_boundary_outcomes() {
         .load_deck_wasm(SAMPLE)
         .expect("loadDeck wasm wrapper should succeed");
     engine.register_script_unit_wasm("ok.wmlsc".to_string(), vec![0x00]);
+    engine.register_script_entry_point_wasm("ok.wmlsc".to_string(), "main".to_string(), 0);
 
     let ok = engine
         .invoke_script_ref_wasm("ok.wmlsc".to_string())
@@ -476,6 +576,7 @@ fn wasm_m1_02_invoke_script_ref_boundary_outcomes() {
             0x03, 0x05, b'#', b'n', b'e', b'x', b't', 0x20, 0x03, 0x01, 0x00,
         ],
     );
+    engine.register_script_entry_point_wasm("go.wmlsc".to_string(), "main".to_string(), 0);
     let go = engine
         .execute_script_ref_wasm("go.wmlsc".to_string())
         .expect("go script outcome should serialize");

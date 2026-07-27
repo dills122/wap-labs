@@ -1797,8 +1797,12 @@ Completed `W0-01` through `W0-04` are archived in:
 - The bounded WMLS-501 tranche directly covers WAP-193 compilation-unit framing, pools,
   instruction decoding, and local/constant/function/jump structural references with native/WASM
   fixture parity.
-- Additive follow-ups retain compiled-unit execution routing, opcode semantics,
-  standard-library indexes, stack dataflow, and full chapter 12 closure.
+- Follow-on progress: registered WAP units now verify the complete compilation unit, resolve
+  external names from the function table, execute `RETURN_ES`, and preserve fatal verification
+  outcomes through invocation and trace boundaries. Manual entry-point PCs explicitly select the
+  non-normative nine-opcode fixture compatibility path.
+- Additive follow-ups retain every other opcode semantic, standard-library indexes, stack
+  dataflow, and full chapter 12 closure.
 
 ### W1-03 Extern/pragma/access-control conformance
 

@@ -1,6 +1,6 @@
 # WAP 1.2.1 WMLScript SCR Ledger
 
-Version: v0.2
+Version: v0.3
 Status: effective SCR extracted; Class C applied; 107 nested clauses planned
 
 ## Purpose
@@ -76,7 +76,10 @@ two recommended.
   pragma, and function pools, and every effective instruction encoding;
 - structural verification rejects malformed/truncated/reserved encodings and invalid
   local, constant, local-function, function-boundary, and jump references;
-- a byte-exact source-derived fixture has native/WASM parity coverage;
+- three byte-exact source-derived fixtures have native/WASM parity coverage;
+- registered WAP units are fully decoded and verified before external name lookup; the bounded
+  executor returns the WAP `RETURN_ES` empty string and reports all other valid instructions as
+  deterministic typed unsupported-execution failures;
 - a small VM supports local call/return frames, integer addition, strings,
   locals, a host-call boundary, and execution limits;
 - scalar values and one string-coercion helper exist;
@@ -85,8 +88,10 @@ two recommended.
 This is direct structural WAP-193 evidence, but it is not full WMLScript execution evidence:
 
 - the VM recognizes only nine project-specific opcodes;
-- the legacy VM is not yet connected to the strict compilation-unit representation;
-- opcode execution semantics and stack dataflow are not verified;
+- the project-specific nine-opcode VM remains separate behind explicit manual-PC fixture metadata
+  and is not normative WAP-193 evidence;
+- only `RETURN_ES` is executable from a WAP unit; the other return form, opcode semantics, and
+  stack dataflow are not implemented;
 - standard-library index validity remains deferred;
 - URL-based external invocation, fragments, relative resolution, pragmas, and
   access control are absent;
@@ -107,9 +112,13 @@ The ledger maps every row to existing requirement and sprint lanes:
 - `WMLS-506` / `W1-01`: WMLScript media types and cross-layer handoff;
 - `W1-05`: machine-ledger and CI closure.
 
-The next additive pass should connect only verified WAP compilation units to execution and
-close library-index and stack-dataflow verification without replacing the isolated legacy
-stream used by current host examples.
+This routing follow-on makes `WMLS-C-069`, `WMLS-C-079`, `WMLS-C-094`, `WMLS-C-105`,
+`WMLS-C-107`, `WMLS-C-108`, and `WMLS-C-110` executable-evidence candidates. The exact SCR
+assessment totals remain unchanged pending machine-ledger review; no row is promoted to
+implemented by this bounded subset.
+
+The next additive pass should close library-index and stack-dataflow verification, then expand
+WAP opcode semantics through WMLS-502 without replacing the isolated legacy fixture stream.
 
 ## Enhancement policy
 

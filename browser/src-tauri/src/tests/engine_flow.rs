@@ -191,6 +191,7 @@ fn snapshot_exposes_script_dialog_and_timer_requests() {
     unit.push(0x02); // setTimer(delay, token)
     unit.push(0x00);
     engine.register_script_unit("effects.wmlsc".to_string(), unit);
+    engine.register_script_entry_point("effects.wmlsc".to_string(), "main".to_string(), 0);
 
     apply_handle_key(
         &mut engine,
@@ -248,6 +249,8 @@ fn snapshot_exposes_script_error_class_and_category() {
 
     engine.register_script_unit("ok.wmlsc".to_string(), vec![0x01, 4, 0x01, 8, 0x02, 0x00]);
     engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
+    engine.register_script_entry_point("ok.wmlsc".to_string(), "main".to_string(), 0);
+    engine.register_script_entry_point("fatal.wmlsc".to_string(), "main".to_string(), 0);
 
     apply_handle_key(
         &mut engine,

@@ -1,3 +1,9 @@
+//! Decoder for the project-specific nine-opcode compatibility fixture stream.
+//!
+//! This is not the WAP-193 compilation-unit format. Registered units use this
+//! decoder only when the host also supplies a manual function entry-point PC;
+//! strict WAP units are decoded by [`super::wap_decoder`].
+
 use std::collections::HashSet;
 
 use super::opcodes::{

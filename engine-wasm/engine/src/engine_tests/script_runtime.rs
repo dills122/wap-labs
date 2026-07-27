@@ -174,6 +174,127 @@ fn execute_script_unit_stack_underflow_is_fatal_bytecode_error() {
 }
 
 #[test]
+fn registered_wap_unit_selects_named_function_and_invokes_return_es() {
+    let mut engine = WmlEngine::new();
+    engine.register_script_unit(
+        "minimal.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT),
+    );
+
+    let executed =
+        engine.execute_script_ref_function("minimal.wmlsc".to_string(), "main".to_string());
+    assert!(executed.ok);
+    assert_eq!(executed.result, ScriptValueLiteral::String(String::new()));
+    assert_eq!(executed.error_class, ScriptErrorClassLiteral::None);
+    assert_eq!(executed.error_category, ScriptErrorCategoryLiteral::None);
+
+    let invoked = engine
+        .invoke_script_ref_function("minimal.wmlsc".to_string(), "main".to_string())
+        .expect("verified RETURN_ES function should invoke");
+    assert_eq!(invoked.result, ScriptValueLiteral::String(String::new()));
+}
+
+#[test]
+fn registered_wap_unit_reports_named_lookup_and_unsupported_execution_failures() {
+    let mut engine = WmlEngine::new();
+    engine.register_script_unit(
+        "named.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_NAMED_UNIT),
+    );
+
+    let missing =
+        engine.execute_script_ref_function("named.wmlsc".to_string(), "missing".to_string());
+    assert!(!missing.ok);
+    assert_eq!(missing.error_class, ScriptErrorClassLiteral::Fatal);
+    assert_eq!(
+        missing.error_category,
+        ScriptErrorCategoryLiteral::HostBinding
+    );
+    assert_eq!(
+        missing.trap.as_deref(),
+        Some("wap runtime: external function not found (named.wmlsc#missing)")
+    );
+
+    let unsupported =
+        engine.execute_script_ref_function("named.wmlsc".to_string(), "todo".to_string());
+    assert!(!unsupported.ok);
+    assert_eq!(unsupported.error_class, ScriptErrorClassLiteral::Fatal);
+    assert_eq!(
+        unsupported.error_category,
+        ScriptErrorCategoryLiteral::HostBinding
+    );
+    assert_eq!(
+        unsupported.trap.as_deref(),
+        Some("wap runtime: unsupported execution opcode 0x14 in function 1 at pc=0")
+    );
+}
+
+#[test]
+fn registered_wap_unit_verifies_every_function_before_selected_execution() {
+    let mut engine = WmlEngine::new();
+    engine.register_script_unit(
+        "invalid-ref.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_INVALID_FUNCTION_REF_UNIT),
+    );
+
+    let outcome =
+        engine.execute_script_ref_function("invalid-ref.wmlsc".to_string(), "main".to_string());
+    assert!(!outcome.ok);
+    assert_eq!(outcome.error_class, ScriptErrorClassLiteral::Fatal);
+    assert_eq!(
+        outcome.error_category,
+        ScriptErrorCategoryLiteral::Integrity
+    );
+    assert_eq!(
+        outcome.trap.as_deref(),
+        Some("wap decode: invalid function reference 2 in function 1 at pc=0")
+    );
+
+    let invocation_error = engine
+        .invoke_script_ref_function("invalid-ref.wmlsc".to_string(), "main".to_string())
+        .expect_err("whole-unit verification failure must abort invocation");
+    assert_eq!(
+        invocation_error,
+        "wap decode: invalid function reference 2 in function 1 at pc=0"
+    );
+}
+
+#[test]
+fn registered_wap_action_records_success_trace_taxonomy() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"<wml><card id="home"><a href="script:minimal.wmlsc#main">Run</a></card></wml>"##,
+        )
+        .expect("deck should load");
+    engine.register_script_unit(
+        "minimal.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT),
+    );
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("verified WAP action should execute");
+
+    assert_trace_kinds_subsequence(&engine, &["ACTION_SCRIPT", "SCRIPT_OK"]);
+    let trace = engine
+        .trace_entries()
+        .into_iter()
+        .find(|entry| entry.kind == "SCRIPT_OK")
+        .expect("SCRIPT_OK trace should be present");
+    assert_eq!(trace.script_ok, Some(true));
+    assert_eq!(
+        trace.script_error_class,
+        Some(ScriptErrorClassLiteral::None)
+    );
+    assert_eq!(
+        trace.script_error_category,
+        Some(ScriptErrorCategoryLiteral::None)
+    );
+    assert_eq!(trace.script_trap, None);
+}
+
+#[test]
 fn vm_trap_classification_matrix_is_explicit() {
     fn expected_class(trap: &VmTrap) -> ScriptErrorClassLiteral {
         match trap {
@@ -303,7 +424,11 @@ fn script_link_executes_registered_unit_without_external_navigation() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit("calc.wmlsc".to_string(), vec![0x01, 4, 0x01, 5, 0x02, 0x00]);
+    register_legacy_script_fixture(
+        &mut engine,
+        "calc.wmlsc",
+        vec![0x01, 4, 0x01, 5, 0x02, 0x00],
+    );
 
     engine
         .handle_key("enter".to_string())
@@ -372,8 +497,9 @@ fn parse_script_href_extracts_source_before_fragment() {
 #[test]
 fn execute_script_ref_function_uses_registered_entry_point() {
     let mut engine = WmlEngine::new();
-    engine.register_script_unit(
-        "multi.wmlsc".to_string(),
+    register_legacy_script_fixture(
+        &mut engine,
+        "multi.wmlsc",
         vec![0x01, 1, 0x00, 0x01, 9, 0x00],
     );
     engine.register_script_entry_point("multi.wmlsc".to_string(), "alt".to_string(), 3);
@@ -387,7 +513,7 @@ fn execute_script_ref_function_uses_registered_entry_point() {
 #[test]
 fn execute_script_ref_function_missing_entry_point_traps() {
     let mut engine = WmlEngine::new();
-    engine.register_script_unit("multi.wmlsc".to_string(), vec![0x01, 1, 0x00]);
+    register_legacy_script_fixture(&mut engine, "multi.wmlsc", vec![0x01, 1, 0x00]);
 
     let outcome = engine.execute_script_ref_internal("multi.wmlsc", "missing");
     assert!(!outcome.ok);
@@ -408,8 +534,9 @@ fn script_link_function_dispatch_uses_registered_entry_point() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit(
-        "multi.wmlsc".to_string(),
+    register_legacy_script_fixture(
+        &mut engine,
+        "multi.wmlsc",
         vec![0x01, 1, 0x00, 0x01, 9, 0x00],
     );
     engine.register_script_entry_point("multi.wmlsc".to_string(), "alt".to_string(), 3);
@@ -424,7 +551,7 @@ fn script_link_function_dispatch_uses_registered_entry_point() {
 #[test]
 fn execute_script_ref_call_passes_args_into_function_locals() {
     let mut engine = WmlEngine::new();
-    engine.register_script_unit("sum.wmlsc".to_string(), vec![0x11, 0, 0x11, 1, 0x02, 0x00]);
+    register_legacy_script_fixture(&mut engine, "sum.wmlsc", vec![0x11, 0, 0x11, 1, 0x02, 0x00]);
     engine.register_script_entry_point("sum.wmlsc".to_string(), "sum".to_string(), 0);
 
     let outcome = engine.execute_script_ref_call_internal(
@@ -456,7 +583,7 @@ fn wmlbrowser_setvar_getvar_lifecycle_and_coercion() {
     unit.push(0x01);
     unit.push(0x01);
     unit.push(0x00);
-    engine.register_script_unit("vars.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "vars.wmlsc", unit);
 
     let outcome = engine.execute_script_ref_internal("vars.wmlsc", "main");
     assert!(outcome.ok);
@@ -490,7 +617,7 @@ fn wmlbrowser_get_current_card_returns_fragment_when_context_exists() {
         0x20, 0x0B, // getCurrentCard()
         0x00, 0x00,
     ];
-    engine.register_script_unit("current-card.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "current-card.wmlsc", unit);
 
     let outcome = engine.execute_script_ref_internal("current-card.wmlsc", "main");
     assert!(outcome.ok);
@@ -507,7 +634,7 @@ fn wmlbrowser_get_current_card_returns_invalid_without_context() {
         0x20, 0x0B, // getCurrentCard()
         0x00, 0x00,
     ];
-    engine.register_script_unit("current-card-noctx.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "current-card-noctx.wmlsc", unit);
 
     let outcome = engine.execute_script_ref_internal("current-card-noctx.wmlsc", "main");
     assert!(outcome.ok);
@@ -564,7 +691,7 @@ fn wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect() {
     unit.push(0x0A); // newContext()
     unit.push(0x00);
     unit.push(0x00);
-    engine.register_script_unit("ctx.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "ctx.wmlsc", unit);
 
     engine.clear_trace_entries();
     engine
@@ -608,7 +735,7 @@ fn execute_script_ref_is_raw_and_does_not_apply_navigation_effects() {
     unit.push(0x03);
     unit.push(0x01);
     unit.push(0x00);
-    engine.register_script_unit("raw-nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "raw-nav.wmlsc", unit);
 
     let outcome = engine.execute_script_ref_internal("raw-nav.wmlsc", "main");
     assert!(outcome.ok);
@@ -643,7 +770,7 @@ fn execute_script_ref_does_not_publish_dialog_or_timer_effects() {
     unit.push(0x08);
     unit.push(0x02); // setTimer(delay, token)
     unit.push(0x00);
-    engine.register_script_unit("raw-effects.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "raw-effects.wmlsc", unit);
 
     let outcome = engine.execute_script_ref_internal("raw-effects.wmlsc", "main");
     assert!(outcome.ok);
@@ -672,7 +799,7 @@ fn invoke_script_ref_applies_effects_and_returns_invocation_outcome() {
     unit.push(0x03);
     unit.push(0x01); // go
     unit.push(0x00);
-    engine.register_script_unit("invoke-nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "invoke-nav.wmlsc", unit);
 
     let outcome = engine
         .invoke_script_ref_internal("invoke-nav.wmlsc", "main", &[])
@@ -708,7 +835,7 @@ fn invoke_script_ref_trap_does_not_apply_deferred_navigation() {
     unit.push(0x03);
     unit.push(0x01); // go #next
     unit.push(0xff); // trap
-    engine.register_script_unit("trap-nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "trap-nav.wmlsc", unit);
 
     let err = engine
         .invoke_script_ref_internal("trap-nav.wmlsc", "main", &[])
@@ -730,8 +857,9 @@ fn invoke_script_ref_fatal_type_error_aborts_invocation() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit(
-        "type-error.wmlsc".to_string(),
+    register_legacy_script_fixture(
+        &mut engine,
+        "type-error.wmlsc",
         vec![0x03, 1, b'x', 0x01, 1, 0x02, 0x00],
     );
 
@@ -771,7 +899,7 @@ fn invoke_script_ref_fatal_trap_after_go_discards_deferred_navigation_effects() 
     unit.push(0x01); // go("#next")
     unit.push(0x02); // add => fatal: host call result is not an int32 operand
     unit.push(0x00);
-    engine.register_script_unit("fatal-nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "fatal-nav.wmlsc", unit);
 
     let err = engine
         .invoke_script_ref_internal("fatal-nav.wmlsc", "main", &[])
@@ -809,7 +937,7 @@ fn invoke_script_ref_go_to_missing_card_reports_failure_not_stale_success() {
     unit.push(0x03);
     unit.push(0x01); // go("#missing")
     unit.push(0x00);
-    engine.register_script_unit("bad-nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "bad-nav.wmlsc", unit);
 
     let err = engine
         .invoke_script_ref_internal("bad-nav.wmlsc", "main", &[])
@@ -836,8 +964,12 @@ fn fatal_invocation_failure_keeps_engine_recoverable() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit("fatal.wmlsc".to_string(), vec![0xff]);
-    engine.register_script_unit("good.wmlsc".to_string(), vec![0x01, 2, 0x01, 3, 0x02, 0x00]);
+    register_legacy_script_fixture(&mut engine, "fatal.wmlsc", vec![0xff]);
+    register_legacy_script_fixture(
+        &mut engine,
+        "good.wmlsc",
+        vec![0x01, 2, 0x01, 3, 0x02, 0x00],
+    );
 
     let err = engine
         .invoke_script_ref_internal("fatal.wmlsc", "main", &[])
@@ -892,7 +1024,7 @@ fn invoke_script_ref_records_dialog_and_timer_effect_traces() {
     unit.push(0x09);
     unit.push(0x01); // clearTimer(token)
     unit.push(0x00);
-    engine.register_script_unit("effects.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "effects.wmlsc", unit);
 
     let outcome = engine
         .invoke_script_ref_internal("effects.wmlsc", "main", &[])
@@ -953,7 +1085,7 @@ fn wmlbrowser_script_go_fragment_applies_at_post_invocation_boundary() {
     unit.push(0x03);
     unit.push(0x01);
     unit.push(0x00);
-    engine.register_script_unit("nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "nav.wmlsc", unit);
 
     engine
         .handle_key("enter".to_string())
@@ -980,7 +1112,7 @@ fn wmlbrowser_script_prev_applies_post_invocation() {
         .expect("fragment nav should work");
     assert_eq!(engine.active_card_id().expect("active"), "next");
 
-    engine.register_script_unit("nav.wmlsc".to_string(), vec![0x20, 0x04, 0x00, 0x00]);
+    register_legacy_script_fixture(&mut engine, "nav.wmlsc", vec![0x20, 0x04, 0x00, 0x00]);
     engine.register_script_entry_point("nav.wmlsc".to_string(), "back".to_string(), 0);
     engine
         .handle_key("enter".to_string())
@@ -1025,9 +1157,9 @@ fn wmlbrowser_navigation_last_call_wins_matrix() {
     unit.push(0x00);
     let go_cancel = unit.clone();
 
-    engine.register_script_unit("go_prev.wmlsc".to_string(), go_prev);
-    engine.register_script_unit("prev_go.wmlsc".to_string(), prev_go);
-    engine.register_script_unit("go_cancel.wmlsc".to_string(), go_cancel);
+    register_legacy_script_fixture(&mut engine, "go_prev.wmlsc", go_prev);
+    register_legacy_script_fixture(&mut engine, "prev_go.wmlsc", prev_go);
+    register_legacy_script_fixture(&mut engine, "go_cancel.wmlsc", go_cancel);
 
     let go_prev_outcome = engine.execute_script_ref_internal("go_prev.wmlsc", "main");
     assert!(go_prev_outcome.ok);

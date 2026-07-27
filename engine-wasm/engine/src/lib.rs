@@ -39,6 +39,7 @@ use wavescript::decoder::{decode_compilation_unit, DecodeError};
 use wavescript::stdlib::wmlbrowser::WmlBrowserHost;
 use wavescript::value::ScriptValue;
 use wavescript::vm::{Vm, VmTrap};
+use wavescript::wap_runtime::{execute_named_function, WapRuntimeError};
 
 #[cfg(feature = "contract-codegen")]
 pub use engine_debug_contract::{

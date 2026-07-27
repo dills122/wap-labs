@@ -14,7 +14,11 @@ fn enter_triggers_accept_do_action_when_no_links_exist() {
         </wml>
         "##;
     engine.load_deck(xml).expect("deck should load");
-    engine.register_script_unit("calc.wmlsc".to_string(), vec![0x01, 2, 0x01, 3, 0x02, 0x00]);
+    register_legacy_script_fixture(
+        &mut engine,
+        "calc.wmlsc",
+        vec![0x01, 2, 0x01, 3, 0x02, 0x00],
+    );
 
     engine
         .handle_key("enter".to_string())
@@ -1575,7 +1579,7 @@ fn navigate_back_runs_onenterbackward_script_action() {
     unit.push(0x03);
     unit.push(0x01); // go #rewind
     unit.push(0x00); // halt
-    engine.register_script_unit("nav.wmlsc".to_string(), unit);
+    register_legacy_script_fixture(&mut engine, "nav.wmlsc", unit);
 
     engine
         .handle_key("enter".to_string())

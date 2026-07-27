@@ -7,6 +7,7 @@ import type {
   ScriptInvocationOutcome,
   WmlEngineWasm
 } from '../contracts/wml-engine';
+import wap193MinimalReturnEsHex from '../engine/tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex?raw';
 
 const lineHeight = 16;
 const charWidth = 8;
@@ -252,8 +253,15 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
 function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
   engine.clearScriptUnits();
   engine.clearScriptEntryPoints();
-  engine.registerScriptUnit('calc.wmlsc', new Uint8Array([0x01, 4, 0x01, 5, 0x02, 0x00]));
-  engine.registerScriptEntryPoint('calc.wmlsc', 'main', 0);
+  engine.registerScriptUnit(
+    'wap-193-minimal-return-es.wmlsc',
+    new Uint8Array(
+      wap193MinimalReturnEsHex
+        .trim()
+        .split(/\s+/u)
+        .map((token) => Number.parseInt(token, 16))
+    )
+  );
   engine.registerScriptUnit(
     'wmlbrowser-demo.wmlsc',
     new Uint8Array([

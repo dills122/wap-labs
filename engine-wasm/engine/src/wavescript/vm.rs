@@ -1,3 +1,8 @@
+//! Interpreter for the project-specific nine-opcode compatibility fixtures.
+//!
+//! Normative WAP-193 compilation units are routed through
+//! [`super::wap_decoder`] and the bounded executor in [`super::wap_runtime`].
+
 use super::decoder::DecodedUnit;
 use super::opcodes::{
     ADD_I32_OPCODE, CALL_HOST_OPCODE, CALL_OPCODE, HALT_OPCODE, LOAD_LOCAL_OPCODE,

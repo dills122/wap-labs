@@ -55,6 +55,10 @@ impl WmlEngine {
             );
         };
 
+        if !self.script_entrypoints.contains_key(src) {
+            return self.execute_wap_script_ref_call(bytes, src, function_name, args);
+        }
+
         let decoded_unit = match decode_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(err) => {
@@ -65,23 +69,17 @@ impl WmlEngine {
             }
         };
 
-        let entry_pc = if function_name == "main" {
-            0
-        } else {
-            let Some(entrypoints) = self.script_entrypoints.get(src) else {
-                return ScriptExecutionOutcome::fatal(
-                    format!("loader: function entry point not registered ({src}#{function_name})"),
-                    ScriptErrorCategoryLiteral::HostBinding,
-                );
-            };
-            let Some(entry_pc) = entrypoints.get(function_name) else {
-                return ScriptExecutionOutcome::fatal(
-                    format!("loader: function entry point not registered ({src}#{function_name})"),
-                    ScriptErrorCategoryLiteral::HostBinding,
-                );
-            };
-            *entry_pc
+        let Some(entry_pc) = self
+            .script_entrypoints
+            .get(src)
+            .and_then(|entrypoints| entrypoints.get(function_name))
+        else {
+            return ScriptExecutionOutcome::fatal(
+                format!("loader: function entry point not registered ({src}#{function_name})"),
+                ScriptErrorCategoryLiteral::HostBinding,
+            );
         };
+        let entry_pc = *entry_pc;
 
         self.pending_script_effects = ScriptRuntimeEffects::default();
         let active_card_id = self.active_card_id().ok();
@@ -110,6 +108,72 @@ impl WmlEngine {
                 script_nav_intent_to_literal(self.pending_script_effects.navigation_intent()),
                 self.pending_script_effects.requires_refresh(),
             ),
+        }
+    }
+
+    fn execute_wap_script_ref_call(
+        &self,
+        bytes: &[u8],
+        src: &str,
+        function_name: &str,
+        args: &[ScriptValue],
+    ) -> ScriptExecutionOutcome {
+        let unit = match decode_wap_compilation_unit(bytes) {
+            Ok(unit) => unit,
+            Err(error) => {
+                return ScriptExecutionOutcome::fatal(
+                    format!("wap decode: {error}"),
+                    ScriptErrorCategoryLiteral::Integrity,
+                );
+            }
+        };
+
+        match execute_named_function(&unit, function_name, args) {
+            Ok(result) => ScriptExecutionOutcome::ok(
+                script_value_to_literal(result),
+                ScriptNavigationIntentLiteral::None,
+                false,
+            ),
+            Err(WapRuntimeError::ExternalFunctionNotFound { function_name }) => {
+                ScriptExecutionOutcome::fatal(
+                    format!("wap runtime: external function not found ({src}#{function_name})"),
+                    ScriptErrorCategoryLiteral::HostBinding,
+                )
+            }
+            Err(WapRuntimeError::InvalidArgumentCount {
+                function,
+                expected,
+                actual,
+            }) => ScriptExecutionOutcome::fatal(
+                format!(
+                    "wap runtime: invalid argument count for function {function} (expected={expected}, actual={actual})"
+                ),
+                ScriptErrorCategoryLiteral::Integrity,
+            ),
+            Err(WapRuntimeError::UnsupportedExecutionOpcode {
+                function,
+                pc,
+                opcode,
+            }) => ScriptExecutionOutcome::fatal(
+                format!(
+                    "wap runtime: unsupported execution opcode 0x{opcode:02x} in function {function} at pc={pc}"
+                ),
+                ScriptErrorCategoryLiteral::HostBinding,
+            ),
+            Err(WapRuntimeError::UnsupportedImplicitReturn { function }) => {
+                ScriptExecutionOutcome::fatal(
+                    format!(
+                        "wap runtime: unsupported implicit return in function {function}"
+                    ),
+                    ScriptErrorCategoryLiteral::HostBinding,
+                )
+            }
+            Err(WapRuntimeError::InvalidFunctionIndex { index }) => {
+                ScriptExecutionOutcome::fatal(
+                    format!("wap runtime: invalid function index {index}"),
+                    ScriptErrorCategoryLiteral::Integrity,
+                )
+            }
         }
     }
 
