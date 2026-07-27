@@ -14,8 +14,8 @@ output "reserved_ipv4_address" {
 }
 
 output "ssh_command" {
-  description = "Restricted non-root administration command."
-  value       = "ssh waves@${digitalocean_reserved_ip.preview.ip_address}"
+  description = "Restricted non-root administration command, null while inbound SSH is sealed."
+  value       = length(var.admin_cidrs) > 0 ? "ssh waves@${digitalocean_reserved_ip.preview.ip_address}" : null
 }
 
 output "published_hostnames" {

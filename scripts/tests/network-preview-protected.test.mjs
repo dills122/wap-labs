@@ -60,6 +60,8 @@ test('staged local infrastructure fails closed before explicit publication', () 
     main,
     /source_addresses = var\.publish_preview \? \["0\.0\.0\.0\/0"\] : var\.wap_test_cidrs/
   );
+  assert.match(main, /for_each = length\(var\.admin_cidrs\) > 0 \? \[true\] : \[\]/);
+  assert.match(variables, /variable "admin_cidrs"[\s\S]*?default\s+=\s+\[\]/);
   assert.match(dns, /for_each = var\.publish_preview \? local\.preview_hostnames : toset\(\[\]\)/);
   assert.match(variables, /cidr != "0\.0\.0\.0\/0"/);
   assert.match(userData, /disable_root: true/);
@@ -83,6 +85,22 @@ test('protected workflows carry every staged provider input without exposing it 
     }
     assert.match(workflow, /CLOUDFLARE_API_TOKEN: \$\{\{ secrets\.CLOUDFLARE_API_TOKEN \}\}/);
   }
+});
+
+test('local planning leaves inbound administration and test traffic sealed by default', () => {
+  const localPlan = read('scripts/network-preview-local-plan.mjs');
+  const requiredValues = localPlan.match(/requireValues\(configured, \[[\s\S]*?\]\);/);
+
+  assert.ok(requiredValues);
+  assert.doesNotMatch(requiredValues[0], /NETWORK_PREVIEW_(?:ADMIN|WAP_TEST)_CIDRS_JSON/);
+  assert.match(
+    localPlan,
+    /TF_VAR_admin_cidrs: configured\.NETWORK_PREVIEW_ADMIN_CIDRS_JSON \|\| '\[\]'/
+  );
+  assert.match(
+    localPlan,
+    /TF_VAR_wap_test_cidrs: configured\.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON \|\| '\[\]'/
+  );
 });
 
 test('protected workflows pin every external action to a full commit SHA', () => {

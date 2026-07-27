@@ -5,8 +5,8 @@ This directory owns the OpenTofu configuration for the public WAP network previe
 
 The configuration defines a staged single-host preview while keeping execution separate from
 authored infrastructure. Its default local deployment creates a hardened Droplet, Reserved IP,
-restricted firewall, default-project verification, and free provider monitoring. Public UDP and the three
-Cloudflare DNS records remain disabled until `publish_preview` is explicitly enabled. No resource
+sealed inbound firewall, default-project verification, and free provider monitoring. Public UDP and
+the three Cloudflare DNS records remain disabled until `publish_preview` is explicitly enabled. No resource
 exists merely because the configuration is checked in, and no apply is authorized by this file.
 
 The initial gate uses the [owner-local deployment path](LOCAL_DEPLOYMENT.md). Protected GitHub
@@ -49,7 +49,7 @@ non-secret validation sentinel; it must never be used for remote state.
 ```sh
 tofu fmt -check -recursive infra/network-preview
 scripts/ci/check-network-preview-workflows.sh
-TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+TF_VAR_admin_cidrs='[]' \
 TF_VAR_monitoring_alert_email=owner@example.com \
 TF_VAR_project_name=offline-validation \
 TF_VAR_region=nyc3 \
@@ -58,7 +58,7 @@ TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
 TF_VAR_wap_test_cidrs='[]' \
   tofu -chdir=infra/network-preview/environments/preview \
   init -backend=false -lockfile=readonly
-TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+TF_VAR_admin_cidrs='[]' \
 TF_VAR_monitoring_alert_email=owner@example.com \
 TF_VAR_project_name=offline-validation \
 TF_VAR_region=nyc3 \

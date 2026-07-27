@@ -67,10 +67,14 @@ resource "digitalocean_firewall" "preview" {
   name        = "${local.preview_name}-firewall"
   droplet_ids = [digitalocean_droplet.preview.id]
 
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = var.admin_cidrs
+  dynamic "inbound_rule" {
+    for_each = length(var.admin_cidrs) > 0 ? [true] : []
+
+    content {
+      protocol         = "tcp"
+      port_range       = "22"
+      source_addresses = var.admin_cidrs
+    }
   }
 
   dynamic "inbound_rule" {

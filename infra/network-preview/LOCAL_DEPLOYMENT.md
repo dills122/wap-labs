@@ -2,13 +2,14 @@
 
 This is the initial single-owner deployment path. It creates real hosted infrastructure from a
 clean local checkout while retaining encrypted remote state, an exact saved plan, narrow provider
-credentials, restricted administration, default-project verification, monitoring, and an explicit apply boundary. It does not
-configure GitHub environments or claim the shared/public `PRE-003` gate.
+credentials, sealed-by-default administration, default-project verification, monitoring, and an
+explicit apply boundary. It does not configure GitHub environments or claim the shared/public
+`PRE-003` gate.
 
 The first stage is intentionally not public:
 
-- SSH is allowed only from `NETWORK_PREVIEW_ADMIN_CIDRS_JSON`;
-- UDP 9200 is allowed only from `NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON`;
+- inbound SSH is closed;
+- UDP 9200 is closed;
 - TCP 80/443 and Kannel administration ports are closed inbound;
 - the three Cloudflare DNS records are absent;
 - `NETWORK_PREVIEW_PUBLISH_PREVIEW` remains `false`.
@@ -26,15 +27,18 @@ NETWORK_PREVIEW_DO_PROJECT=dills122
 NETWORK_PREVIEW_DO_REGION=nyc3
 NETWORK_PREVIEW_DO_DROPLET_SIZE=s-1vcpu-512mb-10gb
 NETWORK_PREVIEW_DO_SSH_KEY_NAME=mac
-NETWORK_PREVIEW_ADMIN_CIDRS_JSON=["<current-public-ip>/32"]
-NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON=["<current-public-ip>/32"]
+NETWORK_PREVIEW_ADMIN_CIDRS_JSON=[]
+NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON=[]
 NETWORK_PREVIEW_ALERT_EMAIL=<owner-email>
 NETWORK_PREVIEW_CLOUDFLARE_ZONE_ID=<shrimpworks.dev-zone-id>
 NETWORK_PREVIEW_PUBLISH_PREVIEW=false
 ```
 
-The CIDRs accept only IPv4 `/24` through `/32`; `0.0.0.0/0` is rejected. Prefer the current
-operator address as a `/32`. Update and review a replacement plan when that address changes.
+The CIDR variables are optional. Leave both empty for the initial host so no inbound administration
+or application traffic is allowed. If interactive maintenance is later necessary, create and apply
+a reviewed short-lived plan containing the operator's then-current `/32`, perform the maintenance,
+then immediately apply another reviewed plan restoring `[]`. `0.0.0.0/0` is always rejected for
+SSH and restricted test traffic.
 
 The owner-local DigitalOcean and Cloudflare token scopes are recorded in
 [`bootstrap/OWNER_SETUP.md`](bootstrap/OWNER_SETUP.md). `AWS_ACCESS_KEY_ID` and

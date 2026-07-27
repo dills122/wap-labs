@@ -98,7 +98,6 @@ requireValues(configured, [
   'AWS_SECRET_ACCESS_KEY',
   'CLOUDFLARE_API_TOKEN',
   'DIGITALOCEAN_TOKEN',
-  'NETWORK_PREVIEW_ADMIN_CIDRS_JSON',
   'NETWORK_PREVIEW_ALERT_EMAIL',
   'NETWORK_PREVIEW_CLOUDFLARE_ZONE_ID',
   'NETWORK_PREVIEW_DO_PROJECT',
@@ -108,7 +107,6 @@ requireValues(configured, [
   'NETWORK_PREVIEW_R2_BUCKET',
   'NETWORK_PREVIEW_R2_RECOVERY_PREFIX',
   'NETWORK_PREVIEW_R2_STATE_KEY',
-  'NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON',
   'TOFU_ENCRYPTION_PASSPHRASE'
 ]);
 
@@ -140,7 +138,7 @@ const childEnv = {
   AWS_REGION: 'auto',
   TF_IN_AUTOMATION: '1',
   TF_INPUT: '0',
-  TF_VAR_admin_cidrs: configured.NETWORK_PREVIEW_ADMIN_CIDRS_JSON,
+  TF_VAR_admin_cidrs: configured.NETWORK_PREVIEW_ADMIN_CIDRS_JSON || '[]',
   TF_VAR_cloudflare_zone_id: configured.NETWORK_PREVIEW_CLOUDFLARE_ZONE_ID,
   TF_VAR_droplet_size: configured.NETWORK_PREVIEW_DO_DROPLET_SIZE || 's-1vcpu-512mb-10gb',
   TF_VAR_monitoring_alert_email: configured.NETWORK_PREVIEW_ALERT_EMAIL,
@@ -149,7 +147,7 @@ const childEnv = {
   TF_VAR_region: configured.NETWORK_PREVIEW_DO_REGION,
   TF_VAR_ssh_key_name: configured.NETWORK_PREVIEW_DO_SSH_KEY_NAME,
   TF_VAR_state_encryption_passphrase: configured.TOFU_ENCRYPTION_PASSPHRASE,
-  TF_VAR_wap_test_cidrs: configured.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON
+  TF_VAR_wap_test_cidrs: configured.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON || '[]'
 };
 
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), 'wap-labs-network-preview-plan-'));

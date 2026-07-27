@@ -38,7 +38,7 @@ const workspaceDependencies = {
 const offlineTofuEnv = Object.freeze({
   TF_IN_AUTOMATION: '1',
   TF_INPUT: '0',
-  TF_VAR_admin_cidrs: '["192.0.2.1/32"]',
+  TF_VAR_admin_cidrs: '[]',
   TF_VAR_monitoring_alert_email: 'owner@example.com',
   TF_VAR_project_name: 'offline-validation',
   TF_VAR_region: 'nyc3',

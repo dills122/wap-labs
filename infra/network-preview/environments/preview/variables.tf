@@ -51,15 +51,16 @@ variable "ssh_key_name" {
 }
 
 variable "admin_cidrs" {
-  description = "IPv4 CIDRs allowed to administer the preview over SSH; public or broad ranges are rejected."
+  description = "Optional temporary IPv4 CIDRs allowed to administer the preview over SSH; empty keeps SSH closed."
   type        = set(string)
+  default     = []
 
   validation {
-    condition = length(var.admin_cidrs) > 0 && alltrue([
+    condition = alltrue([
       for cidr in var.admin_cidrs :
       can(cidrnetmask(cidr)) && can(regex("/(2[4-9]|3[0-2])$", cidr)) && cidr != "0.0.0.0/0"
     ])
-    error_message = "admin_cidrs must contain only valid IPv4 /24 through /32 networks and must never be public"
+    error_message = "admin_cidrs must be empty or contain only valid IPv4 /24 through /32 networks and must never be public"
   }
 }
 

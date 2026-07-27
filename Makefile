@@ -119,7 +119,7 @@ lint-tofu:
 	@echo "==> actionlint (network-preview workflows)"
 	@scripts/ci/check-network-preview-workflows.sh
 	@echo "==> tofu init -backend=false -lockfile=readonly (network preview)"
-	@TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+	@TF_VAR_admin_cidrs='[]' \
 		TF_VAR_monitoring_alert_email=owner@example.com \
 		TF_VAR_project_name=offline-validation \
 		TF_VAR_region=nyc3 \
@@ -128,7 +128,7 @@ lint-tofu:
 		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview init -backend=false -lockfile=readonly -no-color >/dev/null
 	@echo "==> tofu validate (network preview)"
-	@TF_VAR_admin_cidrs='["192.0.2.1/32"]' \
+	@TF_VAR_admin_cidrs='[]' \
 		TF_VAR_monitoring_alert_email=owner@example.com \
 		TF_VAR_project_name=offline-validation \
 		TF_VAR_region=nyc3 \
