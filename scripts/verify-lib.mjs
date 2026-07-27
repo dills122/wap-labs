@@ -311,6 +311,7 @@ export const LANES = Object.freeze([
     profiles: ['change', 'full', 'extended'],
     paths: [
       'infra/network-preview/',
+      'scripts/ci/check-network-preview-workflows.sh',
       'scripts/ci/check-network-preview-r2-lock.sh',
       'scripts/ci/check-network-preview-encrypted-plan.sh',
       'scripts/ci/manage-network-preview-recovery.sh',
@@ -325,6 +326,10 @@ export const LANES = Object.freeze([
     ],
     prerequisites: [
       prerequisite('tofu', 'install OpenTofu 1.12.5'),
+      prerequisite(
+        'actionlint',
+        'run go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12'
+      ),
       prerequisite('sh', 'install a POSIX shell'),
       prerequisite('node', 'install the repository Node version')
     ],
@@ -335,6 +340,11 @@ export const LANES = Object.freeze([
         '-recursive',
         'infra/network-preview'
       ]),
+      command(
+        'GitHub Actions semantic validation',
+        'scripts/ci/check-network-preview-workflows.sh',
+        []
+      ),
       command(
         'backend-disabled initialization',
         'tofu',
@@ -358,6 +368,7 @@ export const LANES = Object.freeze([
       }),
       command('network-preview script POSIX syntax', 'sh', [
         '-n',
+        'scripts/ci/check-network-preview-workflows.sh',
         'scripts/ci/check-network-preview-r2-lock.sh',
         'scripts/ci/check-network-preview-encrypted-plan.sh',
         'scripts/ci/manage-network-preview-recovery.sh',

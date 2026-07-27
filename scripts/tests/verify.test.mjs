@@ -49,6 +49,7 @@ test('change selects backend-disabled OpenTofu checks for network preview infras
     lane.commands.map((command) => command.label),
     [
       'OpenTofu formatting',
+      'GitHub Actions semantic validation',
       'backend-disabled initialization',
       'OpenTofu validation',
       'network-preview script POSIX syntax',

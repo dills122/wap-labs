@@ -30,7 +30,6 @@ jobs:
     env:
       TF_IN_AUTOMATION: '1'
       TF_INPUT: '0'
-      TF_DATA_DIR: ${{ runner.temp }}/network-preview-terraform
       TF_VAR_state_encryption_passphrase: ${{ secrets.TOFU_ENCRYPTION_PASSPHRASE }}
       TF_VAR_project_name: ${{ vars.NETWORK_PREVIEW_DO_PROJECT }}
       TF_VAR_region: ${{ vars.NETWORK_PREVIEW_DO_REGION }}
@@ -44,6 +43,10 @@ jobs:
       NETWORK_PREVIEW_R2_STATE_KEY: ${{ vars.NETWORK_PREVIEW_R2_STATE_KEY }}
       NETWORK_PREVIEW_R2_RECOVERY_PREFIX: ${{ vars.NETWORK_PREVIEW_R2_RECOVERY_PREFIX }}
     steps:
+      - name: Configure runner-local OpenTofu data directory
+        shell: sh
+        run: echo "TF_DATA_DIR=$RUNNER_TEMP/network-preview-terraform" >>"$GITHUB_ENV"
+
       - name: Refuse non-main workflow dispatches
         shell: sh
         run: |

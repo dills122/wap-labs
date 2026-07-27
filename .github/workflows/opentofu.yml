@@ -56,6 +56,18 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup Go for pinned actionlint
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.25'
+          cache: false
+
+      - name: Install pinned actionlint
+        run: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+
+      - name: Validate OpenTofu workflow semantics
+        run: scripts/ci/check-network-preview-workflows.sh
+
       - name: Setup pinned OpenTofu
         uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
         with:

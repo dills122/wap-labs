@@ -30,9 +30,11 @@ There is no successful skip for a missing prerequisite in a selected required la
 `./scripts/init-refresh.sh` to refresh workspace dependencies. Install the repository Node/pnpm
 versions first when absent; use `AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh` when the
 pinned `wasm-pack` or Tauri CLI must be installed. Go 1.25 or newer is required when the selected
-lane includes `wml-server/`. OpenTofu 1.12.5 is required when the selected lane includes
-`infra/network-preview/`; its static lane never receives cloud credentials or enables the R2
-backend.
+lane includes `wml-server/`. OpenTofu 1.12.5 and actionlint 1.7.12 are required when the selected
+lane includes `infra/network-preview/`; install actionlint with
+`go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`. Its static lane validates the three
+OpenTofu workflow definitions semantically, never receives cloud credentials, and never enables
+the R2 backend.
 
 ## Selection and evidence boundaries
 
@@ -51,6 +53,10 @@ The `full` profile is the ordinary pre-PR command. It deliberately excludes:
   jobs.
 - protected R2 locking and DigitalOcean speculative planning, which remain unavailable until
   `PRE-001` and `PRE-003` are completed.
+
+Passing actionlint proves that the checked expression contexts and workflow structure satisfy the
+pinned offline validator. It does not create the `PRE-003` protected environments or prove live
+R2 locking, provider planning, exact-plan apply, or state-recovery behavior.
 
 These exclusions are visible in command output and do not imply conformance or release readiness.
 The full compliance wrapper proves that canonical compliance inputs and generated projections are

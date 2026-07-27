@@ -43,6 +43,7 @@ a non-secret validation sentinel; it must never be used for remote state.
 
 ```sh
 tofu fmt -check -recursive infra/network-preview
+scripts/ci/check-network-preview-workflows.sh
 TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
   tofu -chdir=infra/network-preview/environments/preview \
   init -backend=false -lockfile=readonly
@@ -51,8 +52,11 @@ TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
 sh -n scripts/ci/check-network-preview-r2-lock.sh
 ```
 
-The same contract is available as `make lint-tofu` and is enforced by
-`.github/workflows/opentofu.yml` without repository secrets.
+Install the pinned semantic workflow linter with
+`go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`. The same contract is available as
+`make lint-tofu` and is enforced by `.github/workflows/opentofu.yml` without repository secrets.
+Passing these checks proves offline workflow validity; it does not configure the `PRE-003`
+environments or prove live R2/provider behavior.
 
 ## Remote backend contract
 

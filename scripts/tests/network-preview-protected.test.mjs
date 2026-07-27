@@ -14,6 +14,7 @@ function read(relativePath) {
 
 const planWorkflowPath = '.github/workflows/opentofu-protected-plan.yml';
 const applyWorkflowPath = '.github/workflows/opentofu-protected-apply.yml';
+const staticWorkflow = read('.github/workflows/opentofu.yml');
 const planWorkflow = read(planWorkflowPath);
 const applyWorkflow = read(applyWorkflowPath);
 
@@ -24,6 +25,28 @@ test('protected plan and apply serialize the same shared state without cancellat
     assert.match(workflow, /workflow_dispatch:/);
     assert.doesNotMatch(workflow, /pull_request(?:_target)?:/);
   }
+});
+
+test('runner-dependent OpenTofu data paths are configured only after runner allocation', () => {
+  for (const workflow of [planWorkflow, applyWorkflow]) {
+    assert.doesNotMatch(workflow, /TF_DATA_DIR:\s*\$\{\{\s*runner\./);
+    assert.match(
+      workflow,
+      /echo "TF_DATA_DIR=\$RUNNER_TEMP\/network-preview-terraform" >>"\$GITHUB_ENV"/
+    );
+  }
+});
+
+test('static validation runs pinned semantic workflow lint', () => {
+  assert.match(
+    staticWorkflow,
+    /uses: actions\/setup-go@[0-9a-f]{40} # v7\.0\.0[\s\S]*?go-version: '1\.25'/
+  );
+  assert.match(
+    staticWorkflow,
+    /go install github\.com\/rhysd\/actionlint\/cmd\/actionlint@v1\.7\.12/
+  );
+  assert.match(staticWorkflow, /run: scripts\/ci\/check-network-preview-workflows\.sh/);
 });
 
 test('protected workflows pin every external action to a full commit SHA', () => {

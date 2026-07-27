@@ -17,6 +17,7 @@ Optional but commonly required:
 - `cargo-tauri` / `tauri-cli` (desktop host dev/build)
 - Docker + Compose (legacy Kannel stack)
 - OpenTofu 1.12.5 (network-preview infrastructure validation)
+- actionlint 1.7.12 (semantic validation of network-preview GitHub Actions workflows)
 - `shellcheck` (network-preview reusable shell validation)
 
 ## One-shot Bootstrap / Refresh
@@ -72,8 +73,12 @@ Environment variables supported by `scripts/init-refresh.sh`:
 
 - Version: `infra/network-preview/.opentofu-version`
 - Static validation: `make lint-tofu`
+- Install the pinned workflow linter with
+  `go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12`.
 - Direct format check: `tofu fmt -check -recursive infra/network-preview`
 - Static checks disable the remote backend and use no cloud credentials.
+- Semantic workflow validity is offline evidence only; it does not configure the protected
+  `PRE-003` environments or prove live R2/DigitalOcean behavior.
 - The R2 lock driver is access-backed and must not run before the protected `PRE-003` environment
   exists; see `infra/network-preview/README.md`.
 

@@ -130,17 +130,21 @@ Behavior:
 - validates the root with a non-secret, validation-only encryption sentinel;
 - regenerates the `linux_amd64`, `darwin_arm64`, and `darwin_amd64` provider checksums and fails
   on lock-file drift;
+- installs pinned actionlint 1.7.12 through Go 1.25 and semantically validates the static,
+  protected-plan, and protected-apply workflow definitions, including expression-context
+  availability;
 - checks every network-preview CI helper's POSIX syntax, runs `shellcheck`, and exercises the
   protected workflow contracts without credentials;
 - has only `contents: read`, does not persist checkout credentials, and receives no repository or
   environment secrets.
 
 This workflow does not contact R2 or DigitalOcean, produce a speculative plan, create a GitHub
-environment, or run `tofu apply`. It also proves locally that enforced plan encryption produces an
-opaque saved plan and runs contract tests over the protected workflow definitions. Live R2
-locking and provider planning remain blocked by `PRE-001`/`PRE-003` and require separately
-protected environments before activation. Do not make this path-triggered job a global required
-context; ordinary PRs outside its paths do not create it.
+environment, or run `tofu apply`. It proves that the workflow definitions pass the pinned offline
+GitHub Actions validator, proves locally that enforced plan encryption produces an opaque saved
+plan, and runs contract tests over the protected workflow definitions. That validation is distinct
+from operational readiness: live R2 locking and provider planning remain blocked by
+`PRE-001`/`PRE-003` and require separately protected environments before activation. Do not make
+this path-triggered job a global required context; ordinary PRs outside its paths do not create it.
 
 ### OpenTofu Protected Plan and Apply
 
