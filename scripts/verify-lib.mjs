@@ -295,12 +295,61 @@ export const LANES = Object.freeze([
     paths: ['wml-server/'],
     prerequisites: [prerequisite('go', 'install Go 1.25 or newer')],
     commands: [
-      command('Go format check', 'sh', [
-        '-c',
-        "test -z \"$(find . -name '*.go' -type f -exec gofmt -l {} +)\""
-      ], { cwd: 'wml-server' }),
+      command(
+        'Go format check',
+        'sh',
+        ['-c', 'test -z "$(find . -name \'*.go\' -type f -exec gofmt -l {} +)"'],
+        { cwd: 'wml-server' }
+      ),
       command('Go vet', 'go', ['vet', './...'], { cwd: 'wml-server' }),
       command('Go tests', 'go', ['test', './...'], { cwd: 'wml-server' })
+    ]
+  },
+  {
+    id: 'opentofu-static',
+    label: 'network preview OpenTofu static checks',
+    profiles: ['change', 'full', 'extended'],
+    paths: [
+      'infra/network-preview/',
+      'scripts/ci/check-network-preview-r2-lock.sh',
+      '.github/workflows/opentofu.yml'
+    ],
+    prerequisites: [
+      prerequisite('tofu', 'install OpenTofu 1.12.5'),
+      prerequisite('sh', 'install a POSIX shell')
+    ],
+    commands: [
+      command('OpenTofu formatting', 'tofu', [
+        'fmt',
+        '-check',
+        '-recursive',
+        'infra/network-preview'
+      ]),
+      command(
+        'backend-disabled initialization',
+        'tofu',
+        ['init', '-backend=false', '-lockfile=readonly', '-no-color'],
+        {
+          cwd: 'infra/network-preview/environments/preview',
+          env: {
+            TF_IN_AUTOMATION: '1',
+            TF_INPUT: '0',
+            TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
+          }
+        }
+      ),
+      command('OpenTofu validation', 'tofu', ['validate', '-no-color'], {
+        cwd: 'infra/network-preview/environments/preview',
+        env: {
+          TF_IN_AUTOMATION: '1',
+          TF_INPUT: '0',
+          TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state'
+        }
+      }),
+      command('R2 lock driver POSIX syntax', 'sh', [
+        '-n',
+        'scripts/ci/check-network-preview-r2-lock.sh'
+      ])
     ]
   },
   {

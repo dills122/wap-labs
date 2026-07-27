@@ -39,6 +39,28 @@ test('change selects Go origin checks for WML server changes', () => {
   );
 });
 
+test('change selects backend-disabled OpenTofu checks for network preview infrastructure', () => {
+  const lane = byId(
+    buildPlan('change', ['infra/network-preview/environments/preview/backend.tf']),
+    'opentofu-static'
+  );
+  assert.equal(lane.selected, true);
+  assert.deepEqual(
+    lane.commands.map((command) => command.label),
+    [
+      'OpenTofu formatting',
+      'backend-disabled initialization',
+      'OpenTofu validation',
+      'R2 lock driver POSIX syntax'
+    ]
+  );
+  assert.equal(
+    lane.commands.find((command) => command.label === 'backend-disabled initialization').env
+      .TF_VAR_state_encryption_passphrase,
+    'offline-validation-only-not-for-state'
+  );
+});
+
 test('root verification surfaces select every ordinary change lane', () => {
   const plan = buildPlan('change', ['package.json']);
   for (const lane of plan.filter((item) => !item.extendedOnly)) {

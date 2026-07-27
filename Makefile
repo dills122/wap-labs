@@ -8,7 +8,7 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 .PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap smoke-native-tauri-kannel-ui init-refresh \
 	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
-	lint-rust lint-rust-engine lint-rust-transport lint-node lint-go \
+	lint-rust lint-rust-engine lint-rust-transport lint-node lint-go lint-tofu \
 	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node test-go \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
@@ -67,8 +67,14 @@ fmt:
 	else \
 		echo "skip: go not found (wml-server fmt)"; \
 	fi
+	@if command -v tofu >/dev/null 2>&1; then \
+		echo "==> tofu fmt (network preview)"; \
+		tofu fmt -recursive infra/network-preview; \
+	else \
+		echo "skip: tofu not found (network-preview fmt)"; \
+	fi
 
-lint: lint-rust lint-node lint-go
+lint: lint-rust lint-node lint-go lint-tofu
 
 test: test-rust test-node test-go
 
@@ -101,6 +107,28 @@ lint-rust-engine:
 		cd engine-wasm/engine && cargo fmt --check; \
 	else \
 		echo "skip: cargo not found (engine-wasm lint)"; \
+	fi
+
+lint-tofu:
+	@if ! command -v tofu >/dev/null 2>&1; then \
+		echo "FAIL: tofu not found (network-preview lint)"; \
+		exit 1; \
+	fi
+	@echo "==> tofu fmt -check -recursive (network preview)"
+	@tofu fmt -check -recursive infra/network-preview
+	@echo "==> tofu init -backend=false -lockfile=readonly (network preview)"
+	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		tofu -chdir=infra/network-preview/environments/preview init -backend=false -lockfile=readonly -no-color >/dev/null
+	@echo "==> tofu validate (network preview)"
+	@TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		tofu -chdir=infra/network-preview/environments/preview validate -no-color
+	@echo "==> POSIX syntax (R2 lock driver)"
+	@sh -n scripts/ci/check-network-preview-r2-lock.sh
+	@if command -v shellcheck >/dev/null 2>&1; then \
+		echo "==> shellcheck (R2 lock driver)"; \
+		shellcheck scripts/ci/check-network-preview-r2-lock.sh; \
+	else \
+		echo "skip: shellcheck not found (R2 lock driver)"; \
 	fi
 
 test-rust:

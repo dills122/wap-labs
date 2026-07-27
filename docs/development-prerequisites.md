@@ -16,6 +16,8 @@ Optional but commonly required:
 - `wasm-pack` (engine wasm package builds)
 - `cargo-tauri` / `tauri-cli` (desktop host dev/build)
 - Docker + Compose (legacy Kannel stack)
+- OpenTofu 1.12.5 (network-preview infrastructure validation)
+- `shellcheck` (network-preview reusable shell validation)
 
 ## One-shot Bootstrap / Refresh
 
@@ -65,6 +67,15 @@ Environment variables supported by `scripts/init-refresh.sh`:
 - Tests: `cd wml-server && go test ./...`
 - Start the origin directly: `cd wml-server && go run ./cmd/wml-server`
 - Public WML listens on `:3000`; internal health and metrics listen on `:3001`.
+
+### `infra/network-preview/`
+
+- Version: `infra/network-preview/.opentofu-version`
+- Static validation: `make lint-tofu`
+- Direct format check: `tofu fmt -check -recursive infra/network-preview`
+- Static checks disable the remote backend and use no cloud credentials.
+- The R2 lock driver is access-backed and must not run before the protected `PRE-003` environment
+  exists; see `infra/network-preview/README.md`.
 
 ## CI Parity Commands
 

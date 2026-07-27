@@ -5,6 +5,7 @@ This document describes all active GitHub Actions automation for this repository
 ## Quick Reference
 
 - Main validation workflow: `.github/workflows/ci.yml`
+- Secret-free network-preview infrastructure validation: `.github/workflows/opentofu.yml`
 - Extended deterministic quality workflow: `.github/workflows/extended-quality.yml`
 - Release branch preparation workflow: `.github/workflows/release-prepare.yml`
 - Milestone GitHub release workflow: `.github/workflows/milestone-release.yml`
@@ -107,6 +108,36 @@ Jobs:
 Local `fast`, `change`, `full`, and `extended` profiles are documented separately in
 `docs/ci/LOCAL_VERIFICATION.md`. They do not claim to reproduce GitHub-hosted coverage, security,
 or OS-specific jobs.
+
+### OpenTofu Static Validation (`.github/workflows/opentofu.yml`)
+
+Purpose:
+
+- Validate the resource-free `INF-101` network-preview scaffold without cloud credentials or a
+  remote backend.
+
+Triggers:
+
+- path-scoped `pull_request` and pushes to `main`
+- `workflow_dispatch`
+
+Behavior:
+
+- installs OpenTofu from `infra/network-preview/.opentofu-version` through a full-SHA-pinned
+  setup action;
+- checks recursive formatting;
+- initializes the preview root with `-backend=false -lockfile=readonly`;
+- validates the root with a non-secret, validation-only encryption sentinel;
+- regenerates the `linux_amd64`, `darwin_arm64`, and `darwin_amd64` provider checksums and fails
+  on lock-file drift;
+- checks the future R2 lock driver's POSIX syntax and runs `shellcheck`;
+- has only `contents: read`, does not persist checkout credentials, and receives no repository or
+  environment secrets.
+
+This workflow does not contact R2 or DigitalOcean, produce a speculative plan, create a GitHub
+environment, or run `tofu apply`. Live R2 locking and provider planning remain blocked by
+`PRE-001`/`PRE-003` and require a separate protected environment before activation. Do not make
+this path-triggered job a global required context; ordinary PRs outside its paths do not create it.
 
 Caching:
 
@@ -364,6 +395,8 @@ Configured ecosystems:
   - `/marketing-site`
 - Go modules:
   - `/wml-server`
+- OpenTofu/Terraform providers:
+  - `/infra/network-preview/environments/preview`
 - cargo:
   - `/engine-wasm/engine`
   - `/engine-wasm/engine/fuzz`
@@ -442,6 +475,7 @@ Do not require:
 
 - `Transport WAP Smoke` globally (it is a path-scoped PR signal and does not run for unrelated PRs)
 - `Native Tauri Kannel E2E` until its documented pilot promotion criteria are met
+- `OpenTofu Static Validation` globally (it is path-scoped and otherwise absent)
 - `Deploy Pages` (deployment workflow)
 
 ## Common Failure Modes
