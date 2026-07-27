@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { spawnSync } from 'node:child_process';
+import { hasDeclaredJavaScriptTest } from './lib/test-evidence.mjs';
 
 const root = process.cwd();
 const ledgerPath = path.join(
@@ -74,6 +75,73 @@ const effectiveDocuments = new Map(
     document
   ])
 );
+
+function validateTestEvidence(obligationId, evidence, evidencePath) {
+  const testText = fs.readFileSync(evidencePath, 'utf8');
+  const extension = path.extname(evidence.path);
+
+  if (extension === '.rs') {
+    if (!evidence.test || !testText.includes(`fn ${evidence.test}(`)) {
+      failures.push(
+        `${obligationId}: Rust test is missing from ${evidence.path}: ${evidence.test}`
+      );
+    }
+    if (
+      !evidence.command ||
+      !evidence.command.includes('cargo test') ||
+      !evidence.command.includes(evidence.test)
+    ) {
+      failures.push(
+        `${obligationId}: Rust test command is not exact for ${evidence.test}`
+      );
+    }
+    return;
+  }
+
+  if (evidence.path.endsWith('.flow.json')) {
+    let story;
+    try {
+      story = JSON.parse(testText);
+    } catch {
+      failures.push(
+        `${obligationId}: story evidence is not valid JSON: ${evidence.path}`
+      );
+      return;
+    }
+    const target = evidence.command?.match(/pnpm test:story\s+(\S+)/)?.[1];
+    const mappedWorkItems = new Set(
+      (story.flows ?? []).flatMap((flow) => flow.workItems ?? [])
+    );
+    if (!target || !mappedWorkItems.has(target)) {
+      failures.push(
+        `${obligationId}: story evidence must use a mapped work-item target: ${evidence.test}`
+      );
+    }
+    return;
+  }
+
+  if (['.ts', '.tsx', '.js', '.mjs'].includes(extension)) {
+    if (!hasDeclaredJavaScriptTest(testText, evidence.test)) {
+      failures.push(
+        `${obligationId}: JavaScript/TypeScript test is missing from ${evidence.path}: ${evidence.test}`
+      );
+    }
+    if (
+      !evidence.command?.includes('pnpm') ||
+      !evidence.command.includes('test') ||
+      !evidence.command.includes(path.basename(evidence.path))
+    ) {
+      failures.push(
+        `${obligationId}: JavaScript/TypeScript test command is not supported for ${evidence.test}`
+      );
+    }
+    return;
+  }
+
+  failures.push(
+    `${obligationId}: unsupported test-evidence type for ${evidence.path}`
+  );
+}
 
 if (ledger.schemaVersion !== 1) {
   failures.push(`schemaVersion=${ledger.schemaVersion}; expected 1`);
@@ -273,19 +341,7 @@ for (const obligation of obligations) {
       failures.push(`${obligation.id}: test path is missing: ${evidence.path}`);
       continue;
     }
-    const testText = fs.readFileSync(evidencePath, 'utf8');
-    if (!evidence.test || !testText.includes(`fn ${evidence.test}(`)) {
-      failures.push(
-        `${obligation.id}: test is missing from ${evidence.path}: ${evidence.test}`
-      );
-    }
-    if (
-      !evidence.command ||
-      !evidence.command.includes('cargo test') ||
-      !evidence.command.includes(evidence.test)
-    ) {
-      failures.push(`${obligation.id}: test command is not exact for ${evidence.test}`);
-    }
+    validateTestEvidence(obligation.id, evidence, evidencePath);
   }
 }
 
@@ -374,7 +430,7 @@ if (
 }
 if (
   JSON.stringify(sortedMandatoryStatusCounts) !==
-  JSON.stringify({ implemented: 8, missing: 17, partial: 22 })
+  JSON.stringify({ implemented: 16, missing: 16, partial: 15 })
 ) {
   failures.push(
     `mandatory implementation audit drift: ${JSON.stringify(sortedMandatoryStatusCounts)}`
@@ -622,7 +678,7 @@ if (aggregateRowCount !== 712 || aggregateSelectedCount !== 198) {
 }
 if (
   JSON.stringify(aggregateStatusCounts) !==
-  JSON.stringify({ implemented: 30, partial: 70, missing: 98 })
+  JSON.stringify({ implemented: 40, partial: 70, missing: 88 })
 ) {
   aggregateFailures.push(
     `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`

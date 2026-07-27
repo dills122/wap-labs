@@ -64,8 +64,8 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_303_actions.rs",
-      "test": "active_do_order_retains_metadata_effective_identity_and_optional_policy",
-      "command": "cd engine-wasm/engine && cargo test active_do_order_retains_metadata_effective_identity_and_optional_policy"
+      "test": "wml_303_retains_do_identity_metadata_and_orders_active_actions",
+      "command": "cd engine-wasm/engine && cargo test wml_303_retains_do_identity_metadata_and_orders_active_actions"
     }
   ],
   "ownerLayers": [

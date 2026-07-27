@@ -108,11 +108,11 @@ Current priority order is:
    inactive and unmapped.
 5. Preserve completed `WML-302` variable/substitution, `WML-303`
    action/event/BACK, and `WML-305` native timer evidence; treat
-   completed `WSP-801` as the connectionless PDU/primitive foundation and
-   advance `WSP-802` as its header/version follow-on while `WSP-8` remains behind
-   `WAE-6`. In parallel, adopt and implement `WML-301` and `WMLS-501`; sequence
-   `WML-304` after `WSP-802` and `WML-301` because it shares header/content-type
-   and navigation/task-state seams. Preserve the completed `D0-01` contract
+   completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
+   while `WSP-8` remains behind `WAE-6`. Preserve WML-301's implemented
+   context/history subset and WMLS-501's merged decoder/verifier, then advance
+   graph-first `WML-304` request intent and bounded WMLS-501 runtime routing in
+   parallel. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -134,13 +134,15 @@ Current parallel batch:
 2. `WML-301`: completed the 20-clause source audit and implemented the 12-clause
    context/history/process-order subset with native/WASM/browser/story evidence; the aggregate
    item remains in progress while the explicit table-boundary and broad WAE delegates stay planned.
-3. `WMLS-501`: adopt a focused `WMLS-5` graph slice, then implement the bounded
-   bytecode decoder and structural verifier.
-4. Public preview: finish only access-independent `INF-101` evidence while
-   `PRE-001`/`PRE-003` remain open; keep `GW-101` at readiness until `PRE-004`
-   threat/data-policy acceptance.
-5. `WML-304`: readiness-only until `WSP-802` and `WML-301` merge, then own the
-   GET/POST/postfield request pipeline without reopening completed WML history.
+3. `WMLS-501`: the bounded WAP-193 bytecode decoder and structural verifier are
+   merged; route verified units into execution without claiming WMLS-502
+   operator, dataflow, or library closure.
+4. Public preview: repair and semantically lint the protected OpenTofu
+   workflows; `PRE-001`/`PRE-003` still gate live provider/R2 evidence, and
+   `GW-101` remains at readiness until `PRE-004` threat/data-policy acceptance.
+5. `WML-304`: adopt the correct request-pipeline graph projection first, then
+   define GET/POST/postfield request intent without reopening completed WML
+   history; native serialization and POST replay follow sequentially.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -1950,8 +1952,8 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  8 implemented, 22 partial, and 17 missing rows, with validated code/test
-  evidence for 30 rows. `WML-201` directly projects all 76 rows and maps all
+  16 implemented, 15 partial, and 16 missing rows, with validated code/test
+  evidence for 31 rows. `WML-201` directly projects all 76 rows and maps all
   175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
   ticket is not done.

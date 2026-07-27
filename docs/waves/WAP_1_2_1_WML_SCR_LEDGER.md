@@ -116,16 +116,16 @@ The source table contains one explicit SCR dependency:
 
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
-| `implemented` | 15 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
-| `partial` | 16 | Direct behavior exists, but the cited clause has known uncovered semantics |
+| `implemented` | 16 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
+| `partial` | 15 | Direct behavior exists, but the cited clause has known uncovered semantics |
 | `missing` | 16 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
-The fifteen implemented rows are `WML-C-08` (card/deck task shadowing),
+The sixteen implemented rows are `WML-C-08` (card/deck task shadowing),
 `WML-C-09` (intrinsic events), `WML-C-10` (browser context), `WML-C-11`
 (newcontext initialization), `WML-C-12` (variables), `WML-C-13` (context restrictions),
 `WML-C-16` (error handling), `WML-C-24` (`br`), `WML-C-30` (`head`), `WML-C-35` (`noop`), `WML-C-47`
 (`template`), `WML-C-18` (inter-card navigation), `WML-C-39` (`onevent`), `WML-C-42`
-(`refresh`), and `WML-C-53` (`wml` root). `WML-C-21` (`access`) remains partial:
+(`refresh`), `WML-C-48` (`timer`), and `WML-C-53` (`wml` root). `WML-C-21` (`access`) remains partial:
 the element's `domain`/`path` defaults and component-aware policy are now enforced
 against the host-supplied referring URI before deck commit, but the broader
 `DECK-ACCESS-REQUIRED` clause still includes unassessed `sendreferer` behavior.

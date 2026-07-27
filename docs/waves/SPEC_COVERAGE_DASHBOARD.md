@@ -44,7 +44,7 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
   - exact 76-row actor sequence: 39 required Class C client rows, 27 optional
     client rows, and 10 server/encoder rows outside the client profile
-  - direct evidence states: 30 code/test-linked, 17 mapped mandatory gaps,
+  - direct evidence states: 31 code/test-linked, 16 mapped mandatory gaps,
     and 29 optional rows not assessed
   - WML-201 directly maps all 76 SCR rows and all 175 selected WML clauses;
     its declared WML-family graph gap is closed without changing row status
@@ -64,7 +64,7 @@ Status: Active
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 265 fixture-backed clauses assessed; 497 fixture plans remain unassessed
+  - 287 fixture-backed clauses assessed; 475 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 198 selected rows classified
@@ -234,7 +234,8 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
   - Phase W/W1 tickets in `docs/waves/WORK_ITEMS.md` (`W0-05`..`W0-08`, `W1-01`..`W1-07`)
 - Priority closure focus:
-  - actual WAP-193 compilation-unit and instruction decoding
+  - route verified WAP-193 compilation units into the runtime; the strict
+    compilation-unit decoder and structural verifier are implemented
   - external-call/pragma/access-control conformance
   - content-type routing for WMLScript payloads
   - core function/local/conversion/error semantics
@@ -242,8 +243,9 @@ Status: Active
 
 2. Transport bedrock conformance closure (`WAP-200`, `WAP-202`, `WAP-203`)
 - Status: in progress (exact SCR extraction, selected-path resolution, and
-  implementation audit plus 134 nested clauses complete; WDP/WCMP fixtures
-  are direct, while WSP implementation closure remains pending)
+  implementation audit plus 134 nested clauses complete; the selected WDP,
+  WCMP, and connectionless WSP clause families are direct-fixture-complete,
+  while the aggregate WSP sprint remains behind WAE-6)
 - Deliverables:
   - `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`
   - `spec-processing/source-manifests/wap-1.2.1-wdp-scr.json`

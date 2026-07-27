@@ -569,7 +569,7 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
-          'active_do_order_retains_metadata_effective_identity_and_optional_policy'
+          'wml_303_retains_do_identity_metadata_and_orders_active_actions'
         )
       ]
     },
@@ -784,7 +784,7 @@ const mandatoryImplementationAudit = new Map(
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
-          'option_onevent_onpick_uses_immediate_scope_and_rejects_attribute_conflict'
+          'wml_303_option_onevent_onpick_executes_in_immediate_option_scope'
         )
       ]
     },
@@ -985,7 +985,7 @@ const mandatoryImplementationAudit = new Map(
         },
         {
           path: 'browser/frontend/src/app/engine-timer-runtime.test.ts',
-          test: 'EngineTimerRuntime exact wakeup scheduling',
+          test: 'schedules only the exact native timer wakeup and stops it cleanly',
           command: 'pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts'
         }
       ]
