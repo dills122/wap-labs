@@ -109,8 +109,10 @@ Current priority order is:
 5. Preserve completed `WML-302` variable/substitution, `WML-303`
    action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` as the connectionless PDU/primitive foundation and
-   keep `WSP-802` as its header/version follow-on while `WSP-8` remains behind
-   `WAE-6`. Preserve the completed `D0-01` contract
+   advance `WSP-802` as its header/version follow-on while `WSP-8` remains behind
+   `WAE-6`. In parallel, adopt and implement `WML-301` and `WMLS-501`; sequence
+   `WML-304` after `WSP-802` and `WML-301` because it shares header/content-type
+   and navigation/task-state seams. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -124,6 +126,20 @@ Planning assessment:
    implementation starts.
 2. Replan only when a source-derived fixture changes a dependency, a profile
    is activated, or implementation evidence changes a parent-row assessment.
+
+Current parallel batch:
+
+1. `WSP-802`: resolve the explicit general-formats mapping gap, then close the
+   connectionless header, assigned-number, code-page, and encoding-version matrix.
+2. `WML-301`: audit the focused context/history clause boundary before closing
+   deck/card context and inter-card process ordering.
+3. `WMLS-501`: adopt a focused `WMLS-5` graph slice, then implement the bounded
+   bytecode decoder and structural verifier.
+4. Public preview: finish only access-independent `INF-101` evidence while
+   `PRE-001`/`PRE-003` remain open; keep `GW-101` at readiness until `PRE-004`
+   threat/data-policy acceptance.
+5. `WML-304`: readiness-only until `WSP-802` and `WML-301` merge, then own the
+   GET/POST/postfield request pipeline without reopening completed WML history.
 
 ### WML-203A Legacy local-example standalone-document migration
 
