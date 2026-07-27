@@ -264,6 +264,22 @@ failures.push(...checkGeneratedArtifacts(root, wml3Artifacts));
 failures.push(...checkGeneratedArtifacts(root, wspArtifacts));
 
 const wml3Graph = wml3Artifacts.graph;
+const wml301Pack = renderContextPack(wml3Graph, 'WML-301');
+if (
+  !wml301Pack.startsWith('# WML-301 AI Context Pack') ||
+  !wml301Pack.includes('### WML-301:') ||
+  wml301Pack.includes('### WML-302:') ||
+  !wml301Pack.includes('- Selected work items: 1') ||
+  !wml301Pack.includes('- Selected SCR parents: 7') ||
+  !wml301Pack.includes('- Direct normative clauses: 9') ||
+  !wml301Pack.includes('**WML-CL-CARD-ID-FRAGMENT**') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-301') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-301']
+) {
+  failures.push(
+    'WML-301 context rendering must expose its nine current context/card mappings and seven selected parents without inferring implementation readiness'
+  );
+}
 const wml302Pack = renderContextPack(wml3Graph, 'WML-302');
 if (
   !wml302Pack.startsWith('# WML-302 AI Context Pack') ||
@@ -323,6 +339,25 @@ if (
 ) {
   failures.push(
     'WML-305 context rendering must expose its ten mapped timer clauses, five selected parents, and effective WML source order without a mapping gap'
+  );
+}
+
+const wml304Pack = renderContextPack(wml3Graph, 'WML-304');
+if (
+  !wml304Pack.startsWith('# WML-304 AI Context Pack') ||
+  !wml304Pack.includes('### WML-304:') ||
+  wml304Pack.includes('### WML-305:') ||
+  !wml304Pack.includes('- Selected work items: 1') ||
+  !wml304Pack.includes('- Selected SCR parents: 2') ||
+  !wml304Pack.includes('- Direct normative clauses: 8') ||
+  !wml304Pack.includes('**WML-CL-DECK-ACCESS-REQUIRED**') ||
+  !wml304Pack.includes('`WML-304` declares `wae` scope without a direct clause mapping') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-304') ||
+  JSON.stringify(wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-304']) !==
+    JSON.stringify(['wae'])
+) {
+  failures.push(
+    'WML-304 context rendering must expose its eight current mappings, two selected parents, and explicit WAE-family gap without implying readiness'
   );
 }
 

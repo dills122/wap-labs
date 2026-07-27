@@ -65,12 +65,14 @@ WAP-202 sections 5.1/5.2/5.5 clauses against four capability SCR parents without
 encapsulations and WAP-159 SMPP clauses remain unimplemented and deferred context, not mapped
 evidence.
 
-The `WML-3` slice adds the bounded runtime projection needed for variable, task, event, BACK, and
-softkey work. Its focused `WML-302` target exposes the audited variable-store, substitution,
-setvar-ordering, and history-resolution obligations; `WML-303` exposes only directly mapped
+The `WML-3` slice adds the bounded runtime projection needed for context, variable, task, event,
+BACK, form-request, and timer work. Its focused `WML-301` target exposes the currently mapped
+deck/card context obligations; `WML-302` exposes the audited variable-store, substitution,
+setvar-ordering, and history-resolution obligations; and `WML-303` exposes only directly mapped
 action/event clauses, their selected SCR parents and planned fixtures, the effective WML
-amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. Request
-work remains assigned to `WML-304`; the focused `WML-305` target exposes the ten directly mapped
+amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. The
+focused `WML-304` target exposes the current request/access mappings and its declared WAE-family
+gap without implying readiness. The focused `WML-305` target exposes the ten directly mapped
 timer-lifecycle clauses and their five selected SCR parents without changing fixture status.
 
 The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP lane:
@@ -111,8 +113,8 @@ For implementation or review of one pilot work item, request a focused pack:
 node scripts/wap-context-pack.mjs WML-203
 ```
 
-The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-302`,
-`WML-303`, `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
+The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
+through `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
 `WSP-8`, `WSP-801`, and `WSP-802`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice

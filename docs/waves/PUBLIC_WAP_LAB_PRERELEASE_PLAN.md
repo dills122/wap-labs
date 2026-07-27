@@ -1,7 +1,8 @@
 # Waves Public WAP Lab and Pre-release Plan
 
-Planning status: Sprint 1 implementation; LAB-101 merged, INF-101 static scaffold in flight, and
-public exposure remains blocked on Sprint 0 decisions
+Planning status: Sprint 1 implementation; LAB-101 and the access-independent INF-101 scaffold and
+protected-workflow contract are merged, while public exposure remains blocked on Sprint 0
+decisions and live infrastructure evidence
 
 Research checkpoint: 2026-07-26
 
@@ -177,12 +178,13 @@ deploy/network-preview/
 
 Create shared OpenTofu modules only after actual repetition justifies them.
 
-The `INF-101` offline scaffold pins OpenTofu 1.12.5 and `digitalocean/digitalocean` 2.96.0,
-defines the partial encrypted R2 backend, commits multi-platform provider checksums, and adds
-secret-free static validation plus an isolated lock-test driver. It creates no resources and does
-not prove live R2 locking or provider planning. `PRE-001` and `PRE-003` remain required before
-the protected lock test, speculative plan, serialized apply, and recovery-copy automation can run
-and complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
+The `INF-101` access-independent work merged in PRs #432 and #441. It pins OpenTofu 1.12.5 and
+`digitalocean/digitalocean` 2.96.0, defines the partial encrypted R2 backend, commits
+multi-platform provider checksums, adds secret-free static validation and an isolated lock-test
+driver, and codifies the protected reviewed-plan/apply/recovery workflow contract. It creates no
+resources and does not prove live R2 locking, provider planning, or recovery against the selected
+accounts. `PRE-001` and `PRE-003` remain required before those access-backed checks can run and
+complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
 
 ## Security, abuse, and operations
 

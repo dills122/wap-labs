@@ -44,8 +44,9 @@ planning:
 node scripts/wap-context-pack.mjs WSP-801
 ```
 
-The WML-3 focused targets are `WML-302`, `WML-303`, and `WML-305`. Use `WML-3` only for
-sprint-wide runtime planning.
+The WML-3 focused targets are `WML-301` through `WML-305`. Use `WML-3` only for sprint-wide
+runtime planning. A focused pack exposes the canonical mappings and gaps that exist now; it does
+not by itself establish implementation readiness or complete a source audit.
 
 ## Retrieval workflow
 
