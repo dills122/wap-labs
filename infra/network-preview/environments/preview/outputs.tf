@@ -14,8 +14,8 @@ output "reserved_ipv4_address" {
 }
 
 output "ssh_command" {
-  description = "Restricted non-root administration command, null while inbound SSH is sealed."
-  value       = length(var.admin_cidrs) > 0 ? "ssh waves@${digitalocean_reserved_ip.preview.ip_address}" : null
+  description = "Routine private administration command using Tailscale MagicDNS."
+  value       = "ssh waves@waves-network-preview"
 }
 
 output "published_hostnames" {

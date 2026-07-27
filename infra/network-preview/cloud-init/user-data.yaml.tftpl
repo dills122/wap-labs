@@ -28,6 +28,10 @@ disable_root: true
 ssh_pwauth: false
 
 write_files:
+  - path: /run/waves-tailscale-auth-key
+    owner: root:root
+    permissions: "0600"
+    content: ${tailscale_auth_key}
   - path: /etc/docker/daemon.json
     owner: root:root
     permissions: "0644"

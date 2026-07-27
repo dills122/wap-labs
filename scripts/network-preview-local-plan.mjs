@@ -107,6 +107,7 @@ requireValues(configured, [
   'NETWORK_PREVIEW_R2_BUCKET',
   'NETWORK_PREVIEW_R2_RECOVERY_PREFIX',
   'NETWORK_PREVIEW_R2_STATE_KEY',
+  'TAILSCALE_AUTH_KEY',
   'TOFU_ENCRYPTION_PASSPHRASE'
 ]);
 
@@ -147,8 +148,12 @@ const childEnv = {
   TF_VAR_region: configured.NETWORK_PREVIEW_DO_REGION,
   TF_VAR_ssh_key_name: configured.NETWORK_PREVIEW_DO_SSH_KEY_NAME,
   TF_VAR_state_encryption_passphrase: configured.TOFU_ENCRYPTION_PASSPHRASE,
+  TF_VAR_tailscale_auth_key: configured.TAILSCALE_AUTH_KEY,
   TF_VAR_wap_test_cidrs: configured.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON || '[]'
 };
+if (path.isAbsolute(tofu)) {
+  childEnv.PATH = `${path.dirname(tofu)}${path.delimiter}${childEnv.PATH}`;
+}
 
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), 'wap-labs-network-preview-plan-'));
 const tofuRoot = path.join(repositoryRoot, 'infra/network-preview/environments/preview');
@@ -159,6 +164,7 @@ const planPath = path.join(planDirectory, `preview-${planTimestamp}.tfplan`);
 try {
   mkdirSync(planDirectory, { recursive: true, mode: 0o700 });
   childEnv.TF_DATA_DIR = path.join(temporaryRoot, 'tofu-data');
+  childEnv.GITHUB_STEP_SUMMARY = path.join(temporaryRoot, 'sanitized-summary.md');
   const backendPath = path.join(temporaryRoot, 'backend.hcl');
 
   run(
@@ -198,6 +204,7 @@ try {
   );
 
   const digest = createHash('sha256').update(readFileSync(planPath)).digest('hex');
+  process.stdout.write(readFileSync(childEnv.GITHUB_STEP_SUMMARY, 'utf8'));
   console.log(`PASS: encrypted local plan created for commit ${sourceCommit}`);
   console.log(`Plan: ${path.relative(repositoryRoot, planPath)}`);
   console.log(`SHA-256: ${digest}`);

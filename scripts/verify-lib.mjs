@@ -44,6 +44,7 @@ const offlineTofuEnv = Object.freeze({
   TF_VAR_region: 'nyc3',
   TF_VAR_ssh_key_name: 'offline-validation',
   TF_VAR_state_encryption_passphrase: 'offline-validation-only-not-for-state',
+  TF_VAR_tailscale_auth_key: 'tskey-auth-offline-validation',
   TF_VAR_wap_test_cidrs: '[]'
 });
 

@@ -39,13 +39,16 @@ Expected environment-scoped secrets, with separate values/scopes where plan and 
 - `TOFU_ENCRYPTION_PASSPHRASE`
 - `DIGITALOCEAN_TOKEN`
 - `CLOUDFLARE_API_TOKEN`
+- `TAILSCALE_AUTH_KEY` (one-off, one-day, non-ephemeral, tagged `tag:waves-preview`)
 
 The `AWS_*` names are S3-client conventions. Their values are the Access Key ID and Secret Access
 Key shown once when a Cloudflare R2 token is created; no AWS account or AWS credential is involved.
 
-No values belong in this repository, workflow inputs, logs, plans, cloud-init, images, or issue/PR
-text. Do not reference a secret-bearing environment from an enabled job until its protection rules
-and reviewers have been configured and independently checked.
+No values belong in this repository, workflow inputs, logs, images, or issue/PR text. The one-off
+Tailscale key is the narrow exception: it is carried only in the encrypted plan/state and
+create-time cloud-init, automatically revoked after use, and deleted from `/run`. Do not use a
+reusable Tailscale key. Do not reference a secret-bearing environment from an enabled job until
+its protection rules and reviewers have been configured and independently checked.
 
 Both environments must restrict deployments to `main`. The apply environment must require a
 manual reviewer who did not author the reviewed infrastructure change; the plan environment must

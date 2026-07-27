@@ -40,7 +40,9 @@ Current owner selections:
   the account;
 - use an owner-local deployment for the initial restricted test host. Keep the shared/public
   `PRE-003` gate blocked because the owner cannot also supply independent apply review and
-  two-maintainer recovery evidence.
+  two-maintainer recovery evidence;
+- use the existing Reef tailnet for private administration, with standard OpenSSH over
+  `tailscale0` and no public TCP 22.
 
 ### Northeast region preflight
 
@@ -166,6 +168,56 @@ UDP 9200 and is not an HTTP/HTTPS origin behind Cloudflare's proxy.
 
 Cloudflare reference: [API token permissions](https://developers.cloudflare.com/fundamentals/api/reference/permissions/).
 
+## Tailscale private administration
+
+Use the same owner-controlled tailnet as Reef. The persistent preview host consumes one of the
+Personal plan's 50 included tagged-resource slots and does not consume ephemeral-resource minutes.
+Before creating the key, confirm the tailnet remains on the $0 Personal plan and has an included
+tagged-resource slot available.
+
+Add this least-privilege policy alongside the existing Reef policy:
+
+```json
+{
+  "tagOwners": {
+    "tag:waves-preview": ["autogroup:admin"]
+  },
+  "grants": [
+    {
+      "src": ["autogroup:admin"],
+      "dst": ["tag:waves-preview"],
+      "ip": ["tcp:22"]
+    }
+  ]
+}
+```
+
+Merge these entries into the existing policy rather than replacing its `tagOwners` or `grants`.
+Then create an auth key with exactly these settings:
+
+- reusable: **off**;
+- ephemeral: **off**;
+- expiry: **1 day**;
+- tag: `tag:waves-preview`;
+- pre-approved: **on** only if device approval is enabled.
+
+Store it as `TAILSCALE_AUTH_KEY` in the mode-`0600` local `.env`. The key is included only in the
+encrypted saved plan/state and create-time DigitalOcean user data. The host reads it from a
+root-only `/run` file, joins as `waves-network-preview`, and deletes the file. Tailscale revokes a
+one-off key after first use. Never use a reusable key for this path. OpenSSH remains the host
+authentication boundary; Tailscale SSH is intentionally not enabled.
+
+Routine access is `ssh waves@waves-network-preview` through MagicDNS. Public TCP 22 remains absent
+from the DigitalOcean firewall. The optional `NETWORK_PREVIEW_ADMIN_CIDRS_JSON` setting is reserved
+for a separately reviewed break-glass window and stays `[]` during normal operation.
+
+Tailscale references:
+
+- [Personal plan limits](https://tailscale.com/pricing)
+- [auth key types and expiry](https://tailscale.com/docs/features/access-control/auth-keys)
+- [server enrollment](https://tailscale.com/kb/1245/set-up-servers)
+- [firewall behavior](https://tailscale.com/docs/reference/faq/firewall-ports)
+
 ## Encryption passphrase and recovery
 
 Generate one high-entropy passphrase in the owner's password manager and store it as
@@ -229,6 +281,7 @@ Set the environment-scoped secrets as follows:
 | `TOFU_ENCRYPTION_PASSPHRASE` | Shared escrowed passphrase    | Same shared passphrase                           |
 | `DIGITALOCEAN_TOKEN`         | Custom read-scoped plan token | Distinct token with the declared resource scopes |
 | `CLOUDFLARE_API_TOKEN`       | Zone-scoped DNS Read token    | Distinct zone-scoped DNS Write token             |
+| `TAILSCALE_AUTH_KEY`         | One-off tagged enrollment key | Same exact one-off key until the plan is applied |
 
 GitHub reference: [deployment environments and protection rules](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
 

@@ -53,6 +53,7 @@ test('staged local infrastructure fails closed before explicit publication', () 
   const main = read('infra/network-preview/environments/preview/main.tf');
   const dns = read('infra/network-preview/environments/preview/dns.tf');
   const variables = read('infra/network-preview/environments/preview/variables.tf');
+  const bootstrap = read('infra/network-preview/cloud-init/bootstrap.sh.tftpl');
   const userData = read('infra/network-preview/cloud-init/user-data.yaml.tftpl');
 
   assert.match(variables, /variable "publish_preview"[\s\S]*?default\s+=\s+false/);
@@ -68,6 +69,12 @@ test('staged local infrastructure fails closed before explicit publication', () 
   assert.match(userData, /ssh_pwauth: false/);
   assert.match(userData, /PermitRootLogin no/);
   assert.match(userData, /PasswordAuthentication no/);
+  assert.match(variables, /variable "tailscale_auth_key"[\s\S]*?sensitive\s+=\s+true/);
+  assert.match(userData, /path: \/run\/waves-tailscale-auth-key[\s\S]*?permissions: "0600"/);
+  assert.match(bootstrap, /--auth-key="file:\$tailscale_auth_file"/);
+  assert.match(bootstrap, /--advertise-tags=tag:waves-preview/);
+  assert.match(bootstrap, /ufw allow in on tailscale0 to any port 22 proto tcp/);
+  assert.doesNotMatch(bootstrap, /tailscale (?:up|set)[^\n]*--ssh/);
 });
 
 test('protected workflows carry every staged provider input without exposing it in commands', () => {
@@ -79,11 +86,13 @@ test('protected workflows carry every staged provider input without exposing it 
       'TF_VAR_monitoring_alert_email',
       'TF_VAR_publish_preview',
       'TF_VAR_ssh_key_name',
+      'TF_VAR_tailscale_auth_key',
       'TF_VAR_wap_test_cidrs'
     ]) {
       assert.match(workflow, new RegExp(`\\s${variable}:`));
     }
     assert.match(workflow, /CLOUDFLARE_API_TOKEN: \$\{\{ secrets\.CLOUDFLARE_API_TOKEN \}\}/);
+    assert.match(workflow, /TF_VAR_tailscale_auth_key: \$\{\{ secrets\.TAILSCALE_AUTH_KEY \}\}/);
   }
 });
 
@@ -93,6 +102,7 @@ test('local planning leaves inbound administration and test traffic sealed by de
 
   assert.ok(requiredValues);
   assert.doesNotMatch(requiredValues[0], /NETWORK_PREVIEW_(?:ADMIN|WAP_TEST)_CIDRS_JSON/);
+  assert.match(requiredValues[0], /TAILSCALE_AUTH_KEY/);
   assert.match(
     localPlan,
     /TF_VAR_admin_cidrs: configured\.NETWORK_PREVIEW_ADMIN_CIDRS_JSON \|\| '\[\]'/
@@ -101,6 +111,8 @@ test('local planning leaves inbound administration and test traffic sealed by de
     localPlan,
     /TF_VAR_wap_test_cidrs: configured\.NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON \|\| '\[\]'/
   );
+  assert.match(localPlan, /childEnv\.GITHUB_STEP_SUMMARY = path\.join\(temporaryRoot,/);
+  assert.match(localPlan, /process\.stdout\.write\(readFileSync\(childEnv\.GITHUB_STEP_SUMMARY/);
 });
 
 test('protected workflows pin every external action to a full commit SHA', () => {

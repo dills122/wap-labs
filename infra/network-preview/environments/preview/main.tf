@@ -25,8 +25,9 @@ locals {
   })
 
   user_data = templatefile("${path.module}/../../cloud-init/user-data.yaml.tftpl", {
-    admin_public_key = jsonencode(data.digitalocean_ssh_key.admin.public_key)
-    bootstrap_script = indent(6, local.bootstrap_script)
+    admin_public_key   = jsonencode(data.digitalocean_ssh_key.admin.public_key)
+    bootstrap_script   = indent(6, local.bootstrap_script)
+    tailscale_auth_key = jsonencode(var.tailscale_auth_key)
   })
 }
 
@@ -55,6 +56,9 @@ resource "digitalocean_droplet" "preview" {
       condition     = data.digitalocean_project.selected.is_default
       error_message = "project_name must resolve to the existing DigitalOcean default project"
     }
+
+    # Cloud-init is creation-only and contains a one-off key that is revoked after enrollment.
+    ignore_changes = [user_data]
   }
 }
 

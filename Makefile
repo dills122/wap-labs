@@ -125,6 +125,7 @@ lint-tofu:
 		TF_VAR_region=nyc3 \
 		TF_VAR_ssh_key_name=offline-validation \
 		TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		TF_VAR_tailscale_auth_key=tskey-auth-offline-validation \
 		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview init -backend=false -lockfile=readonly -no-color >/dev/null
 	@echo "==> tofu validate (network preview)"
@@ -134,6 +135,7 @@ lint-tofu:
 		TF_VAR_region=nyc3 \
 		TF_VAR_ssh_key_name=offline-validation \
 		TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+		TF_VAR_tailscale_auth_key=tskey-auth-offline-validation \
 		TF_VAR_wap_test_cidrs='[]' \
 		tofu -chdir=infra/network-preview/environments/preview validate -no-color
 	@echo "==> POSIX syntax (network-preview CI scripts)"

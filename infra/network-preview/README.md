@@ -55,6 +55,7 @@ TF_VAR_project_name=offline-validation \
 TF_VAR_region=nyc3 \
 TF_VAR_ssh_key_name=offline-validation \
 TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+TF_VAR_tailscale_auth_key=tskey-auth-offline-validation \
 TF_VAR_wap_test_cidrs='[]' \
   tofu -chdir=infra/network-preview/environments/preview \
   init -backend=false -lockfile=readonly
@@ -64,6 +65,7 @@ TF_VAR_project_name=offline-validation \
 TF_VAR_region=nyc3 \
 TF_VAR_ssh_key_name=offline-validation \
 TF_VAR_state_encryption_passphrase=offline-validation-only-not-for-state \
+TF_VAR_tailscale_auth_key=tskey-auth-offline-validation \
 TF_VAR_wap_test_cidrs='[]' \
   tofu -chdir=infra/network-preview/environments/preview validate
 sh -n scripts/ci/check-network-preview-r2-lock.sh

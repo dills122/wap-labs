@@ -50,6 +50,17 @@ variable "ssh_key_name" {
   }
 }
 
+variable "tailscale_auth_key" {
+  description = "One-off tagged Tailscale auth key used only to enroll the new host during cloud-init."
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = can(regex("^tskey-auth-", var.tailscale_auth_key))
+    error_message = "tailscale_auth_key must be a Tailscale auth key"
+  }
+}
+
 variable "admin_cidrs" {
   description = "Optional temporary IPv4 CIDRs allowed to administer the preview over SSH; empty keeps SSH closed."
   type        = set(string)

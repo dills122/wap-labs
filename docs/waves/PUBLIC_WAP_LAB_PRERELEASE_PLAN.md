@@ -161,8 +161,9 @@ contention failure, release, and stale-lock recovery with the S3 backend's nativ
 For the initial single-owner infrastructure test, a local exact-plan/apply path is acceptable. It
 uses the existing default DigitalOcean project, a mode-`0600` local environment file, scoped
 provider credentials, encrypted R2 state, and an explicit owner approval between plan and apply.
-The first stage keeps Cloudflare DNS absent and closes both SSH and UDP 9200. A temporary reviewed
-SSH `/32` rule may be applied and then removed if interactive maintenance becomes necessary.
+The first stage keeps Cloudflare DNS absent and closes public SSH and UDP 9200. Routine OpenSSH
+administration uses the existing owner Tailscale network and the host's `tailscale0` interface. A
+temporary reviewed public SSH `/32` rule remains break-glass only.
 This restricted host does not close `PRE-003`, authorize public exposure, or replace the protected
 workflow before a shared operating model exists.
 
@@ -204,7 +205,8 @@ accounts. `PRE-001` and `PRE-003` remain required before those access-backed che
 complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
 
 The staged `INF-102` root may be authored and locally planned while shared/public `PRE-003` is
-open. Its default must fail closed: no DNS records, no UDP ingress, no SSH ingress, and no
+open. Its default must fail closed: no DNS records, no public UDP ingress, no public SSH ingress,
+Tailscale-only administration, and no
 application deployment. Enabling public UDP/DNS still depends on the production gateway,
 `PRE-003`, `PRE-004`, and a separately reviewed plan.
 

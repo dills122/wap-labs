@@ -8,7 +8,7 @@ explicit apply boundary. It does not configure GitHub environments or claim the 
 
 The first stage is intentionally not public:
 
-- inbound SSH is closed;
+- public inbound SSH is closed; routine OpenSSH is available only over Tailscale;
 - UDP 9200 is closed;
 - TCP 80/443 and Kannel administration ports are closed inbound;
 - the three Cloudflare DNS records are absent;
@@ -32,6 +32,7 @@ NETWORK_PREVIEW_WAP_TEST_CIDRS_JSON=[]
 NETWORK_PREVIEW_ALERT_EMAIL=<owner-email>
 NETWORK_PREVIEW_CLOUDFLARE_ZONE_ID=<shrimpworks.dev-zone-id>
 NETWORK_PREVIEW_PUBLISH_PREVIEW=false
+TAILSCALE_AUTH_KEY=<one-off-tagged-auth-key>
 ```
 
 The CIDR variables are optional. Leave both empty for the initial host so no inbound administration
@@ -39,6 +40,14 @@ or application traffic is allowed. If interactive maintenance is later necessary
 a reviewed short-lived plan containing the operator's then-current `/32`, perform the maintenance,
 then immediately apply another reviewed plan restoring `[]`. `0.0.0.0/0` is always rejected for
 SSH and restricted test traffic.
+
+`TAILSCALE_AUTH_KEY` must be a one-off, non-ephemeral key with a one-day expiry and the
+`tag:waves-preview` tag. The host consumes one included persistent tagged-resource slot, not
+ephemeral-resource minutes. Cloud-init reads the key from a root-only `/run` file, enrolls the
+node, and deletes the file. Tailscale automatically revokes the one-off key after successful use.
+The encrypted saved plan and encrypted state still contain the create-time user data, so never use
+a reusable key. Later cloud-init changes are intentionally ignored for the existing Droplet; a
+replacement requires a newly generated one-off key and an explicitly reviewed replacement plan.
 
 The owner-local DigitalOcean and Cloudflare token scopes are recorded in
 [`bootstrap/OWNER_SETUP.md`](bootstrap/OWNER_SETUP.md). `AWS_ACCESS_KEY_ID` and
