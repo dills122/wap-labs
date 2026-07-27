@@ -121,6 +121,7 @@ test('local planning leaves inbound administration and test traffic sealed by de
   );
   assert.match(localPlan, /childEnv\.GITHUB_STEP_SUMMARY = path\.join\(temporaryRoot,/);
   assert.match(localPlan, /process\.stdout\.write\(readFileSync\(childEnv\.GITHUB_STEP_SUMMARY/);
+  assert.match(localPlan, /planArguments\.push\('-replace=digitalocean_droplet\.preview'\)/);
 });
 
 test('protected workflows pin every external action to a full commit SHA', () => {

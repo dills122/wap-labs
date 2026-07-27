@@ -81,6 +81,17 @@ OPEN_TOFU_BIN=/absolute/path/to/tofu-1.12.5 \
 The plan contacts provider read APIs and briefly creates the native R2 `.tflock` object. It does
 not change DigitalOcean, DNS, or application resources.
 
+When a failed creation-only cloud-init bootstrap has been diagnosed and corrected, generate an
+explicit replacement plan with `--replace-droplet`. This flag is allowlisted to
+`digitalocean_droplet.preview`; it cannot select an arbitrary resource:
+
+```sh
+OPEN_TOFU_BIN=/absolute/path/to/tofu-1.12.5 \
+  node scripts/network-preview-local-plan.mjs \
+  --env-file /absolute/path/to/wap-labs/.env \
+  --replace-droplet
+```
+
 ## Apply boundary
 
 Stop after planning. A local apply requires separate owner approval naming the exact plan path,

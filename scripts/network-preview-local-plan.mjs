@@ -17,16 +17,23 @@ function fail(message) {
 
 function parseArguments(argv) {
   let envFile = path.join(repositoryRoot, '.env');
+  let replaceDroplet = false;
 
   for (let index = 0; index < argv.length; index += 1) {
+    if (argv[index] === '--replace-droplet') {
+      replaceDroplet = true;
+      continue;
+    }
     if (argv[index] !== '--env-file' || !argv[index + 1]) {
-      fail('usage: node scripts/network-preview-local-plan.mjs [--env-file PATH]');
+      fail(
+        'usage: node scripts/network-preview-local-plan.mjs [--env-file PATH] [--replace-droplet]'
+      );
     }
     envFile = path.resolve(argv[index + 1]);
     index += 1;
   }
 
-  return { envFile };
+  return { envFile, replaceDroplet };
 }
 
 function parseEnvFile(filePath) {
@@ -91,7 +98,7 @@ function run(command, args, options = {}) {
   return result.stdout ?? '';
 }
 
-const { envFile } = parseArguments(process.argv.slice(2));
+const { envFile, replaceDroplet } = parseArguments(process.argv.slice(2));
 const configured = parseEnvFile(envFile);
 requireValues(configured, [
   'AWS_ACCESS_KEY_ID',
@@ -159,7 +166,8 @@ const temporaryRoot = mkdtempSync(path.join(tmpdir(), 'wap-labs-network-preview-
 const tofuRoot = path.join(repositoryRoot, 'infra/network-preview/environments/preview');
 const planDirectory = path.join(tofuRoot, '.plans');
 const planTimestamp = new Date().toISOString().replaceAll(/[-:.]/g, '');
-const planPath = path.join(planDirectory, `preview-${planTimestamp}.tfplan`);
+const planKind = replaceDroplet ? 'replacement' : 'preview';
+const planPath = path.join(planDirectory, `${planKind}-${planTimestamp}.tfplan`);
 
 try {
   mkdirSync(planDirectory, { recursive: true, mode: 0o700 });
@@ -184,18 +192,18 @@ try {
     ],
     { env: childEnv, stdio: ['ignore', 'ignore', 'inherit'] }
   );
-  run(
-    tofu,
-    [
-      `-chdir=${tofuRoot}`,
-      'plan',
-      '-lock-timeout=5m',
-      '-input=false',
-      '-no-color',
-      `-out=${planPath}`
-    ],
-    { env: childEnv, stdio: ['ignore', 'ignore', 'inherit'] }
-  );
+  const planArguments = [
+    `-chdir=${tofuRoot}`,
+    'plan',
+    '-lock-timeout=5m',
+    '-input=false',
+    '-no-color',
+    `-out=${planPath}`
+  ];
+  if (replaceDroplet) {
+    planArguments.push('-replace=digitalocean_droplet.preview');
+  }
+  run(tofu, planArguments, { env: childEnv, stdio: ['ignore', 'ignore', 'inherit'] });
 
   run(
     path.join(repositoryRoot, 'scripts/ci/summarize-network-preview-plan.sh'),
