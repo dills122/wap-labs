@@ -20,6 +20,9 @@ use crate::network::wsp::header_registry::{
     decode_pdu_type, decode_well_known_parameter, encode_header_field_name_on_page,
     encode_pdu_type, WspAssignedNumberPolicy, DEFAULT_HEADER_CODE_PAGE,
 };
+use crate::network::wsp::header_value::{
+    encode_version_value as encode_wsp_version_value, WspVersionValue,
+};
 
 /// High bit marking a well-known (binary) WSP field name or short-integer value.
 const WELL_KNOWN_MARKER: u8 = 0x80;
@@ -621,7 +624,7 @@ fn encode_connectionless_header_block(block: &WspHeaderBlock) -> Vec<u8> {
             Some(code) => out.push(WELL_KNOWN_MARKER | code),
             None if header.name.eq_ignore_ascii_case("Encoding-Version") => {
                 match encode_version_value(&header.value) {
-                    Some(version) => out.push(WELL_KNOWN_MARKER | version),
+                    Some(version) => out.extend_from_slice(&version),
                     None => {
                         out.extend_from_slice(header.value.as_bytes());
                         out.push(0x00);
@@ -637,11 +640,15 @@ fn encode_connectionless_header_block(block: &WspHeaderBlock) -> Vec<u8> {
     out
 }
 
-fn encode_version_value(value: &str) -> Option<u8> {
+fn encode_version_value(value: &str) -> Option<Vec<u8>> {
     let (major, minor) = value.trim().split_once('.')?;
     let major = major.parse::<u8>().ok()?;
     let minor = minor.parse::<u8>().ok()?;
-    (major <= 0x07 && minor <= 0x0e).then_some((major << 4) | minor)
+    encode_wsp_version_value(WspVersionValue {
+        major,
+        minor: Some(minor),
+    })
+    .ok()
 }
 
 /// Encodes the `ContentType` field that precedes a `Post` header section.

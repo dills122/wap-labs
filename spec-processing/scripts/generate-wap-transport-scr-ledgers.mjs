@@ -38,9 +38,20 @@ if (refreshSelectedEvidence) {
       'wsp',
       obligation.id
     );
+    obligation.mapping.assessmentNote = assessmentNote('wsp', obligation.id);
     obligation.mapping.implementationEvidence =
       evidence.implementationEvidence;
     obligation.mapping.testEvidence = evidence.testEvidence;
+    obligation.mapping.evidenceState = evidence.testEvidence.some(
+      (item) => item.evidenceClass === 'direct-normative'
+    )
+      ? 'direct-normative-test-linked'
+      : 'provisional-non-normative-test-linked';
+    obligation.reviewState = evidence.testEvidence.some(
+      (item) => item.evidenceClass === 'direct-normative'
+    )
+      ? 'source-extracted-class-c-path-implemented-direct-evidence'
+      : 'source-extracted-class-c-path-applied-mapping-provisional';
     refreshed += 1;
   }
   const selectedRows = manifest.obligations.filter(
@@ -745,9 +756,7 @@ function workItems(family, id) {
 
 function selectedImplementationStatus(family, id) {
   if (family === 'wdp' || family === 'wcmp') return 'implemented';
-  return id === 'WSP-CL-C-003' || id === 'WSP-CL-C-020'
-    ? 'partial'
-    : 'implemented';
+  return 'implemented';
 }
 
 function assessmentNote(family, id) {
@@ -789,8 +798,8 @@ function assessmentNote(family, id) {
   }
   if (id === 'WSP-CL-C-003' || id === 'WSP-CL-C-020') {
     return id === 'WSP-CL-C-003'
-      ? 'The WSP-801 matrix directly closes its integer-order and POST/Reply Content-Type framing seams while generic header grammar, registry, version, code-page, and fallback closure remains assigned to WSP-802.'
-      : 'Header and encoding-version modules provide substantial behavior, but generic header registry, Encoding-Version, code-page, and unknown/fallback closure remains assigned to WSP-802.';
+      ? 'The WSP-801 byte-exact matrix and WSP-802 header fixture jointly close integer order, Content-Type seams, generic header framing, the effective registry, code pages, and fallback policy.'
+      : 'The WSP-802 header fixture directly closes Encoding-Version defaults, selection, extension pages, caching, hop-by-hop behavior, and compatible retry policy.';
   }
   return 'The canonical WAP-203 connectionless codec and stateless primitive adapter provide source-linked GET, POST, Reply, transaction, status, URI, body, header-byte preservation, and endpoint-role evidence.';
 }
@@ -973,7 +982,15 @@ function selectedEvidence(family, id) {
           fixture: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
           evidenceClass: 'direct-normative',
           limitation:
-            'Directly closes only WSP-801 integer ordering and POST/Reply Content-Type framing; generic header registry, Encoding-Version, code pages, and unknown/fallback policy remain WSP-802 residuals.'
+            'Preserves the completed WSP-801 byte-exact PDU and Content-Type framing evidence.'
+        },
+        {
+          path: 'transport-rust/tests/wsp_header_grammar.rs',
+          test: 'effective_default_header_registry_is_complete_and_versioned',
+          fixture: 'transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json',
+          evidenceClass: 'direct-normative',
+          limitation:
+            'Detailed Content-Type media and charset ownership remains on the shared WML-304 seam.'
         }
       ]
     };
@@ -992,10 +1009,12 @@ function selectedEvidence(family, id) {
       ],
       testEvidence: [
         {
-          path: 'transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json',
-          test: 'reply-encoding-version-header-and-body',
+          path: 'transport-rust/tests/wsp_header_grammar.rs',
+          test: 'mapped_header_sections_decode_with_explicit_unknown_policy',
+          fixture: 'transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json',
+          evidenceClass: 'direct-normative',
           limitation:
-            'Synthetic fixture; WAP-203/SIN-005 header-table identity is not proven.'
+            'Connection-oriented capability negotiation remains WSP-803 ownership.'
         }
       ]
     };

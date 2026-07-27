@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "164c4b8383327b747383f1235921d694a58ca99866762b935a6c66734708fa44"
+        "sha256": "0812e878c3f9cb22a21fee25906cf1cd304ca5cc25c5b49f90479748b6aea4ea"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,17 +25,17 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "4abe52834ddbd8d4f2f7a358e13e11299a3ff3cfee3ef90f3b2960a37a00921a"
+        "sha256": "626e7f55e6b4d1df40b7af82bb1bedcabce868f214ec97a890abbe80ead29dd3"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "68266ffe01105d2afd46c96e04c10327703a50836739576127dd84e151a1bf95"
+        "sha256": "66bfc975911f8e2f4159dc91b72528bc4677cc98a60c90c791236ff097d2b7c9"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 177,
-    "edgeCount": 516,
+    "nodeCount": 175,
+    "edgeCount": 514,
     "nodesByType": {
       "clause": 57,
       "fixture": 57,
@@ -44,8 +44,8 @@
       "profile": 1,
       "requirement": 3,
       "scr-row": 8,
-      "source-document": 21,
-      "source-family": 5,
+      "source-document": 20,
+      "source-family": 4,
       "sprint": 4,
       "work-item": 6
     },
@@ -54,9 +54,9 @@
       "applied-before": 15,
       "belongs-to": 8,
       "contains": 6,
-      "covers-family": 11,
+      "covers-family": 10,
       "depends-on": 3,
-      "effective-document": 20,
+      "effective-document": 19,
       "maps-to": 63,
       "owned-by": 16,
       "planned-by": 128,
@@ -109,9 +109,6 @@
       "WSP-806": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "WSP-802": [
-        "general-formats"
-      ],
       "WSP-803": [
         "wsp"
       ],
@@ -349,7 +346,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -383,7 +380,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -417,7 +414,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -451,7 +448,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -485,7 +482,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -519,7 +516,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -553,7 +550,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -587,7 +584,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -621,7 +618,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -766,7 +763,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -800,7 +797,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -834,7 +831,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -868,7 +865,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -903,7 +900,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -937,7 +934,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -971,7 +968,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1006,7 +1003,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1040,7 +1037,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1074,7 +1071,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1108,7 +1105,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1142,7 +1139,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2201,7 +2198,7 @@
         "requirementIds": [
           "RQ-TRN-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2273,7 +2270,7 @@
       "title": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2285,7 +2282,7 @@
       "title": "Send the highest encoding version the client implements that does not exceed the known server maximum.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Send the highest encoding version the client implements that does not exceed the known server maximum.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2297,7 +2294,7 @@
       "title": "Send a dedicated Encoding-Version value for each used extended header code page.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Send a dedicated Encoding-Version value for each used extended header code page.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2309,7 +2306,7 @@
       "title": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2321,7 +2318,7 @@
       "title": "Never advertise or emit a binary encoding version for which the sending peer is not compliant.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Never advertise or emit a binary encoding version for which the sending peer is not compliant.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2333,7 +2330,7 @@
       "title": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests.",
       "properties": {
         "kind": "state-machine",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Cache the server-supported encoding version and use it to choose compatible encodings on later requests.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2345,7 +2342,7 @@
       "title": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Include the hop-by-hop Encoding-Version header in every connectionless request and reply.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2357,7 +2354,7 @@
       "title": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2369,7 +2366,7 @@
       "title": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2417,7 +2414,7 @@
       "title": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2429,7 +2426,7 @@
       "title": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2441,7 +2438,7 @@
       "title": "Start every header set on default code page 1 and keep a shifted page active only through that header set.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Start every header set on default code page 1 and keep a shifted page active only through that header set.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2453,7 +2450,7 @@
       "title": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use application-page single-octet field names only after agreement; otherwise use Token-text field names.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2465,7 +2462,7 @@
       "title": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2477,7 +2474,7 @@
       "title": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2489,7 +2486,7 @@
       "title": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2501,7 +2498,7 @@
       "title": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2513,7 +2510,7 @@
       "title": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2525,7 +2522,7 @@
       "title": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2537,7 +2534,7 @@
       "title": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2549,7 +2546,7 @@
       "title": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2885,7 +2882,7 @@
       "title": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3147,7 +3144,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3274,7 +3271,7 @@
           "documentId": "WAP-203_003-WSP",
           "staticConformanceSection": "Appendix D"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -3283,23 +3280,6 @@
           "T0-20"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      }
-    },
-    {
-      "id": "source-document:WAP-188-WAPGenFormats",
-      "key": "WAP-188-WAPGenFormats",
-      "type": "source-document",
-      "title": "WAP General Formats",
-      "properties": {
-        "family": "general-formats",
-        "filename": "WAP-188-WAPGenFormats-20010710-a.pdf",
-        "role": "base",
-        "publicationStatus": "approved",
-        "publishedOn": "2001-07-10",
-        "sha256": "a36aadcd2294fbb363fcd5b141614f8bd5861193c6efe9f2c29e6422ba176810",
-        "localState": "canonical-content-differs",
-        "authorityUrl": "https://www.openmobilealliance.org/tech/affiliates/wap/WAP-188-WAPGenFormats-20010710-a.pdf",
-        "source": "spec-processing/source-manifests/wap-1.2.1-effective-spec.json"
       }
     },
     {
@@ -3641,24 +3621,6 @@
       }
     },
     {
-      "id": "source-family:general-formats",
-      "key": "general-formats",
-      "type": "source-family",
-      "title": "WAP General Formats",
-      "properties": {
-        "sourceClass": "dependency",
-        "targetDisposition": "strict-supporting",
-        "ownerLayers": [
-          "cross-layer"
-        ],
-        "completeness": "release-member-chain-complete",
-        "effectiveSequence": [
-          "WAP-188-WAPGenFormats"
-        ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-effective-spec.json"
-      }
-    },
-    {
       "id": "source-family:wae",
       "key": "wae",
       "type": "source-family",
@@ -3825,7 +3787,7 @@
           "spec-processing/source-manifests/wap-1.2.1-wsp-scr.json"
         ],
         "acceptance": [
-          "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals."
+          "All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents keep their byte-exact evidence, and WSP-802 closes the delegated WSP-CL-C-003 and WSP-CL-C-020 header residuals without changing that matrix."
         ],
         "evidence": [
           "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
@@ -3842,31 +3804,32 @@
       "type": "work-item",
       "title": "WSP header/assigned-number/encoding-version closure",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "transport-rust",
           "qa"
         ],
         "sourceFamilies": [
-          "wsp",
-          "general-formats"
-        ],
-        "explicitUnmappedFamilies": [
-          "general-formats"
+          "wsp"
         ],
         "existingTickets": [
           "T0-10",
           "T0-20"
         ],
         "outputs": [
-          "WSP header/assigned-number/encoding-version closure"
+          "WSP header/assigned-number/encoding-version closure",
+          "transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json",
+          "docs/waves/WSP_802_HEADER_ENCODING_EVIDENCE.md"
         ],
         "acceptance": [
           "Known tokens, code pages, text fallbacks, unknown policy, encoding versions, and round trips match the WAP 1.2.1 effective set."
         ],
         "evidence": [
+          "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar",
+          "cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix",
           "cargo test --manifest-path transport-rust/Cargo.toml",
-          "node scripts/check-wap-transport-conformance-ledgers.mjs"
+          "node scripts/check-wap-transport-conformance-ledgers.mjs",
+          "node scripts/wap-context-pack.mjs WSP-802"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -8027,15 +7990,6 @@
       ]
     },
     {
-      "id": "source-family:general-formats|effective-document|source-document:WAP-188-WAPGenFormats",
-      "from": "source-family:general-formats",
-      "relation": "effective-document",
-      "to": "source-document:WAP-188-WAPGenFormats",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-effective-spec.json"
-      ]
-    },
-    {
       "id": "source-family:wae|effective-document|source-document:WAP-190_101-WAESpec",
       "from": "source-family:wae",
       "relation": "effective-document",
@@ -8347,15 +8301,6 @@
       "from": "work-item:WSP-801",
       "relation": "relates-to",
       "to": "legacy-ticket:T0-20",
-      "sourceRefs": [
-        "docs/waves/wap-1.2.1-compliance-program.json"
-      ]
-    },
-    {
-      "id": "work-item:WSP-802|covers-family|source-family:general-formats",
-      "from": "work-item:WSP-802",
-      "relation": "covers-family",
-      "to": "source-family:general-formats",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

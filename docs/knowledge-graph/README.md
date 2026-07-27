@@ -83,9 +83,9 @@ The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP
 
 Its focused `WSP-801` and `WSP-802` targets use only canonical direct-clause mappings. `WSP-801`
 exposes the connectionless PDU, primitive, and method obligations and their selected SCR parents.
-`WSP-802` exposes header and encoding-version obligations while retaining the explicit
-`general-formats` declared-family gap. The canonical WSP SCR ledger remains authoritative; this
-checkpoint does not change row dispositions, fixture states, or implementation evidence.
+`WSP-802` exposes header and encoding-version obligations. Its source-scope audit removed the
+unrelated `general-formats` family declaration because WAP-188 contains no WSP header grammar.
+The canonical WSP SCR ledger remains authoritative.
 
 ## Commands
 

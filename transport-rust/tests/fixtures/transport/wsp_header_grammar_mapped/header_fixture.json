@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "workItem": "WSP-802",
+  "effectiveSequence": [
+    "WAP-203-WSP",
+    "WAP-203_001-WSP",
+    "WAP-203_003-WSP",
+    "WAP-203_005-WSP"
+  ],
+  "defaultHeaderCount": 68,
+  "defaultHeaderFirstCode": 0,
+  "defaultHeaderLastCode": 67,
+  "deprecatedCodes": [1, 2, 8, 16],
+  "versionBoundaries": [
+    { "code": 46, "name": "Content-Disposition", "major": 1, "minor": 1 },
+    { "code": 47, "name": "X-Wap-Application-Id", "major": 1, "minor": 2 },
+    { "code": 55, "name": "Profile-Warning", "major": 1, "minor": 2 },
+    { "code": 56, "name": "Expect", "major": 1, "minor": 3 },
+    { "code": 67, "name": "Encoding-Version", "major": 1, "minor": 3 }
+  ],
+  "headerSections": [
+    {
+      "name": "assigned-special-values",
+      "encoded": [174, 97, 116, 116, 97, 99, 104, 109, 101, 110, 116, 0, 184, 128, 195, 147],
+      "peerMinor": 3,
+      "negotiatedPages": [],
+      "unknownPolicy": "error",
+      "expectedNames": ["Content-Disposition", "Expect", "Encoding-Version"]
+    },
+    {
+      "name": "sin001-expect-expression",
+      "encoded": [184, 18, 120, 45, 102, 101, 97, 116, 117, 114, 101, 0, 101, 110, 97, 98, 108, 101, 100, 0],
+      "peerMinor": 3,
+      "negotiatedPages": [],
+      "unknownPolicy": "error",
+      "expectedNames": ["Expect"]
+    },
+    {
+      "name": "agreed-application-page",
+      "encoded": [127, 64, 144, 49, 0],
+      "peerMinor": 4,
+      "negotiatedPages": [64],
+      "unknownPolicy": "error",
+      "expectedNames": ["X-Wap-Ack"]
+    },
+    {
+      "name": "text-name-fallback",
+      "encoded": [88, 45, 84, 114, 97, 99, 101, 0, 118, 97, 108, 117, 101, 0],
+      "peerMinor": 2,
+      "negotiatedPages": [],
+      "unknownPolicy": "error",
+      "expectedNames": ["X-Trace"]
+    },
+    {
+      "name": "unknown-length-value-is-preserved",
+      "encoded": [196, 3, 1, 2, 3, 169, 87, 97, 118, 101, 78, 97, 118, 0],
+      "peerMinor": 4,
+      "negotiatedPages": [],
+      "unknownPolicy": "preserve",
+      "expectedNames": ["unknown:01:44", "User-Agent"]
+    },
+    {
+      "name": "unknown-length-value-is-skipped",
+      "encoded": [196, 3, 1, 2, 3, 169, 87, 97, 118, 101, 78, 97, 118, 0],
+      "peerMinor": 4,
+      "negotiatedPages": [],
+      "unknownPolicy": "skip",
+      "expectedNames": ["User-Agent"]
+    }
+  ]
+}

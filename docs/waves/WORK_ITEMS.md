@@ -129,8 +129,8 @@ Planning assessment:
 
 Current parallel batch:
 
-1. `WSP-802`: resolve the explicit general-formats mapping gap, then close the
-   connectionless header, assigned-number, code-page, and encoding-version matrix.
+1. `WSP-802`: completed the source-scope audit and connectionless header,
+   assigned-number, code-page, and encoding-version matrix.
 2. `WML-301`: audit the focused context/history clause boundary before closing
    deck/card context and inter-card process ordering.
 3. `WMLS-501`: adopt a focused `WMLS-5` graph slice, then implement the bounded
@@ -265,13 +265,13 @@ Source-ledger reconciliation:
 1. The exact WAP-200/WAP-202/WAP-203 row authority is
    `docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md` plus its three machine
    manifests. The selected connectionless Class C path is 19 rows with an
-   audit of 17 implemented / 2 partial / 0 missing and 18/19 direct normative
+   audit of 19 implemented / 0 partial / 0 missing and 19/19 direct normative
    tests. The nine selected WDP rows are fixture-backed under `TRN-701`, the
    adopted constrained-payload policy is closed under `TRN-702`, the five-row
    general-WCMP branch is preserved as a non-IP capability under `TRN-703`,
    and both selected ICMP-backed WCMP rows are fixture-backed under `TRN-708`;
-   WSP-801 directly evidences seven selected WSP parents, with WSP-802 residuals
-   preserving the two partial rows.
+   WSP-801 directly evidences seven selected WSP parents, and WSP-802 closes
+   the two delegated header rows while preserving the completed byte matrix.
 2. Completed thematic tickets such as `T0-19`, `T0-20`, and `T0-27` are not
    reopened. Their existing evidence remains useful but provisional against
    the exact target-era rows.

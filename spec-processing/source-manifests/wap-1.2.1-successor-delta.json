@@ -12,7 +12,7 @@
     "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
   },
   "status": "selected-profile-successor-delta-complete",
-  "policy": "Successor material may explain, cross-check, or extend implementation, but cannot replace strict target-era behavior. Compatible findings remain planning classifications until direct target fixtures prove conformance; correction-required findings stay open work; successor-only behavior requires an explicit capability.",
+  "policy": "Successor material may explain, cross-check, or extend implementation, but cannot replace strict target-era behavior. Compatible findings remain planning classifications until direct target fixtures prove conformance; correction-required classifications remain historical delta context after target-era evidence closes the work; successor-only behavior requires an explicit capability.",
   "successorAuthorities": [
     {
       "documentId": "WAP-236-WAESpec-20020207-a",
@@ -1662,7 +1662,7 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -8006,7 +8006,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "T0-09"
@@ -8047,7 +8047,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "T0-09"
@@ -8085,7 +8085,7 @@
         "documentId": "WAP-203_003-WSP",
         "staticConformanceSection": "Appendix D"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": true,
       "implementationBasis": "successor-era-tables-and-synthetic-cases",
@@ -8097,7 +8097,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-802",
         "T0-20"
@@ -8152,7 +8152,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "WSP-804",
@@ -8209,7 +8209,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "WSP-804",
@@ -8267,7 +8267,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "WSP-804",
@@ -8326,7 +8326,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-801",
         "WSP-804",
@@ -8372,7 +8372,7 @@
         "documentId": "WAP-203_003-WSP",
         "staticConformanceSection": "Appendix D"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": true,
       "implementationBasis": "successor-era-tables-and-synthetic-cases",
@@ -8384,7 +8384,7 @@
         }
       ],
       "relationshipClassification": "successor-oriented-foundation",
-      "rationale": "Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.",
+      "rationale": "The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.",
       "strictCorrectionWorkItems": [
         "WSP-802",
         "T0-20"

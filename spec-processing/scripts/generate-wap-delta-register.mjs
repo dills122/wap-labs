@@ -49,7 +49,7 @@ const target = {
   classProfile: 'WAP-215 Class C client (CCR-CLASSC-C-001)'
 };
 const policy =
-  'Successor material may explain, cross-check, or extend implementation, but cannot replace strict target-era behavior. Compatible findings remain planning classifications until direct target fixtures prove conformance; correction-required findings stay open work; successor-only behavior requires an explicit capability.';
+  'Successor material may explain, cross-check, or extend implementation, but cannot replace strict target-era behavior. Compatible findings remain planning classifications until direct target fixtures prove conformance; correction-required classifications remain historical delta context after target-era evidence closes the work; successor-only behavior requires an explicit capability.';
 
 const authorityDefinitions = [
   {
@@ -286,7 +286,7 @@ function classify(definition, obligation) {
       ],
       relationshipClassification: 'successor-oriented-foundation',
       rationale:
-        'Current connectionless WSP foundations use successor-oriented tables or synthetic cases and require WAP-203/SIN fixtures and assigned-number correction.'
+        'The original connectionless WSP foundations used successor-oriented tables or synthetic cases and required WAP-203/SIN fixtures and assigned-number correction; WSP-801 and WSP-802 now provide that target-era evidence while this delta classification preserves the original correction boundary.'
     };
   }
 

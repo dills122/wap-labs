@@ -4,7 +4,7 @@
       "name": "connect-text-header-and-capabilities",
       "decodePolicy": "strict",
       "encodePolicy": "strict",
-      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 16, 126, 88, 45, 83, 101, 115, 115, 105, 111, 110, 0, 105, 110, 105, 116, 0],
+      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 15, 88, 45, 83, 101, 115, 115, 105, 111, 110, 0, 105, 110, 105, 116, 0],
       "expected": {
         "kind": "connect",
         "version_major": 1,
@@ -25,7 +25,7 @@
       "name": "connect-reply-binary-header-and-capabilities",
       "decodePolicy": "strict-v14",
       "encodePolicy": "strict-v14",
-      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 5, 67, 49, 46, 52, 0],
+      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 2, 195, 148],
       "expected": {
         "kind": "connectReply",
         "version_major": 1,
@@ -47,7 +47,7 @@
       "name": "get-content-type-binary-header",
       "decodePolicy": "strict-v14",
       "encodePolicy": "strict-v14",
-      "encoded": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 17, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0],
+      "encoded": [64, 47, 100, 101, 99, 107, 46, 119, 109, 108, 0, 145, 116, 101, 120, 116, 47, 118, 110, 100, 46, 119, 97, 112, 46, 119, 109, 108, 0],
       "expected": {
         "kind": "methodGet",
         "uri": "/deck.wml",
@@ -64,7 +64,7 @@
       "name": "post-text-fallback-header-with-body",
       "decodePolicy": "strict",
       "encodePolicy": "text-fallback",
-      "encoded": [96, 47, 115, 117, 98, 109, 105, 116, 0, 21, 126, 88, 45, 65, 112, 112, 45, 84, 114, 97, 99, 101, 0, 116, 114, 97, 99, 101, 45, 49, 0, 1, 2, 3],
+      "encoded": [96, 47, 115, 117, 98, 109, 105, 116, 0, 20, 88, 45, 65, 112, 112, 45, 84, 114, 97, 99, 101, 0, 116, 114, 97, 99, 101, 45, 49, 0, 1, 2, 3],
       "expected": {
         "kind": "methodPost",
         "uri": "/submit",
@@ -82,7 +82,7 @@
       "name": "reply-encoding-version-header-and-body",
       "decodePolicy": "strict-v14",
       "encodePolicy": "strict-v14",
-      "encoded": [4, 0, 200, 5, 67, 49, 46, 52, 0, 60, 119, 109, 108, 47, 62],
+      "encoded": [4, 0, 200, 2, 195, 148, 60, 119, 109, 108, 47, 62],
       "expected": {
         "kind": "reply",
         "status_code": 200,
@@ -108,19 +108,19 @@
     {
       "name": "truncated-post-header-block",
       "decodePolicy": "strict",
-      "encoded": [96, 47, 0, 10, 17, 116, 101, 120, 116, 0],
+      "encoded": [96, 47, 0, 10, 145, 116, 101, 120, 116, 0],
       "expectedError": "truncated"
     },
     {
       "name": "truncated-connect-header-block",
       "decodePolicy": "strict",
-      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 2, 126],
+      "encoded": [1, 1, 4, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 2, 88],
       "expectedError": "truncated"
     },
     {
       "name": "connect-reply-trailing-bytes",
       "decodePolicy": "strict-v14",
-      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 5, 67, 49, 46, 52, 0, 170],
+      "encoded": [2, 1, 4, 0, 7, 0, 0, 8, 0, 0, 0, 16, 0, 0, 2, 2, 195, 148, 170],
       "expectedError": "trailing-bytes"
     }
   ]

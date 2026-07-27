@@ -13,13 +13,13 @@
 
 ## Graph summary
 
-- Nodes: 177
-- Edges: 516
+- Nodes: 175
+- Edges: 514
 - Selected work items: 6
 - Direct SCR rows: 0
 - Direct normative clauses: 112
 - Work items without direct clause mappings: 2
-- Work items with unmapped declared normative families: 5
+- Work items with unmapped declared normative families: 4
 
 ## Execution target
 
@@ -61,7 +61,7 @@ Outputs:
 
 Acceptance:
 
-- All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents have direct executable evidence while WSP-CL-C-003 and WSP-CL-C-020 retain their explicit WSP-802 residuals.
+- All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents keep their byte-exact evidence, and WSP-802 closes the delegated WSP-CL-C-003 and WSP-CL-C-020 header residuals without changing that matrix.
 
 Evidence commands:
 
@@ -72,9 +72,9 @@ Evidence commands:
 
 ### WSP-802: WSP header/assigned-number/encoding-version closure
 
-- Status: `in-progress`
+- Status: `done`
 - Owner layers: `transport-rust`, `qa`
-- Source families: `wsp`, `general-formats`
+- Source families: `wsp`
 - Existing tickets: `T0-10`, `T0-20`
 - Direct SCR rows: 0
 - Selected SCR parents: 6 (`WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`, `WSP-CL-C-020`)
@@ -87,6 +87,8 @@ Evidence commands:
 Outputs:
 
 - WSP header/assigned-number/encoding-version closure
+- transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json
+- docs/waves/WSP_802_HEADER_ENCODING_EVIDENCE.md
 
 Acceptance:
 
@@ -94,8 +96,11 @@ Acceptance:
 
 Evidence commands:
 
+- `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar`
+- `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
 - `node scripts/check-wap-transport-conformance-ledgers.mjs`
+- `node scripts/wap-context-pack.mjs WSP-802`
 
 ### WSP-803: WSP capability negotiation and session lifecycle
 
@@ -430,127 +435,127 @@ Evidence commands:
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-ABSENT-DEFAULT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-ABSENT-DEFAULT` (`binary-decoder`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-CLIENT-SELECTION** — Send the highest encoding version the client implements that does not exceed the known server maximum.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-CLIENT-SELECTION` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-CLIENT-SELECTION` (`transport-boundary`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-EXTENSION-PAGES** — Send a dedicated Encoding-Version value for each used extended header code page.
   - Family: `wsp`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-EXTENSION-PAGES` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-EXTENSION-PAGES` (`transport-boundary`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-HOP-BY-HOP** — Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.4 (8.4.4 End-to-end and Hop-by-hop Headers)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-HOP-BY-HOP` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-HOP-BY-HOP` (`transport-boundary`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-NO-OVERCLAIM** — Never advertise or emit a binary encoding version for which the sending peer is not compliant.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-NO-OVERCLAIM` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-NO-OVERCLAIM` (`transport-boundary`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-PEER-CACHE** — Cache the server-supported encoding version and use it to choose compatible encodings on later requests.
   - Family: `wsp`; force: `explicit-may`; level: `permitted`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-PEER-CACHE` (`state-machine`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-PEER-CACHE` (`state-machine`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-REQUIRED** — Include the hop-by-hop Encoding-Version header in every connectionless request and reply.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-REQUIRED` (`transport-boundary`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-REQUIRED` (`transport-boundary`, `implemented`)
 - **WSP-CL-ENCODING-VERSION-TEXT-FORM** — Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.
   - Family: `wsp`; force: `grammar`; level: `required`
   - Source: `WAP-203-WSP` §8.4.3.1 (8.4.3.1 Encoding-Version field)
   - Parents: `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-ENCODING-VERSION-TEXT-FORM` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-ENCODING-VERSION-TEXT-FORM` (`binary-decoder`, `implemented`)
 - **WSP-CL-EXPECT-SIN-ENCODING** — Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203_001-WSP` §3.3 (3.3 Change)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-EXPECT-SIN-ENCODING` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-EXPECT-SIN-ENCODING` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-CODE-PAGE-RANGES** — Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.1 (8.4.1.1 Field name)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-CODE-PAGE-RANGES` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-CODE-PAGE-RANGES` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-COMPACTION-FORMS** — Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1 (8.4.1 General)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-COMPACTION-FORMS` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-COMPACTION-FORMS` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-DEFAULT-PAGE** — Start every header set on default code page 1 and keep a shifted page active only through that header set.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.1 (8.4.1.1 Field name)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-DEFAULT-PAGE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-DEFAULT-PAGE` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT** — Use application-page single-octet field names only after agreement; otherwise use Token-text field names.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.1 (8.4.1.1 Field name)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-EXTENSION-PAGE-AGREEMENT` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-EXTENSION-PAGE-AGREEMENT` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-FIELD-ASSIGNMENTS** — Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §appendix-a (Appendix A Assigned Numbers)
   - Parents: `WSP-CL-C-003`, `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-FIELD-ASSIGNMENTS` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-FIELD-ASSIGNMENTS` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-HTTP-COMPATIBILITY** — Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1 (8.4.1 General)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-HTTP-COMPATIBILITY` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-HTTP-COMPATIBILITY` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-LIST-EXPANSION** — Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.3 (8.4.1.3 Encoding of list values)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-LIST-EXPANSION` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-LIST-EXPANSION` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-NAME-VERSION-CHOICE** — Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.1 (8.4.1.1 Field name)
   - Parents: `WSP-CL-C-003`, `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-NAME-VERSION-CHOICE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-NAME-VERSION-CHOICE` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-SYNTAX-REGISTRY** — Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §8.4.2 (8.4.2 Header syntax)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-SYNTAX-REGISTRY` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-SYNTAX-REGISTRY` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-UNKNOWN-VALUE-SKIP** — Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.2 (8.4.1.2 Field values)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-UNKNOWN-VALUE-SKIP` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-UNKNOWN-VALUE-SKIP` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-VALUE-ENCODING-CHOICE** — Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.
   - Family: `wsp`; force: `explicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.2 (8.4.1.2 Field values)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-VALUE-ENCODING-CHOICE` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-VALUE-ENCODING-CHOICE` (`binary-decoder`, `implemented`)
 - **WSP-CL-HEADER-VALUE-LENGTH-PREFIX** — Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.
   - Family: `wsp`; force: `table`; level: `required`
   - Source: `WAP-203-WSP` §8.4.1.2 (8.4.1.2 Field values)
   - Parents: `WSP-CL-C-003`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-HEADER-VALUE-LENGTH-PREFIX` (`binary-decoder`, `planned`)
+  - Fixture: `WSP-FX-HEADER-VALUE-LENGTH-PREFIX` (`binary-decoder`, `implemented`)
 - **WSP-CL-INTEGER-NETWORK-ORDER** — Encode multi-octet integer values in big-endian network octet order.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §8.1.1 (8.1.1 Primitive Data Types)
@@ -574,7 +579,7 @@ Evidence commands:
   - Source: `WAP-203-WSP` §8.4.2.70 (8.4.2.70 Encoding-Version field)
   - Parents: `WSP-CL-C-003`, `WSP-CL-C-020`
   - Requirements: `RQ-TRN-014`
-  - Fixture: `WSP-FX-UNSUPPORTED-ENCODING-RETRY` (`error-policy`, `planned`)
+  - Fixture: `WSP-FX-UNSUPPORTED-ENCODING-RETRY` (`error-policy`, `implemented`)
 
 ### WSP-804
 
@@ -901,7 +906,6 @@ Evidence commands:
 
 Declared-family gaps:
 
-- `WSP-802` declares `general-formats` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WSP-803` declares `wsp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WSP-804` declares `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WSP-805` declares `wae`, `wdp`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
@@ -909,7 +913,6 @@ Declared-family gaps:
 
 ## Effective source order
 
-- `general-formats`: `WAP-188-WAPGenFormats`
 - `wae`: `WAP-190-WAESpec` -> `WAP-190_101-WAESpec` -> `WAP-190_102-WAESpec` -> `WAP-190_103-WAESpec` -> `WAP-190_104-WAE-Spec`
 - `wdp`: `WAP-200-WDP` -> `WAP-200_001-WDP` -> `WAP-200_002-WDP` -> `WAP-200_003-WDP` -> `WAP-200_004-WDP` -> `WAP-200_005-WDP`
 - `wml`: `WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`
@@ -917,7 +920,6 @@ Declared-family gaps:
 
 ## Source documents
 
-- `WAP-188-WAPGenFormats`: WAP General Formats — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-188-WAPGenFormats-20010710-a.pdf
 - `WAP-190_101-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf
 - `WAP-190_102-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf
 - `WAP-190_103-WAESpec`: Wireless Application Environment — https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf

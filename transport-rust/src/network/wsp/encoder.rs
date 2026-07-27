@@ -55,7 +55,7 @@ pub fn encode_header_field_name(
 
     if let Some(token) = encode_header_field_name_on_page(name, page) {
         if page == DEFAULT_HEADER_CODE_PAGE {
-            return Ok(vec![token]);
+            return Ok(vec![0x80 | token]);
         }
 
         if matches!(
@@ -65,7 +65,13 @@ pub fn encode_header_field_name(
             return Ok(encode_text_header(name));
         }
 
-        return Ok(vec![HEADER_CODE_PAGE_SHIFT, page, token]);
+        let mut encoded = if page <= 0x1F {
+            vec![page]
+        } else {
+            vec![HEADER_CODE_PAGE_SHIFT, page]
+        };
+        encoded.push(0x80 | token);
+        return Ok(encoded);
     }
 
     if resolve_header_field_page(name).is_some() {
@@ -98,14 +104,14 @@ mod tests {
     fn encodes_default_page_headers_as_single_octet() {
         let encoded = encode_header_field_name("Content-Type", HeaderEncodePolicy::STRICT_BINARY)
             .expect("default page headers should encode");
-        assert_eq!(encoded, vec![0x11]);
+        assert_eq!(encoded, vec![0x91]);
     }
 
     #[test]
     fn encodes_extension_page_headers_with_shift_sequence() {
         let encoded = encode_header_field_name("X-Wap-Ack", HeaderEncodePolicy::STRICT_BINARY)
             .expect("extension headers should encode");
-        assert_eq!(encoded, vec![HEADER_CODE_PAGE_SHIFT, 0x40, 0x10]);
+        assert_eq!(encoded, vec![HEADER_CODE_PAGE_SHIFT, 0x40, 0x90]);
     }
 
     #[test]

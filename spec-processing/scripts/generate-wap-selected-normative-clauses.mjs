@@ -517,6 +517,33 @@ const implementedWsp801ClauseIds = new Set([
   'WSP-CL-UNITDATA-RECEIVE-DISPATCH',
   'WSP-CL-UNITDATA-SECURITY-EQUIVALENCE'
 ]);
+const implementedWsp802ClauseIds = new Set([
+  'WSP-CL-INTEGER-NETWORK-ORDER',
+  'WSP-CL-POST-CONTENT-TYPE',
+  'WSP-CL-REPLY-CONTENT-TYPE',
+  'WSP-CL-HEADER-HTTP-COMPATIBILITY',
+  'WSP-CL-HEADER-COMPACTION-FORMS',
+  'WSP-CL-HEADER-NAME-VERSION-CHOICE',
+  'WSP-CL-HEADER-DEFAULT-PAGE',
+  'WSP-CL-HEADER-CODE-PAGE-RANGES',
+  'WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT',
+  'WSP-CL-HEADER-VALUE-ENCODING-CHOICE',
+  'WSP-CL-HEADER-VALUE-LENGTH-PREFIX',
+  'WSP-CL-HEADER-UNKNOWN-VALUE-SKIP',
+  'WSP-CL-HEADER-LIST-EXPANSION',
+  'WSP-CL-HEADER-SYNTAX-REGISTRY',
+  'WSP-CL-HEADER-FIELD-ASSIGNMENTS',
+  'WSP-CL-EXPECT-SIN-ENCODING',
+  'WSP-CL-ENCODING-VERSION-REQUIRED',
+  'WSP-CL-ENCODING-VERSION-ABSENT-DEFAULT',
+  'WSP-CL-ENCODING-VERSION-CLIENT-SELECTION',
+  'WSP-CL-ENCODING-VERSION-NO-OVERCLAIM',
+  'WSP-CL-ENCODING-VERSION-EXTENSION-PAGES',
+  'WSP-CL-ENCODING-VERSION-PEER-CACHE',
+  'WSP-CL-UNSUPPORTED-ENCODING-RETRY',
+  'WSP-CL-ENCODING-VERSION-TEXT-FORM',
+  'WSP-CL-ENCODING-VERSION-HOP-BY-HOP'
+]);
 const implementedWml305ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-305')
 );
@@ -623,6 +650,12 @@ const wsp801FixtureEvidence = {
   testPath: 'transport-rust/tests/wsp_connectionless_matrix.rs',
   command:
     'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix'
+};
+const wsp802FixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json',
+  testPath: 'transport-rust/tests/wsp_header_grammar.rs',
+  command:
+    'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar'
 };
 const wml305FixtureTests = new Map([
   ['WML-CL-GO-TIMER-THEN-DISPLAY', 'wml_305_go_starts_destination_timer_before_host_render_boundary'],
@@ -917,6 +950,11 @@ if (refreshWsp801Evidence) {
       `wsp: expected ${implementedWsp801ClauseIds.size} WSP-801 clauses, refreshed ${refreshed}`
     );
   }
+  for (const family of manifest.families) {
+    if (family.clauses.every((candidate) => candidate.fixturePlan.status === 'implemented')) {
+      family.status = 'nested-clauses-fixture-backed';
+    }
+  }
   refreshManifestTotals(manifest);
   fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(
@@ -1007,6 +1045,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWsp801ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wsp801FixtureEvidence;
+      } else if (implementedWsp802ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wsp802FixtureEvidence;
       } else if (implementedWml305ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml305FixtureEvidence(candidate.id);
@@ -1021,6 +1062,11 @@ if (refreshDirectWorkItems) {
         candidate.fixturePlan.status === 'implemented'
           ? 'implemented'
           : 'not-assessed';
+    }
+  }
+  for (const family of manifest.families) {
+    if (family.clauses.every((candidate) => candidate.fixturePlan.status === 'implemented')) {
+      family.status = 'nested-clauses-fixture-backed';
     }
   }
   refreshManifestTotals(manifest);
@@ -1927,6 +1973,7 @@ function clause(
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
+    implementedWsp802ClauseIds.has(clauseId) ||
     implementedWml305ClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
@@ -1949,6 +1996,8 @@ function clause(
       ? wml303FixtureEvidence
       : implementedWsp801ClauseIds.has(clauseId)
       ? wsp801FixtureEvidence
+      : implementedWsp802ClauseIds.has(clauseId)
+      ? wsp802FixtureEvidence
       : implementedWml305ClauseIds.has(clauseId)
       ? wml305FixtureEvidence(clauseId)
       : family === 'wbxml'
@@ -3486,8 +3535,11 @@ const families = familyDefinitions.map((definition) => {
   );
   return {
     family: definition.family,
-    status:
-      definition.family === 'wcmp'
+    status: familyClauses.every(
+      (candidate) => candidate.fixturePlan.status === 'implemented'
+    )
+      ? 'nested-clauses-fixture-backed'
+      : definition.family === 'wcmp'
         ? strictWcmpImplemented
           ? 'nested-clauses-fixture-backed'
           : 'nested-clauses-partially-fixture-backed'

@@ -68,12 +68,20 @@ pub fn decode_header_field_name_stream(
         let byte = input[cursor];
         cursor += 1;
 
-        if byte == HEADER_CODE_PAGE_SHIFT {
-            let Some(next_page) = input.get(cursor).copied() else {
-                return Err(WspHeaderStreamDecodeError::TruncatedShiftSequence);
-            };
+        let shifted_page = if byte == HEADER_CODE_PAGE_SHIFT {
+            let next_page = input
+                .get(cursor)
+                .copied()
+                .ok_or(WspHeaderStreamDecodeError::TruncatedShiftSequence)?;
             cursor += 1;
+            Some(next_page)
+        } else if (0x01..=0x1F).contains(&byte) {
+            Some(byte)
+        } else {
+            None
+        };
 
+        if let Some(next_page) = shifted_page {
             if header_code_page_name(next_page).is_some() {
                 current_page = next_page;
                 skip_extension_tokens = false;
@@ -98,8 +106,19 @@ pub fn decode_header_field_name_stream(
             continue;
         }
 
-        let name = decode_header_field_name_on_page(current_page, byte, policy.assigned_numbers)
-            .map_err(WspHeaderStreamDecodeError::UnknownAssignedNumber)?;
+        if byte & 0x80 == 0 {
+            return Err(WspHeaderStreamDecodeError::UnknownAssignedNumber(
+                WspAssignedNumberError {
+                    kind:
+                        crate::network::wsp::header_registry::WspAssignedNumberKind::HeaderFieldName,
+                    code: byte,
+                },
+            ));
+        }
+
+        let name =
+            decode_header_field_name_on_page(current_page, byte & 0x7F, policy.assigned_numbers)
+                .map_err(WspHeaderStreamDecodeError::UnknownAssignedNumber)?;
         if let Some(name) = name {
             decoded.push(DecodedHeaderField {
                 page: current_page,
@@ -119,7 +138,7 @@ mod tests {
     #[test]
     fn decodes_default_page_headers_without_shift() {
         let decoded =
-            decode_header_field_name_stream(&[0x00, 0x11, 0x24], HeaderStreamDecodePolicy::STRICT)
+            decode_header_field_name_stream(&[0x80, 0x91, 0xA4], HeaderStreamDecodePolicy::STRICT)
                 .expect("default page should decode");
 
         assert_eq!(
@@ -144,7 +163,7 @@ mod tests {
     #[test]
     fn decodes_shifted_extension_page_headers_when_page_is_known() {
         let decoded = decode_header_field_name_stream(
-            &[HEADER_CODE_PAGE_SHIFT, 0x40, 0x10, 0x11],
+            &[HEADER_CODE_PAGE_SHIFT, 0x40, 0x90, 0x91],
             HeaderStreamDecodePolicy::STRICT,
         )
         .expect("known extension page should decode");
@@ -167,7 +186,7 @@ mod tests {
     #[test]
     fn strict_policy_rejects_unsupported_extension_page() {
         let error = decode_header_field_name_stream(
-            &[HEADER_CODE_PAGE_SHIFT, 0x41, 0x10],
+            &[HEADER_CODE_PAGE_SHIFT, 0x41, 0x90],
             HeaderStreamDecodePolicy::STRICT,
         )
         .expect_err("unknown page should fail");
@@ -181,11 +200,11 @@ mod tests {
             &[
                 HEADER_CODE_PAGE_SHIFT,
                 0x41,
-                0x10,
-                0x11,
+                0x90,
+                0x91,
                 HEADER_CODE_PAGE_SHIFT,
                 0x01,
-                0x29,
+                0xA9,
             ],
             HeaderStreamDecodePolicy::HEADER_LENIENT,
         )
