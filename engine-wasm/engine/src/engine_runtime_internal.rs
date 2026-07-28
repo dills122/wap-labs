@@ -530,8 +530,13 @@ impl WmlEngine {
 
     pub(crate) fn select_selected_index_on_active_card(&self, select_name: &str) -> Option<usize> {
         let card = self.active_card_internal().ok()?;
-        node_lookup::find_select(card, select_name)
-            .map(|select| select.selected_indices.first().copied().unwrap_or(0))
+        node_lookup::find_select(card, select_name).and_then(|select| {
+            select
+                .selected_indices
+                .first()
+                .copied()
+                .or_else(|| (!select.options.is_empty()).then_some(0))
+        })
     }
 
     pub(crate) fn select_option_count_on_active_card(&self, select_name: &str) -> Option<usize> {
