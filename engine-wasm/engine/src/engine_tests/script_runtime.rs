@@ -720,6 +720,70 @@ fn wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect() {
 }
 
 #[test]
+fn wmlbrowser_new_context_stops_active_timer_and_bumps_epoch() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <a href="#next">To next</a>
+          </card>
+          <card id="next" ontimer="#next">
+            <timer name="tvar" value="50"/>
+            <a href="script:ctx.wmlsc#main">Run context reset</a>
+          </card>
+        </wml>
+        "##;
+    engine
+        .load_deck_context(
+            xml,
+            "http://example.test/deck.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("deck should load");
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("home enter should navigate to next");
+    assert!(
+        engine.next_timer_wakeup_ms().is_some(),
+        "card timer should start on entry"
+    );
+    let epoch_before = engine.browser_context_epoch();
+
+    let unit = vec![0x20, 0x0A, 0x00, 0x00]; // newContext()
+    register_legacy_script_fixture(&mut engine, "ctx.wmlsc", unit);
+
+    engine.clear_trace_entries();
+    engine
+        .handle_key("enter".to_string())
+        .expect("script context reset should succeed");
+
+    assert_eq!(
+        engine.next_timer_wakeup_ms(),
+        None,
+        "newContext triggered from script should stop the active timer, \
+         not leave it running against the cleared context"
+    );
+    assert_eq!(
+        engine.browser_context_epoch(),
+        epoch_before + 1,
+        "script-triggered newContext should bump browser_context_epoch \
+         the same way card newcontext=\"true\" does"
+    );
+    let traces = engine.trace_entries();
+    assert!(
+        traces.iter().any(|entry| entry.kind == "TIMER_STOP"),
+        "active timer should be stopped (and traced) before the reset, not left ticking"
+    );
+    assert_eq!(
+        engine.get_var("tvar".to_string()),
+        None,
+        "the stopped timer's persisted value must not survive the context reset"
+    );
+}
+
+#[test]
 fn execute_script_ref_is_raw_and_does_not_apply_navigation_effects() {
     let mut engine = WmlEngine::new();
     let xml = r##"

@@ -134,6 +134,23 @@ impl WmlEngine {
     }
 
     pub(crate) fn reset_browser_context_for_newcontext(&mut self) {
+        self.reset_browser_context_state();
+        self.pending_script_effects = ScriptRuntimeEffects::default();
+        self.last_script_outcome = None;
+        self.last_script_dialog_requests.clear();
+        self.last_script_timer_requests.clear();
+    }
+
+    /// Resets the browser-context state shared by both newcontext triggers:
+    /// card-attribute `newcontext="true"` entry (via
+    /// [`Self::reset_browser_context_for_newcontext`]) and WMLScript
+    /// `WMLBrowser.newContext()` (`engine_runtime_internal/script_effects.rs`).
+    /// Deliberately excludes `pending_script_effects`/`last_script_outcome`/
+    /// `last_script_dialog_requests`/`last_script_timer_requests`: the script
+    /// path records the current call's dialog/timer requests into those
+    /// fields immediately before requesting a reset, and clearing them here
+    /// would drop that call's own outputs before the host reads them.
+    pub(crate) fn reset_browser_context_state(&mut self) {
         self.browser_context_epoch = self.browser_context_epoch.saturating_add(1);
         self.vars.clear();
         self.nav_stack.clear();
@@ -143,10 +160,6 @@ impl WmlEngine {
         self.active_timer = None;
         self.active_input_edit = None;
         self.active_select_edit = None;
-        self.pending_script_effects = ScriptRuntimeEffects::default();
-        self.last_script_outcome = None;
-        self.last_script_dialog_requests.clear();
-        self.last_script_timer_requests.clear();
     }
 
     /// Navigate back in history, guarded against unbounded recursion. See
