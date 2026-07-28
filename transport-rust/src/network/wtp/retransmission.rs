@@ -115,8 +115,12 @@ pub fn decide_retransmission(
         WtpRetransmissionEvent::NackObserved { elapsed_ms } => {
             if !policy.sar_enabled {
                 let next_attempt = next_state.attempts.saturating_add(1);
-                next_state.attempts = next_attempt;
-                WtpRetransmissionDecision::Send(next_attempt)
+                if next_attempt > policy.max_retries {
+                    WtpRetransmissionDecision::RetryExhausted
+                } else {
+                    next_state.attempts = next_attempt;
+                    WtpRetransmissionDecision::Send(next_attempt)
+                }
             } else if let Some(last_nack) = next_state.last_nack_elapsed_ms {
                 let next_send_allowed = last_nack.saturating_add(policy.nack_holdoff_ms);
                 if elapsed_ms < next_send_allowed {
@@ -248,6 +252,48 @@ mod tests {
             WtpRetransmissionEvent::NackObserved { elapsed_ms: 80 },
         );
         assert_eq!(third, WtpRetransmissionDecision::Send(1));
+    }
+
+    #[test]
+    fn nack_flood_respects_max_retries_when_sar_is_disabled() {
+        let policy = WtpRetransmissionPolicy {
+            max_retries: 2,
+            sar_enabled: false,
+            ..WtpRetransmissionPolicy::default()
+        };
+        let mut state = WtpRetransmissionState::default();
+
+        let (first, next, _) = decide_retransmission(
+            &policy,
+            &state,
+            WtpRetransmissionEvent::NackObserved { elapsed_ms: 0 },
+        );
+        assert_eq!(first, WtpRetransmissionDecision::Send(1));
+        state = next;
+
+        let (second, next, _) = decide_retransmission(
+            &policy,
+            &state,
+            WtpRetransmissionEvent::NackObserved { elapsed_ms: 10 },
+        );
+        assert_eq!(second, WtpRetransmissionDecision::Send(2));
+        state = next;
+
+        let (third, next, _) = decide_retransmission(
+            &policy,
+            &state,
+            WtpRetransmissionEvent::NackObserved { elapsed_ms: 20 },
+        );
+        assert_eq!(third, WtpRetransmissionDecision::RetryExhausted);
+        assert_eq!(next.attempts, 2);
+
+        let (fourth, next, _) = decide_retransmission(
+            &policy,
+            &next,
+            WtpRetransmissionEvent::NackObserved { elapsed_ms: 30 },
+        );
+        assert_eq!(fourth, WtpRetransmissionDecision::RetryExhausted);
+        assert_eq!(next.attempts, 2);
     }
 
     #[test]
