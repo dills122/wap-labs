@@ -72,7 +72,9 @@ verify_loaded_image() {
 }
 
 [ "$(id -u)" -eq 0 ] || fail 'install-release must run as root'
-[ -n "$archive_path" ] && [ -f "$archive_path" ] || fail 'release archive is required'
+if [ -z "$archive_path" ] || [ ! -f "$archive_path" ]; then
+  fail 'release archive is required'
+fi
 printf '%s' "$expected_sha256" | grep -Eq '^[0-9a-f]{64}$' || fail 'expected SHA-256 is invalid'
 [ "$(sha256_file "$archive_path")" = "$expected_sha256" ] || fail 'release archive SHA-256 mismatch'
 
@@ -122,8 +124,9 @@ for secret_name in kannel-admin-password kannel-status-password; do
     umask 077
     od -An -N32 -tx1 /dev/urandom | tr -d ' \n' >"$secret_path"
   fi
-  [ -f "$secret_path" ] && [ ! -L "$secret_path" ] \
-    || fail "secret path is not a regular file: $secret_path"
+  if [ ! -f "$secret_path" ] || [ -L "$secret_path" ]; then
+    fail "secret path is not a regular file: $secret_path"
+  fi
   chown 10001:10001 "$secret_path"
   chmod 0400 "$secret_path"
   printf '%s' "$(tr -d '\r\n' <"$secret_path")" | grep -Eq '^[0-9a-f]{64}$' \

@@ -18,7 +18,9 @@ sha256_file() {
   fi
 }
 
-[ -n "$archive_path" ] && [ -f "$archive_path" ] || fail 'release archive path is required'
+if [ -z "$archive_path" ] || [ ! -f "$archive_path" ]; then
+  fail 'release archive path is required'
+fi
 [ -n "$ssh_target" ] || fail 'explicit Tailscale SSH target is required, for example waves@waves-network-preview'
 case "$ssh_target" in
   *[!0-9A-Za-z@._:-]*) fail 'SSH target contains unsupported characters' ;;

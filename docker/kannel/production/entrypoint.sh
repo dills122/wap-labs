@@ -35,7 +35,7 @@ unset admin_password status_password
 
 bearerbox_pid=
 wapbox_pid=
-# shellcheck disable=SC2329 # Invoked through POSIX signal/exit traps.
+# shellcheck disable=SC2317,SC2329 # Invoked through POSIX signal/exit traps.
 terminate() {
   trap - EXIT HUP INT TERM
   if [ -n "$wapbox_pid" ]; then
