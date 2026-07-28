@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -17,10 +19,25 @@ import (
 const (
 	defaultPublicAddress   = ":3000"
 	defaultInternalAddress = ":3001"
+	defaultHealthcheckURL  = "http://127.0.0.1:3001/health"
 	shutdownTimeout        = 10 * time.Second
+	healthcheckTimeout     = 3 * time.Second
+	healthcheckBodyLimit   = 4 << 10
 )
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "healthcheck" {
+		if err := runHealthcheck(envOrDefault("WML_HEALTHCHECK_URL", defaultHealthcheckURL)); err != nil {
+			fmt.Fprintln(os.Stderr, "healthcheck failed:", err)
+			os.Exit(1)
+		}
+		return
+	}
+	if len(os.Args) != 1 {
+		fmt.Fprintln(os.Stderr, "usage: wml-server [healthcheck]")
+		os.Exit(2)
+	}
+
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	app, err := origin.New(origin.Config{
 		DTDVersion:   strings.TrimSpace(envOrDefault("WML_DTD_VERSION", "1.1")),
@@ -62,6 +79,29 @@ func main() {
 			logger.Error("graceful shutdown failed", "address", server.Addr, "error", err)
 		}
 	}
+}
+
+func runHealthcheck(url string) error {
+	client := &http.Client{Timeout: healthcheckTimeout}
+	response, err := client.Get(url)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status %s", response.Status)
+	}
+	body, err := io.ReadAll(io.LimitReader(response.Body, healthcheckBodyLimit+1))
+	if err != nil {
+		return err
+	}
+	if len(body) > healthcheckBodyLimit {
+		return errors.New("response body exceeded healthcheck limit")
+	}
+	if !strings.Contains(string(body), `"status":"ok"`) {
+		return errors.New("response did not report status ok")
+	}
+	return nil
 }
 
 func splitCSV(raw string) []string {

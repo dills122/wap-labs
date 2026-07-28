@@ -160,3 +160,21 @@ fn kannel_wap_post_smoke_registers_and_logs_in_user() {
         "expected login confirmation to mention authenticated username"
     );
 }
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
+fn kannel_wap_unapproved_origin_is_not_proxied() {
+    let denied_url = std::env::var("WAP_SMOKE_DENIED_URL")
+        .unwrap_or_else(|_| "wap://127.0.0.1:9200/".to_string());
+    let response =
+        fetch_deck_in_process_with_profile(request(&denied_url), FetchTransportProfile::WapNetCore);
+    assert!(
+        !response.ok,
+        "unapproved WAP origin unexpectedly succeeded: target={denied_url} status={} contentType={}",
+        response.status, response.content_type
+    );
+    assert!(
+        response.status >= 400 || response.error.is_some(),
+        "unapproved WAP origin did not return an explicit failure: target={denied_url}"
+    );
+}

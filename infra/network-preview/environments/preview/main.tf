@@ -24,10 +24,15 @@ locals {
     wap_ufw_rules   = local.wap_ufw_rules
   })
 
+  docker_firewall_script = file("${path.module}/../../../../deploy/network-preview/bin/waves-docker-firewall")
+  docker_firewall_unit   = file("${path.module}/../../../../deploy/network-preview/systemd/waves-docker-firewall.service")
+
   user_data = templatefile("${path.module}/../../cloud-init/user-data.yaml.tftpl", {
-    admin_public_key   = jsonencode(data.digitalocean_ssh_key.admin.public_key)
-    bootstrap_script   = indent(6, local.bootstrap_script)
-    tailscale_auth_key = jsonencode(var.tailscale_auth_key)
+    admin_public_key       = jsonencode(data.digitalocean_ssh_key.admin.public_key)
+    bootstrap_script       = indent(6, local.bootstrap_script)
+    docker_firewall_script = indent(6, local.docker_firewall_script)
+    docker_firewall_unit   = indent(6, local.docker_firewall_unit)
+    tailscale_auth_key     = jsonencode(var.tailscale_auth_key)
   })
 }
 

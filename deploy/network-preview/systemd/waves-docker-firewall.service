@@ -1,0 +1,16 @@
+[Unit]
+Description=Waves Docker forwarding firewall
+Requires=docker.service
+After=docker.service network-online.target
+Before=waves-network-preview.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=-/etc/default/waves-docker-firewall
+ExecStart=/usr/local/sbin/waves-docker-firewall apply
+ExecReload=/usr/local/sbin/waves-docker-firewall apply
+
+[Install]
+WantedBy=multi-user.target

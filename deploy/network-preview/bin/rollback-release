@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+set -eu
+
+install_root=${WAVES_INSTALL_ROOT:-/opt/waves}
+
+fail() {
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+[ "$(id -u)" -eq 0 ] || fail 'rollback-release must run as root'
+[ -L "$install_root/current" ] || fail 'current release symlink is missing'
+[ -L "$install_root/previous" ] || fail 'previous release symlink is missing'
+current_release=$(readlink "$install_root/current")
+previous_release=$(readlink "$install_root/previous")
+[ -d "$current_release" ] || fail 'current release directory is missing'
+[ -d "$previous_release" ] || fail 'previous release directory is missing'
+
+/usr/local/sbin/waves-docker-firewall set sealed
+systemctl stop waves-network-preview.service
+ln -sfn "$previous_release" "$install_root/current"
+if systemctl start waves-network-preview.service; then
+  ln -sfn "$current_release" "$install_root/previous"
+  echo "PASS: rolled back to $(basename "$previous_release"); Docker ingress remains sealed"
+  exit 0
+fi
+
+echo 'Rollback start failed; restoring the release that was active before rollback.' >&2
+ln -sfn "$current_release" "$install_root/current"
+systemctl start waves-network-preview.service || true
+exit 1

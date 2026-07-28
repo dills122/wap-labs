@@ -1,0 +1,105 @@
+name: waves-network-preview
+
+services:
+  wml-origin:
+    image: ${WML_ORIGIN_IMAGE:?set WML_ORIGIN_IMAGE to the verified release image tag}
+    pull_policy: never
+    restart: unless-stopped
+    init: true
+    user: '65532:65532'
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      WML_ALLOWED_HOSTS: wml-origin
+      WML_DTD_VERSION: '1.3'
+      WML_FORMS_HOSTS: forms.wap.shrimpworks.dev
+      WML_HOME_HOSTS: home.wap.shrimpworks.dev
+      WML_INTEROP_HOSTS: interop.wap.shrimpworks.dev
+    expose:
+      - '3000'
+      - '3001'
+    networks:
+      - origin
+    tmpfs:
+      - /tmp:size=4m,mode=1777
+    pids_limit: 64
+    mem_limit: 64m
+    mem_reservation: 24m
+    cpus: 0.25
+    stop_grace_period: 15s
+    healthcheck:
+      test: ['CMD', '/wml-server', 'healthcheck']
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: 10m
+
+  wap-gateway:
+    image: ${WAP_GATEWAY_IMAGE:?set WAP_GATEWAY_IMAGE to the verified release image tag}
+    pull_policy: never
+    restart: unless-stopped
+    init: true
+    user: '10001:10001'
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      wml-origin:
+        condition: service_healthy
+        restart: true
+    secrets:
+      - kannel_admin_password
+      - kannel_status_password
+    ports:
+      - name: wap-connectionless
+        target: 9200
+        published: '9200'
+        host_ip: 0.0.0.0
+        protocol: udp
+        app_protocol: wap-wsp
+    networks:
+      - edge
+      - origin
+    tmpfs:
+      - /run/kannel:size=4m,mode=0700,uid=10001,gid=10001
+      - /tmp:size=8m,mode=1777
+      - /var/log/kannel:size=8m,mode=0750,uid=10001,gid=10001
+    pids_limit: 64
+    mem_limit: 192m
+    mem_reservation: 64m
+    cpus: 0.50
+    stop_grace_period: 20s
+    healthcheck:
+      test: ['CMD', '/usr/local/bin/waves-kannel-healthcheck']
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: 10m
+
+networks:
+  edge:
+    driver: bridge
+  origin:
+    internal: true
+    driver: bridge
+
+secrets:
+  kannel_admin_password:
+    file: ${WAVES_SECRETS_DIR:-/opt/waves/shared/secrets}/kannel-admin-password
+  kannel_status_password:
+    file: ${WAVES_SECRETS_DIR:-/opt/waves/shared/secrets}/kannel-status-password

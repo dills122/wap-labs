@@ -1,0 +1,19 @@
+[Unit]
+Description=Waves public WAP network preview
+Requires=docker.service waves-docker-firewall.service
+After=docker.service waves-docker-firewall.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/waves/current
+ExecStartPre=/usr/local/sbin/waves-docker-firewall check
+ExecStart=/usr/bin/docker compose --project-name waves-network-preview --env-file manifest.env -f compose.yaml up --detach --wait
+ExecReload=/usr/bin/docker compose --project-name waves-network-preview --env-file manifest.env -f compose.yaml up --detach --wait
+ExecStop=/usr/bin/docker compose --project-name waves-network-preview --env-file manifest.env -f compose.yaml down
+TimeoutStartSec=180
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

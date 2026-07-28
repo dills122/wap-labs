@@ -1,0 +1,58 @@
+group = core
+admin-port = 13000
+admin-password = __KANNEL_ADMIN_PASSWORD__
+status-password = __KANNEL_STATUS_PASSWORD__
+admin-deny-ip = "*.*.*.*"
+admin-allow-ip = "127.0.0.1"
+wapbox-port = 13002
+box-deny-ip = "*.*.*.*"
+box-allow-ip = "127.0.0.1"
+wdp-interface-name = "*"
+log-level = 1
+
+group = wapbox
+bearerbox-host = 127.0.0.1
+device-home = "http://wml-origin:3000/__lab/home/"
+
+# Private smoke aliases. Neither name is published in public DNS.
+group = wap-url-map
+name = private_localhost
+url = "http://localhost:13002/*"
+map-url = "http://wml-origin:3000/__lab/home/*"
+
+group = wap-url-map
+name = private_loopback
+url = "http://127.0.0.1:13002/*"
+map-url = "http://wml-origin:3000/__lab/home/*"
+
+group = wap-url-map
+name = private_tailnet
+url = "http://waves-network-preview/*"
+map-url = "http://wml-origin:3000/__lab/home/*"
+
+group = wap-url-map
+name = lab_home
+url = "http://home.wap.shrimpworks.dev/*"
+map-url = "http://wml-origin:3000/__lab/home/*"
+
+group = wap-url-map
+name = lab_forms
+url = "http://forms.wap.shrimpworks.dev/*"
+map-url = "http://wml-origin:3000/__lab/forms/*"
+
+group = wap-url-map
+name = lab_interop
+url = "http://interop.wap.shrimpworks.dev/*"
+map-url = "http://wml-origin:3000/__lab/interop/*"
+
+# Keep these final: Kannel uses the first matching URL map. Unapproved origins
+# are converted to an origin-local 404 instead of becoming an open HTTP proxy.
+group = wap-url-map
+name = deny_unmapped_http
+url = "http://*"
+map-url = "http://wml-origin:3000/__lab/denied"
+
+group = wap-url-map
+name = deny_unmapped_https
+url = "https://*"
+map-url = "http://wml-origin:3000/__lab/denied"

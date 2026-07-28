@@ -1,0 +1,186 @@
+#!/usr/bin/env sh
+set -eu
+
+archive_path=${1:-}
+expected_sha256=${2:-}
+install_root=${WAVES_INSTALL_ROOT:-/opt/waves}
+
+fail() {
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+sha256_file() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  else
+    shasum -a 256 "$1" | awk '{print $1}'
+  fi
+}
+
+sha256_stream() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print $1}'
+  else
+    shasum -a 256 | awk '{print $1}'
+  fi
+}
+
+manifest_value() {
+  key=$1
+  file=$2
+  sed -n "s/^${key}=//p" "$file"
+}
+
+validate_release_value() {
+  value=$1
+  label=$2
+  printf '%s' "$value" | grep -Eq '^[0-9A-Za-z][0-9A-Za-z._/:-]{0,127}$' \
+    || fail "$label contains unsupported characters"
+}
+
+verify_loaded_image() {
+  image=$1
+  expected_id=$2
+  label=$3
+  expected_config_digest=${expected_id#sha256:}
+  verification_archive=$stage_dir/${label}.loaded.tar
+
+  [ "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")" = 'linux/amd64' ] \
+    || fail "loaded $label image is not Linux AMD64"
+
+  # Docker's classic image store reports the config digest as .Id, while the containerd image
+  # store reports the OCI manifest digest. Re-exporting the named image gives both stores the
+  # same canonical config blob, whose digest binds the runtime configuration and rootfs diff IDs.
+  docker image save --output "$verification_archive" "$image"
+  saved_manifest=$(tar -xOf "$verification_archive" manifest.json)
+  printf '%s' "$saved_manifest" | grep -F "\"$image\"" >/dev/null \
+    || fail "saved $label image manifest does not contain the expected tag"
+  config_paths=$(printf '%s' "$saved_manifest" \
+    | sed -n 's/.*"Config":[[:space:]]*"\([^"]*\)".*/\1/p')
+  [ "$(printf '%s\n' "$config_paths" | grep -c .)" -eq 1 ] \
+    || fail "saved $label image manifest has an unexpected config set"
+  case "$config_paths" in
+    "blobs/sha256/$expected_config_digest" | "$expected_config_digest.json") ;;
+    *) fail "saved $label image does not reference the release config digest" ;;
+  esac
+  tar -tf "$verification_archive" | grep -Fx "$config_paths" >/dev/null \
+    || fail "saved $label image is missing its release config blob"
+  actual_config_digest=$(tar -xOf "$verification_archive" "$config_paths" | sha256_stream)
+  [ "$actual_config_digest" = "$expected_config_digest" ] \
+    || fail "saved $label image config does not match the release digest"
+}
+
+[ "$(id -u)" -eq 0 ] || fail 'install-release must run as root'
+if [ -z "$archive_path" ] || [ ! -f "$archive_path" ]; then
+  fail 'release archive is required'
+fi
+printf '%s' "$expected_sha256" | grep -Eq '^[0-9a-f]{64}$' || fail 'expected SHA-256 is invalid'
+[ "$(sha256_file "$archive_path")" = "$expected_sha256" ] || fail 'release archive SHA-256 mismatch'
+
+for command_name in chown docker grep install sed systemctl tar; do
+  command -v "$command_name" >/dev/null 2>&1 || fail "missing required command: $command_name"
+done
+
+stage_dir=$(mktemp -d "${TMPDIR:-/tmp}/waves-install-release.XXXXXX")
+cleanup() {
+  rm -rf "$stage_dir"
+}
+trap cleanup EXIT HUP INT TERM
+
+tar -tzf "$archive_path" >"$stage_dir/archive.list"
+while IFS= read -r entry; do
+  case "$entry" in
+    /* | ../* | */../* | */..) fail "unsafe archive path: $entry" ;;
+  esac
+done <"$stage_dir/archive.list"
+tar --no-same-owner -xzf "$archive_path" -C "$stage_dir"
+
+for required_file in compose.yaml images.tar manifest.env wml-origin.sbom.cdx.json wap-gateway.sbom.cdx.json bin/waves-docker-firewall bin/rollback-release systemd/waves-docker-firewall.service systemd/waves-network-preview.service; do
+  [ -f "$stage_dir/$required_file" ] || fail "release archive is missing $required_file"
+done
+
+release_id=$(manifest_value WAVES_RELEASE_ID "$stage_dir/manifest.env")
+source_commit=$(manifest_value WAVES_SOURCE_COMMIT "$stage_dir/manifest.env")
+wml_image=$(manifest_value WML_ORIGIN_IMAGE "$stage_dir/manifest.env")
+wml_image_id=$(manifest_value WML_ORIGIN_IMAGE_ID "$stage_dir/manifest.env")
+gateway_image=$(manifest_value WAP_GATEWAY_IMAGE "$stage_dir/manifest.env")
+gateway_image_id=$(manifest_value WAP_GATEWAY_IMAGE_ID "$stage_dir/manifest.env")
+validate_release_value "$release_id" WAVES_RELEASE_ID
+printf '%s' "$source_commit" | grep -Eq '^[0-9a-f]{40}$' || fail 'source commit is invalid'
+validate_release_value "$wml_image" WML_ORIGIN_IMAGE
+validate_release_value "$gateway_image" WAP_GATEWAY_IMAGE
+printf '%s' "$wml_image_id" | grep -Eq '^sha256:[0-9a-f]{64}$' || fail 'WML image ID is invalid'
+printf '%s' "$gateway_image_id" | grep -Eq '^sha256:[0-9a-f]{64}$' || fail 'gateway image ID is invalid'
+
+release_dir=$install_root/releases/$release_id
+[ ! -e "$release_dir" ] || fail "release is already installed: $release_id"
+install -d -m 0755 "$install_root/releases" "$install_root/shared" "$install_root/shared/secrets"
+chmod 0700 "$install_root/shared/secrets"
+
+for secret_name in kannel-admin-password kannel-status-password; do
+  secret_path=$install_root/shared/secrets/$secret_name
+  if [ ! -e "$secret_path" ]; then
+    umask 077
+    od -An -N32 -tx1 /dev/urandom | tr -d ' \n' >"$secret_path"
+  fi
+  if [ ! -f "$secret_path" ] || [ -L "$secret_path" ]; then
+    fail "secret path is not a regular file: $secret_path"
+  fi
+  chown 10001:10001 "$secret_path"
+  chmod 0400 "$secret_path"
+  printf '%s' "$(tr -d '\r\n' <"$secret_path")" | grep -Eq '^[0-9a-f]{64}$' \
+    || fail "invalid secret file: $secret_path"
+done
+
+echo '==> Loading verified release images'
+docker image load --input "$stage_dir/images.tar" >/dev/null
+verify_loaded_image "$wml_image" "$wml_image_id" WML
+verify_loaded_image "$gateway_image" "$gateway_image_id" gateway
+
+install -d -m 0755 "$release_dir"
+cp "$stage_dir/compose.yaml" "$stage_dir/manifest.env" "$release_dir/"
+cp "$stage_dir/"*.sbom.cdx.json "$release_dir/"
+chmod 0644 "$release_dir/compose.yaml" "$release_dir/manifest.env" "$release_dir/"*.sbom.cdx.json
+
+install -m 0755 "$stage_dir/bin/waves-docker-firewall" /usr/local/sbin/waves-docker-firewall
+install -m 0755 "$stage_dir/bin/rollback-release" /usr/local/sbin/waves-network-preview-rollback
+install -m 0644 "$stage_dir/systemd/waves-docker-firewall.service" /etc/systemd/system/waves-docker-firewall.service
+install -m 0644 "$stage_dir/systemd/waves-network-preview.service" /etc/systemd/system/waves-network-preview.service
+systemctl daemon-reload
+/usr/local/sbin/waves-docker-firewall set sealed
+systemctl enable waves-docker-firewall.service >/dev/null
+
+if [ -e "$install_root/current" ] && [ ! -L "$install_root/current" ]; then
+  fail "$install_root/current exists but is not a managed symlink"
+fi
+old_release=
+if [ -L "$install_root/current" ]; then
+  old_release=$(readlink "$install_root/current")
+fi
+ln -sfn "$release_dir" "$install_root/current"
+
+systemctl enable waves-network-preview.service >/dev/null
+if ! systemctl restart waves-network-preview.service; then
+  echo 'Deployment failed; sealing Docker ingress and restoring the prior release.' >&2
+  /usr/local/sbin/waves-docker-firewall set sealed || true
+  if [ -n "$old_release" ] && [ -d "$old_release" ]; then
+    ln -sfn "$old_release" "$install_root/current"
+    systemctl restart waves-network-preview.service || true
+  else
+    systemctl disable --now waves-network-preview.service || true
+    (
+      cd "$release_dir"
+      docker compose --project-name waves-network-preview --env-file manifest.env \
+        -f compose.yaml down
+    ) || true
+    rm -f "$install_root/current"
+  fi
+  exit 1
+fi
+
+if [ -n "$old_release" ] && [ -d "$old_release" ]; then
+  ln -sfn "$old_release" "$install_root/previous"
+fi
+/usr/local/sbin/waves-docker-firewall check
+echo "PASS: installed sealed network preview release $release_id from $source_commit"

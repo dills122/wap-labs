@@ -10,6 +10,7 @@ on:
       - 'browser/src-tauri/**'
       - 'docker-compose.yml'
       - 'docker/kannel/**'
+      - 'deploy/network-preview/**'
       - 'engine-wasm/contracts/**'
       - 'engine-wasm/engine/**'
       - 'gateway-kannel/**'
@@ -83,10 +84,49 @@ jobs:
           ./scripts/tests/transport-wap-smoke-status.sh
           make smoke-transport-wap
 
+      - name: Stop development stack before production validation
+        run: docker compose down
+
+      - name: Build and start sealed production topology
+        env:
+          WAVES_SECRETS_DIR: ${{ runner.temp }}/waves-production-secrets
+          WML_ORIGIN_IMAGE: wap-labs/wml-origin:production-ci
+          WAP_GATEWAY_IMAGE: wap-labs/wap-gateway:production-ci
+        run: |
+          install -d -m 0700 "${WAVES_SECRETS_DIR}"
+          printf '%064d\n' 0 >"${WAVES_SECRETS_DIR}/kannel-admin-password"
+          printf '%064d\n' 1 >"${WAVES_SECRETS_DIR}/kannel-status-password"
+          docker build --tag "${WML_ORIGIN_IMAGE}" wml-server
+          docker build --target production --tag "${WAP_GATEWAY_IMAGE}" docker/kannel
+          docker compose -f deploy/network-preview/compose.yaml up --detach --wait
+
+      - name: Verify production WAP path and port publication
+        env:
+          WAVES_SECRETS_DIR: ${{ runner.temp }}/waves-production-secrets
+          WML_ORIGIN_IMAGE: wap-labs/wml-origin:production-ci
+          WAP_GATEWAY_IMAGE: wap-labs/wap-gateway:production-ci
+          WAP_SMOKE_URL: wap://127.0.0.1/
+          WAP_SMOKE_LOGIN_URL: wap://127.0.0.1/login
+          WAP_SMOKE_REGISTER_URL: wap://127.0.0.1/register
+          WAP_SMOKE_DENIED_URL: wap://127.0.0.1:9200/
+        run: |
+          test "$(docker compose -f deploy/network-preview/compose.yaml port --protocol udp wap-gateway 9200 | wc -l)" -eq 1
+          ! docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13000
+          ! docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13002
+          cd transport-rust
+          cargo test --test kannel_smoke -- --ignored --test-threads=1
+          cd ..
+          docker compose -f deploy/network-preview/compose.yaml logs --no-color >"${RUNNER_TEMP}/waves-production.log"
+          ! grep -Eq '[0-9a-f]{64}' "${RUNNER_TEMP}/waves-production.log"
+
       - name: Dump service logs on failure
         if: failure()
         run: |
           docker compose logs --tail=200 kannel wml-server || true
+          WAVES_SECRETS_DIR="${RUNNER_TEMP}/waves-production-secrets" \
+          WML_ORIGIN_IMAGE=wap-labs/wml-origin:production-ci \
+          WAP_GATEWAY_IMAGE=wap-labs/wap-gateway:production-ci \
+            docker compose -f deploy/network-preview/compose.yaml logs --tail=200 || true
 
       - name: Upload smoke diagnostics
         if: always()
@@ -99,4 +139,9 @@ jobs:
 
       - name: Stop stack
         if: always()
-        run: docker compose down
+        run: |
+          docker compose down
+          WAVES_SECRETS_DIR="${RUNNER_TEMP}/waves-production-secrets" \
+          WML_ORIGIN_IMAGE=wap-labs/wml-origin:production-ci \
+          WAP_GATEWAY_IMAGE=wap-labs/wap-gateway:production-ci \
+            docker compose -f deploy/network-preview/compose.yaml down || true

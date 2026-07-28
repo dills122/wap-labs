@@ -52,7 +52,16 @@ and size availability through its authenticated `/v2/regions` and `/v2/sizes` AP
 evidence, not this planning assumption, decides the exact region. Hetzner is the leading
 alternative for a Europe-hosted lab: its EU CX23 offers materially more memory for roughly EUR
 5.49/month plus IPv4 and tax, but its low-cost CX line is not available in North America.
-Lightsail, IONOS, and OVHcloud remain account or regional fallbacks rather than the default.
+IONOS and OVHcloud remain account or regional fallbacks rather than the default. AWS services are
+excluded by owner decision.
+
+DigitalOcean also provides free, always-on network and transport-layer DDoS protection for
+Droplets and assigned Reserved IPs, including UDP floods and reflection attacks. Keep Cloudflare
+records DNS-only: Cloudflare Spectrum is not required for the initial preview. This protection is
+baseline volumetric mitigation, not application-level WAP abuse protection or an availability
+guarantee; DigitalOcean may blackhole the target IP if an attack exceeds mitigation capacity.
+The response-size, amplification, rate-limit, monitoring, and kill-switch controls below therefore
+remain mandatory.
 
 Keep the first Kannel image on x86_64. Multi-architecture images should be a deliberate later
 slice backed by image and end-to-end tests, not a launch-time variable.
@@ -72,7 +81,9 @@ The current local assets prove the topology but are not production configuration
 - `scripts/transport-wap-smoke.sh` and native Kannel tests exercise the transport path.
 
 Production work must remove public Kannel administration/internal ports, placeholder secrets,
-source bind mounts, and package installation at container startup.
+source bind mounts, and package installation at container startup. It must also account for
+Docker's published-port rules, which can bypass ordinary UFW input policy unless forwarding is
+filtered through `DOCKER-USER` or an equivalent supported firewall integration.
 
 ## WML origin decision: Go
 
@@ -117,9 +128,10 @@ state-lifecycle, concurrency, host-profile, route-denial, and internal-observabi
 
 `LAB-101` merged in PR #427. This does not complete `GW-101`, `INF-101`, `INF-102`, or any public
 exposure gate. The owner selected the Cloudflare-managed `shrimpworks.dev` zone for `PRE-002`:
-`home.shrimpworks.dev`, `forms.shrimpworks.dev`, and `interop.shrimpworks.dev`. Use exact DNS-only
-records rather than a wildcard record, and defer a second apex until a cross-registrable-domain
-test proves subdomains insufficient.
+`home.wap.shrimpworks.dev`, `forms.wap.shrimpworks.dev`, and
+`interop.wap.shrimpworks.dev`. Use exact DNS-only records rather than a wildcard record, and defer
+a second apex until a cross-registrable-domain test proves subdomains insufficient. The staged
+OpenTofu root defines these exact names, but its sealed default does not create any of them.
 
 ## Public topology
 
@@ -140,6 +152,14 @@ test proves subdomains insufficient.
 - A private Compose network connects gateway and origin.
 - Root filesystems are read-only and processes non-root where Kannel permits; any exception is
   documented and capability-constrained.
+- Host bootstrap installs idempotent, source-controlled Docker/UFW forwarding policy in the
+  `DOCKER-USER` path before application containers start. The policy permits only the reviewed
+  public UDP 9200 mapping, preserves required private container traffic, and denies every other
+  externally initiated published-port flow.
+- Do not download and execute an unpinned `ufw-docker` default-branch script as root. If the
+  `ufw-docker` utility is selected, pin an immutable release or commit, verify its checksum, and
+  test its generated rules across UFW reload, Docker restart, and host reboot. A small
+  repository-owned rules installer is acceptable when it is easier to audit and verify.
 - Images are pinned by digest and recorded in a rollbackable release manifest.
 
 ### First-party test hosts
@@ -215,10 +235,19 @@ Tailscale-only administration, and no
 application deployment. Enabling public UDP/DNS still depends on the production gateway,
 `PRE-003`, `PRE-004`, and a separately reviewed plan.
 
+The host created from PR #456 does not itself contain the production Compose stack or persistent
+`DOCKER-USER` policy. The current service-deployment implementation packages that policy, a
+sealed-by-default systemd service, immutable local release artifacts, and rollback tooling; its
+private installer is also the upgrade path for the existing host. Cloud-init changes apply only to
+future replacement hosts because Droplet user data is lifecycle-ignored. Treat the forwarding
+control and its external negative tests as unfinished `INF-102`/`GW-101` evidence until the private
+installer and reboot behavior are verified on the restricted host.
+
 ## Security, abuse, and operations
 
-Public UDP is spoofable and can become an amplification surface. A cloud firewall controls reach,
-not protocol safety. Public exposure requires all of the following:
+Public UDP is spoofable and can become an amplification surface. DigitalOcean's included
+network-layer DDoS protection and Cloud Firewall reduce volumetric and reachability risk, but do
+not provide WAP-aware protocol safety. Public exposure requires all of the following:
 
 - exact-host allowlisting and no arbitrary URL fetch;
 - strict request/response byte ceilings and a measured amplification ratio;
@@ -228,6 +257,8 @@ not protocol safety. Public exposure requires all of the following:
 - redaction of form bodies, session values, and sensitive query values;
 - random Kannel administration/status credentials stored outside images;
 - administration bound to loopback/private networking;
+- enforced `DOCKER-USER`/UFW forwarding policy so a Compose port publication cannot bypass the
+  host deny-by-default policy;
 - SSH keys only, non-root administration, and automatic security updates;
 - CI image/dependency scanning and an SBOM;
 - a tested firewall kill switch, disable runbook, abuse contact, and acceptable-use notice.
@@ -277,14 +308,14 @@ be destroyed and rebuilt from OpenTofu.
 Capacity assumption: three parallel implementation lanes, 36 points gross, 29 committed, and a
 7-point (about 19 percent) buffer for Kannel/cloud/network unknowns.
 
-| Priority | ID         | Work item                                      | Points | Dependencies                   | Acceptance                                                                                                                                                                                  |
-| -------: | ---------- | ---------------------------------------------- | -----: | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|        1 | `INF-101`  | OpenTofu bootstrap and CI                      |      5 | `PRE-001`, `PRE-003`           | Pinned provider; encrypted R2 state; tested lock contention/recovery; serialized apply and state copies; fmt/init/validate/speculative-plan CI; no committed secrets                        |
-|        2 | `GW-101`   | Production Kannel/container baseline           |      5 | `PRE-004`                      | Immutable image; generated config; non-default secrets; private admin/box ports; exact-host maps; health checks; local GET/POST smoke                                                       |
-|        3 | `LAB-101`  | Go WML origin and deterministic multi-host lab |      8 | `PRE-002`                      | Standard-library service; current route/session/example golden parity; three-host matrix; public binary excludes gateway/viewer/emulator; `gofmt`, `go vet ./...`, and `go test ./...` pass |
-|        4 | `INF-102`  | Compute, IP, firewall, DNS, bootstrap          |      5 | `INF-101`, `GW-101` interface  | Rebuildable 512 MiB x86 host with bounded swap/limits; only UDP 9200 plus restricted administration public; idempotent cloud-init without long-lived secrets                                |
-|        5 | `PERF-101` | 512 MiB memory soak and resize gate            |      2 | `INF-102`, `GW-101`, `LAB-101` | Record RSS, swap, restarts, latency; allow 1 GiB only if the published threshold fails                                                                                                      |
-|        6 | `OPS-101`  | External WSP probe and disable runbook         |      4 | `INF-102`, `LAB-101`           | Exact external WSP/WBXML fixture; failure alert; tested rate-limit/firewall kill; redacted logs                                                                                             |
+| Priority | ID         | Work item                                      | Points | Dependencies                   | Acceptance                                                                                                                                                                                    |
+| -------: | ---------- | ---------------------------------------------- | -----: | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|        1 | `INF-101`  | OpenTofu bootstrap and CI                      |      5 | `PRE-001`, `PRE-003`           | Pinned provider; encrypted R2 state; tested lock contention/recovery; serialized apply and state copies; fmt/init/validate/speculative-plan CI; no committed secrets                          |
+|        2 | `GW-101`   | Production Kannel/container baseline           |      5 | `PRE-004`                      | Immutable image; generated config; non-default secrets; private admin/box ports; exact-host maps; health checks; local GET/POST smoke                                                         |
+|        3 | `LAB-101`  | Go WML origin and deterministic multi-host lab |      8 | `PRE-002`                      | Standard-library service; current route/session/example golden parity; three-host matrix; public binary excludes gateway/viewer/emulator; `gofmt`, `go vet ./...`, and `go test ./...` pass   |
+|        4 | `INF-102`  | Compute, IP, firewall, DNS, bootstrap          |      5 | `INF-101`, `GW-101` interface  | Rebuildable 512 MiB x86 host with bounded swap/limits; only UDP 9200 plus restricted administration public; idempotent cloud-init and Docker/UFW forwarding policy without long-lived secrets |
+|        5 | `PERF-101` | 512 MiB memory soak and resize gate            |      2 | `INF-102`, `GW-101`, `LAB-101` | Record RSS, swap, restarts, latency; allow 1 GiB only if the published threshold fails                                                                                                        |
+|        6 | `OPS-101`  | External WSP probe and disable runbook         |      4 | `INF-102`, `LAB-101`           | Exact external WSP/WBXML fixture; failure alert; tested rate-limit/firewall kill; redacted logs                                                                                               |
 
 Stretch only after committed acceptance:
 
@@ -332,14 +363,16 @@ The first public pre-release is allowed only when:
 
 1. The lab is exact-host allowlisted, not an open WAP-to-web proxy.
 2. Only UDP 9200 is public for WAP; Kannel administration/internal ports are unreachable.
-3. Repeated external synthetic GET and packaged-desktop supported POST both pass.
-4. Size, timeout, concurrency, amplification, and rate-limit behavior are tested.
-5. Someone other than the author tests the emergency firewall disable action.
-6. Infrastructure rebuild and Reserved IP reassignment are demonstrated.
-7. Remote state is private, encrypted, lock-tested, serialized, and recoverable.
-8. UI/release notes say the transport is unencrypted and WTLS is unsupported.
-9. Claims do not exceed current executable Class C evidence.
-10. Repository fast/change/full verification and public network E2E checks pass from current main.
+3. An external scan against the Reserved IP proves Docker-published ports cannot bypass the host
+   firewall before and after UFW reload, Docker restart, and host reboot.
+4. Repeated external synthetic GET and packaged-desktop supported POST both pass.
+5. Size, timeout, concurrency, amplification, and rate-limit behavior are tested.
+6. Someone other than the author tests the emergency firewall disable action.
+7. Infrastructure rebuild and Reserved IP reassignment are demonstrated.
+8. Remote state is private, encrypted, lock-tested, serialized, and recoverable.
+9. UI/release notes say the transport is unencrypted and WTLS is unsupported.
+10. Claims do not exceed current executable Class C evidence.
+11. Repository fast/change/full verification and public network E2E checks pass from current main.
 
 ## Verification to add or standardize
 
@@ -350,13 +383,17 @@ The first public pre-release is allowed only when:
 - provider-backed speculative plan in a protected CI environment (pending `PRE-001`/`PRE-003`)
 - image build, vulnerability scan, and SBOM
 - production Compose configuration validation
+- Docker/UFW forwarding-policy lint plus idempotent install/check tests against the rendered
+  cloud-init configuration
 - `gofmt -l`, `go vet ./...`, and `go test ./...`
 - HTTP/WML golden tests for content type, cache, status, escaping, forms, session expiry,
   examples, health, and metrics
 - local and external `scripts/transport-wap-smoke.sh` equivalents
 - browser/Tauri Kannel tests and generated-contract drift checks
 - link, format, and documentation validation
-- negative port scan for 13000, 13002, and UDP 9201-9208
+- external negative port scan for TCP 80/443/13000/13002 and UDP 9201-9208, repeated after UFW
+  reload, Docker restart, and host reboot
+- positive external UDP 9200 probe only after the publication gate is approved
 - negative proxy test proving an unknown resource host is rejected
 
 ## Key risks
@@ -365,6 +402,7 @@ The first public pre-release is allowed only when:
 | ----------------------------------- | ---------- | ----------------------------------------------------------------------------------------------- |
 | UDP spoofing/reflection             | high       | allowlist, response cap, rate limit, traffic alert, firewall kill switch                        |
 | Old Kannel exposure                 | high       | distro-patched/pinned build, isolation, minimal ports, scanning, no admin exposure              |
+| Docker bypasses host UFW policy     | high       | verified `DOCKER-USER` forwarding policy plus external negative scans across reload/restart     |
 | Client networks block UDP 9200      | medium     | stage-specific diagnostics and explicit supported-network guidance; no silent protocol fallback |
 | R2 backend lock mismatch            | high       | lock integration test, serialized apply, encrypted state copies, forced-unlock runbook          |
 | Desktop seam changes                | high       | start from refreshed main; audit WSP evidence; contract-first native/Tauri tests                |
@@ -391,16 +429,19 @@ OpenTofu and state:
 - [Cloudflare R2 pricing](https://developers.cloudflare.com/r2/pricing/)
 - [Cloudflare R2 S3 API](https://developers.cloudflare.com/r2/api/s3/api/)
 - [Cloudflare R2 consistency](https://developers.cloudflare.com/r2/reference/consistency/)
+- [Cloudflare Spectrum protocols by plan](https://developers.cloudflare.com/spectrum/protocols-per-plan/)
 
 Provider comparison:
 
 - [DigitalOcean Droplet pricing](https://www.digitalocean.com/pricing/droplets)
+- [DigitalOcean DDoS protection](https://docs.digitalocean.com/platform/ddos-protection/)
 - [DigitalOcean cloud-init](https://docs.digitalocean.com/products/droplets/how-to/provide-user-data/)
 - [DigitalOcean Cloud Firewall rules](https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/)
 - [DigitalOcean Reserved IP pricing](https://docs.digitalocean.com/products/networking/reserved-ips/details/pricing/)
+- [Docker packet filtering and firewalls](https://docs.docker.com/engine/network/packet-filtering-firewalls/)
+- [`ufw-docker` reference implementation](https://github.com/chaifeng/ufw-docker)
 - [Hetzner Cloud OpenTofu provider](https://github.com/hetznercloud/terraform-provider-hcloud)
 - [Hetzner locations](https://docs.hetzner.com/cloud/general/locations/)
 - [Hetzner price adjustment](https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/)
-- [Amazon Lightsail bundles](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-bundles.html)
 - [IONOS VPS pricing](https://www.ionos.com/servers/vps)
 - [OVHcloud Canada VPS pricing](https://www.ovhcloud.com/en-ca/vps/vps-canada/)

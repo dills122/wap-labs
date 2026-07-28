@@ -22,6 +22,7 @@ services:
     build:
       context: ./docker/kannel
       dockerfile: Dockerfile
+      target: development
     container_name: wap-gateway
     depends_on:
       - wml-server
