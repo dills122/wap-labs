@@ -17,6 +17,12 @@ The first stage is intentionally not public:
 Public UDP and DNS require a later reviewed plan with `NETWORK_PREVIEW_PUBLISH_PREVIEW=true`,
 after the gateway image/configuration and disable path have passed their own checks.
 
+Application deployment is a distinct, state-free checkpoint. After the sealed host exists, follow
+[`deploy/network-preview/README.md`](../../deploy/network-preview/README.md) to build a scanned,
+checksummed release locally and install it over Tailscale. The installer deploys only the service
+bundle and persistent Docker forwarding policy, forces that policy to `sealed`, and leaves the
+Cloud Firewall, DNS, Reserved IP, and OpenTofu state unchanged.
+
 ## Local configuration
 
 Keep the environment file outside version control with mode `0600`. In addition to the existing
@@ -102,3 +108,7 @@ and force-unlock are never implied by generating a plan.
 
 Rollback for the initial host is an explicitly approved `tofu destroy` of the same state after
 capturing required diagnostics. No application data belongs on the disposable host.
+
+Service rollback is separate and does not use OpenTofu: `sudo waves-network-preview-rollback`
+selects the preceding verified release and keeps Docker ingress sealed. The emergency service
+kill switch is `sudo waves-docker-firewall set sealed`.

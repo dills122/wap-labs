@@ -110,3 +110,48 @@ jobs:
       - name: Audit WML origin and Go standard library
         working-directory: wml-server
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+
+  network-preview-images:
+    name: Network Preview Image Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Go for pinned image tools
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.25'
+          cache: false
+
+      - name: Install pinned Syft and Grype
+        run: |
+          go install github.com/anchore/syft/cmd/syft@v1.44.0
+          go install github.com/anchore/grype/cmd/grype@v0.112.0
+
+      - name: Build production images
+        run: |
+          docker build --tag wap-labs/wml-origin:security wml-server
+          docker build --target production --tag wap-labs/wap-gateway:security docker/kannel
+
+      - name: Scan high and critical vulnerabilities
+        run: |
+          grype wap-labs/wml-origin:security --fail-on high
+          grype wap-labs/wap-gateway:security --fail-on high
+
+      - name: Generate CycloneDX SBOMs
+        run: |
+          install -d artifacts/network-preview
+          syft wap-labs/wml-origin:security -o cyclonedx-json=artifacts/network-preview/wml-origin.sbom.cdx.json
+          syft wap-labs/wap-gateway:security -o cyclonedx-json=artifacts/network-preview/wap-gateway.sbom.cdx.json
+
+      - name: Upload image SBOMs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: network-preview-sboms-${{ github.run_attempt }}
+          path: artifacts/network-preview
+          if-no-files-found: error
+          retention-days: 14

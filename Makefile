@@ -9,6 +9,7 @@ RUST_FUNCTION_COVERAGE_MIN ?= 85
 	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node lint-go lint-tofu \
+	lint-network-preview-deploy \
 	test-rust test-rust-engine test-rust-transport test-transport-fixtures test-node test-go \
 	hooks-install hooks-update hooks-run \
 	dev-wavenav-host \
@@ -155,6 +156,11 @@ lint-tofu:
 		scripts/ci/check-network-preview-encrypted-plan.sh
 	@echo "==> protected workflow contract tests (network preview)"
 	@node --test scripts/tests/network-preview-protected.test.mjs
+	@$(MAKE) lint-network-preview-deploy
+
+lint-network-preview-deploy:
+	@echo "==> production deployment contracts (network preview)"
+	@scripts/ci/check-network-preview-deploy.sh
 
 test-rust:
 	@$(MAKE) test-rust-engine

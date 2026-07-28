@@ -6,8 +6,9 @@ This directory owns the OpenTofu configuration for the public WAP network previe
 The configuration defines a staged single-host preview while keeping execution separate from
 authored infrastructure. Its default local deployment creates a hardened Droplet, Reserved IP,
 sealed inbound firewall, default-project verification, and free provider monitoring. Public UDP and
-the three Cloudflare DNS records remain disabled until `publish_preview` is explicitly enabled. No resource
-exists merely because the configuration is checked in, and no apply is authorized by this file.
+the three Cloudflare DNS records remain disabled until `publish_preview` is explicitly enabled. No
+resource exists merely because the configuration is checked in, and no apply is authorized by this
+file.
 
 The initial gate uses the [owner-local deployment path](LOCAL_DEPLOYMENT.md). Protected GitHub
 plan/apply automation remains available for a later shared/public operating model and stays
@@ -23,6 +24,11 @@ blocked until `PRE-003` has an independent reviewer and recovery maintainer.
 - `tests/r2-lock/`: an isolated lock holder used only by the access-backed R2 integration test.
 
 Do not introduce shared modules until a second real environment creates demonstrated repetition.
+
+The production application bundle is separate from OpenTofu and documented in
+[`deploy/network-preview/README.md`](../../deploy/network-preview/README.md). Its private installer
+keeps Docker forwarding sealed, verifies the transferred release and image IDs, and does not mutate
+cloud resources, DNS, or OpenTofu state.
 
 ## Pinned toolchain
 

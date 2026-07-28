@@ -130,9 +130,8 @@ state-lifecycle, concurrency, host-profile, route-denial, and internal-observabi
 exposure gate. The owner selected the Cloudflare-managed `shrimpworks.dev` zone for `PRE-002`:
 `home.wap.shrimpworks.dev`, `forms.wap.shrimpworks.dev`, and
 `interop.wap.shrimpworks.dev`. Use exact DNS-only records rather than a wildcard record, and defer
-a second apex until a cross-registrable-domain test proves subdomains insufficient. The existing
-staged OpenTofu DNS names must be updated and reviewed before public publication; the sealed
-default does not create any of them.
+a second apex until a cross-registrable-domain test proves subdomains insufficient. The staged
+OpenTofu root defines these exact names, but its sealed default does not create any of them.
 
 ## Public topology
 
@@ -236,10 +235,13 @@ Tailscale-only administration, and no
 application deployment. Enabling public UDP/DNS still depends on the production gateway,
 `PRE-003`, `PRE-004`, and a separately reviewed plan.
 
-The merged base-host bootstrap hardens the Docker daemon but does not yet install the production
-Compose stack or its `DOCKER-USER`/UFW forwarding policy. Treat that policy and its external
-negative tests as unfinished `INF-102`/`GW-101` work, not as a control already present on the
-restricted host.
+The host created from PR #456 does not itself contain the production Compose stack or persistent
+`DOCKER-USER` policy. The current service-deployment implementation packages that policy, a
+sealed-by-default systemd service, immutable local release artifacts, and rollback tooling; its
+private installer is also the upgrade path for the existing host. Cloud-init changes apply only to
+future replacement hosts because Droplet user data is lifecycle-ignored. Treat the forwarding
+control and its external negative tests as unfinished `INF-102`/`GW-101` evidence until the private
+installer and reboot behavior are verified on the restricted host.
 
 ## Security, abuse, and operations
 

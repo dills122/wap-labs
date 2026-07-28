@@ -323,7 +323,13 @@ export const LANES = Object.freeze([
     label: 'network preview OpenTofu static checks',
     profiles: ['change', 'full', 'extended'],
     paths: [
+      'deploy/network-preview/',
+      'docker/kannel/Dockerfile',
+      'docker/kannel/production/',
       'infra/network-preview/',
+      'scripts/build-network-preview-release.sh',
+      'scripts/deploy-network-preview-private.sh',
+      'scripts/ci/check-network-preview-deploy.sh',
       'scripts/ci/check-network-preview-workflows.sh',
       'scripts/ci/check-network-preview-r2-lock.sh',
       'scripts/ci/check-network-preview-encrypted-plan.sh',
@@ -334,6 +340,7 @@ export const LANES = Object.freeze([
       'scripts/ci/write-network-preview-backend-config.sh',
       'scripts/network-preview-local-plan.mjs',
       'scripts/tests/network-preview-protected.test.mjs',
+      'wml-server/Dockerfile',
       '.github/workflows/opentofu.yml',
       '.github/workflows/opentofu-protected-apply.yml',
       '.github/workflows/opentofu-protected-plan.yml'
@@ -345,6 +352,8 @@ export const LANES = Object.freeze([
         'run go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12'
       ),
       prerequisite('sh', 'install a POSIX shell'),
+      prerequisite('shellcheck', 'install shellcheck'),
+      prerequisite('docker', 'install Docker with Compose v2'),
       prerequisite('node', 'install the repository Node version')
     ],
     commands: [
@@ -400,7 +409,8 @@ export const LANES = Object.freeze([
       command('protected workflow contract tests', 'node', [
         '--test',
         'scripts/tests/network-preview-protected.test.mjs'
-      ])
+      ]),
+      command('production deployment contracts', 'scripts/ci/check-network-preview-deploy.sh', [])
     ]
   },
   {

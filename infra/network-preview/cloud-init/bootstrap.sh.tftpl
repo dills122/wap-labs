@@ -46,6 +46,13 @@ ufw --force enable >/dev/null
 
 sysctl --system >/dev/null
 systemctl enable --now docker
+systemctl daemon-reload
+if [ ! -e /etc/default/waves-docker-firewall ]; then
+  /usr/local/sbin/waves-docker-firewall set sealed
+else
+  /usr/local/sbin/waves-docker-firewall apply
+fi
+systemctl enable waves-docker-firewall.service >/dev/null
 systemctl enable --now fail2ban
 systemctl enable --now unattended-upgrades
 systemctl restart ssh

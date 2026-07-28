@@ -76,7 +76,8 @@ test('change selects backend-disabled OpenTofu checks for network preview infras
       'network-preview script POSIX syntax',
       'network-preview local plan helper syntax',
       'encrypted offline plan check',
-      'protected workflow contract tests'
+      'protected workflow contract tests',
+      'production deployment contracts'
     ]
   );
   assert.equal(
@@ -84,6 +85,24 @@ test('change selects backend-disabled OpenTofu checks for network preview infras
       .TF_VAR_state_encryption_passphrase,
     'offline-validation-only-not-for-state'
   );
+});
+
+test('change selects production deployment checks for network preview service files', () => {
+  const lane = byId(
+    buildPlan('change', ['deploy/network-preview/compose.yaml']),
+    'opentofu-static'
+  );
+  assert.equal(lane.selected, true);
+  assert.equal(
+    lane.commands.some((command) => command.label === 'production deployment contracts'),
+    true
+  );
+});
+
+test('change selects production deployment checks for production image definitions', () => {
+  for (const path of ['docker/kannel/Dockerfile', 'wml-server/Dockerfile']) {
+    assert.equal(byId(buildPlan('change', [path]), 'opentofu-static').selected, true);
+  }
 });
 
 test('root verification surfaces select every ordinary change lane', () => {

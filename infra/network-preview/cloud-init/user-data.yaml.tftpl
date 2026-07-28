@@ -7,6 +7,8 @@ packages:
   - docker.io
   - docker-compose-v2
   - fail2ban
+  - iproute2
+  - iptables
   - unattended-upgrades
   - ufw
 
@@ -78,6 +80,16 @@ write_files:
     permissions: "0750"
     content: |
       ${bootstrap_script}
+  - path: /usr/local/sbin/waves-docker-firewall
+    owner: root:root
+    permissions: "0750"
+    content: |
+      ${docker_firewall_script}
+  - path: /etc/systemd/system/waves-docker-firewall.service
+    owner: root:root
+    permissions: "0644"
+    content: |
+      ${docker_firewall_unit}
 
 runcmd:
   - /usr/local/sbin/waves-bootstrap

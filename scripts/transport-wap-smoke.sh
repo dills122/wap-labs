@@ -2,13 +2,21 @@
 set -eu
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck source=scripts/lib/run-and-tee.sh
 . "${ROOT_DIR}/scripts/lib/run-and-tee.sh"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
+WAP_SMOKE_REGISTER_URL="${WAP_SMOKE_REGISTER_URL:-wap://localhost/register}"
+WAP_SMOKE_DENIED_URL="${WAP_SMOKE_DENIED_URL:-wap://127.0.0.1:9200/}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
+TRANSPORT_WAP_SKIP_INTERNAL_HEALTH="${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH:-0}"
+case "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" in
+  0 | 1) ;;
+  *) echo 'TRANSPORT_WAP_SKIP_INTERNAL_HEALTH must be 0 or 1' >&2; exit 2 ;;
+esac
 if [ -n "${TRANSPORT_WAP_SMOKE_ARTIFACT_DIR:-}" ]; then
   SMOKE_ARTIFACT_DIR="${TRANSPORT_WAP_SMOKE_ARTIFACT_DIR}"
   mkdir -p "${SMOKE_ARTIFACT_DIR}"
@@ -26,17 +34,19 @@ print_failure_diagnostics() {
   echo
   echo "==> transport-wap-smoke diagnostics (exit ${exit_code})" >&2
   echo "Artifacts: ${SMOKE_ARTIFACT_DIR}" >&2
-  echo "-- Kannel admin status snapshot --" >&2
-  curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" \
-    | tee "${SMOKE_ARTIFACT_DIR}/kannel-status.txt" >&2 || true
-  echo >&2
+  if [ "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" = 0 ]; then
+    echo "-- Kannel admin status snapshot --" >&2
+    curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" \
+      | tee "${SMOKE_ARTIFACT_DIR}/kannel-status.txt" >&2 || true
+    echo >&2
 
-  echo "-- WML server health snapshot --" >&2
-  curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" \
-    | tee "${SMOKE_ARTIFACT_DIR}/wml-health.txt" >&2 || true
-  echo >&2
+    echo "-- WML server health snapshot --" >&2
+    curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" \
+      | tee "${SMOKE_ARTIFACT_DIR}/wml-health.txt" >&2 || true
+    echo >&2
+  fi
 
-  if command -v docker >/dev/null 2>&1; then
+  if [ "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" = 0 ] && command -v docker >/dev/null 2>&1; then
     echo "-- docker compose logs (kannel, wml-server) --" >&2
     (
       cd "${ROOT_DIR}" &&
@@ -69,17 +79,21 @@ wait_for_http() {
   return 1
 }
 
-echo "==> Checking Kannel admin status"
-wait_for_http "${KANNEL_ADMIN_URL}"
-curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" | grep -q 'Status: running'
+if [ "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" = 0 ]; then
+  echo "==> Checking Kannel admin status"
+  wait_for_http "${KANNEL_ADMIN_URL}"
+  curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" | grep -q 'Status: running'
 
-echo "==> Checking WML server health"
-wait_for_http "${WML_HEALTH_URL}"
+  echo "==> Checking WML server health"
+  wait_for_http "${WML_HEALTH_URL}"
+else
+  echo '==> Skipping local-only health URLs for remote sealed-stack smoke'
+fi
 
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
     cargo test --test kannel_smoke -- --ignored --test-threads=1
 )

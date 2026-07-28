@@ -10,11 +10,17 @@ on:
       - '.pre-commit-config.yaml'
       - '.gitignore'
       - 'Makefile'
+      - 'deploy/network-preview/**'
+      - 'docker/kannel/Dockerfile'
+      - 'docker/kannel/production/**'
       - 'infra/network-preview/**'
+      - 'scripts/build-network-preview-release.sh'
+      - 'scripts/deploy-network-preview-private.sh'
       - 'scripts/ci/*network-preview*.sh'
       - 'scripts/tests/network-preview-protected.test.mjs'
       - 'scripts/verify-lib.mjs'
       - 'scripts/tests/verify.test.mjs'
+      - 'wml-server/Dockerfile'
   push:
     branches: [main]
     paths:
@@ -25,11 +31,17 @@ on:
       - '.pre-commit-config.yaml'
       - '.gitignore'
       - 'Makefile'
+      - 'deploy/network-preview/**'
+      - 'docker/kannel/Dockerfile'
+      - 'docker/kannel/production/**'
       - 'infra/network-preview/**'
+      - 'scripts/build-network-preview-release.sh'
+      - 'scripts/deploy-network-preview-private.sh'
       - 'scripts/ci/*network-preview*.sh'
       - 'scripts/tests/network-preview-protected.test.mjs'
       - 'scripts/verify-lib.mjs'
       - 'scripts/tests/verify.test.mjs'
+      - 'wml-server/Dockerfile'
   workflow_dispatch:
 
 permissions:
@@ -117,3 +129,6 @@ jobs:
 
       - name: Test protected workflow contracts
         run: node --test scripts/tests/network-preview-protected.test.mjs
+
+      - name: Validate production deployment contracts
+        run: scripts/ci/check-network-preview-deploy.sh

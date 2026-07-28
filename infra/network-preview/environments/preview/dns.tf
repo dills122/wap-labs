@@ -1,8 +1,8 @@
 locals {
   preview_hostnames = toset([
-    "forms.shrimpworks.dev",
-    "home.shrimpworks.dev",
-    "interop.shrimpworks.dev",
+    "forms.wap.shrimpworks.dev",
+    "home.wap.shrimpworks.dev",
+    "interop.wap.shrimpworks.dev",
   ])
 }
 

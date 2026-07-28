@@ -1,0 +1,185 @@
+#!/usr/bin/env sh
+set -eu
+
+chain_name=WAVES-DOCKER
+state_file=${WAVES_FIREWALL_STATE_FILE:-/etc/default/waves-docker-firewall}
+public_rate=${WAVES_WAP_GLOBAL_RATE:-200/second}
+public_burst=${WAVES_WAP_GLOBAL_BURST:-400}
+source_rate=${WAVES_WAP_SOURCE_RATE:-20/second}
+source_burst=${WAVES_WAP_SOURCE_BURST:-40}
+tailnet_interface=${WAVES_TAILNET_INTERFACE:-tailscale0}
+
+fail() {
+  echo "FAIL: $*" >&2
+  exit 1
+}
+
+require_root() {
+  [ "$(id -u)" -eq 0 ] || fail 'waves-docker-firewall must run as root'
+}
+
+public_interface() {
+  if [ -n "${WAVES_PUBLIC_INTERFACE:-}" ]; then
+    printf '%s\n' "$WAVES_PUBLIC_INTERFACE"
+    return
+  fi
+  ip -4 route show default | awk 'NR == 1 { for (i = 1; i <= NF; i++) if ($i == "dev") { print $(i + 1); exit } }'
+}
+
+load_mode() {
+  mode=sealed
+  if [ -r "$state_file" ]; then
+    # shellcheck disable=SC1090 # Root-owned file accepts only the validated variable below.
+    . "$state_file"
+    mode=${WAVES_FIREWALL_MODE:-sealed}
+  fi
+  case "$mode" in
+    sealed | public) printf '%s\n' "$mode" ;;
+    *) fail "unsupported firewall mode in $state_file" ;;
+  esac
+}
+
+validate_rate() {
+  value=$1
+  label=$2
+  case "$value" in
+    *[!0-9/second]*) fail "$label contains unsupported characters" ;;
+  esac
+  printf '%s' "$value" | grep -Eq '^[1-9][0-9]*/second$' || fail "$label must use N/second"
+}
+
+validate_positive_integer() {
+  value=$1
+  label=$2
+  case "$value" in
+    '' | *[!0-9]*) fail "$label must be a positive integer" ;;
+  esac
+  [ "$value" -gt 0 ] || fail "$label must be greater than zero"
+}
+
+ensure_prerequisites() {
+  for command_name in ip iptables iptables-restore awk grep; do
+    command -v "$command_name" >/dev/null 2>&1 || fail "missing required command: $command_name"
+  done
+  iptables -n -L DOCKER-USER >/dev/null 2>&1 || fail 'Docker DOCKER-USER chain is unavailable'
+}
+
+ensure_jump() {
+  first_rule=$(iptables -S DOCKER-USER | sed -n '/^-A / { p; q; }')
+  if [ "$first_rule" = "-A DOCKER-USER -j $chain_name" ]; then
+    return
+  fi
+  if iptables -C DOCKER-USER -j "$chain_name" >/dev/null 2>&1; then
+    fail "$chain_name jump exists but is not first in DOCKER-USER"
+  fi
+  iptables -I DOCKER-USER 1 -j "$chain_name"
+}
+
+apply_rules() {
+  mode=$1
+  interface=$2
+  iptables -N "$chain_name" 2>/dev/null || true
+  ensure_jump
+
+  rules_file=$(mktemp "${TMPDIR:-/tmp}/waves-docker-firewall.XXXXXX")
+  trap 'rm -f "$rules_file"' EXIT HUP INT TERM
+  {
+    printf '%s\n' '*filter'
+    printf ':%s - [0:0]\n' "$chain_name"
+    printf -- '-F %s\n' "$chain_name"
+    printf -- '-A %s -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN\n' "$chain_name"
+    printf -- '-A %s -i docker0 -o docker0 -j RETURN\n' "$chain_name"
+    printf -- '-A %s -i br+ -o br+ -j RETURN\n' "$chain_name"
+    printf -- '-A %s -i %s -p udp --dport 9200 -j RETURN\n' "$chain_name" "$tailnet_interface"
+    printf -- '-A %s -i %s -j DROP\n' "$chain_name" "$tailnet_interface"
+    if [ "$mode" = public ]; then
+      printf -- '-A %s -i %s -p udp --dport 9200 -m hashlimit --hashlimit-upto %s --hashlimit-burst %s --hashlimit-mode srcip --hashlimit-name waves_wap_source -m limit --limit %s --limit-burst %s -j RETURN\n' \
+        "$chain_name" "$interface" "$source_rate" "$source_burst" "$public_rate" "$public_burst"
+    fi
+    printf -- '-A %s -i %s -j DROP\n' "$chain_name" "$interface"
+    printf -- '-A %s -o docker0 -j DROP\n' "$chain_name"
+    printf -- '-A %s -o br+ -j DROP\n' "$chain_name"
+    printf -- '-A %s -i docker0 -j DROP\n' "$chain_name"
+    printf -- '-A %s -i br+ -j DROP\n' "$chain_name"
+    printf -- '-A %s -j RETURN\n' "$chain_name"
+    printf '%s\n' 'COMMIT'
+  } >"$rules_file"
+  iptables-restore --noflush <"$rules_file"
+  rm -f "$rules_file"
+  trap - EXIT HUP INT TERM
+}
+
+check_rules() {
+  mode=$1
+  interface=$2
+  first_rule=$(iptables -S DOCKER-USER | sed -n '/^-A / { p; q; }')
+  [ "$first_rule" = "-A DOCKER-USER -j $chain_name" ] || fail "$chain_name is not first in DOCKER-USER"
+  iptables -C "$chain_name" -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN >/dev/null
+  iptables -C "$chain_name" -i "$tailnet_interface" -p udp --dport 9200 -j RETURN >/dev/null
+  iptables -C "$chain_name" -i "$tailnet_interface" -j DROP >/dev/null
+  iptables -C "$chain_name" -i "$interface" -j DROP >/dev/null
+  iptables -C "$chain_name" -o docker0 -j DROP >/dev/null
+  iptables -C "$chain_name" -o br+ -j DROP >/dev/null
+  iptables -C "$chain_name" -i docker0 -j DROP >/dev/null
+  iptables -C "$chain_name" -i br+ -j DROP >/dev/null
+  if [ "$mode" = public ]; then
+    iptables -S "$chain_name" | grep -Eq -- "^-A $chain_name -i $interface -p udp .*--dport 9200 .* -j RETURN$" \
+      || fail 'public UDP 9200 rate-limit rule is missing'
+  elif iptables -S "$chain_name" | grep -Eq -- "^-A $chain_name -i $interface -p udp .*--dport 9200 .* -j RETURN$"; then
+    fail 'sealed mode unexpectedly allows public UDP 9200'
+  fi
+  echo "PASS: Docker forwarding policy is $mode on $interface"
+}
+
+write_mode() {
+  mode=$1
+  install -d -m 0755 "$(dirname "$state_file")"
+  temporary_state=$(mktemp "${TMPDIR:-/tmp}/waves-firewall-state.XXXXXX")
+  trap 'rm -f "$temporary_state"' EXIT HUP INT TERM
+  printf 'WAVES_FIREWALL_MODE=%s\n' "$mode" >"$temporary_state"
+  chmod 0644 "$temporary_state"
+  install -m 0644 "$temporary_state" "$state_file"
+  rm -f "$temporary_state"
+  trap - EXIT HUP INT TERM
+}
+
+usage() {
+  echo 'usage: waves-docker-firewall apply [sealed|public] | check [sealed|public] | set sealed|public' >&2
+  exit 2
+}
+
+require_root
+ensure_prerequisites
+validate_rate "$public_rate" WAVES_WAP_GLOBAL_RATE
+validate_rate "$source_rate" WAVES_WAP_SOURCE_RATE
+validate_positive_integer "$public_burst" WAVES_WAP_GLOBAL_BURST
+validate_positive_integer "$source_burst" WAVES_WAP_SOURCE_BURST
+interface=$(public_interface)
+[ -n "$interface" ] || fail 'could not determine the public interface'
+printf '%s' "$interface" | grep -Eq '^[A-Za-z0-9_.:-]{1,15}$' \
+  || fail 'public interface name contains unsupported characters'
+printf '%s' "$tailnet_interface" | grep -Eq '^[A-Za-z0-9_.:-]{1,15}$' \
+  || fail 'tailnet interface name contains unsupported characters'
+ip link show "$interface" >/dev/null 2>&1 || fail "public interface does not exist: $interface"
+
+command_name=${1:-}
+requested_mode=${2:-}
+case "$command_name" in
+  apply | check)
+    if [ -z "$requested_mode" ]; then
+      requested_mode=$(load_mode)
+    fi
+    case "$requested_mode" in sealed | public) ;; *) usage ;; esac
+    if [ "$command_name" = apply ]; then
+      apply_rules "$requested_mode" "$interface"
+    fi
+    check_rules "$requested_mode" "$interface"
+    ;;
+  set)
+    case "$requested_mode" in sealed | public) ;; *) usage ;; esac
+    write_mode "$requested_mode"
+    apply_rules "$requested_mode" "$interface"
+    check_rules "$requested_mode" "$interface"
+    ;;
+  *) usage ;;
+esac

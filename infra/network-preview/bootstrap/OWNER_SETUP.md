@@ -35,7 +35,8 @@ Current owner selections:
 - send the DigitalOcean billing alert to the owner's primary account email, which is also used for
   Git and GitHub;
 - use the Cloudflare-managed `shrimpworks.dev` zone with exact DNS-only records for
-  `home.shrimpworks.dev`, `forms.shrimpworks.dev`, and `interop.shrimpworks.dev`;
+  `home.wap.shrimpworks.dev`, `forms.wap.shrimpworks.dev`, and
+  `interop.wap.shrimpworks.dev`;
 - use `wap-labs-opentofu-state-shrimpworks` for the private R2 bucket, subject to availability in
   the account;
 - use an owner-local deployment for the initial restricted test host. Keep the shared/public
