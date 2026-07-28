@@ -133,9 +133,19 @@ export class BrowserController {
       wait
     });
     this.timerRuntime = new EngineTimerRuntime({
-      canTick: () => !this.keyboardIntentRouter.isActionInFlight(),
+      canTick: () =>
+        !this.keyboardIntentRouter.isActionInFlight() && !this.navigation.isNavigationInFlight(),
       getRunMode: () => this.runMode,
-      advanceLocal: (deltaMs) => this.hostClient.engineAdvanceTimeMs({ deltaMs }),
+      advanceLocal: async (deltaMs) => {
+        if (this.navigation.isNavigationInFlight()) {
+          return null;
+        }
+        const generation = this.navigation.captureNavigationGeneration();
+        const snapshot = await this.hostClient.engineAdvanceTimeMs({ deltaMs });
+        return this.runMode === 'local' && this.navigation.isCurrentNavigation(generation)
+          ? snapshot
+          : null;
+      },
       advanceNetwork: (deltaMs) => this.navigation.applyEngineTimerTick(deltaMs),
       getSessionState: () => this.presenter.getSessionState(),
       renderLocalSnapshot: async (snapshot) => {
@@ -620,11 +630,24 @@ export class BrowserController {
     };
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
+    if (this.navigation.isNavigationInFlight()) {
+      return;
+    }
+    const startingRunMode = this.runMode;
+    const startingGeneration = this.navigation.captureNavigationGeneration();
     const previousActiveCardId = this.presenter.getSessionState().activeCardId;
     const localFrame =
-      this.runMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
+      startingRunMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
     const snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
-    if (this.runMode === 'local' && localFrame) {
+    if (
+      !snapshot ||
+      this.runMode !== startingRunMode ||
+      !this.navigation.isCurrentNavigation(startingGeneration) ||
+      this.navigation.isNavigationInFlight()
+    ) {
+      return;
+    }
+    if (startingRunMode === 'local' && localFrame) {
       this.applyFrame(localFrame, snapshot);
       this.syncLocalSessionFromSnapshot(snapshot);
       this.noteLocalForwardNavigation(previousActiveCardId, snapshot.activeCardId);
@@ -648,22 +671,37 @@ export class BrowserController {
   }
 
   private async navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'> {
+    const startingRunMode = this.runMode;
     const endNavigationProgress = this.presenter.beginNavigationProgress();
     try {
-      if (this.runMode === 'local') {
-        const frame = await this.hostClient.engineNavigateBackFrame();
-        const after = frame.snapshot;
-        if (!after.lastBackNavigationHandled) {
-          // Definitive ground truth: the engine's nav stack was already empty.
-          this.localBackAvailable = false;
-          return 'none';
+      if (startingRunMode === 'local') {
+        const generation = this.navigation.beginNavigationOperation();
+        try {
+          const frame = await this.hostClient.engineNavigateBackFrame();
+          if (
+            this.runMode !== startingRunMode ||
+            !this.navigation.isCurrentNavigation(generation)
+          ) {
+            return 'none';
+          }
+          const after = frame.snapshot;
+          if (!after.lastBackNavigationHandled) {
+            // Definitive ground truth: the engine's nav stack was already empty.
+            this.localBackAvailable = false;
+            return 'none';
+          }
+          this.applyFrame(frame);
+          this.syncLocalSessionFromSnapshot(after);
+          return 'engine';
+        } finally {
+          this.navigation.finishNavigationOperation(generation);
         }
-        this.applyFrame(frame);
-        this.syncLocalSessionFromSnapshot(after);
-        return 'engine';
       }
 
       const mode = await this.navigation.navigateBackWithFallback();
+      if (this.runMode !== startingRunMode) {
+        return 'none';
+      }
       const state = this.navigation.getSessionState();
       const resolvedUrl = state.finalUrl ?? state.requestedUrl;
       if (resolvedUrl) {
@@ -684,11 +722,19 @@ export class BrowserController {
     requestPolicy?: FetchRequestPolicy,
     headers?: Record<string, string>
   ): Promise<EngineRuntimeSnapshot | null> {
-    if (this.runMode === 'local') {
+    const startingRunMode = this.runMode;
+    const startingGeneration = this.navigation.captureNavigationGeneration();
+    if (startingRunMode === 'local') {
       await this.loadSelectedLocalDeck();
       return null;
     }
     await this.setViewportCols();
+    if (
+      this.runMode !== startingRunMode ||
+      !this.navigation.isCurrentNavigation(startingGeneration)
+    ) {
+      return null;
+    }
     const requestedUrl = url.trim();
     const endNavigationProgress = this.presenter.beginNavigationProgress();
     if (source === 'user') {
@@ -700,7 +746,7 @@ export class BrowserController {
     }
 
     try {
-      const snapshot = await this.navigation.loadTransportUrl({
+      const loadPromise = this.navigation.loadTransportUrl({
         url: requestedUrl,
         source,
         followExternalIntent,
@@ -708,6 +754,14 @@ export class BrowserController {
         requestPolicy,
         headers
       });
+      const navigationGeneration = this.navigation.captureNavigationGeneration();
+      const snapshot = await loadPromise;
+      if (
+        this.runMode !== startingRunMode ||
+        !this.navigation.isCurrentNavigation(navigationGeneration)
+      ) {
+        return null;
+      }
       if (snapshot) {
         this.timerRuntime.resetScriptTimers();
         this.timerRuntime.applySnapshot(snapshot);

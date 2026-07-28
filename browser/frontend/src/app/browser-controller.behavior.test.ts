@@ -415,6 +415,95 @@ describe('BrowserController behavior coverage', () => {
     expect(hostClient.engineAdvanceTimeMs).toHaveBeenCalledTimes(1);
   });
 
+  it('does not tick the network engine while a transport navigation is in flight', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    await flushAsyncWork();
+    vi.mocked(hostClient.engineAdvanceTimeMs).mockClear();
+
+    let resolveFetch: ((response: FetchResponse) => void) | undefined;
+    vi.mocked(hostClient.fetchDeck).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFetch = resolve;
+        })
+    );
+    refs.fetchUrlInput.value = 'http://example.test/pending.wml';
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    await controllerPrivates(controller).tickEngineTimerRuntime();
+    expect(hostClient.engineAdvanceTimeMs).not.toHaveBeenCalled();
+
+    resolveFetch?.({
+      ok: true,
+      status: 200,
+      finalUrl: 'http://example.test/pending.wml',
+      contentType: 'text/vnd.wap.wml',
+      wml: '<wml><card id="pending"><p>ok</p></card></wml>',
+      timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+      engineDeckInput: {
+        wmlXml: '<wml><card id="pending"><p>ok</p></card></wml>',
+        baseUrl: 'http://example.test/pending.wml',
+        contentType: 'text/vnd.wap.wml'
+      }
+    });
+    await flushAsyncWork();
+  });
+
+  it('discards an engine key result after its starting run mode changes', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    await flushAsyncWork();
+
+    let resolveKey: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineHandleKeyFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveKey = resolve;
+        })
+    );
+    const applyTimerSnapshot = vi.spyOn(
+      controllerPrivates(controller).timerRuntime,
+      'applySnapshot'
+    );
+    const pendingKey = controllerPrivates(controller).applyEngineKey('up');
+    await Promise.resolve();
+    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
+
+    await controllerPrivates(controller).setRunMode('local', { loadLocalOnEnter: false });
+    const activeCardBeforeCompletion = presenter.getSessionState().activeCardId;
+    applyTimerSnapshot.mockClear();
+    resolveKey?.(
+      frame({
+        activeCardId: 'stale-key',
+        externalNavigationIntent: 'http://example.test/stale-intent.wml'
+      })
+    );
+    await pendingKey;
+
+    expect(presenter.getSessionState()).toMatchObject({
+      runMode: 'local',
+      activeCardId: activeCardBeforeCompletion
+    });
+    expect(presenter.getSnapshot()?.activeCardId).not.toBe('stale-key');
+    expect(refs.fetchUrlInput.value).not.toBe('http://example.test/stale-intent.wml');
+    expect(applyTimerSnapshot).not.toHaveBeenCalled();
+  });
+
   it('clears the frozen skeleton placeholder when the very first deck load fails', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

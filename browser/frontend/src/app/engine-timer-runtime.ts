@@ -7,8 +7,8 @@ import { WAVES_CONFIG } from './waves-config';
 export interface EngineTimerRuntimeDependencies {
   canTick(): boolean;
   getRunMode(): 'local' | 'network';
-  advanceLocal(deltaMs: number): Promise<EngineRuntimeSnapshot>;
-  advanceNetwork(deltaMs: number): Promise<EngineRuntimeSnapshot>;
+  advanceLocal(deltaMs: number): Promise<EngineRuntimeSnapshot | null>;
+  advanceNetwork(deltaMs: number): Promise<EngineRuntimeSnapshot | null>;
   getSessionState(): HostSessionState;
   renderLocalSnapshot(snapshot: EngineRuntimeSnapshot): Promise<void>;
   handleExternalIntent(intentUrl: string, snapshot: EngineRuntimeSnapshot): Promise<void>;
@@ -82,6 +82,9 @@ export class EngineTimerRuntime {
         this.deps.getRunMode() === 'local'
           ? await this.deps.advanceLocal(deltaMs)
           : await this.deps.advanceNetwork(deltaMs);
+      if (!snapshot) {
+        return;
+      }
       if (
         this.deps.getRunMode() === 'local' &&
         shouldRenderTimerSnapshot(snapshot, this.deps.getSessionState())

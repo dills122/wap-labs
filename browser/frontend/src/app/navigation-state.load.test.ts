@@ -563,9 +563,17 @@ describe('navigation-state load behavior', () => {
     );
 
     const timed = await machine.applyEngineTimerTick(50);
+    expect(timed).not.toBeNull();
+    if (!timed) {
+      throw new Error('expected a timer snapshot');
+    }
     expect(timed.activeCardId).toBe('timed');
 
     const done = await machine.applyEngineTimerTick(100);
+    expect(done).not.toBeNull();
+    if (!done) {
+      throw new Error('expected a timer snapshot');
+    }
     expect(done.activeCardId).toBe('done');
   });
 

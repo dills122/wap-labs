@@ -1,4 +1,5 @@
 import type { BrowserController, RunMode } from './browser-controller';
+import type { EngineKey } from '../../../contracts/engine';
 import type { EngineTimerRuntime } from './engine-timer-runtime';
 import type { KeyboardIntentRouter } from './keyboard-intent-router';
 
@@ -9,6 +10,7 @@ import type { KeyboardIntentRouter } from './keyboard-intent-router';
  */
 interface BrowserControllerPrivates {
   setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void>;
+  applyEngineKey(key: EngineKey): Promise<void>;
   tickEngineTimerRuntime(): Promise<void>;
   readonly timerRuntime: EngineTimerRuntime;
   readonly keyboardIntentRouter: Omit<KeyboardIntentRouter, 'actionQueue'> & {
