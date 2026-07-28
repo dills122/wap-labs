@@ -291,3 +291,42 @@ fn apply_ua_capability_headers(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn resolve_fetch_destination_addresses_rejects_a_public_looking_host_that_resolves_private() {
+        // A DNS-rebinding-style resolved answer: the host is an IP literal
+        // here only to keep the test deterministic and offline (per
+        // docs/agents/RUST_TRANSPORT_STEERING.md's no-external-network-in-
+        // default-tests rule) -- `to_socket_addrs` on an IP literal doesn't
+        // touch the network. `resolve_fetch_destination_addresses` classifies
+        // whatever address the lookup actually returns, exactly as it would
+        // for a hostname a DNS answer rebound to a private address.
+        let error = resolve_fetch_destination_addresses(
+            "10.0.0.1",
+            80,
+            &FetchDestinationPolicy::PublicOnly,
+        )
+        .expect_err("a resolved private address must be rejected under PublicOnly");
+
+        assert!(error.is_policy_blocked());
+        assert_eq!(
+            error,
+            FetchDestinationError::blocked_resolved_address(DestinationHostClass::Private)
+        );
+    }
+
+    #[test]
+    fn resolve_fetch_destination_addresses_allows_private_answer_under_allow_private() {
+        let addresses = resolve_fetch_destination_addresses(
+            "10.0.0.1",
+            80,
+            &FetchDestinationPolicy::AllowPrivate,
+        )
+        .expect("AllowPrivate must retain its documented behavior");
+        assert_eq!(addresses, vec![SocketAddr::from(([10, 0, 0, 1], 80))]);
+    }
+}

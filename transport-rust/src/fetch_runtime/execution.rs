@@ -72,7 +72,16 @@ fn http_client_builder(
     destination_policy: FetchDestinationPolicy,
 ) -> ClientBuilder {
     let redirect_destination_policy = destination_policy.clone();
-    Client::builder()
+    // reqwest enables system-proxy discovery (HTTP_PROXY/HTTPS_PROXY/etc.) by
+    // default. When a proxy is in play, the proxy resolves the target host,
+    // not PolicyDnsResolver below -- so a PublicOnly request to a
+    // public-looking hostname can be silently routed to a private/loopback
+    // address via ambient proxy configuration, bypassing the destination
+    // check entirely. AllowPrivate (explicit dev/smoke opt-in, and the
+    // operator-configured gateway-bridged WAP upstream) has no destination
+    // check to bypass, so it's left alone.
+    let disable_implicit_proxy = matches!(destination_policy, FetchDestinationPolicy::PublicOnly);
+    let mut builder = Client::builder()
         .timeout(Duration::from_millis(timeout_ms))
         .dns_resolver(Arc::new(PolicyDnsResolver { destination_policy }))
         .redirect(Policy::custom(move |attempt| {
@@ -83,7 +92,11 @@ fn http_client_builder(
                 Ok(()) => attempt.follow(),
                 Err(error) => attempt.error(DestinationPolicyError(error)),
             }
-        }))
+        }));
+    if disable_implicit_proxy {
+        builder = builder.no_proxy();
+    }
+    builder
 }
 
 pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
@@ -286,6 +299,7 @@ fn destination_policy_error(error: &reqwest::Error) -> Option<FetchDestinationEr
 mod tests {
     use super::*;
     use crate::fetch_policy::DestinationHostClass;
+    use crate::test_support::with_env_var_locked;
     use std::io::{Read, Write};
     use std::net::TcpListener;
     use std::thread;
@@ -314,7 +328,6 @@ mod tests {
     #[test]
     fn http_client_rejects_private_dns_answer() {
         let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
-            .no_proxy()
             .build()
             .expect("build DNS policy test client");
         let error = client
@@ -351,7 +364,6 @@ mod tests {
         });
 
         let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
-            .no_proxy()
             .resolve("public.test", listener_address)
             .build()
             .expect("build redirect test client");
@@ -375,5 +387,89 @@ mod tests {
         let message = policy_error.to_string();
         assert!(message.contains("public-only"));
         assert!(message.contains("loopback"));
+    }
+
+    #[test]
+    fn public_only_client_ignores_ambient_system_proxy_env_vars() {
+        // reqwest enables system-proxy discovery by default: if HTTP_PROXY
+        // were honored here, the request below would be routed to
+        // `fake_proxy` (which resolves the destination itself, bypassing
+        // PolicyDnsResolver) instead of connecting directly to
+        // `direct_server`. Bound both sides so a regression fails fast
+        // instead of hanging: the client's own 1s timeout bounds the
+        // request, and `direct_server`'s accept loop is bounded to slightly
+        // longer than that.
+        let direct_listener = TcpListener::bind("127.0.0.1:0").expect("bind direct test server");
+        let direct_address = direct_listener
+            .local_addr()
+            .expect("read direct server address");
+        let direct_server = thread::spawn(move || -> bool {
+            direct_listener
+                .set_nonblocking(true)
+                .expect("direct listener should support nonblocking mode");
+            let deadline = Instant::now() + Duration::from_millis(1_500);
+            loop {
+                match direct_listener.accept() {
+                    Ok((mut stream, _)) => {
+                        stream
+                            .set_nonblocking(false)
+                            .expect("accepted stream should support blocking mode");
+                        read_http_request_headers(&mut stream);
+                        stream
+                            .write_all(
+                                b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
+                            )
+                            .expect("write direct response");
+                        return true;
+                    }
+                    Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                        if Instant::now() >= deadline {
+                            return false;
+                        }
+                        thread::sleep(Duration::from_millis(10));
+                    }
+                    Err(error) => panic!("unexpected direct listener error: {error}"),
+                }
+            }
+        });
+
+        let fake_proxy = TcpListener::bind("127.0.0.1:0").expect("bind fake proxy listener");
+        let fake_proxy_address = fake_proxy.local_addr().expect("read fake proxy address");
+        fake_proxy
+            .set_nonblocking(true)
+            .expect("fake proxy listener should support nonblocking mode");
+
+        let response = with_env_var_locked(
+            "HTTP_PROXY",
+            &format!("http://{fake_proxy_address}"),
+            || {
+                let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+                    .resolve("public.test", direct_address)
+                    .build()
+                    .expect("build proxy-env test client");
+                client
+                    .get(format!("http://public.test:{}/", direct_address.port()))
+                    .send()
+            },
+        );
+
+        let reached_direct_server = direct_server
+            .join()
+            .expect("direct server thread should not panic");
+
+        match fake_proxy.accept() {
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {}
+            Ok(_) => panic!(
+                "PublicOnly client must not route through the ambient HTTP_PROXY environment variable"
+            ),
+            Err(error) => panic!("unexpected fake proxy listener error: {error}"),
+        }
+
+        assert!(
+            reached_direct_server,
+            "PublicOnly client must reach the destination directly, not through the ambient proxy"
+        );
+        let response = response.expect("direct request should succeed");
+        assert_eq!(response.status(), 200);
     }
 }

@@ -486,7 +486,7 @@ mod tests {
     use crate::fetch_policy::DestinationHostClass;
     use crate::network::wdp::transport_trait::WdpResult;
     use crate::network::wsp::connectionless::{decode_uintvar, encode_uintvar};
-    use std::sync::{Mutex, OnceLock};
+    use crate::test_support::{with_env_removed_locked, with_env_var_locked};
 
     #[test]
     fn unprotected_waps_warning_payload_flags_waps_scheme() {
@@ -516,35 +516,6 @@ mod tests {
         fn receive(&mut self) -> WdpResult<WdpDatagram> {
             self.next_receive.clone()
         }
-    }
-
-    fn env_lock() -> &'static Mutex<()> {
-        static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
-        LOCK.get_or_init(|| Mutex::new(()))
-    }
-
-    fn with_env_var_locked<T>(name: &str, value: &str, f: impl FnOnce() -> T) -> T {
-        let _guard = env_lock().lock().expect("env lock should succeed");
-        let previous = std::env::var(name).ok();
-        std::env::set_var(name, value);
-        let out = f();
-        if let Some(previous) = previous {
-            std::env::set_var(name, previous);
-        } else {
-            std::env::remove_var(name);
-        }
-        out
-    }
-
-    fn with_env_removed_locked<T>(name: &str, f: impl FnOnce() -> T) -> T {
-        let _guard = env_lock().lock().expect("env lock should succeed");
-        let previous = std::env::var(name).ok();
-        std::env::remove_var(name);
-        let out = f();
-        if let Some(previous) = previous {
-            std::env::set_var(name, previous);
-        }
-        out
     }
 
     fn detail_string(response: &FetchDeckResponse, key: &str) -> Option<String> {
