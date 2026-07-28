@@ -108,6 +108,9 @@ test('release installation verifies provenance and reseals before restarting ser
   assert.match(installer, /docker image save --output "\$verification_archive" "\$image"/);
   assert.match(installer, /saved \$label image does not reference the release config digest/);
   assert.match(installer, /loaded \$label image is not Linux AMD64/);
+  assert.match(installer, /chown 10001:10001 "\$secret_path"/);
+  assert.match(installer, /chmod 0400 "\$secret_path"/);
+  assert.match(installer, /docker compose --project-name waves-network-preview --env-file manifest.env/);
   const sealIndex = installer.indexOf('waves-docker-firewall set sealed');
   const restartIndex = installer.indexOf('systemctl restart waves-network-preview.service');
   assert.ok(sealIndex >= 0 && restartIndex > sealIndex);

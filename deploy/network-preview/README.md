@@ -12,8 +12,8 @@ development fixture:
 
 - only UDP 9200 is published by Docker;
 - Kannel administration and wapbox ports stay inside its container and accept loopback only;
-- Kannel passwords are random host files mounted as Compose secrets, never image layers or
-  environment variables;
+- Kannel passwords are random host files owned by the fixed Kannel UID with mode `0400`, mounted
+  as Compose secrets, and never placed in image layers or environment variables;
 - both containers run as fixed non-root users with read-only root filesystems, all Linux
   capabilities dropped, `no-new-privileges`, PID/memory/CPU ceilings, bounded logs, and health
   checks;
@@ -61,7 +61,8 @@ The installer then generates host-local 256-bit Kannel secrets when absent, inst
 firewall and systemd units,
 forces firewall mode to `sealed`, starts the containers, and waits for their health checks. A
 failed start restores the prior release when one exists. The archive is removed from `/tmp` after
-success.
+success. With no prior release, a failed start explicitly removes the failed stateless containers
+and networks while leaving ingress sealed.
 
 Private validation can use the Tailnet-only hostname with the test client's private-destination
 policy:
