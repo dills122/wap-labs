@@ -51,6 +51,21 @@ describe('mountBrowserShell', () => {
     expect(phaseBarSlot?.hasAttribute('hidden')).toBe(true);
   });
 
+  it('uses the native window as the only application frame', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const shell = document.querySelector<HTMLElement>('.browser-shell');
+    const chrome = document.querySelector<HTMLElement>('.browser-chrome');
+
+    expect(shell?.dataset.hostPresentation).toBe('native');
+    expect(shell?.classList.contains('card')).toBe(false);
+    expect(shell?.classList.contains('wv-shell-window')).toBe(false);
+    expect(chrome?.classList.contains('card-header')).toBe(false);
+    expect(document.querySelector('.wv95-btn')).toBeNull();
+    expect(document.querySelector('.form-95')).toBeNull();
+  });
+
   it('opens the utility rail by default at normal window widths', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');

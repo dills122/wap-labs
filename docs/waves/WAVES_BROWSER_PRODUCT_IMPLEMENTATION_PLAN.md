@@ -148,6 +148,37 @@ Accept:
 - host high-contrast and reduced-motion modes remain legible
 - colors and motion are defined through shared semantic tokens
 
+### WBP-02A Native host-chrome default
+
+- `Lane`: A, additive presentation follow-up
+- `Status`: done
+- `Depends On`: completed `WBP-01`, completed `WBP-02`
+- `Likely Files`:
+
+- browser shell leaf templates and shared host styles
+- lightweight host panel primitives
+- Tauri window background metadata
+- shell and rendered-accessibility tests
+
+Build:
+
+- make the native Tauri title bar the only application-window frame
+- remove the vendored Win95 stylesheet and faux-window/control classes from the default cascade
+  while retaining the vendor material for a possible later optional treatment
+- use compact system typography and restrained platform-like surfaces for host chrome
+- preserve the neutral Class C handset housing, deterministic LCD typography, inverse-video WML
+  focus, IDs, bindings, tab order, and current adapter controls
+
+Accept:
+
+- address/source/route/profile chrome reads as desktop browser chrome, not as a second desktop
+  window
+- handset and LCD remain primary while utility, status, help, and developer surfaces are quieter
+- default/minimum windows, 200 percent zoom, collapsed utility rail, focus visibility, 24 CSS-pixel
+  targets, reduced motion, landmarks, live announcements, and horizontal reflow remain covered
+- no frame/input, navigation, route, transport, or engine semantics change; dynamic affordances
+  remain `WBP-06` scope
+
 ### WBP-03 Navigation-toolbar information architecture
 
 - `Lane`: A
@@ -546,3 +577,7 @@ and merge sequence. `WBP-06` is ready for a separately authorized activation tas
 inactive in this lane. That future task starts with one F0 contract owner and `F0-01`; `F0-02` and
 `F0-03` follow their declared dependencies without renaming or folding debug DTOs into frame/input
 types.
+
+`WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It does not reopen
+the completed `WBP-01`/`WBP-02` history or activate `WBP-06`; it only changes the default host
+presentation and its evidence.

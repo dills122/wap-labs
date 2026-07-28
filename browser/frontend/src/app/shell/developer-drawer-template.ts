@@ -6,27 +6,27 @@ export const developerDrawerTemplate = () => `
       <summary id="dev-drawer-toggle">${WAVES_COPY.shell.developerTools}</summary>
       <div class="panel-body">
         <div class="actions">
-          <button id="btn-health" class="btn wv95-btn">${WAVES_COPY.shell.health}</button>
-          <button id="btn-render" class="btn wv95-btn">${WAVES_COPY.shell.render}</button>
-          <button id="btn-snapshot" class="btn wv95-btn">${WAVES_COPY.shell.snapshot}</button>
-          <button id="btn-clear-intent" class="btn wv95-btn">${WAVES_COPY.shell.clearExternalIntent}</button>
-          <button id="btn-export-timeline" class="btn wv95-btn">${WAVES_COPY.shell.exportTimeline}</button>
-          <button id="btn-clear-timeline" class="btn wv95-btn">${WAVES_COPY.shell.clearTimeline}</button>
+          <button id="btn-health" class="btn">${WAVES_COPY.shell.health}</button>
+          <button id="btn-render" class="btn">${WAVES_COPY.shell.render}</button>
+          <button id="btn-snapshot" class="btn">${WAVES_COPY.shell.snapshot}</button>
+          <button id="btn-clear-intent" class="btn">${WAVES_COPY.shell.clearExternalIntent}</button>
+          <button id="btn-export-timeline" class="btn">${WAVES_COPY.shell.exportTimeline}</button>
+          <button id="btn-clear-timeline" class="btn">${WAVES_COPY.shell.clearTimeline}</button>
         </div>
         <details id="debug-raw-mode" class="debug-raw-mode">
           <summary id="debug-raw-mode-toggle">${WAVES_COPY.shell.rawWmlPaste}</summary>
           <div class="debug-raw-mode-content">
             <label class="compact-field">
               ${WAVES_COPY.shell.baseUrl}
-              <input id="base-url" class="form-95" type="text" value="" />
+              <input id="base-url" class="host-control" type="text" value="" />
             </label>
             <textarea
               id="wml-input"
-              class="form-95"
+              class="host-control"
               aria-label="${WAVES_COPY.shell.rawWmlPaste}"
             ></textarea>
             <div class="actions">
-              <button id="btn-load-context" class="btn wv95-btn">${WAVES_COPY.shell.loadRawWml}</button>
+              <button id="btn-load-context" class="btn">${WAVES_COPY.shell.loadRawWml}</button>
             </div>
           </div>
         </details>

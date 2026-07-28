@@ -13,9 +13,8 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status {
-      border: 2px solid var(--panel-border-mid);
-      border-top-color: var(--panel-border-dark);
-      border-left-color: var(--panel-border-dark);
+      border: 1px solid var(--panel-border-mid);
+      border-radius: 5px;
       padding: 8px;
       font-size: 13px;
       min-height: 44px;
