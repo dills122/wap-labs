@@ -50,7 +50,7 @@ export class FocusedControlEditController {
     key: string
   ): Promise<ControlEditDisposition> {
     let snapshot = initialSnapshot;
-    if (!snapshot.focusedInputEditName && key.length === 1) {
+    if (!snapshot.focusedInputEditName && (key.length === 1 || key === 'Backspace')) {
       snapshot = (await this.host.beginFocusedInputEdit()).snapshot;
     }
     if (!snapshot.focusedInputEditName) {
@@ -69,7 +69,6 @@ export class FocusedControlEditController {
         key,
         handled: false,
         focusedInputEditName: snapshot.focusedInputEditName ?? null,
-        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
         focusedLinkIndex: snapshot.focusedLinkIndex,
         phase: 'defer-to-engine'
       });
@@ -92,7 +91,6 @@ export class FocusedControlEditController {
         key,
         handled: false,
         focusedInputEditName: snapshot.focusedInputEditName ?? null,
-        focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
         focusedLinkIndex: snapshot.focusedLinkIndex
       });
       return 'unhandled';
@@ -104,7 +102,6 @@ export class FocusedControlEditController {
       key,
       handled: true,
       focusedInputEditName: snapshot.focusedInputEditName ?? null,
-      focusedInputEditValue: snapshot.focusedInputEditValue ?? null,
       focusedLinkIndex: snapshot.focusedLinkIndex
     });
     return 'handled';
