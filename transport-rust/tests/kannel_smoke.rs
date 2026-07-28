@@ -75,6 +75,24 @@ fn kannel_wap_home_smoke_normalizes_expected_root_deck() {
 
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
+fn kannel_wap_static_example_smoke_normalizes_expected_deck() {
+    let target = std::env::var("WAP_SMOKE_EXAMPLE_URL")
+        .unwrap_or_else(|_| "wap://localhost/examples/index.wml".to_string());
+    let response = fetch_ok_response(&target);
+    assert_engine_input_contains(
+        &response,
+        &target,
+        &[
+            "card id=\"welcome\"",
+            "title=\"Static Demo\"",
+            "This is a static WML sample deck.",
+            "href=\"#nav\"",
+        ],
+    );
+}
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
 fn kannel_wap_multi_deck_smoke_fetches_root_and_login_decks() {
     let root_url =
         std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string());

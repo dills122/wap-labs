@@ -141,10 +141,7 @@ const run = async () => {
   const capabilities = new Capabilities();
   capabilities.set('tauri:options', { application: appBinary });
   capabilities.setBrowserName('wry');
-  driver = await new Builder()
-    .withCapabilities(capabilities)
-    .usingServer(driverUrl.href)
-    .build();
+  driver = await new Builder().withCapabilities(capabilities).usingServer(driverUrl.href).build();
 
   const body = await driver.wait(until.elementLocated(By.css('body')), timeoutMs);
   await driver.wait(async () => {
@@ -167,15 +164,34 @@ const run = async () => {
   await driver.findElement(By.css('#btn-enter')).click();
   const menuViewport = await waitForText('#viewport', '1. Login');
   assert.match(await menuViewport.getText(), /2\. Register/);
-  recordAssertion('visible card navigation', 'Select navigated the native engine from home to menu');
+  recordAssertion(
+    'visible card navigation',
+    'Select navigated the native engine from home to menu'
+  );
   await capture('03-menu-navigation');
+
+  for (let index = 0; index < 3; index += 1) {
+    await driver.findElement(By.css('#btn-down')).click();
+  }
+  await driver.findElement(By.css('#btn-enter')).click();
+  const staticExampleViewport = await waitForText('#viewport', 'This is a static WML sample deck.');
+  assert.match(await staticExampleViewport.getText(), /Open Navigation/);
+  assert.match(
+    await driver.findElement(By.css('#fetch-url')).getAttribute('value'),
+    /\/examples\/index\.wml$/
+  );
+  recordAssertion(
+    'static example navigation',
+    'menu option 4 loaded and rendered the gateway-compiled WML 1.3 static deck'
+  );
+  await capture('04-static-example');
 
   await replaceInput('#fetch-url', 'not a url');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const toast = await waitForText('#toast', 'Fetch failed:');
   assert.match(await toast.getText(), /INVALID_REQUEST|invalid|URL/i);
   recordAssertion('deterministic failure', 'invalid URL surfaced a visible Fetch failed message');
-  await capture('04-invalid-url-failure');
+  await capture('05-invalid-url-failure');
 
   await replaceInput('#fetch-url', 'wap://localhost/');
   await driver.findElement(By.css('#btn-fetch-url')).click();
@@ -183,7 +199,7 @@ const run = async () => {
   assert.match(await recoveredViewport.getText(), /environment\./);
   assert.match(await recoveredViewport.getText(), /Open Menu/);
   recordAssertion('failure recovery', 'a subsequent native Kannel load restored the home deck');
-  await capture('05-recovered-home');
+  await capture('06-recovered-home');
 
   await writeFile(path.join(artifactDir, 'page-source.html'), await driver.getPageSource());
   await writeFile(
@@ -196,7 +212,7 @@ const run = async () => {
 try {
   await run();
 } catch (error) {
-  const message = error instanceof Error ? error.stack ?? error.message : String(error);
+  const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
   process.stderr.write(`native-tauri-kannel-e2e: FAIL\n${message}\n`);
   if (driver) {
     await capture('failure').catch(() => undefined);

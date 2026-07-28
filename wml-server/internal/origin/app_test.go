@@ -381,6 +381,27 @@ func TestExamplesAndClosedRoutes(t *testing.T) {
 	}
 }
 
+func TestExamplesUseConfiguredDTDVersion(t *testing.T) {
+	for _, version := range []string{"1.1", "1.2", "1.3"} {
+		t.Run(version, func(t *testing.T) {
+			app, _ := newTestApp(t, func(config *Config) { config.DTDVersion = version })
+			for _, file := range []string{"index.wml", "login.wml", "register.wml"} {
+				response := perform(app.Handler(), http.MethodGet, "/examples/"+file, "", "")
+				if response.Code != http.StatusOK {
+					t.Fatalf("GET /examples/%s = %d", file, response.Code)
+				}
+				body := response.Body.String()
+				if !strings.Contains(body, `-//WAPFORUM//DTD WML `+version+`//EN`) {
+					t.Errorf("example %s public identifier does not use WML %s: %s", file, version, body)
+				}
+				if !strings.Contains(body, `http://www.wapforum.org/DTD/wml_`+version+`.xml`) {
+					t.Errorf("example %s system identifier does not use WML %s: %s", file, version, body)
+				}
+			}
+		})
+	}
+}
+
 func TestInternalHealthMetricsAndRedactedLogs(t *testing.T) {
 	var logOutput bytes.Buffer
 	app, _ := newTestApp(t, func(config *Config) {

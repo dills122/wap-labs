@@ -9,6 +9,7 @@ WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
 WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
 WAP_SMOKE_REGISTER_URL="${WAP_SMOKE_REGISTER_URL:-wap://localhost/register}"
+WAP_SMOKE_EXAMPLE_URL="${WAP_SMOKE_EXAMPLE_URL:-wap://localhost/examples/index.wml}"
 WAP_SMOKE_DENIED_URL="${WAP_SMOKE_DENIED_URL:-wap://127.0.0.1:9200/}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
@@ -102,7 +103,7 @@ fi
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_EXAMPLE_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
     cargo test --test kannel_smoke -- --ignored --test-threads=1
 )
