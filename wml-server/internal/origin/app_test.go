@@ -215,16 +215,62 @@ func TestLoginRejectsUnknownUserAndWrongPIN(t *testing.T) {
 		t.Fatalf("register = %d %s", register.Code, register.Body.String())
 	}
 
-	for name, body := range map[string]string{
-		"unknown user": "username=nobody&pin=1234",
-		"wrong pin":    "username=demo&pin=9999",
-		"shorter pin":  "username=demo&pin=123",
-		"longer pin":   "username=demo&pin=12345",
-	} {
-		t.Run(name, func(t *testing.T) {
-			response := perform(handler, http.MethodPost, "/login", body, "application/x-www-form-urlencoded")
+	tests := []struct {
+		name string
+		body string
+	}{
+		{"unknown user", "username=nobody&pin=1234"},
+		{"wrong pin", "username=demo&pin=9999"},
+		{"shorter pin", "username=demo&pin=123"},
+		{"longer pin", "username=demo&pin=12345"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			response := perform(handler, http.MethodPost, "/login", test.body, "application/x-www-form-urlencoded")
 			if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Invalid username or PIN") {
-				t.Fatalf("login(%s) = %d %s", body, response.Code, response.Body.String())
+				t.Fatalf("login case %q = %d %s", test.name, response.Code, response.Body.String())
+			}
+		})
+	}
+
+	if got := app.counts.loginFailure.Load(); got != uint64(len(tests)) {
+		t.Fatalf("login failure count = %d, want %d", got, len(tests))
+	}
+	if got := app.counts.loginSuccess.Load(); got != 0 {
+		t.Fatalf("login success count after failures = %d, want 0", got)
+	}
+
+	response := perform(handler, http.MethodPost, "/login", "username=demo&pin=1234", "application/x-www-form-urlencoded")
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), `id="login-ok"`) {
+		t.Fatalf("valid login = %d %s", response.Code, response.Body.String())
+	}
+	if got := app.counts.loginFailure.Load(); got != uint64(len(tests)) {
+		t.Fatalf("login failure count after success = %d, want %d", got, len(tests))
+	}
+	if got := app.counts.loginSuccess.Load(); got != 1 {
+		t.Fatalf("login success count = %d, want 1", got)
+	}
+}
+
+func TestConstantTimePINCompare(t *testing.T) {
+	tests := []struct {
+		name      string
+		stored    string
+		submitted string
+		want      int
+	}{
+		{"four-byte match", "1234", "1234", 1},
+		{"six-byte match", "123456", "123456", 1},
+		{"different content", "1234", "4321", 0},
+		{"shorter submission", "1234", "123", 0},
+		{"longer submission", "1234", "12345", 0},
+		{"embedded padding byte", "1234", "1234\x00", 0},
+		{"unknown account value", "", "1234", 0},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := constantTimePINCompare(test.stored, test.submitted); got != test.want {
+				t.Fatalf("constantTimePINCompare() = %d, want %d", got, test.want)
 			}
 		})
 	}
