@@ -174,8 +174,11 @@ const run = async () => {
     await driver.findElement(By.css('#btn-down')).click();
   }
   await driver.findElement(By.css('#btn-enter')).click();
-  const staticExampleViewport = await waitForText('#viewport', 'This is a static WML sample deck.');
-  assert.match(await staticExampleViewport.getText(), /Open Navigation/);
+  const staticExampleViewport = await waitForText('#viewport', 'Open Navigation');
+  assert.match(
+    (await staticExampleViewport.getText()).replace(/\s+/g, ' '),
+    /This is a static WML sample deck\./
+  );
   assert.match(
     await driver.findElement(By.css('#fetch-url')).getAttribute('value'),
     /\/examples\/index\.wml$/

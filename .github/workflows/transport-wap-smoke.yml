@@ -108,6 +108,7 @@ jobs:
           WAP_SMOKE_URL: wap://127.0.0.1/
           WAP_SMOKE_LOGIN_URL: wap://127.0.0.1/login
           WAP_SMOKE_REGISTER_URL: wap://127.0.0.1/register
+          WAP_SMOKE_EXAMPLE_URL: wap://127.0.0.1/examples/index.wml
           WAP_SMOKE_DENIED_URL: wap://127.0.0.1:9200/
         run: |
           test "$(docker compose -f deploy/network-preview/compose.yaml port --protocol udp wap-gateway 9200 | wc -l)" -eq 1
