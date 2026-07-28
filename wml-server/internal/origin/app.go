@@ -40,6 +40,7 @@ var (
 	validPIN         = regexp.MustCompile(`^[0-9]{4,6}$`)
 	validSessionID   = regexp.MustCompile(`^[a-f0-9]{16}$`)
 	validExampleName = regexp.MustCompile(`^[a-zA-Z0-9._-]+\.wml$`)
+	exampleDTD       = regexp.MustCompile(`<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML (1\.[123])//EN" "http://www\.wapforum\.org/DTD/wml_(1\.[123])\.xml">`)
 	validDTDs        = map[string]bool{"1.1": true, "1.2": true, "1.3": true}
 )
 
@@ -448,9 +449,31 @@ func (a *App) example(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
+	body, err = configureExampleDTD(body, a.dtdVersion)
+	if err != nil {
+		a.logger.Error("invalid embedded example", "file", fileName, "error", err)
+		a.sendWML(w,
+			`<card id="error" title="Error"><p>Unable to load `+xmlEscape(fileName)+`</p><do type="prev" label="Back"><prev/></do></card>`,
+			http.StatusInternalServerError,
+		)
+		return
+	}
 	setWMLHeaders(w.Header())
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(body)
+}
+
+func configureExampleDTD(body []byte, version string) ([]byte, error) {
+	matches := exampleDTD.FindAllStringSubmatch(string(body), 2)
+	if len(matches) != 1 || len(matches[0]) != 3 || matches[0][1] != matches[0][2] {
+		return nil, errors.New("example must contain exactly one consistent supported WML doctype")
+	}
+	replacement := fmt.Sprintf(
+		`<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML %s//EN" "http://www.wapforum.org/DTD/wml_%s.xml">`,
+		version,
+		version,
+	)
+	return []byte(exampleDTD.ReplaceAllString(string(body), replacement)), nil
 }
 
 func (a *App) health(w http.ResponseWriter, _ *http.Request) {

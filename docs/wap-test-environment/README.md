@@ -59,6 +59,7 @@ wap-labs/
   - `/examples/index.wml`
   - `/examples/login.wml`
   - `/examples/register.wml`
+  - each example is served with the configured `WML_DTD_VERSION`, matching the dynamic decks
 - Basic observability:
   - redacted structured request logs with request ID
   - internal `/metrics` plain text counters on port `3001`
