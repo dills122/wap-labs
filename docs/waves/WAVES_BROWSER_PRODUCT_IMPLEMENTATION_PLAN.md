@@ -1,7 +1,7 @@
 # Waves Browser Product Implementation Plan
 
 Status: planning-ready
-Last updated: 2026-07-26
+Last updated: 2026-07-28 (`origin/main` `1f07030a`)
 Design source: [Waves Desktop Product and Interaction Design](WAVES_DESKTOP_PRODUCT_DESIGN.md)
 
 ## Purpose
@@ -581,3 +581,14 @@ types.
 `WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It does not reopen
 the completed `WBP-01`/`WBP-02` history or activate `WBP-06`; it only changes the default host
 presentation and its evidence.
+
+The July 28 hardening pass is also landed without changing the product-phase status: focused-input
+Backspace handling, blocked timer wakeup re-arming, effective-profile gateway fallback, and
+generation-scoped navigation coordination now have direct regression tests. Those fixes preserve
+the completed Phase 1 tickets and are not a basis for reopening them or claiming `WBP-06` through
+`WBP-14` complete.
+
+A separate second-pass visual refinement is pending outside `main`. Its coordination boundary is
+to preserve the `WBP-02A` native-host structure and avoid implementing `WBP-02B` Handheld Focus
+View. Treat it as an unmerged presentation iteration, not as completion evidence or a dependency
+for the next contract/runtime batch.

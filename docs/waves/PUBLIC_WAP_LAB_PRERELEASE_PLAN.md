@@ -1,10 +1,10 @@
 # Waves Public WAP Lab and Pre-release Plan
 
-Planning status: Sprint 1 implementation; LAB-101 and the access-independent INF-101 scaffold and
-protected-workflow contract are merged, while public exposure remains blocked on Sprint 0
-decisions and live infrastructure evidence
+Planning status: Sprint 1 private-deployment checkpoint; LAB-101, the restricted INF-101/INF-102
+host path, and the hardened GW-101 deployment are live behind sealed Tailnet-only ingress, while
+public exposure remains blocked on Sprint 0 decisions and publication-specific evidence
 
-Research checkpoint: 2026-07-27
+Research checkpoint: 2026-07-28; audited at `1f07030a`
 
 Historical service-pattern research, first-party fixture expansion, and the separately gated
 archive/museum lane are planned in `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`. That
@@ -235,13 +235,17 @@ Tailscale-only administration, and no
 application deployment. Enabling public UDP/DNS still depends on the production gateway,
 `PRE-003`, `PRE-004`, and a separately reviewed plan.
 
-The host created from PR #456 does not itself contain the production Compose stack or persistent
-`DOCKER-USER` policy. The current service-deployment implementation packages that policy, a
-sealed-by-default systemd service, immutable local release artifacts, and rollback tooling; its
-private installer is also the upgrade path for the existing host. Cloud-init changes apply only to
-future replacement hosts because Droplet user data is lifecycle-ignored. Treat the forwarding
-control and its external negative tests as unfinished `INF-102`/`GW-101` evidence until the private
-installer and reboot behavior are verified on the restricted host.
+PR #476 installed the production Compose stack and persistent `DOCKER-USER` policy on the existing
+restricted host. The exact release passed Tailnet GET/POST and unknown-origin denial, retained the
+prior release for rollback, and remained healthy and sealed after a host reboot. PR #478 then made
+the Kannel health probe use the configured status credentials, and PRs #485/#495 strengthened
+service supervision and the static-example smoke path. Cloud-init changes still apply only to
+future replacement hosts because Droplet user data is lifecycle-ignored.
+
+This is direct private-deployment evidence for the staged `INF-102`/`GW-101` path, not completion of
+their public acceptance. No public DNS record or cloud UDP rule was enabled, the host firewall was
+not switched to public mode, and the required external positive/negative probes and kill-switch
+rehearsal remain open.
 
 ## Security, abuse, and operations
 
@@ -316,6 +320,16 @@ Capacity assumption: three parallel implementation lanes, 36 points gross, 29 co
 |        4 | `INF-102`  | Compute, IP, firewall, DNS, bootstrap          |      5 | `INF-101`, `GW-101` interface  | Rebuildable 512 MiB x86 host with bounded swap/limits; only UDP 9200 plus restricted administration public; idempotent cloud-init and Docker/UFW forwarding policy without long-lived secrets |
 |        5 | `PERF-101` | 512 MiB memory soak and resize gate            |      2 | `INF-102`, `GW-101`, `LAB-101` | Record RSS, swap, restarts, latency; allow 1 GiB only if the published threshold fails                                                                                                        |
 |        6 | `OPS-101`  | External WSP probe and disable runbook         |      4 | `INF-102`, `LAB-101`           | Exact external WSP/WBXML fixture; failure alert; tested rate-limit/firewall kill; redacted logs                                                                                               |
+
+Current landed evidence at the 2026-07-28 checkpoint:
+
+| Work                   | Evidence on `main`                                                                                                                                                                                      | Remaining gate                                                                                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `LAB-101`              | Bounded Go origin, deterministic route/session tests, and live private root/login/register/POST smoke are landed.                                                                                       | Keep fixture expansion separate from public exposure and the archival-content lane.                                                                                      |
+| `GW-101`               | Hardened non-root Kannel/Compose release, authenticated health, exact-host maps, unknown-origin denial, supervision tests, and retained rollback are landed; the deployed release is healthy privately. | `PRE-004`, public-mode review, external port/proxy negatives, and measured abuse limits remain open.                                                                     |
+| `INF-101`              | Pinned offline/protected workflow contracts plus encrypted owner-local R2 state, recovery copies, and a zero-change provider plan are evidenced.                                                        | Shared/public `PRE-003`, live protected-plan/apply, and two-maintainer recovery evidence remain open.                                                                    |
+| `INF-102`              | Restricted Droplet, Reserved IP, private administration, sealed firewall, monitoring, installed service, and reboot persistence are evidenced.                                                          | Exact publication plan/apply, DNS, public UDP 9200, and external verification remain open.                                                                               |
+| `PERF-101` / `OPS-101` | No completion claim. Existing private health and smoke are prerequisites only.                                                                                                                          | Memory soak, external synthetic probe, alerts, rate/amplification measurements, and independently tested kill switch remain to dispatch after the access/decision gates. |
 
 Stretch only after committed acceptance:
 

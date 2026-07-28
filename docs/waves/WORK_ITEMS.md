@@ -1,4 +1,5 @@
 # Waves Browser Work Items (Integration Track)
+
 Purpose: execution board for Waves desktop browser integration work.
 
 Status keys:
@@ -84,7 +85,11 @@ The public network-preview plan is a separate product/release lane. Its `PRE-*`,
 compliance closure or change the dependency order in the machine-readable compliance program.
 Public exposure remains blocked on the plan's access, threat-model, and release gates.
 
-## Next In Line (Post-Merge Compliance Sync - 2026-07-27)
+## Next In Line (Post-Merge Checkpoint Sync - 2026-07-28)
+
+Audit base: `origin/main` `1f07030a`. The GitHub open/draft PR queue was empty at this checkpoint.
+The separately coordinated second-pass desktop visual refinement is pending and unmerged; it
+preserves `WBP-02A`, does not implement `WBP-02B`, and is not counted below as landed evidence.
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -130,19 +135,30 @@ Planning assessment:
 
 Current implementation batch, ordered within each lane:
 
-1. **Request lane:** consume the merged `WML-304` request intent under `R0-06`/`WSP-805`
-   for GET query, form-urlencoded POST, charset/content-type, referer, and no-cache transport
-   application. Follow with replayable POST history after request serialization is stable.
-2. **Script lane:** finish `WMLS-501` library-index and stack-dataflow verification, then begin
-   the bounded `WMLS-502` operator/conversion execution tranche. These two tasks share
-   `engine-wasm/engine/src/wavescript/*` and must remain sequential.
-3. **Runtime lane:** finish the additive `WML-301` table-boundary/WAE delegate mapping and
-   direct fixtures without changing its completed 12-clause history evidence. Take `WML-306`
-   access/error/low-memory policy next; coordinate its browser-policy files with the request lane.
-4. The separately owned public-WAP-services lane may continue in parallel. Current main proves
-   only the secure preview host checkpoint: no public DNS record, WAP listener, or application
-   deployment is complete. That lane neither blocks nor satisfies Class C evidence and is not
-   dispatched from this board.
+1. **Request lane A1:** apply the merged `WML-304` intent through `R0-06`/`WSP-805` for GET query,
+   form-urlencoded POST, charset/content-type, smallest-relative referer, and no-cache transport
+   behavior. This owns request serialization and the browser fetch handoff.
+2. **Request lane A2:** add replayable POST history only after A1 stabilizes the serialized request
+   identity. Coordinate engine navigation/history ownership with runtime lane C1.
+3. **Script lane B1:** finish `WMLS-501` library-index and stack-dataflow verification.
+4. **Script lane B2:** begin bounded `WMLS-502` operator/conversion execution after B1. B1 and B2
+   share `engine-wasm/engine/src/wavescript/*` and remain sequential.
+5. **Runtime lane C1:** finish the additive `WML-301` card-table-boundary/WAE delegate mapping and
+   direct fixtures without changing its completed 12-clause history evidence.
+6. **Desktop contract lane D1:** activate the ready `WBP-06`/`F0-01` frame-and-affordance contract
+   with one owner. Sequence its generated contract integration with A1 and preserve the additive
+   `EngineDebug*` namespace; this is not the pending visual-refinement stream.
+
+The dependency, overlap, and release-contribution matrix is canonical in
+`SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. `WML-306` remains next after this batch because its
+browser policy files conflict with A1/A2. `PERF-101`, `OPS-101`, and public publication remain
+decision/access-gated rather than ready implementation dispatches.
+
+The separately owned public-WAP-services lane may continue in parallel. Current main plus the
+merged live checkpoint proves a healthy hardened application deployment on the restricted host,
+Tailnet WAP smoke, sealed-firewall reboot persistence, and retained rollback. Public DNS, the
+cloud UDP rule, public firewall mode, and external probes remain incomplete. That lane neither
+blocks nor satisfies Class C evidence and is not dispatched from this board.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -162,15 +178,15 @@ Current implementation batch, ordered within each lane:
 
 The `Authentic Core, Modern Console` direction is adopted. Current status is:
 
-| Slice | Status | Direct evidence / next gate |
-| --- | --- | --- |
-| `WBP-00` | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`. |
-| `WBP-01` | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced. |
-| `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
-| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green. |
-| `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
-| `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
-| `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
+| Slice     | Status | Direct evidence / next gate                                                                                                                                                                                                                                                                                                                        |
+| --------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WBP-00`  | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`.                                                                                                                            |
+| `WBP-01`  | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced.                                                                                                                                     |
+| `WBP-02`  | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics.                                                                                                                                                                                                             |
+| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green.                                                                                                                     |
+| `WBP-03`  | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                          |
+| `WBP-04`  | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                           |
+| `WBP-05`  | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
 
 Phase 1 implementation is complete on current `main`; the original seams remain documented in
 `WAVES_BROWSER_BASELINE.md` for maintenance history. All declared prerequisites for `WBP-06` are
@@ -196,11 +212,14 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
 2. `Depends On`: `WBP-01`, `WBP-02`
 3. `Owner`: `browser`, `qa`
 4. `Files`:
+
 - browser shell leaf templates and shared host styles
 - lightweight browser-owned panel primitives
 - narrowly scoped Tauri window background metadata
 - shell/render/accessibility tests and active product documentation
+
 5. `Build`:
+
 - Treat the Tauri title bar and window controls as the sole application frame.
 - Remove teal desktop, beveled faux-window, global Win95 control, and heavy gradient-panel authority
   from the default presentation while keeping the vendored Win95 material available for later
@@ -209,22 +228,30 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
   typography, inverse focus, and housing/LCD separation inside the neutral Class C handset.
 - Preserve every element ID, controller binding, keyboard order, route/source/profile behavior,
   and current fixed handset adapter control.
+
 6. `Tests`:
+
 - shell tests prove the default native presentation has no legacy faux-window/control classes
 - frontend unit, lint, typecheck, format, build, rendered axe/zoom/target/focus/overflow, default and
   minimum viewport/keyboard, Waves story, contract, documentation, and Tauri checks
 - matching default/minimum before-and-after screenshots remain transient PR evidence
+
 7. `Accept`:
+
 - the native app no longer reads as a Win95 window embedded in a second native window
 - the handset/LCD is the visual focal point; utility/help/status is secondary and Developer Tools
   remains subordinate and collapsible
 - 1024 by 768, 880 by 640, 200 percent zoom, collapsed utility rail, reduced motion, 24 CSS-pixel
   targets, visible focus, landmarks/live announcements, and no horizontal overflow remain usable
+
 8. `Boundary`:
+
 - This is an additive presentation correction. Completed `WBP-01` and `WBP-02` remain immutable.
 - Do not change browser controller/navigation state, transport, route logic, engine contracts/runtime,
   WML rendering semantics, focus order, or infer dynamic softkeys before `WBP-06`.
+
 9. `Evidence`:
+
 - 217 frontend unit tests, lint, typecheck, format, production build, and 19 Waves executable flows
 - generated engine/transport/Tauri contracts, schemas, icons, host formatting, Clippy, and 64
   non-ignored Tauri host/contract tests (five external-Kannel tests remain intentionally ignored)
@@ -241,27 +268,36 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
 2. `Depends On`: `WBP-05`
 3. `Owner`: `browser`, `qa`
 4. `Files`:
+
 - browser presenter/controller accessibility tests
 - rendered browser or packaged-Tauri accessibility evidence
 - active browser evidence docs
+
 5. `Build`:
+
 - Keep navigation loading and failure presentation visually available while exposing each state
   change through one live announcement channel. Current main writes the same navigation failure to
   both the polite status region and the live alert toast.
 - Add rendered evidence for 200 percent zoom, visible focus, target geometry, and color contrast;
   the current jsdom `axe-core` test necessarily disables its geometry/pixel-dependent rules.
 - Preserve the future engine-derived card/action semantic adapter as `WBP-09` scope.
+
 6. `Tests`:
+
 - deterministic loading/failure tests assert one accessible announcement per state change
 - rendered browser checks cover default and minimum window sizes at 200 percent zoom
 - packaged-host keyboard and screen-reader smoke evidence remains explicit where automation cannot
   cover native macOS presentation
+
 7. `Accept`:
+
 - loading and failure state changes have one accessible announcement without losing visual recovery
   information
 - rendered evidence covers the checks unavailable to jsdom without introducing a browser-authored
   WML semantic tree
+
 8. `Notes`:
+
 - This is an additive evidence/corrective follow-up. `WBP-05` remains `done` under the backlog
   lifecycle policy.
 - The host now owns one visually hidden, polite, atomic announcement channel. Navigation loading
@@ -390,16 +426,27 @@ This board was prepared before implementation kickoff. Keep ticket statuses curr
 When a PR changes spec interpretation, requirement mapping, or contract behavior, update all linked artifacts in the same PR:
 
 1. traceability source:
+
 - relevant `docs/waves/*TRACEABILITY*.md` requirement entries (`Spec`, `AC`, `Evidence`)
+
 2. tests/fixtures:
+
 - `docs/waves/SPEC_TEST_COVERAGE.md` row(s) with concrete file targets and command(s)
+
 3. contract mapping:
+
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md` for impacted contract surfaces
+
 4. requirement index:
+
 - `docs/waves/REQUIREMENT_INDEX.md` owner/lane/status row(s)
+
 5. coverage/meta dashboards:
+
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md` if scope/status changes
+
 6. source governance:
+
 - `docs/waves/SOURCE_AUTHORITY_POLICY.md` and `docs/waves/OPEN_SPEC_QUESTIONS.md` when precedence or unresolved policy shifts
 
 ## Ticket Lifecycle Guardrail
@@ -435,22 +482,33 @@ Completed `B0` through `B3` tickets are archived in:
 1. `Status`: `done`
 2. `Depends On`: `T0-02`, `A5-02`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/src-tauri/src/lib.rs`
+
 4. `Build`:
+
 - Add request-policy plumbing for WML task metadata (`cache-control`, method/post context, referer policy).
 - Ensure `cache-control=no-cache` reload intent reaches transport deterministically.
+
 5. `Tests`:
+
 - `cargo test --lib` (`transport-rust`) covers no-cache header mapping, same-deck POST suppression, and deterministic request-policy mapping.
 - Browser navigation-state regression tests cover reload/external-intent request-policy propagation.
 - `cargo test` (`browser/src-tauri`) covers snapshot exposure/clear semantics for external navigation request-policy metadata.
+
 6. `Accept`:
+
 - Transport behavior reflects runtime task metadata without host-side semantic drift.
+
 7. `Spec`:
+
 - `RQ-RMK-008`, `RQ-WAE-008`, `RQ-WAE-016`
+
 8. `Notes`:
+
 - Completed as additive follow-up linked to normalization baseline (`T0-02`).
 - Landed transport request-policy contract (`cacheControl`, `refererUrl`, `postContext`) and runtime->host->transport external-intent metadata plumbing.
 
@@ -459,23 +517,34 @@ Completed `B0` through `B3` tickets are archived in:
 1. `Status`: `done`
 2. `Depends On`: `T0-01`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `browser/src-tauri/src/lib.rs`
 - `browser/contracts/transport.ts`
+
 4. `Build`:
+
 - Add profile-gated emission path for `Accept`, `Accept-Charset`, `Accept-Encoding`, and `Accept-Language`.
 - Keep defaults deterministic and explicit when capability advertising is disabled.
+
 5. `Tests`:
+
 - `cargo test --lib` (`transport-rust`) covers:
   - `wap-baseline` profile capability header emission (`Accept`, `Accept-Charset`, `Accept-Encoding`, `Accept-Language`)
   - deterministic disabled profile behavior
   - deterministic caller-header override behavior for capability headers
 - Browser transport request-policy wiring is typechecked via frontend contract consumers.
+
 6. `Accept`:
+
 - Capability advertisement behavior is explicit, test-backed, and contract-documented.
+
 7. `Spec`:
+
 - `RQ-WAE-013`, `RQ-WAE-001`
+
 8. `Notes`:
+
 - Added profile-gated UA capability contract field (`uaCapabilityProfile`) under transport request policy.
 - Browser host now sends `wap-baseline` capability profile by default for network transport fetches.
 
@@ -484,13 +553,18 @@ Completed `B0` through `B3` tickets are archived in:
 1. `Status`: `done`
 2. `Depends On`: `T0-02`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/src/responses.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 4. `Build`:
+
 - Add deterministic handling/tests for 1024-octet URI boundaries and UTF-8/UTF-16 encoding paths.
+
 5. `Tests`:
+
 - URI boundary coverage:
   - fixture `transport-rust/tests/fixtures/transport/uri_too_long_1025/`
   - unit tests for `1024`-octet accept and `>1024` reject path in `transport-rust/src/lib.rs`
@@ -498,11 +572,17 @@ Completed `B0` through `B3` tickets are archived in:
   - mapped fixture `transport-rust/tests/fixtures/transport/utf16le_textual_wml_mapped/` for UTF-16LE decode success
   - mapped fixture `transport-rust/tests/fixtures/transport/utf16_odd_length_protocol_error_mapped/` for deterministic malformed UTF-16 `PROTOCOL_ERROR` mapping
   - unit tests in `transport-rust/src/responses.rs` cover UTF-16 decode success/error code path behavior directly
+
 6. `Accept`:
+
 - URI/encoding behavior meets WAE baseline and remains regression-protected.
+
 7. `Spec`:
+
 - `RQ-WAE-010`, `RQ-WAE-012`
+
 8. `Notes`:
+
 - Completed transport-scope URI/charset boundary conformance follow-up with deterministic URI length guardrails and fixture-backed UTF-16 decode success/error paths.
 
 ### T0-07 WBXML token/literal compatibility conformance follow-up
@@ -510,18 +590,29 @@ Completed `B0` through `B3` tickets are archived in:
 1. `Status`: `done`
 2. `Depends On`: `T0-02`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Add compatibility checks covering WBXML literal-vs-token decoding paths and section-6.1 tokenisation expectations at boundary level.
+
 5. `Tests`:
+
 - Fixture matrix for literal token values, binary token values, and deterministic decode failure classification.
+
 6. `Accept`:
+
 - WBXML boundary behavior is conformance-backed beyond decode happy-path checks.
+
 7. `Spec`:
+
 - `RQ-RMK-007`, `RQ-WAE-005`
+
 8. `Notes`:
+
 - The WBXML SCR audit found that current tests establish isolation/error
   behavior but do not directly prove literal/token equivalence. The additive
   normative closure remains open in `R0-08`; this completed ticket is not
@@ -533,22 +624,33 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-03`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+
 5. `Build`:
+
 - Add explicit responder-side TID decision policy and fixtures for cache/no-cache and duplicate-guarantee modes.
 - Enforce initiator-side TID progression/rate guardrails relative to MPL assumptions for replay-window safety.
+
 6. `Tests`:
+
 - Fixture matrix for Table-6/7/8-like TID decisions and out-of-order invoke handling.
 - Deterministic TID wrap/restart-window tests with trace assertions.
+
 7. `Accept`:
+
 - TID replay-window behavior is deterministic and explicitly profile-gated.
+
 8. `Migration gates`:
+
 - Done-1: responder/initiator TID replay policies are deterministic for table-driven fixture cases.
 - Done-2: out-of-order and retransmission state transitions have deterministic terminal outcomes.
 - Done-3: trace output includes transaction/timer state for replay decisions.
+
 9. `Spec`:
+
 - `RQ-TRN-007`, `RQ-TRN-016`
 
 ### T0-09 WSP connectionless primitive-profile conformance
@@ -557,21 +659,32 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+
 5. `Build`:
+
 - Make WSP mode selection explicit (`connection-oriented`, `connectionless`, or both) with deterministic primitive-usage gating.
 - Implement/validate connectionless primitive occurrence matrix behavior and deterministic invalid-primitive handling.
+
 6. `Tests`:
+
 - Primitive occurrence fixtures for `S-Unit-MethodInvoke`, `S-Unit-MethodResult`, `S-Unit-Push`.
+
 7. `Accept`:
+
 - Connectionless mode policy is explicit and test-backed; invalid primitive paths are deterministic.
+
 8. `Migration gates`:
+
 - Done-1: mode switch behavior is driven by profile and emitted in request/response trace metadata.
 - Done-2: req/ind-only matrix is enforced and fixture-asserted.
 - Done-3: invalid primitive transitions are deterministically rejected before session side effects.
+
 9. `Spec`:
+
 - `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-017`
 
 ### T0-10 WSP assigned-number registry conformance fixtures
@@ -580,23 +693,36 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-05`, `T0-07`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Add table-driven token-map fixtures for WSP PDU types, abort-reason codes, well-known parameters, and header-field names.
 - Define deterministic handling policy for unassigned/unknown registry values.
+
 6. `Tests`:
+
 - Decode/encode round-trip fixtures anchored to assigned-number tables.
+
 7. `Accept`:
+
 - Assigned-number behavior is deterministic, profile-documented, and regression-guarded.
+
 8. `Migration gates`:
+
 - Done-1: registry decode/encode test suite exists and is fixture-backed.
 - Done-2: unknown/unassigned value handling behavior is deterministic by profile.
 - Done-3: no parser side-effect state is introduced by registry table lookup paths.
+
 9. `Spec`:
+
 - `RQ-TRN-014`, `RQ-TRN-018`
+
 10. `Notes`:
+
 - Landed as additive registry fixture slice in `transport-rust/src/wsp_registry.rs` with fixture-backed round-trip/unknown-policy tests (`transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/registry_fixture.json`).
 
 ### T0-11 WSP capability-bound and negotiation-limit enforcement
@@ -605,23 +731,36 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-09`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+
 5. `Build`:
+
 - Enforce min/intersection semantics for negotiated capabilities.
 - Enforce negotiated SDU/message-size and outstanding-request bounds with deterministic abort/error surfacing.
+
 6. `Tests`:
+
 - Capability negotiation fixtures across client/server proposal mismatches and boundary exceed cases.
+
 7. `Accept`:
+
 - Capability negotiation and bounds behavior is deterministic and spec-linked.
+
 8. `Migration gates`:
+
 - Done-1: capability merge strategy is stable and documented in code-level comments or tests.
 - Done-2: bound exceed/invalid capability fixtures are deterministic and mapped to clear error codes.
 - Done-3: cap-limit behavior is tested under both connection-mode and connectionless profiles.
+
 9. `Spec`:
+
 - `RQ-TRN-013`, `RQ-TRN-019`
+
 10. `Notes`:
+
 - Additive capability policy/limit slice landed in `transport-rust/src/wsp_capability.rs` with fixture corpus at `transport-rust/tests/fixtures/transport/wsp_capability_bounds_mapped/capability_fixture.json`.
 - Current closure provides deterministic merge + bound enforcement (`MRUEXCEEDED`, `MOREXCEEDED`) for both connection-oriented and connectionless modes; deeper protocol session integration remains in later WSP lanes.
 
@@ -631,23 +770,36 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `spec`
 4. `Files`:
+
 - `transport-rust/README.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Declare explicit Waves TCP compatibility posture for profiled requirements (SACK/split/end-to-end/window-scale threshold behavior).
 - Mark each requirement as implemented, delegated, or deferred for MVP with rationale.
+
 6. `Tests`:
+
 - Add compatibility-policy fixtures/checks that prevent silent drift in declared TCP posture.
+
 7. `Accept`:
+
 - TCP optimization baseline posture is explicit and traceable.
+
 8. `Migration gates`:
+
 - Done-1: `RQ-TRX-009` decision is explicitly categorized per behavior.
 - Done-2: no code path depends on undeclared TCP behavior assumptions.
 - Done-3: docs + ticket mapping for TCP posture is versioned and linked from `TECHNICAL_ARCHITECTURE`.
+
 9. `Spec`:
+
 - `RQ-TRX-009`
+
 10. `Notes`:
+
 - Landed as policy declaration + drift guard in `transport-rust/src/tcp_profile.rs` with fixture `transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json`.
 - Current posture explicitly marks TCP baseline/SACK/window-scale/end-to-end as delegated to host TCP stack and split-mode as deferred pending profile gate decisions.
 
@@ -657,24 +809,37 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-01`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Make a hard scope decision for `WAP-159` path (`in scope now` vs `deferred`).
 - If in scope, define `data_sm` mapping fixtures and WCMP payload type handling checks.
 - If deferred, document non-blocking rationale and explicit exclusion guardrails.
+
 6. `Tests`:
+
 - Add either adapter fixtures (in-scope) or explicit policy assertions (deferred).
+
 7. `Accept`:
+
 - SMPP adaptation status is unambiguous and regression-guarded.
+
 8. `Migration gates`:
+
 - Done-1: scope decision is documented as `in-scope` or `deferred` before implementation actions.
 - Done-2: deferred paths are explicitly guarded against accidental dependency in `transport-rust`.
 - Done-3: in-scope branch has end-to-end payload-type fixture path before any parser/code activation.
+
 9. `Spec`:
+
 - `RQ-TRX-010`
+
 10. `Notes`:
+
 - Scope decision is `deferred` for Waves MVP and is now regression-guarded in `transport-rust/src/smpp_profile.rs`.
 - Fixture-backed policy assertion lives at `transport-rust/tests/fixtures/transport/smpp_adaptation_scope_mapped/scope_fixture.json`.
 
@@ -684,30 +849,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-09`, `T0-11`, `T0-12`, `T0-13`
 3. `Owner`: `transport-rust`, `browser`, `engine`
 4. `Files`:
+
 - `docs/waves/TECHNICAL_ARCHITECTURE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `transport-rust/README.md`
+
 5. `Build`:
+
 - Publish an explicit profile decision for near-term and target-state transport:
   - current profile: gateway-bridged HTTP/WBXML normalization path
   - target profile: in-process WDP/connectionless-WSP lane with
     connection-oriented WSP/WTP behind explicit activation criteria
 - Define non-negotiable boundary rules so engine/browser contracts stay stable across both profiles.
 - Define migration gates that block profile promotion until required protocol fixtures pass.
+
 6. `Tests`:
+
 - Add profile-gate checks that assert declared mode/profile against fixture coverage state.
 - Add one end-to-end fixture lane per declared profile to prevent drift in behavior expectations.
+
 7. `Accept`:
+
 - Networking architecture direction is explicit, versioned, and test-gated.
 - Team can state exactly what is spec-compliant now versus planned for protocol-complete mode.
+
 8. `Migration gates`:
+
 - Done-1: a single canonical profile decision is written and linked to all transport docs.
 - Done-2: profile-gate checks reference `T0-08..T0-13` completion criteria and required fixture coverage.
 - Done-3: profile migration path has explicit rollback criteria tied to contract stability.
+
 9. `Spec`:
+
 - `RQ-TRN-001..019`, `RQ-TRX-001..010`
+
 10. `Notes`:
+
 - Canonical decision record added at `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md` with explicit current/target profiles, promotion gates, and rollback criteria.
 - Machine-checkable gate validation added via `node scripts/check-networking-profile-gates.mjs` and data file `docs/waves/network-profile-gates.json`.
 
@@ -717,25 +895,38 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-04`, `R0-06`
 3. `Owner`: `transport-rust`, `browser`
 4. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `browser/src-tauri/src/lib.rs`
 - `docs/waves/WAE_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Implement a deterministic cache-policy baseline for deck/script/media retrieval and invalidation triggers.
 - Ensure `cache-control=no-cache` and task-driven reload semantics route through one shared policy model.
+
 6. `Tests`:
+
 - Fixture matrix for cache hit, forced reload, stale invalidation, and request-policy override cases.
+
 7. `Accept`:
+
 - Cache behavior is explicit, deterministic, and verifiably aligned with the declared WAP profile.
+
 8. `Migration gates`:
+
 - Done-1: policy model is single-source and contract-exported across transport/browser layers.
 - Done-2: cache hit/reload/invalidation fixture path is deterministic and repeatable.
 - Done-3: profile switch does not alter cache semantics without explicit migration note.
+
 9. `Spec`:
+
 - `RQ-WAE-008`, `RQ-WAE-010`, `WML-29`, section `9.5.1`
+
 10. `Notes`:
+
 - This completed ticket established request-policy and deterministic reload
   plumbing. It is not full WAP-120 conformance and is not reopened.
 - Exact corrective closure remains in program item `WAE-603`:
@@ -751,27 +942,40 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-14`
 3. `Owner`: `spec-processing`
 4. `Files`:
+
 - `spec-processing/new-source-material/`
 - `spec-processing/source-material/WAP-259-WDP-20010614-a.pdf`
 - `spec-processing/finalize-new-source-material.fish`
 - `docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md`
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md`
 - `docs/waves/SPEC_COVERAGE_DASHBOARD.md`
+
 5. `Build`:
+
 - Resolve `WAP-259-WDP-20010614-a.pdf` conflict variant left in queue and enforce deterministic case/variant policy.
 - Document whether conflict variant is a replacement, supersedence candidate, or legacy duplicate.
+
 6. `Tests`:
+
 - `./spec-processing/finalize-new-source-material.fish --dry-run` reports zero unresolved conflicts for active transport spec IDs.
 - `docs/waves/SOURCE_MATERIAL_REVIEW_LEDGER.md` contains one row per canonical transport/security spec ID.
+
 7. `Accept`:
+
 - Canonical corpus has one active source material path for each spec ID and the queue only contains unresolved non-canonical items.
+
 8. `Migration gates`:
+
 - Done-1: no transport spec ID has multiple active canonical variants in source-material.
 - Done-2: conflict-resolution log is current and versioned with timestamped decision rationale.
 - Done-3: ticket-dependent parser/automation paths resolve to canonical IDs.
+
 9. `Spec`:
+
 - `RQ-TRN-001`, `RQ-TRN-003`
+
 10. `Notes`:
+
 - Completed: new-source `WAP-259` variant was promoted after byte-comparison and manual archival of prior legacy source.
 - Archive captured at:
   - `spec-processing/source-material/archive/WAP-259-WDP-20010614-a.legacy-v1.pdf`
@@ -783,30 +987,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `docs`, `transport`
 4. `Files`:
+
 - `docs/waves/OUT_OF_SCOPE_DOMAIN_SPEC_REVIEW.md`
 - `docs/waves/TRANSPORT_ADJACENT_SPEC_TRACEABILITY.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/networking-implementation-checklist.md`
+
 5. `Build`:
+
 - Record explicit in-scope/out-of-scope policy for non-core transport-adjacent specs that can affect transport boundaries.
 - Add one-line rationale for each deferred family in transport-adjacent docs (`WAP-204*`, `WAP-120*`, `WAP-213*`, related messaging-cache deltas).
 - Keep this decision synchronized with `T0-14` profile gates.
+
 6. `Tests`:
+
 - checklist validation fixtures:
   - `WAP-204` remains transport-deferred; WAP-120 remains outside transport
     ownership and active under `WAE-603`
   - no hidden protocol behavior dependency introduced in `transport-rust` without ticket and contract update
-   - command: `node scripts/check-adjacent-scope-lock.mjs`
+  - command: `node scripts/check-adjacent-scope-lock.mjs`
+
 7. `Accept`:
+
 - future transport scope changes are policy-driven, explicit, and reversible.
+
 8. `Migration gates`:
+
 - Done-1: adjacent scope deferrals are explicit with pass/fail rationale.
 - Done-2: profile gates block adjacent-path promotion when deferral state is uncleared.
 - Done-3: checklist asset exists and references this ticket as gate source.
+
 9. `Spec`:
+
 - `RQ-TRX-001..010` where applicable
 - `RQ-TRN-001..019`
+
 10. `Notes`:
+
 - Completed the explicit transport-scope rationale and checklist alignment
   for `WAP-204*`, `WAP-120*`, `WAP-213*`, and related cache/adjacent messaging
   families; later source-ledger work moved WAP-120 user-agent closure to
@@ -822,30 +1039,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-08`, `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `transport-rust/src/network/wtp/state_machine.rs`
 - `transport-rust/src/network/wtp/retransmission.rs`
 - `transport-rust/src/network/wtp/duplicate_cache.rs`
 - `docs/waves/wtp-state-machine.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Implement explicit WTP retransmission timer/counter behavior and bounded abort conditions.
 - Implement deterministic NACK delay and retransmission hold-off policy for SAR-enabled profiles.
 - Add a documented policy object for timer defaults and backoff strategy (profile-overridable).
+
 6. `Tests`:
+
 - Fixture set for timer expiry -> retransmit -> max-retry abort.
 - Fixture set for duplicate invoke/result handling with cached terminal response behavior.
 - Fixture set for NACK delay/hold-off suppressing redundant retransmissions.
+
 7. `Accept`:
+
 - WTP reliability policy is explicit, deterministic, and test-covered for core flows.
 - `RQ-TRN-007`, `RQ-TRN-008`, and `RQ-TRN-016` map to concrete test artifacts.
+
 8. `Migration gates`:
+
 - Done-1: retransmission policy table is committed and linked from WTP docs.
 - Done-2: duplicate handling fixtures pass for initiator and responder roles.
 - Done-3: SAR-off and SAR-on profile behavior is explicitly gated and non-ambiguous.
+
 9. `Spec`:
+
 - `RQ-TRN-007`, `RQ-TRN-008`, `RQ-TRN-016`
+
 10. `Notes`:
+
 - Completed with retransmission, duplicate-cache, and NACK hold-off fixture evidence; this is the mandatory WTP policy baseline consumed by `T0-22`.
 
 ### T0-19 WDP datagram trait + UDP port mapping baseline
@@ -854,32 +1084,45 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-14`, `T0-16`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/network/wdp/transport_trait.rs`
 - `transport-rust/src/network/wdp/datagram.rs`
 - `transport-rust/src/network/wdp/udp_adapter.rs`
 - `transport-rust/src/network/wdp/sar.rs`
 - `docs/waves/networking-layer-definition.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Create protocol-native WDP datagram trait with strict `(src_port, dst_port, payload)` contract.
 - Implement UDP adapter with deterministic behavior for active WAP service ports and error mapping.
 - Define SAR handling contract boundary for deferred/non-UDP bearers without enabling them by default.
+
 6. `Tests`:
+
 - Port routing fixtures for `9200..9203` service behavior.
 - Datagram malformed/truncation fixtures with deterministic errors.
 - SAR reassembly fixtures in profile-enabled mode.
+
 7. `Accept`:
+
 - WDP trait and UDP baseline are live and do not leak gateway-only assumptions.
 - Port mapping and error paths are fixture-backed and traceable.
+
 8. `Migration gates`:
+
 - Done-1: datagram trait is the only connectionless-WSP ingress path in
   `wap-net-core` and the only WTP ingress when that conditional module is
   activated.
 - Done-2: port-mapping fixtures pass for declared profile modes.
 - Done-3: SAR behavior is explicit (`off` by default) and guarded by profile flags.
+
 9. `Spec`:
+
 - `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRN-004`
+
 10. `Notes`:
+
 - Completed with protocol-native datagram trait, UDP service-port mapping for `9200..9203`, and SAR baseline evidence; this is the mandatory WDP ingress surface consumed by `T0-22`.
 
 ### T0-20 WSP header registry completion and unknown-token policy
@@ -888,6 +1131,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-10`, `T0-11`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `transport-rust/src/network/wsp/header_registry.rs`
 - `transport-rust/src/network/wsp/encoder.rs`
 - `transport-rust/src/network/wsp/decoder.rs`
@@ -900,27 +1144,39 @@ Completed `B0` through `B3` tickets are archived in:
 - `docs/waves/wsp-pdu-reference.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Complete assigned-number header/token registry coverage used by active profile lanes.
 - Implement deterministic unknown-token and unsupported-code-page behavior.
 - Implement explicit fallback behavior for extension headers when page negotiation is unavailable.
+
 6. `Tests`:
+
 - Token roundtrip fixtures for core header set.
 - Unknown token/page fixtures for strict and permissive policy modes.
 - Code-page shift fixtures for multi-page header blocks.
 - Minimal `Get`/`Post`/`Reply` PDU and session-method classification fixtures.
 - WBXML/token-stream fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-009`, `WBK-FX-010`.
+
 7. `Accept`:
+
 - WSP encoding/decoding behavior is table-driven and reproducible.
 - Unknown token handling is documented, deterministic, and profile-aware.
 - Narrow method request/result session parsing is available for replay harness promotion.
+
 8. `Migration gates`:
+
 - Done-1: registry source of truth is versioned and linked to WSP docs.
 - Done-2: unsupported encoding/page behavior has deterministic status output.
 - Done-3: profile promotion is blocked when token fixture coverage is stale.
+
 9. `Spec`:
+
 - `RQ-TRN-014`, `RQ-TRN-018`
+
 10. `Notes`:
+
 - Closed on `codex/t0-20-wsp-header-registry` with registry, encoding-version, header-block, minimal PDU, and session-method fixture evidence; `T0-22` now consumes this surface instead of raw byte parsing.
 
 ### T0-21 WTLS phase boundary and minimal handshake reliability lane
@@ -929,30 +1185,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-14`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `transport-rust/src/network/wtls/record.rs`
 - `transport-rust/src/network/wtls/handshake.rs`
 - `transport-rust/src/network/wtls/alerts.rs`
 - `docs/waves/wtls-record-structure.md`
 - `docs/waves/SECURITY_BOUNDARY_TRACEABILITY.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Publish explicit phase boundary: no-op mode vs minimal active mode.
 - Implement minimal record parsing and handshake retransmission/duplicate handling policy for active mode.
 - Keep WTLS disabled by default until profile gate explicitly enables it.
+
 6. `Tests`:
+
 - Record parse/serialize fixture lane for active mode.
 - Handshake retransmission and duplicate-message fixtures.
 - No-op mode parity fixtures proving transport behavior stability when disabled.
+
 7. `Accept`:
+
 - WTLS scope is explicit, testable, and aligned with profile gates.
 - Security-path behavior cannot activate implicitly.
+
 8. `Migration gates`:
+
 - Done-1: WTLS mode defaults and activation criteria are documented.
 - Done-2: active-mode fixtures pass and map to security requirement IDs.
 - Done-3: no-op mode remains deterministic and contract-compatible.
+
 9. `Spec`:
+
 - `RQ-SEC-004`, `RQ-SEC-005`
+
 10. `Notes`:
+
 - Closed on `codex/t0-21-wtls-boundary` with an explicit disabled-vs-active-minimal prototype boundary, record/alert/handshake module split, and fixture-backed envelope plus reliability coverage.
 - The 2026-07-24 WAP-261 audit established that these envelopes are not WTLS wire encodings and are not used by live `waps://`. `T0-21` remains complete as a phase-boundary ticket, but provides no WAP-261 conformance evidence.
 - Insecure-test labeling, release gating, exact replacement, certificate/SIN behavior, crypto, and interop are tracked as `WTLS-00..WTLS-10` in `docs/architecture/wtls-modernization-research.md`.
@@ -963,30 +1232,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-18`, `T0-19`, `T0-20`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `transport-rust/tests/network/interop/`
 - `transport-rust/tests/interop_replay.rs`
 - `docs/waves/networking-implementation-checklist.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/networking-migration-readiness-checklist.md`
+
 5. `Build`:
+
 - Add replay harness for `CONNECT`/`GET`/`REPLY` plus retransmit/duplicate transaction flows.
 - Normalize replay output into deterministic protocol events for assertion.
 - Gate profile promotion on replay-corpus pass status.
+
 6. `Tests`:
+
 - `connect_session_replay`
 - `get_reply_replay`
 - `retransmit_flow`
 - `duplicate_tid_flow`
+
 7. `Accept`:
+
 - Interop behavior is fixture-backed beyond unit-only coverage.
 - Migration gates can cite replay results as promotion evidence.
+
 8. `Migration gates`:
+
 - Done-1: replay corpus exists for all active profile paths.
 - Done-2: retransmit/duplicate lanes are included in mandatory gating checks.
 - Done-3: fixture updates require corresponding traceability/status updates.
+
 9. `Spec`:
+
 - `RQ-TRN-005..019`
+
 10. `Notes`:
+
 - Baseline replay harness now exists in `transport-rust/tests/interop_replay.rs` with schema-versioned seed corpus files under `transport-rust/tests/network/interop/` covering deterministic `GET`/`REPLY` event ordering over WDP/WSP.
 - `T0-24` now formalizes these replay inputs as schema-versioned seed corpus files under `transport-rust/tests/network/interop/`.
 - The same harness now covers a first WTP retransmission flow (timer expiry -> send, ack -> completed).
@@ -1000,6 +1282,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-16`
 3. `Owner`: `docs`, `spec-processing`, `transport-rust`
 4. `Files`:
+
 - `docs/waves/networking-external-response-triage.md`
 - `docs/waves/NETWORKING_EXTERNAL_SOURCE_INDEX.md`
 - `docs/waves/NETWORKING_GAP_MASTER.md`
@@ -1011,26 +1294,38 @@ Completed `B0` through `B3` tickets are archived in:
 - `spec-processing/source-material/vdoc.pub_the-wireless-application-protocol-wap-a-wiley-tech-brief.pdf`
 - `spec-processing/external-parsed/wap_emulator_spec_notes.md`
 - `spec-processing/README.md`
+
 5. `Build`:
+
 - Ingest and catalog implementation-reference materials for:
   - Kannel networking sources (`wtp`, `wsp`, `wdp` lanes)
   - Wireshark dissectors (`packet-wtp`, `packet-wsp`, `packet-wdp`, `packet-wtls`)
 - Classify local supplemental context sources (slides/tech-brief/LLM-parsed notes) as `heuristic` unless they are backed by canonical WAP/OMA section anchors.
 - Produce a normalized source index with per-source trust class (`normative`, `interop-reference`, `heuristic`).
 - Map extracted behaviors to existing `RQ-TRN-*` IDs without creating new transport requirements.
+
 6. `Tests`:
+
 - Deterministic source-index lint/check (file present + source class + mapped requirement IDs).
 - Spot-check fixture that one behavior from each external source family maps to an existing local requirement.
+
 7. `Accept`:
+
 - External reference corpus is indexed and traceable without changing normative precedence.
 - Each imported behavior note cites a local requirement and implementation target lane.
+
 8. `Migration gates`:
+
 - Done-1: source index exists and is versioned.
 - Done-2: all imported notes are tagged `interop-reference` or `heuristic` unless backed by canonical WAP spec.
 - Done-3: no `RQ-TRN-*` requirement is redefined by external source text.
+
 9. `Spec`:
+
 - `RQ-TRN-001..019`
+
 10. `Notes`:
+
 - Research spike only; non-blocking for protocol implementation unless it uncovers a contradiction with local normative anchors.
 - Initial closure may catalog present supplemental sources and explicitly mark Kannel/Wireshark interop families as planned if no local snapshots are yet checked in.
 - Closure landed with a versioned source index, provenance fields, behavior-note mapping, and intake scaffolding; future Kannel/Wireshark artifact drops remain follow-on ingestion work rather than blockers for `T0-23`.
@@ -1041,31 +1336,44 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-23`
 3. `Owner`: `transport-rust`, `docs`
 4. `Files`:
+
 - `transport-rust/tests/network/interop/`
 - `transport-rust/tests/interop_replay.rs`
 - `transport-rust/tests/network/interop/README.md`
 - `docs/waves/networking-migration-readiness-checklist.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 5. `Build`:
+
 - Build a curated PCAP seed corpus for:
   - `CONNECT` handshake path
   - `GET`/`REPLY` request-response
   - retransmit and duplicate transaction scenarios
 - Define deterministic replay-fixture schema (`capture`, `expected events`, `expected transaction outcomes`).
 - Document capture provenance and legal/reuse constraints.
+
 6. `Tests`:
+
 - Replay parser can consume seed fixtures and emit deterministic event traces.
 - At least one fixture each for connect, get/reply, retransmit, duplicate flow classes.
+
 7. `Accept`:
+
 - PCAP seed corpus exists and is runnable via replay harness scaffolding.
 - Fixture schema is stable and linked from transport/networking docs.
+
 8. `Migration gates`:
+
 - Done-1: seed corpus is committed with metadata and expected outputs.
 - Done-2: replay harness stub validates schema and event ordering.
 - Done-3: ticket `T0-22` references these fixtures as required baseline inputs.
+
 9. `Spec`:
+
 - `RQ-TRN-005..019`
+
 10. `Notes`:
+
 - Spike output is an enabling artifact for `T0-22`; it does not itself satisfy protocol-core implementation gates.
 - Closure landed with schema-versioned replay seed files for `Connect`, `Get/Reply`, retransmission, and duplicate-TID flows, plus provenance/legal-reuse metadata and transaction-outcome assertions in the replay harness.
 
@@ -1075,27 +1383,40 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-23`
 3. `Owner`: `docs`, `spec-processing`
 4. `Files`:
+
 - `docs/waves/NETWORKING_GAP_MASTER.md`
 - `docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md`
 - `docs/waves/networking-vector-adoption.json`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/TRANSPORT_SPEC_TRACEABILITY.md`
+
 5. `Build`:
+
 - Identify publicly available WAP interoperability/conformance vectors that can be safely reused.
 - Classify candidate vectors by usefulness for current lanes (`WDP`, `WTP`, `WSP`, `WTLS`) and profile compatibility (`gateway-bridged`, `wap-net-core`).
 - Produce a recommended adoption list with effort/benefit estimates.
+
 6. `Tests`:
+
 - Checklist validation proving each recommended vector maps to at least one active ticket and one fixture target path.
+
 7. `Accept`:
+
 - Conformance/vector candidates are ranked and tied to current execution lanes.
 - No adoption recommendation conflicts with current spec precedence or scope-defer rules.
+
 8. `Migration gates`:
+
 - Done-1: ranked vector adoption list exists.
 - Done-2: each item maps to `T0-*` and `RQ-*` references.
 - Done-3: explicit `adopt now` vs `defer` decisions are documented.
+
 9. `Spec`:
+
 - `RQ-TRN-001..019`, `RQ-SEC-004..005`
+
 10. `Notes`:
+
 - Research spike only; adoption decisions must remain profile-gated and additive.
 - Closure landed with a ranked adoption register plus validator; Wireshark dissector source and Kannel source/release artifacts are `adopt-now`, while Wireshark sample captures stay `defer` pending explicit provenance/reuse intake.
 
@@ -1105,30 +1426,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-14`, `T0-22`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
+
 - `transport-rust/tests/kannel_smoke.rs`
 - `browser/`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 - `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+
 5. `Build`:
+
 - Convert current local Kannel smoke posture into an explicit scored readiness gate.
 - Strengthen transport smoke assertions beyond `ok/status/content-type` to expected deck/card identity.
 - Add one deterministic browser/host real-gateway smoke path.
 - Normalize failure diagnostics for Kannel + WML server runs.
+
 6. `Tests`:
+
 - transport-only Kannel smoke with deterministic deck assertions
 - browser/host real-gateway smoke with rendered outcome assertions
 - local/CI-compatible one-command runner
+
 7. `Accept`:
+
 - `transport-to-kannel` readiness is measurable and reviewable over time
 - browser real-gateway E2E posture is explicit rather than inferred
 - scorecard is updated whenever readiness meaningfully changes
+
 8. `Migration gates`:
+
 - Done-1: scorecard exists and is linked from profile docs
 - Done-2: transport-only local Kannel E2E reaches credible smoke threshold
 - Done-3: browser real-gateway lane has at least one deterministic smoke path
+
 9. `Spec`:
+
 - `RQ-TRN-001..015`, `RQ-TRX-010`
+
 10. `Notes`:
+
 - Tracking ticket only until browser/transport real-gateway E2E gates are promoted into standard verification.
 - Closure landed with explicit scorecard tracking, transport and browser ignored Kannel smokes, one-command runner diagnostics, and direct test/request-policy hardening so loopback-safe local runs do not rely on hidden host env state.
 
@@ -1138,6 +1472,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-19`, `T0-20`, `T0-22`, `T0-26`
 3. `Owner`: `transport-rust`
 4. `Files`:
+
 - `transport-rust/src/fetch_runtime.rs`
 - `transport-rust/src/lib.rs`
 - `transport-rust/src/network/wdp/*`
@@ -1145,27 +1480,39 @@ Completed `B0` through `B3` tickets are archived in:
 - `transport-rust/src/network/native_fetch.rs` (new)
 - `transport-rust/tests/network/interop/*`
 - `transport-rust/tests/fixtures/transport/*`
+
 5. `Build`:
+
 - Add an additive transport-mode selector inside `fetch_deck_in_process` without changing the host contract.
 - Implement a native executor for `wap://` `GET` requests using connectionless WSP `GET`/`REPLY` over WDP/UDP port `9200`.
 - Reuse existing WDP adapter and WSP codec/session modules rather than introducing browser-side protocol logic.
 - Normalize native replies back into the existing `FetchDeckResponse` and engine handoff shape.
 - Keep the legacy gateway bridge as explicit fallback while the native lane is proving out.
+
 6. `Tests`:
+
 - unit tests for mode selection and fallback behavior
 - integration tests with a deterministic local UDP responder exercising `GET` -> `REPLY`
 - replay/fixture coverage proving encoded request and decoded reply align with the seed corpus
+
 7. `Accept`:
+
 - `fetch_deck_in_process` can load at least `wap://localhost/` and `wap://localhost/login` through the native transport lane
 - browser/engine contracts remain unchanged
 - native path is additive and does not regress gateway-bridged fetches
+
 8. `Migration gates`:
+
 - Done-1: native transport mode exists and is selectable without contract drift
 - Done-2: connectionless `GET` request encode/send/receive/decode flow is deterministic and test-backed
 - Done-3: native path returns normalized `FetchDeckResponse` equivalent to existing gateway-bridge success shape for baseline decks
+
 9. `Spec`:
+
 - `RQ-TRN-001..004`, `RQ-TRN-010..015`, `RQ-TRN-017..019`
+
 10. `Notes`:
+
 - Scope is intentionally narrow: `GET` only, no POST/forms, no full connection-oriented WTP client in this slice.
 - Design goal is low-regret reuse: later POST/session support must extend this executor rather than replace it.
 
@@ -1175,31 +1522,44 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-27`
 3. `Owner`: `browser`, `transport-rust`
 4. `Files`:
+
 - `browser/src-tauri/src/fetch_host.rs`
 - `browser/src-tauri/src/waves_config.rs`
 - `browser/frontend/src/app/navigation-state.ts`
 - `browser/frontend/src/app/browser-controller.ts`
 - `browser/contracts/transport.ts` (only if additive config becomes contract-visible)
 - `docs/waves/NETWORK_PROFILE_DECISION_RECORD.md`
+
 5. `Build`:
+
 - Introduce explicit desktop host selection between legacy gateway bridge and native protocol fetch, defaulting to the safest posture.
 - Preserve the current `fetch_deck` host command and response shape.
 - Ensure local-lab/private-address fetches can opt into the native lane without weakening public-destination policy for unrelated targets.
 - Retain deterministic fallback to legacy bridge when native mode is disabled or unsupported.
+
 6. `Tests`:
+
 - host tests for default mode, override mode, and fallback behavior
 - frontend request-policy/state tests proving network mode uses the intended transport path
+
 7. `Accept`:
+
 - desktop browser can deliberately run native mode for `wap://localhost/` and `wap://localhost/login`
 - fallback behavior is explicit and visible rather than accidental
 - no browser-side WSP/WTP logic is introduced
+
 8. `Migration gates`:
+
 - Done-1: host-side mode selection is explicit and documented
 - Done-2: browser network mode can target native fetch path without contract breakage
 - Done-3: fallback remains available for rollback and debugging
+
 9. `Spec`:
+
 - `RQ-TRX-010`, `RQ-TRN-001..015`
+
 10. `Notes`:
+
 - Prefer env/config-first activation before adding user-facing UI controls.
 - Keep all protocol behavior in `transport-rust`; browser host owns only mode selection and diagnostics.
 
@@ -1209,30 +1569,43 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-27`, `T0-28`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
+
 - `transport-rust/tests/kannel_smoke.rs`
 - `browser/src-tauri/tests/kannel_smoke.rs`
 - `scripts/transport-wap-smoke.sh`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
 - `docs/wap-test-environment/README.md`
+
 5. `Build`:
+
 - Add a real native-transport smoke lane for baseline Kannel-served `GET` deck fetches.
 - Distinguish native-mode evidence from legacy gateway-bridge evidence in tests and docs.
 - Capture diagnostics that make packet-shape/interoperability failures reviewable.
+
 6. `Tests`:
+
 - native-mode transport smoke for root + login decks
 - browser host smoke proving render/navigation from native-mode fetch
 - one-command runner support preserving logs on failure
+
 7. `Accept`:
+
 - local Kannel stack can be exercised from the desktop/browser path without relying on the raw HTTP bridge to `13002`
 - readiness docs clearly distinguish native vs legacy evidence
 - native smoke is strong enough to guide subsequent POST/session work
+
 8. `Migration gates`:
+
 - Done-1: transport native smoke against Kannel is committed and runnable
 - Done-2: browser host native smoke is committed and runnable
 - Done-3: scorecard/profile docs are updated to reflect the live ingress posture
+
 9. `Spec`:
+
 - `RQ-TRN-001..015`, `RQ-TRX-010`
+
 10. `Notes`:
+
 - This ticket is the evidence gate for promoting native desktop fetch from “experimental” to “default candidate.”
 - Completed with explicit native-only transport smoke, host-native smoke, browser render/navigation smoke, and artifact-preserving smoke runner support.
 
@@ -1242,6 +1615,7 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-27`, `T0-28`, `T0-29`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
+
 - `transport-rust/src/native_fetch.rs`
 - `transport-rust/src/lib.rs`
 - `transport-rust/tests/kannel_smoke.rs`
@@ -1249,25 +1623,37 @@ Completed `B0` through `B3` tickets are archived in:
 - `browser/src-tauri/tests/kannel_smoke.rs`
 - `docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+
 5. `Build`:
+
 - extend the native fetch executor to support WML form `POST` submission for the training environment login/register flows
 - keep the existing transport contract and host entrypoint stable while adding native `POST`
 - preserve gateway-bridged fallback behavior for rollback/debugging
+
 6. `Tests`:
+
 - native-mode transport smoke for login/register `POST` submission
 - browser host smoke proving native `POST` can submit through the host fetch command
 - browser render/navigation smoke proving returned success/error decks load correctly after native `POST`
+
 7. `Accept`:
+
 - desktop/browser can submit `wap://localhost/login` and `wap://localhost/register` forms through the native lane
 - no browser-side protocol logic is introduced
 - native `POST` evidence is strong enough to guide later session/connection-oriented work
+
 8. `Migration gates`:
+
 - Done-1: native `POST` transport smoke against Kannel is committed and runnable
 - Done-2: host/browser native `POST` smokes are committed and runnable
 - Done-3: docs distinguish native `GET` completion from remaining native `POST` work
+
 9. `Spec`:
+
 - `RQ-TRN-001..015`, `RQ-TRX-010`
+
 10. `Notes`:
+
 - Keep scope constrained to WML form submission first; do not widen into full connection-oriented WSP session work unless required to land baseline login/register flows.
 - Research note: [NATIVE_WSP_POST_RESEARCH_NOTES.md](../../docs/waves/NATIVE_WSP_POST_RESEARCH_NOTES.md)
 - Landed evidence:
@@ -1281,27 +1667,38 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-30`, `A5-02`
 3. `Owner`: `engine-wasm`, `browser`
 4. `Files`:
+
 - `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/src/layout/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/frontend/src/app/*`
 - `browser/src-tauri/tests/*`
+
 5. `Build`:
+
 - promote form support from submit metadata only into real viewport-editable text inputs for the training-environment login/register decks
 - preserve deterministic focus traversal between links, inputs, and softkey actions in the constrained viewport
 - add explicit edit/commit/cancel semantics so text entry mutates runtime field state without browser-owned shadow state
 - render active field state back through the existing engine/frame contract
+
 6. `Tests`:
+
 - engine fixtures for focus traversal, edit commit, edit cancel, and variable update behavior
 - browser integration coverage proving typed values appear in the viewport and are used by native submit
 - manual demo coverage via a host-sample or Waves fixture deck with verification notes
+
 7. `Accept`:
+
 - Waves can focus, edit, and commit text values inside the viewport for `wap://localhost/login` and `wap://localhost/register`
 - committed values survive render refreshes and feed the existing native `POST` submission path
+
 8. `Spec`:
+
 - `RQ-RMK-008`, `RQ-RMK-002`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - keep first scope to text-style inputs only; do not widen into select/option or mask validation edge cases in this ticket
 - Landed evidence:
   - engine focused-input lifecycle and maxlength coverage (`engine-wasm/engine/src/engine_tests/navigation_metadata.rs`)
@@ -1314,22 +1711,33 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `A5-04`
 3. `Owner`: `engine-wasm`, `browser`
 4. `Files`:
+
 - `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/src/layout/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/frontend/src/app/*`
+
 5. `Build`:
+
 - add runtime and viewport interaction for `select`/`option` controls with deterministic choice cycling and commit behavior
 - preserve WML option ordering and selection state in runtime-owned form state
+
 6. `Tests`:
+
 - engine fixtures for default selection, cycling, commit, and cancellation
 - browser integration coverage for focus and selection rendering
+
 7. `Accept`:
+
 - viewport users can inspect and change `select` values without leaving deterministic engine-owned state
+
 8. `Spec`:
+
 - `RQ-RMK-008`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - keep this ticket independent from multipart or advanced request-encoding work
 - Landed in `#108` (`Select Support in Forms`) with engine select/option runtime support, host contract updates, browser select-edit integration, and local/manual regression coverage in `docs/waves/FORM_HANDLING_LOCAL_MODE_TESTING.md`.
 
@@ -1339,22 +1747,33 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `A5-04`, `A5-05`, `T0-30`
 3. `Owner`: `engine-wasm`, `browser`, `transport-rust`
 4. `Files`:
+
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/contracts/transport.ts`
 - `browser/src-tauri/src/*`
 - `transport-rust/src/*`
+
 5. `Build`:
+
 - ensure engine-owned field state is the single source of truth for `postfield` resolution at submit time
 - harden submit-time substitution, empty/default field handling, and deterministic request generation across local/native/browser paths
+
 6. `Tests`:
+
 - cross-layer fixtures covering edited field values, default field values, and deterministic postfield ordering
 - Kannel-backed browser smoke proving interactive edits change the submitted payload
+
 7. `Accept`:
+
 - interactive viewport edits are reflected in the exact request payload sent through the native transport
+
 8. `Spec`:
+
 - `RQ-RMK-008`, `RQ-WAE-008`
+
 9. `Notes`:
+
 - this is the hardening bridge between new engine interaction semantics and the already-landed native submit path
 - Landed across `#105`, `#108`, and `#109`, including edited-field payload coverage, select-aware submit flow, native Kannel browser/host smoke, and deterministic external-intent/request-policy handling.
 
@@ -1364,27 +1783,38 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `A5-06`
 3. `Owner`: `browser`, `docs`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/main.ts`
 - `browser/src-tauri/src/*`
 - `docs/waves/WORK_ITEMS.md`
 - follow-up design note if the spike produces a concrete execution plan
+
 5. `Build`:
+
 - perform a deep investigation of UI-blocking paths during browser startup and run-mode transitions
 - trace which browser, Tauri, and engine calls are currently awaited on the critical interaction path
 - define a contract for which checks/load operations must be backgroundable versus user-blocking
 - propose a concrete remediation plan that preserves deterministic state while removing avoidable UI stalls
+
 6. `Tests`:
+
 - reproduce and document the current lag cases with targeted frontend timing/regression coverage where feasible
 - capture before/after measurement approach for startup and mode-switch responsiveness
+
 7. `Accept`:
+
 - there is a documented diagnosis for the known lag cases:
 - network-mode startup with no reachable server blocks before the unavailable notification
 - switching from local mode back to network mode waits on the fetch/probe path before the mode change fully settles
 - the spike outputs an implementation-ready follow-up plan for moving non-critical checks and loads into async/background execution
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - treat this as design and diagnosis first; do not land speculative async rewrites without measured evidence
 - evaluate browser-shell architecture holistically, not just the startup probe, to identify any awaited work that degrades perceived UI responsiveness
 - Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
@@ -1396,23 +1826,32 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `T0-26`, `T0-29`, `A5-07`
 3. `Owner`: `browser`, `transport-rust`, `CI`
 4. `Files`:
+
 - `.github/workflows/native-tauri-kannel-e2e.yml`
 - `scripts/native-tauri-kannel-e2e.sh`
 - `browser/frontend/scripts/native-tauri-kannel-e2e.mjs`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+
 5. `Build`:
+
 - evaluate the scheduled/manual native UI pilot against the scorecard's exact Threshold C
 - preserve schedule/manual and pilot self-validation triggers, widening pull-request coverage to product paths only after the pilot qualifies
 - keep local/private access explicit at the existing host policy boundary with `wap-net-core` and fallback disabled
+
 6. `Tests`:
+
 - four consecutive scheduled successes over at least 21 days with no reruns
 - complete fixed-name UI, driver, service, and teardown artifact set for every qualifying run
 - first path-scoped pull-request run succeeds within the 30-minute promotion budget
+
 7. `Accept`:
+
 - production Tauri frontend changes have a stable, relevant-PR native Kannel signal
 - no production SSRF, redirect, DNS, payload, or network-profile policy is weakened
 - `G9` advances to `1.0` only after the promoted workflow succeeds
+
 8. `Notes`:
+
 - additive follow-up to completed `T0-26`; do not reopen or rewrite its historical acceptance.
 
 ## WAE Selected-Profile Gap Queue
@@ -1423,25 +1862,34 @@ Completed `B0` through `B3` tickets are archived in:
 2. `Depends On`: `CONF-002`, `WSP-8`
 3. `Owner`: `transport-rust`, `browser`
 4. `Files`:
+
 - `transport-rust/src/network/wsp/*`
 - `transport-rust/src/fetch_policy.rs`
 - `browser/src-tauri/src/*`
 - `browser/frontend/src/*`
 - `docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md`
+
 5. `Build`:
+
 - Parse and surface Basic authentication challenges across the active
   transport profiles.
 - Define host-owned credential acquisition/storage/cancellation policy.
 - Retry with `Authorization` deterministically without logging credentials.
 - Preserve explicit failure and user-cancel outcomes.
+
 6. `Tests`:
+
 - Challenge parsing and malformed-challenge fixtures.
 - Credential retry, wrong-credential, cancellation, and retry-bound tests.
 - Browser-host tests proving secrets do not enter traces or persisted history.
+
 7. `Accept`:
+
 - `WAESpec-C-002` has an end-to-end browser/transport flow; WSP header token
   registration alone cannot close the item.
+
 8. `Spec`:
+
 - `WAESpec-C-002`, WAP-190 section `5.1.2`, `RQ-WAE-014`
 
 ## Phase D: Engine Debug Connector (Planning-Ready)
@@ -1456,24 +1904,35 @@ Reference plan:
 2. `Depends On`: `A5-06`
 3. `Owner`: `engine-wasm`, `browser`, `docs`
 4. `Files`:
+
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/contracts/engine.ts`
 - `browser/src-tauri/src/contract_types.rs`
 - `docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+
 5. `Build`:
+
 - define additive debug session contracts (`open`, `poll`, `snapshot`, `close`) and event/snapshot type surfaces
 - pin runtime/host responsibilities and determinism constraints for debug instrumentation
 - document masking/default-disable policy for sensitive fields
+
 6. `Tests`:
+
 - contract generation/typecheck passes for host/frontend consumers
 - docs lint/checks pass
+
 7. `Accept`:
+
 - debug connector interfaces are contract-first, additive, and implementation-ready
 - no existing runtime/host contract behavior is broken
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`
+
 9. `Notes`:
+
 - this ticket establishes interfaces only; no runtime emission implementation in this slice
 - completed with Rust-owned DTO generation into both engine and browser TypeScript surfaces,
   consumer type tests, deterministic shape guards, and non-value-bearing masked/omitted variants
@@ -1486,22 +1945,33 @@ Reference plan:
 2. `Depends On`: `D0-01`
 3. `Owner`: `engine-wasm`
 4. `Files`:
+
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/engine_runtime_internal/*`
 - `engine-wasm/engine/src/engine_public_api.rs`
 - `engine-wasm/engine/src/engine_tests/*`
+
 5. `Build`:
+
 - add in-engine fixed-size debug event ring buffer with cursor and drop accounting
 - emit deterministic events at deck/nav/focus/input/action/script/timer boundaries
 - add read-only snapshot export with sensitive-field masking defaults
+
 6. `Tests`:
+
 - engine tests for event ordering determinism and drop accounting
 - engine tests for masked sensitive fields in snapshot/event payloads
+
 7. `Accept`:
+
 - engine exposes deterministic, pollable debug events and snapshots without changing runtime behavior
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
+
 9. `Notes`:
+
 - keep emitter path allocation-light and side-effect free for non-debug execution
 
 ### D0-03 Host bridge integration for attach/poll/close
@@ -1510,22 +1980,33 @@ Reference plan:
 2. `Depends On`: `D0-01`, `D0-02`
 3. `Owner`: `browser`, `engine-wasm`
 4. `Files`:
+
 - `browser/src-tauri/src/engine_bridge/*`
 - `browser/src-tauri/src/lib.rs`
 - `browser/contracts/generated/*`
 - `browser/src-tauri/src/tests/*`
+
 5. `Build`:
+
 - expose tauri commands for debug session lifecycle and event polling
 - map host contract types to engine debug contract surfaces
 - ensure command failures are deterministic and non-fatal to runtime state
+
 6. `Tests`:
+
 - tauri command tests for attach/poll/close behavior and error handling
 - contract wrapper generation/typecheck
+
 7. `Accept`:
+
 - running desktop host can attach and retrieve debug events/snapshots through host APIs
+
 8. `Spec`:
+
 - `RQ-WAE-017`, `RQ-RMK-002`
+
 9. `Notes`:
+
 - scope excludes UI panel; this is command/API integration only
 
 ### D0-04 Browser debug panel and capture workflow
@@ -1534,21 +2015,32 @@ Reference plan:
 2. `Depends On`: `D0-03`
 3. `Owner`: `browser`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/components/*`
 - `browser/frontend/src/styles.css`
 - `browser/frontend/src/app/*.test.ts`
+
 5. `Build`:
+
 - add optional dev-tools panel to start/stop debug session and stream recent events
 - include export-to-json workflow for bug reproduction artifacts
 - keep panel isolated from runtime control path (read-only)
+
 6. `Tests`:
+
 - frontend unit/integration tests for panel lifecycle and export behavior
+
 7. `Accept`:
+
 - operators can capture deterministic engine debug timelines without console scraping
+
 8. `Spec`:
+
 - `RQ-RMK-003`, `RQ-WAE-017`
+
 9. `Notes`:
+
 - if UI scope threatens active lane capacity, ship as follow-up after `D0-03`
 
 ## Phase U: User Onboarding + Help Experience (Planning-Ready)
@@ -1563,24 +2055,35 @@ Reference plan:
 2. `Depends On`: none
 3. `Owner`: `browser`, `docs`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/components/*`
 - `browser/frontend/src/styles.css`
 - `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - `browser/frontend/src/app/*.test.ts`
+
 5. `Build`:
+
 - add a first-run intro/home surface for Waves
 - explain what Waves is and present primary entry points (`Take the tour`, `Try local examples`, `Connect to a WAP server`, `Open help`)
 - keep the experience skippable and non-blocking for returning users
+
 6. `Tests`:
+
 - frontend tests for first-run visibility, dismissal, and re-entry behavior
 - content rendering checks for primary call-to-action states
+
 7. `Accept`:
+
 - new users are not dropped directly into an unexplained shell state
 - first screen explains product purpose and gives a safe next step
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - shell-level orientation only; do not fold tutorial sequencing or hint systems into this ticket
 
 ### U0-02 Guided tour and replayable concept walkthrough
@@ -1589,21 +2092,32 @@ Reference plan:
 2. `Depends On`: `U0-01`
 3. `Owner`: `browser`, `docs`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/components/*`
 - `browser/frontend/src/styles.css`
 - `browser/frontend/src/app/*.test.ts`
+
 5. `Build`:
+
 - add a replayable guided tour for shell chrome, local vs network mode, example loading, and debug-surface discovery
 - keep the tour step-based, skippable, and resumable within a session
+
 6. `Tests`:
+
 - frontend tests for step progression, skip/replay behavior, and state reset
+
 7. `Accept`:
+
 - users can complete a short product tour without leaving Waves
 - returning users can replay the tour from Help
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - do not tie this ticket to deep runtime/debug implementation work; it is a shell-level teaching layer
 
 ### U0-03 Help hub and durable in-app documentation
@@ -1612,21 +2126,32 @@ Reference plan:
 2. `Depends On`: `U0-01`
 3. `Owner`: `browser`, `docs`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/components/*`
 - `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - `browser/frontend/src/app/*.test.ts`
+
 5. `Build`:
+
 - add an in-app help hub with `Start Here`, `Quickstart`, `Core Concepts`, `Troubleshooting`, `Developer Guide`, and `Reference`
 - make help reachable after onboarding, not just during first launch
+
 6. `Tests`:
+
 - frontend tests for section navigation and stable rendering of core help content
+
 7. `Accept`:
+
 - users can access core help inside the product without external documentation
 - help content is versioned in-repo and can be updated with product changes
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-017`
+
 9. `Notes`:
+
 - keep content local-first and testable; avoid building a docs sync pipeline in the MVP slice
 
 ### U0-04 Tutorial decks and task-based learning content
@@ -1635,22 +2160,33 @@ Reference plan:
 2. `Depends On`: `U0-03`
 3. `Owner`: `browser`, `engine-wasm`, `docs`
 4. `Files`:
+
 - `engine-wasm/examples/source/*`
 - `engine-wasm/examples/generated/examples.ts`
 - `browser/frontend/src/app/*`
 - `docs/waves/FORM_HANDLING_LOCAL_MODE_TESTING.md`
+
 5. `Build`:
+
 - add local tutorial content for common tasks (`first deck`, `edit and submit a form`, `understand local vs network mode`, `inspect runtime state`)
 - connect tutorial discovery through the welcome page and help hub
+
 6. `Tests`:
+
 - example generation remains green
 - frontend tests verify tutorial discovery and launch paths
+
 7. `Accept`:
+
 - users can learn core Waves interactions through built-in content and examples
 - tutorial content remains within normal engine/browser boundaries
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-008`
+
 9. `Notes`:
+
 - prefer product-native tutorial content over external-only prose
 
 ### U0-05 Contextual hints and onboarding state persistence
@@ -1659,20 +2195,31 @@ Reference plan:
 2. `Depends On`: `U0-02`, `U0-03`
 3. `Owner`: `browser`
 4. `Files`:
+
 - `browser/frontend/src/app/*`
 - `browser/frontend/src/components/*`
 - `browser/frontend/src/app/*.test.ts`
+
 5. `Build`:
+
 - add lightweight contextual hints for first network failure, first local example load, first edit flow, and first dev-tools open
 - persist dismiss/replay state locally with a clear reset path
+
 6. `Tests`:
+
 - frontend tests for trigger rules, dismissal, and persistence/reset behavior
+
 7. `Accept`:
+
 - contextual help appears only when relevant and remains dismissible
 - returning users are not forced through repeated onboarding
+
 8. `Spec`:
+
 - `RQ-RMK-002`, `RQ-RMK-003`
+
 9. `Notes`:
+
 - hints are additive and non-blocking; do not replace the welcome page or help hub with hint-only onboarding
 
 ## Phase W: WMLScript Runtime and VM (Active)
@@ -1704,6 +2251,7 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `done`
 2. `Depends On`: `W0-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/stdlib/dialogs.rs`
 - `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/runtime/events.rs`
@@ -1711,23 +2259,35 @@ Completed `W0-01` through `W0-04` are archived in:
 - `browser/contracts/engine.ts`
 - `browser/frontend/src/main.ts`
 - `browser/src-tauri/src/*`
+
 4. `Build`:
+
 - Add timer/event plumbing and dialog hostcall path.
+
 5. `Tests`:
+
 - `engine-wasm/engine/src/engine_tests/actions_timers.rs`
   (`timer_expiry_invokes_script_and_publishes_dialog_in_order`)
 - `engine-wasm/examples/source/timer-script-dialog.wml`
 - `engine-wasm/examples/source/timer-script-dialog.flow.json`
 - `pnpm test:story W0-05`
+
 6. `Accept`:
+
 - [x] Timer-triggered script flow works with deterministic host/runtime behavior.
+
 7. `Spec`:
+
 - `RQ-WMLS-022`, `RQ-WAE-016`, `RQ-WAE-017`
+
 8. `Architecture Compliance`:
+
 - [x] Dialog/timer features are host capability calls only.
 - [x] Timer semantics remain runtime-owned and deterministic.
 - [x] Host integration cannot bypass runtime error/trap handling model.
+
 9. `Closure Boundary`:
+
 - This closes the project baseline only. Strict WAP Dialogs library/function
   identifiers, interactive dialog result round-trips, and full `WMLS-5`
   conformance remain in `WMLS-504`/`WMLS-505` and `W1-05..W1-07`.
@@ -1737,18 +2297,29 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `done`
 2. `Depends On`: `W0-02`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/decoder.rs`
 - `engine-wasm/engine/src/wavescript/vm.rs`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Implement structural verification gates (header/pools/index/jump-target validity) before VM execution.
+
 5. `Tests`:
+
 - Verification-failure fixtures for malformed pools, invalid branch targets, and out-of-range references.
+
 6. `Accept`:
+
 - Decoder rejects structurally invalid units before interpreter execution begins.
+
 7. `Spec`:
+
 - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+
 8. `Notes`:
+
 - Additive compliance follow-up to completed decoder skeleton (`W0-02`).
 - Completed with pre-execution structural gates in decoder and boundary entry validation in VM (`invalid local index references`, `call arity/frame bounds`, `host arg-count bounds`, and instruction-boundary entry checks).
 - This completed slice applies to the project-specific VM skeleton. It is
@@ -1761,19 +2332,30 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `done`
 2. `Depends On`: `W0-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs`
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
+
 4. `Build`:
+
 - Implement `WMLBrowser.newContext` and `WMLBrowser.getCurrentCard` behavior per spec.
 - Ensure interaction with pending `go`/`prev` requests is deterministic and spec-aligned.
+
 5. `Tests`:
+
 - Invocation fixtures for context reset semantics and current-card URL formatting (relative vs absolute).
+
 6. `Accept`:
+
 - Missing context APIs are present and behaviorally aligned with WMLScript library semantics.
+
 7. `Spec`:
+
 - `RQ-WMLS-019`, `RQ-WMLS-020`
+
 8. `Notes`:
+
 - Additive compliance follow-up to completed var/nav subset (`W0-04`).
 - Completed in `R0-03` closure pass with deterministic runtime + stdlib tests and host-visible fixture (`wmlbrowser-context-fidelity.wml`).
 
@@ -1782,16 +2364,25 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `todo`
 2. `Depends On`: `W0-01`, `W0-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/wavescript/*`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Enforce external-call constraints (`extern` visibility, access pragma checks, deterministic call failure categories).
+
 5. `Tests`:
+
 - Resolver fixtures for allowed/denied domain/path calls and non-extern function rejection.
+
 6. `Accept`:
+
 - External script invocation semantics include conformance access checks before execution.
+
 7. `Spec`:
+
 - `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
 
 ## Phase W1: Bedrock Compliance Closure (Priority Lane)
@@ -1801,20 +2392,29 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `todo`
 2. `Depends On`: `W0-01`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `browser/src-tauri/src/lib.rs`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+
 4. `Build`:
+
 - Add explicit transport/host handling policy for:
   - `text/vnd.wap.wmlscript`
   - `application/vnd.wap.wmlscriptc`
 - Keep boundary ownership explicit: transport classification + runtime execution handoff; no host-side script semantic execution.
+
 5. `Tests`:
+
 - Fixture matrix for both content types and deterministic unsupported/error mappings.
+
 6. `Accept`:
+
 - Script media types are routed deterministically and reflected in contract/docs.
+
 7. `Spec`:
+
 - `RQ-WMLS-011`
 
 ### W1-02 Bytecode structural verification (header/pools/indexes/jumps)
@@ -1822,24 +2422,35 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `in-progress`
 2. `Depends On`: `W0-06`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/wap_decoder.rs`
 - `engine-wasm/engine/tests/fixtures/wmlscript/`
 - `engine-wasm/engine/src/lib.rs`
+
 4. `Build`:
+
 - Add a strict decoder for the effective WAP-193 compilation-unit format
   alongside the unchanged project-specific execution stream.
 - Implement pre-execution verification gates for WAP header, constant pool,
   pragma pool, function pool, instruction stream, and references.
 - Keep trap taxonomy deterministic and host-safe.
+
 5. `Tests`:
+
 - Source-derived valid `.wmlsc` fixtures plus malformed cases covering
   version/header fields, multi-byte encodings, section sizes, pool references,
   function boundaries, every mandatory instruction family, and jump targets.
+
 6. `Accept`:
+
 - Invalid bytecode fails before execution, with deterministic trap class.
+
 7. `Spec`:
+
 - `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+
 8. `Notes`:
+
 - The bounded WMLS-501 tranche directly covers WAP-193 compilation-unit framing, pools,
   instruction decoding, and local/constant/function/jump structural references with native/WASM
   fixture parity.
@@ -1855,16 +2466,25 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `todo`
 2. `Depends On`: `W0-08`
 3. `Files`:
+
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/wavescript/*`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Enforce `extern` visibility and pragma-based external access control (`use url`, `use access`, `use meta`) for external invocation paths.
+
 5. `Tests`:
+
 - Allowed/denied call fixtures and non-extern rejection fixtures with deterministic outcomes.
+
 6. `Accept`:
+
 - External invocation behavior is policy-complete and spec-linked.
+
 7. `Spec`:
+
 - `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`
 
 ### W1-04 Function/local/return and conversion semantics parity closure
@@ -1872,16 +2492,25 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `todo`
 2. `Depends On`: `W0-03`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/vm.rs`
 - `engine-wasm/engine/src/wavescript/value.rs`
 - `engine-wasm/engine/src/wavescript/stdlib/*`
+
 4. `Build`:
+
 - Close gaps against spec semantics for arity, pass-by-value, implicit return value, local initialization, and conversion behavior.
+
 5. `Tests`:
+
 - Deterministic conformance fixtures mapped to requirement IDs in `docs/waves/SPEC_TEST_COVERAGE.md`.
+
 6. `Accept`:
+
 - Function/call/conversion semantics are deterministic and spec-aligned for mandatory coverage scope.
+
 7. `Spec`:
+
 - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`
 
 ### W1-05 SCR conformance matrix and CI guardrail for WMLScript lane
@@ -1889,6 +2518,7 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `in-progress`
 2. `Depends On`: `W1-02`, `W1-03`, `W1-04`
 3. `Files`:
+
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
 - `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`
 - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
@@ -1897,26 +2527,36 @@ Completed `W0-01` through `W0-04` are archived in:
 - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
 - `scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - `.github/workflows/*`
+
 4. `Build`:
+
 - Maintain the machine-checkable mapping for all 112 WMLScript rows and 95
   effective WMLScript Libraries rows, including source-exact `WMLSSL048`.
 - Apply exact Class C selection: 41 `WMLScript:MCF` rows and 80
   `WMLScriptLibs:MCF` rows.
 - Fail CI when mandatory SCRs are unmapped or regress to untracked.
+
 5. `Tests`:
+
 - `node scripts/check-wap-wmlscript-conformance-ledger.mjs`
 - CI dry-run with one intentionally unmapped mandatory SCR.
+
 6. `Accept`:
+
 - [x] Effective SCR source/order/status/profile mappings are machine-checked.
 - [x] Every selected row maps to implementation status, requirements, and
-  open work.
+      open work.
 - [ ] Every selected row has direct normative test evidence or an explicit
-  release-blocking gap.
+      release-blocking gap.
 - [ ] The validator runs in required CI and an intentional mapping regression
-  fails the job.
+      fails the job.
+
 7. `Spec`:
+
 - `RQ-WMLS-001..022` (mandatory subsets first)
+
 8. `Notes`:
+
 - Current audit is intentionally conservative:
   - WMLScript: 32 partial / 9 missing / 0 implemented;
   - Libraries: 14 partial / 66 missing / 0 implemented;
@@ -1929,22 +2569,31 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `in-progress`
 2. `Depends On`: `W1-02`, `W1-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/wavescript/vm.rs`
 - `engine-wasm/engine/src/wavescript/value.rs`
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
 - Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
 - Progress (`2026-03-02`): added structured execution `error_class` + `error_category` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, added fatal-abort recovery coverage, and enforced explicit `VmTrap` class/category matrix tests across all current variants.
 - Progress (`2026-07-25`): corrected a spec-accuracy bug from the prior slice: `WAP-193_101` 12.3.1.7 classifies Stack Underflow as Fatal ("only generated if compiler generates bad code"), not Non-fatal, and the VM's `TypeError` is the same "compiler generated bad code" condition. Both now classify `fatal`/`integrity` in `classify_vm_trap`/`classify_vm_trap_category` (`engine_script_types.rs`); scripts hitting either trap now abort invocation instead of yielding `invalid`. Updated the affected trace/invocation tests in `engine_tests/script_runtime.rs` and `engine_tests/traces_public_api.rs` to match, and added `non_fatal_execution_outcome_contract_shape` to pin the `ScriptExecutionOutcome::non_fatal` contract shape directly, since no current `VmTrap` variant reaches it. Remaining scope: no VM opcode can trigger a real chapter-12.4 Non-fatal error yet (divide-by-zero, integer/float overflow/underflow, float constant/conversion range) — those need new opcodes, which is `W1-04` territory, not this ticket.
+
 5. `Tests`:
+
 - Conformance fixtures for arithmetic/conversion/runtime-error classes with expected fatal/non-fatal outcomes.
 - Integration fixtures proving host/runtime liveness after fatal script invocation failure.
+
 6. `Accept`:
+
 - Error handling behavior aligns with chapter `12` taxonomy and no longer relies on generic trap collapsing.
+
 7. `Spec`:
+
 - `RQ-WMLS-006`, `RQ-WMLS-010`
 
 ### W1-07 W1-06 closure split and acceptance finalization
@@ -1952,18 +2601,27 @@ Completed `W0-01` through `W0-04` are archived in:
 1. `Status`: `todo`
 2. `Depends On`: `W1-06`
 3. `Files`:
+
 - `docs/waves/WORK_ITEMS.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/WMLSCRIPT_SPEC_TRACEABILITY.md`
 - `engine-wasm/contracts/wml-engine.ts`
+
 4. `Build`:
+
 - Split remaining `W1-06` open work into explicit closure bullets (missing fixture classes, unresolved trap mappings, and host contract assertions).
 - Define objective close criteria so `W1-06` can move from `in-progress` to `done` without ambiguity.
+
 5. `Tests`:
+
 - Coverage matrix update proving each remaining `W1-06` closure bullet maps to a deterministic fixture/test lane.
+
 6. `Accept`:
+
 - `W1-06` has a concrete closure checklist with no implicit scope remaining.
+
 7. `Spec`:
+
 - `RQ-WMLS-006`, `RQ-WMLS-010`
 
 ## Phase R: WAP-191 Full-Stack Conformance Completion
@@ -1979,25 +2637,36 @@ Reference:
 1. `Status`: `in-progress`
 2. `Depends On`: `S0-14`
 3. `Files`:
+
 - `docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`
 - `.github/workflows/*`
+
 4. `Build`:
+
 - Create a machine-checkable effective WML 1.3 conformance matrix
   (`WML-C-01..59`, `WML-S-60..69`, `WML-C-70..76`) with source SCR ID,
   status, profile disposition, and test mapping.
 - Apply `WAP-191_105` after `WAP-191_104`; SIN 105 adds optional
   `WML-C-76` (`tabindex`) and clarifies POST/multipart behavior.
 - Add CI guardrail that fails when mandatory items are unmapped.
+
 5. `Tests`:
+
 - CI dry-run with one intentionally unmapped mandatory ID.
+
 6. `Accept`:
+
 - Mandatory WML IDs cannot silently regress to unmapped/untracked state.
+
 7. `Spec`:
+
 - effective `WAP-191` section `15.1` through `15.4` plus
   `WAP-191_105` section `3`
+
 8. `Notes`:
+
 - Source/status/disposition/work-item accounting is implemented in
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
@@ -2013,6 +2682,7 @@ Reference:
 1. `Status`: `done`
 2. `Depends On`: `A5-02`, `T0-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/src/parser/wml_parser/actions.rs`
@@ -2021,15 +2691,23 @@ Reference:
 - `browser/frontend/src/app/navigation-state.ts`
 - `browser/frontend/src/app/navigation-state.test.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 4. `Build`:
+
 - Implement and verify section `12.5` step-order behavior for `go`, `prev`, `noop`, `refresh`, including deterministic task-failure handling.
 - Ensure request metadata handoff (method/postfield/headers) stays aligned between runtime and transport.
+
 5. `Tests`:
+
 - Cross-layer fixtures for forward/back/refresh/error paths with trace assertions.
 - Seed fixture candidates from `docs/waves/WILEY_BOOK_CODE_EXAMPLES.md`: `WBK-FX-002`, `WBK-FX-003`, `WBK-FX-004`, `WBK-FX-005`, `WBK-FX-007`.
+
 6. `Accept`:
+
 - Runtime and host behavior match documented WML process ordering for covered flows.
+
 7. `Spec`:
+
 - `WML-18`, section `9.5`, section `12.5`
 
 ### R0-03 History/context fidelity completion
@@ -2037,20 +2715,31 @@ Reference:
 1. `Status`: `done`
 2. `Depends On`: `A5-01`, `B2-02`
 3. `Files`:
+
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/contracts/transport.ts`
 - `browser/frontend/src/session-history.ts`
+
 4. `Build`:
+
 - Expand history entries to include request identity fields needed by WML history semantics.
 - Complete `newcontext` and context-reset behavior across runtime and browser history integration.
+
 5. `Tests`:
+
 - Deterministic back-stack fixtures with repeated URLs, mixed transitions, and context resets.
+
 6. `Accept`:
+
 - History and context behavior is deterministic and conforms to section `9.2` + `10.2`.
+
 7. `Spec`:
+
 - `WML-07`, `WML-10`, `WML-11`, `WML-13`
+
 8. `Notes`:
+
 - Context reset semantics closed via `WMLBrowser.newContext` runtime effect handling and `WMLBrowser.getCurrentCard` API coverage.
 - Acceptance evidence includes deterministic engine tests and shared local example coverage (`engine-wasm/examples/source/wmlbrowser-context-fidelity.wml`).
 
@@ -2059,20 +2748,31 @@ Reference:
 1. `Status`: `in-progress`
 2. `Depends On`: `M1-07`
 3. `Files`:
+
 - `engine-wasm/engine/src/parser/wml_parser/*`
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/tests/fixtures/*`
 - `docs/wml-engine/work-items.md`
+
 4. `Build`:
+
 - Complete parser/runtime coverage for `head/template/access/meta`, `do/onevent`, `select/option/optgroup/input/fieldset`, `timer`, and associated validity constraints.
 - Keep deterministic failure behavior for invalid bindings/conflicts.
+
 5. `Tests`:
+
 - Fixture matrix for element parse/validation and runtime effects.
+
 6. `Accept`:
+
 - Core WML element families in section `11` are represented or explicitly profile-gated.
+
 7. `Spec`:
+
 - `WML-21`, `WML-25`, `WML-26`, `WML-33`, `WML-34`, `WML-39`, `WML-40`, `WML-41`, `WML-43`, `WML-47`, `WML-48`, `WML-52`, `WML-53`, `WML-66`, `WML-67`, `WML-69`
+
 8. `Notes`:
+
 - `head` (`WML-C-30`) and `access` (`WML-C-21`) landed: the parser enforces ordered, unique deck-level `<head>`, extracts authored `<access domain= path=>` values, and rejects more than one access element per section `11.3.1`. Ordered `meta` (`WML-C-34`, optional) records now retain name/http-equiv identity, content, forua, and scheme with deterministic EMPTY/attribute validation. `access` remains `partial`: defaults, relative-path resolution, and referring-URI policy enforcement are the cross-boundary `R0-07` scope.
 - `template` (`WML-C-47`) split out to `R0-12`: it is spec-inseparable from card/deck task shadowing (`WML-C-08`, section `9.6`) and requires a real named `do`/`onevent` binding model this codebase doesn't have yet, not a small addition alongside `head`/`access`.
 - Mandatory `input`/`select`/`option` syntax validation for `WML-C-33`, `WML-C-41`, and `WML-C-43` now rejects invalid DTD content, undeclared attributes, and invalid NMTOKEN/enum/boolean/number values deterministically. Optional `fieldset` and nested `optgroup` wrappers receive deterministic DTD-derived attribute/content validation, reject empty fieldsets and leaf optgroups, and continue processing their children in document order. Their capability declaration and grouping presentation remain unmodeled and therefore not assessed.
@@ -2097,17 +2797,26 @@ Reference:
 1. `Status`: `todo`
 2. `Depends On`: `B5-02`, `B5-03`, `C5-01`, `C5-02`
 3. `Files`:
+
 - `engine-wasm/engine/src/layout/*`
 - `engine-wasm/engine/src/render/*`
 - `engine-wasm/engine/tests/fixtures/*`
+
 4. `Build`:
+
 - Close remaining text/paragraph/table/pre/image semantic gaps and maintain deterministic render output.
 - Preserve logical focus semantics under wrap and inline break behavior.
+
 5. `Tests`:
+
 - Snapshot and semantic fixtures across viewport widths and mixed markup.
+
 6. `Accept`:
+
 - Renderer behavior aligns with section `11.8` and `11.9` requirements for implemented profiles.
+
 7. `Spec`:
+
 - `WML-24`, `WML-32`, `WML-36`, `WML-46`, `WML-49`, `WML-50`, `WML-54..59`, `WML-68`, `WML-73`, `WML-75`
 
 ### R0-06 Transport/request-policy and postfield plumbing
@@ -2115,20 +2824,31 @@ Reference:
 1. `Status`: `in-progress`
 2. `Depends On`: `T0-04`, `R0-02`
 3. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `browser/contracts/transport.ts`
 - `engine-wasm/contracts/wml-engine.ts`
 - `browser/src-tauri/src/lib.rs`
+
 4. `Build`:
+
 - Add runtime-to-transport request-policy channel for task metadata (`cache-control`, referer policy, postfield payload context).
 - Preserve boundary ownership: transport executes requests, runtime defines semantic intent.
+
 5. `Tests`:
+
 - End-to-end request-shape fixtures for form submit and refresh/no-cache scenarios.
+
 6. `Accept`:
+
 - Request metadata semantics are deterministic and traceable to runtime task state.
+
 7. `Spec`:
+
 - `WML-29`, `WML-37`, `WML-52`, section `9.5.1`, section `12.5`
+
 8. `Notes`:
+
 - WML-304 now supplies the Rust-owned typed request intent across native, WASM, generated engine,
   and Tauri serialization contracts, with direct parser/runtime/story evidence for 3 of its 15
   mapped clauses. Remaining R0-06 scope starts at the browser/transport consumption boundary:
@@ -2140,18 +2860,27 @@ Reference:
 1. `Status`: `todo`
 2. `Depends On`: `R0-04`
 3. `Files`:
+
 - `browser/frontend/src/*`
 - `browser/src-tauri/src/*`
 - `engine-wasm/contracts/wml-engine.ts`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 4. `Build`:
+
 - Implement policy-consistent handling for deck access-control metadata, low-memory behavior toggles, and unknown-DTD handling strategy.
 - Keep enforcement at host boundary where required by architecture constraints.
+
 5. `Tests`:
+
 - Policy fixtures and integration tests for allow/deny paths and deterministic error/reporting behavior.
+
 6. `Accept`:
+
 - Browser host has explicit, test-backed policy behavior for sections `12.1`-`12.4`.
+
 7. `Spec`:
+
 - `WML-14`, `WML-15`, `WML-16`, `WML-17`
 
 ### R0-08 WML encoder/validation tooling and WBXML conformance fixtures
@@ -2159,27 +2888,36 @@ Reference:
 1. `Status`: `todo`
 2. `Depends On`: `T0-07`
 3. `Files`:
+
 - `transport-rust/tests/fixtures/transport/*`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
 - `spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json`
+
 4. `Build`:
+
 - Add tooling/fixtures that validate WML token table expectations, XML well-formed/validation gates, and server/client conformance constraints.
 - Close the selected `WBXML-C-001`, `WBXML-C-010`, and `WBXML-C-011` rows
   against a pinned decoder implementation rather than permissive subprocess
   behavior.
 - Keep ownership explicit where behavior is authoring/tooling vs runtime-execution.
+
 5. `Tests`:
+
 - Fixture matrix for valid/invalid tokenization and decode compatibility classes.
 - Source-derived cases for WBXML headers, multi-byte integers, string tables,
   code pages, global tokens, entities, opaque/extensions, literals, default
   attributes, and malformed input.
+
 6. `Accept`:
+
 - Section `14` and `15.2/15.3/15.4` obligations are concretely represented in testable artifacts.
 - All three `WBXML:MCF` client rows have direct normative evidence or a
   deterministic explicit unsupported result; fake fixed-output decoders and
   `either` fixtures cannot satisfy the gate.
+
 7. `Spec`:
+
 - `WML-60`, `WML-61`, `WML-62`, `WML-63`, `WML-64`, `WML-65`, `WML-70`
 - `RQ-RMK-010`, `WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`
 
@@ -2188,21 +2926,32 @@ Reference:
 1. `Status`: `done`
 2. `Depends On`: `R0-02`, `R0-03`
 3. `Files`:
+
 - `engine-wasm/engine/src/runtime/*`
 - `engine-wasm/engine/src/parser/wml_parser/*`
 - `browser/frontend/src/*`
 - `browser/contracts/transport.ts`
 - `docs/waves/WAE_SPEC_TRACEABILITY.md`
+
 4. `Build`:
+
 - Guarantee BACK is always user-accessible and maps to deterministic history pop semantics.
 - Implement WML1 override behavior where first-in-document-order `do type="prev"` takes precedence for BACK behavior.
+
 5. `Tests`:
+
 - Fixture set for BACK availability, stack-pop behavior, and `do type=prev` precedence with conflicting bindings.
+
 6. `Accept`:
+
 - BACK semantics are always available and precedence rules are deterministic across runtime + host UI paths.
+
 7. `Spec`:
+
 - `RQ-WAE-017`, section `9.2`, section `9.7`
+
 8. `Notes`:
+
 - WML-303 makes the browser BACK control permanently reachable, preserves history
   availability as non-disabling metadata, resolves the first active `do type="prev"` in
   card-before-template/document order, honors noop masking, and reports handled status
@@ -2218,22 +2967,33 @@ Reference:
 1. `Status`: `in-progress`
 2. `Depends On`: `R0-02`, `R0-03`, `R0-06`, `W1-06`
 3. `Files`:
+
 - `docs/waves/SPEC_TEST_COVERAGE.md`
 - `docs/waves/WORK_ITEMS.md`
 - `docs/wml-engine/work-items.md`
 - `transport-rust/tests/fixtures/transport/*`
 - `engine-wasm/engine/tests/fixtures/*`
 - `browser/frontend/src/app/*.test.ts`
+
 4. `Build`:
+
 - Add a single ledger mapping active `R0`/`T0`/`W1` tickets to concrete fixture and test assets across engine, transport, and browser.
 - Record explicit “implemented”, “partial”, and “missing” fixture lanes for each ticket acceptance criterion.
+
 5. `Tests`:
+
 - Manual consistency pass confirming every referenced fixture path exists and each mapped ticket has at least one deterministic test lane.
+
 6. `Accept`:
+
 - Ticket closure decisions can be made from one cross-layer fixture map without ad hoc test discovery.
+
 7. `Spec`:
+
 - Aggregated IDs from `WML-191`, `RQ-WAE-*`, `RQ-TRN-*`, and `RQ-WMLS-*` lanes linked by mapped tickets.
+
 8. `Progress`:
+
 - The shared WML example corpus now accepts validated executable-flow companions whose work-item
   and spec-item mappings must exactly match example metadata. `pnpm test:story list` exposes this
   first machine-readable host-sample ledger slice.
@@ -2245,22 +3005,33 @@ Reference:
 1. `Status`: `in-progress`
 2. `Depends On`: `R0-10`, `T0-04`, `R0-03`
 3. `Files`:
+
 - `transport-rust/tests/fixtures/transport/*`
 - `engine-wasm/engine/tests/fixtures/*`
 - `browser/frontend/src/app/navigation-state.test.ts`
 - `browser/src-tauri/src/lib.rs`
 - `docs/waves/SPEC_TEST_COVERAGE.md`
+
 4. `Build`:
+
 - Add a deterministic replay runner that executes representative `transport -> engine -> browser` flows from shared fixture inputs and validates timeline/frame/state outputs.
 - Keep this runner behavior-focused (semantic drift guard), not just type/contract shape checks.
+
 5. `Tests`:
+
 - One replay lane for load->fragment nav->back.
 - One replay lane for external intent follow + request-policy metadata.
+
 6. `Accept`:
+
 - Cross-layer behavioral regressions are detectable in one reproducible replay lane with stable fixture outputs.
+
 7. `Spec`:
+
 - `WML-07`, `WML-18`, `RQ-WAE-008`, `RQ-WAE-016`, `RQ-TRN-004`
+
 8. `Progress`:
+
 - `pnpm test:story <id|all>` now provides deterministic Playwright replay against the production
   WASM host sample with automatic Vite lifecycle, semantic state/trace assertions, and structured
   failure artifacts.
@@ -2273,6 +3044,7 @@ Reference:
 1. `Status`: `done`
 2. `Depends On`: `R0-02`, `R0-04`
 3. `Files`:
+
 - `engine-wasm/engine/src/runtime/card.rs`
 - `engine-wasm/engine/src/runtime/deck.rs`
 - `engine-wasm/engine/src/parser/wml_parser/mod.rs`
@@ -2281,20 +3053,32 @@ Reference:
 - `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md`
 - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
 - `spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json`
+
 4. `Build`:
+
 - Introduce a named `do[name]`/`onevent[type]` binding model (the current `Card` struct only has four special-cased single actions: `accept`, `onenterforward`, `onenterbackward`, `ontimer`) so deck-level (`template`) and card-level bindings can be represented independently.
 - Parse `<template>` at deck level (`do`/`onevent` children) per section `11.4`.
 - Implement card/deck task shadowing per section `9.6`: a card-level binding of a given name/type overrides ("shadows") a deck-level binding of the same name/type; a shadowing card-level binding that binds `noop` masks the event entirely (no side effects on either the card- or deck-level binding); an unshadowed deck-level binding stays active for cards that don't override it; an unshadowed binding that itself binds `noop` is also masked.
+
 5. `Tests`:
+
 - Fixture matrix covering: card overrides deck binding; card shadows deck binding with `noop` (fully masked); deck-level binding stays active when not shadowed; unshadowed `noop` binding (masked, no shadowing partner) - matching the three-card `<do>` example in section `9.6`.
+
 6. `Accept`:
+
 - `WML-C-47` (`template`) and `WML-C-08` (card/deck task shadowing) have direct code/test evidence, and the compliance ledger reflects it: obligation status in `wap-1.2.1-wml-scr.json`, parent-status mirrors in `wap-1.2.1-selected-normative-clauses.json`, and the drift-guard snapshots in `scripts/check-wap-conformance-ledger.mjs`/`scripts/check-requirement-status-drift.mjs`, following the same update pattern `R0-04`'s `head`/`access` slice used.
+
 7. `Spec`:
+
 - `WML-08`, `WML-47`, section `9.6`, section `9.7`, section `11.4`, section `11.5.1`
+
 8. `Notes`:
+
 - Split out of `R0-04`'s "parser semantic completeness" scope: `template`/shadowing turned out to need a real named-binding model and merge algorithm, not a small addition alongside `head`/`access`.
 - `WML-C-08` (shadowing) is formally covered by `R0-02`, which is `done` - per `AGENT_STANDARDS.md`'s backlog lifecycle policy, `R0-02`'s status is not reopened for this. This ticket is the scoped corrective follow-up for a gap the newer clause-level ledger (`CONF-003`) found in `R0-02`'s original coverage, not a reversal of `R0-02`'s completion.
+
 9. `Progress`:
+
 - Added ordered, independent card/template `do[name]` and `onevent[type]` bindings in the shared Rust deck model, including effective-name matching, cross-syntax intrinsic precedence, and inactive `noop` masking.
 - Added deterministic parser rejection for duplicate templates, misplaced/invalid template content, duplicate effective do names, and conflicting intrinsic bindings.
 - Added native parser/runtime tests, a WASM boundary parity test, and executable `wml-202-template-shadowing.wml` + `.flow.json` evidence (`pnpm test:story WML-202`).
