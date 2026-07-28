@@ -83,7 +83,7 @@ WAP_GATEWAY_IMAGE_ID=$gateway_image_id
 EOF
 
 mkdir -p "$output_dir"
-tar -C "$stage_dir" -czf "$archive_path" .
+COPYFILE_DISABLE=1 tar -C "$stage_dir" -czf "$archive_path" .
 archive_sha256=$(sha256_file "$archive_path")
 printf '%s  %s\n' "$archive_sha256" "$(basename "$archive_path")" >"$checksum_path"
 

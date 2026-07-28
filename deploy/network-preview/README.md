@@ -35,7 +35,7 @@ and UFW remain independent outer layers; passing one layer never substitutes for
 
 Release builds require a clean committed worktree plus Docker Buildx, Grype, and Syft. They build
 Linux AMD64 images off-host, fail on high or critical image vulnerabilities, generate CycloneDX
-SBOMs, and package the exact image IDs into a checksummed archive:
+SBOMs, and package the exact image config digests into a checksummed archive:
 
 ```sh
 scripts/build-network-preview-release.sh <release-id>
@@ -54,8 +54,11 @@ scripts/deploy-network-preview-private.sh \
   waves@waves-network-preview
 ```
 
-The remote installer verifies the archive checksum and both loaded Docker image IDs, generates
-host-local 256-bit Kannel secrets when absent, installs the persistent firewall and systemd units,
+The remote installer verifies the archive checksum, Linux AMD64 platform, and canonical config
+digest of both loaded images. The config digest check works with both Docker's classic image store
+and its containerd image store and binds each image's runtime configuration and root filesystem.
+The installer then generates host-local 256-bit Kannel secrets when absent, installs the persistent
+firewall and systemd units,
 forces firewall mode to `sealed`, starts the containers, and waits for their health checks. A
 failed start restores the prior release when one exists. The archive is removed from `/tmp` after
 success.

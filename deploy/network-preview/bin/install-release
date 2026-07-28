@@ -18,6 +18,14 @@ sha256_file() {
   fi
 }
 
+sha256_stream() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum | awk '{print $1}'
+  else
+    shasum -a 256 | awk '{print $1}'
+  fi
+}
+
 manifest_value() {
   key=$1
   file=$2
@@ -29,6 +37,38 @@ validate_release_value() {
   label=$2
   printf '%s' "$value" | grep -Eq '^[0-9A-Za-z][0-9A-Za-z._/:-]{0,127}$' \
     || fail "$label contains unsupported characters"
+}
+
+verify_loaded_image() {
+  image=$1
+  expected_id=$2
+  label=$3
+  expected_config_digest=${expected_id#sha256:}
+  verification_archive=$stage_dir/${label}.loaded.tar
+
+  [ "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")" = 'linux/amd64' ] \
+    || fail "loaded $label image is not Linux AMD64"
+
+  # Docker's classic image store reports the config digest as .Id, while the containerd image
+  # store reports the OCI manifest digest. Re-exporting the named image gives both stores the
+  # same canonical config blob, whose digest binds the runtime configuration and rootfs diff IDs.
+  docker image save --output "$verification_archive" "$image"
+  saved_manifest=$(tar -xOf "$verification_archive" manifest.json)
+  printf '%s' "$saved_manifest" | grep -F "\"$image\"" >/dev/null \
+    || fail "saved $label image manifest does not contain the expected tag"
+  config_paths=$(printf '%s' "$saved_manifest" \
+    | sed -n 's/.*"Config":[[:space:]]*"\([^"]*\)".*/\1/p')
+  [ "$(printf '%s\n' "$config_paths" | grep -c .)" -eq 1 ] \
+    || fail "saved $label image manifest has an unexpected config set"
+  case "$config_paths" in
+    "blobs/sha256/$expected_config_digest" | "$expected_config_digest.json") ;;
+    *) fail "saved $label image does not reference the release config digest" ;;
+  esac
+  tar -tf "$verification_archive" | grep -Fx "$config_paths" >/dev/null \
+    || fail "saved $label image is missing its release config blob"
+  actual_config_digest=$(tar -xOf "$verification_archive" "$config_paths" | sha256_stream)
+  [ "$actual_config_digest" = "$expected_config_digest" ] \
+    || fail "saved $label image config does not match the release digest"
 }
 
 [ "$(id -u)" -eq 0 ] || fail 'install-release must run as root'
@@ -89,10 +129,8 @@ done
 
 echo '==> Loading verified release images'
 docker image load --input "$stage_dir/images.tar" >/dev/null
-[ "$(docker image inspect --format '{{.Id}}' "$wml_image")" = "$wml_image_id" ] \
-  || fail 'loaded WML image ID does not match the release manifest'
-[ "$(docker image inspect --format '{{.Id}}' "$gateway_image")" = "$gateway_image_id" ] \
-  || fail 'loaded gateway image ID does not match the release manifest'
+verify_loaded_image "$wml_image" "$wml_image_id" WML
+verify_loaded_image "$gateway_image" "$gateway_image_id" gateway
 
 install -d -m 0755 "$release_dir"
 cp "$stage_dir/compose.yaml" "$stage_dir/manifest.env" "$release_dir/"

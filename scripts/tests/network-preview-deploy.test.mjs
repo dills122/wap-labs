@@ -105,8 +105,9 @@ test('Docker forwarding remains sealed by default and public mode is rate limite
 
 test('release installation verifies provenance and reseals before restarting services', () => {
   assert.match(installer, /release archive SHA-256 mismatch/);
-  assert.match(installer, /loaded WML image ID does not match/);
-  assert.match(installer, /loaded gateway image ID does not match/);
+  assert.match(installer, /docker image save --output "\$verification_archive" "\$image"/);
+  assert.match(installer, /saved \$label image does not reference the release config digest/);
+  assert.match(installer, /loaded \$label image is not Linux AMD64/);
   const sealIndex = installer.indexOf('waves-docker-firewall set sealed');
   const restartIndex = installer.indexOf('systemctl restart waves-network-preview.service');
   assert.ok(sealIndex >= 0 && restartIndex > sealIndex);
