@@ -176,8 +176,12 @@ impl WmlEngine {
         next.content_type = content_type.to_string();
         next.raw_bytes_base64 = raw_bytes_base64;
         next.last_wml_load_diagnostics = parsed.diagnostics;
-        next.active_card_idx =
-            next.destination_card_index(navigation.navigation_url.unwrap_or(base_url));
+        next.active_card_idx = next
+            .destination_card_index(
+                navigation.navigation_url.unwrap_or(base_url),
+                navigation.kind,
+            )
+            .map_err(WmlLoadDiagnostic::recoverable_rejection)?;
         let reset_context = navigation.kind == DeckNavigationKind::Forward
             && next
                 .deck
@@ -211,14 +215,29 @@ impl WmlEngine {
         Ok(())
     }
 
-    fn destination_card_index(&self, navigation_url: &str) -> usize {
+    fn destination_card_index(
+        &self,
+        navigation_url: &str,
+        navigation_kind: DeckNavigationKind,
+    ) -> Result<usize, String> {
         let fragment = navigation_url
             .split_once('#')
             .map(|(_, fragment)| fragment)
             .filter(|fragment| !fragment.is_empty());
-        fragment
-            .and_then(|fragment| self.deck.as_ref()?.card_index(fragment))
-            .unwrap_or(0)
+        let Some(fragment) = fragment else {
+            return Ok(0);
+        };
+        match self
+            .deck
+            .as_ref()
+            .and_then(|deck| deck.card_index(fragment))
+        {
+            Some(index) => Ok(index),
+            None if navigation_kind == DeckNavigationKind::Independent => {
+                Err(CARD_ID_NOT_FOUND_ERROR.to_string())
+            }
+            None => Ok(0),
+        }
     }
 
     /// Diagnostics emitted by the most recent WML load attempt.

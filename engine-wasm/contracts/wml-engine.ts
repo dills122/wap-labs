@@ -236,6 +236,8 @@ export interface WmlEngineCommon {
 // WASM target: `loadDeckContext` takes positional arguments because the
 // wasm-bindgen boundary does not carry a structured input object.
 export interface WmlEngineWasm extends WmlEngineCommon {
+  // A non-empty fragment in an independent/top-level URL must resolve; otherwise
+  // the load rejects with the same stable error as same-deck fragment navigation.
   loadDeckContext(
     wmlXml: string,
     baseUrl: string,
@@ -256,6 +258,8 @@ export interface WmlEngineWasm extends WmlEngineCommon {
 
 // Native target: `loadDeckContext` takes the structured `WmlDeckInput`.
 export interface WmlEngineNative extends WmlEngineCommon {
+  // Independent/top-level missing fragments reject atomically; absent and empty
+  // fragments select card 0.
   loadDeckContext(input: WmlDeckInput): void;
 }
 

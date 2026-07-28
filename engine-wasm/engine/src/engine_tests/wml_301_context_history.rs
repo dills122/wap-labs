@@ -1,5 +1,8 @@
 use super::*;
-use crate::{DeckNavigationContext, DeckNavigationKind};
+use crate::{
+    DeckNavigationContext, DeckNavigationKind, WmlLoadDiagnosticClassLiteral,
+    WmlLoadDiagnosticCodeLiteral, WmlLoadDiagnosticOutcomeLiteral,
+};
 
 const CONTENT_TYPE: &str = "text/vnd.wap.wml";
 
@@ -88,6 +91,77 @@ fn wml_301_forward_load_falls_back_to_first_card_for_unknown_fragment() {
     );
 
     assert_eq!(engine.active_card_id().as_deref(), Ok("first"));
+}
+
+#[test]
+fn wml_301_independent_load_rejects_unknown_fragment_and_preserves_state() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck_context(
+            r#"<wml><card id="source"><p>Source</p></card></wml>"#,
+            "http://example.test/source.wml",
+            CONTENT_TYPE,
+            None,
+        )
+        .expect("source deck should load");
+    assert!(engine.set_var("token".to_string(), "kept".to_string()));
+    let epoch = engine.browser_context_epoch();
+    let trace =
+        serde_json::to_value(engine.trace_entries()).expect("trace entries should serialize");
+
+    let error = engine
+        .load_deck_context(
+            r#"<wml><card id="first"><p>First</p></card></wml>"#,
+            "http://example.test/destination.wml#missing",
+            CONTENT_TYPE,
+            None,
+        )
+        .expect_err("an unknown top-level fragment should reject the load");
+
+    assert_eq!(error, "Card id not found");
+    let diagnostics = engine.last_wml_load_diagnostics();
+    assert_eq!(diagnostics.len(), 1);
+    assert_eq!(
+        diagnostics[0].class,
+        WmlLoadDiagnosticClassLiteral::Recoverable
+    );
+    assert_eq!(
+        diagnostics[0].code,
+        WmlLoadDiagnosticCodeLiteral::RecoverableContent
+    );
+    assert_eq!(
+        diagnostics[0].outcome,
+        WmlLoadDiagnosticOutcomeLiteral::Rejected
+    );
+    assert_eq!(diagnostics[0].message, error);
+    assert_eq!(engine.active_card_id().as_deref(), Ok("source"));
+    assert_eq!(engine.base_url(), "http://example.test/source.wml");
+    assert_eq!(engine.get_var("token".to_string()).as_deref(), Some("kept"));
+    assert_eq!(engine.browser_context_epoch(), epoch);
+    assert_eq!(
+        serde_json::to_value(engine.trace_entries()).expect("trace entries should serialize"),
+        trace
+    );
+}
+
+#[test]
+fn wml_301_independent_load_without_nonempty_fragment_selects_first_card() {
+    for url in [
+        "http://example.test/destination.wml",
+        "http://example.test/destination.wml#",
+    ] {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck_context(
+                r#"<wml><card id="first"><p>First</p></card><card id="second"><p>Second</p></card></wml>"#,
+                url,
+                CONTENT_TYPE,
+                None,
+            )
+            .expect("no fragment or an empty fragment should load the first card");
+
+        assert_eq!(engine.active_card_id().as_deref(), Ok("first"), "{url}");
+    }
 }
 
 #[test]

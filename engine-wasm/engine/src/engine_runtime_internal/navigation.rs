@@ -101,7 +101,7 @@ impl WmlEngine {
 
         let next_idx = deck
             .card_index(id)
-            .ok_or_else(|| "Card id not found".to_string())?;
+            .ok_or_else(|| CARD_ID_NOT_FOUND_ERROR.to_string())?;
         let reset_context = apply_new_context && deck.cards[next_idx].new_context;
 
         // Every fallible entry step below rolls back all navigation state for
