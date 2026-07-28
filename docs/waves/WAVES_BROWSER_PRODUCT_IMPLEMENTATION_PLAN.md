@@ -165,7 +165,10 @@ Build:
 - make the native Tauri title bar the only application-window frame
 - remove the vendored Win95 stylesheet and faux-window/control classes from the default cascade
   while retaining the vendor material for a possible later optional treatment
-- use compact system typography and restrained platform-like surfaces for host chrome
+- use compact system typography and restrained platform-like surfaces for host chrome, with a
+  distinctive ink/teal identity band, warm neutral workspace, and technical route/profile readouts
+- retain selective period electronics character through the neutral handset's graphite/silver
+  housing, tactile keys, and inset green LCD without implying a branded device profile
 - preserve the neutral Class C handset housing, deterministic LCD typography, inverse-video WML
   focus, IDs, bindings, tab order, and current adapter controls
 
@@ -173,7 +176,10 @@ Accept:
 
 - address/source/route/profile chrome reads as desktop browser chrome, not as a second desktop
   window
-- handset and LCD remain primary while utility, status, help, and developer surfaces are quieter
+- handset and LCD remain primary while tinted utility/status/help caps and the developer disclosure
+  establish a secondary, subordinate instrument-panel hierarchy
+- the identity band, neutral workspace/panels, and period handset/LCD are visually distinct surface
+  roles; strong accent color remains reserved for identity, hierarchy, and truthful status
 - default/minimum windows, 200 percent zoom, collapsed utility rail, focus visibility, 24 CSS-pixel
   targets, reduced motion, landmarks, live announcements, and horizontal reflow remain covered
 - no frame/input, navigation, route, transport, or engine semantics change; dynamic affordances
@@ -578,6 +584,8 @@ inactive in this lane. That future task starts with one F0 contract owner and `F
 `F0-03` follow their declared dependencies without renaming or folding debug DTOs into frame/input
 types.
 
-`WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It does not reopen
-the completed `WBP-01`/`WBP-02` history or activate `WBP-06`; it only changes the default host
-presentation and its evidence.
+`WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. Its final visual
+direction is “Authentic Core, Modern Console”: predominantly native application structure with a
+restrained late-1990s/early-2000s telecom-instrument accent in the host palette, readouts, and
+neutral handset materials. It does not reopen the completed `WBP-01`/`WBP-02` history or activate
+`WBP-06`; it only changes the default host presentation and its evidence.

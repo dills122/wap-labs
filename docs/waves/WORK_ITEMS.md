@@ -205,8 +205,10 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
 - Remove teal desktop, beveled faux-window, global Win95 control, and heavy gradient-panel authority
   from the default presentation while keeping the vendored Win95 material available for later
   optional reuse.
-- Give host chrome compact system typography and quiet surfaces; keep deterministic period
-  typography, inverse focus, and housing/LCD separation inside the neutral Class C handset.
+- Give host chrome compact system typography and quiet native surfaces, plus a reserved ink/teal
+  identity treatment, warm workspace, and technical route/profile readouts.
+- Keep deterministic period typography, inverse focus, and housing/LCD separation inside a more
+  tactile graphite/silver neutral Class C handset; do not imply a branded device profile.
 - Preserve every element ID, controller binding, keyboard order, route/source/profile behavior,
   and current fixed handset adapter control.
 6. `Tests`:
@@ -218,6 +220,8 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
 - the native app no longer reads as a Win95 window embedded in a second native window
 - the handset/LCD is the visual focal point; utility/help/status is secondary and Developer Tools
   remains subordinate and collapsible
+- the identity band, neutral workspace/panels, and period handset/LCD are visibly distinct material
+  roles without restoring the teal desktop or universal Win95 bevels
 - 1024 by 768, 880 by 640, 200 percent zoom, collapsed utility rail, reduced motion, 24 CSS-pixel
   targets, visible focus, landmarks/live announcements, and no horizontal overflow remain usable
 8. `Boundary`:
@@ -230,8 +234,8 @@ by their declared dependencies. D0-01 does not activate WBP-06 or implement fram
   non-ignored Tauri host/contract tests (five external-Kannel tests remain intentionally ignored)
 - rendered Chromium at both configured windows and effective 200 percent zoom: zero axe violations,
   no horizontal overflow, one live-announcement channel, all visible targets at least 24 by 24 CSS
-  pixels, visible two-tone focus, system host font, Courier LCD font, inverse WML focus, and no
-  running animations
+  pixels, visible two-tone focus, system host font, technical readout typography, Courier LCD font,
+  inverse WML focus, three distinct surface roles, and no running animations
 - matching 1024 by 768 and 880 by 640 before/after screenshots were visually inspected and kept as
   transient PR evidence rather than committed goldens
 

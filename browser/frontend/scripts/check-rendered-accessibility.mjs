@@ -122,6 +122,10 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     const shell = document.querySelector('.browser-shell');
     const viewport = document.querySelector('#viewport');
     const focusedWmlItem = document.querySelector('.wml-segment-link.is-focused');
+    const titleRow = document.querySelector('.title-row');
+    const utilityHeading = document.querySelector('.utility-rail-panel > summary');
+    const routeReadout = document.querySelector('.toolbar-meta-item');
+    const handset = document.querySelector('.handset-housing');
     return {
       cssViewport: { width: innerWidth, height: innerHeight },
       document: {
@@ -138,6 +142,12 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         ).length,
         hostFontFamily: getComputedStyle(document.body).fontFamily,
         lcdFontFamily: viewport ? getComputedStyle(viewport).fontFamily : null,
+        readoutFontFamily: routeReadout ? getComputedStyle(routeReadout).fontFamily : null,
+        surfaceColors: [document.body, utilityHeading, viewport].map((element) =>
+          element ? getComputedStyle(element).backgroundColor : null
+        ),
+        identityBandImage: titleRow ? getComputedStyle(titleRow).backgroundImage : null,
+        handsetBackgroundImage: handset ? getComputedStyle(handset).backgroundImage : null,
         focusedWmlBackground: focusedWmlItem
           ? getComputedStyle(focusedWmlItem).backgroundColor
           : null,
@@ -167,6 +177,26 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     layout.presentation.lcdFontFamily ?? '',
     /Courier New/,
     `${name}: period LCD font remains scoped to the viewport`
+  );
+  assert.match(
+    layout.presentation.readoutFontFamily ?? '',
+    /ui-monospace|SFMono|Menlo|Monaco|Consolas|monospace/,
+    `${name}: route metadata uses compact technical typography`
+  );
+  assert.equal(
+    new Set(layout.presentation.surfaceColors).size,
+    3,
+    `${name}: host, utility cap, and LCD expose three distinct surface roles`
+  );
+  assert.notEqual(
+    layout.presentation.identityBandImage,
+    'none',
+    `${name}: Waves identity band has a restrained two-tone treatment`
+  );
+  assert.notEqual(
+    layout.presentation.handsetBackgroundImage,
+    'none',
+    `${name}: handset housing retains period material character`
   );
   assert.equal(
     layout.presentation.focusedWmlBackground,

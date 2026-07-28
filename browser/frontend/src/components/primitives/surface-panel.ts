@@ -26,7 +26,7 @@ export class WvSurfacePanel extends LitElement {
       text-transform: none;
       color: var(--panel-heading-text);
       font-weight: 650;
-      background: var(--host-surface);
+      background: var(--panel-heading-bg);
     }
 
     .body {

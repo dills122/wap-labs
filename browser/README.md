@@ -27,7 +27,9 @@ Implemented now:
   evidence
 - Closed `WBP-02` through `WBP-05A` browser foundation with the reference-handset scaffold,
   source/route/profile toolbar separation, ordinary-path Welcome/Help tutorial, and host-chrome
-  accessibility baseline plus single-channel announcements and rendered 200 percent evidence
+  accessibility baseline plus single-channel announcements and rendered 200 percent evidence;
+  `WBP-02A` presents that shell as a native console with a restrained ink/teal telecom identity,
+  warm workspace, technical readouts, and an explicitly neutral graphite/silver handset
 - Responsive full-window shell plus gateway-aware startup status that names the probed URL and
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
