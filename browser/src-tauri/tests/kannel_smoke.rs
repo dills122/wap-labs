@@ -89,6 +89,61 @@ fn unique_smoke_username(prefix: &str) -> String {
     format!("{prefix}{nonce}")
 }
 
+fn edit_auth_form_and_build_payload(url: &str, username: &str, pin: &str) -> String {
+    let transport =
+        fetch_deck_in_process_with_profile(request(url), FetchTransportProfile::WapNetCore);
+    assert!(
+        transport.ok,
+        "expected public auth form fetch to succeed: {:?}",
+        transport.error
+    );
+
+    let mut engine = WmlEngine::new();
+    load_transport_response_into_engine(&mut engine, transport);
+    assert!(engine
+        .begin_focused_input_edit()
+        .expect("username edit should begin"));
+    assert!(engine.set_focused_input_edit_draft(username.to_string()));
+    engine
+        .handle_key("down".to_string())
+        .expect("username should commit and focus should move to PIN");
+    assert!(engine
+        .begin_focused_input_edit()
+        .expect("PIN edit should begin"));
+    assert!(engine.set_focused_input_edit_draft(pin.to_string()));
+    assert!(
+        render_contains(&engine, "****"),
+        "password render should conceal the PIN during editing"
+    );
+    assert!(
+        !render_contains(&engine, pin),
+        "password render exposed the edited PIN"
+    );
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("PIN edit should commit"));
+    assert!(
+        render_contains(&engine, "****"),
+        "password render should conceal the committed PIN"
+    );
+    assert!(
+        !render_contains(&engine, pin),
+        "password render exposed the committed PIN"
+    );
+    if engine.get_var("pin".to_string()).as_deref() != Some(pin) {
+        panic!("engine did not preserve the actual PIN variable");
+    }
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("accept action should submit the auth form");
+    engine
+        .external_navigation_request_policy()
+        .and_then(|policy| policy.post_context)
+        .and_then(|post_context| post_context.payload)
+        .expect("auth form should produce a POST payload")
+}
+
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
 fn kannel_fetch_deck_smoke_loads_into_engine() {
@@ -116,16 +171,21 @@ fn kannel_fetch_deck_smoke_navigates_into_menu_card() {
 
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
-fn kannel_native_post_smoke_loads_login_success_deck_into_engine() {
+fn kannel_public_auth_forms_conceal_pin_and_submit_actual_value() {
     let register_url = std::env::var("WAP_SMOKE_REGISTER_URL")
         .unwrap_or_else(|_| "wap://localhost/register".to_string());
     let login_url = std::env::var("WAP_SMOKE_LOGIN_URL")
         .unwrap_or_else(|_| "wap://localhost/login".to_string());
     let username = unique_smoke_username("enginesmoke");
-    let payload = format!("username={username}&pin=1234");
+    let pin = "1274";
+
+    let register_payload = edit_auth_form_and_build_payload(&register_url, &username, pin);
+    if register_payload != format!("username={username}&pin={pin}") {
+        panic!("registration form POST did not retain the actual PIN");
+    }
 
     let register = fetch_deck_in_process_with_profile(
-        post_request(&register_url, &payload),
+        post_request(&register_url, &register_payload),
         FetchTransportProfile::WapNetCore,
     );
     assert!(
@@ -134,8 +194,13 @@ fn kannel_native_post_smoke_loads_login_success_deck_into_engine() {
         register.error
     );
 
+    let login_payload = edit_auth_form_and_build_payload(&login_url, &username, pin);
+    if login_payload != register_payload {
+        panic!("login form POST did not retain the actual PIN");
+    }
+
     let login = fetch_deck_in_process_with_profile(
-        post_request(&login_url, &payload),
+        post_request(&login_url, &login_payload),
         FetchTransportProfile::WapNetCore,
     );
     assert!(
