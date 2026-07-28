@@ -6,6 +6,11 @@ decisions and live infrastructure evidence
 
 Research checkpoint: 2026-07-27
 
+Historical service-pattern research, first-party fixture expansion, and the separately gated
+archive/museum lane are planned in `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`. That
+plan does not authorize third-party content import or change this document's public-exposure
+gates.
+
 ## Outcome
 
 Give early Waves desktop testers a real, controlled network target:
@@ -284,7 +289,9 @@ Capacity assumption: three parallel implementation lanes, 36 points gross, 29 co
 Stretch only after committed acceptance:
 
 - `OPS-102` (3): rebuild and Reserved IP recovery drill.
-- `LAB-102` (3): redirect, cache, error, and boundary-case expansion.
+- `LAB-102` (3): redirect, cache, error, and boundary-case expansion. The proposed `LAB-102A`
+  historical interoperability matrix in `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`
+  refines this stretch scope without activating it.
 
 ### Parallel lanes
 
