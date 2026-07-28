@@ -375,7 +375,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **40** | **70** | **88** |',
+      '| **Total** | **198** | **762** | **40** | **71** | **87** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]

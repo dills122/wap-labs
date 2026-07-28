@@ -301,6 +301,30 @@ Completed maintenance tickets are archived in:
 8. `Resolution`:
 - The regression coverage `M1-15` describes lives at `engine-wasm/engine/src/engine_tests/navigation_metadata.rs:38`, not `engine-wasm/engine/src/engine_tests.rs`. No code or test changes were needed; this entry exists solely to correct the stale path reference without rewriting `M1-15`'s original record.
 
+### M1-25 Active compliance rollup guard missed contradictory status totals (2026-07-27)
+
+1. `Status`: `done`
+2. `Priority`: `P2`
+3. `Depends On`: `CONF-006`, `M0-08`
+4. `Files`:
+- `scripts/check-active-compliance-facts.mjs`
+- `scripts/check-requirement-status-drift.mjs`
+- `scripts/tests/check-active-compliance-facts.test.mjs`
+- active compliance and planning rollups
+5. `Finding`:
+- The canonical manifests reported 40 implemented / 71 partial / 87 missing selected parents and 28 done / 1 blocked / 11 in-progress / 42 todo work items, while the planning table and several active summaries retained older values. Both drift checks passed because one accepted the stale table literally and the other found the current counts elsewhere in the same document.
+6. `Build`:
+- Derive and require the exact parent-status table, work-item counts, WML evidence-state counts, and key compliance-program transport/WML summaries from canonical inputs.
+- Correct active prose without changing canonical evidence or reopening completed work items.
+7. `Tests`:
+- `node --test scripts/tests/check-active-compliance-facts.test.mjs`
+- `node scripts/check-active-compliance-facts.mjs`
+- `node scripts/check-requirement-status-drift.mjs`
+8. `Accept`:
+- A stale aggregate table or WML evidence-state count fails deterministically even when a correct value appears elsewhere in the same document.
+9. `Resolution`:
+- The guard now checks the exact derived fragments, and focused regressions prove both previously missed drift cases.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

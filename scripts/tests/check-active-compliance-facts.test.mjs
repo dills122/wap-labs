@@ -30,9 +30,11 @@ function createFixture() {
     'docs/knowledge-graph/README.md',
     'docs/wml-engine/work-items.md',
     'docs/waves/SPEC_TEST_COVERAGE.md',
+    'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
+    'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
     'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md',
     ...(clauses.families ?? []).map((family) => family.parentLedger)
   ]);
@@ -74,4 +76,40 @@ test('active rollup guard derives prose assertions from canonical manifests', (c
   const stale = runCheck(fixtureRoot);
   assert.notEqual(stale.status, 0);
   assert.match(stale.stderr, /WAP_1_2_1_PLANNING_BASELINE\.md: missing or stale derived rollup/);
+});
+
+test('active rollup guard rejects a stale parent-status table', (context) => {
+  const { fixtureRoot } = createFixture();
+  context.after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
+
+  const planningPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md');
+  const planning = readFileSync(planningPath, 'utf8');
+  const currentFragment = '| **Total** | **198** | **762** | **40** | **71** | **87** |';
+  const staleFragment = '| **Total** | **198** | **762** | **40** | **70** | **88** |';
+  assert.ok(planning.includes(currentFragment));
+  writeFileSync(planningPath, planning.replace(currentFragment, staleFragment));
+
+  const stale = runCheck(fixtureRoot);
+  assert.notEqual(stale.status, 0);
+  assert.match(stale.stderr, /WAP_1_2_1_PLANNING_BASELINE\.md: missing or stale derived rollup/);
+});
+
+test('active rollup guard rejects stale WML evidence-state counts', (context) => {
+  const { fixtureRoot } = createFixture();
+  context.after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
+
+  const ledgerPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md');
+  const ledger = readFileSync(ledgerPath, 'utf8');
+  assert.ok(ledger.includes('32 `direct-test-linked`, 15 `gap-work-item-mapped`'));
+  writeFileSync(
+    ledgerPath,
+    ledger.replace(
+      '32 `direct-test-linked`, 15 `gap-work-item-mapped`',
+      '31 `direct-test-linked`, 16 `gap-work-item-mapped`'
+    )
+  );
+
+  const stale = runCheck(fixtureRoot);
+  assert.notEqual(stale.status, 0);
+  assert.match(stale.stderr, /WAP_1_2_1_WML_SCR_LEDGER\.md: missing or stale derived rollup/);
 });

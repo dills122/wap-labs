@@ -29,7 +29,7 @@ pnpm wap-graph:check
 
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
-evidence state: 30 `direct-test-linked`, 17 `gap-work-item-mapped`, or 29
+evidence state: 32 `direct-test-linked`, 15 `gap-work-item-mapped`, or 29
 `optional-not-assessed`. All 175 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
@@ -108,7 +108,7 @@ The source table contains one explicit SCR dependency:
 - Enhancements are never allowed to replace strict behavior.
 - Every mandatory row maps to a substantive implementation work item in
   addition to `R0-01`.
-- Direct executable evidence is linked for `30/76` rows. Existing thematic
+- Direct executable evidence is linked for `32/76` rows. Existing thematic
   tests are counted only when their path, test name, command, code symbol, and
   limitation are reviewed against the exact SCR feature.
 
@@ -117,8 +117,8 @@ The source table contains one explicit SCR dependency:
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
 | `implemented` | 16 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
-| `partial` | 15 | Direct behavior exists, but the cited clause has known uncovered semantics |
-| `missing` | 16 | No conforming implementation path exists; a substantive Phase R work item is attached |
+| `partial` | 16 | Direct behavior exists, but the cited clause has known uncovered semantics |
+| `missing` | 15 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
 The sixteen implemented rows are `WML-C-08` (card/deck task shadowing),
 `WML-C-09` (intrinsic events), `WML-C-10` (browser context), `WML-C-11`
@@ -148,9 +148,8 @@ Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
 Their ledger states remain `optional-not-assessed` until the separate
 capability-declaration pass activates the broader optional-profile gate.
 
-The 8 missing required Class C client rows are:
+The 7 missing required Class C client rows are:
 
-- context/policy: `WML-C-14`;
 - task/structure: `WML-C-20`, `WML-C-52`;
 - rendering/media: `WML-C-32`, `WML-C-46`, `WML-C-49`, `WML-C-50`,
   `WML-C-54`;
