@@ -60,7 +60,7 @@ func renderLoginDeck(prefillUser, errorMessage string) string {
 	return `<card id="login" title="Login">` +
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
-		`<p>PIN: <input name="pin" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
+		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
 		`<do type="accept" label="Submit"><go method="post" href="/login">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +
@@ -78,7 +78,7 @@ func renderRegisterDeck(prefillUser, errorMessage string) string {
 	return `<card id="register" title="Register">` +
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
-		`<p>PIN: <input name="pin" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
+		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
 		`<do type="accept" label="Create"><go method="post" href="/register">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +

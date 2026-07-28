@@ -13,6 +13,7 @@ WAP_SMOKE_DENIED_URL="${WAP_SMOKE_DENIED_URL:-wap://127.0.0.1:9200/}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
 TRANSPORT_WAP_SKIP_INTERNAL_HEALTH="${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH:-0}"
+AUTH_FORM_SMOKE_RAN=0
 case "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" in
   0 | 1) ;;
   *) echo 'TRANSPORT_WAP_SKIP_INTERNAL_HEALTH must be 0 or 1' >&2; exit 2 ;;
@@ -47,11 +48,19 @@ print_failure_diagnostics() {
   fi
 
   if [ "${TRANSPORT_WAP_SKIP_INTERNAL_HEALTH}" = 0 ] && command -v docker >/dev/null 2>&1; then
-    echo "-- docker compose logs (kannel, wml-server) --" >&2
-    (
-      cd "${ROOT_DIR}" &&
-      docker compose logs --tail=120 kannel wml-server
-    ) | tee "${SMOKE_ARTIFACT_DIR}/docker-compose.log" >&2 || true
+    if [ "${AUTH_FORM_SMOKE_RAN}" = 1 ]; then
+      echo "-- docker compose logs (wml-server; Kannel omitted after auth submission) --" >&2
+      (
+        cd "${ROOT_DIR}" &&
+        docker compose logs --tail=120 wml-server
+      ) | tee "${SMOKE_ARTIFACT_DIR}/docker-compose.log" >&2 || true
+    else
+      echo "-- docker compose logs (kannel, wml-server) --" >&2
+      (
+        cd "${ROOT_DIR}" &&
+        docker compose logs --tail=120 kannel wml-server
+      ) | tee "${SMOKE_ARTIFACT_DIR}/docker-compose.log" >&2 || true
+    fi
   fi
 
   return "${exit_code}"
@@ -109,9 +118,18 @@ echo "==> Running browser host native Kannel smoke unit test"
 echo "==> Running browser engine/render native Kannel smoke integration test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  export WAP_SMOKE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log" \
     cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1
+)
+
+echo "==> Running browser auth-form privacy native Kannel smoke integration test"
+AUTH_FORM_SMOKE_RAN=1
+(
+  cd "${ROOT_DIR}/browser/src-tauri"
+  export WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-auth-forms-smoke.log" \
+    cargo test kannel_public_auth_forms_conceal_pin_and_submit_actual_value -- --ignored --test-threads=1
 )
 
 echo "transport-wap-smoke: PASS (artifacts: ${SMOKE_ARTIFACT_DIR})"

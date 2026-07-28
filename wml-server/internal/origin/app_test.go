@@ -159,6 +159,21 @@ func TestHostProfilesAndAllowlist(t *testing.T) {
 	}
 }
 
+func TestAuthFormsRenderPINAsPasswordInput(t *testing.T) {
+	app, _ := newTestApp(t, nil)
+	for _, path := range []string{"/login", "/register"} {
+		t.Run(path, func(t *testing.T) {
+			response := perform(app.Handler(), http.MethodGet, path, "", "")
+			if response.Code != http.StatusOK {
+				t.Fatalf("GET %s status = %d", path, response.Code)
+			}
+			if !strings.Contains(response.Body.String(), `<input name="pin" type="password"`) {
+				t.Fatalf("GET %s PIN input is not a password control", path)
+			}
+		})
+	}
+}
+
 func TestRegistrationLoginAndProtectedRoutes(t *testing.T) {
 	app, _ := newTestApp(t, nil)
 	sid := registerAndLogin(t, app, "demo")
