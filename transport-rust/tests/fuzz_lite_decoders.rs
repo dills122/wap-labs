@@ -11,7 +11,7 @@
 //! deeper decoder logic.
 //!
 //! `#[ignore]`d (manual-only, like the other exploratory/slow tests in this
-//! crate) because ~9.5M decode calls take a couple of seconds even in
+//! crate) because ~11M decode calls take a couple of seconds even in
 //! release mode and add no value to the default `cargo test` loop. Run
 //! explicitly with:
 //! `cargo test --release --test fuzz_lite_decoders -- --ignored`
@@ -20,6 +20,7 @@ use lowband_transport_rust::network::wcmp::{
     decode_wcmp, decode_wdp_control_message, WdpControlProfile,
 };
 use lowband_transport_rust::network::wdp::decode_cdpd_ipv4_udp;
+use lowband_transport_rust::network::wsp::connectionless::decode_connectionless_pdu;
 use lowband_transport_rust::network::wsp::{decode_wsp_pdu, WspHeaderBlockDecodePolicy};
 
 struct Xorshift64(u64);
@@ -110,17 +111,20 @@ fn load_seeds(fixture_relative_path: &str, cases_key: &str) -> Vec<Vec<u8>> {
 }
 
 #[test]
-#[ignore = "slow fuzz-lite pass (~9.5M decode calls); run manually with --release"]
+#[ignore = "slow fuzz-lite pass (~11M decode calls); run manually with --release"]
 fn decoders_never_panic_on_mutated_valid_packets() {
     let wcmp_seeds = load_seeds("wcmp_core_mapped/wcmp_fixture.json", "cases");
     let icmp_seeds = load_seeds("wcmp_cdpd_icmp_profile/icmp_fixture.json", "cases");
     let wdp_seeds = load_seeds("wdp_cdpd_ipv4_mapped/wdp_fixture.json", "cases");
     let wsp_pdu_seeds = load_seeds("wsp_pdu_baseline_mapped/pdu_fixture.json", "successCases");
+    let wsp_connectionless_seeds =
+        load_seeds("wsp_connectionless_matrix/matrix_fixture.json", "pduCases");
 
     assert!(!wcmp_seeds.is_empty());
     assert!(!icmp_seeds.is_empty());
     assert!(!wdp_seeds.is_empty());
     assert!(!wsp_pdu_seeds.is_empty());
+    assert!(!wsp_connectionless_seeds.is_empty());
 
     let mut rng = Xorshift64(0x9E3779B97F4A7C15);
     let mut panics: Vec<String> = Vec::new();
@@ -171,6 +175,13 @@ fn decoders_never_panic_on_mutated_valid_packets() {
     fuzz!("decode_wsp_pdu", wsp_pdu_seeds, |b: &[u8]| {
         let _ = decode_wsp_pdu(b, WspHeaderBlockDecodePolicy::STRICT);
     });
+    fuzz!(
+        "decode_connectionless_pdu",
+        wsp_connectionless_seeds,
+        |b: &[u8]| {
+            let _ = decode_connectionless_pdu(b);
+        }
+    );
 
     assert!(
         panics.is_empty(),

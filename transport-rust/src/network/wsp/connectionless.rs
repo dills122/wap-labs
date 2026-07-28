@@ -499,7 +499,8 @@ pub fn decode_connectionless_pdu(
             let uri = decode_uri(&body[..uri_len])?;
             let header_section = &body[uri_len..total_prefix];
             let content_type = decode_content_type_value(header_section)?;
-            let headers = header_section[content_type.consumed_bytes()..].to_vec();
+            let headers =
+                headers_after_content_type(header_section, content_type.consumed_bytes())?.to_vec();
             Ok(WspConnectionlessPdu::Post {
                 transaction_id,
                 uri,
@@ -518,7 +519,8 @@ pub fn decode_connectionless_pdu(
             }
             let (header_section, data) = body.split_at(headers_len);
             let content_type = decode_content_type_value(header_section)?;
-            let headers = header_section[content_type.consumed_bytes()..].to_vec();
+            let headers =
+                headers_after_content_type(header_section, content_type.consumed_bytes())?.to_vec();
             Ok(WspConnectionlessPdu::Reply {
                 transaction_id,
                 status_code: decode_wsp_status_code(status)?,
@@ -529,6 +531,15 @@ pub fn decode_connectionless_pdu(
         }
         _ => Err(WspConnectionlessDecodeError::UnexpectedPduType(pdu_type)),
     }
+}
+
+fn headers_after_content_type(
+    header_section: &[u8],
+    content_type_bytes: usize,
+) -> Result<&[u8], WspConnectionlessDecodeError> {
+    header_section
+        .get(content_type_bytes..)
+        .ok_or(WspConnectionlessDecodeError::ContentTypeOverrunsHeaderSection)
 }
 
 fn decode_request_uri(input: &[u8]) -> Result<(String, &[u8]), WspConnectionlessDecodeError> {
@@ -1111,6 +1122,60 @@ mod tests {
         assert_eq!(decoded.media_type(), "application/vnd.wap.wmlc");
         assert_eq!(decoded.charset(), Some("iso-8859-1"));
         assert_eq!(decoded.consumed_bytes(), 4);
+    }
+
+    #[test]
+    fn content_type_header_boundary_rejects_an_overrun() {
+        let header_section = [0x94, 0x80];
+
+        assert_eq!(
+            headers_after_content_type(&header_section, header_section.len()),
+            Ok(&[][..])
+        );
+        assert_eq!(
+            headers_after_content_type(&header_section, header_section.len() + 1),
+            Err(WspConnectionlessDecodeError::ContentTypeOverrunsHeaderSection)
+        );
+    }
+
+    #[test]
+    fn post_and_reply_reject_content_type_beyond_declared_header_section() {
+        // The short-length Content-Type declares two value octets, but the
+        // carrying Post/Reply header section declares room for only the length
+        // octet. Bytes after that boundary are body data and must not be used to
+        // complete Content-Type or reached by unchecked slicing.
+        let post = [TRANSACTION_ID, 0x60, 0x01, 0x01, b'/', 0x02, b'x', b'y'];
+        let reply = [TRANSACTION_ID, 0x04, 0x20, 0x01, 0x02, b'x', b'y'];
+
+        for wire in [&post[..], &reply[..]] {
+            assert_eq!(
+                decode_connectionless_pdu(wire),
+                Err(WspConnectionlessDecodeError::TruncatedContentType)
+            );
+        }
+    }
+
+    #[test]
+    fn post_and_reply_header_length_inputs_never_panic() {
+        for declared_length in 0u8..=8 {
+            for actual_length in 0u8..=8 {
+                for first_content_type_byte in 0u8..=u8::MAX {
+                    let mut post = vec![TRANSACTION_ID, 0x60, 0x00, declared_length];
+                    post.extend(std::iter::repeat_n(
+                        first_content_type_byte,
+                        usize::from(actual_length),
+                    ));
+                    let _ = decode_connectionless_pdu(&post);
+
+                    let mut reply = vec![TRANSACTION_ID, 0x04, 0x20, declared_length];
+                    reply.extend(std::iter::repeat_n(
+                        first_content_type_byte,
+                        usize::from(actual_length),
+                    ));
+                    let _ = decode_connectionless_pdu(&reply);
+                }
+            }
+        }
     }
 
     #[test]
