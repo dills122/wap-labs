@@ -1,5 +1,5 @@
 use crate::runtime::card::{CardGoRequest, CardPostField, CardSetVar};
-use crate::runtime::variable::is_valid_name;
+use crate::runtime::variable::{checked_apply_assignments, is_valid_name};
 use crate::*;
 use url::Url;
 
@@ -195,7 +195,10 @@ impl WmlEngine {
         nav.engine.active_select_edit = None;
         nav.engine.active_card_idx = back_target_idx;
         nav.engine.focused_link_idx = 0;
-        nav.engine.apply_set_var_assignments(assignments);
+        if let Err(err) = nav.engine.apply_set_var_assignments(assignments) {
+            nav.engine.push_trace("SETVAR_BUDGET_ERROR", err);
+            return true;
+        }
         nav.engine.push_trace("ACTION_BACK", String::new());
         // Each fallible entry step traces first, then leaves the guard armed so
         // the drop restores the pre-navigation state before returning.
@@ -267,7 +270,7 @@ impl WmlEngine {
         match action {
             CardTaskAction::Go { href, request } => {
                 let href = evaluate_href(href, &self.vars)?;
-                self.apply_set_var_assignments(&assignments);
+                self.apply_set_var_assignments(&assignments)?;
                 self.execute_prepared_action_href(&href, request)
             }
             CardTaskAction::Prev => {
@@ -278,7 +281,7 @@ impl WmlEngine {
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
                 self.stop_active_timer_for_exit();
-                self.apply_set_var_assignments(&assignments);
+                self.apply_set_var_assignments(&assignments)?;
                 self.initialize_controls_on_active_card()?;
                 self.start_timer_for_active_card()?;
                 Ok(())
@@ -365,12 +368,16 @@ impl WmlEngine {
             .collect()
     }
 
-    fn apply_set_var_assignments(&mut self, assignments: &[(String, String)]) {
-        for (name, value) in assignments {
-            if is_valid_name(name) {
-                self.vars.insert(name.clone(), value.clone());
-            }
-        }
+    fn apply_set_var_assignments(
+        &mut self,
+        assignments: &[(String, String)],
+    ) -> Result<(), String> {
+        let valid_assignments: Vec<(String, String)> = assignments
+            .iter()
+            .filter(|(name, _)| is_valid_name(name))
+            .cloned()
+            .collect();
+        checked_apply_assignments(&mut self.vars, &valid_assignments)
     }
 
     pub(crate) fn resolve_external_href(&self, href: &str) -> String {

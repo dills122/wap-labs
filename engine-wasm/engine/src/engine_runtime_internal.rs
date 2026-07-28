@@ -1,5 +1,7 @@
 use crate::runtime::node::{InlineNode, Node};
-use crate::runtime::variable::{evaluate as evaluate_variable, SubstitutionContext};
+use crate::runtime::variable::{
+    checked_insert as checked_insert_var, evaluate as evaluate_variable, SubstitutionContext,
+};
 use crate::*;
 
 mod navigation;
@@ -372,7 +374,7 @@ impl WmlEngine {
                     };
 
                     if let Some(initial_value) = initial_value {
-                        vars.insert(input.name.to_string(), initial_value.clone());
+                        checked_insert_var(vars, input.name.to_string(), initial_value.clone())?;
                         *input.value = initial_value;
                     } else {
                         vars.remove(input.name);
@@ -826,10 +828,11 @@ fn sync_select_variables(
         if values.is_empty() {
             vars.remove(name);
         } else {
-            vars.insert(
+            checked_insert_var(
+                vars,
                 name.to_string(),
                 values.join(if multiple { ";" } else { "" }),
-            );
+            )?;
         }
     }
     if let Some(iname) = iname {
@@ -842,7 +845,7 @@ fn sync_select_variables(
                 .collect::<Vec<_>>()
                 .join(if multiple { ";" } else { "" })
         };
-        vars.insert(iname.to_string(), serialized);
+        checked_insert_var(vars, iname.to_string(), serialized)?;
     }
     Ok(())
 }

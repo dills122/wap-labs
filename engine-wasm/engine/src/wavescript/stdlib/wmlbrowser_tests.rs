@@ -188,6 +188,31 @@ fn oversized_setvar_value_is_rejected_without_mutation() {
 }
 
 #[test]
+fn set_var_rejects_when_aggregate_store_budget_would_be_exceeded() {
+    // M1-46 / #446: a single WMLScript setVar() call is already bounded by
+    // MAX_VAR_VALUE_BYTES, but many separately-bounded values can still sum
+    // to an unbounded total across the whole variable store.
+    let mut vars = HashMap::new();
+    vars.insert("existing".to_string(), "x".repeat(1024 * 1024 - 100));
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
+
+    let result = host
+        .call(
+            WMLBROWSER_SET_VAR,
+            &[
+                ScriptValue::String("new".to_string()),
+                ScriptValue::String("y".repeat(200)),
+            ],
+        )
+        .expect("setVar should return invalid, not trap");
+
+    assert_eq!(result, ScriptValue::Invalid);
+    assert!(!vars.contains_key("new"));
+    assert!(!effects.requires_refresh());
+}
+
+#[test]
 fn dialog_calls_record_requests_with_deterministic_return_values() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();

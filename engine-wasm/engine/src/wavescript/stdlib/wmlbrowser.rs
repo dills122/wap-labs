@@ -81,7 +81,9 @@ impl<'a> WmlBrowserHost<'a> {
         if value.len() > MAX_VAR_VALUE_BYTES {
             return ScriptValue::Invalid;
         }
-        self.vars.insert(name, value);
+        if crate::runtime::variable::checked_insert(self.vars, name, value).is_err() {
+            return ScriptValue::Invalid;
+        }
         self.effects.mark_refresh_required();
         ScriptValue::Bool(true)
     }

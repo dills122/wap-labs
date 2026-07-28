@@ -210,6 +210,60 @@ fn wasm_wml_305_named_timer_lifecycle_matches_native_boundary() {
     assert_eq!(zero.active_card_id_wasm().as_deref(), Ok("zero"));
 }
 
+#[wasm_bindgen_test]
+fn wasm_variable_substitution_amplification_bounds_match_native_boundary() {
+    // M1-46 / #446: an unbounded exponential $(x)$(x) doubling via a
+    // repeating ontimer refresh must fail deterministically on wasm32 the
+    // same way it does natively, since `catch_unwind` cannot recover an
+    // allocation-failure panic on wasm32-unknown-unknown at all (see #434).
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home"><a href="#loop">Start</a></card>
+          <card id="loop">
+            <onevent type="ontimer"><refresh><setvar name="x" value="$(x)$(x)"/></refresh></onevent>
+            <timer value="1"/>
+            <p>Doubling</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck_wasm(xml).expect("deck should load");
+    assert!(engine.set_var_wasm("x".to_string(), "a".to_string()));
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("loop card should open and start the timer");
+    assert!(engine.next_timer_wakeup_ms_wasm().is_some());
+
+    let mut failed = false;
+    let mut last_ok_len = 1usize;
+    for _ in 0..30 {
+        match engine.advance_time_ms_wasm(100) {
+            Ok(()) => {
+                last_ok_len = engine
+                    .get_var_wasm("x".to_string())
+                    .map(|value| value.len())
+                    .unwrap_or(last_ok_len);
+            }
+            Err(_) => {
+                failed = true;
+                break;
+            }
+        }
+    }
+    assert!(
+        failed,
+        "exponential doubling must fail deterministically before completing 30 refresh cycles"
+    );
+    assert_eq!(
+        engine
+            .get_var_wasm("x".to_string())
+            .map(|value| value.len()),
+        Some(last_ok_len),
+        "a failed refresh must not partially commit the doubled value"
+    );
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("loop"));
+}
+
 fn draw_text(render_value: &JsValue) -> Vec<String> {
     let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
     Array::from(&draw)
