@@ -458,6 +458,82 @@ describe('BrowserController behavior coverage', () => {
     expect(presenter.getSessionState().lastError).toBe('gateway timed out');
   });
 
+  it('consumes Backspace on a refocused PIN after a failed POST', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    await flushAsyncWork();
+
+    vi.mocked(hostClient.fetchDeck).mockClear();
+    vi.mocked(hostClient.engineNavigateBackFrame).mockClear();
+    vi.mocked(hostClient.engineHandleKeyFrame).mockResolvedValueOnce(
+      frame(
+        {
+          activeCardId: 'login',
+          focusedLinkIndex: 1,
+          externalNavigationIntent: 'http://example.test/login',
+          externalNavigationRequestPolicy: {
+            postContext: {
+              sameDeck: false,
+              contentType: 'application/x-www-form-urlencoded',
+              payload: 'pin='
+            }
+          }
+        },
+        { draw: [{ type: 'text', x: 0, y: 0, text: 'PIN: ••••' }] }
+      )
+    );
+    vi.mocked(hostClient.fetchDeck).mockResolvedValueOnce(gatewayTimeoutResponse() as never);
+
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
+      new KeyboardEvent('keydown', { key: 'Enter' })
+    );
+    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+
+    expect(hostClient.fetchDeck).toHaveBeenCalledWith(
+      expect.objectContaining({ method: 'POST', url: 'http://example.test/login' })
+    );
+    expect(presenter.getSessionState().navigationStatus).toBe('error');
+
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame(
+        {
+          activeCardId: 'login',
+          focusedLinkIndex: 1,
+          focusedInputEditName: 'pin',
+          focusedInputEditValue: '••••'
+        },
+        { draw: [{ type: 'text', x: 0, y: 0, text: 'PIN: ••••' }] }
+      )
+    );
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockResolvedValueOnce(
+      frame(
+        {
+          activeCardId: 'login',
+          focusedLinkIndex: 1,
+          focusedInputEditName: 'pin',
+          focusedInputEditValue: '•••'
+        },
+        { draw: [{ type: 'text', x: 0, y: 0, text: 'PIN: •••' }] }
+      )
+    );
+
+    const backspace = new KeyboardEvent('keydown', { key: 'Backspace', cancelable: true });
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(backspace);
+    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+
+    expect(backspace.defaultPrevented).toBe(true);
+    expect(hostClient.engineBeginFocusedInputEditFrame).toHaveBeenCalledTimes(1);
+    expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '•••' });
+    expect(hostClient.engineNavigateBackFrame).not.toHaveBeenCalled();
+    expect(refs.viewportEl.textContent).toBe('PIN: •••');
+  });
+
   it('words a malformed-deck-payload failure distinctly from a network failure', async () => {
     // U2: a fetch that succeeded but returned no usable WML must not read
     // like a network-layer "fetch failed" -- both toast and status text

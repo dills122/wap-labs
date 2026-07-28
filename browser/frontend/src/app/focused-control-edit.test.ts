@@ -99,6 +99,36 @@ describe('FocusedControlEditController', () => {
     );
   });
 
+  it('begins input edit for Backspace and removes the final draft character', async () => {
+    const { host, applyFrame, syncSnapshot, recordTimeline } = createHost();
+    const controller = new FocusedControlEditController(host);
+
+    const result = await controller.applyKey('Backspace');
+
+    expect(result).toBe('handled');
+    expect(host.beginFocusedInputEdit).toHaveBeenCalledTimes(1);
+    expect(host.setFocusedInputEditDraft).toHaveBeenCalledWith('');
+    expect(applyFrame).toHaveBeenCalledTimes(1);
+    expect(syncSnapshot).toHaveBeenCalledTimes(1);
+    expect(recordTimeline).toHaveBeenLastCalledWith(
+      'keyboard-input-edit-state',
+      expect.not.objectContaining({ focusedInputEditValue: expect.anything() })
+    );
+  });
+
+  it('returns Backspace unhandled when the engine reports a non-input focus target', async () => {
+    const { host } = createHost({
+      beginFocusedInputEdit: vi.fn(async () => frame({ activeCardId: 'home', focusedLinkIndex: 1 }))
+    });
+    const controller = new FocusedControlEditController(host);
+
+    const result = await controller.applyKey('Backspace');
+
+    expect(result).toBe('unhandled');
+    expect(host.beginFocusedInputEdit).toHaveBeenCalledTimes(1);
+    expect(host.setFocusedInputEditDraft).not.toHaveBeenCalled();
+  });
+
   it('supports backspace and escape while deferring input commit to the engine', async () => {
     const { host } = createHost({
       getSnapshot: vi.fn(() =>

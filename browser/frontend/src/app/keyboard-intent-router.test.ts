@@ -124,7 +124,7 @@ describe('KeyboardIntentRouter', () => {
     expect(deps.setStatus).toHaveBeenCalledTimes(1);
   });
 
-  it('falls through to back navigation when the control-edit check does not handle Backspace', async () => {
+  it('retains back navigation when the focused WML target is not an input', async () => {
     const deps = createDeps();
     const router = new KeyboardIntentRouter(deps);
 
