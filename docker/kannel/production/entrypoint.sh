@@ -56,6 +56,7 @@ printf '%s\n' "$bearerbox_pid" >"$runtime_dir/bearerbox.pid"
 i=0
 while [ "$i" -lt 20 ]; do
   if curl -sS --output /dev/null --connect-timeout 1 --max-time 2 \
+    --get --data-urlencode "password@$status_secret_file" \
     'http://127.0.0.1:13000/status' \
     >/dev/null 2>&1; then
     break

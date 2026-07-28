@@ -83,7 +83,11 @@ test('production Kannel maps only approved public hosts and explicit private smo
   const healthcheck = read('docker/kannel/production/healthcheck.sh');
   assert.match(entrypoint, /bearerbox -v 1/);
   assert.match(entrypoint, /wapbox -v 1/);
-  assert.doesNotMatch(healthcheck, /password|secret/);
+  for (const probe of [entrypoint, healthcheck]) {
+    assert.match(probe, /--data-urlencode "password@\$status_secret_file"/);
+    assert.doesNotMatch(probe, /\?password=|--data-urlencode "password=\$/);
+  }
+  assert.doesNotMatch(healthcheck, /secret_value|tr -d|cat /);
 });
 
 test('Docker forwarding remains sealed by default and public mode is rate limited to UDP 9200', () => {
