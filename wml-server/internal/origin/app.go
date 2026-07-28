@@ -31,6 +31,7 @@ const (
 	defaultMaxSessions = 256
 	defaultMaxBody     = int64(8 << 10)
 	maxUsernameBytes   = 32
+	maxPINBytes        = 6
 	maxSessionIDBytes  = 64
 	pageSize           = 2
 )
@@ -310,7 +311,7 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 		a.sendWML(w, renderLoginDeck(username, "Username and PIN are required."), http.StatusOK)
 		return
 	}
-	if !validUsername(username) || len(pin) > 6 {
+	if !validUsername(username) || len(pin) > maxPINBytes {
 		a.counts.loginFailure.Add(1)
 		a.sendWML(w, renderLoginDeck(username, "Invalid username or PIN."), http.StatusOK)
 		return
@@ -319,7 +320,8 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 	a.mu.Lock()
 	account, found := a.users[username]
 	a.mu.Unlock()
-	if !found || subtle.ConstantTimeCompare([]byte(account.PIN), []byte(pin)) != 1 {
+	pinMatches := constantTimePINCompare(account.PIN, pin)
+	if pinMatches != 1 || !found {
 		a.counts.loginFailure.Add(1)
 		a.sendWML(w, renderLoginDeck(username, "Invalid username or PIN."), http.StatusOK)
 		return
@@ -333,6 +335,15 @@ func (a *App) login(w http.ResponseWriter, r *http.Request) {
 	}
 	a.counts.loginSuccess.Add(1)
 	a.sendWML(w, renderLoginSuccess(username, sid, createdAt), http.StatusOK)
+}
+
+func constantTimePINCompare(storedPIN, submittedPIN string) int {
+	var stored, submitted [maxPINBytes + 1]byte
+	copy(stored[:maxPINBytes], storedPIN)
+	copy(submitted[:maxPINBytes], submittedPIN)
+	stored[maxPINBytes] = byte(len(storedPIN))
+	submitted[maxPINBytes] = byte(len(submittedPIN))
+	return subtle.ConstantTimeCompare(stored[:], submitted[:])
 }
 
 func (a *App) registerForm(w http.ResponseWriter, _ *http.Request) {
