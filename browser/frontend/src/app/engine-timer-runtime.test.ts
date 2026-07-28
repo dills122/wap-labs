@@ -80,6 +80,153 @@ describe('EngineTimerRuntime', () => {
     expect(advanceLocal).toHaveBeenCalledWith(275);
   });
 
+  it('re-arms a native timer wakeup skipped while an action is in flight', async () => {
+    let actionInFlight = true;
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
+    const deps = createDeps({
+      canTick: () => !actionInFlight,
+      advanceLocal
+    });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'timed', focusedLinkIndex: 0, nextTimerWakeupMs: 100 })
+    );
+
+    await vi.advanceTimersByTimeAsync(100);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(1);
+
+    actionInFlight = false;
+    await vi.advanceTimersByTimeAsync(100);
+    expect(advanceLocal).toHaveBeenCalledOnce();
+    expect(advanceLocal).toHaveBeenCalledWith(100);
+  });
+
+  it('stops a re-armed blocked wakeup without scheduling again', async () => {
+    let actionInFlight = true;
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
+    const deps = createDeps({
+      canTick: () => !actionInFlight,
+      advanceLocal
+    });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'timed', focusedLinkIndex: 0, nextTimerWakeupMs: 100 })
+    );
+    await vi.advanceTimersByTimeAsync(100);
+    expect(vi.getTimerCount()).toBe(1);
+
+    runtime.stop();
+    actionInFlight = false;
+    await vi.advanceTimersByTimeAsync(1_000);
+
+    expect(advanceLocal).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('preserves script timer cadence across a blocked wakeup', async () => {
+    let actionInFlight = true;
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }));
+    const deps = createDeps({
+      canTick: () => !actionInFlight,
+      advanceLocal
+    });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        lastScriptTimerRequests: [{ type: 'schedule', token: 'blocked', delayMs: 80 }]
+      })
+    );
+
+    await vi.advanceTimersByTimeAsync(80);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(1);
+
+    actionInFlight = false;
+    await vi.advanceTimersByTimeAsync(79);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+
+    expect(advanceLocal).toHaveBeenCalledWith(80);
+    expect(deps.recordTimeline).toHaveBeenCalledWith(
+      'script-timer-expire',
+      'state',
+      expect.objectContaining({ token: 'blocked', dueMs: 80, nowMs: 80 })
+    );
+  });
+
+  it('backs off an already-due blocked timer to the engine cadence', async () => {
+    let actionInFlight = true;
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 }));
+    const deps = createDeps({
+      canTick: () => !actionInFlight,
+      advanceLocal
+    });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'home', focusedLinkIndex: 0, nextTimerWakeupMs: 0 })
+    );
+    await vi.advanceTimersByTimeAsync(0);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(1);
+
+    actionInFlight = false;
+    await vi.advanceTimersByTimeAsync(99);
+    expect(advanceLocal).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
+
+    expect(advanceLocal).toHaveBeenCalledWith(100);
+  });
+
+  it('lets the active tick re-arm after re-entrant wakeups without duplicate timers', async () => {
+    let releaseTick: (() => void) | undefined;
+    const advanceLocal = vi
+      .fn()
+      .mockImplementationOnce(
+        async () =>
+          new Promise<ReturnType<typeof snapshot>>((resolve) => {
+            releaseTick = () =>
+              resolve(
+                snapshot({ activeCardId: 'home', focusedLinkIndex: 0, nextTimerWakeupMs: 100 })
+              );
+          })
+      )
+      .mockResolvedValue(snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
+    const deps = createDeps({ advanceLocal });
+    const runtime = new EngineTimerRuntime(deps);
+
+    runtime.start();
+    runtime.applySnapshot(
+      snapshot({ activeCardId: 'home', focusedLinkIndex: 0, nextTimerWakeupMs: 100 })
+    );
+    const firstTick = runtime.tick();
+
+    await vi.advanceTimersByTimeAsync(100);
+    expect(advanceLocal).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+
+    await runtime.tick();
+    expect(vi.getTimerCount()).toBe(0);
+
+    releaseTick?.();
+    await firstTick;
+    expect(vi.getTimerCount()).toBe(1);
+
+    await vi.advanceTimersByTimeAsync(100);
+    expect(advanceLocal).toHaveBeenCalledTimes(2);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('renders local snapshots when timer advancement changes state', async () => {
     const deps = createDeps({
       advanceLocal: vi.fn(async () =>

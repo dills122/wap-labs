@@ -66,7 +66,13 @@ export class EngineTimerRuntime {
   }
 
   async tick(deltaMs: number = WAVES_CONFIG.engineTimerTickMs): Promise<void> {
-    if (this.timerTickInFlight || !this.deps.canTick()) {
+    if (this.timerTickInFlight) {
+      return;
+    }
+    if (!this.deps.canTick()) {
+      if (this.timerLoopHandle === null) {
+        this.scheduleNextWakeup(WAVES_CONFIG.engineTimerTickMs);
+      }
       return;
     }
     this.timerTickInFlight = true;
@@ -110,7 +116,7 @@ export class EngineTimerRuntime {
     }
   }
 
-  private scheduleNextWakeup(): void {
+  private scheduleNextWakeup(minimumDelayMs = 0): void {
     if (!this.running || this.timerTickInFlight) {
       return;
     }
@@ -124,7 +130,8 @@ export class EngineTimerRuntime {
     if (delays.length === 0) {
       return;
     }
-    const delayMs = Math.max(0, Math.min(...delays));
+    const requestedDelayMs = Math.max(0, Math.min(...delays));
+    const delayMs = requestedDelayMs === 0 ? minimumDelayMs : requestedDelayMs;
     this.timerLoopHandle = setTimeout(() => {
       this.timerLoopHandle = null;
       void this.tick(delayMs);
