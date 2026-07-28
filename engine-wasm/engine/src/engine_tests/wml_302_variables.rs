@@ -246,3 +246,88 @@ fn wml_302_newcontext_and_task_failure_preserve_existing_atomicity() {
         Some("original")
     );
 }
+
+#[test]
+fn wml_302_exponential_timer_refresh_doubling_fails_deterministically_without_partial_commit() {
+    // M1-46 / #446: a repeating ontimer refresh doubling a variable through
+    // itself ($(x)$(x)) must fail before it can grow into a large
+    // allocation, and a failed refresh must not partially apply.
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <card id="home"><a href="#loop">Start</a></card>
+          <card id="loop">
+            <onevent type="ontimer"><refresh><setvar name="x" value="$(x)$(x)"/></refresh></onevent>
+            <timer value="1"/>
+            <p>Doubling</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    assert!(engine.set_var("x".to_string(), "a".to_string()));
+    engine
+        .handle_key("enter".to_string())
+        .expect("loop card should open and start the timer");
+    assert!(engine.next_timer_wakeup_ms().is_some());
+
+    let mut failure = None;
+    let mut last_ok_len = 1usize;
+    for _ in 0..30 {
+        match engine.advance_time_ms(100) {
+            Ok(()) => {
+                last_ok_len = engine
+                    .get_var("x".to_string())
+                    .map(|value| value.len())
+                    .unwrap_or(last_ok_len);
+            }
+            Err(err) => {
+                failure = Some(err);
+                break;
+            }
+        }
+    }
+    let error = failure.expect(
+        "exponential doubling must fail deterministically before completing 30 refresh cycles",
+    );
+    assert!(
+        error.contains("byte"),
+        "error should be the stable substitution/aggregate budget message, got: {error}"
+    );
+    assert_eq!(
+        engine.get_var("x".to_string()).map(|value| value.len()),
+        Some(last_ok_len),
+        "a failed refresh must not partially commit the doubled value"
+    );
+    assert_eq!(engine.active_card_id().as_deref(), Ok("loop"));
+}
+
+#[test]
+fn wml_302_single_pass_amplification_below_input_limit_fails_deterministically() {
+    // Below any single deck/value-size limit individually, but many
+    // substitutions of a moderately-sized variable in one attribute can
+    // still amplify past the substitution-output bound in one evaluation.
+    let mut engine = WmlEngine::new();
+    let repeated_refs = "$(a)".repeat(2_000); // 2,000 * 40 bytes = 80,000 > 64 KiB bound
+    let xml = format!(
+        r##"<wml><card id="home">
+              <do type="accept"><refresh><setvar name="out" value="{repeated_refs}"/></refresh></do>
+              <p>Home</p>
+            </card></wml>"##
+    );
+    engine.load_deck(&xml).expect("deck should load");
+    assert!(engine.set_var("a".to_string(), "x".repeat(40)));
+
+    let error = engine.handle_key("enter".to_string()).expect_err(
+        "single-pass amplification must fail deterministically before large allocation",
+    );
+    assert!(
+        error.contains("byte"),
+        "error should be the stable substitution budget message, got: {error}"
+    );
+    assert_eq!(
+        engine.get_var("out".to_string()),
+        None,
+        "the failed setvar must not partially commit"
+    );
+    assert_eq!(engine.active_card_id().as_deref(), Ok("home"));
+}

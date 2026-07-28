@@ -235,13 +235,13 @@ impl WmlEngine {
         self.vars.get(&name).cloned()
     }
 
-    /// Set a runtime variable if `name` passes deterministic validation.
+    /// Set a runtime variable if `name` passes deterministic validation and
+    /// the aggregate variable store stays within its byte budget.
     pub fn set_var(&mut self, name: String, value: String) -> bool {
         if !is_valid_var_name(&name) {
             return false;
         }
-        self.vars.insert(name, value);
-        true
+        crate::runtime::variable::checked_insert(&mut self.vars, name, value).is_ok()
     }
 
     /// Render active card into draw commands for the current viewport width.
