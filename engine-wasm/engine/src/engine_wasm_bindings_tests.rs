@@ -407,6 +407,108 @@ fn wasm_wml_301_forward_deck_load_preserves_context_and_selects_fragment() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_301_independent_load_rejects_unknown_fragment_and_preserves_state() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_context_wasm(
+            r#"<wml><card id="source"><p>Source</p></card></wml>"#,
+            "http://example.test/source.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("source deck should load through the wasm boundary");
+    assert!(engine.set_var_wasm("token".to_string(), "kept".to_string()));
+    let epoch = engine.browser_context_epoch_wasm();
+
+    let error = engine
+        .load_deck_context_wasm(
+            r#"<wml><card id="first"><p>First</p></card></wml>"#,
+            "http://example.test/destination.wml#missing",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect_err("an unknown top-level fragment should reject the wasm load");
+
+    assert_eq!(error.as_string().as_deref(), Some("Card id not found"));
+    let diagnostics = Array::from(
+        &engine
+            .last_wml_load_diagnostics_wasm()
+            .expect("load diagnostics should serialize"),
+    );
+    assert_eq!(diagnostics.length(), 1);
+    let diagnostic = diagnostics.get(0);
+    assert_eq!(
+        Reflect::get(&diagnostic, &JsValue::from_str("class"))
+            .expect("class field")
+            .as_string()
+            .as_deref(),
+        Some("recoverable")
+    );
+    assert_eq!(
+        Reflect::get(&diagnostic, &JsValue::from_str("code"))
+            .expect("code field")
+            .as_string()
+            .as_deref(),
+        Some("WML_RECOVERABLE_CONTENT")
+    );
+    assert_eq!(
+        Reflect::get(&diagnostic, &JsValue::from_str("outcome"))
+            .expect("outcome field")
+            .as_string()
+            .as_deref(),
+        Some("rejected")
+    );
+    assert_eq!(
+        Reflect::get(&diagnostic, &JsValue::from_str("message"))
+            .expect("message field")
+            .as_string()
+            .as_deref(),
+        Some("Card id not found")
+    );
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("rejected load must preserve the active card"),
+        "source"
+    );
+    assert_eq!(engine.base_url_wasm(), "http://example.test/source.wml");
+    assert_eq!(
+        engine.get_var_wasm("token".to_string()).as_deref(),
+        Some("kept")
+    );
+    assert_eq!(engine.browser_context_epoch_wasm(), epoch);
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_301_independent_load_without_nonempty_fragment_selects_first_card() {
+    for url in [
+        "http://example.test/destination.wml",
+        "http://example.test/destination.wml#",
+    ] {
+        let mut engine = WmlEngine::wasm_new();
+        engine
+            .load_deck_context_wasm(
+                r#"<wml><card id="first"><p>First</p></card><card id="second"><p>Second</p></card></wml>"#,
+                url,
+                "text/vnd.wap.wml",
+                None,
+                None,
+            )
+            .expect("no fragment or an empty fragment should load the first card");
+
+        assert_eq!(
+            engine
+                .active_card_id_wasm()
+                .expect("the first card should be active"),
+            "first",
+            "{url}"
+        );
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_202_head_metadata_parser_matches_native_boundary_behavior() {
     let valid = r#"
         <wml>

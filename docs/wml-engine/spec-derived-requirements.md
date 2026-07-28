@@ -95,6 +95,8 @@ Minimum output guarantees:
 - Unsupported optional constructs and explicitly recoverable content are ignored with distinct
   diagnostics; recognized nested content remains available where the recovery policy permits it.
 - Invalid internal target (`#missing`) must emit a runtime error event.
+- Invalid independent/top-level target (`deck.wml#missing`) must reject the load atomically with
+  the same deterministic error, while absent and empty fragments select the first card.
 
 ## 10. Conformance Baseline (for this project)
 

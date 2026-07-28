@@ -86,6 +86,10 @@ Compatibility policy:
 - Deterministic rendering for snapshot tests.
 - Never panic across wasm boundary; convert to structured error.
 - Reject malformed/invalid loads atomically without replacing the last successfully loaded deck.
+- Reject an unresolved non-empty fragment on an independent/top-level load with the same stable
+  `Card id not found` error used by same-deck navigation. No fragment or an empty fragment still
+  selects the first card; host-fetched forward navigation retains the WML `<go>` first-card
+  fallback.
 
 ## 7. Future-Proofing Without Overengineering
 

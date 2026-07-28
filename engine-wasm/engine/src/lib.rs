@@ -96,6 +96,7 @@ const MAX_TIMER_DISPATCH_DEPTH: u8 = 8;
 const MAX_NAV_DISPATCH_DEPTH: u8 = 8;
 const MAX_DECK_WML_XML_BYTES: usize = 512 * 1024;
 const MAX_DECK_RAW_BYTES_BASE64_BYTES: usize = 1024 * 1024;
+const CARD_ID_NOT_FOUND_ERROR: &str = "Card id not found";
 
 /// Panic-containment boundary for public engine entrypoints.
 ///
