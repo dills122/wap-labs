@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 40 implemented, 70 partial, and 88
+- the selected implementation audit is 40 implemented, 71 partial, and 87
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -56,10 +56,10 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 16 implemented, 15 partial, and
-  16 missing; the selected 39-row client subset is 16 implemented, 15 partial,
-  and 8 missing;
-- 31 rows have direct code symbols and runnable test evidence.
+- the source-wide mandatory code audit finds 16 implemented, 16 partial, and
+  15 missing; the selected 39-row client subset is 16 implemented, 16 partial,
+  and 7 missing;
+- 32 rows have direct code symbols and runnable test evidence.
 - `WML-201` directly projects all 76 WML rows and all 175 selected WML
   clauses; the remaining 16 mandatory gaps and 29 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
@@ -102,12 +102,12 @@ All nine selected Class C family increments are complete at SCR level:
   treated only as a provisional zero-byte-cache profile.
 - 317 effective WDP/WCMP/WSP SCR rows are extracted with all actor, M/O,
   source-order, and dependency expressions preserved;
-- the selected connectionless transport path resolves to 22 rows: 9 WDP
+- the selected connectionless transport path resolves to 19 rows: 9 WDP
   using CDPD-shaped UDP/IPv4, 2 ICMP-backed WCMP rows, and 8 connectionless WSP
   rows;
-- the selected transport audit is 11 implemented, 8 partial, and 0 missing:
-  all nine selected WDP rows and both selected WCMP rows have direct
-  normative evidence, while the eight connectionless WSP rows remain partial;
+- the selected transport audit is 19 implemented, 0 partial, and 0 missing:
+  all nine selected WDP rows, both selected WCMP rows, and all eight
+  connectionless WSP rows have direct normative evidence;
 - connection-oriented WSP and WTP remain a separately activated capability;
 - `TRN-7-CL-C` records the completed selected-profile transport gate from the
   nine WDP rows, two ICMP-backed WCMP rows, deterministic replay evidence, and
@@ -122,7 +122,6 @@ See `docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md` and
 `docs/waves/WAP_1_2_1_WMLSCRIPT_SCR_LEDGER.md`, and
 `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`, and
 `docs/waves/WAP_1_2_1_CACHING_SCR_LEDGER.md`, and
-`docs/waves/WAP_1_2_1_TRANSPORT_SCR_LEDGERS.md`.
 
 ## Compatibility and enhancement policy
 

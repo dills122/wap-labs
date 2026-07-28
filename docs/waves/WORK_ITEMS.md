@@ -83,7 +83,7 @@ The public network-preview plan is a separate product/release lane. Its `PRE-*`,
 compliance closure or change the dependency order in the machine-readable compliance program.
 Public exposure remains blocked on the plan's access, threat-model, and release gates.
 
-## Next In Line (WAP Compliance Sync - 2026-07-25)
+## Next In Line (Post-Merge Compliance Sync - 2026-07-27)
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -110,9 +110,9 @@ Current priority order is:
    action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
    while `WSP-8` remains behind `WAE-6`. Preserve WML-301's implemented
-   context/history subset and WMLS-501's merged decoder/verifier plus verified-unit
-   runtime routing, then advance graph-first `WML-304` request intent alongside
-   bounded `WMLS-502` and public-preview decision work. Preserve the completed `D0-01` contract
+   context/history subset, WML-304's merged request-intent boundary, and WMLS-501's
+   merged decoder/verifier plus verified-unit runtime routing. Advance native request
+   application and verifier/dataflow closure as separate implementation lanes. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -127,23 +127,21 @@ Planning assessment:
 2. Replan only when a source-derived fixture changes a dependency, a profile
    is activated, or implementation evidence changes a parent-row assessment.
 
-Current parallel batch:
+Current implementation batch, ordered within each lane:
 
-1. `WSP-802`: completed the source-scope audit and connectionless header,
-   assigned-number, code-page, and encoding-version matrix.
-2. `WML-301`: completed the 20-clause source audit and implemented the 12-clause
-   context/history/process-order subset with native/WASM/browser/story evidence; the aggregate
-   item remains in progress while the explicit table-boundary and broad WAE delegates stay planned.
-3. `WMLS-501`: the bounded WAP-193 bytecode decoder, structural verifier, and
-   verified-unit runtime routing are merged; the next script baton is a bounded
-   `WMLS-502` operator/dataflow decision without claiming library closure.
-4. Public preview: the protected OpenTofu workflow repair and semantic linting
-   are merged; `PRE-001`/`PRE-003` still gate live provider/R2 evidence, and
-   `GW-101` remains at readiness until `PRE-004` threat/data-policy acceptance.
-5. `WML-304`: the 15-clause/five-parent request-pipeline graph projection is the
-   active compliance baton; land the native/WASM/Tauri-host GET/POST/postfield
-   request-intent contract without reopening completed WML history; native transport
-   request application and POST replay follow sequentially.
+1. **Request lane:** consume the merged `WML-304` request intent under `R0-06`/`WSP-805`
+   for GET query, form-urlencoded POST, charset/content-type, referer, and no-cache transport
+   application. Follow with replayable POST history after request serialization is stable.
+2. **Script lane:** finish `WMLS-501` library-index and stack-dataflow verification, then begin
+   the bounded `WMLS-502` operator/conversion execution tranche. These two tasks share
+   `engine-wasm/engine/src/wavescript/*` and must remain sequential.
+3. **Runtime lane:** finish the additive `WML-301` table-boundary/WAE delegate mapping and
+   direct fixtures without changing its completed 12-clause history evidence. Take `WML-306`
+   access/error/low-memory policy next; coordinate its browser-policy files with the request lane.
+4. The separately owned public-WAP-services lane may continue in parallel. Current main proves
+   only the secure preview host checkpoint: no public DNS record, WAP listener, or application
+   deployment is complete. That lane neither blocks nor satisfies Class C evidence and is not
+   dispatched from this board.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -1957,8 +1955,8 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  16 implemented, 15 partial, and 16 missing rows, with validated code/test
-  evidence for 31 rows. `WML-201` directly projects all 76 rows and maps all
+  16 implemented, 16 partial, and 15 missing rows, with validated code/test
+  evidence for 32 rows. `WML-201` directly projects all 76 rows and maps all
   175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
   ticket is not done.
@@ -2067,7 +2065,7 @@ Reference:
 
 ### R0-06 Transport/request-policy and postfield plumbing
 
-1. `Status`: `todo`
+1. `Status`: `in-progress`
 2. `Depends On`: `T0-04`, `R0-02`
 3. `Files`:
 - `transport-rust/src/lib.rs`
@@ -2083,6 +2081,12 @@ Reference:
 - Request metadata semantics are deterministic and traceable to runtime task state.
 7. `Spec`:
 - `WML-29`, `WML-37`, `WML-52`, section `9.5.1`, section `12.5`
+8. `Notes`:
+- WML-304 now supplies the Rust-owned typed request intent across native, WASM, generated engine,
+  and Tauri serialization contracts, with direct parser/runtime/story evidence for 3 of its 15
+  mapped clauses. Remaining R0-06 scope starts at the browser/transport consumption boundary:
+  final GET/POST encoding, charset/content-type, smallest-relative referer, no-cache application,
+  and replayable POST history.
 
 ### R0-07 Browser policy path: access control, low-memory, unknown-DTD behavior
 

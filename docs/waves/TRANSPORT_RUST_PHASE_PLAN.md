@@ -151,7 +151,7 @@ Immediate safety prerequisite, outside the deferred crypto implementation:
   with the native browser foundation.
 - Completed `T0-*` implementation lanes are provisional evidence. Exact
   strict-profile closure is tracked by `TRN-701`, `TRN-702`, `TRN-703`, the
-  completed `WSP-801` matrix, and residual `WSP-802`/`804`/`805` work.
+  completed `WSP-801`/`WSP-802` matrices, and residual `WSP-804`/`WSP-805` work.
 
 ## Dependency Guidance
 

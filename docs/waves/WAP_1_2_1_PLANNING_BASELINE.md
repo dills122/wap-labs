@@ -46,7 +46,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 175 | 16 | 15 | 8 |
+| WML | 39 | 175 | 16 | 16 | 7 |
 | WAE | 11 | 39 | 5 | 3 | 3 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 32 | 9 |
@@ -55,7 +55,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 8 | 0 | 0 |
-| **Total** | **198** | **762** | **40** | **70** | **88** |
+| **Total** | **198** | **762** | **40** | **71** | **87** |
 
 Parent-row status is not a substitute for direct clause evidence. With 288 of
 762 clauses assessed, the project remains `pre-conformance` until every
@@ -68,8 +68,8 @@ The 82 work items currently roll up to:
 
 - 28 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801/WSP-802 connectionless matrices, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 10 in progress (existing runtime, WML-301 context/history follow-through, WAE, transport, WSP, and WMLS-501 foundations);
-- 43 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
+- 11 in progress (existing runtime, WML-301 context/history follow-through, WML-304 request-pipeline follow-through, WAE, transport, WSP, and WMLS-501 foundations);
+- 42 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
 
 New completion claims should follow the machine dependency graph:
 

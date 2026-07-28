@@ -29,19 +29,20 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 - `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - `docs/waves/wap-1.2.1-compliance-program.json`
 
-## WAP Compliance Rebase (2026-07-24)
+## WAP Compliance Rebase (2026-07-27)
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 40 implemented, 70 partial, and 88 missing parent rows; clause-level
-assessment is 287/762 after WML-301 closed 12 context/history/process-order clauses,
+is 40 implemented, 71 partial, and 87 missing parent rows; clause-level
+assessment is 288/762 after WML-301 closed 12 context/history/process-order clauses,
 WML-302 closed 18 newly implemented clauses,
 retained 2 already implemented shared clauses, WSP-801 directly closed its
 35-clause connectionless matrix, WSP-802 added 22 net assessed header clauses,
-and WML-305 closed its 10 directly mapped timer clauses and completed parent
-row WML-C-48.
+WML-305 closed its 10 directly mapped timer clauses and completed parent row
+WML-C-48, and WML-304 added one net assessed request-intent clause while moving
+WML-C-14 from missing to partial.
 
 Use this order for new completion work:
 
@@ -63,7 +64,7 @@ internal implementation or evidence work: the 97-member private evidence set,
 106-entry redistribution inventory, and request package are ready, while
 maintainer approval to send and written permission remain open.
 
-## Current Snapshot (as of 2026-07-25)
+## Current Snapshot (as of 2026-07-27)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
@@ -225,45 +226,28 @@ Implementation reference:
 
 ## Parallel Follow-on Sprint Recommendation
 
-Current recommendation after all merged implementation workstreams:
+The next six implementation tasks are grouped into three parallel-safe lanes.
+Order is binding within a lane; lanes may run concurrently subject to the noted
+file ownership.
 
-1. **Mapping/evidence lane:** preserve `WML-201`'s completed 76-row evidence
-   projection and 175/175 direct WML-clause mapping.
-2. **Engine lane, first:** preserve completed `WML-202` access-policy,
-   root-language, and card-context evidence (30/30 direct clauses) and completed
-   `WML-204` vdata/HREF conversion and field/control validation evidence (23/23
-   direct clauses) without reopening either history.
-3. **Engine lane, next:** preserve completed `WML-203` mandatory prologue,
-   selected DTD content-model, text/WBXML parity, and document-family evidence
-   (68/68 direct clauses), plus completed `WML-205` exhaustive invalid-WML and
-   atomic fetch/access failure evidence (3/3), completed `WML-302`
-   variable/substitution evidence (20/20), and completed `WML-303`
-   action/event/BACK evidence (27/27), plus completed `WML-305` native timer
-   lifecycle evidence (10/10).
-4. **Transport lane:** preserve the completed schema-v2 selected WDP replay
-   boundary for `TRN-706` and keep its WTP family gap explicit under additive
-   `TRN-704`/`TRN-705` follow-ups. Do not activate WTP or connection-oriented
-   WSP to manufacture completion. Use completed gate `TRN-7-CL-C` for the
-   selected connectionless profile, and track the zero-direct-clause
-   `TRN-703` gap additively in `TRN-710` without reopening TRN-703.
-5. **Browser lane:** preserve the completed `WBP-00` through additive `WBP-05A`
-   accessibility evidence closure without reopening `WBP-05`. `WML-2`,
-   `WML-303`, and `D0-01` now satisfy the declared prerequisites; keep
-   `WBP-06` inactive until a separately authorized F0 lane assumes the single
-   frame/input contract ownership recorded in the browser implementation plan.
-6. **Profile research lane:** treat `WBP-15` as ready for evidence-bounded Nokia
-   7110 profile planning while its implementation dependencies remain closed;
-   advance `WBP-16` independently only as an Openwave handset/browser
-   evidence-lock task, without changing runtime behavior or naming a generic
-   Openwave profile.
+| Priority | Lane / task | Dependency and overlap boundary | Class C contribution |
+|---:|---|---|---|
+| 1 | Request A1 — `WML-304` / `R0-06` / `WSP-805` native request application | Depends on the merged request-intent contract and completed `WSP-801`/`WSP-802`; give this task exclusive ownership of transport request serialization and browser fetch handoff files. | Converts the 12 remaining WML-304 transport-boundary clauses from intent-only plans into direct GET/POST/charset/referer/cache evidence. |
+| 2 | Script B1 — finish `WMLS-501` verifier scope | Independent of A1; owns WAP decoder/verifier fixtures and `engine-wasm/engine/src/wavescript/*`. | Adds direct evidence for standard-library indexes and stack dataflow while preserving the 41-row WMLScript selection. |
+| 3 | Runtime C1 — `WML-301` residual table/WAE delegate closure | Independent of A1 when limited to context/history mapping and fixtures; do not edit request serialization. | Makes the aggregate WML-301 boundary explicit without reopening its completed 12-clause history/process-order evidence. |
+| 4 | Request A2 — replayable POST history | Starts after A1 fixes the serialized request shape; shares navigation-history structures with C1, so land after C1 or coordinate one owner. | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary. |
+| 5 | Script B2 — bounded `WMLS-502` operator/conversion execution | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B. | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence. |
+| 6 | Runtime C2 — `WML-306` access/error/low-memory policy | Starts after C1; coordinate browser policy/host files with A1/A2 and preserve completed WML-202/WML-205 evidence. | Advances the remaining partial access/error parents, including policy beyond WML-304's referer intent. |
 
-Preserve the `W1-06` boundary and completed `D0-01` baseline. Frame migration and
-general maintenance remain non-preemptive until separately authorized or
-required by an upstream Class C gate.
-`WSP-801` is complete on the selected connectionless path because `TRN-7-CL-C`
-is complete. `WSP-802` retains header/version closure; `WSP-8` still cannot
-close before `WAE-6` and its own remaining gates. Connection-oriented WSP
-continues to require the dormant WTP work retained in `TRN-7`.
+Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
+connection-oriented WSP/WTP to manufacture completion. `REN-4` and full
+`WMLS-5`/`WAE-6` closure remain downstream of `WML-3` even when isolated
+foundations proceed early.
+
+The public-WAP-services workstream is externally active and may run beside these
+lanes, but it is deliberately not part of this batch. Current main proves a
+secure preview host with private administration and no public DNS record, WAP
+listener, or application deployment; none of that changes Class C evidence.
 
 Completed this sprint:
 

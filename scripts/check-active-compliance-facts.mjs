@@ -89,6 +89,16 @@ if (clauses.summary?.assessedClauseCount !== clauseStatusCounts.implemented) {
 }
 
 const wmlFamily = clauses.families?.find((family) => family.family === 'wml');
+const wmlLedger = readJson(wmlFamily.parentLedger);
+const wmlEvidenceStateCounts = Object.fromEntries(
+  Object.entries(
+    (wmlLedger.obligations ?? []).reduce((counts, obligation) => {
+      const state = obligation.mapping?.evidenceState;
+      counts[state] = (counts[state] ?? 0) + 1;
+      return counts;
+    }, {})
+  ).sort(([left], [right]) => left.localeCompare(right))
+);
 const wmlImplementedClauseCount = (wmlFamily?.clauses ?? []).filter(
   (clause) => clause.mapping?.clauseImplementationStatus === 'implemented'
 ).length;
@@ -135,6 +145,10 @@ const atlasWorkItems = (complianceProgram.sprints ?? []).flatMap(
   (sprint) => sprint.workItems ?? []
 );
 const atlasWorkItemCount = new Set(atlasWorkItems.map((workItem) => workItem.id)).size;
+const atlasWorkItemStatusCounts = atlasWorkItems.reduce((counts, workItem) => {
+  counts[workItem.status] = (counts[workItem.status] ?? 0) + 1;
+  return counts;
+}, {});
 const atlasSourceCount = releaseManifest.members?.length ?? 0;
 const atlasFamilyCount = effectiveSpec.families?.length ?? 0;
 if (atlasWorkItemCount !== atlasWorkItems.length) {
@@ -155,8 +169,12 @@ const activeRollupFragments = new Map([
     [
       `${assessedClauseCount} clauses now have direct conformance assessment and ${unassessedClauseCount} remain unassessed`,
       `With ${assessedClauseCount} of ${selectedClauseCount} clauses assessed`,
+      `| **Total** | **${selectedParentCount}** | **${selectedClauseCount}** | **${parentStatusCounts.implemented}** | **${parentStatusCounts.partial}** | **${parentStatusCounts.missing}** |`,
       `${parentStatusCounts.partial} partial and ${parentStatusCounts.missing} missing parent rows`,
-      `remaining ${unassessedClauseCount} direct clause fixtures`
+      `remaining ${unassessedClauseCount} direct clause fixtures`,
+      `${atlasWorkItemStatusCounts.done} done`,
+      `${atlasWorkItemStatusCounts['in-progress']} in progress`,
+      `${atlasWorkItemStatusCounts.todo} todo`
     ]
   ],
   [
@@ -164,6 +182,12 @@ const activeRollupFragments = new Map([
     [
       `${assessedClauseCount} WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed`,
       `the other ${unassessedClauseCount}`
+    ]
+  ],
+  [
+    'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
+    [
+      `implementation audit: ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, ${parentStatusCounts.missing} missing`
     ]
   ],
   [
@@ -179,7 +203,19 @@ const activeRollupFragments = new Map([
     'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md',
     [
       `WML family now has ${wmlImplementedClauseCount} implemented clause fixtures`,
-      `other ${wmlUnassessedClauseCount} clauses stay \`not-assessed\``
+      `other ${wmlUnassessedClauseCount} clauses stay \`not-assessed\``,
+      `${wmlEvidenceStateCounts['direct-test-linked']} \`direct-test-linked\``,
+      `${wmlEvidenceStateCounts['gap-work-item-mapped']} \`gap-work-item-mapped\``,
+      `Direct executable evidence is linked for \`${wmlEvidenceStateCounts['direct-test-linked']}/${wmlLedger.obligations.length}\` rows`
+    ]
+  ],
+  [
+    'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
+    [
+      `selected implementation audit is ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, and ${parentStatusCounts.missing} missing`,
+      `selected 39-row client subset is 16 implemented, 16 partial, and 7 missing`,
+      `selected connectionless transport path resolves to 19 rows`,
+      `selected transport audit is 19 implemented, 0 partial, and 0 missing`
     ]
   ]
 ]);
