@@ -67,6 +67,42 @@ fn invalid_var_name_does_not_mutate_store() {
 }
 
 #[test]
+fn set_var_rejects_names_wml_substitution_can_never_resolve() {
+    // A name with a dash (or dot) previously passed normalize_var_name's own
+    // charset check and stored a value, but `$name`/`$(name)` substitution
+    // (crate::runtime::variable) stops scanning a var name at the first
+    // non-alphanumeric/underscore byte, so no card text could ever read it
+    // back -- a silent dead write. normalize_var_name must reject exactly
+    // what substitution would reject, not a wider charset.
+    let mut vars = HashMap::new();
+    let mut effects = ScriptRuntimeEffects::default();
+    let mut host = WmlBrowserHost::new(&mut vars, &mut effects, WmlBrowserContext::default());
+
+    let set = host
+        .call(
+            WMLBROWSER_SET_VAR,
+            &[
+                ScriptValue::String("session-id".to_string()),
+                ScriptValue::String("abc".to_string()),
+            ],
+        )
+        .expect("setVar should not trap");
+    assert_eq!(
+        set,
+        ScriptValue::Invalid,
+        "setVar must reject a name substitution can never resolve back"
+    );
+
+    let value = host
+        .call(
+            WMLBROWSER_GET_VAR,
+            &[ScriptValue::String("session-id".to_string())],
+        )
+        .expect("getVar should not trap");
+    assert_eq!(value, ScriptValue::Invalid);
+}
+
+#[test]
 fn go_and_prev_update_deferred_navigation_intent() {
     let mut vars = HashMap::new();
     let mut effects = ScriptRuntimeEffects::default();

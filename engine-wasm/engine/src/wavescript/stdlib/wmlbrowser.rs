@@ -262,31 +262,19 @@ pub fn coerce_to_string(value: &ScriptValue) -> String {
     }
 }
 
+/// Accepts a name only if it matches the exact charset
+/// [`crate::runtime::variable::is_valid_name`] uses for `$name`/`$(name)`
+/// substitution. WMLBrowser.setVar()/getVar() must not accept a name that
+/// substitution can never resolve back -- a wider charset here would let
+/// script silently write a variable no `$name` reference in any card can
+/// ever read.
 fn normalize_var_name(value: &ScriptValue) -> Option<String> {
     let raw = coerce_to_string(value);
-    if raw.is_empty() {
-        return None;
+    if crate::runtime::variable::is_valid_name(&raw) {
+        Some(raw)
+    } else {
+        None
     }
-
-    let mut chars = raw.chars();
-    let first = chars.next()?;
-    if !is_valid_var_first_char(first) {
-        return None;
-    }
-
-    if !chars.all(is_valid_var_char) {
-        return None;
-    }
-
-    Some(raw)
-}
-
-fn is_valid_var_first_char(ch: char) -> bool {
-    ch.is_ascii_alphabetic() || ch == '_'
-}
-
-fn is_valid_var_char(ch: char) -> bool {
-    ch.is_ascii_alphanumeric() || ch == '_' || ch == '.' || ch == '-'
 }
 
 #[cfg(test)]
