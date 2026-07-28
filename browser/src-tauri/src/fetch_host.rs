@@ -114,7 +114,7 @@ pub(crate) fn fetch_deck_with_transport_executor(
     let fallback = default_fetch_transport_fallback();
     let profile_override = resolve_transport_profile_override(profile, &request.url);
     let response = fetch_impl(request.clone(), profile_override);
-    if should_retry_with_gateway_fallback(&request, &response, profile, fallback) {
+    if should_retry_with_gateway_fallback(&request, &response, profile_override, fallback) {
         return fetch_impl(request, Some(FetchTransportProfile::GatewayBridged));
     }
     response
@@ -136,10 +136,10 @@ pub(crate) fn resolve_transport_profile_override(
 fn should_retry_with_gateway_fallback(
     request: &FetchDeckRequest,
     response: &FetchDeckResponse,
-    profile: HostFetchTransportProfile,
+    profile: Option<FetchTransportProfile>,
     fallback: HostFetchTransportFallback,
 ) -> bool {
-    if profile != HostFetchTransportProfile::WapNetCore
+    if profile != Some(FetchTransportProfile::WapNetCore)
         || fallback != HostFetchTransportFallback::GatewayBridged
         || response.ok
     {

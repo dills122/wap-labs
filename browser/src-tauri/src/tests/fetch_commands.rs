@@ -260,72 +260,227 @@ fn fetch_deck_command_honors_host_allow_private_override() {
 }
 
 #[test]
-fn fetch_deck_command_retries_native_wap_request_with_gateway_fallback_when_configured() {
+fn fetch_deck_command_gateway_fallback_uses_effective_request_profile() {
+    #[derive(Clone, Copy)]
+    struct Case {
+        name: &'static str,
+        configured_profile: Option<&'static str>,
+        fallback_enabled: bool,
+        url: &'static str,
+        method: &'static str,
+        initial_response_ok: bool,
+        error_code: &'static str,
+        expected_profiles: &'static [Option<lowband_transport_rust::FetchTransportProfile>],
+        expected_ok: bool,
+    }
+
+    use lowband_transport_rust::FetchTransportProfile::{GatewayBridged, WapNetCore};
+
+    const NATIVE_THEN_GATEWAY: &[Option<lowband_transport_rust::FetchTransportProfile>] =
+        &[Some(WapNetCore), Some(GatewayBridged)];
+    const NATIVE_ONLY: &[Option<lowband_transport_rust::FetchTransportProfile>] =
+        &[Some(WapNetCore)];
+    const GATEWAY_ONLY: &[Option<lowband_transport_rust::FetchTransportProfile>] =
+        &[Some(GatewayBridged)];
+    const AUTO_HTTP_ONLY: &[Option<lowband_transport_rust::FetchTransportProfile>] = &[None];
+
+    let cases = [
+        Case {
+            name: "auto wap retries transport unavailable",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: NATIVE_THEN_GATEWAY,
+            expected_ok: true,
+        },
+        Case {
+            name: "auto waps retries gateway timeout",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "waps://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "GATEWAY_TIMEOUT",
+            expected_profiles: NATIVE_THEN_GATEWAY,
+            expected_ok: true,
+        },
+        Case {
+            name: "explicit native still retries",
+            configured_profile: Some(super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE),
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: NATIVE_THEN_GATEWAY,
+            expected_ok: true,
+        },
+        Case {
+            name: "auto http stays unpinned",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "http://example.test/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: AUTO_HTTP_ONLY,
+            expected_ok: false,
+        },
+        Case {
+            name: "auto https stays unpinned",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "https://example.test/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "GATEWAY_TIMEOUT",
+            expected_profiles: AUTO_HTTP_ONLY,
+            expected_ok: false,
+        },
+        Case {
+            name: "explicit gateway does not retry",
+            configured_profile: Some(super::waves_config::FETCH_TRANSPORT_PROFILE_GATEWAY_BRIDGED),
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: GATEWAY_ONLY,
+            expected_ok: false,
+        },
+        Case {
+            name: "successful native response does not retry",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: true,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: NATIVE_ONLY,
+            expected_ok: true,
+        },
+        Case {
+            name: "post does not retry",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "POST",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: NATIVE_ONLY,
+            expected_ok: false,
+        },
+        Case {
+            name: "non-retryable native error does not retry",
+            configured_profile: None,
+            fallback_enabled: true,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "PROTOCOL_ERROR",
+            expected_profiles: NATIVE_ONLY,
+            expected_ok: false,
+        },
+        Case {
+            name: "disabled fallback does not retry",
+            configured_profile: None,
+            fallback_enabled: false,
+            url: "wap://localhost/deck.wml",
+            method: "GET",
+            initial_response_ok: false,
+            error_code: "TRANSPORT_UNAVAILABLE",
+            expected_profiles: NATIVE_ONLY,
+            expected_ok: false,
+        },
+    ];
+
     let _guard = env_lock().lock().expect("env lock should succeed");
     let previous_profile = std::env::var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV).ok();
     let previous_fallback = std::env::var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV).ok();
-    std::env::set_var(
-        super::waves_config::FETCH_TRANSPORT_PROFILE_ENV,
-        super::waves_config::FETCH_TRANSPORT_PROFILE_WAP_NET_CORE,
-    );
-    std::env::set_var(
-        super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV,
-        super::waves_config::FETCH_TRANSPORT_FALLBACK_GATEWAY_BRIDGED,
-    );
 
-    let calls = std::sync::Arc::new(std::sync::Mutex::new(Vec::<
-        Option<lowband_transport_rust::FetchTransportProfile>,
-    >::new()));
-    let calls_for_closure = std::sync::Arc::clone(&calls);
-    let response = super::super::fetch_host::fetch_deck_with_transport_executor(
-        FetchDeckRequest {
-            url: "wap://localhost/".to_string(),
-            method: Some("GET".to_string()),
-            headers: None,
-            timeout_ms: Some(100),
-            retries: Some(0),
-            request_id: Some("req-fallback".to_string()),
-            request_policy: Some(FetchRequestPolicy {
-                destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
-                cache_control: None,
-                referer_url: None,
-                post_context: None,
-                ua_capability_profile: None,
-            }),
-        },
-        move |_request, profile| {
-            calls_for_closure
-                .lock()
-                .expect("calls lock should succeed")
-                .push(profile);
-            match profile {
-                Some(lowband_transport_rust::FetchTransportProfile::WapNetCore) => {
-                    FetchDeckResponse {
-                        ok: false,
-                        status: 0,
-                        final_url: "wap://localhost/".to_string(),
-                        content_type: "text/plain".to_string(),
-                        wml: None,
-                        error: Some(lowband_transport_rust::FetchErrorInfo {
-                            code: "TRANSPORT_UNAVAILABLE".to_string(),
-                            message: "native path unavailable".to_string(),
-                            details: None,
-                        }),
-                        timing_ms: FetchTiming {
-                            encode: 0.0,
-                            udp_rtt: 0.0,
-                            decode: 0.0,
-                        },
-                        engine_deck_input: None,
-                    }
+    for case in cases {
+        if let Some(profile) = case.configured_profile {
+            std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, profile);
+        } else {
+            std::env::remove_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV);
+        }
+        if case.fallback_enabled {
+            std::env::set_var(
+                super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV,
+                super::waves_config::FETCH_TRANSPORT_FALLBACK_GATEWAY_BRIDGED,
+            );
+        } else {
+            std::env::remove_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV);
+        }
+
+        let calls = std::sync::Arc::new(std::sync::Mutex::new(Vec::<
+            Option<lowband_transport_rust::FetchTransportProfile>,
+        >::new()));
+        let calls_for_closure = std::sync::Arc::clone(&calls);
+        let response = super::super::fetch_host::fetch_deck_with_transport_executor(
+            FetchDeckRequest {
+                url: case.url.to_string(),
+                method: Some(case.method.to_string()),
+                headers: None,
+                timeout_ms: Some(100),
+                retries: Some(0),
+                request_id: Some(format!("req-fallback-{}", case.name.replace(' ', "-"))),
+                request_policy: Some(FetchRequestPolicy {
+                    destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+                    cache_control: None,
+                    referer_url: None,
+                    post_context: None,
+                    ua_capability_profile: None,
+                }),
+            },
+            move |_request, profile| {
+                let attempt = {
+                    let mut recorded = calls_for_closure.lock().expect("calls lock should succeed");
+                    recorded.push(profile);
+                    recorded.len()
+                };
+                if (attempt == 1 && case.initial_response_ok) || attempt == 2 {
+                    return mock_fetch_ok(case.url, "text/vnd.wap.wml", BASIC_NAV_WML);
                 }
-                Some(lowband_transport_rust::FetchTransportProfile::GatewayBridged) => {
-                    mock_fetch_ok("wap://localhost/", "text/vnd.wap.wml", BASIC_NAV_WML)
+                FetchDeckResponse {
+                    ok: false,
+                    status: 0,
+                    final_url: case.url.to_string(),
+                    content_type: "text/plain".to_string(),
+                    wml: None,
+                    error: Some(lowband_transport_rust::FetchErrorInfo {
+                        code: case.error_code.to_string(),
+                        message: "simulated transport failure".to_string(),
+                        details: None,
+                    }),
+                    timing_ms: FetchTiming {
+                        encode: 0.0,
+                        udp_rtt: 0.0,
+                        decode: 0.0,
+                    },
+                    engine_deck_input: None,
                 }
-                other => panic!("unexpected profile override: {other:?}"),
-            }
-        },
-    );
+            },
+        );
+
+        let recorded = calls.lock().expect("calls lock should succeed");
+        assert_eq!(response.ok, case.expected_ok, "{} response", case.name);
+        assert_eq!(
+            recorded.as_slice(),
+            case.expected_profiles,
+            "{} transport sequence",
+            case.name
+        );
+        assert_eq!(
+            recorded.len(),
+            case.expected_profiles.len(),
+            "{} request count",
+            case.name
+        );
+    }
 
     if let Some(old) = previous_profile {
         std::env::set_var(super::waves_config::FETCH_TRANSPORT_PROFILE_ENV, old);
@@ -337,15 +492,6 @@ fn fetch_deck_command_retries_native_wap_request_with_gateway_fallback_when_conf
     } else {
         std::env::remove_var(super::waves_config::FETCH_TRANSPORT_FALLBACK_ENV);
     }
-
-    assert!(response.ok);
-    assert_eq!(
-        *calls.lock().expect("calls lock should succeed"),
-        vec![
-            Some(lowband_transport_rust::FetchTransportProfile::WapNetCore),
-            Some(lowband_transport_rust::FetchTransportProfile::GatewayBridged)
-        ]
-    );
 }
 
 #[test]
