@@ -50,8 +50,8 @@ impl WmlEngine {
         let context_reset_requested = effects.context_reset_requested();
 
         if context_reset_requested {
-            self.vars.clear();
-            self.nav_stack.clear();
+            self.stop_active_timer_for_exit();
+            self.reset_browser_context_state();
             self.push_trace("ACTION_NEWCONTEXT", String::new());
         }
 
