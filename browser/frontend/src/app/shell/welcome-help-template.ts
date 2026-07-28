@@ -7,11 +7,11 @@ export const welcomeHelpTemplate = () => `
       <p>${WAVES_COPY.shell.welcomeIntro}</p>
       <p>${WAVES_COPY.shell.welcomeModes}</p>
       <div class="actions">
-        <button id="btn-start-tour" class="btn wv95-btn">${WAVES_COPY.shell.takeTheTour}</button>
-        <button id="btn-try-local-examples" class="btn wv95-btn">
+        <button id="btn-start-tour" class="btn">${WAVES_COPY.shell.takeTheTour}</button>
+        <button id="btn-try-local-examples" class="btn">
           ${WAVES_COPY.shell.tryLocalExamples}
         </button>
-        <button id="btn-connect-network" class="btn wv95-btn">
+        <button id="btn-connect-network" class="btn">
           ${WAVES_COPY.shell.connectToServer}
         </button>
       </div>

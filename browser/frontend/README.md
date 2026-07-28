@@ -73,9 +73,11 @@ UI component baseline:
 - Shared primitive: `wv-surface-panel` (`src/components/primitives/surface-panel.ts`) for reusable boxed sections.
 - WML viewport primitive mapping: `src/components/primitives/wml-render-primitives.ts` groups `RenderList.draw`
   commands by line and renders typed text/link segments with deterministic focus styling.
-- Theme direction is now Win95-era and based on `win95.css` design language (beveled controls, title bars,
-  sunken panels), adapted in `src/styles.css` for Waves shell semantics.
-- Upstream `win95.css` is vendored in `src/vendor/win95/` (including required image assets and MIT license).
+- Default host presentation follows the `Authentic Core, Modern Console` direction: the native Tauri
+  title bar is the application frame, host chrome uses compact system typography and restrained
+  platform-like surfaces, and period typography/focus remains scoped to the handset LCD.
+- Upstream `win95.css` remains vendored in `src/vendor/win95/` (including required image assets and MIT
+  license) as optional reusable material; it is not imported by or authoritative over the default shell.
 
 App logic modules:
 
@@ -168,6 +170,7 @@ directories unless `NATIVE_E2E_ARTIFACT_DIR` selects a stable CI artifact path.
 
 Current priority follows the main Waves board:
 
-1. Preserve completed `WBP-00` through additive `WBP-05A`; do not reopen `WBP-05`
-2. Keep `WBP-06` and later frame/input work behind their engine contract gate
-3. Preserve the current engine and transport contracts throughout browser-owned slices
+1. Preserve completed additive `WBP-02A` without reopening the WBP-01/WBP-02 history
+2. Preserve completed `WBP-00` through additive `WBP-05A`; do not reopen `WBP-05`
+3. Keep `WBP-06` and later frame/input work behind their engine contract gate
+4. Preserve the current engine and transport contracts throughout browser-owned slices

@@ -1,54 +1,53 @@
-@import './vendor/win95/win95.css';
-
 :root {
   color-scheme: light;
-  --motion-fast: 120ms;
-  --motion-base: 180ms;
-  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
-  --waves-teal: #008080;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-synthesis: none;
 
-  /* Shared win95-style chrome tones (panel borders/background/heading) used
-     by wv-status-panel and wv-surface-panel. */
-  --panel-border-mid: #808080;
-  --panel-border-dark: #000000;
-  --panel-bg: #c0c0c0;
-  --panel-heading-text: #ffffff;
-  --panel-heading-gradient-start: #000080;
-  --panel-heading-gradient-end: #1084d0;
+  /* Quiet desktop-host surfaces. The native Tauri title bar is the only
+     application window frame; these tokens describe content inside it. */
+  --host-canvas: #edf0f4;
+  --host-surface: #f8f9fb;
+  --host-panel: #ffffff;
+  --host-border: #c8ced7;
+  --host-border-strong: #9da6b2;
+  --host-text: #20242a;
+  --host-muted: #596372;
+  --host-accent: #155eef;
+  --host-accent-hover: #0d4fd4;
 
-  /* Status-panel semantic tones */
-  --status-idle-bg: #ffffff;
-  --status-idle-text: #222222;
-  --status-loading-bg: #ffffcc;
-  --status-loading-text: #222222;
-  --status-ok-bg: #ccffcc;
-  --status-ok-text: #222222;
-  --status-error-bg: #ffcccc;
-  --status-error-text: #222222;
+  /* Shared host-panel tones consumed by the lightweight Web Components. */
+  --panel-border-mid: var(--host-border);
+  --panel-bg: var(--host-panel);
+  --panel-heading-text: var(--host-text);
 
-  /* Toast semantic tones */
-  --toast-ok-bg: #d8f8d8;
-  --toast-error-bg: #ffd6d6;
+  /* Status-panel semantic tones. */
+  --status-idle-bg: #f4f6f8;
+  --status-idle-text: #343b45;
+  --status-loading-bg: #fff4cf;
+  --status-loading-text: #604b00;
+  --status-ok-bg: #e5f5e9;
+  --status-ok-text: #195c31;
+  --status-error-bg: #fde8e7;
+  --status-error-text: #8c2520;
 
-  /* Handset housing + LCD semantic tones (reference-handset scaffold, WBP-02).
-     Housing is a restrained warm-silver/graphite chassis; the LCD uses a
-     low-saturation monochrome-green tint rather than a plain white page. */
-  --handset-housing-bg: #c7c2b4;
-  --handset-housing-highlight: #efece0;
-  --handset-housing-shadow: #6f6a5c;
+  /* Toast semantic tones. */
+  --toast-ok-bg: #e5f5e9;
+  --toast-error-bg: #fde8e7;
+
+  /* Neutral Class C reference-handset and deterministic LCD tones. */
+  --handset-housing-bg: #5c6265;
+  --handset-housing-highlight: #7b8183;
+  --handset-housing-shadow: #34393b;
   --lcd-bg: #d7e4d2;
   --lcd-fg: #1c2b1c;
   --lcd-focus-bg: #1c2b1c;
   --lcd-focus-fg: #d7e4d2;
 
-  /* Deterministic integer display-scale step; never changes engine-computed
-     rows/columns/wrapping, only the rendered pixel size of the handset frame. */
+  /* Integer display scaling changes only rendered pixels, never engine
+     columns, line wrapping, focus, or navigation behavior. */
   --handset-scale: 1;
 
-  /* Host-chrome keyboard-focus ring (WBP-05). Kept as one semantic token so
-     the win95 vendor theme's outline suppression can be overridden in a
-     single place instead of per selector. */
-  --focus-ring-color: #000000;
+  --focus-ring-color: #0b57d0;
   --focus-ring-outer-color: #ffffff;
 }
 
@@ -64,15 +63,22 @@ body {
 
 body {
   margin: 0;
-  background: var(--waves-teal);
-  color: #222;
-  padding-bottom: 0;
+  background: var(--host-canvas);
+  color: var(--host-text);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 #app {
   width: 100%;
   min-height: 100vh;
-  padding: 18px;
 }
 
 .visually-hidden {
@@ -89,120 +95,139 @@ body {
 
 .browser-shell {
   display: flex;
+  min-height: 100vh;
   flex-direction: column;
-  min-height: calc(100vh - 36px);
+  color: var(--host-text);
+  background: var(--host-canvas);
 }
 
-/* win95.css has a global header hero style; reset for app chrome header */
-.browser-shell > .browser-chrome {
-  position: static;
-  background: linear-gradient(90deg, #08216b, #a5cef7);
-  height: auto;
-  min-height: 0;
-  width: auto;
-  overflow: visible;
-  padding: 6px;
-}
-
-.wv-shell-window {
-  color: #222;
-  box-shadow: 2px 2px #000;
-  opacity: 0;
-  transform: translateY(4px);
-  transition:
-    opacity var(--motion-base) var(--ease-standard),
-    transform var(--motion-base) var(--ease-standard);
-}
-
-body[data-boot-phase='shell-ready'] .wv-shell-window,
-body[data-boot-phase='engine-ready'] .wv-shell-window,
-body[data-boot-phase='deck-ready'] .wv-shell-window {
-  opacity: 1;
-  transform: translateY(0);
+.browser-chrome {
+  position: relative;
+  z-index: 2;
+  padding: 10px 14px 12px;
+  border-bottom: 1px solid var(--host-border);
+  background: color-mix(in srgb, var(--host-surface) 94%, transparent);
+  box-shadow: 0 1px 3px rgb(27 35 45 / 8%);
 }
 
 .title-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  color: #fff;
-  margin-bottom: 6px;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
 .brand {
-  margin-block: 0;
-  font-weight: 700;
-  font-size: inherit;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
 }
 
 .caption {
-  font-size: 11px;
+  color: var(--host-muted);
+  font-size: 12px;
+}
+
+.nav-toolbar {
+  display: grid;
+  gap: 8px;
 }
 
 .nav-row {
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto minmax(12rem, 1fr) auto;
   gap: 6px;
   align-items: center;
 }
 
 .mode-row {
-  margin-top: 8px;
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 6px;
+  grid-template-columns: minmax(7rem, 0.65fr) minmax(12rem, 1.8fr) auto;
+  gap: 8px;
   align-items: end;
 }
 
 .mode-field {
   display: grid;
+  min-width: 0;
   gap: 3px;
-  color: #fff;
-  font-size: 12px;
+  color: var(--host-muted);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .toolbar-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 6px;
-  color: #fff;
+  gap: 6px 16px;
+  color: var(--host-muted);
   font-size: 11px;
-  opacity: 0.85;
+}
+
+.toolbar-meta-item {
+  min-width: 0;
 }
 
 .toolbar-meta-label {
   margin-right: 4px;
-  font-weight: 700;
+  color: var(--host-text);
+  font-weight: 650;
 }
 
-.form-95 {
-  margin-top: 0;
-  min-height: 24px;
+.host-control,
+button,
+.btn {
+  min-height: 30px;
+  border: 1px solid var(--host-border-strong);
+  border-radius: 6px;
+  color: var(--host-text);
+  background: var(--host-panel);
+}
+
+.host-control {
+  width: 100%;
+  min-width: 0;
+  padding: 4px 8px;
 }
 
 button,
 .btn {
-  padding: 2px 10px 4px;
-  /* WCAG 2.2 SC 2.5.8 Target Size (Minimum): 24 CSS px. */
-  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 11px;
+  font-weight: 600;
+  cursor: default;
 }
 
-summary {
-  min-height: 24px;
+button:active:not(:disabled),
+.btn:active:not(:disabled) {
+  background: #e8ecf1;
+}
+
+button:disabled,
+.btn:disabled {
+  color: #8a929e;
+  background: #eef0f3;
+  opacity: 0.78;
 }
 
 .browser-chrome .chrome-btn.primary {
-  padding-left: 12px;
-  padding-right: 12px;
+  border-color: var(--host-accent);
+  color: #ffffff;
+  background: var(--host-accent);
 }
 
-/* The win95 vendor theme suppresses the default focus outline on buttons and
-   form fields (`outline: 0 !important`) in favor of a subtle inset-border
-   treatment. That's too easy to miss under keyboard navigation, so restore
-   an explicit, high-contrast focus-visible ring on top of it (WBP-05: "all
-   browser-owned actions are keyboard reachable with visible focus"). This
-   must stay `!important` and after the win95 import to win the cascade. */
+.browser-chrome .chrome-btn.primary:active:not(:disabled) {
+  background: var(--host-accent-hover);
+}
+
+summary {
+  min-height: 30px;
+}
+
 #app button:focus-visible,
 #app .btn:focus-visible,
 #app select:focus-visible,
@@ -217,28 +242,28 @@ summary {
 
 .browser-main {
   display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.7fr);
+  gap: 16px;
   flex: 1;
-  padding: 12px;
+  align-items: start;
+  padding: 16px;
 }
 
 .handset-stage {
   display: flex;
-  flex-direction: column;
   min-width: 0;
-  /* Integer step only; falls back to no-op (1x) on WebKit builds predating
-     `zoom` support (Safari < 17), which is an acceptable static degradation. */
+  flex-direction: column;
   zoom: var(--handset-scale);
 }
 
 .handset-housing {
   display: flex;
   flex: 1;
-  flex-direction: column;
   min-width: 0;
-  padding: 10px;
-  border-radius: 6px;
+  flex-direction: column;
+  padding: 16px;
+  border: 1px solid var(--handset-housing-shadow);
+  border-radius: 22px;
   background: linear-gradient(
     145deg,
     var(--handset-housing-highlight),
@@ -246,8 +271,8 @@ summary {
     var(--handset-housing-shadow)
   );
   box-shadow:
-    inset 0 1px 0 var(--handset-housing-highlight),
-    0 1px 2px rgba(0, 0, 0, 0.35);
+    inset 0 1px 0 rgb(255 255 255 / 22%),
+    0 8px 22px rgb(31 39 46 / 20%);
 }
 
 .handset-housing .device-frame {
@@ -258,74 +283,162 @@ summary {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border: 2px inset #d5d5d5;
-  box-shadow: -1px -1px 0 #828282;
-  background: silver;
   padding: 8px;
+  border-radius: 12px;
+  background: #696f71;
 }
 
 .device-header {
   display: flex;
-  justify-content: space-between;
+  min-width: 0;
   align-items: center;
-  color: #212529;
-  font-size: 12px;
-  margin-bottom: 6px;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 4px 7px;
+  color: #f4f5f5;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .muted-url {
-  max-width: 74%;
+  max-width: 72%;
   overflow: hidden;
+  color: #ffffff;
+  font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.viewport {
+  flex: 1;
+  min-height: 360px;
+  padding: 10px;
+  border: 3px solid #2e3431;
+  border-radius: 4px;
+  color: var(--lcd-fg);
+  background: var(--lcd-bg);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 28%),
+    inset 0 2px 8px rgb(24 39 25 / 14%);
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.4;
+}
+
+.viewport-skeleton {
+  border-color: #39423d;
+}
+
+.skeleton-line {
+  width: 70%;
+  height: 9px;
+  margin-bottom: 8px;
+  background: rgb(28 43 28 / 12%);
+}
+
+.skeleton-line-wide {
+  width: 84%;
+}
+
+.skeleton-line-short {
+  width: 55%;
+}
+
+.skeleton-hint {
+  margin-top: 12px;
+  color: #445144;
+  font-size: 11px;
+}
+
+.line {
+  white-space: pre-wrap;
+}
+
+.wml-segment {
+  display: inline;
+}
+
+.wml-segment-link {
+  color: #284bc6;
+  text-decoration: underline;
+}
+
+.wml-segment-link.is-focused {
+  color: var(--lcd-focus-fg);
+  background: var(--lcd-focus-bg);
+  text-decoration: none;
+}
+
+.softkey-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.softkey-row .btn {
+  min-height: 32px;
+  border-color: #303638;
+  border-radius: 8px;
+  color: #202426;
+  background: #d9dddc;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .utility-rail {
   display: flex;
+  min-width: 0;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Shared silver-bezel disclosure-widget chrome reused by the utility rail,
-   welcome/help, local-example-notes, and developer-drawer panels instead of
-   repeating the same border/summary declarations per widget. */
 .chrome-disclosure {
-  border: 2px solid;
-  border-bottom-color: #424242;
-  border-right-color: #424242;
-  border-left-color: #fff;
-  border-top-color: #fff;
-  background: silver;
-  color: #212529;
+  overflow: clip;
+  border: 1px solid var(--host-border);
+  border-radius: 8px;
+  color: var(--host-text);
+  background: var(--host-panel);
 }
 
 .chrome-disclosure > summary {
-  cursor: pointer;
-  padding: 4px 6px;
-  color: #fff;
-  font-weight: 700;
-  background: linear-gradient(90deg, #08216b, #a5cef7);
+  padding: 6px 9px;
+  color: var(--host-text);
+  background: var(--host-surface);
+  font-size: 13px;
+  font-weight: 650;
+  cursor: default;
+}
+
+.chrome-disclosure > summary::marker {
+  color: var(--host-muted);
+}
+
+.utility-rail-panel > summary {
+  border-bottom: 1px solid transparent;
+}
+
+.utility-rail-panel[open] > summary {
+  border-bottom-color: var(--host-border);
 }
 
 .utility-rail-body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border-top: 1px solid #7f7f7f;
   padding: 8px;
 }
 
 .compact-field {
-  display: block;
-  font-size: 12px;
-  color: #212529;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--host-muted);
+  font-size: 11px;
+  font-weight: 600;
 }
 
-.compact-field input {
-  margin-top: 4px;
-}
-
-textarea.form-95 {
+textarea.host-control {
   min-height: 220px;
   resize: vertical;
   font-family: 'Courier New', Courier, monospace;
@@ -342,17 +455,15 @@ textarea.form-95 {
   position: fixed;
   right: 14px;
   bottom: 14px;
-  max-width: 380px;
-  border: 2px solid;
-  border-bottom-color: #424242;
-  border-right-color: #424242;
-  border-left-color: #fff;
-  border-top-color: #fff;
-  background: silver;
-  color: #212529;
-  padding: 8px 10px;
-  font-size: 12px;
   z-index: 1200;
+  max-width: 380px;
+  padding: 9px 11px;
+  border: 1px solid var(--host-border-strong);
+  border-radius: 8px;
+  color: var(--host-text);
+  background: var(--host-panel);
+  box-shadow: 0 8px 24px rgb(31 39 46 / 18%);
+  font-size: 12px;
 }
 
 .toast-error {
@@ -367,91 +478,26 @@ textarea.form-95 {
   display: none;
 }
 
-.viewport {
-  flex: 1;
-  border: 2px inset #d5d5d5;
-  box-shadow: -1px -1px 0 #828282;
-  min-height: 520px;
-  padding: 8px;
-  background: var(--lcd-bg);
-  color: var(--lcd-fg);
-  font-family: 'Courier New', Courier, monospace;
-  line-height: 1.4;
-}
-
-.viewport-skeleton {
-  border-color: #8f8f8f;
-}
-
-.skeleton-line {
-  height: 10px;
-  margin-bottom: 8px;
-  background: linear-gradient(90deg, #e5e5e5 20%, #f4f4f4 50%, #e5e5e5 80%);
-  background-size: 220% 100%;
-  animation: skeleton-shimmer 1.2s linear infinite;
-}
-
-.skeleton-line-wide {
-  width: 84%;
-}
-
-.skeleton-line-short {
-  width: 55%;
-}
-
-.skeleton-hint {
-  margin-top: 12px;
-  color: #444;
-  font-size: 11px;
-}
-
-.line {
-  white-space: pre-wrap;
-}
-
-.wml-segment {
-  display: inline;
-}
-
-.wml-segment-link {
-  color: #2d49eb;
-  text-decoration: underline;
-}
-
-.wml-segment-link.is-focused {
-  color: var(--lcd-focus-fg);
-  background: var(--lcd-focus-bg);
-  text-decoration: none;
-}
-
-.softkey-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.softkey-row .btn {
-  font-weight: 700;
-}
-
-.local-example-notes-body {
-  border-top: 1px solid #7f7f7f;
-  padding: 8px;
+.local-example-notes-body,
+.welcome-help-body {
+  padding: 8px 9px;
+  border-top: 1px solid var(--host-border);
   font-size: 12px;
 }
 
-.local-example-notes-body p {
-  margin: 0 0 6px;
+.local-example-notes-body p,
+.welcome-help-body p {
+  margin: 0 0 7px;
 }
 
-.local-example-notes-body h2 {
-  margin: 8px 0 4px;
+.local-example-notes-body h2,
+.welcome-help-body h2 {
+  margin: 10px 0 4px;
   font-size: 12px;
 }
 
 .local-example-notes-coverage {
-  color: #1f2f45;
+  color: var(--host-muted);
 }
 
 .local-example-notes-body ul {
@@ -463,34 +509,35 @@ textarea.form-95 {
   margin-bottom: 4px;
 }
 
-.welcome-help-body {
-  border-top: 1px solid #7f7f7f;
-  padding: 8px;
-  font-size: 12px;
-}
-
-.welcome-help-body p {
-  margin: 0 0 6px;
-}
-
-.welcome-help-body h2 {
-  margin: 8px 0 4px;
-  font-size: 12px;
-}
-
 .developer-drawer-section {
-  padding: 0 12px 12px;
+  padding: 0 16px 14px;
+}
+
+.dev-drawer {
+  background: #f4f6f8;
+}
+
+.dev-drawer > summary {
+  color: var(--host-muted);
+  background: transparent;
+  font-size: 12px;
+}
+
+.dev-drawer[open] > summary {
+  border-bottom: 1px solid var(--host-border);
 }
 
 .panel-body {
-  border-top: 1px solid #7f7f7f;
-  padding: 8px;
+  padding: 10px;
 }
 
 .panel-body h2 {
-  margin: 8px 0 4px;
-  font-size: 12px;
-  color: #212529;
+  margin: 10px 0 4px;
+  color: var(--host-muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .debug-raw-mode {
@@ -498,26 +545,28 @@ textarea.form-95 {
 }
 
 .debug-raw-mode-content {
+  display: grid;
+  gap: 6px;
   margin-top: 6px;
 }
 
 pre {
   margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
+  color: #303842;
   font-family: 'Courier New', Courier, monospace;
   font-size: 12px;
-  color: #212529;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 #timeline,
 #snapshot,
 #session-state,
 #transport-response {
-  border: 2px inset #d5d5d5;
-  box-shadow: -1px -1px 0 #828282;
-  background: #fff;
-  padding: 6px;
+  padding: 7px;
+  border: 1px solid var(--host-border);
+  border-radius: 5px;
+  background: var(--host-panel);
 }
 
 #timeline {
@@ -525,42 +574,84 @@ pre {
   overflow: auto;
 }
 
-@keyframes skeleton-shimmer {
-  from {
-    background-position: 100% 0;
+@media (hover: hover) {
+  button:hover:not(:disabled),
+  .btn:hover:not(:disabled) {
+    border-color: #7f8997;
+    background: #f1f3f6;
   }
 
-  to {
-    background-position: -100% 0;
+  .browser-chrome .chrome-btn.primary:hover:not(:disabled) {
+    border-color: var(--host-accent-hover);
+    background: var(--host-accent-hover);
+  }
+
+  .chrome-disclosure > summary:hover {
+    background: #eef1f5;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --host-border: #747d89;
+    --host-border-strong: #3e4650;
+    --host-muted: #3f4751;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-line {
-    animation: none;
-    background: #eee;
-  }
-
-  .wv-shell-window {
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
   }
 }
 
 @media (max-width: 900px) {
-  #app {
-    padding: 10px;
-  }
-
-  .browser-shell {
-    min-height: calc(100vh - 20px);
-  }
-
   .browser-main {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .viewport {
+    min-height: 300px;
+  }
+
+  .developer-drawer-section {
+    padding: 0 12px 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .browser-chrome {
+    padding: 9px 10px 10px;
+  }
+
+  .caption {
+    display: none;
   }
 
   .nav-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  #btn-back {
+    justify-self: start;
+  }
+
+  #btn-reload {
+    grid-column: 2;
+  }
+
+  #fetch-url {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  #btn-fetch-url {
+    grid-row: 2;
+    grid-column: 2;
   }
 
   .mode-row {
@@ -568,8 +659,13 @@ pre {
     align-items: stretch;
   }
 
-  .nav-row input[type='text'] {
-    grid-column: 1 / -1;
+  .handset-housing {
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .device-frame {
+    padding: 6px;
   }
 
   .viewport {

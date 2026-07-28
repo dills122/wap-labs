@@ -14,7 +14,7 @@ export const utilityRailTemplate = () => `
           ${WAVES_COPY.shell.viewportCols}
           <input
             id="viewport-cols"
-            class="form-95"
+            class="host-control"
             type="number"
             value="${WAVES_CONFIG.defaultViewportCols}"
             min="1"
@@ -22,7 +22,7 @@ export const utilityRailTemplate = () => `
         </label>
         <label class="compact-field">
           ${WAVES_COPY.shell.displayScale}
-          <select id="handset-scale-select" class="form-95">
+          <select id="handset-scale-select" class="host-control">
             <option value="1">1x</option>
             <option value="2">2x</option>
             <option value="3">3x</option>

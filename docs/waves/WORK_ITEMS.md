@@ -167,6 +167,7 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-00` | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`. |
 | `WBP-01` | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced. |
 | `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
+| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green. |
 | `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
 | `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
 | `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
@@ -188,6 +189,51 @@ for a separately authorized activation task but remains inactive in this lane:
 
 A dedicated future `WBP-06`/`F0` task may now activate `F0-01`; `F0-02` and `F0-03` remain ordered
 by their declared dependencies. D0-01 does not activate WBP-06 or implement frame/input contracts.
+
+### WBP-02A Native host-chrome default
+
+1. `Status`: `done`
+2. `Depends On`: `WBP-01`, `WBP-02`
+3. `Owner`: `browser`, `qa`
+4. `Files`:
+- browser shell leaf templates and shared host styles
+- lightweight browser-owned panel primitives
+- narrowly scoped Tauri window background metadata
+- shell/render/accessibility tests and active product documentation
+5. `Build`:
+- Treat the Tauri title bar and window controls as the sole application frame.
+- Remove teal desktop, beveled faux-window, global Win95 control, and heavy gradient-panel authority
+  from the default presentation while keeping the vendored Win95 material available for later
+  optional reuse.
+- Give host chrome compact system typography and quiet surfaces; keep deterministic period
+  typography, inverse focus, and housing/LCD separation inside the neutral Class C handset.
+- Preserve every element ID, controller binding, keyboard order, route/source/profile behavior,
+  and current fixed handset adapter control.
+6. `Tests`:
+- shell tests prove the default native presentation has no legacy faux-window/control classes
+- frontend unit, lint, typecheck, format, build, rendered axe/zoom/target/focus/overflow, default and
+  minimum viewport/keyboard, Waves story, contract, documentation, and Tauri checks
+- matching default/minimum before-and-after screenshots remain transient PR evidence
+7. `Accept`:
+- the native app no longer reads as a Win95 window embedded in a second native window
+- the handset/LCD is the visual focal point; utility/help/status is secondary and Developer Tools
+  remains subordinate and collapsible
+- 1024 by 768, 880 by 640, 200 percent zoom, collapsed utility rail, reduced motion, 24 CSS-pixel
+  targets, visible focus, landmarks/live announcements, and no horizontal overflow remain usable
+8. `Boundary`:
+- This is an additive presentation correction. Completed `WBP-01` and `WBP-02` remain immutable.
+- Do not change browser controller/navigation state, transport, route logic, engine contracts/runtime,
+  WML rendering semantics, focus order, or infer dynamic softkeys before `WBP-06`.
+9. `Evidence`:
+- 217 frontend unit tests, lint, typecheck, format, production build, and 19 Waves executable flows
+- generated engine/transport/Tauri contracts, schemas, icons, host formatting, Clippy, and 64
+  non-ignored Tauri host/contract tests (five external-Kannel tests remain intentionally ignored)
+- rendered Chromium at both configured windows and effective 200 percent zoom: zero axe violations,
+  no horizontal overflow, one live-announcement channel, all visible targets at least 24 by 24 CSS
+  pixels, visible two-tone focus, system host font, Courier LCD font, inverse WML focus, and no
+  running animations
+- matching 1024 by 768 and 880 by 640 before/after screenshots were visually inspected and kept as
+  transient PR evidence rather than committed goldens
 
 ### WBP-05A Host accessibility announcement and rendered-evidence closure
 

@@ -119,6 +119,9 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
       role: element.getAttribute('role'),
       ariaLive: element.getAttribute('aria-live')
     }));
+    const shell = document.querySelector('.browser-shell');
+    const viewport = document.querySelector('#viewport');
+    const focusedWmlItem = document.querySelector('.wml-segment-link.is-focused');
     return {
       cssViewport: { width: innerWidth, height: innerHeight },
       document: {
@@ -127,7 +130,19 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         horizontalOverflow: document.documentElement.scrollWidth > innerWidth
       },
       actions,
-      liveChannels
+      liveChannels,
+      presentation: {
+        nativeHost: shell?.getAttribute('data-host-presentation') ?? null,
+        legacyHostClassCount: document.querySelectorAll(
+          '.wv-shell-window, .card-header, .wv95-btn, .form-95'
+        ).length,
+        hostFontFamily: getComputedStyle(document.body).fontFamily,
+        lcdFontFamily: viewport ? getComputedStyle(viewport).fontFamily : null,
+        focusedWmlBackground: focusedWmlItem
+          ? getComputedStyle(focusedWmlItem).backgroundColor
+          : null,
+        runningAnimationCount: document.getAnimations().length
+      }
     };
   });
 
@@ -136,6 +151,32 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     layout.liveChannels,
     [{ id: 'live-announcer', role: 'status', ariaLive: 'polite' }],
     `${name}: one accessible live-announcement channel`
+  );
+  assert.equal(layout.presentation.nativeHost, 'native', `${name}: native host presentation`);
+  assert.equal(
+    layout.presentation.legacyHostClassCount,
+    0,
+    `${name}: no legacy faux-window or Win95 control classes`
+  );
+  assert.match(
+    layout.presentation.hostFontFamily,
+    /-apple-system|BlinkMacSystemFont|Segoe UI|Helvetica|Arial/,
+    `${name}: system host font stack`
+  );
+  assert.match(
+    layout.presentation.lcdFontFamily ?? '',
+    /Courier New/,
+    `${name}: period LCD font remains scoped to the viewport`
+  );
+  assert.equal(
+    layout.presentation.focusedWmlBackground,
+    'rgb(28, 43, 28)',
+    `${name}: inverse-video WML focus remains visible`
+  );
+  assert.equal(
+    layout.presentation.runningAnimationCount,
+    0,
+    `${name}: default shell has no runtime animation`
   );
   assert.ok(layout.actions.length > 10, `${name}: rendered host controls discovered`);
   for (const action of layout.actions) {

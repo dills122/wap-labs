@@ -13,8 +13,8 @@ import {
 } from './shell/utility-rail-template';
 
 const browserShellTemplate = () => `
-  <div class="browser-shell card square wv-shell-window">
-    <header class="browser-chrome card-header icon">
+  <div class="browser-shell" data-host-presentation="native">
+    <header class="browser-chrome">
       <div class="title-row">
         <h1 class="brand">${WAVES_COPY.app.brand}</h1>
         <div class="caption">${WAVES_COPY.app.tagline}</div>
