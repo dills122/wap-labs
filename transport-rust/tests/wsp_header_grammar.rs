@@ -3,8 +3,11 @@ use lowband_transport_rust::network::wsp::header_registry::{
     WspHeaderCodePageClass, WspHeaderValueGrammar,
 };
 use lowband_transport_rust::network::wsp::{
-    decode_header_section, decode_raw_value, encode_value_length, DecodedWspHeaderName,
-    UnknownHeaderBehavior, WspEncodingVersion, WspHeaderSectionDecodePolicy, WspHeaderValueForm,
+    decode_header_section, decode_raw_value, encode_header_block, encode_value_length,
+    parse_encoding_version_header_value, DecodedWspHeaderName, UnknownHeaderBehavior,
+    WspEncodingVersion, WspEncodingVersionHeader, WspHeaderBlock, WspHeaderBlockEncodeError,
+    WspHeaderBlockEncodePolicy, WspHeaderField, WspHeaderNameEncoding,
+    WspHeaderSectionDecodePolicy, WspHeaderValueEncodeError, WspHeaderValueForm,
 };
 use serde::Deserialize;
 use std::fs;
@@ -21,6 +24,7 @@ struct Fixture {
     default_header_last_code: u8,
     deprecated_codes: Vec<u8>,
     version_boundaries: Vec<VersionBoundary>,
+    encoding_version_text_cases: Vec<EncodingVersionTextCase>,
     header_sections: Vec<HeaderSectionCase>,
 }
 
@@ -28,6 +32,22 @@ struct Fixture {
 struct VersionBoundary {
     code: u8,
     name: String,
+    major: u8,
+    minor: u8,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct EncodingVersionTextCase {
+    name: String,
+    input: String,
+    expected_code_page: Option<u8>,
+    expected_version: Option<ExpectedVersion>,
+    expected_encoded: Option<Vec<u8>>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ExpectedVersion {
     major: u8,
     minor: u8,
 }
@@ -149,6 +169,62 @@ fn value_length_boundary_space_roundtrips_without_panics() {
         assert_eq!(decoded.form, WspHeaderValueForm::LengthDelimited);
         assert_eq!(decoded.encoded, encoded);
         assert_eq!(consumed, encoded.len());
+    }
+}
+
+#[test]
+fn encoding_version_text_parser_accepts_only_complete_defined_forms() {
+    for case in fixture().encoding_version_text_cases {
+        let expected = case
+            .expected_encoded
+            .as_ref()
+            .map(|_| WspEncodingVersionHeader {
+                code_page: case.expected_code_page,
+                version: case.expected_version.map(|version| WspEncodingVersion {
+                    major: version.major,
+                    minor: version.minor,
+                }),
+            });
+
+        assert_eq!(
+            parse_encoding_version_header_value(&case.input),
+            expected,
+            "case '{}' failed",
+            case.name
+        );
+    }
+}
+
+#[test]
+fn encoding_version_text_encoding_is_byte_exact_or_rejected() {
+    for case in fixture().encoding_version_text_cases {
+        let block = WspHeaderBlock {
+            headers: vec![WspHeaderField {
+                name: "Encoding-Version".to_string(),
+                value: case.input.clone(),
+                name_encoding: WspHeaderNameEncoding::Binary { page: 1 },
+            }],
+            encoding_version_headers: Vec::new(),
+        };
+        let result = encode_header_block(
+            &block,
+            WspHeaderBlockEncodePolicy {
+                recipient_version: Some(WspEncodingVersion::V1_4),
+                ..WspHeaderBlockEncodePolicy::STRICT
+            },
+        );
+
+        match case.expected_encoded {
+            Some(expected) => assert_eq!(result, Ok(expected), "case '{}' failed", case.name),
+            None => assert_eq!(
+                result,
+                Err(WspHeaderBlockEncodeError::HeaderValue(
+                    WspHeaderValueEncodeError::InvalidVersion,
+                )),
+                "case '{}' failed",
+                case.name
+            ),
+        }
     }
 }
 

@@ -425,11 +425,10 @@ pub fn parse_encoding_version_header_value(input: &str) -> Option<WspEncodingVer
         return None;
     }
 
-    if let Some(version) = second.and_then(parse_version) {
-        let code_page = u8::from_str_radix(first, 16).ok()?;
+    if let Some(second) = second {
         return Some(WspEncodingVersionHeader {
-            code_page: Some(code_page),
-            version: Some(version),
+            code_page: Some(u8::from_str_radix(first, 16).ok()?),
+            version: Some(parse_version(second)?),
         });
     }
 
@@ -441,7 +440,7 @@ pub fn parse_encoding_version_header_value(input: &str) -> Option<WspEncodingVer
     }
 
     Some(WspEncodingVersionHeader {
-        code_page: u8::from_str_radix(first, 16).ok(),
+        code_page: Some(u8::from_str_radix(first, 16).ok()?),
         version: None,
     })
 }

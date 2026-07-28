@@ -32,6 +32,6 @@ spec_items = [
 testing_ac = [
   "Covers all 68 effective Table 39 default-page assignments from 0x00 through 0x43 and excludes successor-only tokens.",
   "Exercises short and uintvar value lengths, text and short-integer values, default/application/reserved page handling, and explicit error/preserve/skip behavior.",
-  "Uses the SIN 001 length-delimited Expect expression and compact Encoding-Version forms, including extension-page identity.",
+  "Uses the SIN 001 length-delimited Expect expression and compact Encoding-Version forms, including extension-page identity and strict rejection of malformed textual values.",
   "Keeps connectionless Content-Type framing on the existing WSP-801 seam and re-runs its byte-exact fixture independently.",
 ]
