@@ -13,9 +13,10 @@ Use these as the current source of truth:
 5. `test-strategy.md`
 6. `work-items.md`
 7. `wavescript-security.md`
-8. `../waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
-9. `../waves/CONTRACT_REQUIREMENTS_MAPPING.md`
-10. `../waves/SPEC_TEST_COVERAGE.md`
+8. `INTENDED_BEHAVIORS.md`
+9. `../waves/RUNTIME_MARKUP_SPEC_TRACEABILITY.md`
+10. `../waves/CONTRACT_REQUIREMENTS_MAPPING.md`
+11. `../waves/SPEC_TEST_COVERAGE.md`
 
 Non-authoritative historical docs are retained only for context:
 
@@ -32,8 +33,9 @@ Non-authoritative historical docs are retained only for context:
 6. `work-items.md` (execution-ready tickets for current build cycle)
 7. `test-strategy.md` (how to verify behavior)
 8. `wavescript-security.md` (sandbox and safety controls)
-9. `source-material-triage.md` (full-corpus triage context)
-10. `implementation-tickets.md` (older backlog draft; superseded by `ticket-plan.md`)
+9. `INTENDED_BEHAVIORS.md` (surprising but contract-correct observable behavior)
+10. `source-material-triage.md` (full-corpus triage context)
+11. `implementation-tickets.md` (older backlog draft; superseded by `ticket-plan.md`)
 
 ## Reference-Only Material (not implementation-ready)
 
