@@ -88,9 +88,14 @@ export interface LoadTransportOptions {
 
 export interface NavigationStateMachine {
   loadTransportUrl(options: LoadTransportOptions): Promise<EngineRuntimeSnapshot | null>;
-  applyEngineKey(key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot>;
-  applyEngineTimerTick(deltaMs: number): Promise<EngineRuntimeSnapshot>;
+  applyEngineKey(key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot | null>;
+  applyEngineTimerTick(deltaMs: number): Promise<EngineRuntimeSnapshot | null>;
   navigateBackWithFallback(): Promise<BackNavigationMode>;
+  beginNavigationOperation(): number;
+  finishNavigationOperation(generation: number): void;
+  captureNavigationGeneration(): number;
+  isCurrentNavigation(generation: number): boolean;
+  isNavigationInFlight(): boolean;
   cancelPendingNavigation(): void;
   getSessionState(): HostSessionState;
   getHistoryState(): HostHistoryState;
@@ -108,7 +113,13 @@ export const createNavigationStateMachine = (
     navigationStatus: 'idle',
     requestedUrl: initialRequestedUrl.trim()
   };
+  // A navigation is in flight exactly while the current generation owns a
+  // transport load or Back operation. Starting either operation advances the
+  // generation; finishing clears ownership only if that generation is still
+  // current. Mode switches cancel by advancing the generation and clearing
+  // ownership, so stale async completions cannot reclaim it.
   let activeNavigationGeneration = 0;
+  let navigationInFlightGeneration: number | undefined;
   let observedBrowserContextEpoch: number | undefined;
 
   const emitSession = (): void => {
@@ -150,15 +161,23 @@ export const createNavigationStateMachine = (
     syncSessionFromSnapshot(frame.snapshot);
   };
 
-  const renderSnapshot = async (snapshot: EngineRuntimeSnapshot): Promise<void> => {
-    const frame = await hostClient.engineRenderFrame();
-    hooks.onSnapshot?.(snapshot);
-    hooks.onRender?.(frame.render);
-    syncSessionFromSnapshot(snapshot);
-  };
-
   const isCurrentNavigation = (generation: number): boolean =>
     generation === activeNavigationGeneration;
+
+  const isNavigationInFlight = (): boolean =>
+    navigationInFlightGeneration === activeNavigationGeneration;
+
+  const beginNavigationOperation = (): number => {
+    activeNavigationGeneration += 1;
+    navigationInFlightGeneration = activeNavigationGeneration;
+    return activeNavigationGeneration;
+  };
+
+  const finishNavigationOperation = (generation: number): void => {
+    if (isCurrentNavigation(generation) && navigationInFlightGeneration === generation) {
+      navigationInFlightGeneration = undefined;
+    }
+  };
 
   const observeBrowserContext = (snapshot: EngineRuntimeSnapshot): boolean => {
     if (snapshot.browserContextEpoch === undefined) {
@@ -187,13 +206,13 @@ export const createNavigationStateMachine = (
 
   const cancelPendingNavigation = (): void => {
     activeNavigationGeneration += 1;
+    navigationInFlightGeneration = undefined;
   };
 
-  const loadTransportUrl = async (
+  const loadTransportUrlForGeneration = async (
     options: LoadTransportOptions,
-    generation = activeNavigationGeneration + 1
+    generation: number
   ): Promise<EngineRuntimeSnapshot | null> => {
-    activeNavigationGeneration = generation;
     const requestedUrl = options.url.trim();
     const navigationUrl = options.navigationUrl?.trim() || requestedUrl;
     if (!requestedUrl) {
@@ -354,7 +373,7 @@ export const createNavigationStateMachine = (
       let nextUrl = frame.snapshot.externalNavigationIntent;
       let nextRequestPolicy = frame.snapshot.externalNavigationRequestPolicy;
       for (let hop = 1; hop <= maxExternalIntentHops; hop += 1) {
-        const nextSnapshot = await loadTransportUrl(
+        const nextSnapshot = await loadTransportUrlForGeneration(
           {
             url: nextUrl,
             method: 'GET',
@@ -381,9 +400,29 @@ export const createNavigationStateMachine = (
     return frame.snapshot;
   };
 
-  const applyEngineKey = async (key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot> => {
+  const loadTransportUrl = async (
+    options: LoadTransportOptions
+  ): Promise<EngineRuntimeSnapshot | null> => {
+    const generation = beginNavigationOperation();
+    try {
+      return await loadTransportUrlForGeneration(options, generation);
+    } finally {
+      finishNavigationOperation(generation);
+    }
+  };
+
+  const applyEngineKey = async (
+    key: HandleKeyRequest['key']
+  ): Promise<EngineRuntimeSnapshot | null> => {
+    if (isNavigationInFlight()) {
+      return null;
+    }
+    const generation = activeNavigationGeneration;
     const previousCardId = hostSessionState.activeCardId;
     const frame = await hostClient.engineHandleKeyFrame({ key });
+    if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
+      return null;
+    }
     if (observeBrowserContext(frame.snapshot)) {
       resetHistoryToCurrentCard(frame.snapshot);
     } else if (frame.snapshot.activeCardId && frame.snapshot.activeCardId !== previousCardId) {
@@ -395,14 +434,26 @@ export const createNavigationStateMachine = (
     return frame.snapshot;
   };
 
-  const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot> => {
+  const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot | null> => {
+    if (isNavigationInFlight()) {
+      return null;
+    }
+    const generation = activeNavigationGeneration;
     const previousCardId = hostSessionState.activeCardId;
     const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
+      return null;
+    }
+    const shouldRender = shouldRenderTimerSnapshot(snapshot, hostSessionState);
+    const renderFrame = shouldRender ? await hostClient.engineRenderFrame() : null;
+    if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
+      return null;
+    }
     const browserContextChanged = observeBrowserContext(snapshot);
     if (browserContextChanged) {
       resetHistoryToCurrentCard(snapshot);
     }
-    if (!shouldRenderTimerSnapshot(snapshot, hostSessionState)) {
+    if (!shouldRender) {
       return snapshot;
     }
     if (
@@ -414,79 +465,98 @@ export const createNavigationStateMachine = (
     } else {
       updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     }
-    await renderSnapshot(snapshot);
+    if (renderFrame) {
+      applyFrame({ snapshot, render: renderFrame.render });
+    }
     return snapshot;
   };
 
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
-    const afterFrame = await hostClient.engineNavigateBackFrame();
-    const after = afterFrame.snapshot;
-    const browserContextChanged = observeBrowserContext(after);
-    if (browserContextChanged) {
-      resetHistoryToCurrentCard(after);
-    }
-
-    if (after.lastBackNavigationHandled) {
-      const current = hostHistory.entries[hostHistory.index];
-      const previous = peekHistoryBack(hostHistory);
-      if (
-        !browserContextChanged &&
-        hostSessionState.activeCardId !== after.activeCardId &&
-        current &&
-        previous &&
-        previous.activeCardId === after.activeCardId &&
-        sameHistoryDocument(current.url, previous.url)
-      ) {
-        commitHistoryBack(hostHistory);
-      } else {
-        updateCurrentHistoryCard(hostHistory, after.activeCardId);
+    const generation = beginNavigationOperation();
+    try {
+      const afterFrame = await hostClient.engineNavigateBackFrame();
+      if (!isCurrentNavigation(generation)) {
+        return 'none';
       }
-      applyFrame(afterFrame);
-      return 'engine';
-    }
+      const after = afterFrame.snapshot;
+      const browserContextChanged = observeBrowserContext(after);
+      if (browserContextChanged) {
+        resetHistoryToCurrentCard(after);
+      }
 
-    if (canHistoryBack(hostHistory)) {
-      const previous = peekHistoryBack(hostHistory);
-      if (previous?.url) {
-        const prevSnapshot = await loadTransportUrl({
-          url: previous.requestedUrl ?? previous.url,
-          navigationUrl: historyNavigationUrl(previous.url, previous.activeCardId),
-          method: previous.method ?? 'GET',
-          headers: previous.headers,
-          source: 'history-back',
-          followExternalIntent: true,
-          pushHistory: false,
-          requestPolicy: previous.requestPolicy
-        });
-        if (prevSnapshot) {
-          let restoredSnapshot = prevSnapshot;
-          if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
-            const frame = await hostClient.engineNavigateToCardFrame({
-              cardId: previous.activeCardId
+      if (after.lastBackNavigationHandled) {
+        const current = hostHistory.entries[hostHistory.index];
+        const previous = peekHistoryBack(hostHistory);
+        if (
+          !browserContextChanged &&
+          hostSessionState.activeCardId !== after.activeCardId &&
+          current &&
+          previous &&
+          previous.activeCardId === after.activeCardId &&
+          sameHistoryDocument(current.url, previous.url)
+        ) {
+          commitHistoryBack(hostHistory);
+        } else {
+          updateCurrentHistoryCard(hostHistory, after.activeCardId);
+        }
+        applyFrame(afterFrame);
+        return 'engine';
+      }
+
+      if (canHistoryBack(hostHistory)) {
+        const previous = peekHistoryBack(hostHistory);
+        if (previous?.url) {
+          const prevSnapshot = await loadTransportUrlForGeneration(
+            {
+              url: previous.requestedUrl ?? previous.url,
+              navigationUrl: historyNavigationUrl(previous.url, previous.activeCardId),
+              method: previous.method ?? 'GET',
+              headers: previous.headers,
+              source: 'history-back',
+              followExternalIntent: true,
+              pushHistory: false,
+              requestPolicy: previous.requestPolicy
+            },
+            generation
+          );
+          if (prevSnapshot && isCurrentNavigation(generation)) {
+            let restoredSnapshot = prevSnapshot;
+            let restoredFrame: EngineFrame | undefined;
+            if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
+              restoredFrame = await hostClient.engineNavigateToCardFrame({
+                cardId: previous.activeCardId
+              });
+              if (!isCurrentNavigation(generation)) {
+                return 'none';
+              }
+              restoredSnapshot = restoredFrame.snapshot;
+            }
+            const committed = commitHistoryBack(hostHistory);
+            if (!committed) {
+              return 'none';
+            }
+            if (restoredFrame) {
+              applyFrame(restoredFrame);
+            }
+            updateCurrentHistoryCard(hostHistory, restoredSnapshot.activeCardId);
+            mergeSessionState({
+              historyIndex: hostHistory.index,
+              history: hostHistory.entries
             });
-            restoredSnapshot = frame.snapshot;
-            applyFrame(frame);
+            hooks.onStateEvent?.('host-history-back', {
+              historyIndex: hostHistory.index,
+              url: previous.url,
+              restoredCardId: restoredSnapshot.activeCardId
+            });
+            return 'host';
           }
-          const committed = commitHistoryBack(hostHistory);
-          if (!committed) {
-            return 'none';
-          }
-          updateCurrentHistoryCard(hostHistory, restoredSnapshot.activeCardId);
-          mergeSessionState({
-            historyIndex: hostHistory.index,
-            history: hostHistory.entries
-          });
-          hooks.onStateEvent?.('host-history-back', {
-            historyIndex: hostHistory.index,
-            url: previous.url,
-            restoredCardId: restoredSnapshot.activeCardId
-          });
-          return 'host';
         }
       }
-    }
 
-    return 'none';
+      return 'none';
+    } finally {
+      finishNavigationOperation(generation);
+    }
   };
 
   function pushCurrentRequestHistoryCard(activeCardId: string): void {
@@ -509,6 +579,11 @@ export const createNavigationStateMachine = (
     applyEngineKey,
     applyEngineTimerTick,
     navigateBackWithFallback,
+    beginNavigationOperation,
+    finishNavigationOperation,
+    captureNavigationGeneration: () => activeNavigationGeneration,
+    isCurrentNavigation,
+    isNavigationInFlight,
     cancelPendingNavigation,
     getSessionState: () => hostSessionState,
     getHistoryState: () => hostHistory
