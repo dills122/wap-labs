@@ -185,6 +185,64 @@ Accept:
 - no frame/input, navigation, route, transport, or engine semantics change; dynamic affordances
   remain `WBP-06` scope
 
+### WBP-02B Handheld Focus View
+
+- `Lane`: A, deferred additive host-presentation slice
+- `Depends On`: completed `WBP-02A`, `WBP-03`, and `WBP-05`
+- `Status Authority`: `WORK_ITEMS.md`
+
+Why:
+
+- Users sometimes need to focus on the emulated handset without utility, help, or developer chrome
+  competing for space.
+- A dedicated view makes the period handset experience more immersive and provides a useful
+  presentation and testing mode while keeping the ordinary full desktop console available.
+- This advances `Authentic Core, Modern Console` without waiting for device-specific profiles.
+
+What — Phase 1 visual-only:
+
+- Add a reversible `Handheld Focus View` toggle comparable in interaction to a DevTools
+  device-preview control, but explicitly not web mobile emulation.
+- Recompose the existing workspace so the current neutral Class C handset is centered and visually
+  prominent. Utility rail and Developer Tools collapse or move out of the primary view while
+  essential navigation and recovery remain reachable.
+- Reuse the exact same loaded deck, engine snapshot, logical viewport, active focus, browser
+  session/history, route, compatibility profile, display scale, and host controller.
+- Treat entry and exit as host presentation changes only. They must not reload the deck, change
+  engine rows, columns, or wrapping, alter WML behavior, switch user agent or transport policy,
+  simulate touch, or claim a named physical handset.
+- Keep `Handheld Focus View` and `Compatibility Profile` distinct concepts in UI copy and planning.
+- Phase 1 may use the existing neutral handset scaffold. Named device frames and profile-specific
+  controls remain dependent on historical evidence and `WBP-06` through `WBP-08`.
+
+Acceptance:
+
+- A user can enter and exit the view without losing or mutating deck, card, focus, form, timer, or
+  history state.
+- Engine traces and rendered WML output are identical before and after the host-only layout switch.
+- The toggle is keyboard accessible, exposes an announced pressed or selected state, retains visible
+  focus, and provides an obvious exit.
+- Essential Back, location, loading, error, and recovery surfaces remain available. Utility and
+  developer surfaces remain reachable without permanently occupying the focused view.
+- The view works at default and minimum Tauri sizes and at 200 percent host zoom without horizontal
+  overflow.
+- Automated tests prove that toggling alone causes no load, fetch, or controller invocation.
+- The view introduces no mobile-browser DOM emulation, responsive WML reinterpretation, touch
+  emulation, user-agent spoofing, or new compatibility claims.
+- Phase 2 and later ideas—named handset frames, profile-derived dimensions, dynamic softkeys, typed
+  input, and hit regions—remain separately gated on `WBP-06` through `WBP-08` and evidence-backed
+  profile work.
+
+Ownership and conflict notes:
+
+- Phase 1 belongs to browser frontend shell, layout, styles, and a presentation-state adapter only;
+  avoid controller and navigation-state semantic changes.
+- `browser/frontend/src/app/browser-shell-template.ts` and `browser/frontend/src/styles.css` are
+  high-conflict surfaces. Schedule this slice only after the `WBP-02A`/PR `#494` presentation work
+  is integrated and those surfaces are free.
+- Phase 1 has no engine or transport contract dependency. Later behavioral or device-specific
+  phases depend on the frame/input contract and the `WBP-06` through `WBP-08` gates.
+
 ### WBP-03 Navigation-toolbar information architecture
 
 - `Lane`: A
@@ -515,13 +573,15 @@ source-recovery candidates until comparable primary evidence exists.
 2. Shell component foundation (`WBP-01`).
 3. Run visual system, navigation toolbar, onboarding, and host accessibility in parallel
    (`WBP-02` through `WBP-05`) with one shell-integration owner.
-4. Land the engine frame and affordance contract (`WBP-06`) through its existing F0 gate.
-5. Run Canvas/input/accessibility integration (`WBP-07` through `WBP-09`).
-6. Land transport cancellation and phase metadata (`WBP-10`).
-7. Integrate loading, recovery, and persistence (`WBP-11`, `WBP-12`).
-8. Land diagnostics/replay after both contract surfaces stabilize (`WBP-13`).
-9. Close MVP with complete-path evidence (`WBP-14`).
-10. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`);
+4. Schedule the additive visual-only Handheld Focus View (`WBP-02B`) after the `WBP-02A` shell
+   surfaces are free; it does not wait on the frame/input contract.
+5. Land the engine frame and affordance contract (`WBP-06`) through its existing F0 gate.
+6. Run Canvas/input/accessibility integration (`WBP-07` through `WBP-09`).
+7. Land transport cancellation and phase metadata (`WBP-10`).
+8. Integrate loading, recovery, and persistence (`WBP-11`, `WBP-12`).
+9. Land diagnostics/replay after both contract surfaces stabilize (`WBP-13`).
+10. Close MVP with complete-path evidence (`WBP-14`).
+11. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`);
     conduct the additive Openwave target/source lock independently as research (`WBP-16`).
 
 ## Parallel Ownership and Conflict Controls
@@ -589,3 +649,7 @@ direction is “Authentic Core, Modern Console”: predominantly native applicat
 restrained late-1990s/early-2000s telecom-instrument accent in the host palette, readouts, and
 neutral handset materials. It does not reopen the completed `WBP-01`/`WBP-02` history or activate
 `WBP-06`; it only changes the default host presentation and its evidence.
+
+`WBP-02B` is the deferred additive Handheld Focus View. Its initial slice is host presentation only,
+keeps compatibility-profile selection separate, and does not implement or infer any `WBP-06`
+through `WBP-08` frame, softkey, typed-input, hit-region, or named-device behavior.

@@ -168,14 +168,16 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-01` | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced. |
 | `WBP-02` | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics. |
 | `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green. |
+| `WBP-02B` | `todo` | Deferred visual-only Handheld Focus View recomposes the existing host shell around the unchanged neutral handset/session. Its authoritative Why–What–Acceptance scope and conflict notes are in `WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md`; no toggle or runtime behavior is implemented. |
 | `WBP-03` | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness. |
 | `WBP-04` | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage. |
 | `WBP-05` | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
 
-Phase 1 implementation is complete on current `main`; the original seams remain documented in
-`WAVES_BROWSER_BASELINE.md` for maintenance history. All declared prerequisites for `WBP-06` are
-now satisfied, including the additive D0-01 debug namespace and sequencing rule. `WBP-06` is ready
-for a separately authorized activation task but remains inactive in this lane:
+The original Phase 1 implementation is complete on current `main`; the planned additive `WBP-02B`
+does not reopen that history. The original seams remain documented in `WAVES_BROWSER_BASELINE.md`
+for maintenance history. All declared prerequisites for `WBP-06` are now satisfied, including the
+additive D0-01 debug namespace and sequencing rule. `WBP-06` is ready for a separately authorized
+activation task but remains inactive in this lane:
 
 1. `WML-2` is `done`, including the residual `WML-203`, `WML-204`, and `WML-205` gates.
 2. `WML-303` has closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
