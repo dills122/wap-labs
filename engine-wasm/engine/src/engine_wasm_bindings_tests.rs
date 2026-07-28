@@ -3,6 +3,7 @@ use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
+use crate::engine_tests::engine_with_empty_select;
 use crate::wavescript::wap_decoder::{decode_wap_compilation_unit, WapDecodeError};
 
 const SAMPLE: &str = r##"
@@ -1150,6 +1151,57 @@ fn wasm_wml_204_select_initialization_and_commit_match_native_state() {
     assert_eq!(
         engine.get_var_wasm("ChoiceIndexes".to_string()),
         Some("1".to_string())
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_empty_select_is_inert_and_non_empty_multi_select_still_edits() {
+    let mut engine = engine_with_empty_select();
+
+    assert!(!engine
+        .begin_focused_select_edit_wasm()
+        .expect("empty select must be handled without trapping"));
+    assert!(!engine.move_focused_select_edit_wasm(1));
+    assert!(!engine
+        .commit_focused_select_edit_wasm()
+        .expect("empty select commit must be a no-op"));
+    assert_eq!(engine.focused_select_edit_name_wasm(), None);
+    assert_eq!(engine.focused_select_edit_value_wasm(), None);
+    engine
+        .render_wasm()
+        .expect("empty select should still render");
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("empty select activation must not trap");
+    assert_eq!(engine.focused_select_edit_name_wasm(), None);
+
+    engine
+        .load_deck_wasm(
+            r#"
+              <wml>
+                <card id="home">
+                  <select name="Choices" multiple="true">
+                    <option value="alpha">Alpha</option>
+                    <option value="beta">Beta</option>
+                  </select>
+                </card>
+              </wml>
+            "#,
+        )
+        .expect("non-empty multi-select deck should load");
+    assert!(engine
+        .begin_focused_select_edit_wasm()
+        .expect("non-empty multi-select edit should begin"));
+    assert_eq!(
+        engine.focused_select_edit_value_wasm().as_deref(),
+        Some("alpha")
+    );
+    assert!(engine
+        .commit_focused_select_edit_wasm()
+        .expect("first option should toggle on"));
+    assert_eq!(
+        engine.get_var_wasm("Choices".to_string()).as_deref(),
+        Some("alpha")
     );
 }
 

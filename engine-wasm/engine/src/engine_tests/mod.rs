@@ -6,6 +6,9 @@ use super::{
     MAX_DECK_WML_XML_BYTES, MAX_TRACE_ENTRIES,
 };
 use crate::render::render_list::DrawCmd;
+use crate::runtime::card::Card;
+use crate::runtime::deck::Deck;
+use crate::runtime::node::{InlineNode, Node};
 use crate::wavescript::value::ScriptValue;
 use crate::wavescript::vm::VmTrap;
 
@@ -69,6 +72,36 @@ fn render_snapshot_lines(engine: &WmlEngine) -> Vec<String> {
             } => format!("link:{x}:{y}:focused={focused}:href={href}:text={text}"),
         })
         .collect()
+}
+
+pub(crate) fn engine_with_empty_select() -> WmlEngine {
+    let mut engine = WmlEngine::new();
+    engine.deck = Some(Deck::with_template(
+        vec![Card {
+            id: "home".to_string(),
+            language: None,
+            new_context: false,
+            ordered: false,
+            nodes: vec![Node::Paragraph(vec![InlineNode::Select {
+                control_id: "Empty".to_string(),
+                name: Some("Empty".to_string()),
+                iname: None,
+                title: None,
+                default_value: None,
+                default_index_value: None,
+                multiple: false,
+                options: Vec::new(),
+                selected_indices: Vec::new(),
+            }])],
+            event_bindings: Vec::new(),
+            timer: None,
+        }],
+        None,
+        Vec::new(),
+        None,
+        Vec::new(),
+    ));
+    engine
 }
 
 fn push_string(bytes: &mut Vec<u8>, value: &str) {

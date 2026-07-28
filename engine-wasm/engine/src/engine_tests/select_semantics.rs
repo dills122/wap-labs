@@ -280,6 +280,51 @@ fn wml_204_same_name_selects_keep_independent_control_state() {
 }
 
 #[test]
+fn empty_select_has_no_selected_index_or_edit_session() {
+    let mut engine = engine_with_empty_select();
+
+    assert_eq!(engine.select_selected_index_on_active_card("Empty"), None);
+    assert!(!engine
+        .begin_focused_select_edit()
+        .expect("empty select must be handled without panicking"));
+    assert_eq!(engine.focused_select_edit_name(), None);
+    assert_eq!(engine.focused_select_edit_value(), None);
+}
+
+#[test]
+fn non_empty_unselected_multi_select_still_edits_first_option() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"
+            <wml><card id="home">
+              <select name="Choices" multiple="true">
+                <option value="alpha">Alpha</option>
+                <option value="beta">Beta</option>
+              </select>
+            </card></wml>
+            "#,
+        )
+        .expect("multi-select deck should load");
+
+    assert_eq!(
+        engine.select_selected_index_on_active_card("Choices"),
+        Some(0)
+    );
+    assert!(engine
+        .begin_focused_select_edit()
+        .expect("non-empty multi-select edit should begin"));
+    assert_eq!(engine.focused_select_edit_value().as_deref(), Some("alpha"));
+    assert!(engine
+        .commit_focused_select_edit()
+        .expect("first option should toggle on"));
+    assert_eq!(
+        engine.get_var("Choices".to_string()).as_deref(),
+        Some("alpha")
+    );
+}
+
+#[test]
 fn wml_fx_select_default_precedence_covers_every_source_and_fallback() {
     // WML-CL-SELECT-DEFAULT-PRECEDENCE and WML-CL-SELECT-INDEX-VALIDATION,
     // WAP-191_104-WML section 11.6.2.1 step 1.
