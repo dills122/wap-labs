@@ -34,6 +34,9 @@ connectionless Content-Type framing and does not claim WML-304 media/charset own
 - Binary Encoding-Version supports default and application-page identities, version defaults,
   sender/peer version caps, hop-local caching, hop-by-hop removal, per-extension-page
   advertisements, and compatible textual retry selection.
+- Corrective issue `#449` closes a residual in the completed WSP-802 text-form evidence:
+  malformed one- or two-token textual values are rejected instead of being normalized into a
+  different valid binary advertisement. This correction does not reopen WSP-802 or `T0-20`.
 - Expect uses SIN 001: `100-continue` is octet `0x80`; extension expressions require a
   Value-length wrapper. The superseded unwrapped expression is rejected.
 - HTTP comma-list values are expanded into ordered repeated WSP fields while quoted commas are
@@ -43,6 +46,8 @@ connectionless Content-Type framing and does not claim WML-304 media/charset own
 
 - `transport-rust/tests/wsp_header_grammar.rs`
 - `transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json`
+- The mapped Encoding-Version table asserts exact bytes for `1.3`, `40`, and `40 1.3`, plus
+  exact `InvalidVersion` failures for malformed one- and two-token values.
 - Native WSP header, Encoding-Version, Expect, peer-cache, retry, list-expansion, and hop-boundary
   unit tests under `transport-rust/src/network/wsp/`
 - `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar`

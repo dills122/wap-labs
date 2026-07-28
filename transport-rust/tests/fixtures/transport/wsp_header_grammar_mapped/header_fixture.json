@@ -18,6 +18,39 @@
     { "code": 56, "name": "Expect", "major": 1, "minor": 3 },
     { "code": 67, "name": "Encoding-Version", "major": 1, "minor": 3 }
   ],
+  "encodingVersionTextCases": [
+    {
+      "name": "default-page-version",
+      "input": "1.3",
+      "expectedVersion": { "major": 1, "minor": 3 },
+      "expectedEncoded": [195, 147]
+    },
+    {
+      "name": "extension-page-only",
+      "input": "40",
+      "expectedCodePage": 64,
+      "expectedEncoded": [195, 1, 192]
+    },
+    {
+      "name": "extension-page-version",
+      "input": "40 1.3",
+      "expectedCodePage": 64,
+      "expectedVersion": { "major": 1, "minor": 3 },
+      "expectedEncoded": [195, 2, 192, 147]
+    },
+    {
+      "name": "page-with-invalid-version",
+      "input": "40 garbage"
+    },
+    {
+      "name": "version-with-invalid-trailing-token",
+      "input": "1.3 garbage"
+    },
+    {
+      "name": "invalid-single-token",
+      "input": "garbage"
+    }
+  ],
   "headerSections": [
     {
       "name": "assigned-special-values",
