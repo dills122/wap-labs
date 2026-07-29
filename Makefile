@@ -6,6 +6,7 @@ RUST_COVERAGE_MIN ?= 90
 RUST_FUNCTION_COVERAGE_MIN ?= 85
 
 .PHONY: up down restart logs ps status smoke smoke-up clean smoke-transport-wap smoke-native-tauri-kannel-ui init-refresh \
+	check-local-compose-security \
 	fmt lint test test-fast verify-fast verify-change verify-full verify-extended ci-local \
 	coverage-rust coverage-rust-engine coverage-rust-transport \
 	lint-rust lint-rust-engine lint-rust-transport lint-node lint-go lint-tofu \
@@ -49,6 +50,9 @@ smoke-native-tauri-kannel-ui:
 
 init-refresh:
 	./scripts/init-refresh.sh
+
+check-local-compose-security:
+	node --test scripts/tests/local-compose-security.test.mjs
 
 clean:
 	$(COMPOSE) down -v --remove-orphans

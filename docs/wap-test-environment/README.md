@@ -45,8 +45,8 @@ wap-labs/
 ## What Is Included
 
 - Kannel gateway with both `bearerbox` and `wapbox`
-- Admin endpoint on port `13000`
-- WAP gateway endpoint on port `13002`
+- Loopback-only admin endpoint on TCP port `13000`
+- Loopback-only WAP HTTP bridge endpoint on TCP port `13002`
 - Standard-library Go WML origin on port `3000`
 - Dynamic WML auth flow:
   - `/register` (POST form)
@@ -111,6 +111,16 @@ Check gateway status:
 make status
 ```
 
+The root Compose stack publishes TCP `13000`, `13002`, `3000`, and `3001` only on
+`127.0.0.1`. The checked-in `changeme` Kannel credentials are known local-development
+placeholders and must not be treated as secrets or used for a non-loopback deployment. UDP
+`9200/9201` remain published for WAP microbrowser VMs; use a trusted host/network or enforce an
+appropriate host firewall. Validate the rendered bindings with:
+
+```bash
+make check-local-compose-security
+```
+
 Verify host endpoints in Chrome:
 
 - Kannel admin: `http://localhost:13000/status?password=changeme`
@@ -132,9 +142,9 @@ make down
 
 ## Direct Endpoints
 
-- Kannel admin status:
+- Kannel admin status (host loopback only):
   - `http://localhost:13000/status?password=changeme`
-- WAP gateway target (emulator/bridge):
+- WAP HTTP bridge target (host loopback only):
   - `http://localhost:13002`
 - WML server direct HTTP:
   - `http://localhost:3000`
@@ -234,7 +244,7 @@ Inside UTM VM window:
 3. Run `setup.exe`
 4. Restart VM
 
-#### 5. Verify VM -> Host Network Access
+#### 5. Confirm VM Network Configuration
 
 Inside XP:
 
@@ -243,12 +253,9 @@ ipconfig
 ```
 
 Find `Default Gateway` (typically `10.0.2.2` in UTM NAT mode). This should route to your Mac host.
-
-In XP Internet Explorer, test:
-
-- `http://10.0.2.2:13000/status?password=changeme`
-
-If it loads, VM can reach your local Kannel gateway.
+The Kannel admin port is deliberately bound to the Mac's `127.0.0.1`, so
+`http://10.0.2.2:13000/` must not be used as a VM connectivity test. Verify the stack on the Mac
+with `make status`; steps 7-9 verify the VM path through the published WAP UDP port instead.
 
 #### 6. Install Openwave SDK (Experimental)
 
@@ -349,10 +356,10 @@ Stop file host with `Ctrl+C` when done.
 
 Cannot reach gateway from XP:
 
-- Recheck XP URL: `http://10.0.2.2:13000/status?password=changeme`
+- On the Mac, run `make status` to verify the loopback-only admin endpoint
 - Confirm VM network mode is Shared Network (NAT)
 - Confirm stack is running: `make ps`
-- Check host firewall rules for local ports
+- Confirm UDP port `9200` is reachable through the host firewall; do not expose TCP `13000/13002`
 
 Openwave loads nothing:
 
@@ -452,7 +459,7 @@ Fix: define explicit `group = wap-url-map` blocks for:
 
 and map each to `http://wml-server:3000/*`, then restart `kannel`.
 
-### `curl: (7) Failed to connect to localhost port 13000`
+### `curl: (7) Failed to connect to localhost port 13000` on the host
 
 Cause: gateway container failed to start or crashed.
 
@@ -475,7 +482,7 @@ make status
 curl -i http://localhost:13002/
 ```
 
-Note: in some environments `http://localhost:13002/` may not return a plain HTTP body promptly because the gateway endpoint primarily serves WSP device traffic. In that case, use emulator verification and rely on `13000/status` plus app logs.
+Note: in some environments `http://localhost:13002/` may not return a plain HTTP body promptly because the gateway endpoint primarily serves WSP device traffic. Both TCP endpoints are host-loopback-only. In that case, use emulator verification and rely on `13000/status` plus app logs from the host.
 
 ## Lab Exercises
 
