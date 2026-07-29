@@ -26,6 +26,8 @@
 - `modern-wap-browser-architecture.md`: current layer boundaries and contract expectations
 - `waves/TECHNICAL_ARCHITECTURE.md`: Waves runtime-first architecture direction (Tauri host + in-process Rust transport)
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
+- `waves/RESILIENCE_WORK_ITEMS.md`: active malformed-input, failure-containment, resource-bound,
+  and recovery work board
 - `waves/WORK_ITEMS_ARCHIVE.md`: archived/historical Waves integration tickets
 - `waves/MAINTENANCE_WORK_ITEMS.md`: Waves maintenance and technical-debt board
 - `waves/MAINTENANCE_WORK_ITEMS_ARCHIVE.md`: archived/historical Waves maintenance tickets
