@@ -667,6 +667,7 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .utility-rail-panel {
+  position: relative;
   height: 100%;
   min-height: 0;
   overflow: hidden;
@@ -675,12 +676,12 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .utility-rail-panel[open] {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  display: block;
 }
 
 .utility-rail-panel > summary {
   display: flex;
+  height: 42px;
   min-height: 42px;
   align-items: center;
   justify-content: space-between;
@@ -705,6 +706,8 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .utility-rail-body {
+  position: absolute;
+  inset: 42px 0 0;
   min-height: 0;
   overflow: hidden;
 }
@@ -1137,7 +1140,12 @@ pre {
   .status-input,
   .inspector-disclosure > summary,
   .utility-rail-panel > summary {
+    height: 44px;
     min-height: 44px;
+  }
+
+  .utility-rail-body {
+    inset-block-start: 44px;
   }
 }
 

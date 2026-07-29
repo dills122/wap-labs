@@ -69,6 +69,124 @@ const openAllDisclosures = async (page) => {
   });
 };
 
+const activateDeveloperToolsTab = async (page, tabId) => {
+  await page.locator(`#devtools-tab-${tabId}`).evaluate((tab) => tab.click());
+};
+
+const assertDeveloperToolsPanelContainment = async (
+  page,
+  name,
+  { requireVerticalScroll = false } = {}
+) => {
+  const originalTimeline = requireVerticalScroll
+    ? await page.locator('#timeline').evaluate((timeline) => {
+        const original = timeline.textContent ?? '';
+        timeline.textContent = `${original}\n${Array.from(
+          { length: 48 },
+          (_, index) => `scroll-verification-${index + 1}`
+        ).join('\n')}`;
+        return original;
+      })
+    : null;
+  const evidence = [];
+  for (const tabId of ['overview', 'transport', 'runtime', 'timeline', 'source']) {
+    await activateDeveloperToolsTab(page, tabId);
+    const metrics = await page.locator(`#devtools-panel-${tabId}`).evaluate((panel) => {
+      const panelRect = panel.getBoundingClientRect();
+      const workspaceRect = document
+        .querySelector('.developer-tools-workspace')
+        .getBoundingClientRect();
+      const actions = [...panel.querySelectorAll('.developer-tools-action')].map((action) => {
+        const rect = action.getBoundingClientRect();
+        return { id: action.id, left: rect.left, right: rect.right };
+      });
+      const preformatted = [...panel.querySelectorAll('pre')].map((element) => ({
+        id: element.id,
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth
+      }));
+      const wideDescendants = [...panel.querySelectorAll('*')]
+        .map((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return {
+            selector: element.id ? `#${element.id}` : `${element.tagName}.${element.className}`,
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+            left: rect.left,
+            right: rect.right,
+            overflowX: style.overflowX,
+            whiteSpace: style.whiteSpace
+          };
+        })
+        .filter(
+          (element) =>
+            element.scrollWidth > element.clientWidth + 1 ||
+            element.left < panelRect.left - 0.5 ||
+            element.right > panelRect.right + 0.5
+        );
+      const initialScrollTop = panel.scrollTop;
+      panel.scrollTop = panel.scrollHeight;
+      const maximumScrollTop = panel.scrollTop;
+      panel.scrollTop = initialScrollTop;
+      return {
+        id: panel.id,
+        clientWidth: panel.clientWidth,
+        scrollWidth: panel.scrollWidth,
+        clientHeight: panel.clientHeight,
+        scrollHeight: panel.scrollHeight,
+        maximumScrollTop,
+        actions,
+        preformatted,
+        wideDescendants,
+        workspace: { left: workspaceRect.left, right: workspaceRect.right }
+      };
+    });
+
+    assert.ok(
+      metrics.scrollWidth <= metrics.clientWidth + 1,
+      `${name}: ${metrics.id} contains horizontal overflow (${metrics.scrollWidth}px scroll / ${metrics.clientWidth}px client): ${JSON.stringify(metrics.wideDescendants)}`
+    );
+    assert.ok(
+      metrics.clientHeight >= 96,
+      `${name}: ${metrics.id} keeps a usable viewport height (${metrics.clientHeight}px)`
+    );
+    for (const action of metrics.actions) {
+      assert.ok(
+        action.left >= metrics.workspace.left - 0.5 && action.right <= metrics.workspace.right + 0.5,
+        `${name}: #${action.id} stays inside the Developer Tools workspace`
+      );
+    }
+    for (const element of metrics.preformatted) {
+      assert.ok(
+        element.scrollWidth <= element.clientWidth + 1,
+        `${name}: #${element.id} wraps diagnostic content without horizontal scrolling`
+      );
+    }
+    if (metrics.scrollHeight > metrics.clientHeight + 1) {
+      assert.ok(metrics.maximumScrollTop > 0, `${name}: ${metrics.id} scrolls vertically`);
+    }
+    evidence.push(metrics);
+  }
+  if (requireVerticalScroll) {
+    assert.ok(
+      evidence.some((panel) => panel.maximumScrollTop > 0),
+      `${name}: at least one populated Developer Tools panel exercises vertical scrolling: ${JSON.stringify(
+        evidence.map((panel) => ({
+          id: panel.id,
+          clientHeight: panel.clientHeight,
+          scrollHeight: panel.scrollHeight,
+          maximumScrollTop: panel.maximumScrollTop
+        }))
+      )}`
+    );
+    await page.locator('#timeline').evaluate((timeline, original) => {
+      timeline.textContent = original;
+    }, originalTimeline);
+  }
+  return evidence;
+};
+
 const assertStatusRegionsDoNotOverlap = async (page, name) => {
   const statusLayout = await page.evaluate(() => {
     const readRegion = (element) => {
@@ -132,7 +250,12 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
   await page.locator('#btn-inspector').click();
   await openAllDisclosures(page);
-  await page.locator('#devtools-tab-overview').click();
+  const developerToolsPanels = await assertDeveloperToolsPanelContainment(
+    page,
+    `${name}: developer tools visual`,
+    { requireVerticalScroll: name === 'minimum' }
+  );
+  await activateDeveloperToolsTab(page, 'overview');
   await page.evaluate(() => {
     document.querySelector('.developer-tools-panel:not([hidden])')?.scrollTo(0, 0);
   });
@@ -145,7 +268,8 @@ const captureDefaultVisual = async (page, name, dimensions) => {
     scrollWidth: layout.scrollWidth,
     screenshot,
     handsetScreenshot,
-    developerToolsScreenshot
+    developerToolsScreenshot,
+    developerToolsPanels
   };
 };
 
@@ -211,16 +335,11 @@ const auditDetachedDeveloperTools = async (page, width) => {
   );
   assert.deepEqual(violations, [], `${width}px detached developer tools: rendered axe audit`);
 
-  const tabIds = ['overview', 'transport', 'runtime', 'timeline', 'source'];
-  for (const tabId of tabIds) {
-    await page.locator(`#devtools-tab-${tabId}`).click();
-    assert.equal(
-      await page.locator(`#devtools-panel-${tabId}`).isVisible(),
-      true,
-      `${width}px detached developer tools: ${tabId} panel is visible when selected`
-    );
-  }
-  await page.locator('#devtools-tab-overview').click();
+  const panels = await assertDeveloperToolsPanelContainment(
+    page,
+    `${width}px detached developer tools`
+  );
+  await activateDeveloperToolsTab(page, 'overview');
 
   const layout = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth,
@@ -233,7 +352,7 @@ const auditDetachedDeveloperTools = async (page, width) => {
   );
   const screenshot = `developer-tools-${width}px.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
-  return { width, ...layout, screenshot };
+  return { width, ...layout, panels, screenshot };
 };
 
 const resolveBaseRevision = async () => {
