@@ -758,7 +758,7 @@ const selectedAudit = new Map([
       domain: 'wml-runtime-integration',
       ownerLayers: ['engine-wasm', 'transport-rust', 'browser'],
       requirementIds: ['RQ-WAE-002', 'RQ-RMK-001'],
-      workItems: ['WML-201', 'WML-301', 'R0-01'],
+      workItems: ['WML-201', 'WAE-601', 'R0-01'],
       status: 'partial',
       note:
         'Deck loading and a substantial WML runtime exist, but the effective WML SCR ledger still records mandatory parser, task, form, rendering, and policy gaps.',
@@ -805,7 +805,7 @@ const selectedAudit = new Map([
       domain: 'wml-user-agent-composition',
       ownerLayers: ['engine-wasm', 'transport-rust', 'browser'],
       requirementIds: ['RQ-WAE-002', 'RQ-WAE-016', 'RQ-WAE-017'],
-      workItems: ['WAE-601', 'WML-201', 'WML-301', 'WMLS-501'],
+      workItems: ['WAE-601', 'WML-201', 'WMLS-501'],
       status: 'partial',
       note:
         'The host, WML runtime, and script runtime compose into a functioning user agent, but the selected WML/WMLScript ledgers and nested WAE behavior map are not yet closed.',

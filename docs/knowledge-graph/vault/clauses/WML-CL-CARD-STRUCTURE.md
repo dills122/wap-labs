@@ -49,6 +49,17 @@ tags:
     "WML-203",
     "WML-301"
   ],
+  "directWorkItems": [
+    "C5-03",
+    "R0-01",
+    "R0-04",
+    "WML-201",
+    "WML-202",
+    "WML-203"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-301"
+  ],
   "ownerLayers": [
     "engine-wasm"
   ],

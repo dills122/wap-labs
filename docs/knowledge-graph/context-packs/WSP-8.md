@@ -7,7 +7,7 @@
 - Target: `WSP-8`
 - Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
 - Compatibility floor: `strict-historical-observable-behavior`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
@@ -18,6 +18,7 @@
 - Selected work items: 6
 - Direct SCR rows: 0
 - Direct normative clauses: 123
+- Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 2
 - Work items with unmapped declared normative families: 4
 
@@ -48,6 +49,7 @@ Exit gates:
 - Direct SCR rows: 0
 - Selected SCR parents: 7 (`WSP-C-001`, `WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`)
 - Direct normative clauses: 35
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
 - Spec references: None
 - Follow-up work items: None
@@ -79,6 +81,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 6 (`WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`, `WSP-CL-C-020`)
 - Direct normative clauses: 25
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
 - Spec references: None
 - Follow-up work items: None
@@ -111,6 +114,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -137,6 +141,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 6 (`WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`)
 - Direct normative clauses: 26
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
 - Spec references: None
 - Follow-up work items: None
@@ -165,6 +170,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 9 (`WML-C-14`, `WML-C-29`, `WML-C-37`, `WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`)
 - Direct normative clauses: 37
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-002`, `RQ-RMK-011`, `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
 - Spec references: `WAP-191_104-WML sections 9.3 and 9.5.1 as amended by WAP-191_105-WML section 4.3`, `WAP-203-WSP sections 6.4 and 8.2.3`
 - Follow-up work items: None
@@ -200,6 +206,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -972,6 +979,9 @@ Evidence commands:
   - Requirements: `RQ-TRN-010`, `RQ-TRN-012`
   - Fixture: `WSP-FX-UNITDATA-RECEIVE-DISPATCH` (`transport-boundary`, `implemented`)
 
+## Aggregate regression and delegate context
+
+- None mapped for this selection.
 ## Explicit mapping gaps
 
 - `WSP-803` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.

@@ -1511,3 +1511,71 @@ fn wml_202_enforces_card_event_timer_content_order() {
         assert!(err.contains(expected), "expected {expected:?}, got {err:?}");
     }
 }
+
+#[test]
+fn wml_301_inserts_source_required_table_boundaries_at_card_content_edges() {
+    let deck = parse_wml(
+        r#"
+        <wml>
+          <card id="leading">
+            <p><table columns="1"><tr><td>Leading table</td></tr></table>After</p>
+          </card>
+          <card id="middle">
+            <p>Before<table columns="1"><tr><td>Middle table</td></tr></table>After</p>
+          </card>
+          <card id="trailing">
+            <p>Before<table columns="1"><tr><td>Trailing table</td></tr></table></p>
+          </card>
+          <card id="only">
+            <p>   <table columns="1"><tr><td>Only table</td></tr></table>   </p>
+          </card>
+          <card id="adjacent">
+            <p><table columns="1"><tr><td>First table</td></tr></table><table columns="1"><tr><td>Second table</td></tr></table></p>
+          </card>
+        </wml>
+        "#,
+    )
+    .expect("source-valid card/table boundary fixture should parse");
+
+    assert_eq!(
+        deck.cards[0].nodes,
+        vec![Node::Paragraph(vec![
+            InlineNode::Text("Leading table".to_string()),
+            InlineNode::Break,
+            InlineNode::Text("After".to_string()),
+        ])]
+    );
+    assert_eq!(
+        deck.cards[1].nodes,
+        vec![Node::Paragraph(vec![
+            InlineNode::Text("Before".to_string()),
+            InlineNode::Break,
+            InlineNode::Text("Middle table".to_string()),
+            InlineNode::Break,
+            InlineNode::Text("After".to_string()),
+        ])]
+    );
+    assert_eq!(
+        deck.cards[2].nodes,
+        vec![Node::Paragraph(vec![
+            InlineNode::Text("Before".to_string()),
+            InlineNode::Break,
+            InlineNode::Text("Trailing table".to_string()),
+        ])]
+    );
+    assert_eq!(
+        deck.cards[3].nodes,
+        vec![Node::Paragraph(vec![InlineNode::Text(
+            "Only table".to_string()
+        )])]
+    );
+    assert_eq!(
+        deck.cards[4].nodes,
+        vec![Node::Paragraph(vec![
+            InlineNode::Text("First table".to_string()),
+            InlineNode::Break,
+            InlineNode::Break,
+            InlineNode::Text("Second table".to_string()),
+        ])]
+    );
+}

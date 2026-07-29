@@ -15,12 +15,12 @@ tags:
 
 ## Relationships
 
+- `context-for` → [[work-items/WML-301|WML-301]]
 - `maps-to` → [[requirements/RQ-WAE-002|RQ-WAE-002]]
 - `maps-to` → [[requirements/RQ-WAE-003|RQ-WAE-003]]
 - `maps-to` → [[requirements/RQ-WAE-016|RQ-WAE-016]]
 - `maps-to` → [[requirements/RQ-WAE-017|RQ-WAE-017]]
 - `maps-to` → [[requirements/RQ-WMLS-001|RQ-WMLS-001]]
-- `planned-by` → [[work-items/WML-301|WML-301]]
 - `refines` → [[scr-rows/WAESpec-C-016|WAESpec-C-016]]
 - `refines` → [[scr-rows/WAESpec-C-017|WAESpec-C-017]]
 - `sourced-from` → [[source-documents/WAP-190-WAESpec|WAP-190-WAESpec]]
@@ -49,9 +49,19 @@ tags:
     "W1-04",
     "WAE-601",
     "WML-201",
-    "WML-301",
     "WMLS-501",
     "WMLS-502"
+  ],
+  "directWorkItems": [
+    "W1-02",
+    "W1-04",
+    "WAE-601",
+    "WML-201",
+    "WMLS-501",
+    "WMLS-502"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-301"
   ],
   "ownerLayers": [
     "browser",

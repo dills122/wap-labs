@@ -7,7 +7,7 @@
 - Target: `TRN-7`
 - Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
 - Compatibility floor: `strict-historical-observable-behavior`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
@@ -18,6 +18,7 @@
 - Selected work items: 9
 - Direct SCR rows: 0
 - Direct normative clauses: 145
+- Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 2
 - Work items with unmapped declared normative families: 2
 
@@ -49,6 +50,7 @@ Exit gates:
 - Direct SCR rows: 0
 - Selected SCR parents: 9 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-000`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 49
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: None
@@ -77,6 +79,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 6 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 9
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: None
@@ -110,6 +113,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Capability SCR parents: 4 (`WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`, `WCMP-SP-C-002`)
 - Direct normative clauses: 27
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: None
 - Follow-up work items: `TRN-710`
@@ -140,6 +144,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -166,6 +171,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -192,6 +198,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 8 (`WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-NA-C-007`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 11
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`
 - Spec references: None
 - Follow-up work items: `TRN-704`, `TRN-705`
@@ -223,6 +230,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 9 (`WCMP-C-001`, `WCMP-SP-C-001`, `WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`, `WDP-NA-C-006`, `WDP-PF-C-001`, `WDP-PF-C-002`)
 - Direct normative clauses: 9
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: None
 - Follow-up work items: `TRN-708`
@@ -260,6 +268,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 6 (`WCMP-C-001`, `WCMP-SP-C-001`, `WDP-C-001`, `WDP-CORE-C-001`, `WDP-CT-C-002`, `WDP-NA-C-003`)
 - Direct normative clauses: 13
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRN-001`, `RQ-TRN-002`, `RQ-TRN-003`, `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: `WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)`, `WAP-202-WCMP sections 5.1, 5.2, and 5.5 (general WCMP scope, conformance, syntax, and behavior)`, `WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002`, `WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003`, `WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)`
 - Follow-up work items: None
@@ -295,6 +304,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Capability SCR parents: 4 (`WCMP-GEN-C-001`, `WCMP-GEN-C-003`, `WCMP-GEN-C-006`, `WCMP-SP-C-002`)
 - Direct normative clauses: 27
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-TRX-006`, `RQ-TRX-007`, `RQ-TRX-008`
 - Spec references: `WAP-202-WCMP sections 5.1 and 5.2 (general WCMP scope and conformance)`, `WAP-202-WCMP sections 5.5.1, 5.5.2, 5.5.3.1, 5.5.3.3, and 5.5.3.5 (general WCMP syntax and supported message behavior)`, `WAP-202-WCMP Appendix A rows WCMP-SP-C-002, WCMP-GEN-C-001, WCMP-GEN-C-003, and WCMP-GEN-C-006`, `WAP-202-WCMP sections 5.4.1-.7 and WAP-159-WDPWCMPAdapt SMPP adaptation (deferred capability scope)`
 - Follow-up work items: None
@@ -1267,6 +1277,9 @@ Evidence commands:
   - Requirements: `RQ-TRX-006`
   - Fixture: `WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE` (`binary-decoder`, `implemented`)
 
+## Aggregate regression and delegate context
+
+- None mapped for this selection.
 ## Explicit mapping gaps
 
 - `TRN-704` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.

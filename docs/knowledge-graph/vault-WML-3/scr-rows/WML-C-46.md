@@ -29,7 +29,7 @@ tags:
     "staticConformanceSection": "15.1.5",
     "changeSection": null
   },
-  "implementationStatus": "missing",
+  "implementationStatus": "partial",
   "ownerLayers": [
     "engine-wasm",
     "browser"

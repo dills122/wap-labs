@@ -7,7 +7,7 @@
 - Target: `WMLS-5`
 - Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
 - Compatibility floor: `strict-historical-observable-behavior`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
@@ -18,6 +18,7 @@
 - Selected work items: 6
 - Direct SCR rows: 28
 - Direct normative clauses: 376
+- Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 1
 - Work items with unmapped declared normative families: 2
 
@@ -47,6 +48,7 @@ Exit gates:
 - Direct SCR rows: 28 (21 `direct-test-linked`, 2 `gap-work-item-mapped`, 5 `provisional-non-normative-test-linked`)
 - Selected SCR parents: 31 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-069`, `WMLS-C-077`, `WMLS-C-079`, `WMLS-C-085`, `WMLS-C-087`, `WMLS-C-088`, `WMLS-C-089`, `WMLS-C-090`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`, `WMLS-C-111`)
 - Direct normative clauses: 69
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
 - Spec references: None
 - Follow-up work items: None
@@ -74,6 +76,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 17 (`WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`, `WMLS-C-077`, `WMLS-C-083`, `WMLS-C-084`, `WMLS-C-085`, `WMLS-C-086`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-105`, `WMLS-C-111`)
 - Direct normative clauses: 25
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
 - Spec references: None
 - Follow-up work items: None
@@ -100,6 +103,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 11 (`WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`, `WMLS-C-078`, `WMLS-C-079`, `WMLS-C-080`, `WMLS-C-081`, `WMLS-C-082`, `WMLS-C-087`, `WMLS-C-093`, `WMLS-C-094`)
 - Direct normative clauses: 20
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`, `RQ-WMLS-011`
 - Spec references: None
 - Follow-up work items: None
@@ -126,6 +130,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 81 (`WMLS-C-070`, `WMLSSL-014`, `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-018`, `WMLSSL-019`, `WMLSSL-020`, `WMLSSL-021`, `WMLSSL-022`, `WMLSSL-023`, `WMLSSL-024`, `WMLSSL-025`, `WMLSSL-026`, `WMLSSL-027`, `WMLSSL-028`, `WMLSSL-029`, `WMLSSL-030`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-046`, `WMLSSL-047`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`, `WMLSSL048`)
 - Direct normative clauses: 212
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
 - Spec references: None
 - Follow-up work items: None
@@ -155,6 +160,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 76 (`WMLS-C-073`, `WMLS-C-077`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-103`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-109`, `WMLS-C-110`, `WMLS-C-111`, `WMLSSL-014`, `WMLSSL-015`, `WMLSSL-016`, `WMLSSL-031`, `WMLSSL-032`, `WMLSSL-033`, `WMLSSL-034`, `WMLSSL-035`, `WMLSSL-036`, `WMLSSL-037`, `WMLSSL-038`, `WMLSSL-039`, `WMLSSL-040`, `WMLSSL-041`, `WMLSSL-042`, `WMLSSL-043`, `WMLSSL-044`, `WMLSSL-045`, `WMLSSL-047`, `WMLSSL-049`, `WMLSSL-050`, `WMLSSL-051`, `WMLSSL-052`, `WMLSSL-053`, `WMLSSL-054`, `WMLSSL-055`, `WMLSSL-056`, `WMLSSL-057`, `WMLSSL-058`, `WMLSSL-059`, `WMLSSL-060`, `WMLSSL-061`, `WMLSSL-062`, `WMLSSL-063`, `WMLSSL-064`, `WMLSSL-065`, `WMLSSL-066`, `WMLSSL-067`, `WMLSSL-068`, `WMLSSL-069`, `WMLSSL-070`, `WMLSSL-071`, `WMLSSL-072`, `WMLSSL-073`, `WMLSSL-074`, `WMLSSL-075`, `WMLSSL-076`, `WMLSSL-077`, `WMLSSL-078`, `WMLSSL-079`, `WMLSSL-080`, `WMLSSL-081`, `WMLSSL-082`, `WMLSSL-083`, `WMLSSL-084`, `WMLSSL-085`, `WMLSSL-086`, `WMLSSL-087`, `WMLSSL-088`, `WMLSSL-089`, `WMLSSL-090`, `WMLSSL-091`, `WMLSSL-092`, `WMLSSL-093`, `WMLSSL-094`, `WMLSSL048`)
 - Direct normative clauses: 50
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`, `RQ-WMLS-022`
 - Spec references: None
 - Follow-up work items: None
@@ -182,6 +188,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -2703,6 +2710,9 @@ Evidence commands:
   - Requirements: `RQ-WMLS-017`, `RQ-WMLS-018`, `RQ-WMLS-019`, `RQ-WMLS-020`, `RQ-WMLS-021`
   - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-UNAVAILABLE` (`error-policy`, `planned`)
 
+## Aggregate regression and delegate context
+
+- None mapped for this selection.
 ## Explicit mapping gaps
 
 - `WMLS-506` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.

@@ -41,7 +41,6 @@ tags:
   "workItems": [
     "WAE-601",
     "WML-201",
-    "WML-301",
     "WMLS-501"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"

@@ -45,8 +45,94 @@ pub(super) fn parse_card_nodes_xml(
 ) -> Result<Vec<Node>, String> {
     let mut out = Vec::new();
     let mut control_ids = ControlIdAllocator::default();
-    map_card_level_nodes(&card.children, &mut out, budget, 0, &mut control_ids)?;
+    let mut table_boundaries = TableBoundaryPlan::for_card(card);
+    map_card_level_nodes(
+        &card.children,
+        &mut out,
+        budget,
+        0,
+        &mut control_ids,
+        &mut table_boundaries,
+    )?;
     Ok(out)
+}
+
+#[derive(Clone, Copy)]
+struct TableBoundary {
+    before: bool,
+    after: bool,
+}
+
+struct TableBoundaryPlan {
+    boundaries: Vec<TableBoundary>,
+    next: usize,
+}
+
+impl TableBoundaryPlan {
+    fn for_card(card: &XmlElement) -> Self {
+        let mut content = Vec::new();
+        collect_significant_card_content(&card.children, &mut content);
+        let boundaries = content
+            .iter()
+            .enumerate()
+            .filter_map(|(index, item)| {
+                matches!(item, SignificantCardContent::Table).then_some(TableBoundary {
+                    before: index > 0,
+                    after: index + 1 < content.len(),
+                })
+            })
+            .collect();
+        Self {
+            boundaries,
+            next: 0,
+        }
+    }
+
+    fn take(&mut self) -> TableBoundary {
+        let boundary = self
+            .boundaries
+            .get(self.next)
+            .copied()
+            .expect("validated table traversal must match the boundary plan");
+        self.next = self.next.saturating_add(1);
+        boundary
+    }
+}
+
+enum SignificantCardContent {
+    Table,
+    Other,
+}
+
+fn collect_significant_card_content(nodes: &[XmlNode], content: &mut Vec<SignificantCardContent>) {
+    for node in nodes {
+        match node {
+            XmlNode::Text(text) if !text.trim().is_empty() => {
+                content.push(SignificantCardContent::Other);
+            }
+            XmlNode::Text(_) => {}
+            XmlNode::Element(element) if element.name == "table" => {
+                // A table is one significant card-content item. Its cells do not affect
+                // whether the table itself is first or last in the card.
+                content.push(SignificantCardContent::Table);
+            }
+            XmlNode::Element(element)
+                if matches!(element.name.as_str(), "onevent" | "timer" | "do") => {}
+            XmlNode::Element(element)
+                if matches!(
+                    element.name.as_str(),
+                    "br" | "img" | "anchor" | "a" | "input" | "select"
+                ) =>
+            {
+                content.push(SignificantCardContent::Other);
+            }
+            XmlNode::Element(element) => {
+                // Paragraphs, preformatted blocks, style/grouping elements, and
+                // forward-compatible wrappers are transparent for this card-wide test.
+                collect_significant_card_content(&element.children, content);
+            }
+        }
+    }
 }
 
 /// What a tag from the shared inline tag set contributed to its walker.
@@ -102,6 +188,7 @@ fn map_card_level_nodes(
     budget: &mut ParseBudget,
     depth: usize,
     control_ids: &mut ControlIdAllocator,
+    table_boundaries: &mut TableBoundaryPlan,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "card-node traversal")?;
     for node in nodes {
@@ -115,6 +202,25 @@ fn map_card_level_nodes(
                 }
             }
             XmlNode::Element(element) => {
+                if element.name == "table" {
+                    let boundary = table_boundaries.take();
+                    if boundary.before {
+                        out.push(Node::Break);
+                    }
+                    map_card_level_nodes(
+                        &element.children,
+                        out,
+                        budget,
+                        depth + 1,
+                        control_ids,
+                        table_boundaries,
+                    )?;
+                    if boundary.after {
+                        out.push(Node::Break);
+                    }
+                    continue;
+                }
+
                 if let Some(outcome) =
                     map_shared_inline_tag(element, budget, depth + 1, control_ids)?
                 {
@@ -127,8 +233,13 @@ fn map_card_level_nodes(
                 }
 
                 if element.name == "p" {
-                    let inline =
-                        map_inline_nodes(&element.children, budget, depth + 1, control_ids)?;
+                    let inline = map_inline_nodes(
+                        &element.children,
+                        budget,
+                        depth + 1,
+                        control_ids,
+                        table_boundaries,
+                    )?;
                     if !inline.is_empty() {
                         out.push(Node::Paragraph(inline));
                     }
@@ -137,7 +248,14 @@ fn map_card_level_nodes(
 
                 if element.name == "fieldset" {
                     validate_fieldset_element(element)?;
-                    map_card_level_nodes(&element.children, out, budget, depth + 1, control_ids)?;
+                    map_card_level_nodes(
+                        &element.children,
+                        out,
+                        budget,
+                        depth + 1,
+                        control_ids,
+                        table_boundaries,
+                    )?;
                     continue;
                 }
 
@@ -149,7 +267,14 @@ fn map_card_level_nodes(
                 }
 
                 budget.note_alternate_dtd_unknown(&element.name);
-                map_card_level_nodes(&element.children, out, budget, depth + 1, control_ids)?;
+                map_card_level_nodes(
+                    &element.children,
+                    out,
+                    budget,
+                    depth + 1,
+                    control_ids,
+                    table_boundaries,
+                )?;
             }
         }
     }
@@ -161,6 +286,7 @@ fn map_inline_nodes(
     budget: &mut ParseBudget,
     depth: usize,
     control_ids: &mut ControlIdAllocator,
+    table_boundaries: &mut TableBoundaryPlan,
 ) -> Result<Vec<InlineNode>, String> {
     let mut out = Vec::new();
     let mut pending_text = String::new();
@@ -171,6 +297,7 @@ fn map_inline_nodes(
         budget,
         depth,
         control_ids,
+        table_boundaries,
     )?;
     flush_pending_inline_text(&mut pending_text, &mut out);
     Ok(out)
@@ -183,6 +310,7 @@ fn map_inline_nodes_recursive(
     budget: &mut ParseBudget,
     depth: usize,
     control_ids: &mut ControlIdAllocator,
+    table_boundaries: &mut TableBoundaryPlan,
 ) -> Result<(), String> {
     budget.enter_scope(depth, "inline-node traversal")?;
     for node in nodes {
@@ -193,6 +321,28 @@ fn map_inline_nodes_recursive(
                 pending_text.push_str(text);
             }
             XmlNode::Element(element) => {
+                if element.name == "table" {
+                    let boundary = table_boundaries.take();
+                    flush_pending_inline_text(pending_text, out);
+                    if boundary.before {
+                        out.push(InlineNode::Break);
+                    }
+                    map_inline_nodes_recursive(
+                        &element.children,
+                        pending_text,
+                        out,
+                        budget,
+                        depth + 1,
+                        control_ids,
+                        table_boundaries,
+                    )?;
+                    flush_pending_inline_text(pending_text, out);
+                    if boundary.after {
+                        out.push(InlineNode::Break);
+                    }
+                    continue;
+                }
+
                 if let Some(outcome) =
                     map_shared_inline_tag(element, budget, depth + 1, control_ids)?
                 {
@@ -216,6 +366,7 @@ fn map_inline_nodes_recursive(
                         budget,
                         depth + 1,
                         control_ids,
+                        table_boundaries,
                     )?;
                     continue;
                 }
@@ -235,6 +386,7 @@ fn map_inline_nodes_recursive(
                     budget,
                     depth + 1,
                     control_ids,
+                    table_boundaries,
                 )?;
             }
         }

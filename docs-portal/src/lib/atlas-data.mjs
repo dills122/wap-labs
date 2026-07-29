@@ -421,6 +421,18 @@ function validateReferencesAndOrder(input, failures) {
           failures.push(`${clause.id}.directWorkItems references unknown work item ${workItemId}`);
         }
       }
+      for (const workItemId of clause.aggregateContextWorkItems ?? []) {
+        if (!workItemIds.has(workItemId)) {
+          failures.push(
+            `${clause.id}.aggregateContextWorkItems references unknown work item ${workItemId}`
+          );
+        }
+        if (clause.directWorkItems?.includes(workItemId)) {
+          failures.push(
+            `${clause.id}.${workItemId} cannot be both direct and aggregate context`
+          );
+        }
+      }
       if (clause.mapping.clauseImplementationStatus !== 'not-assessed') {
         assessedClauseCount += 1;
       }
@@ -482,6 +494,18 @@ function validateReferencesAndOrder(input, failures) {
         for (const workItemId of clause.directWorkItems ?? []) {
           if (!workItemIds.has(workItemId)) {
             failures.push(`${clause.id}.directWorkItems references unknown work item ${workItemId}`);
+          }
+        }
+        for (const workItemId of clause.aggregateContextWorkItems ?? []) {
+          if (!workItemIds.has(workItemId)) {
+            failures.push(
+              `${clause.id}.aggregateContextWorkItems references unknown work item ${workItemId}`
+            );
+          }
+          if (clause.directWorkItems?.includes(workItemId)) {
+            failures.push(
+              `${clause.id}.${workItemId} cannot be both direct and aggregate context`
+            );
           }
         }
       }

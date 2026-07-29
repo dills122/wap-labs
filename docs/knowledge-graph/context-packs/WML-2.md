@@ -7,7 +7,7 @@
 - Target: `WML-2`
 - Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
 - Compatibility floor: `strict-historical-observable-behavior`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
@@ -18,6 +18,7 @@
 - Selected work items: 5
 - Direct SCR rows: 76
 - Direct normative clauses: 302
+- Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 0
 
@@ -44,9 +45,10 @@ Exit gates:
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wml`
 - Existing tickets: `R0-01`
-- Direct SCR rows: 76 (32 `direct-test-linked`, 15 `gap-work-item-mapped`, 29 `optional-not-assessed`)
+- Direct SCR rows: 76 (33 `direct-test-linked`, 14 `gap-work-item-mapped`, 29 `optional-not-assessed`)
 - Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
 - Direct normative clauses: 178
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
 - Spec references: None
 - Follow-up work items: None
@@ -80,6 +82,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 13 (`WML-C-08`, `WML-C-09`, `WML-C-11`, `WML-C-14`, `WML-C-18`, `WML-C-21`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-35`, `WML-C-47`, `WML-C-53`)
 - Direct normative clauses: 30
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-011`
 - Spec references: None
 - Follow-up work items: None
@@ -112,6 +115,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 21 (`WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`, `WML-C-17`, `WML-C-19`, `WML-C-20`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-37`, `WML-C-39`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`)
 - Direct normative clauses: 68
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-004`, `RQ-RMK-006`, `RQ-RMK-007`, `RQ-RMK-009`, `RQ-RMK-010`, `RQ-WAE-006`, `RQ-WAE-018`
 - Spec references: None
 - Follow-up work items: None
@@ -150,6 +154,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
 - Direct normative clauses: 23
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
 - Spec references: None
 - Follow-up work items: None
@@ -179,6 +184,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 4 (`WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`)
 - Direct normative clauses: 3
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
 - Spec references: None
 - Follow-up work items: None
@@ -403,11 +409,11 @@ Evidence commands:
 - **WML-C-25** — card
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.5 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`, `engine-wasm/engine/src/runtime/card.rs#Card`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_enforces_card_event_timer_content_order` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_card_content_order_is_preserved_in_render_output` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/mod.rs#parse_wml`, `engine-wasm/engine/src/parser/wml_parser/nodes.rs#TableBoundaryPlan`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_enforces_card_event_timer_content_order` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_301_inserts_source_required_table_boundaries_at_card_content_edges` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges`), `engine-wasm/engine/src/engine_tests/wml_301_context_history.rs::wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation` (`cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation`)
   - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-201`, `WML-301`
-  - Assessment note: Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.
+  - Assessment note: Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.
 - **WML-C-26** — do
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.7 (SCR §15.1.5)
@@ -571,11 +577,11 @@ Evidence commands:
 - **WML-C-46** — table
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.8.5 (SCR §15.1.5)
-  - Assessment: `missing`; evidence `gap-work-item-mapped`
-  - Code: None; the evidence state remains explicit.
-  - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/validation.rs#validate_content_model`, `engine-wasm/engine/src/parser/wml_parser/nodes.rs#TableBoundaryPlan`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_203_validation.rs::wml_203_invalid_content_model_mutations_are_rejected_deterministically` (`cd engine-wasm/engine && cargo test wml_203_invalid_content_model_mutations_are_rejected_deterministically`), `engine-wasm/engine/src/engine_tests/wml_301_context_history.rs::wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation` (`cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation`)
   - Work items: `R0-01`, `R0-05`, `WML-201`
-  - Assessment note: Table structure, column normalization, alignment, and layout are not represented.
+  - Assessment note: WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.
 - **WML-C-47** — template
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.4 (SCR §15.1.5)
@@ -970,7 +976,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-46`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `planned`)
+  - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `implemented`)
 - **WML-CL-CONTEXT-SINGLE-SCOPE** — Store WML runtime state in one browser-context scope.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
@@ -2646,6 +2652,9 @@ Evidence commands:
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
   - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `implemented`)
 
+## Aggregate regression and delegate context
+
+- None mapped for this selection.
 ## Explicit mapping gaps
 
 - None

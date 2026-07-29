@@ -101,6 +101,25 @@ test('invalid cross-record references fail with the owning record', () => {
   assertValidationFailure(data, /CONF-1\.dependsOn references unknown sprint UNKNOWN-SPRINT/);
 });
 
+test('aggregate clause context requires a known, non-direct work item', () => {
+  const unknown = clone(baseline());
+  const unknownClause = unknown.clauseManifest.families
+    .flatMap((family) => family.clauses)
+    .find((clause) => clause.aggregateContextWorkItems?.length);
+  unknownClause.aggregateContextWorkItems = ['UNKNOWN-WORK-ITEM'];
+  assertValidationFailure(
+    unknown,
+    /aggregateContextWorkItems references unknown work item UNKNOWN-WORK-ITEM/
+  );
+
+  const overlapping = clone(baseline());
+  const overlappingClause = overlapping.clauseManifest.families
+    .flatMap((family) => family.clauses)
+    .find((clause) => clause.aggregateContextWorkItems?.length);
+  overlappingClause.directWorkItems = [...overlappingClause.aggregateContextWorkItems];
+  assertValidationFailure(overlapping, /cannot be both direct and aggregate context/);
+});
+
 test('profile completion gates require known profiles and conditional follow-ups', () => {
   const unknownProfile = clone(baseline());
   unknownProfile.program.sprints[7].profileCompletionGates[0].profile = 'unknown-profile';

@@ -26,6 +26,7 @@ const allowedRelations = new Set([
   'applied-before',
   'belongs-to',
   'contains',
+  'context-for',
   'covers-family',
   'depends-on',
   'effective-document',
@@ -148,6 +149,31 @@ for (const workItem of workItemNodes) {
       failures.push(`${workItem.key}: family ${family} cannot be both mapped and unmapped`);
     }
   }
+  const aggregateContextClauseEdges = graph.edges.filter(
+    (edge) =>
+      edge.relation === 'context-for' &&
+      edge.to === workItem.id &&
+      edge.from.startsWith('clause:')
+  );
+  if (
+    graph.summary.aggregateContextClauseCountsByWorkItem[workItem.key] !==
+    aggregateContextClauseEdges.length
+  ) {
+    failures.push(`${workItem.key}: aggregate-context clause summary count drift`);
+  }
+  const aggregateContextFamilies = [
+    ...new Set(
+      aggregateContextClauseEdges
+        .map((edge) => graph.nodes.find((node) => node.id === edge.from)?.properties.family)
+        .filter(Boolean)
+    )
+  ].sort((left, right) => left.localeCompare(right));
+  if (
+    JSON.stringify(graph.summary.aggregateContextClauseFamiliesByWorkItem[workItem.key]) !==
+    JSON.stringify(aggregateContextFamilies)
+  ) {
+    failures.push(`${workItem.key}: aggregate-context clause family summary drift`);
+  }
   const directScrRows = graph.nodes.filter(
     (node) =>
       node.type === 'scr-row' &&
@@ -186,7 +212,10 @@ if (
 
 for (const clause of graph.nodes.filter((node) => node.type === 'clause')) {
   const relations = graph.edges.filter((edge) => edge.from === clause.id);
-  for (const requiredRelation of ['planned-by', 'refines', 'sourced-from', 'verified-by']) {
+  if (!relations.some((edge) => ['planned-by', 'context-for'].includes(edge.relation))) {
+    failures.push(`${clause.id}: missing planned-by or context-for edge`);
+  }
+  for (const requiredRelation of ['refines', 'sourced-from', 'verified-by']) {
     if (!relations.some((edge) => edge.relation === requiredRelation)) {
       failures.push(`${clause.id}: missing ${requiredRelation} edge`);
     }
@@ -230,8 +259,8 @@ if (
   ) ||
   JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
     JSON.stringify({
-      'direct-test-linked': 32,
-      'gap-work-item-mapped': 15,
+      'direct-test-linked': 33,
+      'gap-work-item-mapped': 14,
       'optional-not-assessed': 29
     }) ||
   graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
@@ -240,8 +269,8 @@ if (
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
   !wml201Pack.includes('- Direct normative clauses: 178') ||
-  !wml201Pack.includes('32 `direct-test-linked`') ||
-  !wml201Pack.includes('15 `gap-work-item-mapped`') ||
+  !wml201Pack.includes('33 `direct-test-linked`') ||
+  !wml201Pack.includes('14 `gap-work-item-mapped`') ||
   !wml201Pack.includes('29 `optional-not-assessed`') ||
   !wml201Pack.includes('**WML-C-01**') ||
   !wml201Pack.includes('**WML-C-76**')
@@ -272,8 +301,16 @@ if (
   !wml301Pack.includes('### WML-301:') ||
   wml301Pack.includes('### WML-302:') ||
   !wml301Pack.includes('- Selected work items: 1') ||
-  !wml301Pack.includes('- Selected SCR parents: 11') ||
-  !wml301Pack.includes('- Direct normative clauses: 20') ||
+  !wml301Pack.includes('- Selected SCR parents: 7') ||
+  !wml301Pack.includes('- Direct normative clauses: 13') ||
+  !wml301Pack.includes('- Aggregate regression/delegate context clauses: 7') ||
+  !wml301Pack.includes('- Aggregate regression/delegate context: 7 (4 additional parents:') ||
+  !wml301Pack.includes('## Aggregate regression and delegate context') ||
+  !wml301Pack.includes('**WML-CL-CARD-TABLE-BOUNDARIES**') ||
+  !wml301Pack.includes('`WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `implemented`)') ||
+  !wml301Pack.includes('**WAE-CL-WML-LANGUAGE-DELEGATE**') ||
+  !wml301Pack.includes('**WAE-CL-WML-USER-AGENT-COMPOSITION**') ||
+  !wml301Pack.includes('**WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE**') ||
   !wml301Pack.includes('**WML-CL-CARD-ID-FRAGMENT**') ||
   !wml301Pack.includes('**WML-CL-HISTORY-STACK-MODEL**') ||
   !wml301Pack.includes('**WML-CL-HISTORY-DUPLICATE-PUSH**') ||
@@ -290,7 +327,7 @@ if (
   wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-301']
 ) {
   failures.push(
-    'WML-301 context rendering must expose its 20 source-audited context/history/navigation mappings and 11 selected parents without inferring implementation readiness'
+    'WML-301 context rendering must separate its 13 direct fixture-backed WML clauses from seven inherited regression/delegate clauses without inflating WAE completion'
   );
 }
 const wml302Pack = renderContextPack(wml3Graph, 'WML-302');

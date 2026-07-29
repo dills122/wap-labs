@@ -20,7 +20,7 @@ Status: Active
   - nine mandatory feature families
   - 712 effective source rows
   - 198 selected strict rows
-  - implementation audit: 40 implemented, 71 partial, 87 missing
+  - implementation audit: 41 implemented, 71 partial, 86 missing
   - all 198 selected rows have owner/work-item mappings
 - Important: `deep-extracted` describes review of the current WAP 2.0-heavy
   local corpus. It is not evidence that the WAP 1.2.1 target source set or
@@ -64,7 +64,7 @@ Status: Active
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 298 fixture-backed clauses assessed; 464 fixture plans remain unassessed
+  - 299 fixture-backed clauses assessed; 463 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 198 selected rows classified

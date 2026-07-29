@@ -397,10 +397,12 @@ Completed compliance follow-up ticket `A5-02` is archived in:
 - The WML-302 variable portion is complete: post-XML substitution, conversions/defaults,
   undefined and literal-dollar behavior, invalid-reference rejection, control commit,
   task snapshots, and go/prev/refresh setvar order have focused native/WASM/story evidence.
-- The WML-301 context/history portion is complete: request-shaped ordered history, duplicate
-  explicit accesses, context preservation/replacement, card-fragment fallback, and cross-deck
-  process order have focused native/WASM/browser/story evidence. WML-304 retains GET/POST
-  construction, postfield serialization, and POST replay; WML-305 retains native timer lifecycle.
+- The WML-301 direct runtime tranche is complete: request-shaped ordered history, duplicate explicit accesses,
+  context preservation/replacement, card-fragment fallback, cross-deck process order, and
+  source-required card/table boundaries have focused native/WASM/browser/story evidence.
+  WML-304 retains GET/POST construction and postfield serialization; replayable POST history is
+  the explicit A2 baton after A1. WML-305 retains native timer lifecycle. The aggregate WML-301
+  item remains in progress only for separately owned, not-assessed WAE delegate context.
 
 ### C5-05 Form controls and commit semantics completion
 

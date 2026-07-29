@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b621cf0dcb9fc256c7b2f4244ca2c332dc233332d1e9ccef310c371066992d2e"
+        "sha256": "094df802a3f5e3c36c04147c92c1770753f2c9d6a440cae25cdb9af399c1cdf7"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "15a035ce40030053ace3e23e4c050af1985ac715ff0a4d61970e440c6a150697"
+        "sha256": "427e92dde5d4e6fe76924b5dbc9cf874571fca7fc1dc81519513583fe029b724"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
+        "sha256": "312750697c1a4a294325a2ae93a8c6871dea63bdcdb4271b1e9a71f8334f51d0"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "5b3b3599aaa8dc57da87d5c189f57f64edbec1245c25de1f8b0e5cc59a72993e"
+        "sha256": "a85a09d985204f733cbb9834ef1826475446919896985bf0e72546625a47f3ac"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -97,6 +97,20 @@
         "wml"
       ]
     },
+    "aggregateContextClauseCountsByWorkItem": {
+      "WML-201": 0,
+      "WML-202": 0,
+      "WML-203": 0,
+      "WML-204": 0,
+      "WML-205": 0
+    },
+    "aggregateContextClauseFamiliesByWorkItem": {
+      "WML-201": [],
+      "WML-202": [],
+      "WML-203": [],
+      "WML-204": [],
+      "WML-205": []
+    },
     "directScrRowCountsByWorkItem": {
       "WML-201": 76,
       "WML-202": 0,
@@ -106,8 +120,8 @@
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WML-201": {
-        "direct-test-linked": 32,
-        "gap-work-item-mapped": 15,
+        "direct-test-linked": 33,
+        "gap-work-item-mapped": 14,
         "optional-not-assessed": 29
       },
       "WML-202": {},
@@ -143,8 +157,16 @@
           "R0-01",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "R0-01",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -184,8 +206,15 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -227,9 +256,19 @@
           "W1-04",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501",
           "WMLS-502"
+        ],
+        "directWorkItems": [
+          "W1-02",
+          "W1-04",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501",
+          "WMLS-502"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -2613,6 +2652,16 @@
           "WML-202",
           "WML-301"
         ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
+        ],
         "ownerLayers": [
           "engine-wasm"
         ],
@@ -2650,6 +2699,17 @@
           "WML-201",
           "WML-202",
           "WML-203",
+          "WML-301"
+        ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202",
+          "WML-203"
+        ],
+        "aggregateContextWorkItems": [
           "WML-301"
         ],
         "ownerLayers": [
@@ -2690,6 +2750,17 @@
           "R0-04",
           "WML-201",
           "WML-202",
+          "WML-301"
+        ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-03",
+          "R0-04",
+          "WML-201",
+          "WML-202"
+        ],
+        "aggregateContextWorkItems": [
           "WML-301"
         ],
         "ownerLayers": [
@@ -2774,6 +2845,17 @@
           "WML-203",
           "WML-301"
         ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202",
+          "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
+        ],
         "ownerLayers": [
           "engine-wasm"
         ],
@@ -2820,7 +2902,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9576,7 +9658,7 @@
       "title": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11763,7 +11845,7 @@
         ],
         "workItems": [
           "WML-201",
-          "WML-301",
+          "WAE-601",
           "R0-01"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
@@ -11818,7 +11900,6 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
@@ -13372,17 +13453,17 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.",
+        "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
             "symbol": "parse_wml"
           },
           {
-            "path": "engine-wasm/engine/src/runtime/card.rs",
-            "symbol": "Card"
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "TableBoundaryPlan"
           }
         ],
         "testEvidence": [
@@ -13392,9 +13473,14 @@
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
           },
           {
-            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
-            "test": "wml_202_card_content_order_is_preserved_in_render_output",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output"
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_301_inserts_source_required_table_boundaries_at_card_content_edges",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+            "test": "wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation",
+            "command": "cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation"
           }
         ],
         "ownerLayers": [
@@ -14749,11 +14835,31 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "missing",
-        "evidenceState": "gap-work-item-mapped",
-        "assessmentNote": "Table structure, column normalization, alignment, and layout are not represented.",
-        "implementationEvidence": [],
-        "testEvidence": [],
+        "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/validation.rs",
+            "symbol": "validate_content_model"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "TableBoundaryPlan"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+            "test": "wml_203_invalid_content_model_mutations_are_rejected_deterministically",
+            "command": "cd engine-wasm/engine && cargo test wml_203_invalid_content_model_mutations_are_rejected_deterministically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+            "test": "wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation",
+            "command": "cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"

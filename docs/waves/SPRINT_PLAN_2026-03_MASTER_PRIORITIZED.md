@@ -35,19 +35,21 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 40 implemented, 71 partial, and 87 missing parent rows; clause-level
-assessment is 288/762 after WML-301 closed 12 context/history/process-order clauses,
+is 41 implemented, 71 partial, and 86 missing parent rows; clause-level
+assessment is 299/762 after WML-301 closed 13 context/history/process-order/card-table clauses,
 WML-302 closed 18 newly implemented clauses,
 retained 2 already implemented shared clauses, WSP-801 directly closed its
 35-clause connectionless matrix, WSP-802 added 22 net assessed header clauses,
 WML-305 closed its 10 directly mapped timer clauses and completed parent row
-WML-C-48, and WML-304 added one net assessed request-intent clause while moving
-WML-C-14 from missing to partial.
+WML-C-48, WML-304 added one net assessed request-intent clause while moving
+WML-C-14 from missing to partial, and R0-06/WSP-805 added ten directly assessed
+request-serialization clauses without closing multipart part Content-Type or POST replay.
 
 The July 28 bug-fix, desktop, and private-preview merges add regression and release-readiness
-evidence without changing those canonical compliance counts. Project Atlas therefore remains at
-28 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 288/762 clauses assessed;
-the machine program and graph require no optimistic status edit for this checkpoint.
+evidence without changing unrelated compliance counts. Project Atlas reports
+28 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 299/762 clauses assessed;
+the WML-301 graph labels its seven inherited card/WAE clauses as aggregate context rather than direct closure,
+so the direct C1 tranche is complete while the aggregate item remains in progress.
 
 Use this order for new completion work:
 

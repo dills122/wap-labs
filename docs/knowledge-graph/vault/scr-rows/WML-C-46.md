@@ -50,11 +50,31 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "missing",
-  "evidenceState": "gap-work-item-mapped",
-  "assessmentNote": "Table structure, column normalization, alignment, and layout are not represented.",
-  "implementationEvidence": [],
-  "testEvidence": [],
+  "implementationStatus": "partial",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/validation.rs",
+      "symbol": "validate_content_model"
+    },
+    {
+      "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+      "symbol": "TableBoundaryPlan"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+      "test": "wml_203_invalid_content_model_mutations_are_rejected_deterministically",
+      "command": "cd engine-wasm/engine && cargo test wml_203_invalid_content_model_mutations_are_rejected_deterministically"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+      "test": "wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation",
+      "command": "cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation"
+    }
+  ],
   "ownerLayers": [
     "engine-wasm",
     "browser"

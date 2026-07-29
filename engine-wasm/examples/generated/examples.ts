@@ -3982,6 +3982,147 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 PLUS//EN\"\n  \"http://vendor.test/wml13-plus.dtd\">\n<wml>\n  <head>\n    <meta name=\"vendor-mode\" content=\"training\"/>\n  </head>\n  <card id=\"home\">\n    <p>\n      Before extension.\n      <vendor:panel data-mode=\"compact\">\n        Recovered extension content.\n        <a href=\"#proof\">Recovery proof</a>\n        <a href=\"http://fixtures.test/examples/wml205MissingTarget.wml\">Missing target</a>\n        <a href=\"http://fixtures.test/examples/wml202TemplateShadowing.wml\">Restricted target</a>\n      </vendor:panel>\n      After extension.\n    </p>\n  </card>\n  <card id=\"proof\">\n    <p>Recovered content stayed deterministic and navigable.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml301CardTableBoundaries",
+    "label": "WML-301 Card and Table Boundaries",
+    "description": "Exercises leading, middle, trailing, and adjacent tables across fragment navigation and BACK.",
+    "goal": "Verify WML 1.3 source-required card/table line boundaries without disturbing card order or history.",
+    "workItems": [
+      "WML-301"
+    ],
+    "specItems": [
+      "WML-CL-CARD-TABLE-BOUNDARIES",
+      "WML-CL-CARD-CONTENT-ORDER",
+      "WML-CL-CARD-ID-FRAGMENT",
+      "WML-CL-NAVIGATION-REFERENCE-MODEL"
+    ],
+    "testingAc": [
+      "Confirm a middle table has distinct content lines before and after it.",
+      "Confirm leading and trailing tables do not receive an extra outer boundary at the card edge.",
+      "Navigate through the table cards and use BACK to confirm the prior card is restored."
+    ],
+    "flows": [
+      {
+        "id": "card-table-boundaries-and-cross-card-navigation",
+        "title": "Card table boundaries remain stable across fragment navigation",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-301"
+        ],
+        "specItems": [
+          "WML-CL-CARD-TABLE-BOUNDARIES",
+          "WML-CL-CARD-CONTENT-ORDER",
+          "WML-CL-CARD-ID-FRAGMENT",
+          "WML-CL-NAVIGATION-REFERENCE-MODEL"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "middle",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Before",
+              "Middle table",
+              "After",
+              "Leading case"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "leading",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Leading table",
+                  "After leading",
+                  "Trailing case"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "trailing",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Before trailing",
+                  "Trailing table"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "adjacent",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "First table",
+                  "Second table"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "back"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "trailing",
+                "focusedLinkIndex": 0
+              },
+              "render": {
+                "textIncludes": [
+                  "Before trailing",
+                  "Trailing table"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"middle\">\n    <p>\n      Before\n      <table columns=\"1\"><tr><td>Middle table</td></tr></table>\n      After\n      <a href=\"#leading\">Leading case</a>\n    </p>\n  </card>\n  <card id=\"leading\">\n    <p>\n      <table columns=\"1\"><tr><td>Leading table</td></tr></table>\n      After leading\n      <a href=\"#trailing\">Trailing case</a>\n    </p>\n  </card>\n  <card id=\"trailing\">\n    <do type=\"accept\" label=\"Adjacent\"><go href=\"#adjacent\"/></do>\n    <p>\n      Before trailing\n      <table columns=\"1\"><tr><td>Trailing table</td></tr></table>\n    </p>\n  </card>\n  <card id=\"adjacent\">\n    <p>\n      <table columns=\"1\"><tr><td>First table</td></tr></table>\n      <table columns=\"1\"><tr><td>Second table</td></tr></table>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml301ContextHistoryFresh",
     "label": "WML-301 Fresh Context Target",
     "description": "Supporting newcontext destination for the WML-301 executable network story.",
