@@ -15,14 +15,16 @@ Purpose: define mandatory safety controls for executing WaveScript bytecode in `
 
 1. Verification before execution
 - Registered WAP-193 units are decoded and fully verified before external name lookup or bounded
-  execution. A structural failure in any function quarantines the complete unit.
+  execution. Verification includes reference domains, standard-library/function identifiers,
+  reachable instruction stack effects, branch-merge depth consistency, and return boundaries. A
+  structural failure in any function quarantines the complete unit.
 - Manual entry-point PCs explicitly select the legacy nine-opcode fixture decoder/VM; that
   compatibility lane is not normative WAP-193 evidence.
 - Empty/oversized units fail deterministically.
 
 2. Bounded execution
 - Instruction step limit.
-- Operand stack limit.
+- Operand stack limit (64 values for both the strict WAP verifier and legacy bounded fixture VM).
 - Call-depth limit (`max_call_depth` is the true maximum total call-frame
   count, including the root frame; the boundary check traps at
   `frames.len() >= max_call_depth`, not one frame later).

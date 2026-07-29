@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Interpret CodeSize as the exact byte count following the version and encoded size field.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

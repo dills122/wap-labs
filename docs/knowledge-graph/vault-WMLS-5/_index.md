@@ -15,7 +15,7 @@ Target: [[sprints/WMLS-5|WMLS-5]]
 ## Graph summary
 
 - Nodes: 846
-- Edges: 2869
+- Edges: 2959
 
 - `clause`: 324
 - `fixture`: 324

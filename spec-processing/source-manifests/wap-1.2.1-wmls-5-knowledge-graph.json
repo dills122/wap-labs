@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "e1347da6f8a1bbd6313c5d748ebce8cde564b9e2b5f266078a1b7c637222ed83"
+        "sha256": "bce3d73f3c918d1e7be3bac70be1bf6a5709305396923da9bb37350afc54d6a3"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,20 +25,20 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "ee125013711326aa9e1b10d7420050c29e4a3aa003ddaa4546a6e9feca76fac8"
+        "sha256": "23db3298aaa1dbe06f56e83a053fcc85558176024e2c30ee9f01680d2a8a2ef0"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "312750697c1a4a294325a2ae93a8c6871dea63bdcdb4271b1e9a71f8334f51d0"
+        "sha256": "9e7a2a3b95ac5b864a613053136010dcc87fee448f01bbd8d478345ddb891e19"
       },
       "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json": {
-        "sha256": "43a900970f32178860d30ab76e211cbe4a2e1d8cb75cf80494196324703a69a8"
+        "sha256": "c7974dc4adf53825edd1ddaa263021757e1898f78b924f1a6527670d94ab6881"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 846,
-    "edgeCount": 2869,
+    "edgeCount": 2959,
     "nodesByType": {
       "clause": 324,
       "fixture": 324,
@@ -57,12 +57,12 @@
       "applied-before": 7,
       "belongs-to": 127,
       "contains": 6,
-      "covers-family": 9,
+      "covers-family": 10,
       "depends-on": 4,
       "effective-document": 11,
       "maps-to": 533,
       "owned-by": 15,
-      "planned-by": 516,
+      "planned-by": 605,
       "refines": 943,
       "relates-to": 9,
       "requires-family": 4,
@@ -72,9 +72,9 @@
       "verified-by": 324
     },
     "directClauseCountsByWorkItem": {
-      "WMLS-501": 69,
-      "WMLS-502": 25,
-      "WMLS-503": 20,
+      "WMLS-501": 83,
+      "WMLS-502": 59,
+      "WMLS-503": 38,
       "WMLS-504": 212,
       "WMLS-505": 50,
       "WMLS-506": 0
@@ -82,7 +82,8 @@
     "directClauseFamiliesByWorkItem": {
       "WMLS-501": [
         "wae",
-        "wmlscript"
+        "wmlscript",
+        "wmlscript-libraries"
       ],
       "WMLS-502": [
         "wae",
@@ -128,9 +129,9 @@
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WMLS-501": {
-        "direct-test-linked": 21,
+        "direct-test-linked": 22,
         "gap-work-item-mapped": 2,
-        "provisional-non-normative-test-linked": 5
+        "provisional-non-normative-test-linked": 4
       },
       "WMLS-502": {},
       "WMLS-503": {},
@@ -630,8 +631,10 @@
         "obligationSynopsis": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -668,6 +671,7 @@
         "workItems": [
           "W1-02",
           "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
@@ -744,6 +748,7 @@
         "obligationSynopsis": "Decode every defined bit, byte, signed, unsigned, multi-byte integer, and float32 field type with its specified width and representation.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -778,6 +783,7 @@
         "obligationSynopsis": "Decode multi-byte integers and bit fields in most-significant-first network order.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -813,8 +819,10 @@
         "obligationSynopsis": "Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -850,6 +858,7 @@
         "workItems": [
           "W1-02",
           "W1-04",
+          "W1-05",
           "WMLS-501",
           "WMLS-502"
         ],
@@ -921,6 +930,7 @@
         "obligationSynopsis": "Interpret CodeSize as the exact byte count following the version and encoded size field.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -955,6 +965,7 @@
         "obligationSynopsis": "Decode the version byte as major-minus-one and minor nibbles, with effective version 1.1 encoded as 0x01.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1028,6 +1039,7 @@
         "obligationSynopsis": "Interpret encoded character-set identities as IANA MIBenum values.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1098,6 +1110,7 @@
         "obligationSynopsis": "Interpret encoded string lengths as byte counts in the declared transfer encoding rather than character counts.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1133,8 +1146,10 @@
         "obligationSynopsis": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -1170,6 +1185,7 @@
         "workItems": [
           "W1-02",
           "W1-04",
+          "W1-05",
           "WMLS-501",
           "WMLS-502"
         ],
@@ -1207,6 +1223,7 @@
         "obligationSynopsis": "Preserve embedded null characters inside length-delimited WMLScript string constants.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1242,7 +1259,12 @@
         "obligationSynopsis": "Reject an indexed constant load that references outside the constant pool or an unsupported constant type.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -1278,8 +1300,10 @@
         "obligationSynopsis": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -1313,6 +1337,7 @@
         "obligationSynopsis": "Decode signed integer constants in the selected 8-bit, 16-bit, or 32-bit two-complement representation.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1348,6 +1373,7 @@
         "obligationSynopsis": "Use the constant-pool character-set MIBenum for string constants encoded with the external character definition.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1382,6 +1408,7 @@
         "obligationSynopsis": "Decode exactly NumberOfConstants sequential entries and assign zero-based indexes by pool order.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1417,6 +1444,7 @@
         "obligationSynopsis": "Decode length-prefixed UTF-8 and externally encoded string constants without requiring a terminating null octet.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1451,6 +1479,7 @@
         "obligationSynopsis": "Decode constant types 0 through 6 as signed integers, float32, UTF-8 string, empty string, or externally encoded string, and reject reserved types.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -1486,8 +1515,10 @@
         "obligationSynopsis": "Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -1522,7 +1553,12 @@
         "obligationSynopsis": "Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -1842,8 +1878,10 @@
         "obligationSynopsis": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2017,8 +2055,10 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Abort the current WMLScript program on a fatal error and signal failure to the calling user agent.",
         "workItems": [
+          "W1-02",
           "W1-06",
           "W1-07",
+          "WMLS-501",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -2055,9 +2095,14 @@
         "obligationSynopsis": "Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.",
         "workItems": [
           "W1-02",
+          "W1-03",
+          "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
+          "WMLS-502",
+          "WMLS-503",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -2092,8 +2137,10 @@
         "obligationLevel": "required",
         "obligationSynopsis": "Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.",
         "workItems": [
+          "W1-02",
           "W1-06",
           "W1-07",
+          "WMLS-501",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -2201,7 +2248,12 @@
         "obligationSynopsis": "Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2210,7 +2262,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2237,8 +2289,10 @@
         "obligationSynopsis": "Implement every local, library, and URL call opcode variant with its index widths, argument count, stack effect, result, and errors.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2276,6 +2330,7 @@
           "W0-08",
           "W1-02",
           "W1-03",
+          "W1-05",
           "WMLS-501",
           "WMLS-503"
         ],
@@ -2314,6 +2369,7 @@
         "obligationSynopsis": "Decode the declared function count, external function-name table, and exactly that many function records.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -2348,6 +2404,7 @@
         "obligationSynopsis": "Assign zero-based function indexes by function-pool order for local call instructions.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -2383,7 +2440,12 @@
         "obligationSynopsis": "Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2418,7 +2480,12 @@
         "obligationSynopsis": "Complete bytecode integrity verification before executing the compilation unit.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2453,7 +2520,12 @@
         "obligationSynopsis": "Require the declared bytecode size to match the available compilation-unit bytes.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2489,9 +2561,14 @@
         "obligationSynopsis": "Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.",
         "workItems": [
           "W1-02",
+          "W1-03",
+          "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
+          "WMLS-502",
+          "WMLS-503",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -2528,7 +2605,12 @@
         "obligationSynopsis": "Require every declared function code size to fit wholly inside the compilation unit.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2575,7 +2657,12 @@
         "obligationSynopsis": "Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2613,7 +2700,12 @@
         "obligationSynopsis": "Require constant, pragma, function-name, and function counts to match the records encoded in their pools.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2649,7 +2741,12 @@
         "obligationSynopsis": "Require matching major bytecode versions and a bytecode minor version no greater than the interpreter-supported minor version.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2824,6 +2921,7 @@
         "workItems": [
           "W1-02",
           "W1-04",
+          "W1-05",
           "WMLS-501",
           "WMLS-502"
         ],
@@ -2862,8 +2960,10 @@
         "obligationSynopsis": "Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -2897,6 +2997,7 @@
         "obligationSynopsis": "Decode multi-byte integers from seven-bit groups whose high bit is set on every non-final octet and clear on the final octet.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -2931,6 +3032,7 @@
         "obligationSynopsis": "Combine multi-byte integer octets and value bits in most-significant-group-first order.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -2965,6 +3067,7 @@
         "obligationSynopsis": "Require unused value bits in the initial multi-byte integer octet to be zero.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -3000,9 +3103,12 @@
         "obligationSynopsis": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.",
         "workItems": [
           "W1-02",
+          "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
+          "WMLS-502",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -3039,9 +3145,12 @@
         "obligationSynopsis": "Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.",
         "workItems": [
           "W1-02",
+          "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
+          "WMLS-502",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -3154,8 +3263,10 @@
         "obligationSynopsis": "Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3189,7 +3300,10 @@
         "obligationSynopsis": "Inspect the evaluated operand type without performing an automatic data conversion.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3366,6 +3480,7 @@
           "W0-08",
           "W1-02",
           "W1-03",
+          "W1-05",
           "WMLS-501",
           "WMLS-503"
         ],
@@ -3403,6 +3518,7 @@
         "obligationSynopsis": "Decode exactly NumberOfPragmas sequential pragma records.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -3437,6 +3553,7 @@
         "obligationSynopsis": "Require access and meta pragma indexes to reference string constants of the permitted constant types.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -3471,6 +3588,7 @@
         "obligationSynopsis": "Decode pragma types 0 through 3 as access domain, access path, user-agent property, or user-agent property with scheme, and reject reserved types.",
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "ownerLayers": [
@@ -3542,8 +3660,10 @@
         "obligationSynopsis": "Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3579,6 +3699,7 @@
         "workItems": [
           "W1-02",
           "W1-04",
+          "W1-05",
           "WMLS-501",
           "WMLS-502"
         ],
@@ -3617,7 +3738,12 @@
         "obligationSynopsis": "Validate every constant index and required constant type before loading or using it.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3653,7 +3779,12 @@
         "obligationSynopsis": "Validate called function, library, URL, and argument-count references before transferring control.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3689,7 +3820,12 @@
         "obligationSynopsis": "Require every taken jump target to fall on an instruction boundary within the current function.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3734,7 +3870,12 @@
         "obligationSynopsis": "Check operand availability for each instruction before applying its stack effect.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3743,7 +3884,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3770,7 +3911,12 @@
         "obligationSynopsis": "Validate every variable index against the current function frame before reading or writing it.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3806,8 +3952,10 @@
         "obligationSynopsis": "Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -3842,9 +3990,12 @@
         "obligationSynopsis": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.",
         "workItems": [
           "W1-02",
+          "W1-04",
+          "W1-05",
           "W1-06",
           "W1-07",
           "WMLS-501",
+          "WMLS-502",
           "WMLS-505"
         ],
         "ownerLayers": [
@@ -3854,7 +4005,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4245,7 +4396,12 @@
         "obligationSynopsis": "Reject a variable instruction whose index is outside the current function argument-and-local variable range.",
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4281,8 +4437,10 @@
         "obligationSynopsis": "Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.",
         "workItems": [
           "W1-02",
+          "W1-04",
           "W1-05",
-          "WMLS-501"
+          "WMLS-501",
+          "WMLS-502"
         ],
         "ownerLayers": [
           "engine-wasm"
@@ -4719,6 +4877,7 @@
         "obligationSynopsis": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -4727,7 +4886,7 @@
         "requirementIds": [
           "RQ-WMLS-022"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4754,6 +4913,7 @@
         "obligationSynopsis": "Map the dialogs standard library to encoded library identifier 5.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -4763,7 +4923,7 @@
           "RQ-WMLS-017",
           "RQ-WMLS-022"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5036,6 +5196,7 @@
         "obligationSynopsis": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -5046,7 +5207,7 @@
           "RQ-WMLS-012",
           "RQ-WMLS-014"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5143,6 +5304,7 @@
         "obligationSynopsis": "Map the float standard library to encoded library identifier 1.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -5153,7 +5315,7 @@
           "RQ-WMLS-014",
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6309,6 +6471,7 @@
         "obligationSynopsis": "Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -6317,7 +6480,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6514,6 +6677,7 @@
         "obligationSynopsis": "Map the lang standard library to encoded library identifier 0.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -6523,7 +6687,7 @@
           "RQ-WMLS-013",
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8336,6 +8500,7 @@
         "obligationSynopsis": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -8344,7 +8509,7 @@
         "requirementIds": [
           "RQ-WMLS-015"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8609,6 +8774,7 @@
         "obligationSynopsis": "Map the string standard library to encoded library identifier 2.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -8618,7 +8784,7 @@
           "RQ-WMLS-015",
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9650,6 +9816,7 @@
         "obligationSynopsis": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -9658,7 +9825,7 @@
         "requirementIds": [
           "RQ-WMLS-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10637,6 +10804,7 @@
         "obligationSynopsis": "Map the url standard library to encoded library identifier 3.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -10646,7 +10814,7 @@
           "RQ-WMLS-016",
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11257,6 +11425,7 @@
         "obligationSynopsis": "Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -11265,7 +11434,7 @@
         "requirementIds": [
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11580,6 +11749,7 @@
         "obligationSynopsis": "Map the wmlbrowser standard library to encoded library identifier 4.",
         "workItems": [
           "W1-05",
+          "WMLS-501",
           "WMLS-504"
         ],
         "ownerLayers": [
@@ -11588,7 +11758,7 @@
         "requirementIds": [
           "RQ-WMLS-017"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12870,7 +13040,7 @@
       "title": "Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13374,7 +13544,7 @@
       "title": "Check operand availability for each instruction before applying its stack effect.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Check operand availability for each instruction before applying its stack effect.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13410,7 +13580,7 @@
       "title": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13650,7 +13820,7 @@
       "title": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13662,7 +13832,7 @@
       "title": "Map the dialogs standard library to encoded library identifier 5.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the dialogs standard library to encoded library identifier 5.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13758,7 +13928,7 @@
       "title": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13794,7 +13964,7 @@
       "title": "Map the float standard library to encoded library identifier 1.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the float standard library to encoded library identifier 1.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14142,7 +14312,7 @@
       "title": "Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14214,7 +14384,7 @@
       "title": "Map the lang standard library to encoded library identifier 0.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the lang standard library to encoded library identifier 0.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14802,7 +14972,7 @@
       "title": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14898,7 +15068,7 @@
       "title": "Map the string standard library to encoded library identifier 2.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the string standard library to encoded library identifier 2.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -15210,7 +15380,7 @@
       "title": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -15558,7 +15728,7 @@
       "title": "Map the url standard library to encoded library identifier 3.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the url standard library to encoded library identifier 3.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -15774,7 +15944,7 @@
       "title": "Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -15882,7 +16052,7 @@
       "title": "Map the wmlbrowser standard library to encoded library identifier 4.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map the wmlbrowser standard library to encoded library identifier 4.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -17252,7 +17422,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17264,7 +17434,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17284,6 +17454,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17316,7 +17487,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17328,7 +17499,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17348,6 +17519,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17380,7 +17552,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17392,7 +17564,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17412,6 +17584,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17444,7 +17617,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17456,7 +17629,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17476,6 +17649,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17508,7 +17682,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17520,7 +17694,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17540,6 +17714,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17572,7 +17747,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17584,7 +17759,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17604,6 +17779,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17636,7 +17812,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17648,7 +17824,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17668,6 +17844,7 @@
         ],
         "workItems": [
           "W1-02",
+          "W1-05",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -17700,7 +17877,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17712,7 +17889,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17732,7 +17909,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -17764,7 +17944,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17776,7 +17956,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17796,7 +17976,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -17828,7 +18011,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17840,7 +18023,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17860,7 +18043,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -17892,7 +18078,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17904,7 +18090,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17924,7 +18110,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -17956,7 +18145,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -17968,7 +18157,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -17988,7 +18177,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18020,7 +18212,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18032,7 +18224,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18052,7 +18244,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18084,7 +18279,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18096,7 +18291,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18116,7 +18311,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18148,7 +18346,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18160,7 +18358,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18180,7 +18378,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18212,7 +18413,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18224,7 +18425,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18244,7 +18445,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18276,7 +18480,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18288,7 +18492,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18308,7 +18512,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18340,7 +18547,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18352,7 +18559,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18372,7 +18579,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18404,7 +18614,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18416,7 +18626,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18436,7 +18646,10 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18468,7 +18681,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18478,9 +18691,15 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct pre-execution library-domain, whole-function stack, return, reachability, and recovery evidence; execution semantics remain deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18500,7 +18719,12 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18532,7 +18756,7 @@
         "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -18542,9 +18766,15 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct standard-library/function-index and reachable stack-validity evidence; remaining URL/access and execution behavior is deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -18564,7 +18794,12 @@
         ],
         "workItems": [
           "W1-02",
-          "WMLS-501"
+          "W1-03",
+          "W1-04",
+          "W1-05",
+          "WMLS-501",
+          "WMLS-502",
+          "WMLS-503"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
       }
@@ -18617,14 +18852,22 @@
           "classCProfile": "required-by-class-c-client-mcf",
           "enhancementMayReplaceStrictBehavior": false
         },
-        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "reviewState": "source-extracted-class-c-applied-direct-test-linked",
         "implementationStatus": "partial",
-        "evidenceState": "provisional-non-normative-test-linked",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Source-pinned WAP units now prove fatal stack-underflow integrity handling, resource-class stack overflow, invocation abort, stable trace serialization, and recovery. Other chapter 12 fatal cases remain open.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_script_types.rs",
             "symbol": "ScriptExecutionOutcome"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "WapDecodeError"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "execute_wap_script_ref_call"
           }
         ],
         "testEvidence": [
@@ -18632,6 +18875,18 @@
             "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
             "test": "vm_trap_error_category_matrix_is_explicit",
             "limitation": "The deterministic local taxonomy is not yet mapped exhaustively to WAP-193 chapter 12 outcomes."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+            "limitation": "Direct evidence for stack underflow/overflow, abort, trace, and recovery only; the remaining fatal matrix is deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_library_and_dataflow_verification_matches_native",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM serialization parity for the covered fatal stack cases."
           }
         ],
         "ownerLayers": [
@@ -18644,6 +18899,7 @@
           "WMLS-501"
         ],
         "workItems": [
+          "W1-02",
           "W1-06",
           "W1-07",
           "WMLS-501",
@@ -18930,11 +19186,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -18953,11 +19210,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -18976,11 +19234,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -18999,11 +19258,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -19022,11 +19282,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -19045,11 +19306,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -19068,11 +19330,12 @@
           "documentId": "WAP-194-WMLScriptLibraries",
           "staticConformanceSection": "12.5"
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
@@ -20931,13 +21194,18 @@
       "type": "work-item",
       "title": "Complete bytecode decoder and structural verifier",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "qa"
         ],
         "sourceFamilies": [
-          "wmlscript"
+          "wmlscript",
+          "wmlscript-libraries"
+        ],
+        "notes": [
+          "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work.",
+          "B2 is ready to implement WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
         ],
         "scrMatrix": {
           "family": "wmlscript",
@@ -20947,14 +21215,17 @@
           "W1-02"
         ],
         "outputs": [
-          "Complete bytecode decoder and structural verifier"
+          "Complete bytecode decoder and structural verifier",
+          "Additive standard-library index and whole-function stack-dataflow verifier closure"
         ],
         "acceptance": [
           "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-          "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+          "pnpm test:story WMLS-501"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -21887,6 +22158,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -22188,6 +22468,15 @@
       "from": "clause:WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -22688,6 +22977,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -22877,6 +23175,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS|refines|scr-row:WMLS-C-098",
       "from": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
       "relation": "refines",
@@ -22926,6 +23242,15 @@
       "from": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -23228,6 +23553,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -23286,6 +23620,24 @@
       "from": "clause:WMLSCRIPT-CL-CONTROL-FLOW-TARGETS",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-CONTROL-FLOW-TARGETS|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-CONTROL-FLOW-TARGETS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-CONTROL-FLOW-TARGETS|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-CONTROL-FLOW-TARGETS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -23813,6 +24165,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -24047,6 +24408,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL|planned-by|work-item:WMLS-505",
       "from": "clause:WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL",
       "relation": "planned-by",
@@ -24110,6 +24480,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|planned-by|work-item:WMLS-505",
       "from": "clause:WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX",
       "relation": "planned-by",
@@ -24168,6 +24556,15 @@
       "from": "clause:WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -24344,6 +24741,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES|refines|scr-row:WMLS-C-096",
       "from": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
       "relation": "refines",
@@ -24393,6 +24808,15 @@
       "from": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -24650,6 +25074,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES|refines|scr-row:WMLS-C-094",
       "from": "clause:WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES",
       "relation": "refines",
@@ -24704,6 +25146,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION|refines|scr-row:WMLS-C-107",
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION",
       "relation": "refines",
@@ -24753,6 +25213,24 @@
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -24816,6 +25294,24 @@
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -24893,6 +25389,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES|refines|scr-row:WMLS-C-094",
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES",
       "relation": "refines",
@@ -24951,6 +25465,24 @@
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -25118,6 +25650,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS|refines|scr-row:WMLS-C-092",
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS",
       "relation": "refines",
@@ -25194,6 +25744,24 @@
       "from": "clause:WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -25532,6 +26100,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -25730,6 +26307,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX|planned-by|work-item:WMLS-505",
       "from": "clause:WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX",
       "relation": "planned-by",
@@ -25797,6 +26383,15 @@
       "from": "clause:WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -26000,6 +26595,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -26049,6 +26653,15 @@
       "from": "clause:WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -26585,6 +27198,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX|refines|scr-row:WMLS-C-069",
       "from": "clause:WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX",
       "relation": "refines",
@@ -26729,6 +27351,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY|refines|scr-row:WMLS-C-098",
       "from": "clause:WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY",
       "relation": "refines",
@@ -26787,6 +27427,24 @@
       "from": "clause:WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -26855,6 +27513,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY|refines|scr-row:WMLS-C-095",
       "from": "clause:WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY",
       "relation": "refines",
@@ -26913,6 +27589,24 @@
       "from": "clause:WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -27062,6 +27756,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY|refines|scr-row:WMLS-C-097",
       "from": "clause:WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY",
       "relation": "refines",
@@ -27111,6 +27823,15 @@
       "from": "clause:WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -27174,6 +27895,15 @@
       "from": "clause:WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -27836,6 +28566,24 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS|planned-by|work-item:WMLS-503",
+      "from": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS|refines|scr-row:WMLS-C-097",
       "from": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS",
       "relation": "refines",
@@ -27885,6 +28633,15 @@
       "from": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX|planned-by|work-item:WMLS-502",
+      "from": "clause:WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -29645,6 +30402,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -29703,6 +30469,15 @@
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-022",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -30149,6 +30924,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -30324,6 +31108,15 @@
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-017",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -33200,6 +33993,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -33483,6 +34285,15 @@
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-017",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -37052,6 +37863,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -37425,6 +38245,15 @@
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-017",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -39968,6 +40797,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -41291,6 +42129,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER",
       "relation": "planned-by",
@@ -42137,6 +42984,15 @@
       ]
     },
     {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS|planned-by|work-item:WMLS-504",
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS",
       "relation": "planned-by",
@@ -42618,6 +43474,15 @@
       "from": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-017",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER|planned-by|work-item:WMLS-501",
+      "from": "clause:WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -44381,6 +45246,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-095|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-095",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-095|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-095",
       "relation": "sourced-from",
@@ -44404,6 +45279,16 @@
       "from": "scr-row:WMLS-C-096",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-096|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-096",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44439,6 +45324,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-097|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-097",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-097|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-097",
       "relation": "sourced-from",
@@ -44462,6 +45357,16 @@
       "from": "scr-row:WMLS-C-098",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-098|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-098",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44497,6 +45402,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-099|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-099",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-099|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-099",
       "relation": "sourced-from",
@@ -44520,6 +45435,16 @@
       "from": "scr-row:WMLS-C-100",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-100|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-100",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44555,6 +45480,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-101|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-101",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-101|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-101",
       "relation": "sourced-from",
@@ -44578,6 +45513,16 @@
       "from": "scr-row:WMLS-C-102",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-102|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-102",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44613,6 +45558,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-103|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-103",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-103|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-103",
       "relation": "sourced-from",
@@ -44636,6 +45591,16 @@
       "from": "scr-row:WMLS-C-104",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-104|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-104",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44671,6 +45636,16 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-105|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-105",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-105|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-105",
       "relation": "sourced-from",
@@ -44694,6 +45669,16 @@
       "from": "scr-row:WMLS-C-106",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-106|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-106",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -44729,6 +45714,26 @@
       ]
     },
     {
+      "id": "scr-row:WMLS-C-107|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-107",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-107|planned-by|work-item:WMLS-503",
+      "from": "scr-row:WMLS-C-107",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLS-C-107|sourced-from|source-document:WAP-193_101-WMLScript",
       "from": "scr-row:WMLS-C-107",
       "relation": "sourced-from",
@@ -44752,6 +45757,26 @@
       "from": "scr-row:WMLS-C-108",
       "relation": "planned-by",
       "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-108|planned-by|work-item:WMLS-502",
+      "from": "scr-row:WMLS-C-108",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-502",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLS-C-108|planned-by|work-item:WMLS-503",
+      "from": "scr-row:WMLS-C-108",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-503",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
@@ -45034,6 +46059,15 @@
       ]
     },
     {
+      "id": "scr-row:WMLSSL-024|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-024",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLSSL-024|planned-by|work-item:WMLS-504",
       "from": "scr-row:WMLSSL-024",
       "relation": "planned-by",
@@ -45047,6 +46081,15 @@
       "from": "scr-row:WMLSSL-025",
       "relation": "belongs-to",
       "to": "source-family:wmlscript-libraries",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLSSL-025|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-025",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -45070,6 +46113,15 @@
       ]
     },
     {
+      "id": "scr-row:WMLSSL-026|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-026",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLSSL-026|planned-by|work-item:WMLS-504",
       "from": "scr-row:WMLSSL-026",
       "relation": "planned-by",
@@ -45083,6 +46135,15 @@
       "from": "scr-row:WMLSSL-027",
       "relation": "belongs-to",
       "to": "source-family:wmlscript-libraries",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLSSL-027|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-027",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -45106,6 +46167,15 @@
       ]
     },
     {
+      "id": "scr-row:WMLSSL-028|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-028",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLSSL-028|planned-by|work-item:WMLS-504",
       "from": "scr-row:WMLSSL-028",
       "relation": "planned-by",
@@ -45124,6 +46194,15 @@
       ]
     },
     {
+      "id": "scr-row:WMLSSL-029|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-029",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "scr-row:WMLSSL-029|planned-by|work-item:WMLS-504",
       "from": "scr-row:WMLSSL-029",
       "relation": "planned-by",
@@ -45137,6 +46216,15 @@
       "from": "scr-row:WMLSSL-030",
       "relation": "belongs-to",
       "to": "source-family:wmlscript-libraries",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WMLSSL-030|planned-by|work-item:WMLS-501",
+      "from": "scr-row:WMLSSL-030",
+      "relation": "planned-by",
+      "to": "work-item:WMLS-501",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -46713,6 +47801,15 @@
       "from": "work-item:WMLS-501",
       "relation": "covers-family",
       "to": "source-family:wmlscript",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WMLS-501|covers-family|source-family:wmlscript-libraries",
+      "from": "work-item:WMLS-501",
+      "relation": "covers-family",
+      "to": "source-family:wmlscript-libraries",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

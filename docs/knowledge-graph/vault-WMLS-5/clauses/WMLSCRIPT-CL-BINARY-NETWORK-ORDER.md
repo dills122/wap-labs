@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode multi-byte integers and bit fields in most-significant-first network order.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

@@ -40,6 +40,63 @@
           }
         }
       ]
+    },
+    {
+      "id": "verifier-failure-and-recovery",
+      "title": "A fatal verifier failure is stable and a replacement invocation recovers",
+      "workItems": ["WMLS-501", "W1-02"],
+      "specItems": ["RQ-WMLS-008", "RQ-WMLS-009", "RQ-WMLS-010"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "lastScriptExecutionOk": null,
+          "lastScriptExecutionTrap": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 2,
+              "lastScriptExecutionOk": false,
+              "lastScriptExecutionTrap": "wap decode: stack underflow in function 0 at pc=0 (required=1, available=0)"
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_TRAP"],
+            "statusIncludes": "stack underflow"
+          }
+        },
+        {
+          "action": { "type": "key", "key": "up" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "up" },
+          "expect": { "state": { "activeCardId": "home", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "focusedLinkIndex": 0,
+              "lastScriptExecutionOk": true,
+              "lastScriptExecutionTrap": null
+            },
+            "traceKinds": ["SCRIPT_TRAP", "ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        }
+      ]
     }
   ]
 }

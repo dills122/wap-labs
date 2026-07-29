@@ -18,6 +18,8 @@ tags:
 - `maps-to` → [[requirements/RQ-WMLS-008|RQ-WMLS-008]]
 - `maps-to` → [[requirements/RQ-WMLS-009|RQ-WMLS-009]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
+- `planned-by` → [[work-items/WMLS-503|WMLS-503]]
 - `refines` → [[scr-rows/WMLS-C-097|WMLS-C-097]]
 - `refines` → [[scr-rows/WMLS-C-108|WMLS-C-108]]
 - `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
@@ -43,7 +45,12 @@ tags:
   "obligationSynopsis": "Reject a variable instruction whose index is outside the current function argument-and-local variable range.",
   "workItems": [
     "W1-02",
-    "WMLS-501"
+    "W1-03",
+    "W1-04",
+    "W1-05",
+    "WMLS-501",
+    "WMLS-502",
+    "WMLS-503"
   ],
   "ownerLayers": [
     "engine-wasm"

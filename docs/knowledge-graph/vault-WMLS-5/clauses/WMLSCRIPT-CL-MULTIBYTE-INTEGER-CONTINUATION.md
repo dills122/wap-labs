@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode multi-byte integers from seven-bit groups whose high bit is set on every non-final octet and clear on the final octet.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

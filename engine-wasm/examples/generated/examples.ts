@@ -2471,17 +2471,20 @@ export const EXAMPLES: HostExample[] = [
     "workItems": [
       "W0-01",
       "W0-03",
+      "W1-02",
       "WMLS-501"
     ],
     "specItems": [
       "RQ-WMLS-001",
       "RQ-WMLS-008",
-      "RQ-WMLS-009"
+      "RQ-WMLS-009",
+      "RQ-WMLS-010"
     ],
     "testingAc": [
       "Load the example and press Enter on \"Run WAP-193 script\"; activeCardId should stay home.",
       "Confirm runtime-state lastScriptExecutionOk becomes true.",
-      "Confirm runtime-state lastScriptExecutionTrap remains (none)."
+      "Confirm runtime-state lastScriptExecutionTrap remains (none).",
+      "Select \"Reject invalid WAP-193 script\", confirm the fatal/integrity stack-underflow outcome, then run the valid script again to prove host recovery."
     ],
     "flows": [
       {
@@ -2554,9 +2557,119 @@ export const EXAMPLES: HostExample[] = [
             }
           }
         ]
+      },
+      {
+        "id": "verifier-failure-and-recovery",
+        "title": "A fatal verifier failure is stable and a replacement invocation recovers",
+        "target": "host-sample",
+        "workItems": [
+          "WMLS-501",
+          "W1-02"
+        ],
+        "specItems": [
+          "RQ-WMLS-008",
+          "RQ-WMLS-009",
+          "RQ-WMLS-010"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "lastScriptExecutionOk": null,
+            "lastScriptExecutionTrap": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 2,
+                "lastScriptExecutionOk": false,
+                "lastScriptExecutionTrap": "wap decode: stack underflow in function 0 at pc=0 (required=1, available=0)"
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_TRAP"
+              ],
+              "statusIncludes": "stack underflow"
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "up"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "up"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0,
+                "lastScriptExecutionOk": true,
+                "lastScriptExecutionTrap": null
+              },
+              "traceKinds": [
+                "SCRIPT_TRAP",
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          }
+        ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:wap-193-minimal-return-es.wmlsc#main\">Run WAP-193 script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:wap-193-minimal-return-es.wmlsc#main\">Run WAP-193 script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n      <br/>\n      <a href=\"script:wap-193-stack-underflow.wmlsc#main\">Reject invalid WAP-193 script</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerHostClockLifecycle",

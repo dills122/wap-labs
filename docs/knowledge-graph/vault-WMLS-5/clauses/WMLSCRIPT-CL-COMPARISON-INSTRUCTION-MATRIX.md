@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-WMLS-008|RQ-WMLS-008]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
 - `refines` → [[scr-rows/WMLS-C-069|WMLS-C-069]]
 - `refines` → [[scr-rows/WMLS-C-101|WMLS-C-101]]
 - `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
@@ -42,8 +43,10 @@ tags:
   "obligationSynopsis": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
   "workItems": [
     "W1-02",
+    "W1-04",
     "W1-05",
-    "WMLS-501"
+    "WMLS-501",
+    "WMLS-502"
   ],
   "ownerLayers": [
     "engine-wasm"

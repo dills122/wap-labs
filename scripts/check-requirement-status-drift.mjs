@@ -66,7 +66,7 @@ const familyDefinitions = [
     expectedRows: 95,
     expectedSelected: 80,
     expectedClauses: 211,
-    expectedStatus: { implemented: 0, partial: 14, missing: 66 },
+    expectedStatus: { implemented: 0, partial: 21, missing: 59 },
     activeDoc:
       'docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md'
   },
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 29, blocked: 1, 'in-progress': 11, todo: 42 })
+  JSON.stringify({ done: 30, blocked: 1, 'in-progress': 10, todo: 42 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 41, partial: 71, missing: 86 })
+  JSON.stringify({ implemented: 41, partial: 78, missing: 79 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -347,7 +347,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
       'all 198 selected rows now expand into 762',
-      `${selectedClauses.summary.assessedClauseCount} WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed`
+      `${selectedClauses.summary.assessedClauseCount} WML, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed`
     ]
   ],
   [
@@ -375,7 +375,7 @@ const requiredDocumentFragments = new Map([
     'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md',
     [
       'Planning status: complete for the selected strict profile',
-      '| **Total** | **198** | **762** | **41** | **71** | **86** |',
+      '| **Total** | **198** | **762** | **41** | **78** | **79** |',
       '60 residual external citations',
       '`SRC-006` is the only blocked source item'
     ]

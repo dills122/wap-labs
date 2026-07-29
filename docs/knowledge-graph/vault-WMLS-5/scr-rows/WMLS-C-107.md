@@ -17,6 +17,8 @@ tags:
 
 - `belongs-to` → [[source-families/wmlscript|wmlscript]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
+- `planned-by` → [[work-items/WMLS-503|WMLS-503]]
 - `refines` ← [[clauses/WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX]]
 - `refines` ← [[clauses/WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES|WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES]]
 - `refines` ← [[clauses/WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION|WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION]]
@@ -53,7 +55,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-direct-test-linked",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
+  "assessmentNote": "The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -63,9 +65,15 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+      "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+      "limitation": "Direct pre-execution library-domain, whole-function stack, return, reachability, and recovery evidence; execution semantics remain deferred."
+    },
+    {
+      "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
       "test": "decodes_constant_pragma_function_and_instruction_pools",
       "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-      "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+      "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
     },
     {
       "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -85,7 +93,12 @@ tags:
   ],
   "workItems": [
     "W1-02",
-    "WMLS-501"
+    "W1-03",
+    "W1-04",
+    "W1-05",
+    "WMLS-501",
+    "WMLS-502",
+    "WMLS-503"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"
 }

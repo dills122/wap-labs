@@ -911,23 +911,30 @@
       "workItems": [
         {
           "id": "WMLS-501",
-          "status": "in-progress",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "qa"],
-          "sourceFamilies": ["wmlscript"],
+          "sourceFamilies": ["wmlscript", "wmlscript-libraries"],
           "existingTickets": ["W1-02"],
           "scrMatrix": {
             "family": "wmlscript",
             "scope": "selected-clause-parents"
           },
           "outputs": [
-            "Complete bytecode decoder and structural verifier"
+            "Complete bytecode decoder and structural verifier",
+            "Additive standard-library index and whole-function stack-dataflow verifier closure"
           ],
           "acceptance": [
             "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+            "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "pnpm test:story WMLS-501"
+          ],
+          "notes": [
+            "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work.",
+            "B2 is ready to implement WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
           ]
         },
         {

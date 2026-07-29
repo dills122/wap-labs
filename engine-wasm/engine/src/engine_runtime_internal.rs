@@ -123,10 +123,12 @@ impl WmlEngine {
         let unit = match decode_wap_compilation_unit(bytes) {
             Ok(unit) => unit,
             Err(error) => {
-                return ScriptExecutionOutcome::fatal(
-                    format!("wap decode: {error}"),
-                    ScriptErrorCategoryLiteral::Integrity,
-                );
+                let category = if error.is_resource_exhaustion() {
+                    ScriptErrorCategoryLiteral::Resource
+                } else {
+                    ScriptErrorCategoryLiteral::Integrity
+                };
+                return ScriptExecutionOutcome::fatal(format!("wap decode: {error}"), category);
             }
         };
 

@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode signed integer constants in the selected 8-bit, 16-bit, or 32-bit two-complement representation.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

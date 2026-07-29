@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Interpret encoded string lengths as byte counts in the declared transfer encoding rather than character counts.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

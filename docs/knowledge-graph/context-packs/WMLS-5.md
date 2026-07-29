@@ -14,10 +14,10 @@
 ## Graph summary
 
 - Nodes: 846
-- Edges: 2869
+- Edges: 2959
 - Selected work items: 6
 - Direct SCR rows: 28
-- Direct normative clauses: 376
+- Direct normative clauses: 442
 - Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 1
 - Work items with unmapped declared normative families: 2
@@ -41,15 +41,15 @@ Exit gates:
 
 ### WMLS-501: Complete bytecode decoder and structural verifier
 
-- Status: `in-progress`
+- Status: `done`
 - Owner layers: `engine-wasm`, `qa`
-- Source families: `wmlscript`
+- Source families: `wmlscript`, `wmlscript-libraries`
 - Existing tickets: `W1-02`
-- Direct SCR rows: 28 (21 `direct-test-linked`, 2 `gap-work-item-mapped`, 5 `provisional-non-normative-test-linked`)
-- Selected SCR parents: 31 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-069`, `WMLS-C-077`, `WMLS-C-079`, `WMLS-C-085`, `WMLS-C-087`, `WMLS-C-088`, `WMLS-C-089`, `WMLS-C-090`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`, `WMLS-C-111`)
-- Direct normative clauses: 69
+- Direct SCR rows: 28 (22 `direct-test-linked`, 2 `gap-work-item-mapped`, 4 `provisional-non-normative-test-linked`)
+- Selected SCR parents: 44 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-069`, `WMLS-C-077`, `WMLS-C-079`, `WMLS-C-085`, `WMLS-C-087`, `WMLS-C-088`, `WMLS-C-089`, `WMLS-C-090`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`, `WMLS-C-111`, `WMLSSL-018`, `WMLSSL-019`, `WMLSSL-020`, `WMLSSL-021`, `WMLSSL-022`, `WMLSSL-023`, `WMLSSL-024`, `WMLSSL-025`, `WMLSSL-026`, `WMLSSL-027`, `WMLSSL-028`, `WMLSSL-029`, `WMLSSL-030`)
+- Direct normative clauses: 83
 - Aggregate regression/delegate context: 0
-- Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
+- Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`, `RQ-WMLS-012`, `RQ-WMLS-013`, `RQ-WMLS-014`, `RQ-WMLS-015`, `RQ-WMLS-016`, `RQ-WMLS-017`, `RQ-WMLS-022`
 - Spec references: None
 - Follow-up work items: None
 - Depends on: None
@@ -57,6 +57,7 @@ Exit gates:
 Outputs:
 
 - Complete bytecode decoder and structural verifier
+- Additive standard-library index and whole-function stack-dataflow verifier closure
 
 Acceptance:
 
@@ -65,7 +66,9 @@ Acceptance:
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery`
 - `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+- `pnpm test:story WMLS-501`
 
 ### WMLS-502: Language operation and conversion parity
 
@@ -74,10 +77,10 @@ Evidence commands:
 - Source families: `wmlscript`
 - Existing tickets: `W1-04`
 - Direct SCR rows: 0
-- Selected SCR parents: 17 (`WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`, `WMLS-C-077`, `WMLS-C-083`, `WMLS-C-084`, `WMLS-C-085`, `WMLS-C-086`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-105`, `WMLS-C-111`)
-- Direct normative clauses: 25
+- Selected SCR parents: 32 (`WAESpec-C-016`, `WAESpec-C-017`, `WMLS-C-069`, `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`, `WMLS-C-077`, `WMLS-C-083`, `WMLS-C-084`, `WMLS-C-085`, `WMLS-C-086`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`, `WMLS-C-111`)
+- Direct normative clauses: 59
 - Aggregate regression/delegate context: 0
-- Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
+- Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`, `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`
 - Spec references: None
 - Follow-up work items: None
 - Depends on: None
@@ -101,10 +104,10 @@ Evidence commands:
 - Source families: `wmlscript`, `wmlscript-libraries`
 - Existing tickets: `W1-03`, `W0-08`
 - Direct SCR rows: 0
-- Selected SCR parents: 11 (`WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`, `WMLS-C-078`, `WMLS-C-079`, `WMLS-C-080`, `WMLS-C-081`, `WMLS-C-082`, `WMLS-C-087`, `WMLS-C-093`, `WMLS-C-094`)
-- Direct normative clauses: 20
+- Selected SCR parents: 28 (`WAESpec-C-019`, `WAESpec-C-020`, `WAESpec-C-021`, `WMLS-C-078`, `WMLS-C-079`, `WMLS-C-080`, `WMLS-C-081`, `WMLS-C-082`, `WMLS-C-087`, `WMLS-C-091`, `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`)
+- Direct normative clauses: 38
 - Aggregate regression/delegate context: 0
-- Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`, `RQ-WMLS-011`
+- Requirements: `RQ-WAE-001`, `RQ-WAE-003`, `RQ-WAE-005`, `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`, `RQ-WMLS-009`, `RQ-WMLS-010`, `RQ-WMLS-011`
 - Spec references: None
 - Follow-up work items: None
 - Depends on: None
@@ -258,176 +261,176 @@ Evidence commands:
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-089** — Multi-byte integer format
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Multi-byte integer format (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-090** — Character encoding
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Character encoding (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-091** — Bytecode header
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Bytecode header (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-092** — Constant pool
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Constant pool (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-093** — Pragma pool
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Pragma pool (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-094** — Function pool
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Function pool (SCR §15.2.4)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.
+  - Work items: `W1-02`, `W1-05`, `WMLS-501`
+  - Assessment note: The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.
 - **WMLS-C-095** — Control-flow instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Control-flow instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-096** — Function-call instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Function-call instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-097** — Variable access and manipulation
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Variable access and manipulation (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-098** — Access to constants
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Access to constants (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-099** — Arithmetic instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Arithmetic instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-100** — Bitwise instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Bitwise instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-101** — Comparison instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Comparison instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-102** — Logical instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Logical instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-103** — Stack instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Stack instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-104** — Access to operand type
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Access to operand type (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-105** — Function-return instructions
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Function-return instructions (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-106** — Debug instruction
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Debug instruction (SCR §15.2.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
   - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.
+  - Work items: `W1-02`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`
+  - Assessment note: The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.
 - **WMLS-C-107** — Bytecode integrity verification
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Bytecode integrity verification (SCR §15.2.6)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
-  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::source_pinned_library_and_stack_dataflow_fixtures_are_deterministic` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `W1-03`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`, `WMLS-503`
+  - Assessment note: The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.
 - **WMLS-C-108** — Runtime validity checks
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Runtime validity checks (SCR §15.2.6)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/wavescript/wap_decoder.rs#decode_wap_compilation_unit`
-  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
-  - Work items: `W1-02`, `WMLS-501`
-  - Assessment note: The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.
+  - Tests: `engine-wasm/engine/src/wavescript/wap_decoder.rs::source_pinned_library_and_stack_dataflow_fixtures_are_deterministic` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/wavescript/wap_decoder.rs::decodes_constant_pragma_function_and_instruction_pools` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `W1-03`, `W1-04`, `W1-05`, `WMLS-501`, `WMLS-502`, `WMLS-503`
+  - Assessment note: The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.
 - **WMLS-C-110** — Fatal error handling
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Fatal error handling (SCR §15.2.6)
-  - Assessment: `partial`; evidence `provisional-non-normative-test-linked`
-  - Code: `engine-wasm/engine/src/engine_script_types.rs#ScriptExecutionOutcome`
-  - Tests: `engine-wasm/engine/src/engine_tests/script_runtime.rs::vm_trap_error_category_matrix_is_explicit` (`undefined`)
-  - Work items: `W1-06`, `W1-07`, `WMLS-501`, `WMLS-505`
-  - Assessment note: Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_script_types.rs#ScriptExecutionOutcome`, `engine-wasm/engine/src/wavescript/wap_decoder.rs#WapDecodeError`, `engine-wasm/engine/src/engine_runtime_internal.rs#execute_wap_script_ref_call`
+  - Tests: `engine-wasm/engine/src/engine_tests/script_runtime.rs::vm_trap_error_category_matrix_is_explicit` (`undefined`), `engine-wasm/engine/src/engine_tests/script_runtime.rs::registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery`), `engine-wasm/engine/src/engine_wasm_bindings_tests.rs::wasm_wmls_501_library_and_dataflow_verification_matches_native` (`wasm-pack test --node engine-wasm/engine --features wasm-bindings`)
+  - Work items: `W1-02`, `W1-06`, `W1-07`, `WMLS-501`, `WMLS-505`
+  - Assessment note: Source-pinned WAP units now prove fatal stack-underflow integrity handling, resource-class stack overflow, invocation abort, stable trace serialization, and recovery. Other chapter 12 fatal cases remain open.
 - **WMLS-C-111** — Non-fatal error handling
   - Actor/status/profile: `wmlscript-interpreter`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-193_101-WMLScript` §Non-fatal error handling (SCR §15.2.6)
@@ -615,18 +618,30 @@ Evidence commands:
   - Parents: `WMLS-C-069`, `WMLS-C-106`
   - Requirements: `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL** — Abort the current WMLScript program on a fatal error and signal failure to the calling user agent.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-110`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-ABORT-AND-SIGNAL` (`error-policy`, `planned`)
 - **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
   - Parents: `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`
   - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
   - Fixture: `WMLSCRIPT-FX-FATAL-BYTECODE-ERROR-MATRIX` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX** — Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-110`
+  - Requirements: `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-RESOURCE-ERROR-MATRIX` (`error-policy`, `planned`)
 - **WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES** — Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
   - Parents: `WMLS-C-096`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX** — Implement every local, library, and URL call opcode variant with its index widths, argument count, stack effect, result, and errors.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
@@ -824,7 +839,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY** — Validate every variable index against the current function frame before reading or writing it.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -842,7 +857,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
   - Parents: `WMLS-C-103`, `WMLS-C-110`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS** — Reject a variable instruction whose index is outside the current function argument-and-local variable range.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
@@ -855,6 +870,78 @@ Evidence commands:
   - Parents: `WMLS-C-069`, `WMLS-C-097`
   - Requirements: `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS** — Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-023`, `WMLSSL-030`
+  - Requirements: `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER** — Map the dialogs standard library to encoded library identifier 5.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-023`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-017`, `RQ-WMLS-022`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS** — Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-019`, `WMLSSL-026`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-014`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER** — Map the float standard library to encoded library identifier 1.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-019`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS** — Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-018`, `WMLSSL-025`
+  - Requirements: `RQ-WMLS-013`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER** — Map the lang standard library to encoded library identifier 0.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-018`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-013`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS** — Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-020`, `WMLSSL-027`
+  - Requirements: `RQ-WMLS-015`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER** — Map the string standard library to encoded library identifier 2.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-020`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-015`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS** — Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-021`, `WMLSSL-028`
+  - Requirements: `RQ-WMLS-016`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER** — Map the url standard library to encoded library identifier 3.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-021`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-016`, `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS** — Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-022`, `WMLSSL-029`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER** — Map the wmlbrowser standard library to encoded library identifier 4.
+  - Family: `wmlscript-libraries`; force: `table`; level: `required`
+  - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
+  - Parents: `WMLSSL-022`, `WMLSSL-024`
+  - Requirements: `RQ-WMLS-017`
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 
 ### WMLS-502
 
@@ -882,6 +969,12 @@ Evidence commands:
   - Parents: `WMLS-C-084`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
   - Fixture: `WMLSCRIPT-FX-ARGUMENT-VARIABLE-INDEXES` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX** — Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-099`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
@@ -894,18 +987,54 @@ Evidence commands:
   - Parents: `WMLS-C-085`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
   - Fixture: `WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX** — Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-100`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS** — Convert bitwise operands to integers and return invalid when an integer conversion is illegal.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-100`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX** — Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-101`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-COMPARISON-INVALID-RESULT** — Return invalid rather than true or false when a comparison operand conversion or value is invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-101`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS** — Reject an indexed constant load that references outside the constant pool or an unsupported constant type.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX** — Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
+  - Parents: `WMLS-C-069`, `WMLS-C-098`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX** — Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-095`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
 - **WMLSCRIPT-CL-CONVERSION-BOOLEAN-MATRIX** — Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.5 (6.8.5 Conversions to Boolean)
@@ -954,6 +1083,78 @@ Evidence commands:
   - Parents: `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
   - Fixture: `WMLSCRIPT-FX-CONVERSION-SUMMARY-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX** — Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.12 (10.5.12 Miscellaneous Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-106`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-BYTECODE-ERROR-MATRIX` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES** — Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES` (`binary-decoder`, `implemented`)
+- **WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX** — Implement every local, library, and URL call opcode variant with its index widths, argument count, stack effect, result, and errors.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-096`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES** — Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`
+  - Requirements: `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-BEFORE-EXECUTION` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK** — Require the declared bytecode size to match the available compilation-unit bytes.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-CODE-SIZE-CHECK` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE** — Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FAILURE-QUARANTINE` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES** — Require every declared function code size to fit wholly inside the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FUNCTION-SIZES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM** — Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-INSTRUCTION-STREAM` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS** — Require constant, pragma, function-name, and function counts to match the records encoded in their pools.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-POOL-COUNTS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK** — Require matching major bytecode versions and a bytecode minor version no greater than the interpreter-supported minor version.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-VERSION-CHECK` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-LOCAL-EMPTY-INITIALIZATION** — Initialize every function local variable to an empty string before executing the function body.
   - Family: `wmlscript`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-193_101-WMLScript` §8.4.4 (8.4.4 Initialisation of Variables)
@@ -972,12 +1173,42 @@ Evidence commands:
   - Parents: `WMLS-C-077`, `WMLS-C-102`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX** — Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-102`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX** — Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-099`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
+  - Parents: `WMLS-C-098`, `WMLS-C-111`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONSTANT-MATRIX` (`runtime`, `planned`)
 - **WMLSCRIPT-CL-NONFATAL-CONVERSION-MATRIX** — Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-073`, `WMLS-C-077`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-010`
   - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX** — Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
+  - Parents: `WMLS-C-069`, `WMLS-C-104`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION** — Inspect the evaluated operand type without performing an automatic data conversion.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
+  - Parents: `WMLS-C-104`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `planned`)
 - **WMLSCRIPT-CL-OPERATOR-CONVERSION-ATOMICITY** — Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
@@ -1002,12 +1233,72 @@ Evidence commands:
   - Parents: `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
   - Fixture: `WMLSCRIPT-FX-OPERATOR-NUMERIC-PRECEDENCE` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX** — Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-105`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY** — Return the selected value to the host caller when leaving the top-level invoked WMLScript function.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
   - Parents: `WMLS-C-085`, `WMLS-C-105`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY** — Validate every constant index and required constant type before loading or using it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-FUNCTION-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY** — Require every taken jump target to fall on an instruction boundary within the current function.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY` (`error-policy`, `implemented`)
+- **WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY** — Validate every variable index against the current function frame before reading or writing it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX** — Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
+  - Parents: `WMLS-C-069`, `WMLS-C-103`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
+  - Family: `wmlscript`; force: `error-condition`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
+  - Parents: `WMLS-C-103`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `implemented`)
+- **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS** — Reject a variable instruction whose index is outside the current function argument-and-local variable range.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX** — Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
+  - Parents: `WMLS-C-069`, `WMLS-C-097`
+  - Requirements: `RQ-WMLS-008`
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
 
 ### WMLS-503
 
@@ -1041,12 +1332,30 @@ Evidence commands:
   - Parents: `WMLS-C-087`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`
   - Fixture: `WMLSCRIPT-FX-ACCESS-DOMAIN-PATH-GATE` (`security-policy`, `planned`)
+- **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS** — Reject an indexed constant load that references outside the constant pool or an unsupported constant type.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
 - **WMLSCRIPT-CL-EXTERNAL-KEYWORD-GATE** — Permit calls from another compilation unit only to functions marked external.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.5 (8.5 Access Control)
   - Parents: `WMLS-C-087`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`
   - Fixture: `WMLSCRIPT-FX-EXTERNAL-KEYWORD-GATE` (`security-policy`, `planned`)
+- **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
+  - Family: `wmlscript`; force: `table`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
+  - Parents: `WMLS-C-107`, `WMLS-C-108`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-FATAL-BYTECODE-ERROR-MATRIX` (`error-policy`, `planned`)
 - **WMLSCRIPT-CL-FRAGMENT-DOCUMENT-FORM** — Parse a function fragment after a hash mark appended to the compilation-unit URL.
   - Family: `wmlscript`; force: `grammar`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.3.2 (8.3.2 Fragment Anchors)
@@ -1059,12 +1368,66 @@ Evidence commands:
   - Parents: `WMLS-C-079`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
   - Fixture: `WMLSCRIPT-FX-FRAGMENT-FUNCTION-IDENTITY` (`runtime`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES** — Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.2 (10.5.2 Function Call Instructions)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-FUNCTION-NAME-TABLE** — Store only external function names in the name table and preserve their function-pool order.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
   - Parents: `WMLS-C-079`, `WMLS-C-087`, `WMLS-C-094`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-002`, `RQ-WMLS-003`, `RQ-WMLS-008`
   - Fixture: `WMLSCRIPT-FX-FUNCTION-NAME-TABLE` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES** — Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.
+  - Family: `wmlscript`; force: `implicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`
+  - Requirements: `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-BEFORE-EXECUTION` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK** — Require the declared bytecode size to match the available compilation-unit bytes.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-CODE-SIZE-CHECK` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE** — Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-107`, `WMLS-C-110`
+  - Requirements: `RQ-WMLS-009`, `RQ-WMLS-010`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FAILURE-QUARANTINE` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES** — Require every declared function code size to fit wholly inside the compilation unit.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-FUNCTION-SIZES` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM** — Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-098`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-106`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-INSTRUCTION-STREAM` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS** — Require constant, pragma, function-name, and function counts to match the records encoded in their pools.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-092`, `WMLS-C-093`, `WMLS-C-094`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-POOL-COUNTS` (`binary-decoder`, `planned`)
+- **WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK** — Require matching major bytecode versions and a bytecode minor version no greater than the interpreter-supported minor version.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
+  - Parents: `WMLS-C-091`, `WMLS-C-107`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-INTEGRITY-VERSION-CHECK` (`binary-decoder`, `planned`)
 - **WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS** — Allow at most one access-domain and one access-path pragma in a compilation unit.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
@@ -1077,6 +1440,36 @@ Evidence commands:
   - Parents: `WMLS-C-082`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
   - Fixture: `WMLSCRIPT-FX-RELATIVE-URL-RESOLUTION` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY** — Validate every constant index and required constant type before loading or using it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-098`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-096`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-FUNCTION-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY** — Require every taken jump target to fall on an instruction boundary within the current function.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+- **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-095`, `WMLS-C-096`, `WMLS-C-097`, `WMLS-C-099`, `WMLS-C-100`, `WMLS-C-101`, `WMLS-C-102`, `WMLS-C-103`, `WMLS-C-104`, `WMLS-C-105`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY` (`error-policy`, `implemented`)
+- **WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY** — Validate every variable index against the current function frame before reading or writing it.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
 - **WMLSCRIPT-CL-URL-CALL-ACCESS-FIRST** — Perform compilation-unit access control before matching or invoking the requested external function.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
@@ -1131,6 +1524,12 @@ Evidence commands:
   - Parents: `WMLS-C-078`
   - Requirements: `RQ-WMLS-001`, `RQ-WMLS-003`
   - Fixture: `WMLSCRIPT-FX-URL-SCHEME-SUPPORT` (`transport-boundary`, `planned`)
+- **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS** — Reject a variable instruction whose index is outside the current function argument-and-local variable range.
+  - Family: `wmlscript`; force: `explicit-must`; level: `required`
+  - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
+  - Parents: `WMLS-C-097`, `WMLS-C-108`
+  - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
 
 ### WMLS-504
 
@@ -1187,13 +1586,13 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-023`, `WMLSSL-030`
   - Requirements: `RQ-WMLS-022`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER** — Map the dialogs standard library to encoded library identifier 5.
   - Family: `wmlscript-libraries`; force: `table`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-023`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-017`, `RQ-WMLS-022`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-SURFACE** — Expose the complete dialogs standard-library namespace and its selected functions through the WMLScript library-call boundary.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §12 (12.   DIALOGS)
@@ -1241,7 +1640,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-019`, `WMLSSL-026`
   - Requirements: `RQ-WMLS-007`, `RQ-WMLS-012`, `RQ-WMLS-014`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-FLOAT-INT-BEHAVIOR** — Return the integer part by truncating a Float toward zero, or return an Integer argument unchanged.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §8.1 (8.1   int)
@@ -1259,7 +1658,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-019`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-007`, `RQ-WMLS-014`, `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-INTEGER-ONLY-RESULT** — Return invalid from every Float library function when floating-point operations are unavailable.
   - Family: `wmlscript-libraries`; force: `explicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §8 (8.    FLOAT)
@@ -1433,7 +1832,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-018`, `WMLSSL-025`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-IS-FLOAT-BEHAVIOR** — Return true exactly when Lang.parseFloat can convert the value, false for a non-convertible non-invalid value, and invalid for invalid input.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.7 (7.7   isFloat)
@@ -1469,7 +1868,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-018`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-013`, `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-SURFACE** — Expose the complete lang standard-library namespace and its selected functions through the WMLScript library-call boundary.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7 (7.      LANG)
@@ -1763,7 +2162,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-020`, `WMLSSL-027`
   - Requirements: `RQ-WMLS-015`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-STRING-INSERT-AT-BEHAVIOR** — Insert the element and needed separator at the converted index, clamping negative index to zero and appending beyond the final element.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §9.11 (9.11 insertAt)
@@ -1811,7 +2210,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-020`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-015`, `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-SURFACE** — Expose the complete string standard-library namespace and its selected functions through the WMLScript library-call boundary.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §9 (9. STRING)
@@ -1967,7 +2366,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-021`, `WMLSSL-028`
   - Requirements: `RQ-WMLS-016`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-URL-GET-BASE-BEHAVIOR** — Return the absolute URL of the current compilation unit with its fragment removed.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §10.9 (10.9 getBase)
@@ -2141,7 +2540,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-021`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-016`, `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-SURFACE** — Expose the complete url standard-library namespace and its selected functions through the WMLScript library-call boundary.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §10 (10.   URL)
@@ -2249,7 +2648,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-022`, `WMLSSL-029`
   - Requirements: `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-FUNCTION-IDENTIFIERS` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-FUNCTION-IDENTIFIERS` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-GET-VAR-BEHAVIOR** — Return the named current-context variable value, or empty string when the variable does not exist.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §11.1 (11.1 getVar)
@@ -2303,7 +2702,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
   - Parents: `WMLSSL-022`, `WMLSSL-024`
   - Requirements: `RQ-WMLS-017`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-IDENTIFIER` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-IDENTIFIER` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-SURFACE** — Expose the complete wmlbrowser standard-library namespace and its selected functions through the WMLScript library-call boundary.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §11 (11.   WMLBROWSER)
@@ -2486,7 +2885,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
   - Parents: `WMLS-C-103`, `WMLS-C-110`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL` (`error-policy`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-ANY-PARAMETER-UNION** — Interpret an Any parameter as accepting every supported WMLScript value type.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §6.1 (6.1 Supported Data Type)

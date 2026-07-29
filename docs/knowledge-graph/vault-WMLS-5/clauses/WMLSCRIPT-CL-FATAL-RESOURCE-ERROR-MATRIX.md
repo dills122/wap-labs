@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` → [[requirements/RQ-WMLS-010|RQ-WMLS-010]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
 - `planned-by` → [[work-items/WMLS-505|WMLS-505]]
 - `refines` → [[scr-rows/WMLS-C-110|WMLS-C-110]]
 - `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
@@ -39,8 +40,10 @@ tags:
   "obligationLevel": "required",
   "obligationSynopsis": "Handle programmed abort, stack overflow, out-of-memory, and user- or system-initiated termination as fatal invocation errors.",
   "workItems": [
+    "W1-02",
     "W1-06",
     "W1-07",
+    "WMLS-501",
     "WMLS-505"
   ],
   "ownerLayers": [

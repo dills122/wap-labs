@@ -1,13 +1,14 @@
 <!--
 label: Script Link Execution
-work-items: W0-01, W0-03, WMLS-501
-spec-items: RQ-WMLS-001, RQ-WMLS-008, RQ-WMLS-009
+work-items: W0-01, W0-03, W1-02, WMLS-501
+spec-items: RQ-WMLS-001, RQ-WMLS-008, RQ-WMLS-009, RQ-WMLS-010
 description: Runs a registered, verified WAP-193 compilation unit through a script href and exposes execution outcome in runtime state.
 goal: Validate runtime routes a named WAP-193 function through verification and bounded execution.
 testing-ac:
 - Load the example and press Enter on "Run WAP-193 script"; activeCardId should stay home.
 - Confirm runtime-state lastScriptExecutionOk becomes true.
 - Confirm runtime-state lastScriptExecutionTrap remains (none).
+- Select "Reject invalid WAP-193 script", confirm the fatal/integrity stack-underflow outcome, then run the valid script again to prove host recovery.
 -->
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
@@ -19,6 +20,8 @@ testing-ac:
       <a href="script:wap-193-minimal-return-es.wmlsc#main">Run WAP-193 script</a>
       <br/>
       <a href="#done">Continue</a>
+      <br/>
+      <a href="script:wap-193-stack-underflow.wmlsc#main">Reject invalid WAP-193 script</a>
     </p>
   </card>
   <card id="done">

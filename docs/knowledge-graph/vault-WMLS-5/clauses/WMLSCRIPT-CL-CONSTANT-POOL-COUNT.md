@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode exactly NumberOfConstants sequential entries and assign zero-based indexes by pool order.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

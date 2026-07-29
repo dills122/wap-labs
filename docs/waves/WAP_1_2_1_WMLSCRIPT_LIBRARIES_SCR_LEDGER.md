@@ -69,9 +69,9 @@ from sections 12.4 and 12.5.
 | Result | Rows |
 |---|---:|
 | Implemented | 0 |
-| Partial | 14 |
-| Missing | 66 |
-| Direct normative tests | 0 |
+| Partial | 21 |
+| Missing | 59 |
+| Direct normative tests | 7 |
 | Provisional local-test links | 14 |
 
 Related behavior exists for:
@@ -82,9 +82,12 @@ Related behavior exists for:
 - placeholder Dialogs request recording for `prompt`, `confirm`, and `alert`.
 
 Those rows remain partial because exact argument conversion, error semantics,
-context rules, identifiers, side effects, and direct fixtures are not fully
-proven. All 80 selected rows now map to 211 required, deduplicated normative
-clauses.
+context rules, side effects, and execution are not fully proven. The additive
+WMLS-501 B1 verifier tranche now gives the seven identifier-capability rows
+direct source-pinned evidence: strict bytecode accepts exactly library IDs
+`0..5`, the Appendix A function-ID domains, and their declared arities before
+execution. All 80 selected rows remain mapped to 211 required, deduplicated
+normative clauses.
 
 The principal missing areas are:
 
@@ -92,7 +95,7 @@ The principal missing areas are:
 - Float library and all required function rows;
 - String library and all 16 function rows;
 - URL library and all 14 function rows;
-- standard library IDs and per-library function IDs;
+- execution behavior behind the now-verified standard-library and function IDs;
 - `WMLBrowser.refresh`;
 - complete Dialogs host/UI result integration.
 

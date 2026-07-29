@@ -18,6 +18,8 @@ tags:
 - `maps-to` → [[requirements/RQ-WMLS-008|RQ-WMLS-008]]
 - `maps-to` → [[requirements/RQ-WMLS-009|RQ-WMLS-009]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
+- `planned-by` → [[work-items/WMLS-503|WMLS-503]]
 - `refines` → [[scr-rows/WMLS-C-095|WMLS-C-095]]
 - `refines` → [[scr-rows/WMLS-C-096|WMLS-C-096]]
 - `refines` → [[scr-rows/WMLS-C-097|WMLS-C-097]]
@@ -65,7 +67,12 @@ tags:
   "obligationSynopsis": "Reject unknown, truncated, reserved, or structurally invalid instruction encodings before execution.",
   "workItems": [
     "W1-02",
-    "WMLS-501"
+    "W1-03",
+    "W1-04",
+    "W1-05",
+    "WMLS-501",
+    "WMLS-502",
+    "WMLS-503"
   ],
   "ownerLayers": [
     "engine-wasm"

@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `belongs-to` → [[source-families/wmlscript-libraries|wmlscript-libraries]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
 - `planned-by` → [[work-items/WMLS-504|WMLS-504]]
 - `refines` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS]]
 
@@ -29,11 +30,12 @@ tags:
     "documentId": "WAP-194-WMLScriptLibraries",
     "staticConformanceSection": "12.5"
   },
-  "implementationStatus": "missing",
+  "implementationStatus": "partial",
   "ownerLayers": [
     "engine-wasm"
   ],
   "workItems": [
+    "WMLS-501",
     "WMLS-504",
     "W1-05"
   ],

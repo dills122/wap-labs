@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Preserve embedded null characters inside length-delimited WMLScript string constants.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

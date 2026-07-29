@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode exactly NumberOfPragmas sequential pragma records.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` → [[requirements/RQ-WMLS-022|RQ-WMLS-022]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
 - `planned-by` → [[work-items/WMLS-504|WMLS-504]]
 - `refines` → [[scr-rows/WMLSSL-023|WMLSSL-023]]
 - `refines` → [[scr-rows/WMLSSL-030|WMLSSL-030]]
@@ -42,6 +43,7 @@ tags:
   "obligationSynopsis": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.",
   "workItems": [
     "W1-05",
+    "WMLS-501",
     "WMLS-504"
   ],
   "ownerLayers": [
@@ -50,7 +52,7 @@ tags:
   "requirementIds": [
     "RQ-WMLS-022"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

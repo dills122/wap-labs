@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 41 implemented, 71 partial, and 86
+- the selected implementation audit is 41 implemented, 78 partial, and 79
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -195,17 +195,17 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-Merged R0-06/WSP-805 request serialization plus Runtime C1 and WML-309 advance the evidence rollup to
-41/198 selected parents implemented and 302/762 clauses assessed while the canonical program records
-29 work items `done`, 11 `in-progress`, 42 `todo`, and one `blocked`.
-The WML-301 focused graph separately exposes 13 direct clauses and seven aggregate
-regression/delegate clauses so Project Atlas cannot infer broad WAE closure from this tranche;
-the aggregate item remains in progress under `WAE-601`.
+After the merged WSP-805 request work, WML-309 frame-contract closure, and additive WMLS-501
+verifier tranche, the canonical program records 30 work items `done`, 10 `in-progress`, 42 `todo`,
+and one `blocked`, with 41/198 selected parents implemented and 317/762 clauses assessed. Project
+Atlas must continue to render these machine-backed counts without widening the remaining execution
+or standard-library claims.
 
-The dispatch baton is `WMLS-501` verifier closure plus replayable POST history in A2 after the
-landed A1 serializer/fetch handoff. `WML-306` follows
-after request/history work releases the overlapping browser-policy files. Completed-ticket history
-remains immutable; newly exposed gaps require additive follow-ups.
+The dispatch baton is residual `WML-304`/`WSP-805` request application, residual `WML-301`
+aggregate card/WAE evidence, and `WMLS-502` operator/conversion execution after the stable
+WMLS-501 verifier boundary. `WML-306` follows after request/history work releases the overlapping
+browser-policy files. Completed-ticket history remains immutable; newly exposed gaps require
+additive follow-ups.
 
 1. Treat `SRC-005` external-dependency normalization as complete, including
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`

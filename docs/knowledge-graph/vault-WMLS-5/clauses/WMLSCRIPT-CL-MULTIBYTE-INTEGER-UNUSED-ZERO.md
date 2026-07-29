@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Require unused value bits in the initial multi-byte integer octet to be zero.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

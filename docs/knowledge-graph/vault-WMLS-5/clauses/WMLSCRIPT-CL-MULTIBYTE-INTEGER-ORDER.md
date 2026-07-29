@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Combine multi-byte integer octets and value bits in most-significant-group-first order.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

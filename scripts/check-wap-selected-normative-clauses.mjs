@@ -372,6 +372,36 @@ const wml309FixtureEvidence = {
   path: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
   command: 'pnpm test:story WML-309'
 };
+const wmls501ClauseIds = new Set([
+  'WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES',
+  'WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY',
+  'WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS',
+  'WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS',
+  'WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS',
+  'WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS',
+  'WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS',
+  'WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER',
+  'WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS'
+]);
+function wmls501FixturePath(clauseId) {
+  const fixtureName =
+    clauseId === 'WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL'
+      ? 'wap-193-stack-underflow.wmlsc.hex'
+      : clauseId === 'WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY'
+        ? 'wap-193-inconsistent-merge.wmlsc.hex'
+        : 'wap-193-valid-library-refs.wmlsc.hex';
+  return `engine-wasm/engine/tests/fixtures/wmlscript/${fixtureName}`;
+}
+const wmls501TestPath =
+  'engine-wasm/engine/src/wavescript/wap_decoder.rs';
+const wmls501Command =
+  'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder';
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -609,15 +639,9 @@ for (const family of ledger.families ?? []) {
     (candidate) => candidate.fixturePlan?.status === 'implemented'
   )
     ? 'nested-clauses-fixture-backed'
-    : family.family === 'wcmp'
-      ? family.clauses?.every((candidate) => candidate.fixturePlan?.status === 'implemented')
-        ? 'nested-clauses-fixture-backed'
-        : 'nested-clauses-partially-fixture-backed'
-    : family.family === 'wdp'
-      ? 'nested-clauses-fixture-backed'
-      : family.family === 'wml' || family.family === 'wbxml'
-        ? 'nested-clauses-partially-fixture-backed'
-        : 'nested-clauses-anchored-fixtures-planned';
+    : family.clauses?.some((candidate) => candidate.fixturePlan?.status === 'implemented')
+    ? 'nested-clauses-partially-fixture-backed'
+    : 'nested-clauses-anchored-fixtures-planned';
 
   if (
     family.status !== expectedFamilyStatus ||
@@ -790,6 +814,7 @@ for (const family of ledger.families ?? []) {
         ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
+        ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -809,6 +834,7 @@ for (const family of ledger.families ?? []) {
       ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
+      ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -832,7 +858,8 @@ for (const family of ledger.families ?? []) {
         !deferredWbxmlClauseIds.has(candidate.id)) ||
       implementedWmlClauseIds.has(candidate.id) ||
       implementedWsp801ClauseIds.has(candidate.id) ||
-      implementedWsp802ClauseIds.has(candidate.id));
+      implementedWsp802ClauseIds.has(candidate.id) ||
+      wmls501ClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -914,7 +941,14 @@ for (const family of ledger.families ?? []) {
           candidate.fixturePlan.evidence?.testPath !== wsp802TestPath ||
           !fs.existsSync(path.join(root, wsp802TestPath)) ||
           candidate.fixturePlan.evidence?.command !==
-            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar'))
+            'cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar')) ||
+      (wmls501ClauseIds.has(candidate.id) &&
+        (wmls501ClauseIds.size !== 15 ||
+          candidate.fixturePlan.evidence?.path !== wmls501FixturePath(candidate.id) ||
+          candidate.fixturePlan.evidence?.testPath !== wmls501TestPath ||
+          !fs.existsSync(path.join(root, wmls501FixturePath(candidate.id))) ||
+          !fs.existsSync(path.join(root, wmls501TestPath)) ||
+          candidate.fixturePlan.evidence?.command !== wmls501Command))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }

@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode the version byte as major-minus-one and minor nibbles, with effective version 1.1 encoded as 0x01.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

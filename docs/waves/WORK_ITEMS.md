@@ -140,16 +140,20 @@ Current implementation batch, ordered within each lane:
    behavior. This owns request serialization and the browser fetch handoff.
 2. **Request lane A2:** add replayable POST history only after A1 stabilizes the serialized request
    identity. C1 leaves `WML-CL-HISTORY-POST-REPLAY` untouched as the explicit A2 baton.
-3. **Script lane B1:** finish `WMLS-501` library-index and stack-dataflow verification.
-4. **Script lane B2:** begin bounded `WMLS-502` operator/conversion execution after B1. B1 and B2
-   share `engine-wasm/engine/src/wavescript/*` and remain sequential.
-5. **Runtime lane C1 direct tranche (complete):** the additive `WML-301` card-table boundary now has direct
-   parser/native/WASM/story fixtures. The graph separates 13 direct clauses from seven aggregate
-   card/WAE context clauses; the three broad WAE delegates remain not-assessed under `WAE-601`,
-   keeping the aggregate work item in progress.
-6. **Desktop contract lane D1:** activate the ready `WBP-06`/`F0-01` frame-and-affordance contract
-   with one owner. Sequence its generated contract integration with A1 and preserve the additive
-   `EngineDebug*` namespace; this is not the pending visual-refinement stream.
+3. **Script lane B1 (complete):** the additive `WMLS-501` library-index and stack-dataflow
+   verification tranche is closed without reopening or replacing the merged decoder/runtime
+   history.
+4. **Script lane B2 (ready):** begin bounded `WMLS-502` operator/conversion execution on the B1
+   verifier foundation. B1 and B2 share `engine-wasm/engine/src/wavescript/*` and remain
+   sequential.
+5. **Runtime lane C1 direct tranche (complete):** the additive `WML-301` card-table boundary has
+   direct parser/native/WASM/story fixtures. The graph separates 13 direct clauses from seven
+   aggregate card/WAE context clauses; the three broad WAE delegates remain not-assessed under
+   `WAE-601`, keeping the aggregate work item in progress.
+6. **Desktop contract lane D1 (complete):** `WML-309` closes the engine-owned
+   frame-and-affordance contract for `WBP-06`/`F0-01`, including generated host contracts and
+   native/WASM/story evidence. Preserve the additive `EngineDebug*` namespace; this is not the
+   pending visual-refinement stream.
 
 A1 fixes the A2 dependency at the transport boundary: the replay input is the absolute requested
 URL plus the typed `FetchRequestIntent` (`method`, declared enctype, `sendreferer`, accepted
@@ -2429,7 +2433,7 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W1-02 Bytecode structural verification (header/pools/indexes/jumps)
 
-1. `Status`: `in-progress`
+1. `Status`: `done`
 2. `Depends On`: `W0-06`
 3. `Files`:
 
@@ -2468,8 +2472,17 @@ Completed `W0-01` through `W0-04` are archived in:
   external names from the function table, execute `RETURN_ES`, and preserve fatal verification
   outcomes through invocation and trace boundaries. Manual entry-point PCs explicitly select the
   non-normative nine-opcode fixture compatibility path.
-- Additive follow-ups retain every other opcode semantic, standard-library indexes, stack
-  dataflow, and full chapter 12 closure.
+- Additive B1 closure (2026-07-28): source-pinned fixtures verify all WAP-194 Appendix A
+  standard-library/function identifier domains and arities plus reachable whole-function stack
+  effects, merge consistency, loops, unreachable regions, implicit/explicit returns,
+  underflow/overflow classification, native/WASM serialization parity, and verifier recovery.
+  `script-link-execution.flow.json` makes failure and replacement-invocation recovery executable
+  with `pnpm test:story WMLS-501`.
+  This closes the additive verifier tranche without reopening the previously merged WMLS-501
+  decoder/runtime-routing history.
+- B2 baton: `WMLS-502` may now add bounded operator/conversion execution on the verified CFG and
+  stack model. It must not conflate that execution kernel with `WMLS-503` URL/access behavior or
+  `WMLS-504` standard-library function behavior. Full chapter 12 closure remains in `WMLS-505`.
 
 ### W1-03 Extern/pragma/access-control conformance
 

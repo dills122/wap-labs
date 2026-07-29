@@ -47,7 +47,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-direct-test-linked",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+  "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -59,7 +59,7 @@ tags:
       "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
       "test": "decodes_constant_pragma_function_and_instruction_pools",
       "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-      "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+      "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
     },
     {
       "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -79,6 +79,7 @@ tags:
   ],
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json"

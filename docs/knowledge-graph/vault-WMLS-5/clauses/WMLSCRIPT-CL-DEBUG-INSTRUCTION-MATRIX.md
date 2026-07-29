@@ -17,6 +17,7 @@ tags:
 
 - `maps-to` → [[requirements/RQ-WMLS-008|RQ-WMLS-008]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
 - `refines` → [[scr-rows/WMLS-C-069|WMLS-C-069]]
 - `refines` → [[scr-rows/WMLS-C-106|WMLS-C-106]]
 - `sourced-from` → [[source-documents/WAP-193_101-WMLScript|WAP-193_101-WMLScript]]
@@ -42,8 +43,10 @@ tags:
   "obligationSynopsis": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
   "workItems": [
     "W1-02",
+    "W1-04",
     "W1-05",
-    "WMLS-501"
+    "WMLS-501",
+    "WMLS-502"
   ],
   "ownerLayers": [
     "engine-wasm"

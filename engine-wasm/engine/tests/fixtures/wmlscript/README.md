@@ -12,8 +12,18 @@ These byte-exact `.wmlsc.hex` fixtures are pinned from the effective
   whose embedded function index `2` is outside the two-entry function pool. It proves that a
   reference failure in an unselected function quarantines the whole compilation unit before
   `main` can execute.
+- `wap-193-valid-library-refs.wmlsc.hex` pins valid calls at the WAP-194 Appendix A boundary for
+  Lang, Float, String, URL, WMLBrowser, and Dialogs, with arguments matching the source function
+  signatures. The paired invalid-library and invalid-library-function fixtures step one index
+  outside those domains.
+- The stack-dataflow fixtures pin WAP-193 chapter 10 effects and chapter 11 validity across fatal
+  underflow, the strict 64-value resource ceiling, inconsistent conditional merges, a balanced
+  backward loop, an unreachable `POP`, and implicit/explicit return paths. The 64-value ceiling
+  matches the engine's existing bounded interpreter default; WAP-193 section 12.3.3.1 permits an
+  implementation resource boundary and classifies exhaustion as fatal stack overflow.
 
 The fields follow WAP-193_101 sections 9.2-9.6 (version `1.1`, code size, UTF-8 MIBEnum `106`,
 empty constant/pragma pools, external function-name table, function prologues, and code arrays).
-The execution assertions are deliberately limited to `RETURN_ES`; the fixtures do not claim
-operator, conversion, standard-library, or stack-dataflow coverage.
+Library calls and general operators remain verification-only: the execution assertions are still
+deliberately limited to `RETURN_ES`. These fixtures establish index and stack-control validity,
+not WMLS-502 operator/conversion execution or WMLS-504 standard-library behavior.

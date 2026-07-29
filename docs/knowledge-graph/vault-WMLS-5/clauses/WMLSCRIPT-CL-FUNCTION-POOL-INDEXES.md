@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Assign zero-based function indexes by function-pool order for local call instructions.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [
