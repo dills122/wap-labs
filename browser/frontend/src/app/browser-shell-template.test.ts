@@ -168,11 +168,20 @@ describe('mountBrowserShell', () => {
     expect(localButton?.getAttribute('aria-pressed')).toBe('true');
     expect(networkButton?.getAttribute('aria-pressed')).toBe('false');
 
+    const welcomePanel = document.querySelector<HTMLElement>('#welcome-help-panel');
+    localButton?.click();
+    expect(welcomePanel?.hidden).toBe(true);
+    expect(modeChangeSpy).not.toHaveBeenCalled();
+
+    document.querySelector<HTMLButtonElement>('#btn-welcome-toggle')?.click();
+    expect(welcomePanel?.hidden).toBe(false);
+
     networkButton?.click();
     expect(refs.runModeSelectEl.value).toBe('network');
     expect(shell?.dataset.runMode).toBe('network');
     expect(modeChangeSpy).toHaveBeenCalledTimes(1);
     expect(networkButton?.getAttribute('aria-pressed')).toBe('true');
+    expect(welcomePanel?.hidden).toBe(true);
   });
 
   it('opens and closes the inspector from the command bar', () => {

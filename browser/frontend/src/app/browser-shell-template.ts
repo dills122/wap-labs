@@ -194,12 +194,16 @@ export const mountBrowserShell = (
     welcomeToggleBtn &&
     welcomePanelEl &&
     showWelcomeOnLaunchEl &&
-    browserShellEl
+    browserShellEl &&
+    localModeButtonEl &&
+    networkModeButtonEl
   ) {
     bindWelcomeHelpControls({
       startTourBtn,
       tryLocalBtn,
       connectNetworkBtn,
+      localModeButtonEl,
+      networkModeButtonEl,
       welcomeToggleBtn,
       welcomePanelEl,
       showWelcomeOnLaunchEl,

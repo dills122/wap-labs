@@ -9,6 +9,8 @@ const setup = () => {
   const startTourBtn = document.createElement('button');
   const tryLocalBtn = document.createElement('button');
   const connectNetworkBtn = document.createElement('button');
+  const localModeButtonEl = document.createElement('button');
+  const networkModeButtonEl = document.createElement('button');
   const welcomeToggleBtn = document.createElement('button');
   const welcomePanelEl = document.createElement('section');
   const showWelcomeOnLaunchEl = document.createElement('input');
@@ -38,6 +40,8 @@ const setup = () => {
     startTourBtn,
     tryLocalBtn,
     connectNetworkBtn,
+    localModeButtonEl,
+    networkModeButtonEl,
     welcomeToggleBtn,
     welcomePanelEl,
     showWelcomeOnLaunchEl,
@@ -52,6 +56,8 @@ const setup = () => {
     startTourBtn,
     tryLocalBtn,
     connectNetworkBtn,
+    localModeButtonEl,
+    networkModeButtonEl,
     welcomeToggleBtn,
     welcomePanelEl,
     showWelcomeOnLaunchEl,
@@ -104,6 +110,18 @@ describe('bindWelcomeHelpControls', () => {
     nextRefs.welcomeToggleBtn.click();
     expect(nextRefs.welcomePanelEl.hidden).toBe(false);
     expect(nextRefs.showWelcomeOnLaunchEl.checked).toBe(false);
+  });
+
+  it('dismisses Welcome when either header mode segment is chosen', () => {
+    const refs = setup();
+    bindWelcomeHelpControls(refs);
+
+    refs.networkModeButtonEl.click();
+    expect(refs.welcomePanelEl.hidden).toBe(true);
+
+    refs.welcomeToggleBtn.click();
+    refs.localModeButtonEl.click();
+    expect(refs.welcomePanelEl.hidden).toBe(true);
   });
 
   it('Take the Tour switches to local mode, selects the tutorial deck, and clicks load', () => {

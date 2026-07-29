@@ -8,6 +8,8 @@ export interface WelcomeHelpControlRefs {
   startTourBtn: HTMLButtonElement;
   tryLocalBtn: HTMLButtonElement;
   connectNetworkBtn: HTMLButtonElement;
+  localModeButtonEl: HTMLButtonElement;
+  networkModeButtonEl: HTMLButtonElement;
   welcomeToggleBtn: HTMLButtonElement;
   welcomePanelEl: HTMLElement;
   showWelcomeOnLaunchEl: HTMLInputElement;
@@ -98,6 +100,8 @@ export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => vo
   refs.startTourBtn.addEventListener('click', handleStartTour);
   refs.tryLocalBtn.addEventListener('click', handleTryLocal);
   refs.connectNetworkBtn.addEventListener('click', handleConnectNetwork);
+  refs.localModeButtonEl.addEventListener('click', hideWelcome);
+  refs.networkModeButtonEl.addEventListener('click', hideWelcome);
   syncWelcomePresentation();
 
   return () => {
@@ -106,5 +110,7 @@ export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => vo
     refs.startTourBtn.removeEventListener('click', handleStartTour);
     refs.tryLocalBtn.removeEventListener('click', handleTryLocal);
     refs.connectNetworkBtn.removeEventListener('click', handleConnectNetwork);
+    refs.localModeButtonEl.removeEventListener('click', hideWelcome);
+    refs.networkModeButtonEl.removeEventListener('click', hideWelcome);
   };
 };
