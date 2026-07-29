@@ -6,10 +6,20 @@ fn gateway_http_base() -> String {
     env::var("GATEWAY_HTTP_BASE").unwrap_or_else(|_| "http://localhost:13002".to_string())
 }
 
+#[cfg(test)]
 pub(crate) fn build_gateway_request(
     original_url: &str,
     method: &str,
     headers: &HashMap<String, String>,
+) -> Result<(String, HashMap<String, String>), String> {
+    build_gateway_request_with_endpoint(original_url, method, headers, None)
+}
+
+pub(crate) fn build_gateway_request_with_endpoint(
+    original_url: &str,
+    method: &str,
+    headers: &HashMap<String, String>,
+    configured_base: Option<&str>,
 ) -> Result<(String, HashMap<String, String>), String> {
     let parsed = Url::parse(original_url).map_err(|err| format!("invalid wap url: {err}"))?;
     if !matches!(parsed.scheme(), "wap" | "waps") {
@@ -24,7 +34,10 @@ pub(crate) fn build_gateway_request(
         ));
     }
 
-    let base = Url::parse(&gateway_http_base())
+    let base_value = configured_base
+        .map(str::to_owned)
+        .unwrap_or_else(gateway_http_base);
+    let base = Url::parse(&base_value)
         .map_err(|_| "GATEWAY_HTTP_BASE must be an absolute http(s) URL".to_string())?;
     if !matches!(base.scheme(), "http" | "https") || base.host_str().is_none() {
         return Err("GATEWAY_HTTP_BASE must be an absolute http(s) URL".to_string());

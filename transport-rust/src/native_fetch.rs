@@ -37,6 +37,7 @@ pub(crate) enum TransportProfile {
 
 pub(crate) struct NativeFetchPlan {
     pub(crate) request_url: String,
+    pub(crate) gateway_endpoint: Option<String>,
     pub(crate) method: String,
     pub(crate) outbound_headers: HashMap<String, String>,
     pub(crate) post_body: Option<Vec<u8>>,
@@ -104,7 +105,21 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
         }
     };
 
-    let peer = match resolve_destination_socket_addr(&parsed, &plan.destination_policy) {
+    let peer_url = match plan.gateway_endpoint.as_deref() {
+        Some(endpoint) => match parse_native_gateway_endpoint(endpoint) {
+            Ok(endpoint) => endpoint,
+            Err(error) => {
+                return invalid_request_response(
+                    plan.request_url,
+                    error,
+                    plan.request_id.as_deref(),
+                );
+            }
+        },
+        None => parsed.clone(),
+    };
+
+    let peer = match resolve_destination_socket_addr(&peer_url, &plan.destination_policy) {
         Ok(peer) => peer,
         Err(error) => {
             return map_destination_resolution_error(
@@ -136,6 +151,27 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
     };
 
     execute_native_wap_request_with_transport(&mut transport, peer, plan)
+}
+
+fn parse_native_gateway_endpoint(endpoint: &str) -> Result<Url, String> {
+    let parsed = Url::parse(endpoint)
+        .map_err(|_| "native gateway endpoint must be an absolute wap:// URL".to_string())?;
+    if !matches!(parsed.scheme(), "wap" | "waps") || parsed.host_str().is_none() {
+        return Err(
+            "native gateway endpoint must be an absolute wap:// or waps:// URL".to_string(),
+        );
+    }
+    if !parsed.username().is_empty()
+        || parsed.password().is_some()
+        || !matches!(parsed.path(), "" | "/")
+        || parsed.query().is_some()
+        || parsed.fragment().is_some()
+    {
+        return Err(
+            "native gateway endpoint may contain only scheme, host, and optional port".to_string(),
+        );
+    }
+    Ok(parsed)
 }
 
 pub(crate) fn execute_native_wap_request_with_transport(
@@ -592,6 +628,26 @@ mod tests {
     }
 
     #[test]
+    fn native_gateway_endpoint_is_resource_independent_and_strictly_shaped() {
+        let endpoint = parse_native_gateway_endpoint("wap://159.89.254.0:9200")
+            .expect("gateway endpoint should parse");
+        assert_eq!(endpoint.host_str(), Some("159.89.254.0"));
+        assert_eq!(endpoint.port(), Some(9200));
+
+        for invalid in [
+            "http://159.89.254.0:9200",
+            "wap://user:secret@159.89.254.0:9200",
+            "wap://159.89.254.0:9200/path",
+            "wap://159.89.254.0:9200?token=secret",
+        ] {
+            assert!(
+                parse_native_gateway_endpoint(invalid).is_err(),
+                "endpoint should be rejected: {invalid}"
+            );
+        }
+    }
+
+    #[test]
     fn native_fetch_roundtrip_maps_reply_to_normalized_response() {
         let request_url = "wap://127.0.0.1/login".to_string();
         let peer: SocketAddr = "127.0.0.1:9200".parse().expect("literal should parse");
@@ -618,6 +674,7 @@ mod tests {
             peer,
             NativeFetchPlan {
                 request_url: request_url.clone(),
+                gateway_endpoint: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::from([(
                     "Accept".to_string(),
@@ -666,6 +723,7 @@ mod tests {
             "127.0.0.1:9200".parse().expect("literal should parse"),
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
+                gateway_endpoint: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,
@@ -717,6 +775,7 @@ mod tests {
             peer,
             NativeFetchPlan {
                 request_url: request_url.clone(),
+                gateway_endpoint: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,
@@ -1061,6 +1120,7 @@ mod tests {
             "127.0.0.1:9200".parse().expect("literal should parse"),
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
+                gateway_endpoint: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,

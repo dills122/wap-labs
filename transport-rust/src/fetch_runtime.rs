@@ -3,7 +3,7 @@ mod execution;
 use crate::fetch_policy::{
     apply_request_policy, resolve_fetch_destination_policy, validate_fetch_destination,
 };
-use crate::gateway::build_gateway_request;
+use crate::gateway::build_gateway_request_with_endpoint;
 use crate::native_fetch::{
     execute_native_wap_request, should_use_native_wap_request, NativeFetchPlan,
 };
@@ -12,7 +12,7 @@ use crate::request_serialization::serialize_fetch_request;
 use crate::responses::{invalid_request_response, transport_unavailable_response};
 use crate::{
     FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy,
-    FetchTransportProfile, MAX_URI_OCTETS,
+    FetchTransportOptions, FetchTransportProfile, MAX_URI_OCTETS,
 };
 use url::Url;
 
@@ -20,7 +20,7 @@ use self::execution::{execute_fetch, FetchExecutionPlan};
 
 pub(crate) fn fetch_deck_in_process_impl(
     request: FetchDeckRequest,
-    profile_override: Option<FetchTransportProfile>,
+    transport_options: Option<FetchTransportOptions>,
 ) -> FetchDeckResponse {
     let FetchDeckRequest {
         url,
@@ -122,9 +122,15 @@ pub(crate) fn fetch_deck_in_process_impl(
         }),
     );
 
+    let profile_override = transport_options.as_ref().map(|options| options.profile);
+    let gateway_endpoint = transport_options
+        .as_ref()
+        .and_then(|options| options.gateway_endpoint.clone());
+
     if should_use_native_wap_request_for_profile(&parsed, &method, profile_override) {
         return execute_native_wap_request(NativeFetchPlan {
             request_url: url,
+            gateway_endpoint,
             method,
             outbound_headers,
             post_body: request_body,
@@ -145,7 +151,12 @@ pub(crate) fn fetch_deck_in_process_impl(
     }
 
     if is_wap_scheme {
-        match build_gateway_request(&url, &method, &outbound_headers) {
+        match build_gateway_request_with_endpoint(
+            &url,
+            &method,
+            &outbound_headers,
+            gateway_endpoint.as_deref(),
+        ) {
             Ok((gateway_url, headers)) => {
                 upstream_url = gateway_url;
                 outbound_headers = headers;

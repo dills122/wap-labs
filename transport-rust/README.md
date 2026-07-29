@@ -2,6 +2,91 @@
 
 In-process Rust transport boundary used by the Waves browser host.
 
+## `wapcurl` diagnostic CLI
+
+`wapcurl` is a small curl-like developer probe built on the same Lowband fetch facade, WSP codec,
+WBXML decoder, destination policy, retry bounds, and response-size limit as the desktop host.
+Install it locally or run it from the repository:
+
+```sh
+cargo install --path transport-rust --bin wapcurl
+cargo run --manifest-path transport-rust/Cargo.toml --bin wapcurl -- --help
+```
+
+Inspect decoded WML over direct HTTP:
+
+```sh
+wapcurl https://example.test/deck.wml
+```
+
+Use native connectionless WSP/WDP while keeping the resource URL separate from the gateway peer:
+
+```sh
+wapcurl \
+  --profile wap-net-core \
+  --gateway 159.89.254.0:9200 \
+  wap://home.wap.shrimpworks.dev/
+```
+
+Inspect the original WMLC bytes or save them:
+
+```sh
+wapcurl --gateway 159.89.254.0:9200 --hex \
+  wap://home.wap.shrimpworks.dev/examples/index.wml
+wapcurl --gateway 159.89.254.0:9200 --raw \
+  wap://interop.wap.shrimpworks.dev/ > response.wbxml
+wapcurl --gateway 159.89.254.0:9200 --output response.wbxml \
+  wap://interop.wap.shrimpworks.dev/
+```
+
+Use the explicit HTTP gateway bridge or a controlled local fixture:
+
+```sh
+wapcurl --profile gateway-bridged --gateway http://localhost:13002 \
+  --allow-private wap://localhost/examples/index.wml
+wapcurl --allow-private http://127.0.0.1:8080/fixture.wml
+```
+
+`--json` emits one object on stdout. `--verbose` emits redacted trace events on stderr. Header
+values for authorization and cookies, URL credentials, and sensitive query parameters are
+redacted from diagnostics by default.
+
+The default is one attempt with a 5-second whole-request timeout. `--retry` is limited to `0..2`,
+`--timeout-ms` to `100..30000`, HTTP redirects to 10, and bodies to 524,288 bytes. There is no
+automatic native-to-bridge fallback.
+
+Exit codes:
+
+| Code | Meaning                                          |
+| ---: | ------------------------------------------------ |
+|    0 | Success                                          |
+|    2 | CLI usage/configuration error                    |
+|    3 | Invalid request or destination-policy rejection  |
+|    4 | Request timeout                                  |
+|    5 | Unreachable/unavailable transport                |
+|    6 | Protocol/status failure                          |
+|    7 | Unsupported content type or WBXML decode failure |
+|    8 | Response exceeded the shared payload limit       |
+|    9 | Local output/write failure                       |
+
+### Opt-in public smoke
+
+This live command is intentionally manual and bounded. It performs one request, has a 5-second
+timeout, allows no retries, and expects the public service to return WML 1.3 WBXML (numeric public
+identifier 10):
+
+```sh
+cargo run --manifest-path transport-rust/Cargo.toml --bin wapcurl -- \
+  --gateway 159.89.254.0:9200 \
+  --timeout-ms 5000 \
+  --retry 0 \
+  --hex \
+  wap://home.wap.shrimpworks.dev/examples/index.wml
+```
+
+The public lab is unencrypted test infrastructure. Do not send real credentials, cookies, or
+personal data. Ordinary tests use local fixtures and never depend on this service.
+
 ## Scope
 
 - HTTP/HTTPS fetch transport

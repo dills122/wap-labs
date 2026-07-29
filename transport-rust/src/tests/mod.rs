@@ -22,7 +22,7 @@ pub(super) use crate::fetch_policy::{
     validate_fetch_destination, validate_resolved_destination_addresses, AppliedRequestPolicy,
     DestinationHostClass,
 };
-pub(super) use crate::gateway::build_gateway_request;
+pub(super) use crate::gateway::{build_gateway_request, build_gateway_request_with_endpoint};
 pub(super) use crate::request_meta::{
     details_with_request_id, log_transport_event, normalized_request_id,
 };
