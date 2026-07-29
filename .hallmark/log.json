@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-07-28",
+    "scope": "app",
+    "macrostructure": "Map / Diagram",
+    "theme": "custom",
+    "theme_axes": "light / system-native / chromatic-teal ~191°",
+    "vibe": "mature native craft, reduced chrome, precise simulator",
+    "enrichment": "none",
+    "brief": "Waves Current structural desktop shell redesign"
+  },
+  {
+    "date": "2026-07-28",
     "macrostructure": "Split Studio",
     "theme": "custom",
     "theme_axes": "light / mono / chromatic-teal ~187°",

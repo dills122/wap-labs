@@ -1,9 +1,10 @@
 import { WAVES_COPY } from '../waves-copy';
 
 export const welcomeHelpTemplate = () => `
-  <details id="welcome-help-panel" class="welcome-help-panel chrome-disclosure" open>
-    <summary id="welcome-help-toggle">${WAVES_COPY.shell.welcomeHelpTitle}</summary>
+  <section id="welcome-help-panel" class="welcome-empty-state" aria-labelledby="welcome-help-toggle">
+    <span class="welcome-mark" aria-hidden="true"></span>
     <div class="welcome-help-body">
+      <h2 id="welcome-help-toggle">${WAVES_COPY.shell.welcomeHelpTitle}</h2>
       <p>${WAVES_COPY.shell.welcomeIntro}</p>
       <p>${WAVES_COPY.shell.welcomeModes}</p>
       <div class="actions">
@@ -20,5 +21,5 @@ export const welcomeHelpTemplate = () => `
       <h2>${WAVES_COPY.shell.troubleshootingTitle}</h2>
       <p>${WAVES_COPY.shell.troubleshootingBody}</p>
     </div>
-  </details>
+  </section>
 `;

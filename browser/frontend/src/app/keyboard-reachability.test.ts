@@ -29,14 +29,16 @@ describe('keyboard reachability of host-chrome actions', () => {
     for (const selector of [
       '#btn-back',
       '#btn-reload',
-      '#fetch-url',
-      '#btn-fetch-url',
-      '#run-mode',
       '#local-example',
-      '#btn-load-local'
+      '#btn-load-local',
+      '#btn-mode-local',
+      '#btn-mode-network',
+      '#btn-inspector'
     ]) {
       expectFocusable(selector);
     }
+
+    expect(document.querySelector<HTMLElement>('#run-mode')?.tabIndex).toBe(-1);
   });
 
   it('reaches the softkey row', () => {
@@ -49,13 +51,13 @@ describe('keyboard reachability of host-chrome actions', () => {
     }
   });
 
-  it('reaches the open utility rail, Welcome/Help panel, and its actions', () => {
+  it('reaches persistent display controls and empty-state actions with the inspector closed', () => {
     document.body.innerHTML = '<div id="app"></div>';
     registerBrowserComponents();
     mountBrowserShell('wap://localhost/start.wml', 'local');
 
-    expect(document.querySelector<HTMLDetailsElement>('#utility-rail-panel')?.open).toBe(true);
-    expect(document.querySelector<HTMLDetailsElement>('#welcome-help-panel')?.open).toBe(true);
+    expect(document.querySelector<HTMLDetailsElement>('#utility-rail-panel')?.open).toBe(false);
+    expect(document.querySelector('#welcome-help-panel')?.tagName).toBe('SECTION');
 
     for (const selector of [
       '#viewport-cols',
@@ -74,7 +76,11 @@ describe('keyboard reachability of host-chrome actions', () => {
     mountBrowserShell('wap://localhost/start.wml', 'local');
 
     const drawer = document.querySelector<HTMLDetailsElement>('#dev-drawer');
+    const rail = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
     expect(drawer).not.toBeNull();
+    if (rail) {
+      rail.open = true;
+    }
     // Collapsed by default, matching native <details> semantics -- its
     // content is intentionally out of the tab order until opened.
     expect(drawer?.open).toBe(false);

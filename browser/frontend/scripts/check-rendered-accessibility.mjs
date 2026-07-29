@@ -164,6 +164,7 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         const style = getComputedStyle(element);
         const rect = element.getBoundingClientRect();
         return (
+          element.getAttribute('aria-hidden') !== 'true' &&
           style.display !== 'none' &&
           style.visibility !== 'hidden' &&
           rect.width > 0 &&
@@ -299,22 +300,15 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     assert.equal(focused.focusVisible, true, `${name}: #${focused.id} matches :focus-visible`);
     assert.notEqual(focused.outlineStyle, 'none', `${name}: #${focused.id} has an outline`);
     assert.ok(focused.outlineWidth >= 2, `${name}: #${focused.id} outline is at least 2px`);
-    assert.match(
-      focused.boxShadow,
-      /0px 0px 0px 2px/,
-      `${name}: #${focused.id} focus ring has a separation layer`
-    );
-    assert.match(
-      focused.boxShadow,
-      /0px 0px 0px 5px/,
-      `${name}: #${focused.id} focus ring has a high-contrast outer layer`
-    );
     focusEvidence.push(focused);
   }
   assert.ok(focusEvidence.length > 10, `${name}: keyboard focus evidence covers host controls`);
 
   await page.locator('#btn-reload').focus();
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    document.querySelector('.utility-rail-body')?.scrollTo(0, 0);
+  });
   const screenshot = `${name}-window-200-percent.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
 

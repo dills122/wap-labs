@@ -3,25 +3,14 @@ import { bindHandsetScaleControl } from './handset-scale-control';
 import { bindRouteIndicator } from './route-indicator';
 import { bindWelcomeHelpControls } from './welcome-help-control';
 import { WAVES_CONFIG } from './waves-config';
-import { WAVES_COPY } from './waves-copy';
-import { developerDrawerTemplate } from './shell/developer-drawer-template';
 import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
-import {
-  UTILITY_RAIL_NARROW_MEDIA_QUERY,
-  utilityRailTemplate
-} from './shell/utility-rail-template';
+import { statusBarTemplate } from './shell/status-bar-template';
+import { utilityRailTemplate } from './shell/utility-rail-template';
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
     <header class="browser-chrome">
-      <div class="title-row">
-        <h1 class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>${WAVES_COPY.app.brand}</span>
-        </h1>
-        <div class="caption">${WAVES_COPY.app.tagline}</div>
-      </div>
       ${navigationToolbarTemplate()}
     </header>
 
@@ -32,7 +21,7 @@ const browserShellTemplate = () => `
 
     <div class="phase-bar-slot" hidden aria-hidden="true"></div>
 
-    ${developerDrawerTemplate()}
+    ${statusBarTemplate()}
 
     <div
       id="live-announcer"
@@ -69,20 +58,6 @@ export interface BrowserShellRefs {
   localExampleGoalEl: HTMLParagraphElement;
   localExampleTestingAcEl: HTMLUListElement;
 }
-
-// Narrow windows start with the utility rail collapsed so the handset stage
-// gets the available width; the native <details> disclosure still lets the
-// user reopen it manually. Guarded because jsdom's matchMedia support is
-// inconsistent across environments running this same mount path in tests.
-const utilityRailPrefersNarrow = (): boolean => {
-  try {
-    return typeof window.matchMedia === 'function'
-      ? window.matchMedia(UTILITY_RAIL_NARROW_MEDIA_QUERY).matches
-      : false;
-  } catch {
-    return false;
-  }
-};
 
 export const mountBrowserShell = (
   defaultUrl: string,
@@ -157,8 +132,43 @@ export const mountBrowserShell = (
   baseUrlInput.value = WAVES_CONFIG.defaultDebugBaseUrl;
 
   const utilityRailPanelEl = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
-  if (utilityRailPanelEl && utilityRailPrefersNarrow()) {
-    utilityRailPanelEl.open = false;
+  const inspectorButtonEl = document.querySelector<HTMLButtonElement>('#btn-inspector');
+  const localModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-local');
+  const networkModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-network');
+  const browserShellEl = document.querySelector<HTMLElement>('.browser-shell');
+
+  const syncRunModePresentation = (): void => {
+    const mode = runModeSelectEl.value === 'network' ? 'network' : 'local';
+    browserShellEl?.setAttribute('data-run-mode', mode);
+    localModeButtonEl?.setAttribute('aria-pressed', String(mode === 'local'));
+    networkModeButtonEl?.setAttribute('aria-pressed', String(mode === 'network'));
+  };
+
+  const requestRunMode = (mode: 'local' | 'network'): void => {
+    if (runModeSelectEl.value === mode) {
+      syncRunModePresentation();
+      return;
+    }
+    runModeSelectEl.value = mode;
+    syncRunModePresentation();
+    runModeSelectEl.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+
+  localModeButtonEl?.addEventListener('click', () => requestRunMode('local'));
+  networkModeButtonEl?.addEventListener('click', () => requestRunMode('network'));
+  runModeSelectEl.addEventListener('change', syncRunModePresentation);
+  syncRunModePresentation();
+
+  if (utilityRailPanelEl && inspectorButtonEl) {
+    const syncInspectorPresentation = (): void => {
+      inspectorButtonEl.setAttribute('aria-expanded', String(utilityRailPanelEl.open));
+    };
+    inspectorButtonEl.addEventListener('click', () => {
+      utilityRailPanelEl.open = !utilityRailPanelEl.open;
+      syncInspectorPresentation();
+    });
+    utilityRailPanelEl.addEventListener('toggle', syncInspectorPresentation);
+    syncInspectorPresentation();
   }
 
   const handsetScaleSelectEl = document.querySelector<HTMLSelectElement>('#handset-scale-select');

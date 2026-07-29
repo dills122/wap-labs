@@ -2,17 +2,16 @@
   color-scheme: light;
   font-synthesis: none;
 
-  /* Dependency-free typography: native application chrome, technical readouts,
-     and the deterministic period LCD face remain deliberately distinct. */
-  --font-display: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  /* Waves Current uses the host operating system for chrome, technical mono
+     only for instrumentation, and a deterministic period face for the LCD. */
   --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
   --font-lcd: 'Courier New', Courier, monospace;
 
   --text-xs: 0.6875rem;
   --text-sm: 0.75rem;
-  --text-base: 0.875rem;
-  --text-md: 1rem;
+  --text-base: 0.8125rem;
+  --text-md: 0.9375rem;
   --text-lg: 1.125rem;
 
   --space-3xs: 0.125rem;
@@ -32,13 +31,11 @@
 
   --rule-hair: 1px;
   --rule-strong: 2px;
-  --rule-lcd: 4px;
+  --rule-lcd: 3px;
   --radius-xs: 2px;
   --radius-control: 6px;
   --radius-panel: 8px;
-  --radius-device: 14px;
-  --radius-handset: 24px;
-  --radius-pill: 999px;
+  --radius-device: 8px;
 
   --z-base: 1;
   --z-raised: 10;
@@ -48,101 +45,89 @@
   --z-toast: 500;
   --z-tooltip: 600;
 
-  /* Custom Waves host palette. The user-supplied anchors are translated
-     directly from #F3F2EE, #FBFAF7, and #0E7F77 into named OKLCH tokens. */
-  --color-canvas: oklch(96.08% 0.0054 95.1);
-  --color-canvas-deep: oklch(93% 0.008 94);
-  --color-paper: oklch(98.5% 0.0041 91.45);
-  --color-paper-2: oklch(96.5% 0.006 93);
-  --color-paper-3: oklch(92.5% 0.008 94);
-  --color-panel: oklch(98.5% 0.0041 91.45);
-  --color-rule: oklch(82% 0.009 95);
-  --color-rule-2: oklch(68% 0.012 187);
-  --color-ink: oklch(22% 0.012 187);
-  --color-ink-2: oklch(30% 0.012 187);
-  --color-muted: oklch(43% 0.012 187);
-  --color-disabled: oklch(62% 0.008 187);
+  /* Waves Current custom palette, translated from the supplied hex anchors. */
+  --color-canvas: oklch(92.52% 0.0045 214.33);
+  --color-chrome-top: oklch(97.81% 0.0017 145.56);
+  --color-chrome-bottom: oklch(92.54% 0.0035 174.48);
+  --color-surface: oklch(97.53% 0.004 106.47);
+  --color-surface-raised: oklch(99.4% 0.002 190.62);
+  --color-ink: oklch(26.57% 0.0166 196.2);
+  --color-muted: oklch(53.66% 0.0169 191.42);
+  --color-disabled: oklch(67% 0.008 191.42);
+  --color-divider: oklch(80.02% 0.0103 181.33);
+  --color-divider-strong: oklch(66% 0.018 187);
 
-  --color-accent: oklch(53.84% 0.0912 186.96);
-  --color-accent-hover: oklch(47% 0.0912 186.96);
-  --color-accent-deep: oklch(34% 0.07 186.96);
-  --color-accent-soft: oklch(92% 0.03 186.96);
-  --color-accent-ink: oklch(98.5% 0.0041 91.45);
-  --color-highlight: var(--color-accent);
-  --color-highlight-hover: var(--color-accent-hover);
-  --color-highlight-soft: var(--color-accent-soft);
-  --color-highlight-ink: var(--color-accent-deep);
-  --color-focus: oklch(26% 0.05 186.96);
-  --color-focus-outer: var(--color-panel);
-  --color-contrast-rule: oklch(50% 0.018 187);
-  --color-contrast-rule-strong: oklch(28% 0.018 187);
-  --color-contrast-muted: oklch(32% 0.016 187);
-  --color-contrast-accent: oklch(40% 0.1 186.96);
+  --color-accent: oklch(51.5% 0.0864 190.62);
+  --color-accent-hover: oklch(45.19% 0.0759 189.89);
+  --color-accent-deep: oklch(34% 0.064 190.62);
+  --color-accent-soft: oklch(92.24% 0.0203 189.19);
+  --color-accent-ink: oklch(99.4% 0.002 190.62);
+  --color-focus: oklch(26% 0.05 190.62);
+  --color-focus-soft: oklch(66.53% 0.0923 188.75);
+  --color-focus-outer: var(--color-surface-raised);
   --color-transparent: transparent;
 
-  --color-idle-bg: oklch(95% 0.012 165);
-  --color-idle-ink: oklch(31% 0.025 175);
-  --color-idle-signal: oklch(56% 0.025 175);
+  /* Teal carries normal host activity; amber and red are reserved for status. */
+  --color-idle-bg: var(--color-surface);
+  --color-idle-ink: var(--color-ink);
+  --color-idle-signal: var(--color-muted);
   --color-loading-bg: var(--color-accent-soft);
   --color-loading-ink: var(--color-accent-deep);
   --color-loading-signal: var(--color-accent);
-  --color-success-bg: oklch(93% 0.045 150);
-  --color-success-ink: oklch(34% 0.09 150);
-  --color-success-signal: oklch(53% 0.14 150);
-  --color-error-bg: oklch(93% 0.045 30);
-  --color-error-ink: oklch(38% 0.13 30);
-  --color-error-signal: oklch(55% 0.17 30);
+  --color-success-bg: var(--color-accent-soft);
+  --color-success-ink: var(--color-accent-deep);
+  --color-success-signal: var(--color-accent);
+  --color-warning: oklch(62.5% 0.1253 71.41);
+  --color-warning-bg: oklch(94% 0.035 71.41);
+  --color-danger: oklch(54.96% 0.1332 25.79);
+  --color-danger-bg: oklch(94% 0.035 25.79);
+  --color-danger-ink: oklch(38% 0.12 25.79);
 
-  /* Functional Class C reference handset and deterministic monochrome LCD. */
-  --color-handset: oklch(36% 0.035 180);
-  --color-handset-raised: oklch(48% 0.03 180);
-  --color-handset-shadow: oklch(20% 0.025 180);
-  --color-bezel: oklch(27% 0.03 180);
-  --color-bezel-raised: oklch(39% 0.035 180);
-  --color-device-label: oklch(94% 0.012 105);
-  --color-device-muted: oklch(84% 0.025 175);
-  --color-led: oklch(73% 0.12 160);
-  --color-lcd: oklch(88% 0.06 120);
-  --color-lcd-ink: oklch(25% 0.04 130);
+  /* Functional Class C reference view and deterministic monochrome LCD. */
+  --color-device: oklch(33.29% 0.0223 187.16);
+  --color-device-raised: oklch(39% 0.023 187.16);
+  --color-device-shadow: oklch(19% 0.018 187.16);
+  --color-bezel: oklch(24% 0.021 187.16);
+  --color-device-label: oklch(92% 0.012 110);
+  --color-device-muted: oklch(78% 0.02 180);
+  --color-lcd: oklch(90.09% 0.0633 119.32);
+  --color-lcd-ink: oklch(31.79% 0.0236 154.66);
   --color-lcd-link: oklch(42% 0.17 255);
-  --color-lcd-skeleton: oklch(25% 0.04 130 / 0.13);
-  --color-lcd-scanline: oklch(25% 0.04 130 / 0.025);
+  --color-lcd-skeleton: oklch(31.79% 0.0236 154.66 / 0.13);
+  --color-lcd-scanline: oklch(31.79% 0.0236 154.66 / 0.025);
   --color-lcd-glare: oklch(99% 0.018 110 / 0.14);
 
-  /* Optical highlights and shadows are named modifiers, not palette entries. */
-  --color-highlight-strong: oklch(99% 0.006 93 / 0.8);
-  --color-highlight-medium: oklch(99% 0.006 93 / 0.55);
-  --color-highlight-faint: oklch(99% 0.006 93 / 0.24);
-  --color-shadow-faint: oklch(22% 0.012 187 / 0.06);
-  --color-shadow-soft: oklch(22% 0.012 187 / 0.1);
-  --color-shadow-medium: oklch(20% 0.014 187 / 0.16);
-  --color-shadow-device: oklch(17% 0.025 180 / 0.3);
+  --color-highlight-medium: oklch(100% 0 0 / 0.55);
+  --color-highlight-faint: oklch(100% 0 0 / 0.24);
+  --color-shadow-faint: oklch(20% 0.014 190 / 0.06);
+  --color-shadow-soft: oklch(20% 0.014 190 / 0.11);
+  --color-shadow-medium: oklch(20% 0.014 190 / 0.18);
+  --color-shadow-device: oklch(16% 0.02 187 / 0.32);
 
-  --shadow-panel: 0 1px 3px var(--color-shadow-faint);
-  --shadow-chrome: 0 2px 7px var(--color-shadow-faint);
-  --shadow-device: 0 14px 30px var(--color-shadow-device);
+  --shadow-panel: 0 1px 2px var(--color-shadow-faint);
+  --shadow-device: 0 18px 34px var(--color-shadow-device);
   --shadow-toast: 0 10px 28px var(--color-shadow-medium);
 
-  /* Compatibility aliases consumed by the existing shell and Web Components. */
+  /* Compatibility aliases consumed by existing shell code and components. */
   --host-canvas: var(--color-canvas);
-  --host-canvas-deep: var(--color-canvas-deep);
-  --host-surface: var(--color-paper-2);
-  --host-surface-raised: var(--color-paper);
-  --host-panel: var(--color-panel);
-  --host-border: var(--color-rule);
-  --host-border-strong: var(--color-rule-2);
+  --host-canvas-deep: var(--color-canvas);
+  --host-surface: var(--color-chrome-bottom);
+  --host-surface-raised: var(--color-chrome-top);
+  --host-panel: var(--color-surface-raised);
+  --host-border: var(--color-divider);
+  --host-border-strong: var(--color-divider-strong);
   --host-text: var(--color-ink);
   --host-muted: var(--color-muted);
   --host-accent: var(--color-accent);
   --host-accent-hover: var(--color-accent-hover);
   --host-accent-deep: var(--color-accent-deep);
   --host-accent-soft: var(--color-accent-soft);
-  --host-highlight: var(--color-highlight);
-  --host-highlight-soft: var(--color-highlight-soft);
-  --panel-border-mid: var(--color-rule);
-  --panel-bg: var(--color-panel);
-  --panel-heading-bg: var(--color-paper-3);
-  --panel-heading-text: var(--color-accent-deep);
+  --host-highlight: var(--color-accent);
+  --host-highlight-soft: var(--color-accent-soft);
+  --panel-border-mid: var(--color-divider);
+  --panel-bg: var(--color-surface-raised);
+  --panel-heading-bg: var(--color-surface);
+  --panel-heading-text: var(--color-ink);
   --status-idle-bg: var(--color-idle-bg);
   --status-idle-text: var(--color-idle-ink);
   --status-idle-indicator: var(--color-idle-signal);
@@ -152,14 +137,14 @@
   --status-ok-bg: var(--color-success-bg);
   --status-ok-text: var(--color-success-ink);
   --status-ok-indicator: var(--color-success-signal);
-  --status-error-bg: var(--color-error-bg);
-  --status-error-text: var(--color-error-ink);
-  --status-error-indicator: var(--color-error-signal);
+  --status-error-bg: var(--color-danger-bg);
+  --status-error-text: var(--color-danger-ink);
+  --status-error-indicator: var(--color-danger);
   --toast-ok-bg: var(--color-success-bg);
-  --toast-error-bg: var(--color-error-bg);
-  --handset-housing-bg: var(--color-handset);
-  --handset-housing-highlight: var(--color-handset-raised);
-  --handset-housing-shadow: var(--color-handset-shadow);
+  --toast-error-bg: var(--color-danger-bg);
+  --handset-housing-bg: var(--color-device);
+  --handset-housing-highlight: var(--color-device-raised);
+  --handset-housing-shadow: var(--color-device-shadow);
   --handset-bezel: var(--color-bezel);
   --lcd-bg: var(--color-lcd);
   --lcd-fg: var(--color-lcd-ink);

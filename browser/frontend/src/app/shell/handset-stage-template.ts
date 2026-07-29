@@ -1,4 +1,5 @@
 import { WAVES_COPY } from '../waves-copy';
+import { welcomeHelpTemplate } from './welcome-help-template';
 
 // #viewport is tabindex="0" so keyboard/softkey input reaches the engine,
 // and gets a minimal aria-label so it isn't a silently unnamed stop in the
@@ -7,13 +8,14 @@ import { WAVES_COPY } from '../waves-copy';
 // scope (see WAVES_DESKTOP_PRODUCT_DESIGN.md "Accessibility Model"), not
 // this host-chrome baseline slice (WBP-05).
 export const handsetStageTemplate = () => `
-  <section class="handset-stage" aria-label="Handset display">
-    <div class="handset-housing">
+  <section class="handset-stage simulator-stage" aria-label="${WAVES_COPY.shell.simulatorStage}">
+    <div class="stage-heading">
+      <span>${WAVES_COPY.shell.referenceView}</span>
+      <span>${WAVES_COPY.shell.classCReferenceProfile}</span>
+    </div>
+    ${welcomeHelpTemplate()}
+    <div class="handset-housing reference-view">
       <div class="device-frame">
-        <div class="device-header">
-          <span class="device-title">${WAVES_COPY.shell.deckView}</span>
-          <span id="active-url-label" class="muted-url">${WAVES_COPY.shell.idle}</span>
-        </div>
         <div
           id="viewport"
           class="viewport viewport-skeleton"
