@@ -17,6 +17,7 @@ const artifactDir = path.resolve(
   process.env.NATIVE_E2E_ARTIFACT_DIR ?? 'test-results/native-tauri-kannel'
 );
 const tauriDriverBin = process.env.TAURI_DRIVER_BIN ?? 'tauri-driver';
+const metricsUrl = process.env.WML_METRICS_URL ?? 'http://localhost:3001/metrics';
 
 let driver;
 let tauriDriver;
@@ -73,6 +74,15 @@ const replaceInput = async (selector, value) => {
   await input.click();
   await input.clear();
   await input.sendKeys(value);
+};
+
+const readOriginRequestCount = async () => {
+  const response = await fetch(metricsUrl);
+  assert.equal(response.ok, true, `origin metrics request failed with ${response.status}`);
+  const body = await response.text();
+  const match = /^requests_total (\d+)$/m.exec(body);
+  assert.ok(match, 'origin metrics omitted requests_total');
+  return Number.parseInt(match[1], 10);
 };
 
 const capture = async (name) => {
@@ -188,12 +198,69 @@ const run = async () => {
   );
   await capture('04-static-example');
 
+  await replaceInput('#fetch-url', 'wap://localhost/examples/pocket-portal.wml');
+  await driver.findElement(By.css('#btn-fetch-url')).click();
+  const portalViewport = await waitForText('#viewport', 'first-party service');
+  const portalText = await portalViewport.getText();
+  assert.match(portalText, /first-party service/);
+  assert.match(portalText, /directory\./);
+  await driver.findElement(By.css('#btn-enter')).click();
+  const directoryViewport = await waitForText('#viewport', 'Forms');
+  assert.match(await directoryViewport.getText(), /Forms/);
+  assert.match(await directoryViewport.getText(), /Examples/);
+  recordAssertion(
+    'pocket portal navigation',
+    'the native WSP/WBXML path rendered the portal and followed its fragment directory link'
+  );
+  await capture('05-pocket-portal');
+
+  await replaceInput('#fetch-url', 'wap://localhost/examples/preferences.wml');
+  await driver.findElement(By.css('#btn-fetch-url')).click();
+  const preferencesViewport = await waitForText('#viewport', 'made-up alias');
+  const preferencesText = await preferencesViewport.getText();
+  assert.match(preferencesText, /made-up alias/);
+  assert.match(preferencesText, /Layout/);
+  assert.match(preferencesText, /Review Preference/);
+  recordAssertion(
+    'local preferences render',
+    'the native WSP/WBXML path rendered bounded input and select controls without submission'
+  );
+  await capture('06-local-preferences');
+
+  await replaceInput('#fetch-url', 'wap://localhost/examples/interop-check.wml');
+  await driver.findElement(By.css('#btn-fetch-url')).click();
+  const interopViewport = await waitForText('#viewport', 'W13-A');
+  assert.match(await interopViewport.getText(), /W13-A/);
+  const requestsBeforeRepeat = await readOriginRequestCount();
+  await driver.findElement(By.css('#btn-enter')).click();
+  await driver.wait(
+    async () =>
+      (await driver.findElement(By.css('#fetch-url')).getAttribute('value')).endsWith(
+        '/examples/interop-check.wml?probe=repeat'
+      ),
+    timeoutMs
+  );
+  const repeatedInteropViewport = await waitForText('#viewport', 'W13-A');
+  assert.match(await repeatedInteropViewport.getText(), /W13-A/);
+  await delay(2000);
+  const requestsAfterRepeat = await readOriginRequestCount();
+  assert.equal(
+    requestsAfterRepeat - requestsBeforeRepeat,
+    1,
+    'one successful repeat navigation must produce exactly one origin request'
+  );
+  recordAssertion(
+    'successful navigation request bound',
+    `one repeat navigation produced one origin request over a 2s observation window (${requestsBeforeRepeat} -> ${requestsAfterRepeat})`
+  );
+  await capture('07-interop-repeat');
+
   await replaceInput('#fetch-url', 'not a url');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const toast = await waitForText('#toast', 'Fetch failed:');
   assert.match(await toast.getText(), /INVALID_REQUEST|invalid|URL/i);
   recordAssertion('deterministic failure', 'invalid URL surfaced a visible Fetch failed message');
-  await capture('05-invalid-url-failure');
+  await capture('08-invalid-url-failure');
 
   await replaceInput('#fetch-url', 'wap://localhost/');
   await driver.findElement(By.css('#btn-fetch-url')).click();
@@ -201,7 +268,7 @@ const run = async () => {
   assert.match(await recoveredViewport.getText(), /environment\./);
   assert.match(await recoveredViewport.getText(), /Open Menu/);
   recordAssertion('failure recovery', 'a subsequent native Kannel load restored the home deck');
-  await capture('06-recovered-home');
+  await capture('09-recovered-home');
 
   await writeFile(path.join(artifactDir, 'page-source.html'), await driver.getPageSource());
   await writeFile(

@@ -325,6 +325,29 @@ Completed maintenance tickets are archived in:
 9. `Resolution`:
 - The guard now checks the exact derived fragments, and focused regressions prove both previously missed drift cases.
 
+### M1-26 Suppress automatic re-follow of a terminally failed external intent (2026-07-29)
+
+1. `Status`: `todo`
+2. `Priority`: `P1`
+3. `Depends On`: `WML-205`
+4. `Files`:
+- `browser/frontend/src/app/browser-controller.ts`
+- `browser/frontend/src/app/engine-timer-runtime.ts`
+- focused browser controller/timer tests and native failure-path E2E coverage
+5. `Finding`:
+- A stale public origin compiled the static example as WML 1.1. The strict WML 1.3 decoder correctly rejected public ID 4, but the invoking engine state retained the pending external navigation intent. Later timer ticks automatically followed that same terminally failed intent again, producing 97 identical origin requests in about 7.7 seconds.
+- Correcting the origin removes the immediate trigger but does not close this independent client resilience gap. Broadening the WBXML decoder would mask both problems and is out of scope.
+6. `Build`:
+- After a terminal external-intent fetch failure, preserve the invoking card and failed intent for inspection and explicit user retry, while suppressing automatic re-follow of that same intent.
+- Clear the suppression only for a distinct engine intent, a successful navigation, or an explicit user retry action.
+7. `Tests`:
+- Prove one terminal WBXML failure produces one fetch, a stable visible error, and no additional origin request over a bounded observation window.
+- Preserve existing success, distinct-intent, timer, and manual-retry behavior.
+8. `Accept`:
+- Timer ticks cannot turn one terminal external-navigation failure into repeated network requests.
+- The original card and failed intent remain available for diagnosis and explicit retry.
+- No decoder compatibility broadening or service-side workaround is used to hide the client state bug.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

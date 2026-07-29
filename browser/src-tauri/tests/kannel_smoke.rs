@@ -189,6 +189,100 @@ fn kannel_fetch_deck_smoke_navigates_into_menu_card() {
 
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
+fn kannel_fetch_deck_smoke_renders_public_examples() {
+    let cases = [
+        (
+            "WAP_SMOKE_EXAMPLE_URL",
+            "wap://localhost/examples/index.wml",
+            "welcome",
+            "This is a static WML",
+        ),
+        (
+            "WAP_SMOKE_PORTAL_EXAMPLE_URL",
+            "wap://localhost/examples/pocket-portal.wml",
+            "portal",
+            "first-party",
+        ),
+        (
+            "WAP_SMOKE_PREFERENCES_EXAMPLE_URL",
+            "wap://localhost/examples/preferences.wml",
+            "preferences",
+            "made-up",
+        ),
+        (
+            "WAP_SMOKE_INTEROP_EXAMPLE_URL",
+            "wap://localhost/examples/interop-check.wml",
+            "wire-check",
+            "W13-A",
+        ),
+    ];
+
+    for (environment, default_url, active_card, marker) in cases {
+        let target = std::env::var(environment).unwrap_or_else(|_| default_url.to_string());
+        let transport =
+            fetch_deck_in_process_with_profile(request(&target), FetchTransportProfile::WapNetCore);
+        assert!(
+            transport.ok,
+            "expected example fetch to succeed for {target}: {:?}",
+            transport.error
+        );
+        assert_eq!(transport.content_type, "application/vnd.wap.wmlc");
+
+        let mut engine = WmlEngine::new();
+        load_transport_response_into_engine(&mut engine, transport);
+        assert_eq!(engine.active_card_id().as_deref(), Ok(active_card));
+        assert!(
+            render_contains(&engine, marker),
+            "rendered example {target} omitted {marker:?}"
+        );
+    }
+
+    let preferences_url = std::env::var("WAP_SMOKE_PREFERENCES_EXAMPLE_URL")
+        .unwrap_or_else(|_| "wap://localhost/examples/preferences.wml".to_string());
+    let preferences = fetch_deck_in_process_with_profile(
+        request(&preferences_url),
+        FetchTransportProfile::WapNetCore,
+    );
+    let mut engine = WmlEngine::new();
+    load_transport_response_into_engine(&mut engine, preferences);
+    assert_eq!(
+        engine.get_var("alias".to_string()).as_deref(),
+        Some("GUEST")
+    );
+    assert_eq!(
+        engine.get_var("layout".to_string()).as_deref(),
+        Some("compact")
+    );
+    assert!(engine
+        .begin_focused_input_edit()
+        .expect("alias edit should begin"));
+    assert!(engine.set_focused_input_edit_draft("SCOUT".to_string()));
+    assert!(engine
+        .commit_focused_input_edit()
+        .expect("alias edit should commit"));
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move from alias to layout");
+    assert!(engine
+        .begin_focused_select_edit()
+        .expect("layout edit should begin"));
+    assert!(engine.move_focused_select_edit(1));
+    assert!(engine
+        .commit_focused_select_edit()
+        .expect("layout edit should commit"));
+    engine
+        .handle_key("down".to_string())
+        .expect("focus should move from layout to review link");
+    engine
+        .handle_key("enter".to_string())
+        .expect("review link should open the local saved card");
+    assert_eq!(engine.active_card_id().as_deref(), Ok("saved"));
+    assert!(render_contains(&engine, "SCOUT"));
+    assert!(render_contains(&engine, "roomy"));
+}
+
+#[test]
+#[ignore = "runs against external Kannel dev stack (make up)"]
 fn kannel_public_auth_forms_conceal_pin_and_submit_actual_value() {
     let register_url = std::env::var("WAP_SMOKE_REGISTER_URL")
         .unwrap_or_else(|_| "wap://localhost/register".to_string());

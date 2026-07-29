@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml_1.3.xml">
+<wml>
+  <card id="portal" title="Pocket Portal">
+    <p>Welcome to a small, first-party service directory.</p>
+    <p><a href="#directory">Open Local Services</a></p>
+    <p><a href="#bulletin">Read Bulletin</a></p>
+    <do type="accept" label="Directory"><go href="#directory"/></do>
+  </card>
+
+  <card id="directory" title="Local Services">
+    <p>
+      <table columns="2" align="LL">
+        <tr><td>Forms</td><td><a href="/register">Register</a></td></tr>
+        <tr><td>Account</td><td><a href="/login">Login</a></td></tr>
+        <tr><td>About</td><td><a href="/about">Stack</a></td></tr>
+        <tr><td>Lab</td><td><a href="/examples/index.wml">Examples</a></td></tr>
+      </table>
+    </p>
+    <do type="options" label="Bulletin"><go href="#bulletin"/></do>
+    <do type="prev" label="Back"><prev/></do>
+  </card>
+
+  <card id="bulletin" title="Pocket Bulletin">
+    <p>09:00 - Gateway practice window open.</p>
+    <p>12:00 - Forms lab accepts made-up data only.</p>
+    <p>18:00 - Interop check remains deterministic.</p>
+    <do type="accept" label="Directory"><go href="#directory"/></do>
+    <do type="prev" label="Back"><prev/></do>
+  </card>
+</wml>

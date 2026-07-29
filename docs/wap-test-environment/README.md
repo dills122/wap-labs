@@ -59,7 +59,11 @@ wap-labs/
   - `/examples/index.wml`
   - `/examples/login.wml`
   - `/examples/register.wml`
+  - `/examples/pocket-portal.wml` (multi-card directory, table, softkeys, and history)
+  - `/examples/preferences.wml` (local-only input/select preference review)
+  - `/examples/interop-check.wml` (deterministic WML 1.3/WBXML markers)
   - each example is served with the configured `WML_DTD_VERSION`, matching the dynamic decks
+  - each embedded source is WML 1.3, deterministic, and limited to 4 KiB
 - Basic observability:
   - redacted structured request logs with request ID
   - internal `/metrics` plain text counters on port `3001`
@@ -84,6 +88,8 @@ Configured in `docker/kannel/kannel.conf`:
   - `url = "http://10.0.2.2/*"` -> `map-url = "http://wml-server:3000/*"`
   - `home.wap.test`, `forms.wap.test`, and `interop.wap.test` map to private origin profile
     prefixes because Kannel rewrites the upstream `Host` header.
+  - each profile root links its focused example: Pocket Portal, Local Preferences, or Interop
+    Wire Check respectively.
 
 ## Quickstart (3 Minutes)
 

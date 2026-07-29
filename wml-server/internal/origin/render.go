@@ -28,7 +28,8 @@ func renderHomeDeck() string {
 		`<p><a href="/login">1. Login</a></p>` +
 		`<p><a href="/register">2. Register</a></p>` +
 		`<p><a href="/about">3. About Stack</a></p>` +
-		`<p><a href="/examples/index.wml">4. Static Example</a></p>` +
+		`<p><a href="/examples/index.wml">4. Example Directory</a></p>` +
+		`<p><a href="/examples/pocket-portal.wml">5. Pocket Portal</a></p>` +
 		`<do type="options" label="About"><go href="/about"/></do>` +
 		`<do type="prev" label="Back"><prev/></do>` +
 		`</card>`
@@ -39,6 +40,7 @@ func renderFormsHomeDeck() string {
 		`<p>Deterministic registration and login exercises.</p>` +
 		`<p><a href="/register">Register a demo user</a></p>` +
 		`<p><a href="/login">Login to the portal</a></p>` +
+		`<p><a href="/examples/preferences.wml">Try local preferences</a></p>` +
 		`<do type="accept" label="Register"><go href="/register"/></do>` +
 		`</card>`
 }
@@ -47,8 +49,9 @@ func renderInteropHomeDeck() string {
 	return `<card id="interop" title="Interop Lab">` +
 		`<p>Deterministic WML response profile.</p>` +
 		`<p>Content type: text/vnd.wap.wml</p>` +
-		`<p><a href="/examples/index.wml">Static WML 1.1 deck</a></p>` +
-		`<do type="accept" label="Example"><go href="/examples/index.wml"/></do>` +
+		`<p><a href="/examples/interop-check.wml">WML 1.3 wire check</a></p>` +
+		`<p><a href="/examples/index.wml">Example directory</a></p>` +
+		`<do type="accept" label="Wire Check"><go href="/examples/interop-check.wml"/></do>` +
 		`</card>`
 }
 

@@ -2,6 +2,7 @@ package origin
 
 import (
 	"bytes"
+	"encoding/xml"
 	"io"
 	"log/slog"
 	"net/http"
@@ -57,6 +58,21 @@ func perform(handler http.Handler, method, target, body, contentType string) *ht
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
 	return response
+}
+
+func embeddedExampleNames(t *testing.T) []string {
+	t.Helper()
+	entries, err := exampleFiles.ReadDir("routes")
+	if err != nil {
+		t.Fatal(err)
+	}
+	names := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".wml") {
+			names = append(names, entry.Name())
+		}
+	}
+	return names
 }
 
 func registerAndLogin(t *testing.T, app *App, username string) string {
@@ -155,6 +171,31 @@ func TestHostProfilesAndAllowlist(t *testing.T) {
 		app.Handler().ServeHTTP(response, request)
 		if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), test.want) {
 			t.Errorf("GET %s = %d %s", test.path, response.Code, response.Body.String())
+		}
+	}
+}
+
+func TestHostProfilesLinkToTheirExamples(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.AllowedHosts = []string{"home.test", "forms.test", "interop.test"}
+		config.HomeHosts = []string{"home.test"}
+		config.FormsHosts = []string{"forms.test"}
+		config.InteropHosts = []string{"interop.test"}
+	})
+
+	for _, test := range []struct {
+		host string
+		link string
+	}{
+		{"home.test", `/examples/pocket-portal.wml`},
+		{"forms.test", `/examples/preferences.wml`},
+		{"interop.test", `/examples/interop-check.wml`},
+	} {
+		request := httptest.NewRequest(http.MethodGet, "http://"+test.host+"/", nil)
+		response := httptest.NewRecorder()
+		app.Handler().ServeHTTP(response, request)
+		if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), `href="`+test.link+`"`) {
+			t.Errorf("GET http://%s/ does not link %s: %d %s", test.host, test.link, response.Code, response.Body.String())
 		}
 	}
 }
@@ -351,14 +392,22 @@ func TestExamplesAndClosedRoutes(t *testing.T) {
 	app, _ := newTestApp(t, nil)
 	handler := app.Handler()
 
-	for _, file := range []string{"index.wml", "login.wml", "register.wml"} {
+	for _, file := range embeddedExampleNames(t) {
 		response := perform(handler, http.MethodGet, "/examples/"+file, "", "")
 		want, err := exampleFiles.ReadFile("routes/" + file)
 		if err != nil {
 			t.Fatal(err)
 		}
+		want, err = configureExampleDTD(want, app.dtdVersion)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if response.Code != http.StatusOK || !bytes.Equal(response.Body.Bytes(), want) {
 			t.Errorf("example %s differs: %d", file, response.Code)
+		}
+		repeat := perform(handler, http.MethodGet, "/examples/"+file, "", "")
+		if !bytes.Equal(response.Body.Bytes(), repeat.Body.Bytes()) {
+			t.Errorf("example %s is not deterministic", file)
 		}
 	}
 	invalid := perform(handler, http.MethodGet, "/examples/nope.txt", "", "")
@@ -385,7 +434,7 @@ func TestExamplesUseConfiguredDTDVersion(t *testing.T) {
 	for _, version := range []string{"1.1", "1.2", "1.3"} {
 		t.Run(version, func(t *testing.T) {
 			app, _ := newTestApp(t, func(config *Config) { config.DTDVersion = version })
-			for _, file := range []string{"index.wml", "login.wml", "register.wml"} {
+			for _, file := range embeddedExampleNames(t) {
 				response := perform(app.Handler(), http.MethodGet, "/examples/"+file, "", "")
 				if response.Code != http.StatusOK {
 					t.Fatalf("GET /examples/%s = %d", file, response.Code)
@@ -399,6 +448,71 @@ func TestExamplesUseConfiguredDTDVersion(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestEmbeddedExamplesAreWML13WellFormedLinkedAndBounded(t *testing.T) {
+	names := embeddedExampleNames(t)
+	if len(names) != 6 {
+		t.Fatalf("embedded example count = %d, want 6: %v", len(names), names)
+	}
+	for _, file := range names {
+		body, err := exampleFiles.ReadFile("routes/" + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(body) > maxExampleBytes {
+			t.Errorf("example %s = %d bytes, limit %d", file, len(body), maxExampleBytes)
+		}
+		if !strings.Contains(string(body), `-//WAPFORUM//DTD WML 1.3//EN`) ||
+			!strings.Contains(string(body), `http://www.wapforum.org/DTD/wml_1.3.xml`) {
+			t.Errorf("example %s does not declare the canonical embedded WML 1.3 doctype", file)
+		}
+		decoder := xml.NewDecoder(bytes.NewReader(body))
+		for {
+			if _, err = decoder.Token(); err == io.EOF {
+				break
+			}
+			if err != nil {
+				t.Errorf("example %s is not well-formed XML: %v", file, err)
+				break
+			}
+		}
+	}
+
+	index, err := exampleFiles.ReadFile("routes/index.wml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, link := range []string{
+		`href="/examples/pocket-portal.wml"`,
+		`href="/examples/preferences.wml"`,
+		`href="/examples/interop-check.wml"`,
+	} {
+		if !strings.Contains(string(index), link) {
+			t.Errorf("example directory missing stable link %s", link)
+		}
+	}
+}
+
+func TestNewExamplesContainExpectedDeterministicFlows(t *testing.T) {
+	for _, test := range []struct {
+		file    string
+		markers []string
+	}{
+		{"pocket-portal.wml", []string{`id="portal"`, `id="directory"`, `<table columns="2"`, `<prev/>`}},
+		{"preferences.wml", []string{`id="preferences"`, `<input name="alias"`, `<select name="layout"`, `href="#saved"`, `Nothing is stored or sent.`}},
+		{"interop-check.wml", []string{`id="wire-check"`, `Public ID</td><td>10`, `Cache</td><td>no-store`, `?probe=repeat`, `W13-A`}},
+	} {
+		body, err := exampleFiles.ReadFile("routes/" + test.file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, marker := range test.markers {
+			if !strings.Contains(string(body), marker) {
+				t.Errorf("example %s missing marker %q", test.file, marker)
+			}
+		}
 	}
 }
 

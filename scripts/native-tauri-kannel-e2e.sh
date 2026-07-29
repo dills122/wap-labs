@@ -4,6 +4,7 @@ set -eu
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
+WML_METRICS_URL="${WML_METRICS_URL:-http://localhost:3001/metrics}"
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo "native Tauri WebDriver smoke requires Linux (tauri-driver does not support macOS)" >&2
@@ -84,6 +85,7 @@ export VITE_WAVES_DEFAULT_RUN_MODE=network
 export GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE:-http://localhost:13002}"
 export NATIVE_E2E_APP_BINARY="${NATIVE_E2E_APP_BINARY:-${ROOT_DIR}/browser/src-tauri/target/debug/wavenav_host}"
 export NATIVE_E2E_ARTIFACT_DIR="${ARTIFACT_DIR}"
+export WML_METRICS_URL
 export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 
 {
@@ -95,6 +97,7 @@ export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
   echo "transport-fallback: ${WAVES_FETCH_TRANSPORT_FALLBACK}"
   echo "destination-policy: ${WAVES_FETCH_DESTINATION_POLICY}"
   echo "wml-dtd-version: ${WML_DTD_VERSION}"
+  echo "request-observation: ${WML_METRICS_URL}"
 } >"${ARTIFACT_DIR}/environment.txt"
 
 echo "==> Building the production Tauri frontend and debug application binary"
