@@ -48,43 +48,44 @@
   --z-toast: 500;
   --z-tooltip: 600;
 
-  /* Almanac-inspired host palette: warm reference-book paper and cool
-     instrument-panel neutrals, with one teal signal and one amber action. */
-  --color-canvas: oklch(91% 0.018 165);
-  --color-canvas-deep: oklch(87% 0.022 165);
-  --color-paper: oklch(97% 0.014 92);
-  --color-paper-2: oklch(94% 0.016 96);
-  --color-paper-3: oklch(90% 0.02 150);
-  --color-panel: oklch(98% 0.012 92);
-  --color-rule: oklch(77% 0.025 165);
-  --color-rule-2: oklch(60% 0.035 175);
-  --color-ink: oklch(24% 0.028 175);
-  --color-ink-2: oklch(31% 0.03 175);
-  --color-muted: oklch(43% 0.03 175);
-  --color-disabled: oklch(61% 0.014 170);
+  /* Custom Waves host palette. The user-supplied anchors are translated
+     directly from #F3F2EE, #FBFAF7, and #0E7F77 into named OKLCH tokens. */
+  --color-canvas: oklch(96.08% 0.0054 95.1);
+  --color-canvas-deep: oklch(93% 0.008 94);
+  --color-paper: oklch(98.5% 0.0041 91.45);
+  --color-paper-2: oklch(96.5% 0.006 93);
+  --color-paper-3: oklch(92.5% 0.008 94);
+  --color-panel: oklch(98.5% 0.0041 91.45);
+  --color-rule: oklch(82% 0.009 95);
+  --color-rule-2: oklch(68% 0.012 187);
+  --color-ink: oklch(22% 0.012 187);
+  --color-ink-2: oklch(30% 0.012 187);
+  --color-muted: oklch(43% 0.012 187);
+  --color-disabled: oklch(62% 0.008 187);
 
-  --color-accent: oklch(51% 0.095 188);
-  --color-accent-hover: oklch(43% 0.09 188);
-  --color-accent-deep: oklch(34% 0.07 188);
-  --color-accent-soft: oklch(90% 0.04 180);
-  --color-accent-ink: oklch(98% 0.012 92);
-  --color-highlight: oklch(68% 0.14 75);
-  --color-highlight-hover: oklch(63% 0.15 72);
-  --color-highlight-soft: oklch(91% 0.065 84);
-  --color-highlight-ink: oklch(27% 0.045 70);
-  --color-focus: oklch(52% 0.2 255);
-  --color-focus-outer: oklch(98% 0.012 92);
-  --color-contrast-rule: oklch(54% 0.025 175);
-  --color-contrast-rule-strong: oklch(32% 0.03 175);
-  --color-contrast-muted: oklch(34% 0.025 175);
-  --color-contrast-accent: oklch(42% 0.1 188);
+  --color-accent: oklch(53.84% 0.0912 186.96);
+  --color-accent-hover: oklch(47% 0.0912 186.96);
+  --color-accent-deep: oklch(34% 0.07 186.96);
+  --color-accent-soft: oklch(92% 0.03 186.96);
+  --color-accent-ink: oklch(98.5% 0.0041 91.45);
+  --color-highlight: var(--color-accent);
+  --color-highlight-hover: var(--color-accent-hover);
+  --color-highlight-soft: var(--color-accent-soft);
+  --color-highlight-ink: var(--color-accent-deep);
+  --color-focus: oklch(26% 0.05 186.96);
+  --color-focus-outer: var(--color-panel);
+  --color-contrast-rule: oklch(50% 0.018 187);
+  --color-contrast-rule-strong: oklch(28% 0.018 187);
+  --color-contrast-muted: oklch(32% 0.016 187);
+  --color-contrast-accent: oklch(40% 0.1 186.96);
+  --color-transparent: transparent;
 
   --color-idle-bg: oklch(95% 0.012 165);
   --color-idle-ink: oklch(31% 0.025 175);
   --color-idle-signal: oklch(56% 0.025 175);
-  --color-loading-bg: oklch(94% 0.06 86);
-  --color-loading-ink: oklch(35% 0.08 78);
-  --color-loading-signal: oklch(58% 0.14 68);
+  --color-loading-bg: var(--color-accent-soft);
+  --color-loading-ink: var(--color-accent-deep);
+  --color-loading-signal: var(--color-accent);
   --color-success-bg: oklch(93% 0.045 150);
   --color-success-ink: oklch(34% 0.09 150);
   --color-success-signal: oklch(53% 0.14 150);
@@ -109,17 +110,17 @@
   --color-lcd-glare: oklch(99% 0.018 110 / 0.14);
 
   /* Optical highlights and shadows are named modifiers, not palette entries. */
-  --color-highlight-strong: oklch(99% 0.012 92 / 0.8);
-  --color-highlight-medium: oklch(99% 0.012 92 / 0.55);
-  --color-highlight-faint: oklch(99% 0.012 92 / 0.24);
-  --color-shadow-faint: oklch(22% 0.025 175 / 0.07);
-  --color-shadow-soft: oklch(22% 0.025 175 / 0.12);
-  --color-shadow-medium: oklch(20% 0.025 175 / 0.2);
-  --color-shadow-device: oklch(17% 0.025 180 / 0.34);
+  --color-highlight-strong: oklch(99% 0.006 93 / 0.8);
+  --color-highlight-medium: oklch(99% 0.006 93 / 0.55);
+  --color-highlight-faint: oklch(99% 0.006 93 / 0.24);
+  --color-shadow-faint: oklch(22% 0.012 187 / 0.06);
+  --color-shadow-soft: oklch(22% 0.012 187 / 0.1);
+  --color-shadow-medium: oklch(20% 0.014 187 / 0.16);
+  --color-shadow-device: oklch(17% 0.025 180 / 0.3);
 
-  --shadow-panel: 0 2px 8px var(--color-shadow-faint);
-  --shadow-chrome: 0 3px 12px var(--color-shadow-soft);
-  --shadow-device: 0 12px 28px var(--color-shadow-device);
+  --shadow-panel: 0 1px 3px var(--color-shadow-faint);
+  --shadow-chrome: 0 2px 7px var(--color-shadow-faint);
+  --shadow-device: 0 14px 30px var(--color-shadow-device);
   --shadow-toast: 0 10px 28px var(--color-shadow-medium);
 
   /* Compatibility aliases consumed by the existing shell and Web Components. */

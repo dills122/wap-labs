@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-07-28",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "light / mono / chromatic-teal ~187°",
+    "vibe": "premium native technical instrument panel",
+    "enrichment": "none",
+    "brief": "Waves desktop browser shell visual redesign"
+  },
+  {
+    "date": "2026-07-28",
     "macrostructure": "Workbench",
     "theme": "Almanac",
     "enrichment": "Tier-A CSS instrument",
