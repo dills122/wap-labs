@@ -19,6 +19,7 @@ application or connected to the browser-hosted WASM simulator.
 - Browser/engine architecture and roadmap: `docs/waves/TECHNICAL_ARCHITECTURE.md`
 - Browser integration work board: `docs/waves/WORK_ITEMS.md`
 - Maintenance and tech debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- Failure containment and recovery board: `docs/waves/RESILIENCE_WORK_ITEMS.md`
 - Engine implementation board: `docs/wml-engine/work-items.md`
 - Engine phase roadmap (`A-D`): `docs/wml-engine/ticket-plan.md`
 - Transport phase roadmap (`A-D`): `docs/waves/TRANSPORT_RUST_PHASE_PLAN.md`

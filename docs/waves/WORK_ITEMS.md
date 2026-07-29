@@ -64,6 +64,7 @@ Project planning links:
 - Engine execution board: `docs/wml-engine/work-items.md`
 - Engine phased backlog: `docs/wml-engine/ticket-plan.md`
 - Maintenance/debt board: `docs/waves/MAINTENANCE_WORK_ITEMS.md`
+- Failure-containment and recovery board: `docs/waves/RESILIENCE_WORK_ITEMS.md`
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Public WAP lab and pre-release plan: `docs/waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md`
 - Archival research incorporation and service-fixture handoff: `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`
