@@ -8,10 +8,10 @@ operating system. The real Class C LCD is the visual hero; host chrome recedes i
 native-feeling control surface.
 
 The shell uses Hallmark's **Map / Diagram** macrostructure: one compact command bar maps an address
-or fixture into a centered simulator stage, an optional right inspector exposes supporting detail,
-and a persistent status strip reports the current route and display configuration. This rotates away
-from the previous Workbench/Almanac sidebar-and-card fingerprint while preserving the product's
-existing information architecture and controller seams.
+or fixture into a centered simulator stage, an optional docked Developer Tools toolbox exposes
+supporting detail, and a persistent status strip reports the current route and display configuration.
+This rotates away from the previous Workbench/Almanac sidebar-and-card fingerprint while preserving
+the product's existing information architecture and controller seams.
 
 ## Locked visual system
 
@@ -57,8 +57,10 @@ All production color declarations live as named OKLCH tokens in `src/tokens.css`
   can skip Welcome on later launches without removing the toggle.
 - **Reference view:** minimal graphite support around the real viewport and softkeys. No speaker,
   LED, vendor frame, or decorative hardware.
-- **Inspector:** closed by default, opened from the command bar, and separated with full-width rules
-  instead of nested cards. Document notes and diagnostics retain their existing disclosure seams.
+- **Developer Tools:** closed by default and opened from the command bar as a bounded, tabbed
+  toolbox. Overview, Transport, Runtime, Timeline, and Source are task panels with one scroll owner
+  each, a shared action bar, and compact session telemetry. “Open in Window” creates a real native
+  Tauri webview window synchronized with the current session; it is not imitation IDE chrome.
 - **Status strip:** persistent two-tier technical readout. Connection state and display controls
   occupy the first tier; route, profile, and an ellipsized address occupy the second. Constrained
   widths progressively hide nonessential metadata rather than allowing values to collide.
@@ -73,8 +75,8 @@ contrast focus ring. Action copy is compact and literal: “Go”, “Load”, �
 ## Responsive allowances
 
 The information architecture is shared at every width. At 768px and above the command bar becomes
-one row and the open inspector occupies a 288–336px right column. Below 768px the omnibox moves to a
-second row and the open inspector becomes an in-shell sheet. At narrow handset widths, nonessential
+one row and the open toolbox occupies a fluid 384–576px right column. Below the 880px native window
+minimum, the toolbox becomes an in-shell sheet. At narrow handset widths, nonessential
 status metadata and the brand wordmark hide while controller-bound actions remain reachable. Coarse
 pointer targets expand to at least 44px. Horizontal overflow is not permitted.
 
@@ -86,7 +88,7 @@ pointer targets expand to at least 44px. Horizontal overflow is not permitted.
 
 ### Macrostructure and key knobs
 
-`Map / Diagram · command-bar → simulator-stage → status-strip · optional right inspector · guest LCD as proof object`
+`Map / Diagram · command-bar → simulator-stage → status-strip · dockable tabbed toolbox · guest LCD as proof object`
 
 ### Core design tokens
 
@@ -94,4 +96,4 @@ pointer targets expand to at least 44px. Horizontal overflow is not permitted.
 
 ### Interaction signature
 
-`mode-aware omnibox · segmented Local/Network control · recallable Welcome · inspector reveal · persistent route/status telemetry · instant focus`
+`mode-aware omnibox · segmented Local/Network control · recallable Welcome · docked/detached Developer Tools · persistent route/status telemetry · instant focus`

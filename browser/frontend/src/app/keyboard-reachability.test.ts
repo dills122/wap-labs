@@ -76,28 +76,29 @@ describe('keyboard reachability of host-chrome actions', () => {
     mountBrowserShell('wap://localhost/start.wml', 'local');
 
     const drawer = document.querySelector<HTMLDetailsElement>('#dev-drawer');
-    const rail = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
     expect(drawer).not.toBeNull();
-    if (rail) {
-      rail.open = true;
-    }
-    // Collapsed by default, matching native <details> semantics -- its
-    // content is intentionally out of the tab order until opened.
     expect(drawer?.open).toBe(false);
-    if (drawer) {
-      drawer.open = true;
-    }
+    document.querySelector<HTMLButtonElement>('#btn-inspector')?.click();
+    expect(drawer?.open).toBe(true);
 
     for (const selector of [
+      '#devtools-tab-overview',
       '#btn-health',
       '#btn-render',
       '#btn-snapshot',
-      '#btn-clear-intent',
-      '#btn-export-timeline',
-      '#btn-clear-timeline',
-      '#btn-load-context'
+      '#btn-open-devtools-window'
     ]) {
       expectFocusable(selector);
     }
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-runtime')?.click();
+    expectFocusable('#btn-clear-intent');
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-timeline')?.click();
+    expectFocusable('#btn-export-timeline');
+    expectFocusable('#btn-clear-timeline');
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-source')?.click();
+    expectFocusable('#btn-load-context');
   });
 });

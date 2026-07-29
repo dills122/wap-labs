@@ -130,12 +130,22 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
   const handsetScreenshot = `${name}-handset-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
+  await page.locator('#btn-inspector').click();
+  await openAllDisclosures(page);
+  await page.locator('#devtools-tab-overview').click();
+  await page.evaluate(() => {
+    document.querySelector('.developer-tools-panel:not([hidden])')?.scrollTo(0, 0);
+  });
+  await assertStatusRegionsDoNotOverlap(page, `${name}: developer tools visual`);
+  const developerToolsScreenshot = `${name}-developer-tools-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, developerToolsScreenshot), fullPage: false });
   return {
     physicalWindow: dimensions.physical,
     cssViewportAt100Percent: layout.cssViewport,
     scrollWidth: layout.scrollWidth,
     screenshot,
-    handsetScreenshot
+    handsetScreenshot,
+    developerToolsScreenshot
   };
 };
 
@@ -189,6 +199,41 @@ const captureResponsiveVisual = async (page, width) => {
   const screenshot = `responsive-${width}px.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
   return { ...layout, screenshot };
+};
+
+const auditDetachedDeveloperTools = async (page, width) => {
+  await page.addScriptTag({ content: axe.source });
+  const violations = await page.evaluate(async () =>
+    (await window.axe.run(document)).violations.map((violation) => ({
+      id: violation.id,
+      targets: violation.nodes.map((node) => node.target.join(' '))
+    }))
+  );
+  assert.deepEqual(violations, [], `${width}px detached developer tools: rendered axe audit`);
+
+  const tabIds = ['overview', 'transport', 'runtime', 'timeline', 'source'];
+  for (const tabId of tabIds) {
+    await page.locator(`#devtools-tab-${tabId}`).click();
+    assert.equal(
+      await page.locator(`#devtools-panel-${tabId}`).isVisible(),
+      true,
+      `${width}px detached developer tools: ${tabId} panel is visible when selected`
+    );
+  }
+  await page.locator('#devtools-tab-overview').click();
+
+  const layout = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth
+  }));
+  assert.equal(
+    layout.horizontalOverflow,
+    false,
+    `${width}px detached developer tools: no horizontal overflow`
+  );
+  const screenshot = `developer-tools-${width}px.png`;
+  await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  return { width, ...layout, screenshot };
 };
 
 const resolveBaseRevision = async () => {
@@ -368,6 +413,7 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
   await page.evaluate(() => {
     window.scrollTo(0, 0);
     document.querySelector('.utility-rail-body')?.scrollTo(0, 0);
+    document.querySelector('.developer-tools-panel:not([hidden])')?.scrollTo(0, 0);
   });
   const screenshot = `${name}-window-200-percent.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
@@ -399,7 +445,12 @@ try {
     build: {
       outDir: tempRoot,
       emptyOutDir: true,
-      rollupOptions: { input: path.join(FRONTEND_DIR, 'browser-story.html') }
+      rollupOptions: {
+        input: {
+          story: path.join(FRONTEND_DIR, 'browser-story.html'),
+          devtools: path.join(FRONTEND_DIR, 'devtools.html')
+        }
+      }
     }
   });
   previewServer = await preview({
@@ -427,6 +478,22 @@ try {
       });
       await waitForReady(page);
       responsiveEvidence[width] = await captureResponsiveVisual(page, width);
+    } finally {
+      await context.close();
+    }
+  }
+
+  const developerToolsEvidence = {};
+  for (const width of [320, 720, 960]) {
+    const context = await browser.newContext({
+      viewport: { width, height: width === 320 ? 720 : 640 },
+      reducedMotion: 'reduce'
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto(new URL('devtools.html', baseUrl).href, { waitUntil: 'domcontentloaded' });
+      await page.locator('#developer-tools-workspace').waitFor();
+      developerToolsEvidence[width] = await auditDetachedDeveloperTools(page, width);
     } finally {
       await context.close();
     }
@@ -520,6 +587,7 @@ try {
       reducedMotion: true
     },
     responsiveEvidence,
+    developerToolsEvidence,
     visualEvidenceAt100Percent,
     windowEvidence
   };

@@ -19,6 +19,8 @@ import { inferStatusTone, uiEvents } from '../ui-helpers';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { renderWmlViewportHtml } from '../components/primitives/wml-render-primitives';
+import type { DeveloperToolsHostBridge } from './developer-tools-bridge';
+import { renderDeveloperToolsSummary, type DeveloperToolsState } from './developer-tools-workspace';
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
@@ -61,6 +63,7 @@ export class BrowserPresenter {
   private snapshotDirty = true;
   private transportResponseDirty = true;
   private navigationProgressTimer: ReturnType<typeof setTimeout> | undefined;
+  private developerToolsBridge: DeveloperToolsHostBridge | undefined;
   // U7: flushDeveloperPanels() re-serializes whichever dev-panel sub-object
   // is dirty via JSON.stringify(..., null, 2). Each mutating setter used to
   // call it immediately and synchronously, so a burst of same-tick mutations
@@ -99,6 +102,39 @@ export class BrowserPresenter {
       clearTimeout(this.toastTimer);
       this.toastTimer = undefined;
     }
+    this.developerToolsBridge?.dispose();
+    this.developerToolsBridge = undefined;
+  }
+
+  attachDeveloperToolsBridge(bridge: DeveloperToolsHostBridge): void {
+    this.developerToolsBridge?.dispose();
+    this.developerToolsBridge = bridge;
+  }
+
+  getDeveloperToolsState(): DeveloperToolsState {
+    return {
+      sessionState: { ...this.hostSessionState },
+      transportResponse: this.latestTransportResponse ? { ...this.latestTransportResponse } : null,
+      runtimeSnapshot: this.latestSnapshot ? { ...this.latestSnapshot } : null,
+      timeline: this.timelineState.entries.map((entry) => ({
+        ...entry,
+        session: { ...entry.session },
+        ...(entry.details ? { details: { ...entry.details } } : {})
+      })),
+      document: {
+        coverage: this.refs.localExampleCoverageEl.textContent ?? '',
+        description: this.refs.localExampleDescriptionEl.textContent ?? '',
+        goal: this.refs.localExampleGoalEl.textContent ?? '',
+        testingAcceptance: Array.from(
+          this.refs.localExampleTestingAcEl.querySelectorAll('li'),
+          (item) => item.textContent ?? ''
+        )
+      },
+      source: {
+        baseUrl: this.refs.baseUrlInput.value,
+        wml: this.refs.wmlInput.value
+      }
+    };
   }
 
   getSessionState(): HostSessionState {
@@ -392,10 +428,16 @@ export class BrowserPresenter {
   }
 
   private flushDeveloperPanels(): void {
-    if (!this.refs.devDrawerEl.open) {
+    const drawerOpen = this.refs.devDrawerEl.open;
+    const detachedOpen = this.developerToolsBridge?.isConnected() ?? false;
+    if (!drawerOpen && !detachedOpen) {
       return;
     }
-    if (this.sessionStateDirty) {
+    const state = this.getDeveloperToolsState();
+    if (drawerOpen && this.refs.developerToolsRootEl) {
+      renderDeveloperToolsSummary(this.refs.developerToolsRootEl, state);
+    }
+    if (drawerOpen && this.sessionStateDirty) {
       this.sessionStateText = this.writeTextIfChanged(
         this.refs.sessionStateEl,
         this.sessionStateText,
@@ -403,7 +445,7 @@ export class BrowserPresenter {
       );
       this.sessionStateDirty = false;
     }
-    if (this.timelineDirty) {
+    if (drawerOpen && this.timelineDirty) {
       this.timelineText = this.writeTextIfChanged(
         this.refs.timelineEl,
         this.timelineText,
@@ -411,7 +453,7 @@ export class BrowserPresenter {
       );
       this.timelineDirty = false;
     }
-    if (this.snapshotDirty) {
+    if (drawerOpen && this.snapshotDirty) {
       this.snapshotText = this.writeTextIfChanged(
         this.refs.snapshotEl,
         this.snapshotText,
@@ -419,13 +461,16 @@ export class BrowserPresenter {
       );
       this.snapshotDirty = false;
     }
-    if (this.transportResponseDirty) {
+    if (drawerOpen && this.transportResponseDirty) {
       this.transportResponseText = this.writeTextIfChanged(
         this.refs.transportResponseEl,
         this.transportResponseText,
         this.latestTransportResponse ? JSON.stringify(this.latestTransportResponse, null, 2) : ''
       );
       this.transportResponseDirty = false;
+    }
+    if (detachedOpen) {
+      this.developerToolsBridge?.publish(state);
     }
   }
 

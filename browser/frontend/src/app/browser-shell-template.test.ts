@@ -61,6 +61,9 @@ describe('mountBrowserShell', () => {
     // route and display telemetry remain persistent in the status strip.
     expect(utilityRail?.querySelector('#dev-drawer')).not.toBeNull();
     expect(devDrawerSection?.querySelector('#dev-drawer')).not.toBeNull();
+    expect(devDrawerSection?.querySelector('[role="tablist"]')).not.toBeNull();
+    expect(devDrawerSection?.querySelectorAll('[role="tabpanel"]')).toHaveLength(5);
+    expect(devDrawerSection?.querySelector('#btn-open-devtools-window')).not.toBeNull();
     expect(statusBar?.querySelector('#status')).not.toBeNull();
     expect(statusBar?.querySelector('#viewport-cols')).not.toBeNull();
 
@@ -193,11 +196,21 @@ describe('mountBrowserShell', () => {
 
     inspectorButton?.click();
     expect(railPanel?.open).toBe(true);
+    expect(document.querySelector<HTMLDetailsElement>('#dev-drawer')?.open).toBe(true);
     expect(inspectorButton?.getAttribute('aria-expanded')).toBe('true');
 
     inspectorButton?.click();
     expect(railPanel?.open).toBe(false);
+    expect(document.querySelector<HTMLDetailsElement>('#dev-drawer')?.open).toBe(false);
     expect(inspectorButton?.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('exposes the visible utility rail to keyboard intent routing', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('wap://localhost/start.wml', 'local');
+
+    expect(refs.utilityRailPanelEl?.id).toBe('utility-rail-panel');
+    expect(refs.utilityRailPanelEl?.open).toBe(false);
   });
 
   it('wires the Welcome/Help panel into the ordinary mode/local-example controls', () => {

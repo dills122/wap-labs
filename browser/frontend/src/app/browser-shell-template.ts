@@ -3,6 +3,7 @@ import { bindHandsetScaleControl } from './handset-scale-control';
 import { bindRouteIndicator } from './route-indicator';
 import { bindWelcomeHelpControls } from './welcome-help-control';
 import { WAVES_CONFIG } from './waves-config';
+import { bindDeveloperToolsWorkspace } from './developer-tools-workspace';
 import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
 import { statusBarTemplate } from './shell/status-bar-template';
@@ -46,6 +47,8 @@ export interface BrowserShellRefs {
   timelineEl: HTMLPreElement;
   activeUrlLabelEl: HTMLSpanElement;
   devDrawerEl: HTMLDetailsElement;
+  developerToolsRootEl?: HTMLElement;
+  utilityRailPanelEl?: HTMLDetailsElement;
   toastEl: HTMLDivElement;
   liveAnnouncerEl: HTMLDivElement;
   runModeSelectEl: HTMLSelectElement;
@@ -81,6 +84,7 @@ export const mountBrowserShell = (
   const timelineEl = document.querySelector<HTMLPreElement>('#timeline');
   const activeUrlLabelEl = document.querySelector<HTMLSpanElement>('#active-url-label');
   const devDrawerEl = document.querySelector<HTMLDetailsElement>('#dev-drawer');
+  const developerToolsRootEl = document.querySelector<HTMLElement>('#developer-tools-workspace');
   const toastEl = document.querySelector<HTMLDivElement>('#toast');
   const liveAnnouncerEl = document.querySelector<HTMLDivElement>('#live-announcer');
   const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
@@ -111,6 +115,7 @@ export const mountBrowserShell = (
     !timelineEl ||
     !activeUrlLabelEl ||
     !devDrawerEl ||
+    !developerToolsRootEl ||
     !toastEl ||
     !liveAnnouncerEl ||
     !runModeSelectEl ||
@@ -162,6 +167,7 @@ export const mountBrowserShell = (
   if (utilityRailPanelEl && inspectorButtonEl) {
     const syncInspectorPresentation = (): void => {
       inspectorButtonEl.setAttribute('aria-expanded', String(utilityRailPanelEl.open));
+      devDrawerEl.open = utilityRailPanelEl.open;
     };
     inspectorButtonEl.addEventListener('click', () => {
       utilityRailPanelEl.open = !utilityRailPanelEl.open;
@@ -170,6 +176,8 @@ export const mountBrowserShell = (
     utilityRailPanelEl.addEventListener('toggle', syncInspectorPresentation);
     syncInspectorPresentation();
   }
+
+  bindDeveloperToolsWorkspace(developerToolsRootEl);
 
   const handsetScaleSelectEl = document.querySelector<HTMLSelectElement>('#handset-scale-select');
   if (handsetScaleSelectEl) {
@@ -228,6 +236,8 @@ export const mountBrowserShell = (
     timelineEl,
     activeUrlLabelEl,
     devDrawerEl,
+    developerToolsRootEl,
+    utilityRailPanelEl: utilityRailPanelEl ?? undefined,
     toastEl,
     liveAnnouncerEl,
     runModeSelectEl,

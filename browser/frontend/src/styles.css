@@ -1,4 +1,4 @@
-/* Hallmark · genre: modern-minimal · macrostructure: Map / Diagram · shell knobs: map=command-bar→stage→status, inspector=right-sheet, guest=reference-view
+/* Hallmark · genre: modern-minimal · macrostructure: Map / Diagram · shell knobs: map=command-bar→stage→status, developer-tools=docked-toolbox, guest=reference-view
  * theme: custom · vibe: "mature native craft, reduced chrome, precise simulator" · canvas: oklch(92.52% 0.0045 214.33) · accent: oklch(51.5% 0.0864 190.62)
  * display: native system UI · body: native system UI · axes: light / system-native / chromatic-teal ~191deg
  * studied: no · context: explicit · design-system: design.md · designed-as-app · v1.1.0
@@ -7,6 +7,7 @@
 /* Hallmark · contrast: pass (40–41) · nav: N9 · footer: Ft2 · slop: 58/58 pass (app-shell gates scoped) */
 /* Hallmark · honest: pass (46) · chrome: pass (47, functional browser + emulator) · tokens: pass (48) · responsive/mobile: pass (34, 49–57) · icons: pass (30) */
 @import './tokens.css';
+@import './developer-tools.css';
 
 :root {
   font-family: var(--font-body);
@@ -657,6 +658,7 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
   display: none;
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
   background: var(--color-surface-raised);
 }
 
@@ -667,8 +669,14 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 .utility-rail-panel {
   height: 100%;
   min-height: 0;
+  overflow: hidden;
   border-left: var(--rule-hair) solid var(--host-border);
   background: var(--color-surface-raised);
+}
+
+.utility-rail-panel[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .utility-rail-panel > summary {
@@ -697,8 +705,8 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .utility-rail-body {
-  max-height: calc(100dvh - 88px);
-  overflow: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .inspector-section {
@@ -1003,12 +1011,14 @@ pre {
     grid-column: auto;
   }
 
-  .browser-main:has(.utility-rail-panel[open]) {
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 21rem);
-  }
-
   .handset-stage {
     padding: var(--space-md) var(--space-lg);
+  }
+}
+
+@media (min-width: 55rem) {
+  .browser-main:has(.utility-rail-panel[open]) {
+    grid-template-columns: minmax(0, 1fr) clamp(24rem, 42vw, 36rem);
   }
 }
 
@@ -1022,7 +1032,7 @@ pre {
   }
 }
 
-@media (max-width: 47.999rem) {
+@media (max-width: 54.999rem) {
   .browser-main:has(.utility-rail-panel[open]) {
     position: relative;
   }

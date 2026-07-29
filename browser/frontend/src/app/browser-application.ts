@@ -7,6 +7,7 @@ import { defaultRunMode, defaultStartUrl } from './defaults';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { registerBrowserComponents } from '../components';
+import { bindDeveloperToolsHost } from './developer-tools-bridge';
 
 const SAMPLE_WML = `<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
@@ -55,6 +56,16 @@ export const composeBrowserApplication = (
     requestedUrl: refs.fetchUrlInput.value
   };
   const presenter = new BrowserPresenter(refs, initialSession, WAVES_CONFIG.maxTimelineEvents);
+  if (refs.developerToolsRootEl) {
+    presenter.attachDeveloperToolsBridge(
+      bindDeveloperToolsHost({
+        root: refs.developerToolsRootEl,
+        getState: () => presenter.getDeveloperToolsState(),
+        onError: (message) =>
+          presenter.showToast(WAVES_COPY.status.developerToolsWindowFailed(message), 'error')
+      })
+    );
+  }
   const controller = new BrowserController(hostClient, presenter, refs);
 
   return { controller, presenter, refs };

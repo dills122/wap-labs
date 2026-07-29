@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "developer-tools-host",
+  "description": "Allows the main Waves window to open and focus the least-privileged Developer Tools window and exchange frontend events with it.",
+  "windows": ["main"],
+  "permissions": [
+    "core:event:default",
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-show",
+    "core:window:allow-set-focus"
+  ]
+}

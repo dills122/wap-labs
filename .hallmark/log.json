@@ -1,5 +1,15 @@
 [
   {
+    "date": "2026-07-29",
+    "scope": "app-subsystem",
+    "macrostructure": "Map / Diagram — dockable toolbox",
+    "theme": "custom",
+    "theme_axes": "light / system-native / chromatic-teal ~191°",
+    "vibe": "quiet native developer instrument with bounded task panels",
+    "enrichment": "none",
+    "brief": "Waves Developer Tools docked and detached workspace redesign"
+  },
+  {
     "date": "2026-07-28",
     "scope": "app",
     "macrostructure": "Map / Diagram",
