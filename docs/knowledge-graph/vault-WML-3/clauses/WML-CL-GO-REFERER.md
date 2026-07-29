@@ -47,17 +47,19 @@ tags:
     "R0-06",
     "R0-07",
     "WML-201",
-    "WML-304"
+    "WML-304",
+    "WSP-805"
   ],
   "ownerLayers": [
     "browser",
-    "engine-wasm"
+    "engine-wasm",
+    "transport-rust"
   ],
   "requirementIds": [
     "RQ-RMK-002",
     "RQ-RMK-011"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

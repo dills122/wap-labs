@@ -1090,7 +1090,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-ACCESS-BEFORE-TRANSITION** — Evaluate destination-deck access control before committing the card transition.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1108,7 +1108,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-ENTRY-EVENT-PRECEDENCE** — Run a destination forward-entry handler before starting its timer or displaying the card, and stop the current traversal when it runs.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1120,7 +1120,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`, `WML-C-37`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-FRAGMENT-FALLBACK** — Choose the named card when a fragment matches; otherwise choose the first card in the fetched deck.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1132,7 +1132,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-HISTORY-PUSH** — Push the destination request identity onto history after destination context initialization.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1150,13 +1150,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-NO-CACHE** — For cache-control no-cache, reload from the origin and send the matching request cache-control value.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-PART-CONTENT-TYPE** — Provide a content type for each multipart part and a charset when its content is not US-ASCII.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -1168,13 +1168,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-REFERER** — When sendreferer is true, transmit the smallest usable relative URI for the referring deck.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-14`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-011`
-  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-SETVAR-SNAPSHOT** — For go, resolve setvar names and values into temporary assignments before fetching or changing context.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1192,7 +1192,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`, `WML-C-37`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-TARGET-RESOLUTION** — Resolve variables in the go target URI before fetching it.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
@@ -1486,7 +1486,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
   - Parents: `WML-C-37`, `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `implemented`)
 - **WML-CL-POSTFIELD-STRUCTURE** — Require postfield name and value attributes and treat both as variable-bearing data.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)

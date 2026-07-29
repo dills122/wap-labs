@@ -4,7 +4,7 @@ key: "WML-FX-GO-GET-QUERY-MERGE"
 type: "fixture"
 generated: true
 slice: "WML-3"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

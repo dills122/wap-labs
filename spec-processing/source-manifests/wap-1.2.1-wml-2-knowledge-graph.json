@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "7894d3660502d5584bbbb63953b7b9d8f8457820f038db3aea69e29b66befb6d"
+        "sha256": "b621cf0dcb9fc256c7b2f4244ca2c332dc233332d1e9ccef310c371066992d2e"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "f3bea7e28ab4cd1236e3ed21fec9ea82e9668744f981ac0c197e12313721d5cd"
+        "sha256": "15a035ce40030053ace3e23e4c050af1985ac715ff0a4d61970e440c6a150697"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
@@ -3563,16 +3563,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3684,16 +3686,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3765,16 +3769,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3843,16 +3849,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3962,16 +3970,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4000,16 +4010,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4038,11 +4050,13 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
@@ -4076,16 +4090,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4116,17 +4132,19 @@
           "R0-06",
           "R0-07",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002",
           "RQ-RMK-011"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4236,16 +4254,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6117,16 +6137,18 @@
           "R0-02",
           "R0-06",
           "WML-201",
-          "WML-304"
+          "WML-304",
+          "WSP-805"
         ],
         "ownerLayers": [
           "browser",
-          "engine-wasm"
+          "engine-wasm",
+          "transport-rust"
         ],
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9794,7 +9816,7 @@
       "title": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9830,7 +9852,7 @@
       "title": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9854,7 +9876,7 @@
       "title": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9878,7 +9900,7 @@
       "title": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9914,7 +9936,7 @@
       "title": "Map get and post method values to the corresponding request operation.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map get and post method values to the corresponding request operation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9926,7 +9948,7 @@
       "title": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9950,7 +9972,7 @@
       "title": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9962,7 +9984,7 @@
       "title": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9998,7 +10020,7 @@
       "title": "Substitute variables, transcode fields, then serialize postfields in document order.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Substitute variables, transcode fields, then serialize postfields in document order.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10586,7 +10608,7 @@
       "title": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

@@ -201,6 +201,7 @@ fn apply_request_policy_adds_no_cache_headers_and_referer() {
         cache_control: Some(FetchCacheControlPolicy::NoCache),
         referer_url: Some("http://example.test/home.wml".to_string()),
         post_context: None,
+        request_intent: None,
         ua_capability_profile: None,
     };
 
@@ -243,6 +244,7 @@ fn apply_request_policy_keeps_same_deck_post_when_payload_present() {
             content_type: Some("application/x-www-form-urlencoded".to_string()),
             payload: Some("a=1".to_string()),
         }),
+        request_intent: None,
         ua_capability_profile: None,
     };
     let AppliedRequestPolicy {
@@ -267,6 +269,7 @@ fn apply_request_policy_suppresses_same_deck_post_when_payload_missing() {
             content_type: Some("application/x-www-form-urlencoded".to_string()),
             payload: Some("   ".to_string()),
         }),
+        request_intent: None,
         ua_capability_profile: None,
     };
     let AppliedRequestPolicy {
@@ -291,6 +294,7 @@ fn apply_request_policy_keeps_post_when_no_cache_is_set() {
             content_type: Some("application/x-www-form-urlencoded".to_string()),
             payload: Some("a=1".to_string()),
         }),
+        request_intent: None,
         ua_capability_profile: None,
     };
     let AppliedRequestPolicy {
@@ -316,6 +320,7 @@ fn apply_request_policy_wap_baseline_profile_adds_capability_headers() {
         cache_control: None,
         referer_url: None,
         post_context: None,
+        request_intent: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
     };
     let AppliedRequestPolicy {
@@ -355,6 +360,7 @@ fn apply_request_policy_wap_baseline_profile_keeps_existing_capability_headers()
         cache_control: None,
         referer_url: None,
         post_context: None,
+        request_intent: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::WapBaseline),
     };
     let AppliedRequestPolicy {
@@ -374,6 +380,7 @@ fn apply_request_policy_disabled_profile_does_not_add_capability_headers() {
         cache_control: None,
         referer_url: None,
         post_context: None,
+        request_intent: None,
         ua_capability_profile: Some(FetchUaCapabilityProfile::Disabled),
     };
     let AppliedRequestPolicy {

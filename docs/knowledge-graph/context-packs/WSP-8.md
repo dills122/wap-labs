@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 175
-- Edges: 514
+- Nodes: 202
+- Edges: 577
 - Selected work items: 6
 - Direct SCR rows: 0
-- Direct normative clauses: 112
+- Direct normative clauses: 123
 - Work items without direct clause mappings: 2
 - Work items with unmapped declared normative families: 4
 
@@ -163,10 +163,10 @@ Evidence commands:
 - Source families: `wsp`, `wdp`, `wml`, `wae`
 - Existing tickets: `T0-30`, `R0-06`
 - Direct SCR rows: 0
-- Selected SCR parents: 6 (`WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`)
-- Direct normative clauses: 26
-- Requirements: `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
-- Spec references: None
+- Selected SCR parents: 9 (`WML-C-14`, `WML-C-29`, `WML-C-37`, `WSP-CL-C-001`, `WSP-CL-C-003`, `WSP-CL-C-004`, `WSP-CL-C-005`, `WSP-CL-C-006`, `WSP-CL-C-007`)
+- Direct normative clauses: 37
+- Requirements: `RQ-RMK-002`, `RQ-RMK-011`, `RQ-TRN-010`, `RQ-TRN-012`, `RQ-TRN-014`
+- Spec references: `WAP-191_104-WML sections 9.3 and 9.5.1 as amended by WAP-191_105-WML section 4.3`, `WAP-203-WSP sections 6.4 and 8.2.3`
 - Follow-up work items: None
 - Depends on: None
 
@@ -177,12 +177,19 @@ Outputs:
 Acceptance:
 
 - Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP.
+- The focused WSP-805 context directly maps only selected WML request-serialization and WSP method/PDU clauses; unresolved WAE and WDP source-family mappings remain explicit gaps.
 
 Evidence commands:
 
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json`
+- `cargo test --manifest-path transport-rust/Cargo.toml request_serialization`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
+- `cargo test --manifest-path browser/src-tauri/Cargo.toml fetch_deck_command_serializes_typed_post_intent_before_http_handoff`
 - `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `pnpm --dir browser/frontend test`
+- `node scripts/wap-context-pack.mjs WSP-805`
+- `pnpm wap-graph:check`
 
 ### WSP-806: WAP 1.2.1-to-WAP 2.0 WSP delta register
 
@@ -742,6 +749,72 @@ Evidence commands:
 
 ### WSP-805
 
+- **WML-CL-GO-ACCEPT-CHARSET** — Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-ENCTYPE-SUPPORT** — Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-FORM-URLENCODING** — URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`, `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-GET-QUERY-MERGE** — For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-METHOD** — Map get and post method values to the corresponding request operation.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-NO-CACHE** — For cache-control no-cache, reload from the origin and send the matching request cache-control value.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-PART-CONTENT-TYPE** — Provide a content type for each multipart part and a charset when its content is not US-ASCII.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `planned`)
+- **WML-CL-GO-POST-CONTENT-TYPE-CHARSET** — For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-REFERER** — When sendreferer is true, transmit the smallest usable relative URI for the referring deck.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-14`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-011`
+  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `implemented`)
+- **WML-CL-GO-SUBMISSION-ORDER** — Substitute variables, transcode fields, then serialize postfields in document order.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
+  - Parents: `WML-C-29`, `WML-C-37`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `implemented`)
+- **WML-CL-POSTFIELD-REQUEST-PAIR** — Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
+  - Parents: `WML-C-37`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `implemented`)
 - **WSP-CL-CONNECTIONLESS-METHOD-FACILITY** — Implement the connectionless method-invocation facility for selected GET and POST requests and replies.
   - Family: `wsp`; force: `implicit-must`; level: `required`
   - Source: `WAP-203-WSP` §6.4.1 (6.4.1 Overview)
@@ -908,7 +981,7 @@ Declared-family gaps:
 
 - `WSP-803` declares `wsp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WSP-804` declares `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
-- `WSP-805` declares `wae`, `wdp`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
+- `WSP-805` declares `wae`, `wdp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WSP-806` declares `wsp` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Effective source order

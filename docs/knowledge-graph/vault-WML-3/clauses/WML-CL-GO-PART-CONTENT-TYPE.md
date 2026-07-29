@@ -43,11 +43,13 @@ tags:
     "R0-02",
     "R0-06",
     "WML-201",
-    "WML-304"
+    "WML-304",
+    "WSP-805"
   ],
   "ownerLayers": [
     "browser",
-    "engine-wasm"
+    "engine-wasm",
+    "transport-rust"
   ],
   "requirementIds": [
     "RQ-RMK-002"

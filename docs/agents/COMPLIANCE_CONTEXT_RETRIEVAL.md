@@ -37,8 +37,8 @@ node scripts/wap-context-pack.mjs TRN-703
 ```
 
 For the selected connectionless WSP lane, use `WSP-801` for the PDU, primitive, and method
-slice or `WSP-802` for header and encoding-version work. Use `WSP-8` only for sprint-wide WSP
-planning:
+slice, `WSP-802` for header and encoding-version work, or `WSP-805` for native WML request
+serialization and fetch ingress. Use `WSP-8` only for sprint-wide WSP planning:
 
 ```sh
 node scripts/wap-context-pack.mjs WSP-801

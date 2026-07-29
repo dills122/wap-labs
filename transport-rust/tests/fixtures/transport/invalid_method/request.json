@@ -1,6 +1,6 @@
 {
   "url": "http://example.test/home.wml",
-  "method": "POST",
+  "method": "DELETE",
   "timeoutMs": 500,
   "retries": 0
 }

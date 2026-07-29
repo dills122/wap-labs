@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request intent 3/15 complete)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 13/15 complete)
 
 ## Purpose
 
@@ -64,7 +64,7 @@ Legend:
 - AC:
   - Evidence: [x] WML-303 task identity, optional/noop filtering, card/template shadowing, intrinsic conflicts/scope, BACK/accept precedence, entry order, and rollback are covered in `engine-wasm/engine/src/engine_tests/wml_303_actions.rs`, the native/WASM host boundary suites, and `engine-wasm/examples/source/wml-303-actions-softkeys.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-303`.
   - Evidence: [x] WML-302 setvar task snapshot, assignment, target-resolution, prev, refresh, and rollback ordering is covered in `engine-wasm/engine/src/engine_tests/wml_302_variables.rs`, WASM parity, and `engine-wasm/examples/source/wml-302-variable-substitution.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-302`.
-  - Evidence: [x] WML-304 publishes a typed GET/POST request intent with ordered resolved postfields, `sendreferer`, no-cache, enctype, accept-charset, and same-deck classification across native/WASM/Tauri serialization; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-304`.
+  - Evidence: [x] WML-304 publishes a typed GET/POST request intent with ordered resolved postfields, `sendreferer`, no-cache, enctype, accept-charset, and same-deck classification across native/WASM/Tauri serialization; transport consumes that intent in `transport-rust/src/request_serialization.rs` with byte-exact mapped fixtures and browser/Tauri handoff tests. Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304`, `cargo test --manifest-path transport-rust/Cargo.toml request_serialization`, and `pnpm test:story WML-304`.
   - [x] Each task path has explicit runtime behavior and observable state transitions.
   - [x] Unsupported task attributes fail deterministically without host/runtime crash.
   - Dynamic do visibility, labels, and widget exposure remain planned for the WBP-06 frame/affordance gate after the completed D0-01 contract sequence; WML-302 closes variable/setvar task ordering without changing the host-visible engine contract.
@@ -79,7 +79,7 @@ Legend:
 - AC:
   - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_202_residual.rs` proves newcontext defaults, go-only variable/history/private-state reset, direct-navigation exclusion, and rollback-safe state; `pnpm test:story WML-202` proves empty history after the stable newcontext flow.
   - Evidence: [x] WML-301 closes card-id selection, missing-fragment first-card fallback, forward/backward/reload entry order, context preservation/reset, duplicate explicit history pushes, and context-initialization-before-history order in `engine-wasm/engine/src/engine_tests/wml_301_context_history.rs`, the native/WASM host adapters, browser history tests, and `engine-wasm/examples/source/wml-301-context-history.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301`, `wasm-pack test --node engine-wasm/engine`, `pnpm --dir browser/frontend test`, and `pnpm test:story WML-301`.
-  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` remains owned by WML-302; WML-304 now defines the request intent and retains transport serialization plus POST replay.
+  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` remains owned by WML-302; WML-304 now defines and serializes the request identity, while replayable POST history remains the dependent A2 lane.
   - [x] A monotonic engine context epoch makes newcontext and independent-navigation replacement observable so the host discards the old history without moving runtime semantics out of Rust.
 
 ### RQ-RMK-004 Event and timer lifecycle
@@ -108,7 +108,7 @@ Legend:
   - Evidence: [x] WML-302 fixes substitution after XML/entity parsing and before render/task use, including text, vdata/HREF defaults, conversions, undefined variables, `$$`, invalid-reference rejection, task snapshots, and resolved link/go targets in `engine-wasm/engine/src/engine_tests/wml_302_variables.rs` plus WASM/story parity.
   - [x] Substitution timing is fixed in runtime pipeline (post-parse, pre-render/task use).
   - [x] Undefined-variable behavior is covered for control and ordinary text/link contexts.
-  - Request serialization/postfields remain additive WML-304 work and do not reopen WML-302.
+  - Request serialization/postfields are directly covered by WML-304 without reopening WML-302.
 
 ### RQ-RMK-006 Anchor shorthand semantics
 
@@ -143,12 +143,14 @@ Legend:
 - Requirement:
   - Apply later SIN clarifications around `go` method/encoding behavior (`post`, `enctype`, charset handling).
 - Spec:
-  - `WAP-191_105` SIN clarifications
+  - `WAP-191_104` sections 9.3 and 9.5.1, as amended by `WAP-191_105` section 4.3
+  - `WAP-203-WSP` sections 6.4 and 8.2.3 for the connectionless method/header handoff
 - AC:
   - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs`, native/WASM/Tauri contract tests, and `engine-wasm/examples/source/wml-304-request-intent.flow.json` prove the parser/runtime request-intent boundary; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304`, `wasm-pack test --node engine-wasm/engine`, and `pnpm test:story WML-304`.
   - [x] Navigation/request metadata includes method, ordered postfields, enctype, accept-charset, referer opt-in, no-cache, and same-deck classification.
   - [x] Same-deck postfield suppression is documented and fixture-scoped.
-  - [ ] Native transport serialization, charset/body construction, smallest-relative referer emission, no-cache application, and POST history replay have direct evidence.
+  - [x] Native transport serialization, charset/body construction, smallest-relative referer emission, and no-cache application have direct byte-exact fixture, browser adapter, Tauri HTTP handoff, and native WSP header evidence.
+  - [ ] Multipart part Content-Type construction and replayable POST history remain separate gaps; A2 owns replay after the serialized identity is stable.
 
 ### RQ-RMK-009 WML2 reference-behavior compatibility guardrails
 

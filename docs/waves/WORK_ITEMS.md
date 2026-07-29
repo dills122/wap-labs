@@ -149,6 +149,15 @@ Current implementation batch, ordered within each lane:
    with one owner. Sequence its generated contract integration with A1 and preserve the additive
    `EngineDebug*` namespace; this is not the pending visual-refinement stream.
 
+A1 fixes the A2 dependency at the transport boundary: the replay input is the absolute requested
+URL plus the typed `FetchRequestIntent` (`method`, declared enctype, `sendreferer`, accepted
+charset list, same-deck classification, ordered resolved postfields, and referring deck
+Content-Type), together with cache policy, absolute referring URL, explicit request headers, and
+UA capability profile. Transport deterministically derives the effective method, query or body
+bytes, charset-bearing Content-Type, smallest usable Referer, and no-cache headers from that
+identity. A2 may persist and replay that semantic input; it must not invent an independent form
+serializer or treat the legacy pre-serialized `postContext` payload as the new identity.
+
 The dependency, overlap, and release-contribution matrix is canonical in
 `SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. `WML-306` remains next after this batch because its
 browser policy files conflict with A1/A2. `PERF-101`, `OPS-101`, and public publication remain
@@ -2850,10 +2859,11 @@ Reference:
 8. `Notes`:
 
 - WML-304 now supplies the Rust-owned typed request intent across native, WASM, generated engine,
-  and Tauri serialization contracts, with direct parser/runtime/story evidence for 3 of its 15
-  mapped clauses. Remaining R0-06 scope starts at the browser/transport consumption boundary:
-  final GET/POST encoding, charset/content-type, smallest-relative referer, no-cache application,
-  and replayable POST history.
+  and Tauri serialization contracts. R0-06/WSP-805 now consumes that intent for deterministic
+  GET query and form-urlencoded POST construction, charset-bearing Content-Type, smallest-relative
+  Referer, no-cache headers, direct HTTP and native WSP handoff, bringing WML-304 to 13 of 15
+  directly assessed clauses. Multipart part Content-Type remains explicit; replayable POST history
+  stays in dependent lane A2.
 
 ### R0-07 Browser policy path: access control, low-memory, unknown-DTD behavior
 

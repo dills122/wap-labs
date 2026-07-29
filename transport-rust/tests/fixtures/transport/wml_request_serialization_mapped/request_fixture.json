@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {
+      "name": "ordered-get-query-merge",
+      "url": "https://example.test/search?existing=1",
+      "intent": {
+        "method": "get",
+        "enctype": "application/x-www-form-urlencoded",
+        "sendReferer": false,
+        "acceptCharset": "utf-8",
+        "sameDeck": false,
+        "postFields": [
+          { "name": "first field", "value": "one&two" },
+          { "name": "city", "value": "Montréal" }
+        ]
+      },
+      "expected": {
+        "method": "GET",
+        "url": "https://example.test/search?existing=1&first+field=one%26two&city=Montr%C3%A9al",
+        "bodyBytes": null,
+        "contentType": null,
+        "referer": null
+      }
+    },
+    {
+      "name": "post-relative-referer-no-cache",
+      "url": "https://example.test/forms/submit",
+      "refererUrl": "https://example.test/forms/login.wml#card",
+      "noCache": true,
+      "intent": {
+        "method": "post",
+        "enctype": "application/x-www-form-urlencoded",
+        "sendReferer": true,
+        "acceptCharset": "unknown",
+        "sameDeck": false,
+        "postFields": [
+          { "name": "city", "value": "Montréal" }
+        ],
+        "sourceContentType": "text/vnd.wap.wml; charset=iso-8859-1"
+      },
+      "expected": {
+        "method": "POST",
+        "url": "https://example.test/forms/submit",
+        "bodyBytes": [99, 105, 116, 121, 61, 77, 111, 110, 116, 114, 37, 69, 57, 97, 108],
+        "contentType": "application/x-www-form-urlencoded; charset=iso-8859-1",
+        "referer": "login.wml"
+      }
+    }
+  ],
+  "invalidCases": [
+    {
+      "name": "get-multipart",
+      "method": "get",
+      "enctype": "multipart/form-data",
+      "sendReferer": false,
+      "acceptCharset": "utf-8",
+      "expectedError": "GET does not support multipart/form-data"
+    },
+    {
+      "name": "unsupported-charset",
+      "method": "post",
+      "enctype": "application/x-www-form-urlencoded",
+      "sendReferer": false,
+      "acceptCharset": "x-not-a-real-charset",
+      "expectedError": "Unsupported accept-charset list: x-not-a-real-charset"
+    },
+    {
+      "name": "missing-referer",
+      "method": "post",
+      "enctype": "application/x-www-form-urlencoded",
+      "sendReferer": true,
+      "acceptCharset": "utf-8",
+      "expectedError": "sendreferer requires a referring deck URL"
+    }
+  ]
+}

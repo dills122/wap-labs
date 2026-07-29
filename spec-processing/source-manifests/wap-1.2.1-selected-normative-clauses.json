@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 288
+    "assessedClauseCount": 298
   },
   "families": [
     {
@@ -5195,20 +5195,27 @@
           "fixturePlan": {
             "id": "WML-FX-POSTFIELD-REQUEST-PAIR",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task."
+            "status": "implemented",
+            "assertion": "Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5217,12 +5224,13 @@
               "WML-C-37": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5510,13 +5518,19 @@
           "fixturePlan": {
             "id": "WML-FX-GO-REFERER",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck."
+            "status": "implemented",
+            "assertion": "When sendreferer is true, transmit the smallest usable relative URI for the referring deck.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
@@ -5524,7 +5538,8 @@
               "R0-06",
               "R0-07",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -5534,12 +5549,13 @@
               "WML-C-14": "partial",
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5560,20 +5576,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-METHOD",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Map get and post method values to the corresponding request operation."
+            "status": "implemented",
+            "assertion": "Map get and post method values to the corresponding request operation.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5581,12 +5604,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5607,20 +5631,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-NO-CACHE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "For cache-control no-cache, reload from the origin and send the matching request cache-control value."
+            "status": "implemented",
+            "assertion": "For cache-control no-cache, reload from the origin and send the matching request cache-control value.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5628,12 +5659,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5654,20 +5686,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-ENCTYPE-SUPPORT",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests."
+            "status": "implemented",
+            "assertion": "Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5675,12 +5714,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5707,14 +5747,16 @@
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5727,7 +5769,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5748,20 +5791,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-ACCEPT-CHARSET",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown."
+            "status": "implemented",
+            "assertion": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5769,12 +5819,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5796,20 +5847,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-SUBMISSION-ORDER",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Substitute variables, transcode fields, then serialize postfields in document order."
+            "status": "implemented",
+            "assertion": "Substitute variables, transcode fields, then serialize postfields in document order.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5818,12 +5876,13 @@
               "WML-C-29": "partial",
               "WML-C-37": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5844,20 +5903,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-GET-QUERY-MERGE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component."
+            "status": "implemented",
+            "assertion": "For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5865,12 +5931,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5891,20 +5958,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-POST-CONTENT-TYPE-CHARSET",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type."
+            "status": "implemented",
+            "assertion": "For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5912,12 +5986,13 @@
             "parentImplementationSnapshot": {
               "WML-C-29": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {
@@ -5939,20 +6014,27 @@
           "fixturePlan": {
             "id": "WML-FX-GO-FORM-URLENCODING",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands."
+            "status": "implemented",
+            "assertion": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+              "testPath": "transport-rust/src/request_serialization/tests.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml request_serialization"
+            }
           },
           "mapping": {
             "ownerLayers": [
               "browser",
-              "engine-wasm"
+              "engine-wasm",
+              "transport-rust"
             ],
             "workItems": [
               "R0-01",
               "R0-02",
               "R0-06",
               "WML-201",
-              "WML-304"
+              "WML-304",
+              "WSP-805"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -5961,12 +6043,13 @@
               "WML-C-29": "partial",
               "WML-C-37": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-304"
+            "WML-304",
+            "WSP-805"
           ]
         },
         {

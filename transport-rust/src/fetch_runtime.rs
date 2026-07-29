@@ -8,6 +8,7 @@ use crate::native_fetch::{
     execute_native_wap_request, should_use_native_wap_request, NativeFetchPlan,
 };
 use crate::request_meta::{log_transport_event, normalized_request_id};
+use crate::request_serialization::serialize_fetch_request;
 use crate::responses::{invalid_request_response, transport_unavailable_response};
 use crate::{
     FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy,
@@ -48,16 +49,45 @@ pub(crate) fn fetch_deck_in_process_impl(
         .to_ascii_uppercase();
     let applied_policy =
         apply_request_policy(method, headers.unwrap_or_default(), request_policy.as_ref());
-    let method = applied_policy.method;
-    let mut outbound_headers = applied_policy.outbound_headers;
     let suppressed_same_deck_post_context = applied_policy.suppressed_same_deck_post_context;
     let applied_ua_capability_profile = applied_policy.applied_ua_capability_profile;
-    let native_method_supported = matches!(method.as_str(), "GET" | "POST")
-        && matches!(parsed_scheme(&url), Some("wap" | "waps"));
-    if method != "GET" && !native_method_supported {
+    let serialized = match serialize_fetch_request(
+        &url,
+        applied_policy.method,
+        applied_policy.outbound_headers,
+        request_policy.as_ref(),
+    ) {
+        Ok(serialized) => serialized,
+        Err(error) => return invalid_request_response(url, error, request_id.as_deref()),
+    };
+    let url = serialized.url;
+    let method = serialized.method;
+    let mut outbound_headers = serialized.headers;
+    let request_body = serialized.body;
+    let request_content_type = serialized.content_type;
+    if !matches!(method.as_str(), "GET" | "POST") {
         return invalid_request_response(
             url,
             format!("Unsupported method: {method}"),
+            request_id.as_deref(),
+        );
+    }
+    if method == "POST" && request_body.is_none() {
+        return invalid_request_response(
+            url,
+            "POST requests require a serialized request body".to_string(),
+            request_id.as_deref(),
+        );
+    }
+
+    let serialized_url_octets = url.len();
+    if serialized_url_octets > MAX_URI_OCTETS {
+        return invalid_request_response(
+            url,
+            format!(
+                "URL exceeds {}-octet limit after request serialization (got {} octets)",
+                MAX_URI_OCTETS, serialized_url_octets
+            ),
             request_id.as_deref(),
         );
     }
@@ -93,20 +123,12 @@ pub(crate) fn fetch_deck_in_process_impl(
     );
 
     if should_use_native_wap_request_for_profile(&parsed, &method, profile_override) {
-        let (post_body, post_content_type) = extract_native_post_context(request_policy.as_ref());
-        if method == "POST" && post_body.is_none() {
-            return invalid_request_response(
-                url,
-                "POST requests require requestPolicy.postContext.payload".to_string(),
-                request_id.as_deref(),
-            );
-        }
         return execute_native_wap_request(NativeFetchPlan {
             request_url: url,
             method,
             outbound_headers,
-            post_body,
-            post_content_type,
+            post_body: request_body,
+            post_content_type: request_content_type,
             timeout_ms: timeout_ms.unwrap_or(5000).clamp(100, 30000),
             attempts,
             request_id,
@@ -143,7 +165,9 @@ pub(crate) fn fetch_deck_in_process_impl(
     execute_fetch(FetchExecutionPlan {
         url,
         upstream_url,
+        method,
         outbound_headers,
+        request_body,
         timeout_ms: timeout_ms.unwrap_or(5000).clamp(100, 30000),
         attempts,
         is_wap_scheme,
@@ -172,28 +196,6 @@ fn should_use_native_wap_request_for_profile(
     }
 }
 
-fn extract_native_post_context(
-    request_policy: Option<&crate::FetchRequestPolicy>,
-) -> (Option<Vec<u8>>, Option<String>) {
-    let Some(post_context) = request_policy.and_then(|policy| policy.post_context.as_ref()) else {
-        return (None, None);
-    };
-    let payload = post_context
-        .payload
-        .as_ref()
-        .map(|value| value.as_bytes().to_vec());
-    let content_type = post_context.content_type.clone().or_else(|| {
-        payload
-            .as_ref()
-            .map(|_| "application/x-www-form-urlencoded".to_string())
-    });
-    (payload, content_type)
-}
-
-fn parsed_scheme(url: &str) -> Option<&str> {
-    url.split_once(':').map(|(scheme, _)| scheme)
-}
-
 /// Builds an explicit, allowlisted view of `FetchRequestPolicy` for transport logging.
 ///
 /// `post_context.payload` carries the raw POST body (e.g. WML login form fields such as a
@@ -216,6 +218,15 @@ fn redacted_request_policy_for_log(
             "contentType": post_context.content_type,
             "hasPayload": post_context.payload.is_some(),
             "payloadLen": post_context.payload.as_ref().map(|payload| payload.len()),
+        })),
+        "requestIntent": policy.request_intent.as_ref().map(|intent| serde_json::json!({
+            "method": intent.method,
+            "enctype": intent.enctype,
+            "sendReferer": intent.send_referer,
+            "acceptCharset": intent.accept_charset,
+            "sameDeck": intent.same_deck,
+            "postFieldCount": intent.post_fields.len(),
+            "hasSourceContentType": intent.source_content_type.is_some(),
         })),
         "uaCapabilityProfile": policy.ua_capability_profile,
     })
@@ -261,7 +272,7 @@ mod tests {
     }
 
     #[test]
-    fn extract_native_post_context_defaults_form_content_type_when_payload_present() {
+    fn legacy_post_context_defaults_form_content_type_when_payload_present() {
         let request_policy = FetchRequestPolicy {
             destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
             cache_control: Some(FetchCacheControlPolicy::NoCache),
@@ -271,20 +282,27 @@ mod tests {
                 content_type: None,
                 payload: Some("username=alice&pin=1234".to_string()),
             }),
+            request_intent: None,
             ua_capability_profile: None,
         };
 
-        let (payload, content_type) = extract_native_post_context(Some(&request_policy));
+        let serialized = serialize_fetch_request(
+            "wap://localhost/login",
+            "POST".to_string(),
+            std::collections::HashMap::new(),
+            Some(&request_policy),
+        )
+        .expect("legacy request should serialize");
 
-        assert_eq!(payload, Some(b"username=alice&pin=1234".to_vec()));
+        assert_eq!(serialized.body, Some(b"username=alice&pin=1234".to_vec()));
         assert_eq!(
-            content_type.as_deref(),
+            serialized.content_type.as_deref(),
             Some("application/x-www-form-urlencoded")
         );
     }
 
     #[test]
-    fn extract_native_post_context_returns_none_when_payload_missing() {
+    fn legacy_post_context_returns_none_when_payload_missing() {
         let request_policy = FetchRequestPolicy {
             destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
             cache_control: None,
@@ -294,22 +312,22 @@ mod tests {
                 content_type: Some("application/x-www-form-urlencoded".to_string()),
                 payload: None,
             }),
+            request_intent: None,
             ua_capability_profile: None,
         };
 
-        let (payload, content_type) = extract_native_post_context(Some(&request_policy));
+        let serialized = serialize_fetch_request(
+            "wap://localhost/login",
+            "POST".to_string(),
+            std::collections::HashMap::new(),
+            Some(&request_policy),
+        )
+        .expect("legacy request should serialize");
 
-        assert_eq!(payload, None);
+        assert_eq!(serialized.body, None);
         assert_eq!(
-            content_type.as_deref(),
+            serialized.content_type.as_deref(),
             Some("application/x-www-form-urlencoded")
         );
-    }
-
-    #[test]
-    fn parsed_scheme_returns_prefix_before_colon() {
-        assert_eq!(parsed_scheme("wap://localhost/login"), Some("wap"));
-        assert_eq!(parsed_scheme("http://localhost:3000/"), Some("http"));
-        assert_eq!(parsed_scheme("not-a-url"), None);
     }
 }

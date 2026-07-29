@@ -10,7 +10,7 @@ fn transport_supported_content_type_matrix() {
 #[test]
 fn transport_fetch_invalid_method_maps_invalid_request() {
     let response = fetch_deck_in_process(FetchDeckRequest {
-        method: Some("POST".to_string()),
+        method: Some("DELETE".to_string()),
         request_id: Some("req-invalid-method".to_string()),
         ..basic_request("http://example.test".to_string())
     });
@@ -34,7 +34,7 @@ fn transport_fetch_with_profile_invalid_method_maps_invalid_request_for_each_pro
     ] {
         let response = fetch_deck_in_process_with_profile(
             FetchDeckRequest {
-                method: Some("POST".to_string()),
+                method: Some("DELETE".to_string()),
                 request_id: Some("req-invalid-method-profile".to_string()),
                 ..basic_request("http://example.test".to_string())
             },

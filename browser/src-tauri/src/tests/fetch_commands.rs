@@ -1,5 +1,7 @@
 use super::*;
-use lowband_transport_rust::{FetchCacheControlPolicy, FetchPostContext};
+use lowband_transport_rust::{
+    FetchCacheControlPolicy, FetchRequestIntent, FetchRequestMethod, FetchRequestPostField,
+};
 
 fn unique_smoke_username(prefix: &str) -> String {
     let nonce = std::time::SystemTime::now()
@@ -7,6 +9,29 @@ fn unique_smoke_username(prefix: &str) -> String {
         .expect("clock should be monotonic enough for test ids")
         .as_millis();
     format!("{prefix}{nonce}")
+}
+
+fn typed_post_intent(payload: &str) -> FetchRequestIntent {
+    FetchRequestIntent {
+        method: FetchRequestMethod::Post,
+        enctype: "application/x-www-form-urlencoded".to_string(),
+        send_referer: true,
+        accept_charset: Some("utf-8".to_string()),
+        same_deck: false,
+        post_fields: payload
+            .split('&')
+            .map(|pair| {
+                let (name, value) = pair
+                    .split_once('=')
+                    .expect("test form payload should contain name/value pairs");
+                FetchRequestPostField {
+                    name: name.to_string(),
+                    value: value.to_string(),
+                }
+            })
+            .collect(),
+        source_content_type: Some("text/vnd.wap.wml; charset=utf-8".to_string()),
+    }
 }
 
 #[test]
@@ -223,6 +248,7 @@ fn fetch_deck_command_rejects_renderer_destination_policy_override() {
                     cache_control: None,
                     referer_url: None,
                     post_context: None,
+                    request_intent: None,
                     ua_capability_profile: None,
                 }),
             })
@@ -257,6 +283,114 @@ fn fetch_deck_command_honors_host_allow_private_override() {
         response.error.as_ref().map(|err| err.code.as_str()),
         Some("TRANSPORT_UNAVAILABLE")
     );
+}
+
+#[test]
+fn fetch_deck_command_serializes_typed_post_intent_before_http_handoff() {
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").expect("bind local request listener");
+    let listener_addr = listener.local_addr().expect("read listener address");
+    let captured = std::sync::Arc::new(std::sync::Mutex::new(Vec::<u8>::new()));
+    let captured_for_thread = std::sync::Arc::clone(&captured);
+    let server = std::thread::spawn(move || {
+        use std::io::{BufRead, BufReader, Read, Write};
+        let (stream, _) = listener.accept().expect("accept request connection");
+        let mut reader = BufReader::new(stream.try_clone().expect("clone request stream"));
+        let mut request = Vec::new();
+        let mut content_length = 0usize;
+        loop {
+            let mut line = String::new();
+            reader.read_line(&mut line).expect("read request header");
+            request.extend_from_slice(line.as_bytes());
+            if let Some(value) = line
+                .to_ascii_lowercase()
+                .strip_prefix("content-length:")
+                .map(str::trim)
+            {
+                content_length = value.parse().expect("parse request Content-Length");
+            }
+            if line == "\r\n" {
+                break;
+            }
+        }
+        let mut body = vec![0; content_length];
+        reader.read_exact(&mut body).expect("read request body");
+        request.extend_from_slice(&body);
+        *captured_for_thread.lock().expect("capture request lock") = request;
+
+        let response_body = BASIC_NAV_WML;
+        let response = format!(
+            "HTTP/1.1 200 OK\r\nContent-Type: text/vnd.wap.wml\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+            response_body.len(),
+            response_body
+        );
+        stream
+            .try_clone()
+            .expect("clone response stream")
+            .write_all(response.as_bytes())
+            .expect("write response");
+    });
+
+    let target = format!("http://{listener_addr}/forms/submit");
+    let referer = format!("http://{listener_addr}/forms/login.wml#card");
+    let response = with_env_var_locked(
+        super::waves_config::FETCH_DESTINATION_POLICY_ENV,
+        super::waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+        || {
+            fetch_deck(FetchDeckRequest {
+                url: target.clone(),
+                method: Some("GET".to_string()),
+                headers: None,
+                timeout_ms: Some(1000),
+                retries: Some(0),
+                request_id: Some("req-typed-post-handoff".to_string()),
+                request_policy: Some(FetchRequestPolicy {
+                    destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+                    cache_control: Some(FetchCacheControlPolicy::NoCache),
+                    referer_url: Some(referer),
+                    post_context: None,
+                    request_intent: Some(FetchRequestIntent {
+                        method: FetchRequestMethod::Post,
+                        enctype: "application/x-www-form-urlencoded".to_string(),
+                        send_referer: true,
+                        accept_charset: Some("utf-8".to_string()),
+                        same_deck: false,
+                        post_fields: vec![
+                            FetchRequestPostField {
+                                name: "first field".to_string(),
+                                value: "one&two".to_string(),
+                            },
+                            FetchRequestPostField {
+                                name: "city".to_string(),
+                                value: "Montréal".to_string(),
+                            },
+                        ],
+                        source_content_type: Some("text/vnd.wap.wml; charset=utf-8".to_string()),
+                    }),
+                    ua_capability_profile: None,
+                }),
+            })
+        },
+    );
+    server.join().expect("request server should exit");
+
+    assert!(
+        response.ok,
+        "typed POST fetch should succeed: {:?}",
+        response.error
+    );
+    let captured = captured.lock().expect("capture request lock");
+    let request = String::from_utf8_lossy(&captured);
+    assert!(request.starts_with("POST /forms/submit HTTP/1.1\r\n"));
+    assert!(request
+        .to_ascii_lowercase()
+        .contains("content-type: application/x-www-form-urlencoded; charset=utf-8\r\n"));
+    assert!(request
+        .to_ascii_lowercase()
+        .contains("cache-control: no-cache\r\n"));
+    assert!(
+        request.contains("referer: login.wml\r\n") || request.contains("Referer: login.wml\r\n")
+    );
+    assert!(request.ends_with("first+field=one%26two&city=Montr%C3%A9al"));
 }
 
 #[test]
@@ -433,6 +567,7 @@ fn fetch_deck_command_gateway_fallback_uses_effective_request_profile() {
                     cache_control: None,
                     referer_url: None,
                     post_context: None,
+                    request_intent: None,
                     ua_capability_profile: None,
                 }),
             },
@@ -572,6 +707,7 @@ fn fetch_deck_command_gateway_fallback_cannot_be_redirected_by_fallback_env_valu
             cache_control: None,
             referer_url: None,
             post_context: None,
+            request_intent: None,
             ua_capability_profile: None,
         }),
     });
@@ -650,6 +786,7 @@ fn host_fetch_deck_command_native_wap_home_smoke_succeeds() {
             cache_control: None,
             referer_url: None,
             post_context: None,
+            request_intent: None,
             ua_capability_profile: None,
         }),
     });
@@ -721,11 +858,8 @@ fn host_fetch_deck_command_native_wap_post_smoke_registers_and_logs_in() {
             destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: Some(register_url.clone()),
-            post_context: Some(FetchPostContext {
-                same_deck: Some(false),
-                content_type: Some("application/x-www-form-urlencoded".to_string()),
-                payload: Some(payload.clone()),
-            }),
+            post_context: None,
+            request_intent: Some(typed_post_intent(&payload)),
             ua_capability_profile: None,
         }),
     });
@@ -754,11 +888,8 @@ fn host_fetch_deck_command_native_wap_post_smoke_registers_and_logs_in() {
             destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: Some(login_url.clone()),
-            post_context: Some(FetchPostContext {
-                same_deck: Some(false),
-                content_type: Some("application/x-www-form-urlencoded".to_string()),
-                payload: Some(payload),
-            }),
+            post_context: None,
+            request_intent: Some(typed_post_intent(&payload)),
             ua_capability_profile: None,
         }),
     });

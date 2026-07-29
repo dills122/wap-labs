@@ -466,6 +466,21 @@ fn connectionless_request_headers(headers: &HashMap<String, String>) -> WspHeade
             },
         });
     }
+    for name in ["Cache-Control", "Pragma", "Referer"] {
+        let Some((_, value)) = headers
+            .iter()
+            .find(|(candidate, _)| candidate.eq_ignore_ascii_case(name))
+        else {
+            continue;
+        };
+        block.headers.push(WspHeaderField {
+            name: name.to_string(),
+            value: value.clone(),
+            name_encoding: WspHeaderNameEncoding::Binary {
+                page: DEFAULT_HEADER_CODE_PAGE,
+            },
+        });
+    }
     prepare_connectionless_header_block(&block, WspEncodingVersion::V1_3, &[])
 }
 
@@ -849,6 +864,38 @@ mod tests {
         assert_eq!(headers.headers.len(), 1);
         assert_eq!(headers.headers[0].name, "Encoding-Version");
         assert_eq!(headers.headers[0].value, "1.3");
+    }
+
+    #[test]
+    fn connectionless_request_headers_forward_request_policy_headers_deterministically() {
+        let headers = connectionless_request_headers(&HashMap::from([
+            ("Referer".to_string(), "login.wml".to_string()),
+            ("Pragma".to_string(), "no-cache".to_string()),
+            ("Cache-Control".to_string(), "no-cache".to_string()),
+            (
+                "Content-Type".to_string(),
+                "application/x-www-form-urlencoded; charset=utf-8".to_string(),
+            ),
+        ]));
+
+        let names = headers
+            .headers
+            .iter()
+            .map(|header| header.name.as_str())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            names,
+            vec![
+                "Accept",
+                "Cache-Control",
+                "Pragma",
+                "Referer",
+                "Encoding-Version"
+            ]
+        );
+        assert_eq!(headers.headers[1].value, "no-cache");
+        assert_eq!(headers.headers[2].value, "no-cache");
+        assert_eq!(headers.headers[3].value, "login.wml");
     }
 
     #[test]

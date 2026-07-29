@@ -1476,6 +1476,7 @@ fn wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior() {
             cache_control: None,
             referer_url: None,
             post_context: None,
+            request_intent: None,
             ua_capability_profile: None,
         }),
     });

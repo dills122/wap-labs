@@ -347,6 +347,66 @@ describe('navigation-state load behavior', () => {
     });
   });
 
+  it('hands typed request intent and referring deck content type to transport', async () => {
+    const fetchRequests: Array<{ method?: string; requestPolicy: unknown }> = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchRequests.push({ method: request.method, requestPolicy: request.requestPolicy });
+          return fetchOk({
+            finalUrl: request.url,
+            contentType: 'text/vnd.wap.wml; charset=iso-8859-1',
+            engineDeckInput: {
+              wmlXml: '<wml><card id="home"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml; charset=iso-8859-1'
+            }
+          });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/submit',
+      method: 'GET',
+      source: 'external-intent',
+      followExternalIntent: false,
+      requestPolicy: {
+        requestIntent: {
+          method: 'post',
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          acceptCharset: 'unknown',
+          sameDeck: false,
+          postFields: [{ name: 'city', value: 'Montréal' }]
+        }
+      }
+    });
+
+    expect(fetchRequests[1]).toEqual({
+      method: 'POST',
+      requestPolicy: {
+        refererUrl: 'http://example.test/start.wml',
+        uaCapabilityProfile: 'wap-baseline',
+        requestIntent: {
+          method: 'post',
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          acceptCharset: 'unknown',
+          sameDeck: false,
+          postFields: [{ name: 'city', value: 'Montréal' }],
+          sourceContentType: 'text/vnd.wap.wml; charset=iso-8859-1'
+        }
+      }
+    });
+  });
+
   it('passes the current deck URI only to external-intent access checks', async () => {
     const loadRequests: Array<{ referringUrl?: string }> = [];
     const machine = createNavigationStateMachine(

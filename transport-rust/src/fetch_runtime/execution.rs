@@ -23,7 +23,9 @@ const MAX_HTTP_REDIRECTS: usize = 10;
 pub(super) struct FetchExecutionPlan {
     pub(super) url: String,
     pub(super) upstream_url: String,
+    pub(super) method: String,
     pub(super) outbound_headers: HashMap<String, String>,
+    pub(super) request_body: Option<Vec<u8>>,
     pub(super) timeout_ms: u64,
     pub(super) attempts: u8,
     pub(super) is_wap_scheme: bool,
@@ -103,7 +105,9 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
     let FetchExecutionPlan {
         url,
         upstream_url,
+        method,
         outbound_headers,
+        request_body,
         timeout_ms,
         attempts,
         is_wap_scheme,
@@ -134,9 +138,15 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
 
     for attempt in 1..=attempts {
         let start = Instant::now();
-        let mut req = client.get(&upstream_url);
+        let mut req = match method.as_str() {
+            "POST" => client.post(&upstream_url),
+            _ => client.get(&upstream_url),
+        };
         for (key, value) in &outbound_headers {
             req = req.header(key, value);
+        }
+        if let Some(body) = request_body.as_ref() {
+            req = req.body(body.clone());
         }
 
         match req.send() {
