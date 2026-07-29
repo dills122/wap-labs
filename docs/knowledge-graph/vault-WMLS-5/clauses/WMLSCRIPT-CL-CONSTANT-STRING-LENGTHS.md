@@ -42,6 +42,7 @@ tags:
   "obligationSynopsis": "Decode length-prefixed UTF-8 and externally encoded string constants without requiring a terminating null octet.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

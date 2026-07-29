@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode every defined bit, byte, signed, unsigned, multi-byte integer, and float32 field type with its specified width and representation.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

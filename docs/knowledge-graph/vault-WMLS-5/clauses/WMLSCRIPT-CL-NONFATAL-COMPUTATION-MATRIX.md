@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-WMLS-008|RQ-WMLS-008]]
 - `maps-to` → [[requirements/RQ-WMLS-010|RQ-WMLS-010]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
 - `planned-by` → [[work-items/WMLS-505|WMLS-505]]
 - `refines` → [[scr-rows/WMLS-C-099|WMLS-C-099]]
 - `refines` → [[scr-rows/WMLS-C-111|WMLS-C-111]]
@@ -44,9 +45,12 @@ tags:
   "obligationSynopsis": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.",
   "workItems": [
     "W1-02",
+    "W1-04",
+    "W1-05",
     "W1-06",
     "W1-07",
     "WMLS-501",
+    "WMLS-502",
     "WMLS-505"
   ],
   "ownerLayers": [

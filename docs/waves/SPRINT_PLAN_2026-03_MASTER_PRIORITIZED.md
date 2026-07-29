@@ -35,22 +35,24 @@ Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
 13-sprint/83-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
-is 41 implemented, 71 partial, and 86 missing parent rows; clause-level
-assessment is 302/762 after WML-301 closed 13 context/history/process-order/card-table clauses and
+is 41 implemented, 78 partial, and 79 missing parent rows; clause-level
+assessment is 317/762 after WML-301 closed 13 context/history/process-order/card-table clauses,
 WML-309 closed three frame-affordance presentation clauses,
 WML-302 closed 18 newly implemented clauses,
 retained 2 already implemented shared clauses, WSP-801 directly closed its
 35-clause connectionless matrix, WSP-802 added 22 net assessed header clauses,
 WML-305 closed its 10 directly mapped timer clauses and completed parent row
 WML-C-48, WML-304 added one net assessed request-intent clause while moving
-WML-C-14 from missing to partial, and R0-06/WSP-805 added ten directly assessed
-request-serialization clauses without closing multipart part Content-Type or POST replay.
+WML-C-14 from missing to partial, WSP-805 preserved the merged request-serialization
+evidence, and additive WMLS-501 added 15 library-index and stack-dataflow clauses
+while moving seven library parent rows from missing to partial.
 
 The July 28 bug-fix, desktop, and private-preview merges add regression and release-readiness
-evidence, while WML-309 adds one work item plus three directly assessed clauses. Project Atlas reports
-29 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 302/762 clauses assessed;
-the WML-301 graph labels its seven inherited card/WAE clauses as aggregate context rather than direct closure,
-so the direct C1 tranche is complete while the aggregate item remains in progress.
+evidence. WML-309 and the additive WMLS-501 verifier tranche change the machine-backed evidence
+state: Project Atlas now renders 30 `done`, 10 `in-progress`, 42 `todo`, and one `blocked` work
+item with 317/762 clauses assessed. The WML-301 graph labels its seven inherited card/WAE clauses
+as aggregate context rather than direct closure, while broader WMLScript execution and
+standard-library claims remain partial.
 
 Use this order for new completion work:
 
@@ -252,7 +254,7 @@ file ownership.
 | Priority | Lane / task                                                             | Dependency and overlap boundary                                                                                                                                                                                                              | Class C contribution                                                                                                                       | First useful desktop pre-release contribution                                                  |
 | -------: | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 |        1 | Request A1 — `WML-304` / `R0-06` / `WSP-805` native request application | Depends on the merged request-intent contract and completed `WSP-801`/`WSP-802`; give this task exclusive ownership of transport request serialization and browser fetch handoff files.                                                      | Converts the 12 remaining WML-304 transport-boundary clauses from intent-only plans into direct GET/POST/charset/referer/cache evidence.   | Makes real network forms and request policy usable through the native desktop path.            |
-|        2 | Script B1 — finish `WMLS-501` verifier scope                            | Independent of A1; owns WAP decoder/verifier fixtures and `engine-wasm/engine/src/wavescript/*`.                                                                                                                                             | Adds direct evidence for standard-library indexes and stack dataflow while preserving the 41-row WMLScript selection.                      | Prevents malformed script units from weakening a tester-facing desktop build.                  |
+|        2 | Script B1 — `WMLS-501` verifier scope (complete)                        | Additively closed over the merged decoder/runtime-routing history; owns WAP decoder/verifier fixtures and `engine-wasm/engine/src/wavescript/*`.                                                                                             | Directly verifies standard-library indexes and stack dataflow while preserving broader partial SCR rows.                                   | Prevents malformed script units from weakening a tester-facing desktop build.                  |
 |        3 | Runtime C1 — `WML-301` residual card-table/WAE delegate closure         | Independent of A1 when limited to rendering/mapping fixtures; do not edit request serialization or browser fetch handoff.                                                                                                                    | Closes the planned card-table boundary and makes the aggregate WML-301/WAE boundary explicit without reopening completed history evidence. | Improves deterministic historical page presentation in the reference handset.                  |
 |        4 | Desktop D1 — activate `WBP-06` / `F0-01` frame-and-affordance contract  | Prerequisites are satisfied. Use one frame-contract owner; preserve `EngineDebug*`. Coordinate generated host artifacts with A1 because both touch browser contract integration. This is separate from the pending visual-refinement stream. | Unblocks `REN-4` and the planned dynamic `do` presentation/softkey evidence; it does not itself close WML-3.                               | Establishes the engine-owned frame and affordance spine required for a credible desktop alpha. |
 |        5 | Request A2 — replayable POST history                                    | Starts after A1 fixes the serialized request shape; shares navigation/history structures with C1, so land after C1 or coordinate one owner.                                                                                                  | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary.                                        | Makes form navigation/back behavior predictable in public-lab scenarios.                       |

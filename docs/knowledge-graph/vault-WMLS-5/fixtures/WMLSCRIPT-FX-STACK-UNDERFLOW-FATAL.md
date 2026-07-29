@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "error-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

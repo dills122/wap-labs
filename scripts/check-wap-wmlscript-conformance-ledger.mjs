@@ -31,8 +31,8 @@ const ledgers = [
       missing: 9
     },
     expectedEvidenceCounts: {
-      direct: 21,
-      provisional: 11
+      direct: 22,
+      provisional: 10
     },
     expectedActors: new Set([
       'wmlscript-encoder',
@@ -61,11 +61,11 @@ const ledgers = [
       selected: 80,
       selectedOptional: 2,
       notApplicable: 13,
-      partial: 14,
-      missing: 66
+      partial: 21,
+      missing: 59
     },
     expectedEvidenceCounts: {
-      direct: 0,
+      direct: 7,
       provisional: 14
     },
     expectedActors: new Set([

@@ -28,6 +28,14 @@ const WMLS_501_NAMED_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
 const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
+const WMLS_501_STACK_UNDERFLOW_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex");
+const WMLS_501_STACK_OVERFLOW_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-stack-overflow.wmlsc.hex");
+const WMLS_501_VALID_LIBRARY_REFS_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex");
+const WMLS_501_INVALID_LIBRARY_INDEX_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-invalid-library-index.wmlsc.hex");
 
 fn wmls_501_fixture_bytes(fixture: &str) -> Vec<u8> {
     fixture
@@ -150,6 +158,113 @@ fn wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace() 
         })
         .collect();
     assert!(trace_kinds.ends_with(&["ACTION_SCRIPT".to_string(), "SCRIPT_OK".to_string()]));
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_501_library_and_dataflow_verification_matches_native() {
+    assert!(
+        decode_wap_compilation_unit(&wmls_501_fixture_bytes(WMLS_501_VALID_LIBRARY_REFS_UNIT))
+            .is_ok()
+    );
+    assert_eq!(
+        decode_wap_compilation_unit(&wmls_501_fixture_bytes(WMLS_501_INVALID_LIBRARY_INDEX_UNIT)),
+        Err(WapDecodeError::InvalidLibraryIndex {
+            function: 0,
+            pc: 0,
+            index: 6,
+        })
+    );
+
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r##"<wml><card id="home"><a href="script:dataflow.wmlsc#main">Run</a></card></wml>"##,
+        )
+        .expect("deck should load");
+
+    engine.register_script_unit_wasm(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_UNDERFLOW_UNIT),
+    );
+    let underflow = engine
+        .execute_script_ref_function_wasm("dataflow.wmlsc".to_string(), "main".to_string())
+        .expect("underflow outcome must serialize");
+    assert_eq!(
+        Reflect::get(&underflow, &JsValue::from_str("errorCategory"))
+            .expect("errorCategory field")
+            .as_string()
+            .as_deref(),
+        Some("integrity")
+    );
+    assert_eq!(
+        Reflect::get(&underflow, &JsValue::from_str("trap"))
+            .expect("trap field")
+            .as_string()
+            .as_deref(),
+        Some("wap decode: stack underflow in function 0 at pc=0 (required=1, available=0)")
+    );
+
+    engine.register_script_unit_wasm(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_OVERFLOW_UNIT),
+    );
+    let overflow = engine
+        .execute_script_ref_function_wasm("dataflow.wmlsc".to_string(), "main".to_string())
+        .expect("overflow outcome must serialize");
+    assert_eq!(
+        Reflect::get(&overflow, &JsValue::from_str("errorCategory"))
+            .expect("errorCategory field")
+            .as_string()
+            .as_deref(),
+        Some("resource")
+    );
+    assert_eq!(
+        Reflect::get(&overflow, &JsValue::from_str("trap"))
+            .expect("trap field")
+            .as_string()
+            .as_deref(),
+        Some("wap decode: stack overflow in function 0 at pc=64 (depth=65, limit=64)")
+    );
+
+    engine.register_script_unit_wasm(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_UNDERFLOW_UNIT),
+    );
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect_err("underflow must abort the WAP action");
+    let traces = Array::from(
+        &engine
+            .trace_entries_wasm()
+            .expect("failure trace entries must serialize"),
+    );
+    let trace_kinds: Vec<String> = traces
+        .iter()
+        .filter_map(|entry| {
+            Reflect::get(&entry, &JsValue::from_str("kind"))
+                .ok()
+                .and_then(|kind| kind.as_string())
+        })
+        .collect();
+    assert!(trace_kinds.ends_with(&["ACTION_SCRIPT".to_string(), "SCRIPT_TRAP".to_string()]));
+
+    engine.clear_trace_entries_wasm();
+    engine.register_script_unit_wasm(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT),
+    );
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("valid replacement must execute after verifier failure");
+    let recovered = engine
+        .execute_script_ref_function_wasm("dataflow.wmlsc".to_string(), "main".to_string())
+        .expect("recovered outcome must serialize");
+    assert_eq!(
+        Reflect::get(&recovered, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
+    );
 }
 
 fn draw_len(render_value: &JsValue) -> u32 {

@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 302
+    "assessedClauseCount": 317
   },
   "families": [
     {
@@ -25136,9 +25136,9 @@
     },
     {
       "family": "wmlscript",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json",
-      "parentLedgerSha256": "43a900970f32178860d30ab76e211cbe4a2e1d8cb75cf80494196324703a69a8",
+      "parentLedgerSha256": "c7974dc4adf53825edd1ddaa263021757e1898f78b924f1a6527670d94ab6881",
       "effectiveSequence": [
         "WAP-193-WMLScript",
         "WAP-193_101-WMLScript"
@@ -25568,7 +25568,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY",
@@ -25589,7 +25590,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION",
@@ -25611,7 +25613,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-CHARACTER-SET-MIBENUM",
@@ -25635,7 +25638,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BYTECODE-HEADER-CODE-SIZE",
@@ -25659,7 +25663,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -25686,7 +25691,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -25711,7 +25717,8 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -25737,7 +25744,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX",
@@ -25761,7 +25771,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
@@ -25785,7 +25798,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -25809,7 +25825,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
@@ -25833,7 +25852,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX",
@@ -25857,7 +25879,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX",
@@ -25880,7 +25905,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX",
@@ -25903,7 +25931,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -25926,7 +25957,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -25949,7 +25983,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -25972,7 +26009,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -25995,7 +26035,10 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX",
@@ -26016,7 +26059,12 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "WMLS-503",
+            "W1-03",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX",
@@ -26044,7 +26092,12 @@
           ],
           "workItems": [
             "WMLS-501",
-            "W1-02"
+            "W1-02",
+            "WMLS-502",
+            "W1-04",
+            "WMLS-503",
+            "W1-03",
+            "W1-05"
           ],
           "clauseIds": [
             "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
@@ -26095,6 +26148,8 @@
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
+            "W1-02",
             "WMLS-505",
             "W1-06",
             "W1-07"
@@ -27670,6 +27725,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27709,6 +27765,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27748,6 +27805,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27787,6 +27845,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27826,6 +27885,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27865,6 +27925,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -27946,6 +28007,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28033,6 +28095,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28072,6 +28135,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28111,6 +28175,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28151,6 +28216,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28191,6 +28257,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28230,6 +28297,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28270,6 +28338,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28310,6 +28379,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28349,6 +28419,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28388,6 +28459,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28430,6 +28502,7 @@
               "W0-08",
               "W1-02",
               "W1-03",
+              "W1-05",
               "WMLS-501",
               "WMLS-503"
             ],
@@ -28473,6 +28546,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28512,6 +28586,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28551,6 +28626,7 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-05",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -28594,6 +28670,7 @@
               "W0-08",
               "W1-02",
               "W1-03",
+              "W1-05",
               "WMLS-501",
               "WMLS-503"
             ],
@@ -28640,7 +28717,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -28682,8 +28764,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -28724,7 +28808,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -28766,8 +28855,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -28799,8 +28890,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-FUNCTION-CALL-INDEX-TYPES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call."
+            "status": "implemented",
+            "assertion": "Validate local, library, URL, and function-name indexes against the required pool and constant type before invoking a call.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -28808,7 +28904,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -28818,9 +28919,12 @@
               "WMLS-C-096": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX",
@@ -28850,8 +28954,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -28892,7 +28998,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -28934,8 +29045,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -28976,7 +29089,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29018,8 +29136,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29062,6 +29182,7 @@
             "workItems": [
               "W1-02",
               "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
@@ -29111,8 +29232,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29154,6 +29277,7 @@
             "workItems": [
               "W1-02",
               "W1-04",
+              "W1-05",
               "WMLS-501",
               "WMLS-502"
             ],
@@ -29198,8 +29322,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29241,6 +29367,7 @@
             "workItems": [
               "W1-02",
               "W1-04",
+              "W1-05",
               "WMLS-501",
               "WMLS-502"
             ],
@@ -29285,8 +29412,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29328,6 +29457,7 @@
             "workItems": [
               "W1-02",
               "W1-04",
+              "W1-05",
               "WMLS-501",
               "WMLS-502"
             ],
@@ -29372,8 +29502,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29405,8 +29537,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-STACK-UNDERFLOW-FATAL",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error."
+            "status": "implemented",
+            "assertion": "Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29414,9 +29551,12 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
+              "WMLS-502",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -29427,9 +29567,12 @@
               "WMLS-C-103": "partial",
               "WMLS-C-110": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX",
@@ -29459,8 +29602,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29500,7 +29645,10 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29540,8 +29688,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29583,6 +29733,7 @@
             "workItems": [
               "W1-02",
               "W1-04",
+              "W1-05",
               "WMLS-501",
               "WMLS-502"
             ],
@@ -29627,8 +29778,10 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
               "W1-05",
-              "WMLS-501"
+              "WMLS-501",
+              "WMLS-502"
             ],
             "requirementIds": [
               "RQ-WMLS-008"
@@ -29668,7 +29821,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-009"
@@ -29708,7 +29866,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29750,7 +29913,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29794,7 +29962,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29838,7 +30011,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29891,7 +30069,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -29944,9 +30127,14 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-03",
+              "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
+              "WMLS-502",
+              "WMLS-503",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -29989,7 +30177,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -30031,7 +30224,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -30073,7 +30271,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -30115,7 +30318,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -30157,8 +30365,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RUNTIME-STACK-VALIDITY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Check operand availability for each instruction before applying its stack effect."
+            "status": "implemented",
+            "assertion": "Check operand availability for each instruction before applying its stack effect.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-inconsistent-merge.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30166,7 +30379,12 @@
             ],
             "workItems": [
               "W1-02",
-              "WMLS-501"
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "WMLS-501",
+              "WMLS-502",
+              "WMLS-503"
             ],
             "requirementIds": [
               "RQ-WMLS-008",
@@ -30185,9 +30403,12 @@
               "WMLS-C-105": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-ERROR-DETECTION-TOOLS",
@@ -30335,8 +30556,10 @@
               "engine-wasm"
             ],
             "workItems": [
+              "W1-02",
               "W1-06",
               "W1-07",
+              "WMLS-501",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -30378,9 +30601,14 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-03",
+              "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
+              "WMLS-502",
+              "WMLS-503",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -30422,8 +30650,10 @@
               "engine-wasm"
             ],
             "workItems": [
+              "W1-02",
               "W1-06",
               "W1-07",
+              "WMLS-501",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -30504,9 +30734,12 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
+              "WMLS-502",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -30549,9 +30782,12 @@
             ],
             "workItems": [
               "W1-02",
+              "W1-04",
+              "W1-05",
               "W1-06",
               "W1-07",
               "WMLS-501",
+              "WMLS-502",
               "WMLS-505"
             ],
             "requirementIds": [
@@ -30618,9 +30854,9 @@
     },
     {
       "family": "wmlscript-libraries",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json",
-      "parentLedgerSha256": "26562e283fb99ffca9d422198f9da75fcf5bb319a9b71315d43dcefe861275d0",
+      "parentLedgerSha256": "09390eba5ee6b5f1bb735a1d2401f48fd2907dbfc6665343e6512a24229508f5",
       "effectiveSequence": [
         "WAP-194-WMLScriptLibraries",
         "WAP-194_103-WMLScriptLibraries"
@@ -30855,11 +31091,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30880,11 +31117,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30900,11 +31138,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30920,11 +31159,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30940,11 +31180,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30960,11 +31201,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -30980,11 +31222,12 @@
             "documentId": "WAP-194-WMLScriptLibraries",
             "staticConformanceSection": "12.5"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm"
           ],
           "workItems": [
+            "WMLS-501",
             "WMLS-504",
             "W1-05"
           ],
@@ -34463,8 +34706,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the lang standard library to encoded library identifier 0."
+            "status": "implemented",
+            "assertion": "Map the lang standard library to encoded library identifier 0.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34472,6 +34720,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34480,11 +34729,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-018": "missing",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS",
@@ -34505,8 +34757,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14."
+            "status": "implemented",
+            "assertion": "Map lang function identifiers exactly as follows: abs=0, min=1, max=2, parseInt=3, parseFloat=4, isInt=5, isFloat=6, maxInt=7, minInt=8, float=9, exit=10, abort=11, random=12, seed=13, characterSet=14.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34514,6 +34771,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34521,11 +34779,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-018": "missing",
-              "WMLSSL-025": "missing"
+              "WMLSSL-025": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-SURFACE",
@@ -34586,8 +34847,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-FLOAT-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the float standard library to encoded library identifier 1."
+            "status": "implemented",
+            "assertion": "Map the float standard library to encoded library identifier 1.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34595,6 +34861,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34604,11 +34871,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-019": "missing",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS",
@@ -34629,8 +34899,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7."
+            "status": "implemented",
+            "assertion": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34638,6 +34913,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34647,11 +34923,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-019": "missing",
-              "WMLSSL-026": "missing"
+              "WMLSSL-026": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-SURFACE",
@@ -34711,8 +34990,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-STRING-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the string standard library to encoded library identifier 2."
+            "status": "implemented",
+            "assertion": "Map the string standard library to encoded library identifier 2.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34720,6 +35004,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34728,11 +35013,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-020": "missing",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS",
@@ -34753,8 +35041,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-STRING-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15."
+            "status": "implemented",
+            "assertion": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34762,6 +35055,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34769,11 +35063,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-020": "missing",
-              "WMLSSL-027": "missing"
+              "WMLSSL-027": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-SURFACE",
@@ -34833,8 +35130,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-URL-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the url standard library to encoded library identifier 3."
+            "status": "implemented",
+            "assertion": "Map the url standard library to encoded library identifier 3.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34842,6 +35144,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34850,11 +35153,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-021": "missing",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS",
@@ -34875,8 +35181,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13."
+            "status": "implemented",
+            "assertion": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34884,6 +35195,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34891,11 +35203,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-021": "missing",
-              "WMLSSL-028": "missing"
+              "WMLSSL-028": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-SURFACE",
@@ -34955,8 +35270,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the wmlbrowser standard library to encoded library identifier 4."
+            "status": "implemented",
+            "assertion": "Map the wmlbrowser standard library to encoded library identifier 4.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -34964,6 +35284,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -34971,11 +35292,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-022": "partial",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS",
@@ -34996,8 +35320,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-WMLBROWSER-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6."
+            "status": "implemented",
+            "assertion": "Map wmlbrowser function identifiers exactly as follows: getVar=0, setVar=1, go=2, prev=3, newContext=4, getCurrentCard=5, refresh=6.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -35005,6 +35334,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -35012,11 +35342,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-022": "partial",
-              "WMLSSL-029": "missing"
+              "WMLSSL-029": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-SURFACE",
@@ -35076,8 +35409,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-DIALOGS-LIBRARY-IDENTIFIER",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map the dialogs standard library to encoded library identifier 5."
+            "status": "implemented",
+            "assertion": "Map the dialogs standard library to encoded library identifier 5.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -35085,6 +35423,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -35093,11 +35432,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-023": "partial",
-              "WMLSSL-024": "missing"
+              "WMLSSL-024": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS",
@@ -35118,8 +35460,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-DIALOGS-FUNCTION-IDENTIFIERS",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2."
+            "status": "implemented",
+            "assertion": "Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -35127,6 +35474,7 @@
             ],
             "workItems": [
               "W1-05",
+              "WMLS-501",
               "WMLS-504"
             ],
             "requirementIds": [
@@ -35134,11 +35482,14 @@
             ],
             "parentImplementationSnapshot": {
               "WMLSSL-023": "partial",
-              "WMLSSL-030": "missing"
+              "WMLSSL-030": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-501"
+          ]
         },
         {
           "id": "WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE",

@@ -75,8 +75,8 @@
       "missing": 9,
       "partial": 32
     },
-    "selectedDirectNormativeTestEvidenceCount": 21,
-    "selectedProvisionalTestEvidenceCount": 11
+    "selectedDirectNormativeTestEvidenceCount": 22,
+    "selectedProvisionalTestEvidenceCount": 10
   },
   "obligations": [
     {
@@ -3801,10 +3801,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -3816,7 +3817,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -3860,10 +3861,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -3875,7 +3877,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -3919,10 +3921,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -3934,7 +3937,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -3978,10 +3981,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -3993,7 +3997,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4037,10 +4041,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4052,7 +4057,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4096,10 +4101,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4111,7 +4117,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4155,10 +4161,11 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area; WMLS-501 remains in progress because compiled-unit runtime routing and execution closure are deferred.",
+        "assessmentNote": "The WAP-193 decoder directly parses and structurally verifies this binary-format area. WMLS-501 verifier closure is complete; compiled-unit opcode execution remains deferred to WMLS-502 and related lanes.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4170,7 +4177,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4214,10 +4221,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4229,7 +4239,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4273,10 +4283,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4288,7 +4301,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4332,10 +4345,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4347,7 +4363,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4391,10 +4407,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4406,7 +4425,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4450,10 +4469,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4465,7 +4487,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4509,10 +4531,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4524,7 +4549,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4568,10 +4593,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4583,7 +4611,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4627,10 +4655,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4642,7 +4673,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4686,10 +4717,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4701,7 +4735,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4745,10 +4779,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4760,7 +4797,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4804,10 +4841,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4819,7 +4859,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4863,10 +4903,13 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly recognizes this instruction family and verifies its encoded operands and applicable local, constant, function, and jump references; execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier recognizes this instruction family, validates applicable references, and includes its source stack effect in reachable whole-function dataflow; execution semantics remain deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4878,7 +4921,7 @@
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4922,10 +4965,15 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "WMLS-503",
+          "W1-03",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4935,9 +4983,15 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct pre-execution library-domain, whole-function stack, return, reachability, and recovery evidence; execution semantics remain deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -4981,10 +5035,15 @@
         ],
         "workItems": [
           "WMLS-501",
-          "W1-02"
+          "W1-02",
+          "WMLS-502",
+          "W1-04",
+          "WMLS-503",
+          "W1-03",
+          "W1-05"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The WAP-193 decoder directly enforces compilation-unit integrity and structural reference checks; standard-library indexes, stack dataflow, runtime routing, and execution semantics remain deferred.",
+        "assessmentNote": "The WAP-193 verifier enforces whole-unit integrity, standard-library/function reference domains, and reachable stack dataflow before execution; opcode execution and remaining URL/access validity stay deferred.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
@@ -4994,9 +5053,15 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct standard-library/function-index and reachable stack-validity evidence; remaining URL/access and execution behavior is deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
             "test": "decodes_constant_pragma_function_and_instruction_pools",
             "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-            "limitation": "Direct structural decoder evidence only; it does not claim deferred execution, standard-library-index, stack-dataflow, or host-routing closure."
+            "limitation": "Direct strict verifier evidence only; it does not claim deferred opcode execution, URL/access behavior, or complete chapter 12 closure."
           },
           {
             "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
@@ -5082,7 +5147,7 @@
         "classCProfile": "required-by-class-c-client-mcf",
         "enhancementMayReplaceStrictBehavior": false
       },
-      "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+      "reviewState": "source-extracted-class-c-applied-direct-test-linked",
       "mapping": {
         "implementationDomain": "error-handling",
         "ownerLayers": [
@@ -5092,16 +5157,26 @@
           "RQ-WMLS-010"
         ],
         "workItems": [
+          "WMLS-501",
+          "W1-02",
           "WMLS-505",
           "W1-06",
           "W1-07"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "Related local behavior exists, but the evidence does not yet prove the complete WAP-193 requirement and effective binary format.",
+        "assessmentNote": "Source-pinned WAP units now prove fatal stack-underflow integrity handling, resource-class stack overflow, invocation abort, stable trace serialization, and recovery. Other chapter 12 fatal cases remain open.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_script_types.rs",
             "symbol": "ScriptExecutionOutcome"
+          },
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "WapDecodeError"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal.rs",
+            "symbol": "execute_wap_script_ref_call"
           }
         ],
         "testEvidence": [
@@ -5109,9 +5184,21 @@
             "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
             "test": "vm_trap_error_category_matrix_is_explicit",
             "limitation": "The deterministic local taxonomy is not yet mapped exhaustively to WAP-193 chapter 12 outcomes."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/script_runtime.rs",
+            "test": "registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+            "limitation": "Direct evidence for stack underflow/overflow, abort, trace, and recovery only; the remaining fatal matrix is deferred."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_library_and_dataflow_verification_matches_native",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM serialization parity for the covered fatal stack cases."
           }
         ],
-        "evidenceState": "provisional-non-normative-test-linked"
+        "evidenceState": "direct-test-linked"
       }
     },
     {

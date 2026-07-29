@@ -42,6 +42,7 @@ tags:
   "obligationSynopsis": "Use the constant-pool character-set MIBenum for string constants encoded with the external character definition.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

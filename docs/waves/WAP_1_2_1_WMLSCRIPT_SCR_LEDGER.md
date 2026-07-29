@@ -61,8 +61,8 @@ The optional interpreter rows are `WMLS-C-071` (floating-point size),
 | Implemented | 0 |
 | Partial | 32 |
 | Missing | 9 |
-| Direct structural tests | 21 |
-| Provisional local-test links | 11 |
+| Direct normative test links | 22 |
+| Provisional local-test links | 10 |
 
 These counts describe exact selected SCR rows, not a compliance percentage.
 “Partial” means related behavior exists but the repository has not proved the
@@ -75,8 +75,12 @@ two recommended.
 - a bounded strict decoder parses the WAP-193 header, multibyte fields, constant,
   pragma, and function pools, and every effective instruction encoding;
 - structural verification rejects malformed/truncated/reserved encodings and invalid
-  local, constant, local-function, function-boundary, and jump references;
-- three byte-exact source-derived fixtures have native/WASM parity coverage;
+  local, constant, local-function, standard-library/function, function-boundary, and jump
+  references;
+- reachable whole-function stack dataflow validates instruction effects, merge consistency,
+  balanced loops, terminal and implicit returns, underflow, and the bounded overflow limit;
+- source-pinned byte-exact fixtures have native/WASM parity coverage, including recovery and
+  serialized error/trace stability;
 - registered WAP units are fully decoded and verified before external name lookup; the bounded
   executor returns the WAP `RETURN_ES` empty string and reports all other valid instructions as
   deterministic typed unsupported-execution failures;
@@ -90,9 +94,10 @@ This is direct structural WAP-193 evidence, but it is not full WMLScript executi
 - the VM recognizes only nine project-specific opcodes;
 - the project-specific nine-opcode VM remains separate behind explicit manual-PC fixture metadata
   and is not normative WAP-193 evidence;
-- only `RETURN_ES` is executable from a WAP unit; the other return form, opcode semantics, and
-  stack dataflow are not implemented;
-- standard-library index validity remains deferred;
+- only `RETURN_ES` is executable from a WAP unit; the other return form and opcode execution
+  semantics are not implemented;
+- verified standard-library identifiers and arities do not implement the corresponding library
+  functions;
 - URL-based external invocation, fragments, relative resolution, pragmas, and
   access control are absent;
 - the complete conversion and chapter 12 error rules are not proven;
@@ -112,13 +117,13 @@ The ledger maps every row to existing requirement and sprint lanes:
 - `WMLS-506` / `W1-01`: WMLScript media types and cross-layer handoff;
 - `W1-05`: machine-ledger and CI closure.
 
-This routing follow-on makes `WMLS-C-069`, `WMLS-C-079`, `WMLS-C-094`, `WMLS-C-105`,
-`WMLS-C-107`, `WMLS-C-108`, and `WMLS-C-110` executable-evidence candidates. The exact SCR
-assessment totals remain unchanged pending machine-ledger review; no row is promoted to
-implemented by this bounded subset.
+The additive B1 closure adds direct evidence to `WMLS-C-107`, `WMLS-C-108`, and `WMLS-C-110`
+and source-linked partial evidence across the instruction-family rows without promoting a broad
+execution row to implemented. The exact machine-ledger assessments remain authoritative.
 
-The next additive pass should close library-index and stack-dataflow verification, then expand
-WAP opcode semantics through WMLS-502 without replacing the isolated legacy fixture stream.
+The B2 baton is `WMLS-502`: add bounded WAP-193 operator/conversion execution on top of this
+verified CFG and stack model, preserve native/WASM outcomes and serialized traces, and leave
+standard-library behavior (`WMLS-504`) plus URL/access invocation (`WMLS-503`) in their own lanes.
 
 ## Enhancement policy
 

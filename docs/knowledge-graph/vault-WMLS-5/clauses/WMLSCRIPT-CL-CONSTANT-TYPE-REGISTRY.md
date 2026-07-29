@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode constant types 0 through 6 as signed integers, float32, UTF-8 string, empty string, or externally encoded string, and reject reserved types.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

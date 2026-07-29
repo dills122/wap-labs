@@ -4,7 +4,7 @@ key: "WMLSCRIPT-LIBRARIES-FX-FLOAT-FUNCTION-IDENTIFIERS"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -4,7 +4,7 @@ key: "WMLS-501"
 type: "work-item"
 generated: true
 slice: "WMLS-5"
-status: "in-progress"
+status: "done"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/work-item"
@@ -17,6 +17,7 @@ tags:
 ## Relationships
 
 - `contains` ← [[sprints/WMLS-5|WMLS-5]]
+- `covers-family` → [[source-families/wmlscript-libraries|wmlscript-libraries]]
 - `covers-family` → [[source-families/wmlscript|wmlscript]]
 - `owned-by` → [[owner-layers/engine-wasm|engine-wasm]]
 - `owned-by` → [[owner-layers/qa|qa]]
@@ -49,7 +50,9 @@ tags:
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX|WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-CONTROL-FLOW-TARGETS|WMLSCRIPT-CL-CONTROL-FLOW-TARGETS]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX|WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX]]
+- `planned-by` ← [[clauses/WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL|WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX]]
+- `planned-by` ← [[clauses/WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX|WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES|WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX|WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-FUNCTION-NAME-TABLE|WMLSCRIPT-CL-FUNCTION-NAME-TABLE]]
@@ -89,6 +92,18 @@ tags:
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL|WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS|WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS]]
 - `planned-by` ← [[clauses/WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX|WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS]]
+- `planned-by` ← [[clauses/WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER]]
 - `planned-by` ← [[scr-rows/WAESpec-C-016|WAESpec-C-016]]
 - `planned-by` ← [[scr-rows/WAESpec-C-017|WAESpec-C-017]]
 - `planned-by` ← [[scr-rows/WMLS-C-069|WMLS-C-069]]
@@ -119,19 +134,31 @@ tags:
 - `planned-by` ← [[scr-rows/WMLS-C-108|WMLS-C-108]]
 - `planned-by` ← [[scr-rows/WMLS-C-110|WMLS-C-110]]
 - `planned-by` ← [[scr-rows/WMLS-C-111|WMLS-C-111]]
+- `planned-by` ← [[scr-rows/WMLSSL-024|WMLSSL-024]]
+- `planned-by` ← [[scr-rows/WMLSSL-025|WMLSSL-025]]
+- `planned-by` ← [[scr-rows/WMLSSL-026|WMLSSL-026]]
+- `planned-by` ← [[scr-rows/WMLSSL-027|WMLSSL-027]]
+- `planned-by` ← [[scr-rows/WMLSSL-028|WMLSSL-028]]
+- `planned-by` ← [[scr-rows/WMLSSL-029|WMLSSL-029]]
+- `planned-by` ← [[scr-rows/WMLSSL-030|WMLSSL-030]]
 - `relates-to` → [[legacy-tickets/W1-02|W1-02]]
 
 ## Data
 
 ```json
 {
-  "status": "in-progress",
+  "status": "done",
   "ownerLayers": [
     "engine-wasm",
     "qa"
   ],
   "sourceFamilies": [
-    "wmlscript"
+    "wmlscript",
+    "wmlscript-libraries"
+  ],
+  "notes": [
+    "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work.",
+    "B2 is ready to implement WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
   ],
   "scrMatrix": {
     "family": "wmlscript",
@@ -141,14 +168,17 @@ tags:
     "W1-02"
   ],
   "outputs": [
-    "Complete bytecode decoder and structural verifier"
+    "Complete bytecode decoder and structural verifier",
+    "Additive standard-library index and whole-function stack-dataflow verifier closure"
   ],
   "acceptance": [
     "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."
   ],
   "evidence": [
     "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
-    "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
+    "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery",
+    "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+    "pnpm test:story WMLS-501"
   ],
   "source": "docs/waves/wap-1.2.1-compliance-program.json"
 }

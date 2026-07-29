@@ -18,6 +18,7 @@ tags:
 - `maps-to` → [[requirements/RQ-WMLS-007|RQ-WMLS-007]]
 - `maps-to` → [[requirements/RQ-WMLS-012|RQ-WMLS-012]]
 - `maps-to` → [[requirements/RQ-WMLS-014|RQ-WMLS-014]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
 - `planned-by` → [[work-items/WMLS-504|WMLS-504]]
 - `refines` → [[scr-rows/WMLSSL-019|WMLSSL-019]]
 - `refines` → [[scr-rows/WMLSSL-026|WMLSSL-026]]
@@ -44,6 +45,7 @@ tags:
   "obligationSynopsis": "Map float function identifiers exactly as follows: int=0, floor=1, ceil=2, pow=3, round=4, sqrt=5, maxFloat=6, minFloat=7.",
   "workItems": [
     "W1-05",
+    "WMLS-501",
     "WMLS-504"
   ],
   "ownerLayers": [
@@ -54,7 +56,7 @@ tags:
     "RQ-WMLS-012",
     "RQ-WMLS-014"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

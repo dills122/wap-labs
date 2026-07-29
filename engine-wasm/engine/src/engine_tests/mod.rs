@@ -42,6 +42,10 @@ const WMLS_501_NAMED_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
 const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
+const WMLS_501_STACK_UNDERFLOW_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex");
+const WMLS_501_STACK_OVERFLOW_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-stack-overflow.wmlsc.hex");
 
 fn wmls_501_fixture_bytes(fixture: &str) -> Vec<u8> {
     fixture

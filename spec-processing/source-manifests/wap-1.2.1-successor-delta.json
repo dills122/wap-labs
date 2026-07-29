@@ -65,11 +65,11 @@
       "not-successor-derived": 181
     },
     "implementationBasisCounts": {
-      "not-implemented": 86,
+      "not-implemented": 79,
       "successor-era-compatibility-behavior": 1,
       "successor-era-or-cross-checked": 8,
       "successor-era-tables-and-synthetic-cases": 8,
-      "target-era-or-version-neutral": 95
+      "target-era-or-version-neutral": 102
     },
     "successorOnlyCapabilityCount": 5
   },
@@ -3222,7 +3222,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY",
@@ -3254,7 +3255,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION",
@@ -3287,7 +3289,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-CHARACTER-SET-MIBENUM",
@@ -3322,7 +3325,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BYTECODE-HEADER-CODE-SIZE",
@@ -3357,7 +3361,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -3395,7 +3400,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -3431,7 +3437,8 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BYTECODE-SECTION-ORDER",
@@ -3468,7 +3475,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX",
@@ -3503,7 +3513,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
@@ -3538,7 +3551,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -3573,7 +3589,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
@@ -3608,7 +3627,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX",
@@ -3643,7 +3665,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX",
@@ -3677,7 +3702,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX",
@@ -3711,7 +3739,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -3745,7 +3776,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -3779,7 +3813,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -3813,7 +3850,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -3847,7 +3887,10 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX",
@@ -3879,7 +3922,12 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "WMLS-503",
+        "W1-03",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX",
@@ -3918,7 +3966,12 @@
       ],
       "workItems": [
         "WMLS-501",
-        "W1-02"
+        "W1-02",
+        "WMLS-502",
+        "W1-04",
+        "WMLS-503",
+        "W1-03",
+        "W1-05"
       ],
       "clauseIds": [
         "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
@@ -3991,6 +4044,8 @@
         "RQ-WMLS-010"
       ],
       "workItems": [
+        "WMLS-501",
+        "W1-02",
         "WMLS-505",
         "W1-06",
         "W1-07"
@@ -4347,14 +4402,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4363,6 +4418,7 @@
         "RQ-WMLS-017"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4383,14 +4439,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4399,6 +4455,7 @@
         "RQ-WMLS-013"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4414,14 +4471,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4430,6 +4487,7 @@
         "RQ-WMLS-012"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4445,14 +4503,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4461,6 +4519,7 @@
         "RQ-WMLS-015"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4476,14 +4535,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4492,6 +4551,7 @@
         "RQ-WMLS-016"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4507,14 +4567,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4523,6 +4583,7 @@
         "RQ-WMLS-017"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],
@@ -4538,14 +4599,14 @@
         "documentId": "WAP-194-WMLScriptLibraries",
         "staticConformanceSection": "12.5"
       },
-      "selectedImplementationStatus": "missing",
+      "selectedImplementationStatus": "partial",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
-      "implementationBasis": "not-implemented",
+      "implementationBasis": "target-era-or-version-neutral",
       "disposition": "not-successor-derived",
       "successorReferences": [],
       "relationshipClassification": null,
-      "rationale": "No selected-row implementation exists to classify against successor behavior.",
+      "rationale": "No successor-derived selected-row implementation basis is identified; strict conformance remains governed by target-era clauses.",
       "strictCorrectionWorkItems": [],
       "ownerLayers": [
         "engine-wasm"
@@ -4554,6 +4615,7 @@
         "RQ-WMLS-022"
       ],
       "workItems": [
+        "WMLS-501",
         "WMLS-504",
         "W1-05"
       ],

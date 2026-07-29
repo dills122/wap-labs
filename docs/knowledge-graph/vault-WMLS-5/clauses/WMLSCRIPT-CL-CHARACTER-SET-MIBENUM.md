@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Interpret encoded character-set identities as IANA MIBenum values.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

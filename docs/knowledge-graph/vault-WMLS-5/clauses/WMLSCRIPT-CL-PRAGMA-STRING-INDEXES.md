@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Require access and meta pragma indexes to reference string constants of the permitted constant types.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

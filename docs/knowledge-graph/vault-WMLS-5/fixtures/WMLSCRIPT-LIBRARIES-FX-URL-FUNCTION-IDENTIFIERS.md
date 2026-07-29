@@ -4,7 +4,7 @@ key: "WMLSCRIPT-LIBRARIES-FX-URL-FUNCTION-IDENTIFIERS"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Map url function identifiers exactly as follows: isValid=0, getScheme=1, getHost=2, getPort=3, getPath=4, getParameters=5, getQuery=6, getFragment=7, getBase=8, getReferer=9, resolve=10, escapeString=11, unescapeString=12, loadString=13.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

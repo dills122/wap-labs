@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` → [[requirements/RQ-WMLS-015|RQ-WMLS-015]]
+- `planned-by` → [[work-items/WMLS-501|WMLS-501]]
 - `planned-by` → [[work-items/WMLS-504|WMLS-504]]
 - `refines` → [[scr-rows/WMLSSL-020|WMLSSL-020]]
 - `refines` → [[scr-rows/WMLSSL-027|WMLSSL-027]]
@@ -42,6 +43,7 @@ tags:
   "obligationSynopsis": "Map string function identifiers exactly as follows: length=0, isEmpty=1, charAt=2, subString=3, find=4, replace=5, elements=6, elementAt=7, removeAt=8, replaceAt=9, insertAt=10, squeeze=11, trim=12, compare=13, toString=14, format=15.",
   "workItems": [
     "W1-05",
+    "WMLS-501",
     "WMLS-504"
   ],
   "ownerLayers": [
@@ -50,7 +52,7 @@ tags:
   "requirementIds": [
     "RQ-WMLS-015"
   ],
-  "implementationStatus": "not-assessed",
+  "implementationStatus": "implemented",
   "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

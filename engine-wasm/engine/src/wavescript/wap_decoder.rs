@@ -1,8 +1,14 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, VecDeque};
 use std::fmt;
 
 pub const WAP_BYTECODE_VERSION: u8 = 0x01;
 pub const MAX_WAP_COMPILATION_UNIT_BYTES: usize = 64 * 1024;
+/// Deterministic strict-mode resource ceiling for a WAP operand stack.
+///
+/// WAP-193_101 section 12.3.3.1 permits an interpreter-defined stack
+/// exhaustion boundary. Keeping that boundary in the strict decoder makes a
+/// statically provable overflow fail before execution on both native and WASM.
+pub const MAX_WAP_OPERAND_STACK_DEPTH: usize = 64;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum WapDecodeError {
@@ -98,11 +104,49 @@ pub enum WapDecodeError {
         pc: usize,
         index: usize,
     },
+    InvalidLibraryIndex {
+        function: usize,
+        pc: usize,
+        index: usize,
+    },
+    InvalidLibraryFunctionIndex {
+        function: usize,
+        pc: usize,
+        library_index: usize,
+        function_index: usize,
+    },
     InvalidJumpTarget {
         function: usize,
         pc: usize,
         target: usize,
     },
+    StackUnderflow {
+        function: usize,
+        pc: usize,
+        required: usize,
+        available: usize,
+    },
+    StackOverflow {
+        function: usize,
+        pc: usize,
+        depth: usize,
+        limit: usize,
+    },
+    InconsistentStackDepth {
+        function: usize,
+        pc: usize,
+        expected: usize,
+        actual: usize,
+    },
+}
+
+impl WapDecodeError {
+    /// WAP-193_101 classifies stack overflow as a resource-exhaustion error;
+    /// all other strict decoding/dataflow failures in this type are bytecode
+    /// integrity errors.
+    pub fn is_resource_exhaustion(&self) -> bool {
+        matches!(self, Self::StackOverflow { .. })
+    }
 }
 
 impl fmt::Display for WapDecodeError {
@@ -215,6 +259,23 @@ impl fmt::Display for WapDecodeError {
                 formatter,
                 "invalid function reference {index} in function {function} at pc={pc}"
             ),
+            Self::InvalidLibraryIndex {
+                function,
+                pc,
+                index,
+            } => write!(
+                formatter,
+                "invalid standard-library index {index} in function {function} at pc={pc}"
+            ),
+            Self::InvalidLibraryFunctionIndex {
+                function,
+                pc,
+                library_index,
+                function_index,
+            } => write!(
+                formatter,
+                "invalid standard-library function index {function_index} for library {library_index} in function {function} at pc={pc}"
+            ),
             Self::InvalidJumpTarget {
                 function,
                 pc,
@@ -222,6 +283,33 @@ impl fmt::Display for WapDecodeError {
             } => write!(
                 formatter,
                 "invalid jump target {target} in function {function} at pc={pc}"
+            ),
+            Self::StackUnderflow {
+                function,
+                pc,
+                required,
+                available,
+            } => write!(
+                formatter,
+                "stack underflow in function {function} at pc={pc} (required={required}, available={available})"
+            ),
+            Self::StackOverflow {
+                function,
+                pc,
+                depth,
+                limit,
+            } => write!(
+                formatter,
+                "stack overflow in function {function} at pc={pc} (depth={depth}, limit={limit})"
+            ),
+            Self::InconsistentStackDepth {
+                function,
+                pc,
+                expected,
+                actual,
+            } => write!(
+                formatter,
+                "inconsistent stack depth in function {function} at pc={pc} (expected={expected}, actual={actual})"
             ),
         }
     }
@@ -458,13 +546,23 @@ pub fn decode_wap_compilation_unit(bytes: &[u8]) -> Result<WapCompilationUnit, W
         });
     }
 
+    let function_argument_counts: Vec<u8> = functions
+        .iter()
+        .map(|function| function.argument_count)
+        .collect();
     for (function_index, function) in functions.iter_mut().enumerate() {
         function.instructions = verify_instruction_stream(
             function_index,
             &function.code,
             usize::from(function.argument_count) + usize::from(function.local_count),
             &constants,
-            function_count,
+            &function_argument_counts,
+        )?;
+        verify_stack_dataflow(
+            function_index,
+            &function.code,
+            &function.instructions,
+            &function_argument_counts,
         )?;
     }
 
@@ -535,7 +633,7 @@ fn verify_instruction_stream(
     code: &[u8],
     variable_count: usize,
     constants: &[WapConstant],
-    function_count: usize,
+    function_argument_counts: &[u8],
 ) -> Result<Vec<WapInstruction>, WapDecodeError> {
     let mut pc = 0usize;
     let mut starts = HashSet::new();
@@ -572,10 +670,22 @@ fn verify_instruction_stream(
                 verify_constant(function, op_pc, usize::from(opcode & 0x0f), constants)?;
             }
             0x60..=0x67 => {
-                verify_function(function, op_pc, usize::from(opcode & 0x07), function_count)?;
+                verify_function(
+                    function,
+                    op_pc,
+                    usize::from(opcode & 0x07),
+                    function_argument_counts.len(),
+                )?;
             }
             0x68..=0x6f => {
-                read_instruction_bytes(code, &mut pc, 1, function, op_pc, opcode)?;
+                let library_index =
+                    usize::from(read_instruction_u8(code, &mut pc, function, op_pc, opcode)?);
+                verify_library_function(
+                    function,
+                    op_pc,
+                    library_index,
+                    usize::from(opcode & 0x07),
+                )?;
             }
             0x01 | 0x05 => {
                 let offset =
@@ -620,13 +730,25 @@ fn verify_instruction_stream(
             0x09 => {
                 let index =
                     usize::from(read_instruction_u8(code, &mut pc, function, op_pc, opcode)?);
-                verify_function(function, op_pc, index, function_count)?;
+                verify_function(function, op_pc, index, function_argument_counts.len())?;
             }
             0x0a => {
-                read_instruction_bytes(code, &mut pc, 2, function, op_pc, opcode)?;
+                let operands = read_instruction_bytes(code, &mut pc, 2, function, op_pc, opcode)?;
+                verify_library_function(
+                    function,
+                    op_pc,
+                    usize::from(operands[1]),
+                    usize::from(operands[0]),
+                )?;
             }
             0x0b => {
-                read_instruction_bytes(code, &mut pc, 3, function, op_pc, opcode)?;
+                let operands = read_instruction_bytes(code, &mut pc, 3, function, op_pc, opcode)?;
+                verify_library_function(
+                    function,
+                    op_pc,
+                    usize::from(u16::from_be_bytes([operands[1], operands[2]])),
+                    usize::from(operands[0]),
+                )?;
             }
             0x0c => {
                 let operands = read_instruction_bytes(code, &mut pc, 3, function, op_pc, opcode)?;
@@ -741,6 +863,456 @@ fn verify_function(
         });
     }
     Ok(())
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct StandardLibraryFunction {
+    argument_count: usize,
+    returns_value: bool,
+}
+
+const fn library_function(argument_count: usize) -> StandardLibraryFunction {
+    StandardLibraryFunction {
+        argument_count,
+        returns_value: true,
+    }
+}
+
+const fn terminating_library_function(argument_count: usize) -> StandardLibraryFunction {
+    StandardLibraryFunction {
+        argument_count,
+        returns_value: false,
+    }
+}
+
+// WAP-194 Appendix A fixes library IDs 0..=5 and the per-library function
+// domains. Argument counts come from the corresponding function signatures.
+// This is verifier metadata only; execution remains in the WMLS-502/504 lanes.
+const LANG_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(1),
+    library_function(2),
+    library_function(2),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(0),
+    library_function(0),
+    library_function(0),
+    terminating_library_function(1), // exit
+    terminating_library_function(1), // abort
+    library_function(1),
+    library_function(1),
+    library_function(0),
+];
+const FLOAT_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(2),
+    library_function(1),
+    library_function(1),
+    library_function(0),
+    library_function(0),
+];
+const STRING_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(1),
+    library_function(1),
+    library_function(2),
+    library_function(3),
+    library_function(2),
+    library_function(3),
+    library_function(2),
+    library_function(3),
+    library_function(3),
+    library_function(4),
+    library_function(4),
+    library_function(1),
+    library_function(1),
+    library_function(2),
+    library_function(1),
+    library_function(2),
+];
+const URL_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(1),
+    library_function(0),
+    library_function(0),
+    library_function(2),
+    library_function(1),
+    library_function(1),
+    library_function(2),
+];
+const WMLBROWSER_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(1),
+    library_function(2),
+    library_function(1),
+    library_function(0),
+    library_function(0),
+    library_function(0),
+    library_function(0),
+];
+const DIALOGS_LIBRARY: &[StandardLibraryFunction] = &[
+    library_function(2),
+    library_function(3),
+    library_function(1),
+];
+const STANDARD_LIBRARIES: &[&[StandardLibraryFunction]] = &[
+    LANG_LIBRARY,
+    FLOAT_LIBRARY,
+    STRING_LIBRARY,
+    URL_LIBRARY,
+    WMLBROWSER_LIBRARY,
+    DIALOGS_LIBRARY,
+];
+
+fn standard_library_function(
+    library_index: usize,
+    function_index: usize,
+) -> Option<StandardLibraryFunction> {
+    STANDARD_LIBRARIES
+        .get(library_index)
+        .and_then(|library| library.get(function_index))
+        .copied()
+}
+
+fn verify_library_function(
+    function: usize,
+    pc: usize,
+    library_index: usize,
+    function_index: usize,
+) -> Result<(), WapDecodeError> {
+    let Some(library) = STANDARD_LIBRARIES.get(library_index) else {
+        return Err(WapDecodeError::InvalidLibraryIndex {
+            function,
+            pc,
+            index: library_index,
+        });
+    };
+    if function_index >= library.len() {
+        return Err(WapDecodeError::InvalidLibraryFunctionIndex {
+            function,
+            pc,
+            library_index,
+            function_index,
+        });
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone, Copy)]
+struct StackEffect {
+    pops: usize,
+    pushes: usize,
+    terminal: bool,
+}
+
+impl StackEffect {
+    const fn new(pops: usize, pushes: usize) -> Self {
+        Self {
+            pops,
+            pushes,
+            terminal: false,
+        }
+    }
+
+    const fn terminal(pops: usize) -> Self {
+        Self {
+            pops,
+            pushes: 0,
+            terminal: true,
+        }
+    }
+}
+
+fn verify_stack_dataflow(
+    function: usize,
+    code: &[u8],
+    instructions: &[WapInstruction],
+    function_argument_counts: &[u8],
+) -> Result<(), WapDecodeError> {
+    if code.is_empty() {
+        return Ok(()); // WAP-193_101 8.4.3 implicit empty-string return.
+    }
+
+    let mut instruction_indexes = vec![None; code.len()];
+    for (index, instruction) in instructions.iter().enumerate() {
+        instruction_indexes[instruction.offset] = Some(index);
+    }
+
+    let mut depths = vec![None; code.len()];
+    depths[0] = Some(0);
+    let mut queue = VecDeque::from([(0usize, 0usize)]);
+
+    while let Some((pc, depth)) = queue.pop_front() {
+        let instruction_index = instruction_indexes[pc]
+            .expect("structural verification records every instruction boundary");
+        let instruction = &instructions[instruction_index];
+
+        if matches!(instruction.opcode, 0x34 | 0x35) {
+            verify_stack_available(function, instruction.offset, depth, 1)?;
+            let alternate_depth = depth + 1;
+            verify_stack_limit(function, instruction.offset, alternate_depth)?;
+            let next = next_instruction_offset(instruction);
+
+            // SCAND/SCOR deliberately have value-dependent stack heights. The
+            // compiler form pairs them with TJUMP: the fall-through consumes
+            // the converted true value, while the taken edge preserves the
+            // false/invalid result. Treating that pair as one dataflow step
+            // preserves both source-specified effects without inventing an
+            // operator execution kernel.
+            if let Some(next_index) = instruction_index_at(&instruction_indexes, next) {
+                let next_instruction = &instructions[next_index];
+                if is_conditional_jump(next_instruction.opcode) {
+                    let target = jump_target(next_instruction)
+                        .expect("conditional instructions have verified jump targets");
+                    enqueue_stack_depth(
+                        function,
+                        code.len(),
+                        target,
+                        depth,
+                        &mut depths,
+                        &mut queue,
+                    )?;
+                    enqueue_stack_depth(
+                        function,
+                        code.len(),
+                        next_instruction_offset(next_instruction),
+                        depth - 1,
+                        &mut depths,
+                        &mut queue,
+                    )?;
+                    continue;
+                }
+            }
+
+            enqueue_stack_depth(function, code.len(), next, depth, &mut depths, &mut queue)?;
+            enqueue_stack_depth(
+                function,
+                code.len(),
+                next,
+                alternate_depth,
+                &mut depths,
+                &mut queue,
+            )?;
+            continue;
+        }
+
+        let effect = instruction_stack_effect(instruction, function_argument_counts);
+        verify_stack_available(function, instruction.offset, depth, effect.pops)?;
+        let next_depth = depth - effect.pops + effect.pushes;
+        verify_stack_limit(function, instruction.offset, next_depth)?;
+        if effect.terminal {
+            continue;
+        }
+
+        let fallthrough = next_instruction_offset(instruction);
+        if is_unconditional_jump(instruction.opcode) {
+            let target = jump_target(instruction).expect("jump instructions have verified targets");
+            enqueue_stack_depth(
+                function,
+                code.len(),
+                target,
+                next_depth,
+                &mut depths,
+                &mut queue,
+            )?;
+        } else if is_conditional_jump(instruction.opcode) {
+            enqueue_stack_depth(
+                function,
+                code.len(),
+                fallthrough,
+                next_depth,
+                &mut depths,
+                &mut queue,
+            )?;
+            let target = jump_target(instruction).expect("jump instructions have verified targets");
+            enqueue_stack_depth(
+                function,
+                code.len(),
+                target,
+                next_depth,
+                &mut depths,
+                &mut queue,
+            )?;
+        } else {
+            enqueue_stack_depth(
+                function,
+                code.len(),
+                fallthrough,
+                next_depth,
+                &mut depths,
+                &mut queue,
+            )?;
+        }
+    }
+
+    Ok(())
+}
+
+fn instruction_stack_effect(
+    instruction: &WapInstruction,
+    function_argument_counts: &[u8],
+) -> StackEffect {
+    match instruction.opcode {
+        0x80..=0xbf | 0x01..=0x04 | 0x10 | 0x11 | 0x3c | 0x70..=0x77 => StackEffect::new(0, 0),
+        0xc0..=0xdf | 0x05..=0x08 => StackEffect::new(1, 0),
+        0xe0..=0xff | 0x0e | 0x12..=0x1a | 0x50..=0x5f => StackEffect::new(0, 1),
+        0x40..=0x4f | 0x0f | 0x1d | 0x1e | 0x37 => StackEffect::new(1, 0),
+        0x1b | 0x1c | 0x1f | 0x29 | 0x33 | 0x36 | 0x38 | 0x39 => StackEffect::new(1, 1),
+        0x20..=0x28 | 0x2a..=0x32 => StackEffect::new(2, 1),
+        0x60..=0x67 => {
+            let index = usize::from(instruction.opcode & 0x07);
+            StackEffect::new(usize::from(function_argument_counts[index]), 1)
+        }
+        0x09 => {
+            let index = usize::from(instruction.operands[0]);
+            StackEffect::new(usize::from(function_argument_counts[index]), 1)
+        }
+        0x68..=0x6f | 0x0a | 0x0b => {
+            let (library_index, function_index) = library_call_indexes(instruction);
+            let library_function = standard_library_function(library_index, function_index)
+                .expect("library references were structurally verified");
+            if library_function.returns_value {
+                StackEffect::new(library_function.argument_count, 1)
+            } else {
+                StackEffect::terminal(library_function.argument_count)
+            }
+        }
+        0x0c | 0x0d => StackEffect::new(
+            usize::from(*instruction.operands.last().expect("CALL_URL has args")),
+            1,
+        ),
+        0x3a => StackEffect::terminal(1),
+        0x3b => StackEffect::terminal(0),
+        0x34 | 0x35 => unreachable!("SCAND/SCOR are handled as value-dependent effects"),
+        _ => unreachable!("unsupported opcodes fail structural verification"),
+    }
+}
+
+fn library_call_indexes(instruction: &WapInstruction) -> (usize, usize) {
+    match instruction.opcode {
+        0x68..=0x6f => (
+            usize::from(instruction.operands[0]),
+            usize::from(instruction.opcode & 0x07),
+        ),
+        0x0a => (
+            usize::from(instruction.operands[1]),
+            usize::from(instruction.operands[0]),
+        ),
+        0x0b => (
+            usize::from(u16::from_be_bytes([
+                instruction.operands[1],
+                instruction.operands[2],
+            ])),
+            usize::from(instruction.operands[0]),
+        ),
+        _ => unreachable!("not a standard-library call"),
+    }
+}
+
+fn next_instruction_offset(instruction: &WapInstruction) -> usize {
+    instruction.offset + 1 + instruction.operands.len()
+}
+
+fn instruction_index_at(indexes: &[Option<usize>], pc: usize) -> Option<usize> {
+    indexes.get(pc).copied().flatten()
+}
+
+fn is_unconditional_jump(opcode: u8) -> bool {
+    matches!(opcode, 0x01..=0x04 | 0x80..=0xbf)
+}
+
+fn is_conditional_jump(opcode: u8) -> bool {
+    matches!(opcode, 0x05..=0x08 | 0xc0..=0xdf)
+}
+
+fn jump_target(instruction: &WapInstruction) -> Option<usize> {
+    let pc = instruction.offset;
+    match instruction.opcode {
+        0x80..=0x9f | 0xc0..=0xdf => {
+            Some(next_instruction_offset(instruction) + usize::from(instruction.opcode & 0x1f))
+        }
+        0xa0..=0xbf => pc.checked_sub(usize::from(instruction.opcode & 0x1f)),
+        0x01 | 0x05 => {
+            Some(next_instruction_offset(instruction) + usize::from(instruction.operands[0]))
+        }
+        0x02 | 0x06 => Some(
+            next_instruction_offset(instruction)
+                + usize::from(u16::from_be_bytes([
+                    instruction.operands[0],
+                    instruction.operands[1],
+                ])),
+        ),
+        0x03 | 0x07 => pc.checked_sub(usize::from(instruction.operands[0])),
+        0x04 | 0x08 => pc.checked_sub(usize::from(u16::from_be_bytes([
+            instruction.operands[0],
+            instruction.operands[1],
+        ]))),
+        _ => None,
+    }
+}
+
+fn verify_stack_available(
+    function: usize,
+    pc: usize,
+    available: usize,
+    required: usize,
+) -> Result<(), WapDecodeError> {
+    if available < required {
+        return Err(WapDecodeError::StackUnderflow {
+            function,
+            pc,
+            required,
+            available,
+        });
+    }
+    Ok(())
+}
+
+fn verify_stack_limit(function: usize, pc: usize, depth: usize) -> Result<(), WapDecodeError> {
+    if depth > MAX_WAP_OPERAND_STACK_DEPTH {
+        return Err(WapDecodeError::StackOverflow {
+            function,
+            pc,
+            depth,
+            limit: MAX_WAP_OPERAND_STACK_DEPTH,
+        });
+    }
+    Ok(())
+}
+
+fn enqueue_stack_depth(
+    function: usize,
+    code_len: usize,
+    pc: usize,
+    depth: usize,
+    depths: &mut [Option<usize>],
+    queue: &mut VecDeque<(usize, usize)>,
+) -> Result<(), WapDecodeError> {
+    if pc == code_len {
+        return Ok(()); // WAP-193_101 8.4.3 implicit empty-string return.
+    }
+    match depths[pc] {
+        Some(expected) if expected != depth => Err(WapDecodeError::InconsistentStackDepth {
+            function,
+            pc,
+            expected,
+            actual: depth,
+        }),
+        Some(_) => Ok(()),
+        None => {
+            depths[pc] = Some(depth);
+            queue.push_back((pc, depth));
+            Ok(())
+        }
+    }
 }
 
 fn verify_url_call_constants(
@@ -931,35 +1503,60 @@ mod tests {
 
     const MINIMAL_UNIT_HEX: &str =
         include_str!("../../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
+    const VALID_LIBRARY_REFS_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-valid-library-refs.wmlsc.hex");
+    const INVALID_LIBRARY_INDEX_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-invalid-library-index.wmlsc.hex");
+    const INVALID_LIBRARY_FUNCTION_INDEX_HEX: &str = include_str!(
+        "../../tests/fixtures/wmlscript/wap-193-invalid-library-function-index.wmlsc.hex"
+    );
+    const STACK_UNDERFLOW_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex");
+    const STACK_OVERFLOW_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-stack-overflow.wmlsc.hex");
+    const INCONSISTENT_MERGE_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-inconsistent-merge.wmlsc.hex");
+    const BALANCED_LOOP_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-balanced-loop.wmlsc.hex");
+    const UNREACHABLE_REGION_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-unreachable-region.wmlsc.hex");
+    const IMPLICIT_RETURN_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-implicit-return.wmlsc.hex");
+    const EXPLICIT_RETURN_HEX: &str =
+        include_str!("../../tests/fixtures/wmlscript/wap-193-explicit-return.wmlsc.hex");
 
-    fn fixture_bytes() -> Vec<u8> {
-        MINIMAL_UNIT_HEX
+    fn fixture_bytes_from(fixture: &str) -> Vec<u8> {
+        fixture
             .split_ascii_whitespace()
             .filter(|token| !token.starts_with('#'))
             .map(|token| u8::from_str_radix(token, 16).expect("fixture must contain hex bytes"))
             .collect()
     }
 
+    fn fixture_bytes() -> Vec<u8> {
+        fixture_bytes_from(MINIMAL_UNIT_HEX)
+    }
+
     fn unit_with_code(code: &[u8], arguments: u8, locals: u8) -> Vec<u8> {
-        let mut unit = vec![
-            0x01,
-            u8::try_from(14 + code.len()).expect("test code size must fit one byte"),
-            0x00,
-            0x6a,
-            0x00,
-            0x01,
-            0x01,
-            0x00,
-            0x04,
-            b'm',
-            b'a',
-            b'i',
-            b'n',
-            arguments,
-            locals,
-            u8::try_from(code.len()).expect("test function size must fit one byte"),
+        fn multibyte(mut value: usize) -> Vec<u8> {
+            let mut encoded = vec![u8::try_from(value & 0x7f).expect("seven-bit group")];
+            value >>= 7;
+            while value != 0 {
+                encoded.push(u8::try_from(value & 0x7f).expect("seven-bit group") | 0x80);
+                value >>= 7;
+            }
+            encoded.reverse();
+            encoded
+        }
+
+        let mut body = vec![
+            0x00, 0x6a, 0x00, 0x01, 0x01, 0x00, 0x04, b'm', b'a', b'i', b'n', arguments, locals,
         ];
-        unit.extend_from_slice(code);
+        body.extend(multibyte(code.len()));
+        body.extend_from_slice(code);
+        let mut unit = vec![0x01];
+        unit.extend(multibyte(body.len()));
+        unit.extend(body);
         unit
     }
 
@@ -1013,6 +1610,74 @@ mod tests {
         assert_eq!(decoded.function_names[0].name, "main");
         assert_eq!(decoded.functions[0].code, [0x3b]);
         assert_eq!(decoded.functions[0].instructions[0].offset, 0);
+    }
+
+    #[test]
+    fn source_pinned_library_and_stack_dataflow_fixtures_are_deterministic() {
+        assert!(decode_wap_compilation_unit(&fixture_bytes_from(VALID_LIBRARY_REFS_HEX)).is_ok());
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(INVALID_LIBRARY_INDEX_HEX)),
+            Err(WapDecodeError::InvalidLibraryIndex {
+                function: 0,
+                pc: 0,
+                index: 6,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(INVALID_LIBRARY_FUNCTION_INDEX_HEX)),
+            Err(WapDecodeError::InvalidLibraryFunctionIndex {
+                function: 0,
+                pc: 0,
+                library_index: 5,
+                function_index: 7,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(STACK_UNDERFLOW_HEX)),
+            Err(WapDecodeError::StackUnderflow {
+                function: 0,
+                pc: 0,
+                required: 1,
+                available: 0,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(STACK_OVERFLOW_HEX)),
+            Err(WapDecodeError::StackOverflow {
+                function: 0,
+                pc: MAX_WAP_OPERAND_STACK_DEPTH,
+                depth: MAX_WAP_OPERAND_STACK_DEPTH + 1,
+                limit: MAX_WAP_OPERAND_STACK_DEPTH,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(INCONSISTENT_MERGE_HEX)),
+            Err(WapDecodeError::InconsistentStackDepth {
+                function: 0,
+                pc: 3,
+                expected: 0,
+                actual: 1,
+            })
+        );
+        for fixture in [
+            BALANCED_LOOP_HEX,
+            UNREACHABLE_REGION_HEX,
+            IMPLICIT_RETURN_HEX,
+            EXPLICIT_RETURN_HEX,
+        ] {
+            decode_wap_compilation_unit(&fixture_bytes_from(fixture))
+                .expect("valid source-pinned dataflow fixture must verify");
+        }
+
+        // Decoder state is per-call: a failed verification cannot poison a
+        // later valid unit, and retrying the failed unit is byte-for-byte stable.
+        assert!(decode_wap_compilation_unit(&fixture_bytes_from(VALID_LIBRARY_REFS_HEX)).is_ok());
+        assert_eq!(
+            decode_wap_compilation_unit(&fixture_bytes_from(STACK_UNDERFLOW_HEX))
+                .expect_err("underflow remains invalid")
+                .to_string(),
+            "stack underflow in function 0 at pc=0 (required=1, available=0)"
+        );
     }
 
     #[test]
@@ -1087,7 +1752,7 @@ mod tests {
             WapConstant::Utf8String(b"url".to_vec()),
             WapConstant::Utf8String(b"func".to_vec()),
         ];
-        let instructions = verify_instruction_stream(0, &code, 1, &constants, 1)
+        let instructions = verify_instruction_stream(0, &code, 1, &constants, &[0])
             .expect("every effective opcode encoding must be recognized");
         assert!(instructions.len() > 60);
     }
@@ -1158,10 +1823,180 @@ mod tests {
     }
 
     #[test]
+    fn validates_every_standard_library_and_function_index_with_source_arity() {
+        for (library_index, library) in STANDARD_LIBRARIES.iter().enumerate() {
+            for (function_index, library_function) in library.iter().enumerate() {
+                let mut code = vec![0x14; library_function.argument_count];
+                if function_index <= 7 {
+                    code.extend_from_slice(&[
+                        0x68 | u8::try_from(function_index).expect("short function index"),
+                        u8::try_from(library_index).expect("library index"),
+                    ]);
+                } else {
+                    code.extend_from_slice(&[
+                        0x0a,
+                        u8::try_from(function_index).expect("function index"),
+                        u8::try_from(library_index).expect("library index"),
+                    ]);
+                }
+                if library_function.returns_value {
+                    code.push(0x3a);
+                }
+
+                decode_wap_compilation_unit(&unit_with_code(&code, 0, 0)).unwrap_or_else(|error| {
+                    panic!("library {library_index} function {function_index} must verify: {error}")
+                });
+            }
+        }
+    }
+
+    #[test]
+    fn rejects_invalid_standard_library_reference_domains() {
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x68, 0x06], 0, 0)),
+            Err(WapDecodeError::InvalidLibraryIndex {
+                function: 0,
+                pc: 0,
+                index: 6,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x6f, 0x05], 0, 0)),
+            Err(WapDecodeError::InvalidLibraryFunctionIndex {
+                function: 0,
+                pc: 0,
+                library_index: 5,
+                function_index: 7,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x0b, 0x00, 0x01, 0x00], 0, 0)),
+            Err(WapDecodeError::InvalidLibraryIndex {
+                function: 0,
+                pc: 0,
+                index: 256,
+            })
+        );
+    }
+
+    #[test]
+    fn verifies_stack_effects_for_calls_and_instruction_families() {
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x6a, 0x00], 0, 0)),
+            Err(WapDecodeError::StackUnderflow {
+                function: 0,
+                pc: 0,
+                required: 2,
+                available: 0,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x60], 1, 0)),
+            Err(WapDecodeError::StackUnderflow {
+                function: 0,
+                pc: 0,
+                required: 1,
+                available: 0,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x0c, 0x00, 0x01, 0x02], 0, 0)),
+            Err(WapDecodeError::InvalidConstantReference {
+                function: 0,
+                pc: 0,
+                index: 0,
+            })
+        );
+
+        let mut overflow = vec![0x14; MAX_WAP_OPERAND_STACK_DEPTH + 1];
+        overflow.push(0x3b);
+        let error = decode_wap_compilation_unit(&unit_with_code(&overflow, 0, 0))
+            .expect_err("a statically provable stack overflow must fail");
+        assert_eq!(
+            error,
+            WapDecodeError::StackOverflow {
+                function: 0,
+                pc: MAX_WAP_OPERAND_STACK_DEPTH,
+                depth: MAX_WAP_OPERAND_STACK_DEPTH + 1,
+                limit: MAX_WAP_OPERAND_STACK_DEPTH,
+            }
+        );
+        assert!(error.is_resource_exhaustion());
+    }
+
+    #[test]
+    fn verifies_branch_merges_loops_and_value_dependent_logical_pairs() {
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x19, 0xc1, 0x14, 0x3b], 0, 0)),
+            Err(WapDecodeError::InconsistentStackDepth {
+                function: 0,
+                pc: 3,
+                expected: 0,
+                actual: 1,
+            })
+        );
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x14, 0xa1], 0, 0)),
+            Err(WapDecodeError::InconsistentStackDepth {
+                function: 0,
+                pc: 0,
+                expected: 0,
+                actual: 1,
+            })
+        );
+        decode_wap_compilation_unit(&unit_with_code(&[0x14, 0x37, 0xa2], 0, 0))
+            .expect("balanced backward loop must verify");
+        decode_wap_compilation_unit(&unit_with_code(&[0x19, 0x34, 0xc1, 0x14, 0x3a], 0, 0))
+            .expect("SCAND/TJUMP pair must preserve source-specified path depths");
+        assert_eq!(
+            decode_wap_compilation_unit(&unit_with_code(&[0x19, 0x34, 0x3b], 0, 0)),
+            Err(WapDecodeError::InconsistentStackDepth {
+                function: 0,
+                pc: 2,
+                expected: 1,
+                actual: 2,
+            })
+        );
+    }
+
+    #[test]
+    fn accepts_unreachable_regions_and_implicit_or_explicit_returns() {
+        decode_wap_compilation_unit(&unit_with_code(&[0x3b, 0x37], 0, 0))
+            .expect("unreachable stack underflow is not a runtime path");
+        decode_wap_compilation_unit(&unit_with_code(&[0x14], 0, 0))
+            .expect("falling off the function end is an implicit empty return");
+        decode_wap_compilation_unit(&unit_with_code(&[0x14, 0x3a, 0x37], 0, 0))
+            .expect("explicit return terminates dataflow before unreachable bytes");
+        decode_wap_compilation_unit(&unit_with_code(&[], 0, 0))
+            .expect("an empty function immediately returns the implicit empty string");
+    }
+
+    #[test]
+    fn verifier_recovers_after_deterministic_dataflow_failure() {
+        let invalid = unit_with_code(&[0x37], 0, 0);
+        let valid = unit_with_code(&[0x3b], 0, 0);
+        assert!(matches!(
+            decode_wap_compilation_unit(&invalid),
+            Err(WapDecodeError::StackUnderflow { .. })
+        ));
+        assert!(decode_wap_compilation_unit(&valid).is_ok());
+        assert_eq!(
+            decode_wap_compilation_unit(&invalid),
+            Err(WapDecodeError::StackUnderflow {
+                function: 0,
+                pc: 0,
+                required: 1,
+                available: 0,
+            })
+        );
+    }
+
+    #[test]
     fn accepts_forward_and_backward_jumps_to_instruction_boundaries() {
-        let decoded = decode_wap_compilation_unit(&unit_with_code(&[0x14, 0xa1, 0x80, 0x3b], 0, 0))
-            .expect("jumps target instruction boundaries");
-        assert_eq!(decoded.functions[0].instructions.len(), 4);
+        let decoded =
+            decode_wap_compilation_unit(&unit_with_code(&[0x14, 0x37, 0xa2, 0x80, 0x3b], 0, 0))
+                .expect("jumps target instruction boundaries with consistent stack depth");
+        assert_eq!(decoded.functions[0].instructions.len(), 5);
     }
 
     #[test]

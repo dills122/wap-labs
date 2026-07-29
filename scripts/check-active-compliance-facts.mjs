@@ -180,7 +180,7 @@ const activeRollupFragments = new Map([
   [
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
-      `${assessedClauseCount} WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed`,
+      `${assessedClauseCount} WML, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed`,
       `the other ${unassessedClauseCount}`
     ]
   ],

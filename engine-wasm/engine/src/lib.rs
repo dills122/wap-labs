@@ -83,7 +83,7 @@ pub use render::render_list::{DrawCmd, RenderList};
 pub use wavescript::wap_decoder::{
     decode_wap_compilation_unit, WapCompilationUnit, WapConstant, WapDecodeError, WapFunction,
     WapFunctionName, WapInstruction, WapPragma, MAX_WAP_COMPILATION_UNIT_BYTES,
-    WAP_BYTECODE_VERSION,
+    MAX_WAP_OPERAND_STACK_DEPTH, WAP_BYTECODE_VERSION,
 };
 
 #[cfg(test)]

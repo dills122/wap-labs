@@ -658,18 +658,18 @@ if (
   wmls501Pack.includes('### WMLS-502:') ||
   !wmls501Pack.includes('- Selected work items: 1') ||
   !wmls501Pack.includes('- Direct SCR rows: 28') ||
-  !wmls501Pack.includes('21 `direct-test-linked`') ||
-  !wmls501Pack.includes('5 `provisional-non-normative-test-linked`') ||
+  !wmls501Pack.includes('22 `direct-test-linked`') ||
+  !wmls501Pack.includes('4 `provisional-non-normative-test-linked`') ||
   !wmls501Pack.includes('2 `gap-work-item-mapped`') ||
-  !wmls501Pack.includes('- Selected SCR parents: 31') ||
-  !wmls501Pack.includes('- Direct normative clauses: 69') ||
+  !wmls501Pack.includes('- Selected SCR parents: 44') ||
+  !wmls501Pack.includes('- Direct normative clauses: 83') ||
   !wmls501Pack.includes('**WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT**') ||
   !wmls501Pack.includes('**WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM**') ||
   wmlsGraph.summary.workItemsWithoutDirectClauses.includes('WMLS-501') ||
   wmlsGraph.summary.unmappedNormativeFamiliesByWorkItem['WMLS-501']
 ) {
   failures.push(
-    'WMLS-501 context rendering must expose its 28 direct SCR rows, 69 mapped bytecode/interpreter clauses, 31 selected parents, and explicit in-progress evidence without a declared-family gap'
+    'WMLS-501 context rendering must expose its 28 direct SCR rows, 83 mapped verifier/library-index clauses, 44 selected parents, and explicit closed evidence without a declared-family gap'
   );
 }
 

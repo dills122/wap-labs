@@ -114,11 +114,15 @@ Derived implementation standards for Waves WaveScript VM runtime:
 - The bounded executor currently implements only WAP-193 `RETURN_ES`. Structurally valid but
   unsupported opcodes return fatal/host-binding outcomes; verification failures return
   fatal/integrity outcomes. Both remain observable through native/WASM invocation and trace state.
+- Before execution, the verifier validates WAP-194 Appendix A library/function identifiers and
+  their arities, then propagates source-defined stack effects through reachable control flow.
+  Underflow, a depth above 64, and inconsistent branch merges fail deterministically; balanced
+  loops, unreachable regions, and implicit/explicit return boundaries remain well-defined.
 - `registerScriptEntryPoint` is the explicit compatibility opt-in for the project-specific
   nine-opcode fixture VM. Manual PCs are not part of the WAP-193 function-name model and must not
   be treated as normative evidence.
-- This slice does not implement WMLS-502 operators/conversions, standard-library identifiers,
-  stack dataflow, access control, URL fetch, or complete chapter 12 behavior.
+- This slice does not implement WMLS-502 operators/conversions, WMLS-504 standard-library
+  behavior, access control, URL fetch, or complete chapter 12 behavior.
 
 ### Components
 

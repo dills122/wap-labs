@@ -43,7 +43,8 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
 
 - Waves has active WaveScript/WMLScript runtime implementation in `engine-wasm/engine/src/wavescript/*`.
 - Registered units without manual entry-point PCs now route through the strict WAP-193
-  compilation-unit decoder, whole-unit verification, and external function-name table. The
+  compilation-unit decoder, whole-unit verification, standard-library reference validation,
+  reachable whole-function stack dataflow, and external function-name table. The
   executable subset is intentionally limited to `RETURN_ES`; every other structurally valid
   opcode returns a deterministic typed unsupported-execution failure.
 - The project-specific nine-opcode VM remains an explicit fixture compatibility boundary selected
@@ -56,8 +57,9 @@ This document captures WMLScript requirements and acceptance criteria (AC) direc
   - `docs/waves/WAP_1_2_1_WMLSCRIPT_LIBRARIES_SCR_LEDGER.md`
 - Selected-row audit:
   - WMLScript: 41 required, 32 partial / 9 missing / 0 implemented;
-  - Libraries: 80 required, 14 partial / 66 missing / 0 implemented;
-  - WMLScript direct structural tests: 21; remaining evidence stays provisional or mapped-gap.
+  - Libraries: 80 required, 21 partial / 59 missing / 0 implemented;
+  - Direct normative test links: WMLScript 22 and Libraries 7; broader execution evidence stays
+    provisional or mapped-gap.
 - Nested-clause plan:
   - WMLScript: all 41 selected parents / 107 deduplicated clauses;
   - WMLScript Libraries: all 80 selected parents / 211 deduplicated clauses.
@@ -203,7 +205,13 @@ Legend:
   - [x] WAP jump targets are verified to instruction boundaries within function bounds.
   - [x] Invalid WAP local/constant/function references fail deterministically before any selected
     function executes, including invalid references in an unselected function.
-  - [ ] Standard-library index validation and stack dataflow remain additive follow-ups.
+  - [x] Standard-library and function indexes are validated against the WAP-194 Appendix A
+    domains and source arities.
+  - [x] Reachable whole-function stack dataflow rejects underflow, the bounded 64-value overflow
+    boundary, and inconsistent branch merges while accepting balanced loops, unreachable
+    stack-invalid regions, and implicit/explicit returns.
+  - Scope note: these checks verify bytecode before execution. They do not implement WMLS-502
+    operator/conversion execution or WMLS-504 standard-library behavior.
 
 ### RQ-WMLS-010: Error detection and handling model
 
@@ -213,10 +221,11 @@ Legend:
   - `WAP-193_101` 12
   - SCRs: `WMLS-C-109 (M)`, `WMLS-C-110 (M)`, `WMLS-C-111 (M)`
 - AC:
-  - Evidence: [x] `registered_wap_unit_verifies_every_function_before_selected_execution` and
-    `wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace` prove that a
-    WAP verification failure aborts invocation with fatal/integrity taxonomy before execution;
-    full chapter 12 remains open.
+  - Evidence: [x] `registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery`
+    and `wasm_wmls_501_library_and_dataflow_verification_matches_native` prove deterministic
+    integrity/resource classification, `SCRIPT_TRAP` serialization, and recovery after stack
+    verification failures. `pnpm test:story WMLS-501` replays the stable host-visible failure and
+    replacement-invocation recovery path; full chapter 12 remains open.
   - [ ] Non-fatal errors return defined error/invalid results where applicable.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.

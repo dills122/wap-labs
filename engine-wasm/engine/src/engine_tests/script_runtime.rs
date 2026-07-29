@@ -295,6 +295,80 @@ fn registered_wap_action_records_success_trace_taxonomy() {
 }
 
 #[test]
+fn registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"<wml><card id="home"><a href="script:dataflow.wmlsc#main">Run</a></card></wml>"##,
+        )
+        .expect("deck should load");
+    engine.register_script_unit(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_UNDERFLOW_UNIT),
+    );
+
+    let underflow =
+        engine.execute_script_ref_function("dataflow.wmlsc".to_string(), "main".to_string());
+    assert_eq!(underflow.error_class, ScriptErrorClassLiteral::Fatal);
+    assert_eq!(
+        underflow.error_category,
+        ScriptErrorCategoryLiteral::Integrity
+    );
+    assert_eq!(
+        underflow.trap.as_deref(),
+        Some("wap decode: stack underflow in function 0 at pc=0 (required=1, available=0)")
+    );
+
+    engine.register_script_unit(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_OVERFLOW_UNIT),
+    );
+    let overflow =
+        engine.execute_script_ref_function("dataflow.wmlsc".to_string(), "main".to_string());
+    assert_eq!(overflow.error_class, ScriptErrorClassLiteral::Fatal);
+    assert_eq!(
+        overflow.error_category,
+        ScriptErrorCategoryLiteral::Resource
+    );
+    assert_eq!(
+        overflow.trap.as_deref(),
+        Some("wap decode: stack overflow in function 0 at pc=64 (depth=65, limit=64)")
+    );
+
+    engine.register_script_unit(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_STACK_UNDERFLOW_UNIT),
+    );
+    engine
+        .handle_key("enter".to_string())
+        .expect_err("dataflow failure must abort the action");
+    let trap = engine
+        .trace_entries()
+        .into_iter()
+        .find(|entry| entry.kind == "SCRIPT_TRAP")
+        .expect("SCRIPT_TRAP trace must be recorded");
+    assert_eq!(trap.script_ok, Some(false));
+    assert_eq!(
+        trap.script_error_category,
+        Some(ScriptErrorCategoryLiteral::Integrity)
+    );
+    assert_eq!(
+        trap.script_trap.as_deref(),
+        Some("wap decode: stack underflow in function 0 at pc=0 (required=1, available=0)")
+    );
+
+    engine.clear_trace_entries();
+    engine.register_script_unit(
+        "dataflow.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT),
+    );
+    engine
+        .handle_key("enter".to_string())
+        .expect("a valid replacement unit must execute after verifier failure");
+    assert_trace_kinds_subsequence(&engine, &["ACTION_SCRIPT", "SCRIPT_OK"]);
+}
+
+#[test]
 fn vm_trap_classification_matrix_is_explicit() {
     fn expected_class(trap: &VmTrap) -> ScriptErrorClassLiteral {
         match trap {

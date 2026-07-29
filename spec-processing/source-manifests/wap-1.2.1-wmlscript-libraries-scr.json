@@ -80,10 +80,10 @@
       "wmlbrowser-library": 7
     },
     "selectedImplementationStatus": {
-      "missing": 66,
-      "partial": 14
+      "missing": 59,
+      "partial": 21
     },
-    "selectedDirectNormativeTestEvidenceCount": 0,
+    "selectedDirectNormativeTestEvidenceCount": 7,
     "selectedProvisionalTestEvidenceCount": 14
   },
   "obligations": [
@@ -1131,14 +1131,33 @@
           "RQ-WMLS-017"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict WAP decoder recognizes exactly standard-library IDs 0 through 5 before execution. Library behavior and execution remain in WMLS-504.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "STANDARD_LIBRARIES"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "source_pinned_library_and_stack_dataflow_fixtures_are_deterministic",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Direct identifier and verifier evidence only; it does not claim standard-library execution behavior."
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+            "test": "wasm_wmls_501_library_and_dataflow_verification_matches_native",
+            "command": "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "limitation": "Pins native/WASM identifier-domain and failure parity without claiming library execution."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1172,14 +1191,27 @@
           "RQ-WMLS-013"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes Lang function IDs 0 through 14 and their source arities. Lang execution remains unimplemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "LANG_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; Lang behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1213,14 +1245,27 @@
           "RQ-WMLS-012"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes Float function IDs 0 through 7 and their source arities. Float execution remains unimplemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "FLOAT_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; Float behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1254,14 +1299,27 @@
           "RQ-WMLS-015"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes String function IDs 0 through 15 and their source arities. String execution remains unimplemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "STRING_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; String behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1295,14 +1353,27 @@
           "RQ-WMLS-016"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes URL function IDs 0 through 13 and their source arities. URL library execution remains unimplemented.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "URL_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; URL behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1336,14 +1407,27 @@
           "RQ-WMLS-017"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes WMLBrowser function IDs 0 through 6 and their source arities. Existing host helpers do not yet prove the complete library behavior.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "WMLBROWSER_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; complete WMLBrowser behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -1377,14 +1461,27 @@
           "RQ-WMLS-022"
         ],
         "workItems": [
+          "WMLS-501",
           "WMLS-504",
           "W1-05"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "No implementation and direct normative test evidence currently closes this selected WAP-194 interpreter requirement.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "The strict verifier recognizes Dialogs function IDs 0 through 2 and their source arities. Existing host helpers do not yet prove the complete library behavior.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "symbol": "DIALOGS_LIBRARY"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/wavescript/wap_decoder.rs",
+            "test": "validates_every_standard_library_and_function_index_with_source_arity",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder",
+            "limitation": "Identifier/arity verification only; complete Dialogs behavior is deferred."
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {

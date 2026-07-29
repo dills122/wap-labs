@@ -18,6 +18,8 @@ tags:
 - `maps-to` → [[requirements/RQ-WMLS-009|RQ-WMLS-009]]
 - `maps-to` → [[requirements/RQ-WMLS-010|RQ-WMLS-010]]
 - `planned-by` → [[work-items/WMLS-501|WMLS-501]]
+- `planned-by` → [[work-items/WMLS-502|WMLS-502]]
+- `planned-by` → [[work-items/WMLS-503|WMLS-503]]
 - `planned-by` → [[work-items/WMLS-505|WMLS-505]]
 - `refines` → [[scr-rows/WMLS-C-107|WMLS-C-107]]
 - `refines` → [[scr-rows/WMLS-C-110|WMLS-C-110]]
@@ -44,9 +46,14 @@ tags:
   "obligationSynopsis": "Do not execute failed bytecode; abort any started execution and signal verification failure to the interpreter caller.",
   "workItems": [
     "W1-02",
+    "W1-03",
+    "W1-04",
+    "W1-05",
     "W1-06",
     "W1-07",
     "WMLS-501",
+    "WMLS-502",
+    "WMLS-503",
     "WMLS-505"
   ],
   "ownerLayers": [

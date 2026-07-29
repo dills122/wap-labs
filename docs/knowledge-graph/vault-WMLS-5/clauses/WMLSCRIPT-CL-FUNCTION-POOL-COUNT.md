@@ -40,6 +40,7 @@ tags:
   "obligationSynopsis": "Decode the declared function count, external function-name table, and exactly that many function records.",
   "workItems": [
     "W1-02",
+    "W1-05",
     "WMLS-501"
   ],
   "ownerLayers": [

@@ -10,6 +10,7 @@ import type {
   WmlEngineWasm
 } from '../contracts/wml-engine';
 import wap193MinimalReturnEsHex from '../engine/tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex?raw';
+import wap193StackUnderflowHex from '../engine/tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex?raw';
 
 const lineHeight = 16;
 const charWidth = 8;
@@ -268,6 +269,15 @@ function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
     'wap-193-minimal-return-es.wmlsc',
     new Uint8Array(
       wap193MinimalReturnEsHex
+        .trim()
+        .split(/\s+/u)
+        .map((token) => Number.parseInt(token, 16))
+    )
+  );
+  engine.registerScriptUnit(
+    'wap-193-stack-underflow.wmlsc',
+    new Uint8Array(
+      wap193StackUnderflowHex
         .trim()
         .split(/\s+/u)
         .map((token) => Number.parseInt(token, 16))

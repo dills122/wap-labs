@@ -84,8 +84,8 @@ test('active rollup guard rejects a stale parent-status table', (context) => {
 
   const planningPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md');
   const planning = readFileSync(planningPath, 'utf8');
-  const currentFragment = '| **Total** | **198** | **762** | **41** | **71** | **86** |';
-  const staleFragment = '| **Total** | **198** | **762** | **41** | **70** | **87** |';
+  const currentFragment = '| **Total** | **198** | **762** | **41** | **78** | **79** |';
+  const staleFragment = '| **Total** | **198** | **762** | **41** | **77** | **80** |';
   assert.ok(planning.includes(currentFragment));
   writeFileSync(planningPath, planning.replace(currentFragment, staleFragment));
 
