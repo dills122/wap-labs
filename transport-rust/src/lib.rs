@@ -24,6 +24,7 @@ pub mod wsp_registry;
 mod wtp_replay_window;
 
 use fetch_runtime::fetch_deck_in_process_impl;
+pub use request_meta::{is_sensitive_transport_field, redact_transport_url, TRANSPORT_TRACE_ENV};
 pub use wbxml::preflight_wbxml_decoder;
 
 pub(crate) const MAX_URI_OCTETS: usize = 1024;
@@ -136,6 +137,18 @@ pub enum FetchTransportProfile {
     WapNetCore,
 }
 
+/// Rust-only routing options for Lowband clients such as the diagnostic CLI.
+///
+/// `gateway_endpoint` is deliberately separate from [`FetchDeckRequest::url`]: the request URL
+/// identifies the WAP resource, while the endpoint identifies the selected proxy/gateway peer.
+/// Native WAP endpoints use `wap://host[:port]`; gateway-bridged endpoints use an absolute
+/// `http://` or `https://` base URL.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FetchTransportOptions {
+    pub profile: FetchTransportProfile,
+    pub gateway_endpoint: Option<String>,
+}
+
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchTiming {
@@ -190,7 +203,21 @@ pub fn fetch_deck_in_process_with_profile(
     request: FetchDeckRequest,
     profile: FetchTransportProfile,
 ) -> FetchDeckResponse {
-    fetch_deck_in_process_impl(request, Some(profile))
+    fetch_deck_in_process_impl(
+        request,
+        Some(FetchTransportOptions {
+            profile,
+            gateway_endpoint: None,
+        }),
+    )
+}
+
+/// Fetches a deck with an explicit transport profile and optional gateway endpoint.
+pub fn fetch_deck_in_process_with_options(
+    request: FetchDeckRequest,
+    options: FetchTransportOptions,
+) -> FetchDeckResponse {
+    fetch_deck_in_process_impl(request, Some(options))
 }
 
 #[cfg(test)]

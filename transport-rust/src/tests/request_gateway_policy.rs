@@ -11,6 +11,22 @@ fn transport_normalize_content_type_handles_charset_and_empty() {
 }
 
 #[test]
+fn explicit_gateway_bridge_endpoint_overrides_process_default() {
+    let (gateway_url, headers) = build_gateway_request_with_endpoint(
+        "wap://resource.example/decks/home.wml?card=1",
+        "GET",
+        &HashMap::new(),
+        Some("https://gateway.example/base"),
+    )
+    .expect("explicit gateway should build");
+    assert_eq!(gateway_url, "https://gateway.example/decks/home.wml?card=1");
+    assert_eq!(
+        headers.get("X-Wap-Target-Url").map(String::as_str),
+        Some("wap://resource.example/decks/home.wml?card=1")
+    );
+}
+
+#[test]
 fn transport_normalized_request_id_trims_and_rejects_blank() {
     assert_eq!(normalized_request_id(Some(" req-1 ")), Some("req-1"));
     assert_eq!(normalized_request_id(Some("   ")), None);
