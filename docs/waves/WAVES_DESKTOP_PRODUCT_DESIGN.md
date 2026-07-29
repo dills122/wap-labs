@@ -41,6 +41,7 @@ Implementation remains subordinate to:
 - [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md)
 - [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md)
 - [historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md)
+- [desktop application completion PRD](PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md)
 
 Browser-only presentation work may proceed while core work continues when it preserves the current
 contracts and does not infer or hard-code future WML semantics. Contract-dependent capabilities must

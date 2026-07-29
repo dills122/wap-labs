@@ -22,14 +22,15 @@ permit browser work to infer unfinished engine or transport behavior.
 
 ## Source Plans and Ownership
 
-| Capability                                 | Authoritative plan or backlog                                                                                   |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| Class C sequence and adoption gates        | [WAP 1.2.1 planning baseline](WAP_1_2_1_PLANNING_BASELINE.md)                                                   |
-| Frame, Canvas, hit regions, typed input    | [engine-host frame plan](ENGINE_HOST_FRAME_MIGRATION_PLAN.md) and [work items](ENGINE_HOST_FRAME_WORK_ITEMS.md) |
-| Welcome, help, tours, tutorials            | [user onboarding plan](USER_ONBOARDING_EXPERIENCE_PLAN.md)                                                      |
-| Read-only runtime observation              | [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md)                                                   |
-| Existing host usability follow-ups         | [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md)                                             |
-| Historical profile evidence and provenance | [historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md)                     |
+| Capability                                  | Authoritative plan or backlog                                                                                   |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Class C sequence and adoption gates         | [WAP 1.2.1 planning baseline](WAP_1_2_1_PLANNING_BASELINE.md)                                                   |
+| Frame, Canvas, hit regions, typed input     | [engine-host frame plan](ENGINE_HOST_FRAME_MIGRATION_PLAN.md) and [work items](ENGINE_HOST_FRAME_WORK_ITEMS.md) |
+| Welcome, help, tours, tutorials             | [user onboarding plan](USER_ONBOARDING_EXPERIENCE_PLAN.md)                                                      |
+| Read-only runtime observation               | [engine debug connector plan](ENGINE_DEBUG_CONNECTOR_PLAN.md)                                                   |
+| Existing host usability follow-ups          | [usability and resilience backlog](USABILITY_RESILIENCE_BACKLOG.md)                                             |
+| Historical profile evidence and provenance  | [historical browser profile source baseline](HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md)                     |
+| Application completion discovery and slices | [desktop application completion PRD](PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md)                               |
 
 When a slice starts, update the owning work-item ledger rather than creating a second status source in
 this document.
