@@ -51,7 +51,8 @@ select {
 
 #app {
   width: 100%;
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
 }
 
 .visually-hidden {
@@ -68,7 +69,8 @@ select {
 
 .browser-shell {
   display: flex;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
   flex-direction: column;
   color: var(--host-text);
   background: var(--host-canvas);
@@ -383,6 +385,7 @@ summary {
   display: grid;
   min-width: 0;
   min-height: 0;
+  overflow: auto;
   grid-template-rows: auto minmax(0, 1fr);
   align-items: center;
   justify-items: center;
@@ -390,6 +393,8 @@ summary {
 }
 
 .stage-heading {
+  position: relative;
+  z-index: var(--z-raised);
   display: flex;
   width: min(100%, 74rem);
   align-items: center;
@@ -402,6 +407,28 @@ summary {
 
 .stage-heading span:last-child {
   text-align: end;
+}
+
+.stage-heading-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.stage-welcome-toggle {
+  min-height: 26px;
+  padding: 0 var(--space-xs);
+  border: var(--rule-hair) solid transparent;
+  border-radius: var(--radius-control);
+  color: var(--host-accent-deep);
+  background: transparent;
+  font: inherit;
+  white-space: nowrap;
+}
+
+.stage-welcome-toggle[aria-expanded='true'] {
+  border-color: var(--host-border);
+  background: var(--host-accent-soft);
 }
 
 .welcome-empty-state {
@@ -463,17 +490,30 @@ summary {
   margin-block-start: var(--space-md);
 }
 
+.welcome-startup-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-block-start: var(--space-md);
+  color: var(--host-muted);
+  font-size: var(--text-sm);
+}
+
+.welcome-startup-option input {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  accent-color: var(--host-accent);
+}
+
 #btn-start-tour {
   border-color: var(--host-accent-hover);
   color: var(--color-accent-ink);
   background: var(--host-accent);
 }
 
-body[data-boot-phase='deck-ready'] .welcome-empty-state {
-  display: none;
-}
-
-body:not([data-boot-phase='deck-ready']) .reference-view {
+body:not([data-boot-phase='deck-ready']) .reference-view,
+.browser-shell[data-welcome-visible='true'] .reference-view {
   display: none;
 }
 
@@ -806,11 +846,13 @@ pre {
 .status-bar {
   display: grid;
   min-width: 0;
-  min-height: 32px;
+  min-height: 48px;
   flex: 0 0 auto;
-  grid-template-columns: minmax(12rem, 1.25fr) minmax(0, 1fr) auto;
+  grid-template-areas:
+    'primary controls'
+    'context context';
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  padding: var(--space-3xs) var(--space-sm);
   border-top: var(--rule-hair) solid var(--host-border);
   color: var(--host-text);
   background: var(--color-chrome-bottom);
@@ -835,7 +877,8 @@ pre {
 }
 
 .status-primary {
-  padding-inline-end: var(--space-sm);
+  grid-area: primary;
+  padding: var(--space-2xs) var(--space-md);
   overflow: hidden;
 }
 
@@ -847,18 +890,20 @@ pre {
 
 .status-context,
 .status-controls {
-  display: flex;
   align-items: center;
 }
 
 .status-context {
-  height: 100%;
+  display: grid;
+  grid-area: context;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
   overflow: hidden;
-  border-left: var(--rule-hair) solid var(--host-border);
+  border-top: var(--rule-hair) solid var(--host-border);
 }
 
 .status-context .status-readout {
-  padding-inline: var(--space-sm);
+  overflow: hidden;
+  padding: var(--space-2xs) var(--space-md);
 }
 
 .status-context .status-readout + .status-readout {
@@ -866,9 +911,10 @@ pre {
 }
 
 .status-controls {
-  height: 100%;
+  display: flex;
+  grid-area: controls;
   gap: var(--space-sm);
-  padding-inline-start: var(--space-sm);
+  padding: var(--space-2xs) var(--space-md);
   border-left: var(--rule-hair) solid var(--host-border);
 }
 
@@ -883,6 +929,12 @@ pre {
 }
 
 #active-url-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#route-label,
+#profile-label {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -914,6 +966,7 @@ pre {
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled),
   .mode-segment:hover:not(:disabled),
+  .stage-welcome-toggle:hover:not(:disabled),
   summary:hover {
     color: var(--host-text);
     background-color: var(--color-surface);
@@ -986,21 +1039,23 @@ pre {
   }
 
   .status-bar {
+    grid-template-areas:
+      'primary controls'
+      'context context';
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .status-context {
+  .status-profile,
+  .status-location {
     display: none;
+  }
+
+  .status-context {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 68rem) {
-  .status-location {
-    display: none;
-  }
-}
-
-@media (max-width: 64rem) {
   .status-profile {
     display: none;
   }
@@ -1032,20 +1087,27 @@ pre {
   }
 
   .status-bar {
+    grid-template-areas:
+      'primary'
+      'controls'
+      'context';
     grid-template-columns: minmax(0, 1fr);
-    padding-inline: var(--space-xs);
   }
 
   .status-primary {
-    padding: var(--space-3xs) 0 var(--space-2xs);
+    padding: var(--space-2xs) var(--space-xs);
   }
 
   .status-controls {
     justify-content: flex-end;
     gap: var(--space-xs);
-    padding: var(--space-2xs) 0 var(--space-3xs);
+    padding: var(--space-2xs) var(--space-xs);
     border-top: var(--rule-hair) solid var(--host-border);
     border-left: 0;
+  }
+
+  .status-context .status-readout {
+    padding-inline: var(--space-xs);
   }
 
   .status-control-label-full {
@@ -1061,6 +1123,7 @@ pre {
   .btn,
   .host-control,
   .mode-segment,
+  .stage-welcome-toggle,
   .status-input,
   .inspector-disclosure > summary,
   .utility-rail-panel > summary {

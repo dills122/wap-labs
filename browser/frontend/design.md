@@ -51,14 +51,17 @@ All production color declarations live as named OKLCH tokens in `src/tokens.css`
 
 - **Command bar:** Waves identity, grouped history controls, dominant mode-aware omnibox, a compact
   Local/Network segment, and Inspector toggle. It is real browser functionality, not fake chrome.
-- **Simulator stage:** open fog canvas with a small reference-view label. Before a deck is ready it
-  holds the welcome/help empty state; afterward it centers the authentic LCD reference view.
+- **Simulator stage:** open fog canvas with a small reference-view label. It opens on the
+  welcome/help view by default, keeps that view available from a quiet stage-level toggle, and
+  reveals the authentic LCD reference view when the welcome view is dismissed. A saved preference
+  can skip Welcome on later launches without removing the toggle.
 - **Reference view:** minimal graphite support around the real viewport and softkeys. No speaker,
   LED, vendor frame, or decorative hardware.
 - **Inspector:** closed by default, opened from the command bar, and separated with full-width rules
   instead of nested cards. Document notes and diagnostics retain their existing disclosure seams.
-- **Status strip:** persistent technical line for connection, route, profile, address, viewport
-  columns, and integer display scale.
+- **Status strip:** persistent two-tier technical readout. Connection state and display controls
+  occupy the first tier; route, profile, and an ellipsized address occupy the second. Constrained
+  widths progressively hide nonessential metadata rather than allowing values to collide.
 
 ## Interaction and copy
 
@@ -91,4 +94,4 @@ pointer targets expand to at least 44px. Horizontal overflow is not permitted.
 
 ### Interaction signature
 
-`mode-aware omnibox · segmented Local/Network control · inspector reveal · persistent route/status telemetry · instant focus`
+`mode-aware omnibox · segmented Local/Network control · recallable Welcome · inspector reveal · persistent route/status telemetry · instant focus`

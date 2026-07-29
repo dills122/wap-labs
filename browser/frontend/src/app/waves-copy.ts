@@ -62,6 +62,8 @@ const locale = {
     localExampleGoal: 'Goal:',
     localExampleTestingAc: 'Testing AC',
     welcomeHelpTitle: 'Browse a WAP deck',
+    welcome: 'Welcome',
+    showWelcomeOnLaunch: 'Show this welcome screen on launch',
     welcomeIntro:
       'Waves emulates a WAP 1.2.1 / WML 1.3 handset — decks and cards, not modern web pages.',
     welcomeModes:

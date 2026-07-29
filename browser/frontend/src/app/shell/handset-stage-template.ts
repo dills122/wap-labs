@@ -11,7 +11,18 @@ export const handsetStageTemplate = () => `
   <section class="handset-stage simulator-stage" aria-label="${WAVES_COPY.shell.simulatorStage}">
     <div class="stage-heading">
       <span>${WAVES_COPY.shell.referenceView}</span>
-      <span>${WAVES_COPY.shell.classCReferenceProfile}</span>
+      <span class="stage-heading-actions">
+        <button
+          id="btn-welcome-toggle"
+          class="stage-welcome-toggle"
+          type="button"
+          aria-controls="welcome-help-panel"
+          aria-expanded="true"
+        >
+          ${WAVES_COPY.shell.welcome}
+        </button>
+        <span>${WAVES_COPY.shell.classCReferenceProfile}</span>
+      </span>
     </div>
     ${welcomeHelpTemplate()}
     <div class="handset-housing reference-view">

@@ -41,6 +41,12 @@ const windows = {
 };
 const hallmarkResponsiveWidths = [320, 375, 414, 768];
 
+const browserStoryUrl = (baseUrl) => {
+  const url = new URL('browser-story.html', baseUrl);
+  url.searchParams.set('welcome', '1');
+  return url.href;
+};
+
 const waitForReady = async (page) => {
   await page.waitForFunction(
     () => {
@@ -63,6 +69,53 @@ const openAllDisclosures = async (page) => {
   });
 };
 
+const assertStatusRegionsDoNotOverlap = async (page, name) => {
+  const statusLayout = await page.evaluate(() => {
+    const readRegion = (element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        selector: element.id ? `#${element.id}` : `.${element.classList[0]}`,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0,
+        overflowX: style.overflowX
+      };
+    };
+    return {
+      bar: readRegion(document.querySelector('.status-bar')),
+      top: [...document.querySelectorAll('.status-primary, .status-controls')].map(readRegion),
+      context: [...document.querySelectorAll('.status-context > .status-readout')].map(readRegion)
+    };
+  });
+  assert.ok(statusLayout.bar.top >= 0, `${name}: status bar starts inside the viewport`);
+  assert.ok(
+    statusLayout.bar.bottom <= (await page.evaluate(() => innerHeight)) + 0.5,
+    `${name}: complete status bar remains inside the viewport`
+  );
+  const overlaps = [];
+  for (const regions of [statusLayout.top, statusLayout.context]) {
+    const visibleRegions = regions.filter((region) => region.visible);
+    for (let index = 0; index < visibleRegions.length; index += 1) {
+      for (let candidateIndex = index + 1; candidateIndex < visibleRegions.length; candidateIndex += 1) {
+        const first = visibleRegions[index];
+        const second = visibleRegions[candidateIndex];
+        const horizontalOverlap = first.left < second.right - 0.5 && second.left < first.right - 0.5;
+        const verticalOverlap = first.top < second.bottom - 0.5 && second.top < first.bottom - 0.5;
+        if (horizontalOverlap && verticalOverlap) {
+          overlaps.push(`${first.selector}/${second.selector}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(overlaps, [], `${name}: status regions do not overlap`);
+  for (const region of statusLayout.context.filter((entry) => entry.visible)) {
+    assert.equal(region.overflowX, 'hidden', `${name}: ${region.selector} contains long values`);
+  }
+};
+
 const captureDefaultVisual = async (page, name, dimensions) => {
   const layout = await page.evaluate(() => ({
     cssViewport: { width: innerWidth, height: innerHeight },
@@ -70,13 +123,19 @@ const captureDefaultVisual = async (page, name, dimensions) => {
     horizontalOverflow: document.documentElement.scrollWidth > innerWidth
   }));
   assert.equal(layout.horizontalOverflow, false, `${name}: 100% visual has no horizontal overflow`);
+  await assertStatusRegionsDoNotOverlap(page, `${name}: 100% visual`);
   const screenshot = `${name}-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  await page.locator('#btn-welcome-toggle').click();
+  await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
+  const handsetScreenshot = `${name}-handset-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
   return {
     physicalWindow: dimensions.physical,
     cssViewportAt100Percent: layout.cssViewport,
     scrollWidth: layout.scrollWidth,
-    screenshot
+    screenshot,
+    handsetScreenshot
   };
 };
 
@@ -111,6 +170,7 @@ const captureResponsiveVisual = async (page, width) => {
     };
   });
   assert.equal(layout.horizontalOverflow, false, `${width}px: no horizontal overflow`);
+  await assertStatusRegionsDoNotOverlap(page, `${width}px`);
   for (const action of layout.clickableText) {
     assert.equal(
       action.whiteSpace,
@@ -362,7 +422,7 @@ try {
     });
     const page = await context.newPage();
     try {
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);
@@ -380,7 +440,7 @@ try {
     });
     const page = await context.newPage();
     try {
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);
@@ -402,7 +462,7 @@ try {
     try {
       await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
       tracing = true;
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);

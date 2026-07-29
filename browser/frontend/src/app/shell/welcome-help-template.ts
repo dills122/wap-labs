@@ -8,14 +8,18 @@ export const welcomeHelpTemplate = () => `
       <p>${WAVES_COPY.shell.welcomeIntro}</p>
       <p>${WAVES_COPY.shell.welcomeModes}</p>
       <div class="actions">
-        <button id="btn-start-tour" class="btn">${WAVES_COPY.shell.takeTheTour}</button>
-        <button id="btn-try-local-examples" class="btn">
+        <button id="btn-start-tour" class="btn" type="button">${WAVES_COPY.shell.takeTheTour}</button>
+        <button id="btn-try-local-examples" class="btn" type="button">
           ${WAVES_COPY.shell.tryLocalExamples}
         </button>
-        <button id="btn-connect-network" class="btn">
+        <button id="btn-connect-network" class="btn" type="button">
           ${WAVES_COPY.shell.connectToServer}
         </button>
       </div>
+      <label class="welcome-startup-option">
+        <input id="show-welcome-on-launch" type="checkbox" />
+        <span>${WAVES_COPY.shell.showWelcomeOnLaunch}</span>
+      </label>
       <h2>${WAVES_COPY.shell.controlsReferenceTitle}</h2>
       <p>${WAVES_COPY.shell.controlsReferenceBody}</p>
       <h2>${WAVES_COPY.shell.troubleshootingTitle}</h2>

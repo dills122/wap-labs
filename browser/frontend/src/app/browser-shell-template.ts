@@ -184,11 +184,26 @@ export const mountBrowserShell = (
   const startTourBtn = document.querySelector<HTMLButtonElement>('#btn-start-tour');
   const tryLocalBtn = document.querySelector<HTMLButtonElement>('#btn-try-local-examples');
   const connectNetworkBtn = document.querySelector<HTMLButtonElement>('#btn-connect-network');
-  if (startTourBtn && tryLocalBtn && connectNetworkBtn) {
+  const welcomeToggleBtn = document.querySelector<HTMLButtonElement>('#btn-welcome-toggle');
+  const welcomePanelEl = document.querySelector<HTMLElement>('#welcome-help-panel');
+  const showWelcomeOnLaunchEl = document.querySelector<HTMLInputElement>('#show-welcome-on-launch');
+  if (
+    startTourBtn &&
+    tryLocalBtn &&
+    connectNetworkBtn &&
+    welcomeToggleBtn &&
+    welcomePanelEl &&
+    showWelcomeOnLaunchEl &&
+    browserShellEl
+  ) {
     bindWelcomeHelpControls({
       startTourBtn,
       tryLocalBtn,
       connectNetworkBtn,
+      welcomeToggleBtn,
+      welcomePanelEl,
+      showWelcomeOnLaunchEl,
+      browserShellEl,
       runModeSelectEl,
       localExampleSelectEl,
       loadLocalBtnEl,

@@ -4,6 +4,7 @@ import { WAVES_CONFIG } from './waves-config';
 
 describe('mountBrowserShell', () => {
   afterEach(() => {
+    localStorage.clear();
     vi.unstubAllGlobals();
   });
 
@@ -196,6 +197,13 @@ describe('mountBrowserShell', () => {
 
     const welcomePanel = document.querySelector('#welcome-help-panel');
     expect(welcomePanel).not.toBeNull();
+    expect(welcomePanel?.hasAttribute('hidden')).toBe(false);
+    expect(document.querySelector('#btn-welcome-toggle')?.getAttribute('aria-expanded')).toBe(
+      'true'
+    );
+    expect((document.querySelector('#show-welcome-on-launch') as HTMLInputElement).checked).toBe(
+      true
+    );
 
     const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
     const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
@@ -206,11 +214,39 @@ describe('mountBrowserShell', () => {
 
     expect(runModeSelectEl?.value).toBe('local');
     expect(loadClickSpy).toHaveBeenCalledTimes(1);
+    expect(welcomePanel?.hasAttribute('hidden')).toBe(true);
 
     // Mode is already "local" from the tour click above; confirm "Connect to
     // a WAP Server" switches it to network.
     document.querySelector<HTMLButtonElement>('#btn-connect-network')?.click();
     expect(runModeSelectEl?.value).toBe('network');
+  });
+
+  it('restores Welcome after it is dismissed and respects the saved launch preference', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('', 'local');
+
+    const toggle = document.querySelector<HTMLButtonElement>('#btn-welcome-toggle');
+    const panel = document.querySelector<HTMLElement>('#welcome-help-panel');
+    const launchPreference = document.querySelector<HTMLInputElement>('#show-welcome-on-launch');
+
+    toggle?.click();
+    expect(panel?.hidden).toBe(true);
+
+    toggle?.click();
+    expect(panel?.hidden).toBe(false);
+
+    if (launchPreference) {
+      launchPreference.checked = false;
+      launchPreference.dispatchEvent(new Event('change'));
+    }
+
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('', 'local');
+    expect(document.querySelector<HTMLElement>('#welcome-help-panel')?.hidden).toBe(true);
+    expect(document.querySelector('#btn-welcome-toggle')?.getAttribute('aria-expanded')).toBe(
+      'false'
+    );
   });
 
   it('keeps the inspector closed independent of viewport matching', () => {
