@@ -29,13 +29,13 @@ const createDeps = (
     fetchDeck: vi.fn(async (): Promise<FetchResponse> => ({
       ok: true,
       status: 200,
-      finalUrl: 'wap://localhost/',
+      finalUrl: 'wap://gateway.test/',
       contentType: 'text/vnd.wap.wml',
       timingMs: { encode: 0, udpRtt: 1, decode: 0 },
       engineDeckInput: undefined,
       wml: '<wml/>'
     })),
-    getTargetUrl: vi.fn(() => 'wap://localhost/'),
+    getTargetUrl: vi.fn(() => 'wap://gateway.test/'),
     getRunMode: vi.fn((): RunMode => 'network'),
     setLastNetworkUrl: vi.fn(),
     recordTimeline,
@@ -67,6 +67,25 @@ describe('StartupNetworkProbeController', () => {
     expect(deps.fetchDeck).not.toHaveBeenCalled();
   });
 
+  it('does not probe the built-in placeholder target before user navigation', async () => {
+    const deps = createDeps({
+      getTargetUrl: vi.fn(() => 'wap://localhost/')
+    });
+
+    const controller = new StartupNetworkProbeController(deps);
+    controller.start();
+    await flushAsyncWork();
+
+    expect(deps.fetchDeck).not.toHaveBeenCalled();
+    expect(deps.setStatus).not.toHaveBeenCalled();
+    expect(deps.patchSessionState).not.toHaveBeenCalled();
+    expect(deps.showToast).not.toHaveBeenCalled();
+    expect(deps.recordTimeline).toHaveBeenCalledWith('startup-network-probe-skipped', {
+      reason: 'placeholder-target',
+      targetUrl: 'wap://localhost/'
+    });
+  });
+
   it('reports the checked gateway when a reachable probe succeeds', async () => {
     const deps = createDeps();
 
@@ -75,8 +94,10 @@ describe('StartupNetworkProbeController', () => {
     await flushAsyncWork();
 
     expect(deps.fetchDeck).toHaveBeenCalledTimes(1);
-    expect(deps.setLastNetworkUrl).toHaveBeenCalledWith('wap://localhost/');
-    expect(deps.setStatus).toHaveBeenCalledWith(WAVES_COPY.status.readyNetwork('wap://localhost/'));
+    expect(deps.setLastNetworkUrl).toHaveBeenCalledWith('wap://gateway.test/');
+    expect(deps.setStatus).toHaveBeenCalledWith(
+      WAVES_COPY.status.readyNetwork('wap://gateway.test/')
+    );
     expect(deps.patchSessionState).not.toHaveBeenCalled();
   });
 
@@ -85,7 +106,7 @@ describe('StartupNetworkProbeController', () => {
       fetchDeck: vi.fn(async (): Promise<FetchResponse> => ({
         ok: false,
         status: 0,
-        finalUrl: 'wap://localhost/',
+        finalUrl: 'wap://gateway.test/',
         contentType: 'text/plain',
         timingMs: { encode: 0, udpRtt: 0, decode: 0 },
         error: { code: 'TRANSPORT_UNAVAILABLE', message: 'offline' }
@@ -98,7 +119,7 @@ describe('StartupNetworkProbeController', () => {
 
     expect(deps.fetchDeck).toHaveBeenCalledTimes(3);
     expect(deps.wait).toHaveBeenCalledTimes(2);
-    const expectedMessage = WAVES_COPY.status.gatewayCheckFailed('wap://localhost/', 'offline');
+    const expectedMessage = WAVES_COPY.status.gatewayCheckFailed('wap://gateway.test/', 'offline');
     expect(deps.patchSessionState).toHaveBeenCalledWith({
       navigationStatus: 'error',
       lastError: expectedMessage
@@ -117,7 +138,7 @@ describe('StartupNetworkProbeController', () => {
               resolve({
                 ok: false,
                 status: 503,
-                finalUrl: 'wap://localhost/',
+                finalUrl: 'wap://gateway.test/',
                 contentType: 'text/plain',
                 timingMs: { encode: 0, udpRtt: 0, decode: 0 },
                 error: { code: 'TRANSPORT_UNAVAILABLE', message: 'offline' }

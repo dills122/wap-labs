@@ -36,6 +36,16 @@ export class StartupNetworkProbeController {
     if (!targetUrl) {
       return;
     }
+    // The fallback only seeds the empty address bar; it is not an implicit
+    // navigation request. Explicit Go/reload actions use the navigation state
+    // machine directly and still surface the host's destination-policy error.
+    if (targetUrl === WAVES_CONFIG.defaultStartUrl) {
+      this.deps.recordTimeline('startup-network-probe-skipped', {
+        reason: 'placeholder-target',
+        targetUrl
+      });
+      return;
+    }
     this.deps.setLastNetworkUrl(targetUrl);
     let lastFailure: string = WAVES_COPY.status.networkUnavailable;
 

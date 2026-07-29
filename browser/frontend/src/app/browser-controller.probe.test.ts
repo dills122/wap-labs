@@ -79,6 +79,7 @@ const initialSession: HostSessionState = {
 describe('BrowserController startup probe behavior', () => {
   it('does not block network mode entry on startup probe completion', async () => {
     const refs = createRefs();
+    refs.fetchUrlInput.value = 'wap://gateway.test/';
     const presenter = new BrowserPresenter(refs, initialSession, 20);
     let resolveProbe: ((value: unknown) => void) | undefined;
     const hostClient = {
@@ -152,6 +153,7 @@ describe('BrowserController startup probe behavior', () => {
 
   it('ignores stale probe results after switching back to local mode', async () => {
     const refs = createRefs();
+    refs.fetchUrlInput.value = 'wap://gateway.test/';
     const presenter = new BrowserPresenter(refs, initialSession, 20);
     let resolveProbe:
       | ((value: {
