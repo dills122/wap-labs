@@ -7,12 +7,15 @@ import {
 } from './handset-scale-control';
 
 describe('isHandsetScaleStep', () => {
-  it('accepts only the documented integer steps', () => {
+  it('accepts only the documented display-scale steps', () => {
     expect(isHandsetScaleStep(1)).toBe(true);
+    expect(isHandsetScaleStep(1.25)).toBe(true);
+    expect(isHandsetScaleStep(1.5)).toBe(true);
+    expect(isHandsetScaleStep(1.75)).toBe(true);
     expect(isHandsetScaleStep(2)).toBe(true);
     expect(isHandsetScaleStep(3)).toBe(true);
     expect(isHandsetScaleStep(0)).toBe(false);
-    expect(isHandsetScaleStep(1.5)).toBe(false);
+    expect(isHandsetScaleStep(1.1)).toBe(false);
     expect(isHandsetScaleStep(4)).toBe(false);
     expect(isHandsetScaleStep(Number.NaN)).toBe(false);
   });
@@ -30,7 +33,7 @@ describe('bindHandsetScaleControl', () => {
   it('applies the selected step to root on change', () => {
     const root = document.createElement('div');
     const select = document.createElement('select');
-    for (const step of [1, 2, 3]) {
+    for (const step of [1, 1.25, 1.5, 1.75, 2, 3]) {
       const option = document.createElement('option');
       option.value = String(step);
       select.appendChild(option);
@@ -39,10 +42,10 @@ describe('bindHandsetScaleControl', () => {
 
     bindHandsetScaleControl(select, root);
 
-    select.value = '3';
+    select.value = '1.5';
     select.dispatchEvent(new Event('change'));
 
-    expect(root.style.getPropertyValue('--handset-scale')).toBe('3');
+    expect(root.style.getPropertyValue('--handset-scale')).toBe('1.5');
   });
 
   it('stops reacting once unbound', () => {

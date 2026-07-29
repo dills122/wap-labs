@@ -187,6 +187,20 @@ select {
   min-width: 0;
 }
 
+.omnibox-field,
+.omnibox-local {
+  display: flex;
+  min-height: 44px;
+  align-items: stretch;
+}
+
+.omnibox-local .host-control {
+  display: block;
+  height: 44px;
+  padding-block: 0;
+  line-height: normal;
+}
+
 .omnibox .host-control {
   min-height: 44px;
   border: 0;
@@ -790,13 +804,13 @@ pre {
 }
 
 .status-bar {
-  display: flex;
+  display: grid;
   min-width: 0;
-  min-height: 24px;
+  min-height: 32px;
   flex: 0 0 auto;
+  grid-template-columns: minmax(12rem, 1.25fr) minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-3xs) var(--space-xs);
+  padding: var(--space-3xs) var(--space-sm);
   border-top: var(--rule-hair) solid var(--host-border);
   color: var(--host-text);
   background: var(--color-chrome-bottom);
@@ -813,17 +827,48 @@ pre {
   white-space: nowrap;
 }
 
-.status-divider {
-  width: var(--rule-hair);
-  height: 12px;
-  flex: 0 0 auto;
-  background: var(--host-border);
+.status-primary,
+.status-context,
+.status-controls,
+.status-connection {
+  min-width: 0;
 }
 
-.status-profile,
-.status-location,
-.status-control {
-  padding-inline-start: var(--space-xs);
+.status-primary {
+  padding-inline-end: var(--space-sm);
+  overflow: hidden;
+}
+
+.status-connection,
+.status-connection wv-status-panel {
+  width: 100%;
+  overflow: hidden;
+}
+
+.status-context,
+.status-controls {
+  display: flex;
+  align-items: center;
+}
+
+.status-context {
+  height: 100%;
+  overflow: hidden;
+  border-left: var(--rule-hair) solid var(--host-border);
+}
+
+.status-context .status-readout {
+  padding-inline: var(--space-sm);
+}
+
+.status-context .status-readout + .status-readout {
+  border-left: var(--rule-hair) solid var(--host-border);
+}
+
+.status-controls {
+  height: 100%;
+  gap: var(--space-sm);
+  padding-inline-start: var(--space-sm);
   border-left: var(--rule-hair) solid var(--host-border);
 }
 
@@ -844,7 +889,7 @@ pre {
 
 .status-input {
   width: auto;
-  min-height: 24px;
+  min-height: 26px;
   padding: 0 var(--space-2xs);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -855,7 +900,11 @@ pre {
 }
 
 .status-scale .status-input {
-  width: 3.25rem;
+  width: 4.25rem;
+}
+
+.status-control-label-short {
+  display: none;
 }
 
 .phase-bar-slot {
@@ -937,10 +986,21 @@ pre {
   }
 
   .status-bar {
-    flex-wrap: wrap;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  .status-location,
+  .status-context {
+    display: none;
+  }
+}
+
+@media (max-width: 68rem) {
+  .status-location {
+    display: none;
+  }
+}
+
+@media (max-width: 64rem) {
   .status-profile {
     display: none;
   }
@@ -971,13 +1031,29 @@ pre {
     padding: var(--space-md) var(--space-xs);
   }
 
-  .status-connection {
-    flex: 1 1 auto;
+  .status-bar {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: var(--space-xs);
   }
 
-  .status-divider,
-  .route-meta {
+  .status-primary {
+    padding: var(--space-3xs) 0 var(--space-2xs);
+  }
+
+  .status-controls {
+    justify-content: flex-end;
+    gap: var(--space-xs);
+    padding: var(--space-2xs) 0 var(--space-3xs);
+    border-top: var(--rule-hair) solid var(--host-border);
+    border-left: 0;
+  }
+
+  .status-control-label-full {
     display: none;
+  }
+
+  .status-control-label-short {
+    display: inline;
   }
 }
 
