@@ -29,7 +29,7 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 - `docs/waves/WAP_1_2_1_PLANNING_BASELINE.md`
 - `docs/waves/wap-1.2.1-compliance-program.json`
 
-## WAP Compliance Rebase (2026-07-27)
+## WAP Compliance Rebase (2026-07-28)
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
@@ -43,6 +43,11 @@ retained 2 already implemented shared clauses, WSP-801 directly closed its
 WML-305 closed its 10 directly mapped timer clauses and completed parent row
 WML-C-48, and WML-304 added one net assessed request-intent clause while moving
 WML-C-14 from missing to partial.
+
+The July 28 bug-fix, desktop, and private-preview merges add regression and release-readiness
+evidence without changing those canonical compliance counts. Project Atlas therefore remains at
+28 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 288/762 clauses assessed;
+the machine program and graph require no optimistic status edit for this checkpoint.
 
 Use this order for new completion work:
 
@@ -64,33 +69,44 @@ internal implementation or evidence work: the 97-member private evidence set,
 106-entry redistribution inventory, and request package are ready, while
 maintainer approval to send and written permission remain open.
 
-## Current Snapshot (as of 2026-07-27)
+## Current Snapshot (as of 2026-07-28, `origin/main` `1f07030a`)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
-| Ticket | Lane | Current status | Immediate dependency action |
-| --- | --- | --- | --- |
-| `A5-01` | engine/runtime | `done` | request-shaped history fidelity and deterministic restore semantics are covered |
-| `A5-04` | engine + browser | `done` | viewport-editable text input baseline is closed |
-| `A5-05` | engine + browser | `done` | select/option interaction baseline is closed |
-| `A5-06` | engine + browser + transport | `done` | form-state submit hardening is closed for the active MVP lane |
-| `A5-07` | browser | `done` | blocking startup/navigation/browser hot-path remediation landed in `#109/#110` |
-| `R0-02` | engine + browser + transport | `done` | closed with deterministic host/runtime request-fidelity coverage |
-| `R0-03` | engine + browser | `done` | closed with history/context fidelity integration evidence |
-| `W0-05` | wavescript/runtime | `done` | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
-| `W0-06` | engine/wavescript | `done` | strict structural closure continues in `W1-02` |
-| `W1-06` | wavescript/runtime | `in-progress` | finalize remaining fatal/non-fatal fixture classes and close checklist split |
-| `D0-01` | engine + browser + docs | `done` | additive debug DTOs, lifecycle outcomes, security/bounds policy, and WBP-06 sequencing are settled; implementation remains D0-02/D0-03 |
-| `T0-18` | transport | `done` | retransmission/duplicate/NACK hold-off baseline is closed |
-| `T0-19` | transport | `done` | WDP ingress and UDP mapping baseline is closed |
-| `T0-20` | transport | `done` | WSP registry/header/session baseline is closed |
-| `T0-21` | transport/security | `done` | explicit WTLS boundary and minimal reliability lane are now closed |
-| `T0-22` | transport | `done` | replay promotion gate is closed and seed-backed |
-| `T0-24` | transport/docs | `done` | seed corpus is formalized and promotion-gated |
-| `T0-25` | docs/spec-processing | `done` | external vector adoption sweep is closed |
-| `T0-26` | transport/browser/docs | `done` | local Kannel readiness gate is explicit and runnable |
-| `M1-08` | maintenance | `done` | boundary-module decomposition is complete; new hotspots require additive tickets |
-| `M1-16` | maintenance/security | `done` | payload-size guardrails are closed for the current transport/engine/browser boundary |
+| Ticket  | Lane                         | Current status | Immediate dependency action                                                                                                            |
+| ------- | ---------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `A5-01` | engine/runtime               | `done`         | request-shaped history fidelity and deterministic restore semantics are covered                                                        |
+| `A5-04` | engine + browser             | `done`         | viewport-editable text input baseline is closed                                                                                        |
+| `A5-05` | engine + browser             | `done`         | select/option interaction baseline is closed                                                                                           |
+| `A5-06` | engine + browser + transport | `done`         | form-state submit hardening is closed for the active MVP lane                                                                          |
+| `A5-07` | browser                      | `done`         | blocking startup/navigation/browser hot-path remediation landed in `#109/#110`                                                         |
+| `R0-02` | engine + browser + transport | `done`         | closed with deterministic host/runtime request-fidelity coverage                                                                       |
+| `R0-03` | engine + browser             | `done`         | closed with history/context fidelity integration evidence                                                                              |
+| `W0-05` | wavescript/runtime           | `done`         | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream                 |
+| `W0-06` | engine/wavescript            | `done`         | strict structural closure continues in `W1-02`                                                                                         |
+| `W1-06` | wavescript/runtime           | `in-progress`  | finalize remaining fatal/non-fatal fixture classes and close checklist split                                                           |
+| `D0-01` | engine + browser + docs      | `done`         | additive debug DTOs, lifecycle outcomes, security/bounds policy, and WBP-06 sequencing are settled; implementation remains D0-02/D0-03 |
+| `T0-18` | transport                    | `done`         | retransmission/duplicate/NACK hold-off baseline is closed                                                                              |
+| `T0-19` | transport                    | `done`         | WDP ingress and UDP mapping baseline is closed                                                                                         |
+| `T0-20` | transport                    | `done`         | WSP registry/header/session baseline is closed                                                                                         |
+| `T0-21` | transport/security           | `done`         | explicit WTLS boundary and minimal reliability lane are now closed                                                                     |
+| `T0-22` | transport                    | `done`         | replay promotion gate is closed and seed-backed                                                                                        |
+| `T0-24` | transport/docs               | `done`         | seed corpus is formalized and promotion-gated                                                                                          |
+| `T0-25` | docs/spec-processing         | `done`         | external vector adoption sweep is closed                                                                                               |
+| `T0-26` | transport/browser/docs       | `done`         | local Kannel readiness gate is explicit and runnable                                                                                   |
+| `M1-08` | maintenance                  | `done`         | boundary-module decomposition is complete; new hotspots require additive tickets                                                       |
+| `M1-16` | maintenance/security         | `done`         | payload-size guardrails are closed for the current transport/engine/browser boundary                                                   |
+
+Landed since the prior planning sync, without reopening completed tickets:
+
+1. Engine/browser/transport/service bug fixes through PR #495 add bounded malformed-input,
+   retransmission, context/variable/timer/input/select, navigation-concurrency, authentication,
+   service-supervision, and static-example-loop regression coverage.
+2. `WBP-02A` establishes native host chrome on `main`. A second-pass visual refinement is active
+   in a separate stream but is unmerged, preserves `WBP-02A`, and is not `WBP-02B` evidence.
+3. The hardened Kannel/Go deployment is healthy on the restricted preview host with Tailnet smoke,
+   sealed-firewall reboot persistence, and retained rollback. Public DNS, UDP publication, and
+   external probes remain gated and make no Class C contribution.
 
 ## Sprint 1 Review: Bedrock + Networking Unblockers
 
@@ -226,28 +242,30 @@ Implementation reference:
 
 ## Parallel Follow-on Sprint Recommendation
 
-The next six implementation tasks are grouped into three parallel-safe lanes.
+The next six implementation tasks are grouped into four parallel-safe lanes.
 Order is binding within a lane; lanes may run concurrently subject to the noted
 file ownership.
 
-| Priority | Lane / task | Dependency and overlap boundary | Class C contribution |
-|---:|---|---|---|
-| 1 | Request A1 — `WML-304` / `R0-06` / `WSP-805` native request application | Depends on the merged request-intent contract and completed `WSP-801`/`WSP-802`; give this task exclusive ownership of transport request serialization and browser fetch handoff files. | Converts the 12 remaining WML-304 transport-boundary clauses from intent-only plans into direct GET/POST/charset/referer/cache evidence. |
-| 2 | Script B1 — finish `WMLS-501` verifier scope | Independent of A1; owns WAP decoder/verifier fixtures and `engine-wasm/engine/src/wavescript/*`. | Adds direct evidence for standard-library indexes and stack dataflow while preserving the 41-row WMLScript selection. |
-| 3 | Runtime C1 — `WML-301` residual table/WAE delegate closure | Independent of A1 when limited to context/history mapping and fixtures; do not edit request serialization. | Makes the aggregate WML-301 boundary explicit without reopening its completed 12-clause history/process-order evidence. |
-| 4 | Request A2 — replayable POST history | Starts after A1 fixes the serialized request shape; shares navigation-history structures with C1, so land after C1 or coordinate one owner. | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary. |
-| 5 | Script B2 — bounded `WMLS-502` operator/conversion execution | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B. | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence. |
-| 6 | Runtime C2 — `WML-306` access/error/low-memory policy | Starts after C1; coordinate browser policy/host files with A1/A2 and preserve completed WML-202/WML-205 evidence. | Advances the remaining partial access/error parents, including policy beyond WML-304's referer intent. |
+| Priority | Lane / task                                                             | Dependency and overlap boundary                                                                                                                                                                                                              | Class C contribution                                                                                                                       | First useful desktop pre-release contribution                                                  |
+| -------: | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+|        1 | Request A1 — `WML-304` / `R0-06` / `WSP-805` native request application | Depends on the merged request-intent contract and completed `WSP-801`/`WSP-802`; give this task exclusive ownership of transport request serialization and browser fetch handoff files.                                                      | Converts the 12 remaining WML-304 transport-boundary clauses from intent-only plans into direct GET/POST/charset/referer/cache evidence.   | Makes real network forms and request policy usable through the native desktop path.            |
+|        2 | Script B1 — finish `WMLS-501` verifier scope                            | Independent of A1; owns WAP decoder/verifier fixtures and `engine-wasm/engine/src/wavescript/*`.                                                                                                                                             | Adds direct evidence for standard-library indexes and stack dataflow while preserving the 41-row WMLScript selection.                      | Prevents malformed script units from weakening a tester-facing desktop build.                  |
+|        3 | Runtime C1 — `WML-301` residual card-table/WAE delegate closure         | Independent of A1 when limited to rendering/mapping fixtures; do not edit request serialization or browser fetch handoff.                                                                                                                    | Closes the planned card-table boundary and makes the aggregate WML-301/WAE boundary explicit without reopening completed history evidence. | Improves deterministic historical page presentation in the reference handset.                  |
+|        4 | Desktop D1 — activate `WBP-06` / `F0-01` frame-and-affordance contract  | Prerequisites are satisfied. Use one frame-contract owner; preserve `EngineDebug*`. Coordinate generated host artifacts with A1 because both touch browser contract integration. This is separate from the pending visual-refinement stream. | Unblocks `REN-4` and the planned dynamic `do` presentation/softkey evidence; it does not itself close WML-3.                               | Establishes the engine-owned frame and affordance spine required for a credible desktop alpha. |
+|        5 | Request A2 — replayable POST history                                    | Starts after A1 fixes the serialized request shape; shares navigation/history structures with C1, so land after C1 or coordinate one owner.                                                                                                  | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary.                                        | Makes form navigation/back behavior predictable in public-lab scenarios.                       |
+|        6 | Script B2 — bounded `WMLS-502` operator/conversion execution            | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B.                                                                                                                                                 | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence.               | Expands the safe script behavior available to representative WAP decks.                        |
 
 Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
 connection-oriented WSP/WTP to manufacture completion. `REN-4` and full
 `WMLS-5`/`WAE-6` closure remain downstream of `WML-3` even when isolated
 foundations proceed early.
 
-The public-WAP-services workstream is externally active and may run beside these
-lanes, but it is deliberately not part of this batch. Current main proves a
-secure preview host with private administration and no public DNS record, WAP
-listener, or application deployment; none of that changes Class C evidence.
+`WML-306` is the next compliance slice after this batch; its browser policy files overlap A1/A2,
+so dispatching it now would create avoidable ownership conflict. The public-WAP-services workstream
+is also deliberately not part of this batch. Its private host/application deployment, live
+Tailnet smoke, and rollback work are already handled by that stream, while `PERF-101`, `OPS-101`,
+and public publication remain blocked on access/decision gates and external evidence. None of that
+changes Class C evidence.
 
 Completed this sprint:
 

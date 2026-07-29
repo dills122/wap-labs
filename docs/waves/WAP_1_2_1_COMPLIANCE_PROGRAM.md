@@ -158,21 +158,21 @@ The program contains 13 sprints and 82 unique work items. Existing completed
 tickets remain historical facts; the program maps to them where relevant and
 adds work only for uncovered obligations.
 
-| Sprint | Scope | Depends on | Exit meaning |
-|---|---|---|---|
-| `SRC-0` | Authoritative release, assets, class sources, and redistribution posture | — | Source control plane is reproducible |
-| `CONF-1` | CCR, SCR, and normative-clause ledgers | `SRC-0` | Selected-profile obligations are one-to-one accountable |
-| `WML-2` | Parser, deck model, validation, and WML/WBXML input | `CONF-1` | WML input and deck structure meet strict fixtures |
-| `WML-3` | State, tasks, events, forms, and navigation | `WML-2` | Runtime mechanics are deterministic and source-backed |
-| `REN-4` | Historical layout, focus, keypad, and softkeys | `WML-2`, `WML-3` | Observable device interaction is reproducible |
-| `WMLS-5` | WMLScript language, bytecode, VM, and libraries | `CONF-1`, `WML-3` | Script execution and failure behavior are bounded and compliant |
-| `WAE-6` | WAE integration, caching, formats, and content behavior | `CONF-1`, `WML-3`, `REN-4`, `WMLS-5` | Browser-environment behavior closes across engine features |
-| `TRN-7` | WDP, WCMP, and conditional WTP core | `CONF-1` | Protocol PDUs, state, bounds, and errors meet vectors |
-| `WSP-8` | WSP session/connectionless behavior and host fetch | `CONF-1`, `WAE-6`, completed profile gate `TRN-7-CL-C` | Native transport reaches the browser contract correctly without claiming WTP |
-| `INT-9` | Native/WASM parity and end-to-end interoperability | Runtime and transport sprints | Cross-layer strict scenarios have auditable evidence |
-| `REL-10` | Strict Class C-compatible release gate | `INT-9` | No mandatory obligation is unmapped and all build gates pass |
-| `OPT-11` | Security, Push, telephony, identity, and other optional profiles | `CONF-1`, `REL-10` | Optional capabilities are independently declared and tested |
-| `ENH-12` | Behavior-preserving improvements and Waves extensions | `REL-10` | Modern features cannot regress or obscure strict behavior |
+| Sprint   | Scope                                                                    | Depends on                                             | Exit meaning                                                                 |
+| -------- | ------------------------------------------------------------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| `SRC-0`  | Authoritative release, assets, class sources, and redistribution posture | —                                                      | Source control plane is reproducible                                         |
+| `CONF-1` | CCR, SCR, and normative-clause ledgers                                   | `SRC-0`                                                | Selected-profile obligations are one-to-one accountable                      |
+| `WML-2`  | Parser, deck model, validation, and WML/WBXML input                      | `CONF-1`                                               | WML input and deck structure meet strict fixtures                            |
+| `WML-3`  | State, tasks, events, forms, and navigation                              | `WML-2`                                                | Runtime mechanics are deterministic and source-backed                        |
+| `REN-4`  | Historical layout, focus, keypad, and softkeys                           | `WML-2`, `WML-3`                                       | Observable device interaction is reproducible                                |
+| `WMLS-5` | WMLScript language, bytecode, VM, and libraries                          | `CONF-1`, `WML-3`                                      | Script execution and failure behavior are bounded and compliant              |
+| `WAE-6`  | WAE integration, caching, formats, and content behavior                  | `CONF-1`, `WML-3`, `REN-4`, `WMLS-5`                   | Browser-environment behavior closes across engine features                   |
+| `TRN-7`  | WDP, WCMP, and conditional WTP core                                      | `CONF-1`                                               | Protocol PDUs, state, bounds, and errors meet vectors                        |
+| `WSP-8`  | WSP session/connectionless behavior and host fetch                       | `CONF-1`, `WAE-6`, completed profile gate `TRN-7-CL-C` | Native transport reaches the browser contract correctly without claiming WTP |
+| `INT-9`  | Native/WASM parity and end-to-end interoperability                       | Runtime and transport sprints                          | Cross-layer strict scenarios have auditable evidence                         |
+| `REL-10` | Strict Class C-compatible release gate                                   | `INT-9`                                                | No mandatory obligation is unmapped and all build gates pass                 |
+| `OPT-11` | Security, Push, telephony, identity, and other optional profiles         | `CONF-1`, `REL-10`                                     | Optional capabilities are independently declared and tested                  |
+| `ENH-12` | Behavior-preserving improvements and Waves extensions                    | `REL-10`                                               | Modern features cannot regress or obscure strict behavior                    |
 
 ## Source acquisition status
 
@@ -194,6 +194,17 @@ hash-locked, and extracted into exact Class A/B/C client/server graphs. This
 closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
+
+Checkpoint at `origin/main` `1f07030a` (2026-07-28): the canonical program remains 28 work items
+`done`, 11 `in-progress`, 42 `todo`, and one `blocked`, with 40/198 selected parents implemented
+and 288/762 clauses assessed. The July 28 bug-fix, desktop UX, and restricted network-preview
+merges strengthen regression and pre-release evidence but do not complete another normative work
+item. Project Atlas should continue to render these machine-backed counts.
+
+The dispatch baton is native `WML-304`/`WSP-805` request application, residual `WML-301`
+card-table/WAE evidence, and `WMLS-501` verifier closure in parallel-safe lanes. `WML-306` follows
+after request/history work releases the overlapping browser-policy files. Completed-ticket history
+remains immutable; newly exposed gaps require additive follow-ups.
 
 1. Treat `SRC-005` external-dependency normalization as complete, including
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`

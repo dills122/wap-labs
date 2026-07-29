@@ -28,6 +28,8 @@ Implemented now:
 - Closed `WBP-02` through `WBP-05A` browser foundation with the reference-handset scaffold,
   source/route/profile toolbar separation, ordinary-path Welcome/Help tutorial, and host-chrome
   accessibility baseline plus single-channel announcements and rendered 200 percent evidence
+- Closed additive `WBP-02A` native-host-chrome default without changing the neutral Class C
+  handset, engine viewport semantics, element IDs, or keyboard order
 - Responsive full-window shell plus gateway-aware startup status that names the probed URL and
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
@@ -42,6 +44,8 @@ Implemented now:
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
+- Generation-scoped navigation coordination prevents overlapping startup, timer, and user loads
+  from committing stale engine, history, status, or persistence state
 - Debug-only raw WML paste path (`Load Raw WML (Debug)` under debug section)
 - Collapsed developer tools drawer (toggle with `Ctrl+Shift+D`) for session/transport/snapshot/timeline panels
 - Native engine harness commands in `src-tauri/src/lib.rs`:
@@ -64,8 +68,9 @@ Implemented now:
 
 Not implemented yet:
 
-- Full browser chrome (address bar/history panes/history/devtools)
-- Production packaging/signing
+- Engine-owned dynamic frame/affordance integration (`WBP-06` and later)
+- True transport cancellation, phase-aware recovery, and safe session persistence (`WBP-10..12`)
+- Production packaging/signing/notarization
 
 ## Direction
 
@@ -166,8 +171,9 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 
 ## Next implementation slice
 
-1. Preserve completed `WBP-00` through `WBP-05A`, including the additive single-announcement and
-   rendered accessibility evidence closure; do not reopen `WBP-05`.
+1. Preserve completed `WBP-00` through `WBP-05A` and additive `WBP-02A`, including native chrome,
+   single-announcement behavior, rendered accessibility evidence, and the landed navigation
+   concurrency hardening; do not reopen completed tickets.
 2. `WML-2`, `WML-303`, and `D0-01` now satisfy the declared `WBP-06` prerequisites. Keep WBP-06
    inactive in this lane, but treat it as ready for a separately authorized `F0-01` contract task.
 3. That future task must use one frame/input contract owner, preserve the additive `EngineDebug*`
