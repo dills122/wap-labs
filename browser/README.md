@@ -191,6 +191,7 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 
 - Desktop product and interaction design: `docs/waves/WAVES_DESKTOP_PRODUCT_DESIGN.md`
 - Browser product implementation plan: `docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md`
+- Desktop application completion PRD: `docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md`
 - WBP-00/WBP-01 decisions, measurements, and integration seams: `docs/waves/WAVES_BROWSER_BASELINE.md`
 - WBP-05A rendered accessibility evidence: `docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
