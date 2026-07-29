@@ -52,12 +52,25 @@ export interface StoryExpectation {
   session?: StorySessionExpectation;
   statusIncludes?: string;
   render?: { textIncludes: string[] };
+  frame?: {
+    contractVersion: number;
+    profileId: string;
+    cardId: string;
+    affordances: Array<{
+      actionId: string;
+      label: string;
+      source: string;
+      control: string;
+      enabled: true;
+    }>;
+  };
 }
 
 export type StoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
+  | { type: 'activate-action'; actionId: string }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
@@ -5229,6 +5242,130 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      WML timer lifecycle.\n      <a href=\"#refresh-timer\">Refresh lifecycle</a>\n      <a href=\"#exit-timer\">Exit persistence</a>\n    </p>\n  </card>\n\n  <card id=\"refresh-timer\">\n    <onevent type=\"ontimer\"><go href=\"#expired\"/></onevent>\n    <timer name=\"remaining\" value=\"5\"/>\n    <do type=\"accept\" label=\"Refresh timer\">\n      <refresh><setvar name=\"remaining\" value=\"2\"/></refresh>\n    </do>\n    <p>Press Enter after one tick to refresh the timer.</p>\n  </card>\n\n  <card id=\"exit-timer\">\n    <timer name=\"saved\" value=\"5\"/>\n    <p><a href=\"#persisted\">Leave timer card</a></p>\n  </card>\n\n  <card id=\"expired\"><p>Expired at $(remaining).</p></card>\n  <card id=\"persisted\"><p>Persisted timer value: $(saved).</p></card>\n</wml>\n"
+  },
+  {
+    "key": "wml309FrameAffordances",
+    "label": "WML-309 Frame Affordances",
+    "description": "Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.",
+    "goal": "Verify that active do elements are exposed once with stable action identifiers and best-effort labels while optional and noop-masked actions stay absent.",
+    "workItems": [
+      "WML-309",
+      "WBP-06",
+      "F0-01"
+    ],
+    "specItems": [
+      "WML-C-26",
+      "RQ-RMK-002",
+      "WML-CL-DO-ACTIVE-VISIBILITY",
+      "WML-CL-DO-LABEL-BEST-EFFORT",
+      "WML-CL-DO-UNIQUE-WIDGET"
+    ],
+    "testingAc": [
+      "The initial frame exposes Open Ada, the accept fallback label, and template Help Ada in deterministic order.",
+      "The first accept action is the logical primary control and later actions remain task affordances.",
+      "Activating do:alternate through the current frame identifier reaches the second card.",
+      "Optional and noop-masked do elements never appear as affordances."
+    ],
+    "flows": [
+      {
+        "id": "host-frame-affordance-contract",
+        "title": "Host sample consumes ordered frame affordances and activates one by stable id",
+        "target": "host-sample",
+        "workItems": [
+          "WML-309",
+          "WBP-06",
+          "F0-01"
+        ],
+        "specItems": [
+          "WML-C-26",
+          "RQ-RMK-002",
+          "WML-CL-DO-ACTIVE-VISIBILITY",
+          "WML-CL-DO-LABEL-BEST-EFFORT",
+          "WML-CL-DO-UNIQUE-WIDGET"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "frame": {
+            "contractVersion": 1,
+            "profileId": "class-c-reference",
+            "cardId": "home",
+            "affordances": [
+              {
+                "actionId": "do:open",
+                "label": "Open Ada",
+                "source": "card-do",
+                "control": "primary",
+                "enabled": true
+              },
+              {
+                "actionId": "do:alternate",
+                "label": "accept",
+                "source": "card-do",
+                "control": "task",
+                "enabled": true
+              },
+              {
+                "actionId": "do:template-help",
+                "label": "Help Ada",
+                "source": "template-do",
+                "control": "task",
+                "enabled": true
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "activate-action",
+              "actionId": "do:alternate"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "second",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_AFFORDANCE",
+                "ACTION_FRAGMENT"
+              ],
+              "frame": {
+                "contractVersion": 1,
+                "profileId": "class-c-reference",
+                "cardId": "second",
+                "affordances": [
+                  {
+                    "actionId": "do:template-help",
+                    "label": "Help Ada",
+                    "source": "template-do",
+                    "control": "task",
+                    "enabled": true
+                  },
+                  {
+                    "actionId": "do:masked",
+                    "label": "options",
+                    "source": "template-do",
+                    "control": "task",
+                    "enabled": true
+                  },
+                  {
+                    "actionId": "history:back",
+                    "label": "Back",
+                    "source": "history",
+                    "control": "back",
+                    "enabled": true
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <template>\n    <do name=\"template-help\" type=\"help\" label=\"Help Ada\"><go href=\"#help\"/></do>\n    <do name=\"masked\" type=\"options\"><go href=\"#masked\"/></do>\n  </template>\n\n  <card id=\"home\">\n    <do name=\"open\" type=\"accept\" label=\"Open Ada\"><go href=\"#first\"/></do>\n    <do name=\"alternate\" type=\"accept\"><go href=\"#second\"/></do>\n    <do name=\"masked\" type=\"options\"><noop/></do>\n    <do name=\"optional\" type=\"x-vendor\" optional=\"true\"><go href=\"#optional\"/></do>\n    <p>Choose an action.</p>\n  </card>\n\n  <card id=\"first\"><p>First action.</p></card>\n  <card id=\"second\"><p>Second action.</p></card>\n  <card id=\"help\"><p>Help action.</p></card>\n  <card id=\"masked\"><p>Masked action.</p></card>\n  <card id=\"optional\"><p>Optional action.</p></card>\n</wml>\n"
   },
   {
     "key": "wmlbrowserContextFidelity",

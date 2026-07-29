@@ -1,10 +1,75 @@
 use serde_json::json;
 
 use crate::{
-    DrawCmd, EngineTraceEntry, RenderList, ScriptErrorCategoryLiteral, ScriptErrorClassLiteral,
-    ScriptExecutionOutcome, ScriptInvocationOutcome, ScriptNavigationIntentLiteral,
-    ScriptValueLiteral,
+    DrawCmd, EngineInputEvent, EngineInputKey, EngineTraceEntry, RenderList,
+    ScriptErrorCategoryLiteral, ScriptErrorClassLiteral, ScriptExecutionOutcome,
+    ScriptInvocationOutcome, ScriptNavigationIntentLiteral, ScriptValueLiteral, WmlEngine,
 };
+
+#[test]
+fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck_context(
+            r##"<wml><card id="home"><do name="open" type="accept" label="Open"><go href="#next"/></do><p>Home</p></card><card id="next"><p>Next</p></card></wml>"##,
+            "http://example.test/frame.wml",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .expect("fixture deck should load");
+    let frame = engine.render_frame().expect("frame should render");
+
+    assert_eq!(
+        serde_json::to_value(&frame).expect("frame should serialize"),
+        json!({
+            "contractVersion": 1,
+            "frameId": frame.frame_id,
+            "profileId": "class-c-reference",
+            "viewport": { "cols": 20 },
+            "deck": {
+                "baseUrl": "http://example.test/frame.wml",
+                "contentType": "text/vnd.wap.wml",
+                "language": null
+            },
+            "card": { "id": "home", "language": null },
+            "rows": [{
+                "index": 0,
+                "segments": [{ "type": "text", "x": 0, "text": "Home" }]
+            }],
+            "focus": null,
+            "selection": { "type": "none" },
+            "affordances": [{
+                "actionId": "do:open",
+                "label": "Open",
+                "enabled": true,
+                "source": "card-do",
+                "control": "primary",
+                "doName": "open",
+                "doType": "accept"
+            }],
+            "backAvailable": false
+        })
+    );
+    assert_eq!(
+        serde_json::to_value(EngineInputEvent::Key {
+            key: EngineInputKey::Enter
+        })
+        .expect("key input should serialize"),
+        json!({ "type": "key", "key": "enter" })
+    );
+    assert_eq!(
+        serde_json::to_value(EngineInputEvent::ActivateAction {
+            frame_id: "0123456789abcdef".to_string(),
+            action_id: "do:open".to_string()
+        })
+        .expect("action input should serialize"),
+        json!({
+            "type": "activate-action",
+            "frameId": "0123456789abcdef",
+            "actionId": "do:open"
+        })
+    );
+}
 
 #[test]
 fn script_outcomes_serialize_flat_effect_fields() {

@@ -41,7 +41,11 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     lastScriptTimerRequests: engine.lastScriptTimerRequests()
   });
   const render = (): RenderList => engine.render();
-  const frame = (): EngineFrame => ({ snapshot: snapshot(), render: render() });
+  const frame = (): EngineFrame => ({
+    snapshot: snapshot(),
+    render: render(),
+    presentation: engine.renderFrame()
+  });
 
   const client: TauriHostClient = {
     health: async () => 'waves-browser-test-host:ok',
@@ -66,6 +70,10 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     },
     engineHandleKeyFrame: async ({ key }) => {
       engine.handleKey(key);
+      return frame();
+    },
+    engineHandleInputFrame: async ({ event }) => {
+      engine.handleInput(event);
       return frame();
     },
     engineNavigateToCard: async ({ cardId }) => {

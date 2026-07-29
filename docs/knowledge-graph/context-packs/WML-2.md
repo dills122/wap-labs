@@ -1006,7 +1006,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-ACTIVE-VISIBILITY` (`rendering`, `planned`)
+  - Fixture: `WML-FX-DO-ACTIVE-VISIBILITY` (`rendering`, `implemented`)
 - **WML-CL-DO-EFFECTIVE-NAME** — Use the declared do name for binding identity and default a missing name to the type value.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1024,7 +1024,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-LABEL-BEST-EFFORT` (`rendering`, `planned`)
+  - Fixture: `WML-FX-DO-LABEL-BEST-EFFORT` (`rendering`, `implemented`)
 - **WML-CL-DO-OPTIONAL-PERMISSION** — The user agent may omit a do explicitly marked optional.
   - Family: `wml`; force: `explicit-may`; level: `permitted`
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
@@ -1048,7 +1048,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
   - Parents: `WML-C-26`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-DO-UNIQUE-WIDGET` (`rendering`, `planned`)
+  - Fixture: `WML-FX-DO-UNIQUE-WIDGET` (`rendering`, `implemented`)
 - **WML-CL-ENTITY-FORMS** — Accept named, decimal numeric, and hexadecimal numeric WML character references.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)

@@ -281,6 +281,7 @@ contract scope, if adopted, to carry the product data needed by the handset:
 ### WBP-06 Frame and affordance contract coordination
 
 - `Lane`: B
+- `Status`: done
 - `Depends On`: WML task/softkey semantics ready for exposure; frame F0 work
 - `Conflicts With`: debug connector contract edits
 
@@ -290,6 +291,16 @@ Accept:
 - Rust/native and WASM shapes remain aligned
 - compatibility wrappers preserve current hosts
 - golden parity tests cover frame commands, focus, affordances, and input traces
+
+Delivered boundary:
+
+- engine-owned, versioned, content-identified presentation frames with ordered rows/segments,
+  focus/selection state, logical affordances, and Back availability
+- frame-bound typed key/action dispatch across native Rust, WASM, and Tauri adapters
+- additive compatibility with `render()`/`handleKey()` and a separate unchanged `EngineDebug*`
+  namespace
+- no Canvas/CSS cutover, hit-region/pointer/scroll expansion, vendor-specific softkey placement, or
+  WBP-02B Handheld Focus View
 
 ### WBP-07 Canvas handset renderer integration
 
@@ -572,11 +583,11 @@ packaged macOS VoiceOver manual-only smoke are recorded in
 
 The canonical compliance program records `WML-2`, engine-internal WML-302
 variable/substitution semantics, and engine-owned WML-303 task/BACK/softkey precedence as `done`;
-WML-302 made no host-contract edit, and D0-01 has now settled the additive `EngineDebug*` namespace
-and merge sequence. `WBP-06` is ready for a separately authorized activation task but remains
-inactive in this lane. That future task starts with one F0 contract owner and `F0-01`; `F0-02` and
-`F0-03` follow their declared dependencies without renaming or folding debug DTOs into frame/input
-types.
+WML-302 made no host-contract edit, and D0-01 settled the additive `EngineDebug*` namespace and
+merge sequence. WBP-06 and F0-01 through F0-03 now close the canonical frame/input contract,
+additive APIs, host projection, WML-309 presentation clauses, and existing CI drift gates without
+renaming or folding debug DTOs into frame/input types. F1 renderer cutover and F2 pointer/scroll
+expansion remain dependency-ordered follow-ups.
 
 `WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It does not reopen
 the completed `WBP-01`/`WBP-02` history or activate `WBP-06`; it only changes the default host

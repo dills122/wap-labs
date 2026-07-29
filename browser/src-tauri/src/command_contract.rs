@@ -164,6 +164,12 @@ macro_rules! with_tauri_commands {
                 response: CommandType::engine("EngineFrame"),
                 facade: Some(FacadeMethod::engine("handleKeyFrame"))
             };
+            engine_handle_input_frame => {
+                client: "engineHandleInputFrame",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("HandleInputRequest"))),
+                response: CommandType::engine("EngineFrame"),
+                facade: Some(FacadeMethod::engine("handleInputFrame"))
+            };
             engine_navigate_to_card => {
                 client: "engineNavigateToCard",
                 parameter: Some(CommandParameter::new("request", CommandType::engine("NavigateToCardRequest"))),

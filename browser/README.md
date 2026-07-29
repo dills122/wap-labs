@@ -12,6 +12,8 @@ Implemented now:
 - Rust-sourced engine host contract generation:
   - generator: `src-tauri/src/bin/generate_contracts.rs`
   - output: `contracts/generated/engine-host.ts`
+- Canonical engine-owned WBP-06 presentation frame and typed input projection, carried inside the
+  transitional host `EngineFrame` envelope alongside the legacy snapshot/render fields
 - Rust-sourced transport host contract generation:
   - generator: `src-tauri/src/bin/generate_contracts.rs`
   - output: `contracts/generated/transport-host.ts`
@@ -53,6 +55,7 @@ Implemented now:
   - `engine_load_deck_context`
   - `engine_render`
   - `engine_handle_key`
+  - `engine_handle_input_frame`
   - `engine_navigate_to_card`
   - `engine_navigate_back`
   - `engine_set_viewport_cols`
@@ -68,7 +71,8 @@ Implemented now:
 
 Not implemented yet:
 
-- Engine-owned dynamic frame/affordance integration (`WBP-06` and later)
+- Frame renderer/input cutover (`F1`/`F2`): the current viewport and keyboard behavior continue to
+  use compatibility paths while every host frame also carries the canonical presentation payload
 - True transport cancellation, phase-aware recovery, and safe session persistence (`WBP-10..12`)
 - Production packaging/signing/notarization
 
@@ -174,11 +178,11 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 1. Preserve completed `WBP-00` through `WBP-05A` and additive `WBP-02A`, including native chrome,
    single-announcement behavior, rendered accessibility evidence, and the landed navigation
    concurrency hardening; do not reopen completed tickets.
-2. `WML-2`, `WML-303`, and `D0-01` now satisfy the declared `WBP-06` prerequisites. Keep WBP-06
-   inactive in this lane, but treat it as ready for a separately authorized `F0-01` contract task.
-3. That future task must use one frame/input contract owner, preserve the additive `EngineDebug*`
-   namespace, and execute `F0-01` before dependency-ordered `F0-02`/`F0-03`.
-4. Keep `M1-09` (`F0-F4` frame migration) dependency-gated and `M1-03` as a non-priority generator
+2. Preserve completed WBP-06/F0 frame, input, drift, and WML-309 evidence. Keep `EngineDebug*`
+   separate and retain the legacy render/key compatibility paths until the declared cutover gate.
+3. Continue with `F1-01` renderer adoption, then the visual-owner-led Canvas migration and later
+   hit-region/input expansion. Do not infer physical softkey placement from logical associations.
+4. Keep the remaining `M1-09` (`F1-F4` frame migration) dependency-gated and `M1-03` as a non-priority generator
    follow-up.
 5. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;
    `WBP-16` may run independently as an Openwave handset/browser evidence-lock research task.

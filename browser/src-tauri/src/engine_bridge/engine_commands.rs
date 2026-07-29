@@ -6,8 +6,8 @@ use super::engine_adapter::{
     apply_cancel_focused_select_edit_frame, apply_clear_external_navigation_intent,
     apply_clear_external_navigation_intent_frame, apply_commit_focused_input_edit,
     apply_commit_focused_input_edit_frame, apply_commit_focused_select_edit,
-    apply_commit_focused_select_edit_frame, apply_engine_snapshot, apply_handle_key,
-    apply_handle_key_frame, apply_load_deck, apply_load_deck_context,
+    apply_commit_focused_select_edit_frame, apply_engine_snapshot, apply_handle_input_frame,
+    apply_handle_key, apply_handle_key_frame, apply_load_deck, apply_load_deck_context,
     apply_load_deck_context_frame, apply_move_focused_select_edit,
     apply_move_focused_select_edit_frame, apply_navigate_back, apply_navigate_back_frame,
     apply_navigate_to_card, apply_navigate_to_card_frame, apply_render, apply_render_frame,
@@ -15,7 +15,7 @@ use super::engine_adapter::{
     apply_set_viewport_cols, AppState,
 };
 use crate::contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleKeyRequest,
+    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
     LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
     RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
@@ -68,6 +68,14 @@ pub fn command_engine_handle_key_frame(
 ) -> Result<EngineFrame, String> {
     let mut engine = lock_engine(state)?;
     apply_handle_key_frame(&mut engine, request)
+}
+
+pub fn command_engine_handle_input_frame(
+    state: &AppState,
+    request: HandleInputRequest,
+) -> Result<EngineFrame, String> {
+    let mut engine = lock_engine(state)?;
+    apply_handle_input_frame(&mut engine, request)
 }
 
 pub fn command_engine_navigate_to_card(

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "094df802a3f5e3c36c04147c92c1770753f2c9d6a440cae25cdb9af399c1cdf7"
+        "sha256": "e1347da6f8a1bbd6313c5d748ebce8cde564b9e2b5f266078a1b7c637222ed83"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "427e92dde5d4e6fe76924b5dbc9cf874571fca7fc1dc81519513583fe029b724"
+        "sha256": "ee125013711326aa9e1b10d7420050c29e4a3aa003ddaa4546a6e9feca76fac8"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "312750697c1a4a294325a2ae93a8c6871dea63bdcdb4271b1e9a71f8334f51d0"
@@ -37,12 +37,12 @@
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 332,
-    "edgeCount": 882,
+    "nodeCount": 341,
+    "edgeCount": 904,
     "nodesByType": {
-      "clause": 121,
-      "fixture": 121,
-      "legacy-ticket": 14,
+      "clause": 124,
+      "fixture": 124,
+      "legacy-ticket": 16,
       "owner-layer": 4,
       "profile": 1,
       "requirement": 12,
@@ -50,28 +50,28 @@
       "source-document": 13,
       "source-family": 3,
       "sprint": 6,
-      "work-item": 8
+      "work-item": 9
     },
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
       "belongs-to": 29,
-      "contains": 8,
+      "contains": 9,
       "context-for": 7,
-      "covers-family": 12,
+      "covers-family": 13,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 197,
-      "owned-by": 24,
-      "planned-by": 127,
-      "refines": 177,
-      "relates-to": 16,
+      "maps-to": 200,
+      "owned-by": 27,
+      "planned-by": 130,
+      "refines": 180,
+      "relates-to": 18,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 126,
+      "sourced-from": 129,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 121
+      "verified-by": 124
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 13,
@@ -81,7 +81,8 @@
       "WML-305": 10,
       "WML-306": 8,
       "WML-307": 0,
-      "WML-308": 23
+      "WML-308": 23,
+      "WML-309": 3
     },
     "directClauseFamiliesByWorkItem": {
       "WML-301": [
@@ -105,6 +106,9 @@
       "WML-307": [],
       "WML-308": [
         "wml"
+      ],
+      "WML-309": [
+        "wml"
       ]
     },
     "aggregateContextClauseCountsByWorkItem": {
@@ -115,7 +119,8 @@
       "WML-305": 0,
       "WML-306": 0,
       "WML-307": 0,
-      "WML-308": 0
+      "WML-308": 0,
+      "WML-309": 0
     },
     "aggregateContextClauseFamiliesByWorkItem": {
       "WML-301": [
@@ -128,7 +133,8 @@
       "WML-305": [],
       "WML-306": [],
       "WML-307": [],
-      "WML-308": []
+      "WML-308": [],
+      "WML-309": []
     },
     "directScrRowCountsByWorkItem": {
       "WML-301": 0,
@@ -138,7 +144,8 @@
       "WML-305": 0,
       "WML-306": 0,
       "WML-307": 0,
-      "WML-308": 0
+      "WML-308": 0,
+      "WML-309": 0
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WML-301": {},
@@ -150,7 +157,8 @@
       "WML-305": {},
       "WML-306": {},
       "WML-307": {},
-      "WML-308": {}
+      "WML-308": {},
+      "WML-309": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
       "WML-306": [
@@ -1031,6 +1039,43 @@
       }
     },
     {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "key": "WML-CL-DO-ACTIVE-VISIBILITY",
+      "type": "clause",
+      "title": "Make every active, non-optional do accessible for user activation.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-26"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.7",
+          "heading": "9.7 The Do Element",
+          "normalizedTextSha256": "2bc27d930169116f20b3b8e3a2e0f38735321034fd2fe257b78898e70f3f8d19"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Make every active, non-optional do accessible for user activation.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "WML-201",
+          "WML-309"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-DO-EFFECTIVE-NAME",
       "key": "WML-CL-DO-EFFECTIVE-NAME",
       "type": "clause",
@@ -1097,6 +1142,43 @@
           "WML-201",
           "WML-202",
           "WML-303"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "key": "WML-CL-DO-LABEL-BEST-EFFORT",
+      "type": "clause",
+      "title": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-26"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.7",
+          "heading": "9.7 The Do Element",
+          "normalizedTextSha256": "2bc27d930169116f20b3b8e3a2e0f38735321034fd2fe257b78898e70f3f8d19"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "WML-201",
+          "WML-309"
         ],
         "ownerLayers": [
           "browser",
@@ -1209,6 +1291,43 @@
           "R0-02",
           "WML-201",
           "WML-303"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "key": "WML-CL-DO-UNIQUE-WIDGET",
+      "type": "clause",
+      "title": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-26"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "9.7",
+          "heading": "9.7 The Do Element",
+          "normalizedTextSha256": "2bc27d930169116f20b3b8e3a2e0f38735321034fd2fe257b78898e70f3f8d19"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "WML-201",
+          "WML-309"
         ],
         "ownerLayers": [
           "browser",
@@ -5210,6 +5329,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-DO-ACTIVE-VISIBILITY",
+      "key": "WML-FX-DO-ACTIVE-VISIBILITY",
+      "type": "fixture",
+      "title": "Make every active, non-optional do accessible for user activation.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Make every active, non-optional do accessible for user activation.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-DO-EFFECTIVE-NAME",
       "key": "WML-FX-DO-EFFECTIVE-NAME",
       "type": "fixture",
@@ -5230,6 +5361,18 @@
         "kind": "rendering",
         "status": "implemented",
         "assertion": "Do not expose an inactive do in a form the user can activate.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-DO-LABEL-BEST-EFFORT",
+      "key": "WML-FX-DO-LABEL-BEST-EFFORT",
+      "type": "fixture",
+      "title": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -5266,6 +5409,18 @@
         "kind": "runtime",
         "status": "implemented",
         "assertion": "Accept every do type and treat an unrecognized type as unknown when no specialized mapping exists.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-DO-UNIQUE-WIDGET",
+      "key": "WML-FX-DO-UNIQUE-WIDGET",
+      "type": "fixture",
+      "title": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -6467,6 +6622,15 @@
       }
     },
     {
+      "id": "legacy-ticket:F0-01",
+      "key": "F0-01",
+      "type": "legacy-ticket",
+      "title": "F0-01",
+      "properties": {
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
+    },
+    {
       "id": "legacy-ticket:R0-02",
       "key": "R0-02",
       "type": "legacy-ticket",
@@ -6543,6 +6707,15 @@
       "key": "W0-05",
       "type": "legacy-ticket",
       "title": "W0-05",
+      "properties": {
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
+    },
+    {
+      "id": "legacy-ticket:WBP-06",
+      "key": "WBP-06",
+      "type": "legacy-ticket",
+      "title": "WBP-06",
       "properties": {
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -8379,6 +8552,50 @@
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
+    },
+    {
+      "id": "work-item:WML-309",
+      "key": "WML-309",
+      "type": "work-item",
+      "title": "Engine-owned frame and affordance contract for active WML do actions",
+      "properties": {
+        "status": "done",
+        "ownerLayers": [
+          "engine-wasm",
+          "browser",
+          "qa"
+        ],
+        "sourceFamilies": [
+          "wml"
+        ],
+        "notes": [
+          "This additive slice owns only the three WML-C-26 presentation residuals: active do visibility, label best effort, and unique activatable action exposure. It preserves completed WML-303 task, shadowing, BACK, and activation-order history.",
+          "Source-derived native, WASM, Tauri host-serialization, and executable-story evidence proves the three mapped clauses. Contract prose and generated types remain insufficient without those synchronized checks."
+        ],
+        "specReferences": [
+          "WAP-191_104-WML section 9.7"
+        ],
+        "existingTickets": [
+          "WBP-06",
+          "F0-01"
+        ],
+        "outputs": [
+          "Engine-owned frame and affordance contract for active WML do actions"
+        ],
+        "acceptance": [
+          "Every active non-optional do is represented once with stable activation identity and best-effort authored labelling without assuming a vendor-specific physical widget."
+        ],
+        "evidence": [
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_309",
+          "wasm-pack test --node engine-wasm/engine",
+          "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+          "pnpm test:story WML-309",
+          "node scripts/wap-context-pack.mjs WML-309",
+          "pnpm wap-compliance:check",
+          "pnpm wap-graph:check"
+        ],
+        "source": "docs/waves/wap-1.2.1-compliance-program.json"
+      }
     }
   ],
   "edges": [
@@ -9445,6 +9662,51 @@
       ]
     },
     {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY|planned-by|work-item:WML-309",
+      "from": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "relation": "planned-by",
+      "to": "work-item:WML-309",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY|refines|scr-row:WML-C-26",
+      "from": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-26",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-ACTIVE-VISIBILITY|verified-by|fixture:WML-FX-DO-ACTIVE-VISIBILITY",
+      "from": "clause:WML-CL-DO-ACTIVE-VISIBILITY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-DO-ACTIVE-VISIBILITY",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-DO-EFFECTIVE-NAME|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-DO-EFFECTIVE-NAME",
       "relation": "maps-to",
@@ -9548,6 +9810,51 @@
       "from": "clause:WML-CL-DO-INACTIVE-HIDDEN",
       "relation": "verified-by",
       "to": "fixture:WML-FX-DO-INACTIVE-HIDDEN",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT|planned-by|work-item:WML-309",
+      "from": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "relation": "planned-by",
+      "to": "work-item:WML-309",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT|refines|scr-row:WML-C-26",
+      "from": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-26",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-LABEL-BEST-EFFORT|verified-by|fixture:WML-FX-DO-LABEL-BEST-EFFORT",
+      "from": "clause:WML-CL-DO-LABEL-BEST-EFFORT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-DO-LABEL-BEST-EFFORT",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9683,6 +9990,51 @@
       "from": "clause:WML-CL-DO-TYPE-ACCEPTANCE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-DO-TYPE-ACCEPTANCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET|planned-by|work-item:WML-309",
+      "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "relation": "planned-by",
+      "to": "work-item:WML-309",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET|refines|scr-row:WML-C-26",
+      "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-26",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-DO-UNIQUE-WIDGET|verified-by|fixture:WML-FX-DO-UNIQUE-WIDGET",
+      "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-DO-UNIQUE-WIDGET",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -15827,6 +16179,15 @@
       ]
     },
     {
+      "id": "sprint:WML-3|contains|work-item:WML-309",
+      "from": "sprint:WML-3",
+      "relation": "contains",
+      "to": "work-item:WML-309",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
       "id": "sprint:WML-3|depends-on|sprint:WML-2",
       "from": "sprint:WML-3",
       "relation": "depends-on",
@@ -16328,6 +16689,60 @@
       "from": "work-item:WML-308",
       "relation": "relates-to",
       "to": "legacy-ticket:R0-05",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|covers-family|source-family:wml",
+      "from": "work-item:WML-309",
+      "relation": "covers-family",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|owned-by|owner-layer:browser",
+      "from": "work-item:WML-309",
+      "relation": "owned-by",
+      "to": "owner-layer:browser",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|owned-by|owner-layer:engine-wasm",
+      "from": "work-item:WML-309",
+      "relation": "owned-by",
+      "to": "owner-layer:engine-wasm",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|owned-by|owner-layer:qa",
+      "from": "work-item:WML-309",
+      "relation": "owned-by",
+      "to": "owner-layer:qa",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|relates-to|legacy-ticket:F0-01",
+      "from": "work-item:WML-309",
+      "relation": "relates-to",
+      "to": "legacy-ticket:F0-01",
+      "sourceRefs": [
+        "docs/waves/wap-1.2.1-compliance-program.json"
+      ]
+    },
+    {
+      "id": "work-item:WML-309|relates-to|legacy-ticket:WBP-06",
+      "from": "work-item:WML-309",
+      "relation": "relates-to",
+      "to": "legacy-ticket:WBP-06",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

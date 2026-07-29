@@ -28,10 +28,10 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
 | Nested clauses | The 198 parents expand into 762 clauses: 722 required, 29 recommended, and 11 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 762 clause fixtures have target locations; 299 clauses now have direct conformance assessment and 463 remain unassessed |
+| Fixtures | All 762 clause fixtures have target locations; 302 clauses now have direct conformance assessment and 460 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
-| Execution program | 13 dependency-ordered sprints contain 82 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
+| Execution program | 13 dependency-ordered sprints contain 83 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
 
 `SRC-006` is the only blocked source item. All 97 technical members are
 available for private extraction, and the 106-entry redistribution inventory
@@ -57,16 +57,16 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WSP | 8 | 57 | 8 | 0 | 0 |
 | **Total** | **198** | **762** | **41** | **71** | **86** |
 
-Parent-row status is not a substitute for direct clause evidence. With 299 of
+Parent-row status is not a substitute for direct clause evidence. With 302 of
 762 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
 
 ## Work-program state
 
-The 82 work items currently roll up to:
+The 83 work items currently roll up to:
 
-- 28 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801/WSP-802 connectionless matrices, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, and the frontend production-build defect closure);
+- 29 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801/WSP-802 connectionless matrices, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-305 native timer closure, WML-309 frame-affordance closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
 - 11 in progress (existing runtime, the WML-301 aggregate WAE-delegate follow-through, WML-304 request-pipeline follow-through, WAE, transport, WSP, and WMLS-501 foundations);
 - 42 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
@@ -113,7 +113,7 @@ claim.
 The remaining build work is now measurable:
 
 1. close or correct the 71 partial and 86 missing parent rows;
-2. implement and assess the remaining 463 direct clause fixtures;
+2. implement and assess the remaining 460 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

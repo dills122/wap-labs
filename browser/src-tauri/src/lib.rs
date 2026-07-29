@@ -7,7 +7,7 @@ mod engine_bridge;
 mod fetch_host;
 
 use contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleKeyRequest,
+    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
     LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
     RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
@@ -21,14 +21,14 @@ use engine_bridge::{
     command_engine_clear_external_navigation_intent_frame,
     command_engine_commit_focused_input_edit, command_engine_commit_focused_input_edit_frame,
     command_engine_commit_focused_select_edit, command_engine_commit_focused_select_edit_frame,
-    command_engine_handle_key, command_engine_handle_key_frame, command_engine_load_deck,
-    command_engine_load_deck_context, command_engine_load_deck_context_frame,
-    command_engine_move_focused_select_edit, command_engine_move_focused_select_edit_frame,
-    command_engine_navigate_back, command_engine_navigate_back_frame,
-    command_engine_navigate_to_card, command_engine_navigate_to_card_frame, command_engine_render,
-    command_engine_render_frame, command_engine_set_focused_input_edit_draft,
-    command_engine_set_focused_input_edit_draft_frame, command_engine_set_viewport_cols,
-    command_engine_snapshot, AppState,
+    command_engine_handle_input_frame, command_engine_handle_key, command_engine_handle_key_frame,
+    command_engine_load_deck, command_engine_load_deck_context,
+    command_engine_load_deck_context_frame, command_engine_move_focused_select_edit,
+    command_engine_move_focused_select_edit_frame, command_engine_navigate_back,
+    command_engine_navigate_back_frame, command_engine_navigate_to_card,
+    command_engine_navigate_to_card_frame, command_engine_render, command_engine_render_frame,
+    command_engine_set_focused_input_edit_draft, command_engine_set_focused_input_edit_draft_frame,
+    command_engine_set_viewport_cols, command_engine_snapshot, AppState,
 };
 use fetch_host::fetch_deck as host_fetch_deck;
 use lowband_transport_rust::{FetchDeckRequest, FetchDeckResponse};
@@ -109,6 +109,15 @@ fn engine_handle_key_frame(
     request: HandleKeyRequest,
 ) -> Result<EngineFrame, String> {
     command_engine_handle_key_frame(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_handle_input_frame(
+    state: State<AppState>,
+    request: HandleInputRequest,
+) -> Result<EngineFrame, String> {
+    command_engine_handle_input_frame(state.inner(), request)
 }
 
 #[tauri::command]

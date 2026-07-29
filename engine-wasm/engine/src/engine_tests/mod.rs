@@ -154,4 +154,5 @@ mod wml_302_variables;
 mod wml_303_actions;
 mod wml_304_request_intent;
 mod wml_305_timers;
+mod wml_309_frame;
 mod wml_load_errors;

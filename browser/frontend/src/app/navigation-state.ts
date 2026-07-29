@@ -470,7 +470,7 @@ export const createNavigationStateMachine = (
       updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     }
     if (renderFrame) {
-      applyFrame({ snapshot, render: renderFrame.render });
+      applyFrame(renderFrame);
     }
     return snapshot;
   };

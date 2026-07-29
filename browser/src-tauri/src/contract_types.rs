@@ -3,6 +3,7 @@ use ts_rs::TS;
 use wavenav_engine as engine;
 
 pub use engine::{
+    EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
     EngineDebugBufferSnapshot, EngineDebugCapabilities, EngineDebugCloseSessionOutcome,
     EngineDebugCloseSessionRequest, EngineDebugCloseSessionResult, EngineDebugCollectionSummary,
     EngineDebugError, EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch,
@@ -12,7 +13,9 @@ pub use engine::{
     EngineDebugPostfieldResolution, EngineDebugPostfieldResolutionSource,
     EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
     EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
-    EngineDebugTimestampKind, EngineDebugValue,
+    EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
+    EngineFocusTargetKind, EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey,
+    EnginePresentationFrame, EngineSelectionState, EngineViewport,
 };
 
 #[derive(Clone, Debug, Deserialize, TS)]
@@ -84,6 +87,12 @@ impl EngineKey {
 #[serde(rename_all = "camelCase")]
 pub struct HandleKeyRequest {
     pub key: EngineKey,
+}
+
+#[derive(Clone, Debug, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+pub struct HandleInputRequest {
+    pub event: EngineInputEvent,
 }
 
 #[derive(Clone, Debug, Deserialize, TS)]
@@ -252,6 +261,7 @@ pub struct EngineRuntimeSnapshot {
 pub struct EngineFrame {
     pub snapshot: EngineRuntimeSnapshot,
     pub render: RenderList,
+    pub presentation: EnginePresentationFrame,
 }
 
 impl From<engine::ScriptNavigationRequestPolicyLiteral>

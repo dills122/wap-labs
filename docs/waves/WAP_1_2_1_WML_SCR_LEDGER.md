@@ -136,12 +136,12 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 137
+owner/work mapping and a direct fixture plan. The WML family now has 140
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
-slices plus WML-305 timer, WML-301 context/history/card-table closure, and the ten directly
-assessed WML-304 request-serialization clauses; shared clauses are deduplicated.
-The other 38 clauses stay
+slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
+assessed WML-304 request-serialization clauses, and WML-309 frame-affordance
+closure; shared clauses are deduplicated. The other 35 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

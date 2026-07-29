@@ -715,6 +715,53 @@ fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_309_frame_and_action_input_match_native_contract() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r##"<wml><card id="home"><do name="open" type="accept" label="Open"><go href="#next"/></do><p>Home</p></card><card id="next"><p>Next</p></card></wml>"##,
+        )
+        .expect("frame deck should load");
+
+    let native = engine.render_frame().expect("native frame should render");
+    let wasm = engine
+        .render_frame_wasm()
+        .expect("WASM frame should serialize");
+    assert_eq!(
+        Reflect::get(&wasm, &JsValue::from_str("frameId"))
+            .expect("frameId")
+            .as_string()
+            .as_deref(),
+        Some(native.frame_id.as_str())
+    );
+    let affordances =
+        Array::from(&Reflect::get(&wasm, &JsValue::from_str("affordances")).expect("affordances"));
+    assert_eq!(affordances.length(), 1);
+    assert_eq!(
+        Reflect::get(&affordances.get(0), &JsValue::from_str("actionId"))
+            .expect("actionId")
+            .as_string()
+            .as_deref(),
+        Some("do:open")
+    );
+
+    let input = serde_wasm_bindgen::to_value(&EngineInputEvent::ActivateAction {
+        frame_id: native.frame_id,
+        action_id: "do:open".to_string(),
+    })
+    .expect("input should serialize");
+    engine
+        .handle_input_wasm(input)
+        .expect("WASM action input should dispatch");
+    assert_eq!(
+        engine
+            .active_card_id_wasm()
+            .expect("active card should be readable"),
+        "next"
+    );
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_303_back_override_reports_handled_without_snapshot_change() {
     let mut engine = WmlEngine::wasm_new();
     engine

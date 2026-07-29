@@ -36,7 +36,15 @@ const SESSION_KEYS = new Set([
   'externalNavigationIntent',
   'lastError'
 ]);
-const ACTION_TYPES = new Set(['key', 'keyboard', 'type-text', 'back', 'tick', 'clear-intent']);
+const ACTION_TYPES = new Set([
+  'key',
+  'keyboard',
+  'type-text',
+  'activate-action',
+  'back',
+  'tick',
+  'clear-intent'
+]);
 const KEY_NAMES = new Set(['up', 'down', 'enter']);
 const KEYBOARD_NAMES = new Set(['ArrowUp', 'ArrowDown', 'Enter', 'Backspace', 'Escape']);
 const STORY_TARGETS = new Set(['host-sample', 'waves-browser']);
@@ -360,11 +368,65 @@ function parseRenderExpectation(value, filename, location) {
   return { textIncludes: render.textIncludes };
 }
 
+function parseFrameExpectation(value, filename, location) {
+  const frame = requireRecord(value, filename, location);
+  validateKeys(
+    frame,
+    new Set(['contractVersion', 'profileId', 'cardId', 'affordances']),
+    filename,
+    location
+  );
+  if (!Number.isInteger(frame.contractVersion) || frame.contractVersion < 1) {
+    throw new Error(`${filename}: ${location}.contractVersion must be a positive integer`);
+  }
+  const profileId = requireString(frame.profileId, filename, `${location}.profileId`);
+  const cardId = requireString(frame.cardId, filename, `${location}.cardId`);
+  if (!Array.isArray(frame.affordances)) {
+    throw new Error(`${filename}: ${location}.affordances must be an array`);
+  }
+  const affordances = frame.affordances.map((value, index) => {
+    const affordance = requireRecord(value, filename, `${location}.affordances[${index}]`);
+    validateKeys(
+      affordance,
+      new Set(['actionId', 'label', 'source', 'control', 'enabled']),
+      filename,
+      `${location}.affordances[${index}]`
+    );
+    return {
+      actionId: requireString(
+        affordance.actionId,
+        filename,
+        `${location}.affordances[${index}].actionId`
+      ),
+      label: requireString(
+        affordance.label,
+        filename,
+        `${location}.affordances[${index}].label`
+      ),
+      source: requireString(
+        affordance.source,
+        filename,
+        `${location}.affordances[${index}].source`
+      ),
+      control: requireString(
+        affordance.control,
+        filename,
+        `${location}.affordances[${index}].control`
+      ),
+      enabled: affordance.enabled === true
+    };
+  });
+  if (frame.affordances.some((affordance) => affordance.enabled !== true)) {
+    throw new Error(`${filename}: ${location}.affordances[].enabled must be true`);
+  }
+  return { contractVersion: frame.contractVersion, profileId, cardId, affordances };
+}
+
 function parseExpectation(value, filename, location) {
   const expectation = requireRecord(value, filename, location);
   validateKeys(
     expectation,
-    new Set(['state', 'traceKinds', 'session', 'statusIncludes', 'render']),
+    new Set(['state', 'traceKinds', 'session', 'statusIncludes', 'render', 'frame']),
     filename,
     location
   );
@@ -395,12 +457,15 @@ function parseExpectation(value, filename, location) {
   if (expectation.render !== undefined) {
     parsed.render = parseRenderExpectation(expectation.render, filename, `${location}.render`);
   }
+  if (expectation.frame !== undefined) {
+    parsed.frame = parseFrameExpectation(expectation.frame, filename, `${location}.frame`);
+  }
   return parsed;
 }
 
 function parseAction(value, filename, location) {
   const action = requireRecord(value, filename, location);
-  validateKeys(action, new Set(['type', 'key', 'ms', 'text']), filename, location);
+  validateKeys(action, new Set(['type', 'key', 'ms', 'text', 'actionId']), filename, location);
   if (!ACTION_TYPES.has(action.type)) {
     throw new Error(`${filename}: ${location}.type has unknown action "${String(action.type)}"`);
   }
@@ -435,7 +500,15 @@ function parseAction(value, filename, location) {
     return { type: action.type, text };
   }
 
-  if (action.key !== undefined || action.text !== undefined) {
+  if (action.type === 'activate-action') {
+    const actionId = requireString(action.actionId, filename, `${location}.actionId`);
+    if (action.key !== undefined || action.ms !== undefined || action.text !== undefined) {
+      throw new Error(`${filename}: ${location} activate-action only accepts type and actionId`);
+    }
+    return { type: action.type, actionId };
+  }
+
+  if (action.key !== undefined || action.text !== undefined || action.actionId !== undefined) {
     throw new Error(`${filename}: ${location} only key/keyboard/type-text actions accept input`);
   }
   if (action.type === 'tick') {
@@ -661,12 +734,25 @@ export interface StoryExpectation {
   session?: StorySessionExpectation;
   statusIncludes?: string;
   render?: { textIncludes: string[] };
+  frame?: {
+    contractVersion: number;
+    profileId: string;
+    cardId: string;
+    affordances: Array<{
+      actionId: string;
+      label: string;
+      source: string;
+      control: string;
+      enabled: true;
+    }>;
+  };
 }
 
 export type StoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
+  | { type: 'activate-action'; actionId: string }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };

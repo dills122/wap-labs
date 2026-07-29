@@ -198,24 +198,23 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-03`  | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                          |
 | `WBP-04`  | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                           |
 | `WBP-05`  | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
+| `WBP-06`  | `done` | F0-01 through F0-03 add the engine-owned versioned presentation frame, logical affordances, frame-bound typed input, generated native/WASM/Tauri projections, WML-309 evidence, and CI drift coverage while retaining legacy render/key compatibility and the separate `EngineDebug*` namespace. Canvas/CSS, physical softkey placement, hit regions, pointer/scroll input, and WBP-02B remain later work. |
 
-Phase 1 implementation is complete on current `main`; the original seams remain documented in
-`WAVES_BROWSER_BASELINE.md` for maintenance history. All declared prerequisites for `WBP-06` are
-now satisfied, including the additive D0-01 debug namespace and sequencing rule. `WBP-06` is ready
-for a separately authorized activation task but remains inactive in this lane:
+Phase 1 implementation is complete; the original seams remain documented in
+`WAVES_BROWSER_BASELINE.md` for maintenance history. WBP-06/F0 is now complete after the declared
+prerequisites, additive D0-01 debug namespace, and sequencing rule were preserved:
 
 1. `WML-2` is `done`, including the residual `WML-203`, `WML-204`, and `WML-205` gates.
-2. `WML-303` has closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
-   precedence semantics that the frame contract would expose. The three dynamic `do`
-   presentation clauses remain planned for that frame/affordance slice rather than being
-   inferred from the engine-semantic closure.
+2. `WML-303` closed the engine-owned `do`/`onevent` task, BACK, activation-order, and softkey
+   precedence semantics. WML-309 now directly closes the three dynamic `do` presentation clauses
+   through native/WASM/Tauri tests and an executable frame/action story.
 3. `WML-302` has closed engine-internal variable substitution and setvar ordering without changing
    `wml-engine.ts` or browser debug contracts; request serialization remains WML-304.
-4. `D0-01` has settled the overlapping `EngineDebug*` surface and reserved frame/input work for a
-   later additive namespace owned by one F0 contract lane.
+4. `D0-01` remains the separate `EngineDebug*` surface; WBP-06 owns the ordinary frame/input
+   namespace and does not consume debug payloads.
 
-A dedicated future `WBP-06`/`F0` task may now activate `F0-01`; `F0-02` and `F0-03` remain ordered
-by their declared dependencies. D0-01 does not activate WBP-06 or implement frame/input contracts.
+F1 renderer cutover, F2 hit-region/pointer/scroll expansion, F3 layout/paint separation, and F4
+legacy removal remain ordered follow-ups. D0-01 remains completed history, not a rendering API.
 
 ### WBP-02A Native host-chrome default
 

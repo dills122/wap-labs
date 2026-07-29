@@ -98,6 +98,30 @@ export function assertStoryExpectation(evidence, expectation, label) {
       );
     }
   }
+  if (expectation.frame) {
+    assert.ok(evidence.frame, `${label}: engine presentation frame is unavailable`);
+    assert.equal(
+      evidence.frame.contractVersion,
+      expectation.frame.contractVersion,
+      `${label}: frame.contractVersion`
+    );
+    assert.equal(evidence.frame.profileId, expectation.frame.profileId, `${label}: frame.profileId`);
+    assert.equal(evidence.frame.card.id, expectation.frame.cardId, `${label}: frame.card.id`);
+    const actualAffordances = evidence.frame.affordances.map(
+      ({ actionId, label: actionLabel, source, control, enabled }) => ({
+        actionId,
+        label: actionLabel,
+        source,
+        control,
+        enabled
+      })
+    );
+    assert.deepEqual(
+      actualAffordances,
+      expectation.frame.affordances,
+      `${label}: frame.affordances`
+    );
+  }
 }
 
 export function storyListLines(records) {

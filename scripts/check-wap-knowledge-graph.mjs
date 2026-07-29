@@ -392,6 +392,25 @@ if (
   );
 }
 
+const wml309Pack = renderContextPack(wml3Graph, 'WML-309');
+if (
+  !wml309Pack.startsWith('# WML-309 AI Context Pack') ||
+  !wml309Pack.includes('### WML-309:') ||
+  wml309Pack.includes('### WML-303:') ||
+  !wml309Pack.includes('- Selected work items: 1') ||
+  !wml309Pack.includes('- Selected SCR parents: 1') ||
+  !wml309Pack.includes('- Direct normative clauses: 3') ||
+  !wml309Pack.includes('**WML-CL-DO-ACTIVE-VISIBILITY**') ||
+  !wml309Pack.includes('**WML-CL-DO-LABEL-BEST-EFFORT**') ||
+  !wml309Pack.includes('**WML-CL-DO-UNIQUE-WIDGET**') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-309') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-309']
+) {
+  failures.push(
+    'WML-309 context rendering must expose the three bounded WML-C-26 frame/affordance obligations without reopening WML-303'
+  );
+}
+
 const wml304Pack = renderContextPack(wml3Graph, 'WML-304');
 if (
   !wml304Pack.startsWith('# WML-304 AI Context Pack') ||

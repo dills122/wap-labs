@@ -6,6 +6,15 @@ use crate::runtime::node::{InlineNode, Node};
 pub struct LayoutResult {
     pub render_list: RenderList,
     pub focus_targets: Vec<FocusTarget>,
+    pub segments: Vec<LayoutSegment>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LayoutSegment {
+    pub x: u32,
+    pub y: u32,
+    pub text: String,
+    pub focus_index: Option<usize>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -28,6 +37,14 @@ impl FocusTarget {
             FocusTarget::Link(href) => href.clone(),
             FocusTarget::Input { control_id, .. } => format!("input:{control_id}"),
             FocusTarget::Select(name) => format!("select:{name}"),
+        }
+    }
+
+    pub fn frame_kind(&self) -> crate::EngineFocusTargetKind {
+        match self {
+            FocusTarget::Link(_) => crate::EngineFocusTargetKind::Link,
+            FocusTarget::Input { .. } => crate::EngineFocusTargetKind::Input,
+            FocusTarget::Select(_) => crate::EngineFocusTargetKind::Select,
         }
     }
 }
@@ -144,6 +161,12 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                     let href = target.as_ref().map(FocusTarget::to_render_href);
 
                     for chunk in chunks {
+                        result.segments.push(LayoutSegment {
+                            x: 0,
+                            y: line,
+                            text: chunk.clone(),
+                            focus_index,
+                        });
                         match &href {
                             Some(link_href) => {
                                 result.render_list.draw.push(DrawCmd::Link {

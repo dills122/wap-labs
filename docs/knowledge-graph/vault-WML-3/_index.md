@@ -14,12 +14,12 @@ Target: [[sprints/WML-3|WML-3]]
 
 ## Graph summary
 
-- Nodes: 332
-- Edges: 882
+- Nodes: 341
+- Edges: 904
 
-- `clause`: 121
-- `fixture`: 121
-- `legacy-ticket`: 14
+- `clause`: 124
+- `fixture`: 124
+- `legacy-ticket`: 16
 - `owner-layer`: 4
 - `profile`: 1
 - `requirement`: 12
@@ -27,7 +27,7 @@ Target: [[sprints/WML-3|WML-3]]
 - `source-document`: 13
 - `source-family`: 3
 - `sprint`: 6
-- `work-item`: 8
+- `work-item`: 9
 
 ## Work items without direct normative-clause mappings
 

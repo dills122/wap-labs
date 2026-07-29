@@ -273,6 +273,12 @@
           "markdownDescription": "Enables the engine_commit_focused_select_edit_frame command without any pre-configured scope."
         },
         {
+          "description": "Enables the engine_handle_input_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-handle-input-frame",
+          "markdownDescription": "Enables the engine_handle_input_frame command without any pre-configured scope."
+        },
+        {
           "description": "Enables the engine_handle_key command without any pre-configured scope.",
           "type": "string",
           "const": "allow-engine-handle-key",
@@ -481,6 +487,12 @@
           "type": "string",
           "const": "deny-engine-commit-focused-select-edit-frame",
           "markdownDescription": "Denies the engine_commit_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_handle_input_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-handle-input-frame",
+          "markdownDescription": "Denies the engine_handle_input_frame command without any pre-configured scope."
         },
         {
           "description": "Denies the engine_handle_key command without any pre-configured scope.",

@@ -1,9 +1,30 @@
 import type { FetchResponse } from '../../../contracts/transport';
-import type { EngineFrame, EngineRuntimeSnapshot, RenderList } from '../../../contracts/engine';
+import type {
+  EngineFrame,
+  EnginePresentationFrame,
+  EngineRuntimeSnapshot,
+  RenderList
+} from '../../../contracts/engine';
 import type { NavigationHostClient } from './navigation-state';
 
 export const renderStub: RenderList = {
   draw: [{ type: 'text', x: 0, y: 0, text: 'ok' }]
+};
+
+export const presentationStub: EnginePresentationFrame = {
+  contractVersion: 1,
+  frameId: 'test-frame',
+  profileId: 'class-c-reference',
+  viewport: { cols: 20 },
+  deck: {
+    baseUrl: 'http://example.test/start.wml',
+    contentType: 'text/vnd.wap.wml'
+  },
+  card: { id: 'home' },
+  rows: [{ index: 0, segments: [{ type: 'text', x: 0, text: 'ok' }] }],
+  selection: { type: 'none' },
+  affordances: [],
+  backAvailable: false
 };
 
 export const snapshot = (
@@ -24,7 +45,8 @@ export const frame = (
   render: RenderList = renderStub
 ): EngineFrame => ({
   snapshot: snapshot(snapshotOverrides),
-  render
+  render,
+  presentation: presentationStub
 });
 
 export const fetchOk = (overrides: Partial<FetchResponse> = {}): FetchResponse => ({
@@ -67,43 +89,50 @@ export const createHostClientMock = (
       overrides.engineLoadDeckContextFrame ??
       (async (request) => ({
         snapshot: await host.engineLoadDeckContext(request),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineRenderFrame:
       overrides.engineRenderFrame ??
       (async () => ({
         snapshot: await host.engineSnapshot(),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineHandleKeyFrame:
       overrides.engineHandleKeyFrame ??
       (async (request) => ({
         snapshot: await host.engineHandleKey(request),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineNavigateBackFrame:
       overrides.engineNavigateBackFrame ??
       (async () => ({
         snapshot: await host.engineNavigateBack(),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineNavigateToCardFrame:
       overrides.engineNavigateToCardFrame ??
       (async (request) => ({
         snapshot: await host.engineNavigateToCard(request),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineAdvanceTimeMsFrame:
       overrides.engineAdvanceTimeMsFrame ??
       (async (request) => ({
         snapshot: await host.engineAdvanceTimeMs(request),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       })),
     engineClearExternalNavigationIntentFrame:
       overrides.engineClearExternalNavigationIntentFrame ??
       (async () => ({
         snapshot: await host.engineClearExternalNavigationIntent(),
-        render: await renderForFrame()
+        render: await renderForFrame(),
+        presentation: presentationStub
       }))
   };
 };

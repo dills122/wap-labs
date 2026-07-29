@@ -1,0 +1,35 @@
+<!--
+label: WML-309 Frame Affordances
+work-items: WML-309,WBP-06,F0-01
+spec-items: WML-C-26,RQ-RMK-002,WML-CL-DO-ACTIVE-VISIBILITY,WML-CL-DO-LABEL-BEST-EFFORT,WML-CL-DO-UNIQUE-WIDGET
+description: Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.
+goal: Verify that active do elements are exposed once with stable action identifiers and best-effort labels while optional and noop-masked actions stay absent.
+testing-ac:
+- The initial frame exposes Open Ada, the accept fallback label, and template Help Ada in deterministic order.
+- The first accept action is the logical primary control and later actions remain task affordances.
+- Activating do:alternate through the current frame identifier reaches the second card.
+- Optional and noop-masked do elements never appear as affordances.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <template>
+    <do name="template-help" type="help" label="Help Ada"><go href="#help"/></do>
+    <do name="masked" type="options"><go href="#masked"/></do>
+  </template>
+
+  <card id="home">
+    <do name="open" type="accept" label="Open Ada"><go href="#first"/></do>
+    <do name="alternate" type="accept"><go href="#second"/></do>
+    <do name="masked" type="options"><noop/></do>
+    <do name="optional" type="x-vendor" optional="true"><go href="#optional"/></do>
+    <p>Choose an action.</p>
+  </card>
+
+  <card id="first"><p>First action.</p></card>
+  <card id="second"><p>Second action.</p></card>
+  <card id="help"><p>Help action.</p></card>
+  <card id="masked"><p>Masked action.</p></card>
+  <card id="optional"><p>Optional action.</p></card>
+</wml>

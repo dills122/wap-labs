@@ -139,6 +139,52 @@ test('asserts Waves host session, status, and semantic render evidence', () => {
   );
 });
 
+test('asserts the canonical frame contract and ordered affordances', () => {
+  const frame = {
+    contractVersion: 1,
+    frameId: 'cafef00d',
+    profileId: 'class-c-reference',
+    card: { id: 'home' },
+    affordances: [
+      {
+        actionId: 'do:open',
+        label: 'Open',
+        source: 'card-do',
+        control: 'primary',
+        enabled: true,
+        doName: 'open',
+        doType: 'accept'
+      }
+    ]
+  };
+  const expectation = {
+    state: { activeCardId: 'home' },
+    frame: {
+      contractVersion: 1,
+      profileId: 'class-c-reference',
+      cardId: 'home',
+      affordances: [
+        {
+          actionId: 'do:open',
+          label: 'Open',
+          source: 'card-do',
+          control: 'primary',
+          enabled: true
+        }
+      ]
+    }
+  };
+  const evidence = {
+    snapshot: { activeCardId: 'home' },
+    traceEntries: [],
+    frame
+  };
+
+  assert.doesNotThrow(() => assertStoryExpectation(evidence, expectation, 'frame'));
+  frame.affordances[0].label = 'Different';
+  assert.throws(() => assertStoryExpectation(evidence, expectation, 'frame'), /frame.affordances/);
+});
+
 test('normalizes undefined optional fields in structured snapshot expectations', () => {
   const evidence = {
     snapshot: {

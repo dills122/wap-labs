@@ -855,7 +855,7 @@ fn sync_select_variables(
     Ok(())
 }
 
-fn evaluate_vdata(raw: &str, vars: &HashMap<String, String>) -> Result<String, String> {
+pub(crate) fn evaluate_vdata(raw: &str, vars: &HashMap<String, String>) -> Result<String, String> {
     evaluate_variable(raw, vars, SubstitutionContext::VData)
 }
 
