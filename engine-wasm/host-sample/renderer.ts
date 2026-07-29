@@ -1,5 +1,7 @@
 import init, { WmlEngine } from '../pkg/wavenav_engine.js';
 import type {
+  EngineInputEvent,
+  EnginePresentationFrame,
   EngineTraceEntry,
   ScriptDialogRequest,
   WmlGoRequestPolicy,
@@ -46,6 +48,8 @@ export interface EngineHost {
   advanceTimeMs(deltaMs: number): void;
   navigateBack(): boolean;
   snapshot(): EngineSnapshot;
+  renderFrame(): EnginePresentationFrame;
+  handleInput(event: EngineInputEvent): void;
   clearExternalNavigationIntent(): void;
   getVar(name: string): string | undefined;
   setVar(name: string, value: string): boolean;
@@ -165,6 +169,13 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
           diagnostics.lastScriptExecutionErrorCategory?.() ?? undefined,
         lastScriptRequiresRefresh: engine.lastScriptRequiresRefresh()
       };
+    },
+    renderFrame() {
+      return engine.renderFrame();
+    },
+    handleInput(event: EngineInputEvent) {
+      engine.handleInput(event);
+      paint();
     },
     clearExternalNavigationIntent() {
       engine.clearExternalNavigationIntent();

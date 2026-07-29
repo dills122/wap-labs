@@ -461,6 +461,14 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-309',
+    new Set([
+      'WML-CL-DO-ACTIVE-VISIBILITY',
+      'WML-CL-DO-LABEL-BEST-EFFORT',
+      'WML-CL-DO-UNIQUE-WIDGET'
+    ])
+  ],
+  [
     'TRN-702',
     new Set([
       'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -550,6 +558,9 @@ const implementedWml301ClauseIds = new Set(
 );
 const implementedWml303ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-303')
+);
+const implementedWml309ClauseIds = new Set(
+  directWorkItemClauseIds.get('WML-309')
 );
 const implementedWml304TransportClauseIds = new Set([
   'WML-CL-POSTFIELD-REQUEST-PAIR',
@@ -778,6 +789,12 @@ const wml303FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
+};
+
+const wml309FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
+  testPath: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
+  command: 'pnpm test:story WML-309'
 };
 
 function wml304FixtureEvidence(clauseId) {
@@ -1211,6 +1228,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (implementedWml309ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml309FixtureEvidence;
       } else if (implementedWml304ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml304FixtureEvidence(candidate.id);
@@ -2146,6 +2166,7 @@ function clause(
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml301ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
+    implementedWml309ClauseIds.has(clauseId) ||
     implementedWml304ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
     implementedWsp802ClauseIds.has(clauseId) ||
@@ -2171,6 +2192,8 @@ function clause(
       ? wml301FixtureEvidence(clauseId)
       : implementedWml303ClauseIds.has(clauseId)
       ? wml303FixtureEvidence
+      : implementedWml309ClauseIds.has(clauseId)
+      ? wml309FixtureEvidence
       : implementedWml304ClauseIds.has(clauseId)
       ? wml304FixtureEvidence(clauseId)
       : implementedWsp801ClauseIds.has(clauseId)

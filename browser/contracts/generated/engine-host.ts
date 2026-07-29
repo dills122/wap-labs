@@ -11,6 +11,8 @@ export type LoadDeckContextRequest = { wmlXml: string, baseUrl: string, contentT
 
 export type HandleKeyRequest = { key: EngineKey, };
 
+export type HandleInputRequest = { event: EngineInputEvent, };
+
 export type NavigateToCardRequest = { cardId: string, };
 
 export type SetViewportColsRequest = { cols: number, };
@@ -39,7 +41,35 @@ export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalN
 
 export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, nextTimerWakeupMs?: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, browserContextEpoch?: number, deckLanguage?: string, activeCardLanguage?: string, lastBackNavigationHandled: boolean, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
-export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, };
+export type EngineViewport = { cols: number, };
+
+export type EngineDeckDisplayMetadata = { baseUrl: string, contentType: string, language?: string, };
+
+export type EngineCardDisplayMetadata = { id: string, language?: string, };
+
+export type EngineFrameRow = { index: number, segments: Array<EngineFrameSegment>, };
+
+export type EngineFocusTargetKind = "link" | "input" | "select";
+
+export type EngineFrameSegment = { "type": "text", x: number, text: string, } | { "type": "focusable", x: number, text: string, focusId: string, targetKind: EngineFocusTargetKind, focused: boolean, };
+
+export type EngineFocusState = { index: number, focusId: string, targetKind: EngineFocusTargetKind, };
+
+export type EngineSelectionState = { "type": "none" } | { "type": "input", controlId: string, name: string, editing: boolean, } | { "type": "select", controlId: string, editing: boolean, value?: string, };
+
+export type EngineAffordanceSource = "focused-link" | "focused-input" | "focused-select" | "card-do" | "template-do" | "history";
+
+export type EngineControlAssociation = "primary" | "task" | "back";
+
+export type EngineAffordance = { actionId: string, label: string, enabled: boolean, source: EngineAffordanceSource, control: EngineControlAssociation, doName?: string, doType?: string, };
+
+export type EnginePresentationFrame = { contractVersion: number, frameId: string, profileId: string, viewport: EngineViewport, deck: EngineDeckDisplayMetadata, card: EngineCardDisplayMetadata, rows: Array<EngineFrameRow>, focus?: EngineFocusState, selection: EngineSelectionState, affordances: Array<EngineAffordance>, backAvailable: boolean, };
+
+export type EngineInputKey = "up" | "down" | "enter";
+
+export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, };
+
+export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, presentation: EnginePresentationFrame, };
 
 export type EngineDebugMaskingPolicy = "required";
 
@@ -140,6 +170,7 @@ export interface EngineHostClient {
     renderFrame(): Promise<EngineFrame>;
     handleKey(request: HandleKeyRequest): Promise<EngineRuntimeSnapshot>;
     handleKeyFrame(request: HandleKeyRequest): Promise<EngineFrame>;
+    handleInputFrame(request: HandleInputRequest): Promise<EngineFrame>;
     navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
     navigateToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
     navigateBack(): Promise<EngineRuntimeSnapshot>;

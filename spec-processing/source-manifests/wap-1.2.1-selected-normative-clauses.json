@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 299
+    "assessedClauseCount": 302
   },
   "families": [
     {
@@ -6174,8 +6174,13 @@
           "fixturePlan": {
             "id": "WML-FX-DO-UNIQUE-WIDGET",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget."
+            "status": "implemented",
+            "assertion": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "testPath": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "command": "pnpm test:story WML-309"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6185,7 +6190,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "WML-201"
+              "WML-201",
+              "WML-309"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -6193,11 +6199,12 @@
             "parentImplementationSnapshot": {
               "WML-C-26": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-309"
           ]
         },
         {
@@ -6269,8 +6276,13 @@
           "fixturePlan": {
             "id": "WML-FX-DO-LABEL-BEST-EFFORT",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Make a best-effort to use a supplied do label when the interface action can be labeled."
+            "status": "implemented",
+            "assertion": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "testPath": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "command": "pnpm test:story WML-309"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6280,7 +6292,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "WML-201"
+              "WML-201",
+              "WML-309"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -6288,11 +6301,12 @@
             "parentImplementationSnapshot": {
               "WML-C-26": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-309"
           ]
         },
         {
@@ -6420,8 +6434,13 @@
           "fixturePlan": {
             "id": "WML-FX-DO-ACTIVE-VISIBILITY",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Make every active, non-optional do accessible for user activation."
+            "status": "implemented",
+            "assertion": "Make every active, non-optional do accessible for user activation.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "testPath": "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+              "command": "pnpm test:story WML-309"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6431,7 +6450,8 @@
             "workItems": [
               "R0-01",
               "R0-02",
-              "WML-201"
+              "WML-201",
+              "WML-309"
             ],
             "requirementIds": [
               "RQ-RMK-002"
@@ -6439,11 +6459,12 @@
             "parentImplementationSnapshot": {
               "WML-C-26": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-309"
           ]
         },
         {

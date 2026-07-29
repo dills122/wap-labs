@@ -46,7 +46,7 @@ Archive:
 
 ### F0-01 Define canonical frame/input contract types
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: none
 3. `Files`:
 - `engine-wasm/engine/src/render/*`
@@ -55,20 +55,25 @@ Archive:
 - `browser/src-tauri/src/bin/generate_contracts.rs`
 4. `Build`:
 - Add additive types for:
-  - `EngineFrame`
-  - `DrawCommand` (new contract alias or replacement for `DrawCmd`)
+  - `EnginePresentationFrame` with ordered rows/segments, focus/selection, and affordances
   - `EngineInputEvent`
-  - `EngineCommand` (if command queue is adopted)
+- Keep the Tauri-owned `EngineFrame` only as a transitional snapshot/render/presentation envelope.
+- Defer `EngineCommand`; no command queue was required for the stable F0 boundary.
 - Keep legacy `RenderList` contract available.
 5. `Tests`:
 - contract generation succeeds
 - TypeScript compile in `browser/frontend`
 6. `Accept`:
 - New frame/input types are exported in Rust and TS contracts without breaking current hosts.
+8. `Notes`:
+- WBP-06 v1 uses engine-owned `EnginePresentationFrame` and `EngineInputEvent` DTOs. The host-owned
+  `EngineFrame` remains a transitional envelope containing snapshot, legacy render output, and the
+  canonical presentation payload; it does not own presentation semantics.
+- Logical `primary`, `task`, and `back` associations avoid vendor-specific physical key claims.
 
 ### F0-02 Add additive engine APIs with compatibility wrappers
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F0-01`
 3. `Files`:
 - `engine-wasm/engine/src/lib.rs`
@@ -88,10 +93,14 @@ Archive:
 - `cd browser/src-tauri && cargo test`
 6. `Accept`:
 - Old and new APIs return equivalent behavior for existing fixtures and key sequences.
+8. `Notes`:
+- Native and WASM `renderFrame()`/`handleInput()` share the legacy layout, key, and task execution
+  paths. Action activation is bound to the current frame identity and rejects stale input before
+  mutation.
 
 ### F0-03 Contract drift guardrails for frame/input interfaces
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F0-01`
 3. `Files`:
 - `scripts/` (new contract drift check)
@@ -103,6 +112,10 @@ Archive:
 - intentional drift causes CI/check failure
 6. `Accept`:
 - contract changes cannot merge with stale generated outputs.
+8. `Notes`:
+- The existing CI `contracts:check` lanes now regenerate the frame/input Rust projections for both
+  `engine-wasm/contracts/generated/runtime-dtos.ts` and browser host/command contracts. The
+  Tauri generated schema gate covers the added command allowlist.
 
 ## Phase F1: Host Rendering Migration
 

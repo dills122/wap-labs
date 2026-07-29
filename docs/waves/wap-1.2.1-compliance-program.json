@@ -768,6 +768,35 @@
           "notes": [
             "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
           ]
+        },
+        {
+          "id": "WML-309",
+          "status": "done",
+          "ownerLayers": ["engine-wasm", "browser", "qa"],
+          "sourceFamilies": ["wml"],
+          "existingTickets": ["WBP-06", "F0-01"],
+          "outputs": [
+            "Engine-owned frame and affordance contract for active WML do actions"
+          ],
+          "acceptance": [
+            "Every active non-optional do is represented once with stable activation identity and best-effort authored labelling without assuming a vendor-specific physical widget."
+          ],
+          "evidence": [
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_309",
+            "wasm-pack test --node engine-wasm/engine",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm test:story WML-309",
+            "node scripts/wap-context-pack.mjs WML-309",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML section 9.7"
+          ],
+          "notes": [
+            "This additive slice owns only the three WML-C-26 presentation residuals: active do visibility, label best effort, and unique activatable action exposure. It preserves completed WML-303 task, shadowing, BACK, and activation-order history.",
+            "Source-derived native, WASM, Tauri host-serialization, and executable-story evidence proves the three mapped clauses. Contract prose and generated types remain insufficient without those synchronized checks."
+          ]
         }
       ],
       "exitGates": [

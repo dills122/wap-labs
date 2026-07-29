@@ -17,11 +17,14 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `refines` ← [[clauses/WML-CL-DO-ACTIVATION|WML-CL-DO-ACTIVATION]]
+- `refines` ← [[clauses/WML-CL-DO-ACTIVE-VISIBILITY|WML-CL-DO-ACTIVE-VISIBILITY]]
 - `refines` ← [[clauses/WML-CL-DO-EFFECTIVE-NAME|WML-CL-DO-EFFECTIVE-NAME]]
 - `refines` ← [[clauses/WML-CL-DO-INACTIVE-HIDDEN|WML-CL-DO-INACTIVE-HIDDEN]]
+- `refines` ← [[clauses/WML-CL-DO-LABEL-BEST-EFFORT|WML-CL-DO-LABEL-BEST-EFFORT]]
 - `refines` ← [[clauses/WML-CL-DO-OPTIONAL-PERMISSION|WML-CL-DO-OPTIONAL-PERMISSION]]
 - `refines` ← [[clauses/WML-CL-DO-STRUCTURE|WML-CL-DO-STRUCTURE]]
 - `refines` ← [[clauses/WML-CL-DO-TYPE-ACCEPTANCE|WML-CL-DO-TYPE-ACCEPTANCE]]
+- `refines` ← [[clauses/WML-CL-DO-UNIQUE-WIDGET|WML-CL-DO-UNIQUE-WIDGET]]
 
 ## Data
 

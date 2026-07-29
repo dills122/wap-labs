@@ -151,6 +151,25 @@
       }
     },
     {
+      "clientMethod": "engineHandleInputFrame",
+      "command": "engine_handle_input_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "handleInputFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "HandleInputRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
       "clientMethod": "engineNavigateToCard",
       "command": "engine_navigate_to_card",
       "facadeMethod": {

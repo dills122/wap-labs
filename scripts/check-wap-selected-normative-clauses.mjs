@@ -363,6 +363,15 @@ const wml305ClauseIds = new Set([
   'WML-CL-TIMER-START-STOP',
   'WML-CL-TIMER-UNITS'
 ]);
+const wml309ClauseIds = new Set([
+  'WML-CL-DO-ACTIVE-VISIBILITY',
+  'WML-CL-DO-LABEL-BEST-EFFORT',
+  'WML-CL-DO-UNIQUE-WIDGET'
+]);
+const wml309FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
+  command: 'pnpm test:story WML-309'
+};
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -508,6 +517,7 @@ const implementedWmlClauseIds = new Set([
   ...wml302ClauseIds,
   ...wml303ClauseIds,
   ...wml305ClauseIds,
+  ...wml309ClauseIds,
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
 ]);
@@ -779,6 +789,7 @@ for (const family of ledger.families ?? []) {
         ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
         ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
+        ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -797,6 +808,7 @@ for (const family of ledger.families ?? []) {
       ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
       ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
+      ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -875,7 +887,10 @@ for (const family of ledger.families ?? []) {
             candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
           : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
             !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
-            (wml301EvidenceByClauseId.has(candidate.id)
+            (wml309ClauseIds.has(candidate.id)
+              ? candidate.fixturePlan.evidence?.path !== wml309FixtureEvidence.path ||
+                candidate.fixturePlan.evidence?.command !== wml309FixtureEvidence.command
+              : wml301EvidenceByClauseId.has(candidate.id)
             ? candidate.fixturePlan.evidence?.path !==
                 wml301EvidenceByClauseId.get(candidate.id).path ||
               candidate.fixturePlan.evidence?.command !==

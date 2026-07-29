@@ -26,7 +26,9 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `loadDeckContext(...)` | `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-007`, `RQ-WAE-001`, `WML-202` |
 | `WmlLoadDiagnostic` + `lastWmlLoadDiagnostics()` | `RQ-RMK-012`, `WML-205` |
 | `render()` / `RenderList` | `RQ-RMK-001`, `RQ-RMK-009` |
+| `renderFrame()` / `EnginePresentationFrame` ordered rows, focus, selection, affordances, and `frameId` | `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-006`, `RQ-RMK-009`, `WML-309`, `WBP-06`, `F0-01` |
 | `handleKey('up'|'down'|'enter')` | `RQ-RMK-003`, `RQ-WAE-017` |
+| `handleInput(EngineInputEvent)` key and frame-bound action activation | `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-017`, `WML-309`, `WBP-06`, `F0-02` |
 | `navigateToCard(id)` | `RQ-RMK-003` |
 | `navigateBack()` / `lastBackNavigationHandled()` | `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`, `RQ-WAE-017`, `WML-303` |
 | `activeCardId()` | `RQ-RMK-003` |
@@ -79,6 +81,7 @@ Map contract surfaces to requirement IDs so implementation work in each project 
 | `HostSessionState.history` / `historyIndex` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
 | `HostHistoryEntry.url` / `activeCardId` | `RQ-WAE-016`, `RQ-WAE-017`, `RQ-RMK-003` |
 | `EngineRuntimeSnapshot.lastBackNavigationHandled` | `RQ-RMK-002`, `RQ-WAE-017`, `WML-303` |
+| Generated `EnginePresentationFrame`, `EngineInputEvent`, and `engineHandleInputFrame` projection | `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-006`, `RQ-WAE-017`, `WML-309`, `WBP-06`, `F0-01`, `F0-02` |
 | Generated `EngineDebug*` DTOs and `EngineDebugConnector` projection | `RQ-RMK-002`, `RQ-RMK-008`, `RQ-WAE-017`, `D0-01` |
 
 Deterministic transport error trigger mapping:
@@ -103,3 +106,6 @@ Sync rule:
    round-trips remain in `WMLS-504`/`WMLS-505`; the existing
    `lastScriptDialogRequests()` surface is sufficient for the completed
    `W0-05` deterministic host-capability baseline.
+3. Frame hit regions, pointer/scroll input, editor event expansion, Canvas renderer adoption, and
+   legacy API removal remain F1/F2/F4 work. Version 1 deliberately makes no vendor-specific
+   physical-control placement claim.

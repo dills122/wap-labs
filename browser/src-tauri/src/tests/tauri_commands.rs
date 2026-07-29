@@ -70,6 +70,13 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
     )
     .expect("frame load should succeed");
     assert_eq!(loaded.snapshot.active_card_id.as_deref(), Some("home"));
+    assert_eq!(loaded.presentation.contract_version, 1);
+    assert_eq!(loaded.presentation.card.id, "home");
+    assert_eq!(loaded.presentation.frame_id.len(), 16);
+    assert_eq!(
+        loaded.presentation.focus.as_ref().map(|focus| focus.index),
+        Some(0)
+    );
     assert!(
         loaded.render.draw.iter().any(|cmd| match cmd {
             DrawCmd::Text { text, .. } => text.contains("Hello from Waves"),
@@ -94,6 +101,25 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
     let after_back = super::super::engine_navigate_back_frame(borrowed_state(&state))
         .expect("frame back should succeed");
     assert_eq!(after_back.snapshot.active_card_id.as_deref(), Some("home"));
+
+    let typed_action = super::super::engine_handle_input_frame(
+        borrowed_state(&state),
+        HandleInputRequest {
+            event: EngineInputEvent::ActivateAction {
+                frame_id: after_back.presentation.frame_id,
+                action_id: "focus:0".to_string(),
+            },
+        },
+    )
+    .expect("typed frame action should succeed");
+    assert_eq!(
+        typed_action.snapshot.active_card_id.as_deref(),
+        Some("next")
+    );
+    assert_eq!(typed_action.presentation.card.id, "next");
+
+    super::super::engine_navigate_back_frame(borrowed_state(&state))
+        .expect("second frame back should succeed");
 
     let advanced = super::super::engine_advance_time_ms_frame(
         borrowed_state(&state),

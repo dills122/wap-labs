@@ -143,9 +143,21 @@ impl WmlEngine {
         to_js_value(&self.render().map_err(as_js_err)?)
     }
 
+    #[wasm_bindgen(js_name = renderFrame)]
+    pub fn render_frame_wasm(&self) -> Result<JsValue, JsValue> {
+        to_js_value(&self.render_frame().map_err(as_js_err)?)
+    }
+
     #[wasm_bindgen(js_name = handleKey)]
     pub fn handle_key_wasm(&mut self, key: String) -> Result<(), JsValue> {
         self.handle_key(key).map_err(as_js_err)
+    }
+
+    #[wasm_bindgen(js_name = handleInput)]
+    pub fn handle_input_wasm(&mut self, event: JsValue) -> Result<(), JsValue> {
+        let event: EngineInputEvent = serde_wasm_bindgen::from_value(event)
+            .map_err(|err| JsValue::from_str(&err.to_string()))?;
+        self.handle_input(event).map_err(as_js_err)
     }
 
     #[wasm_bindgen(js_name = navigateToCard)]

@@ -73,6 +73,12 @@ pub use engine_wml_types::{
     WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,
     WmlLoadDiagnosticOutcomeLiteral,
 };
+pub use render::frame::{
+    EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
+    EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
+    EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
+    EngineSelectionState, EngineViewport, ENGINE_FRAME_CONTRACT_VERSION, ENGINE_FRAME_PROFILE_ID,
+};
 pub use render::render_list::{DrawCmd, RenderList};
 pub use wavescript::wap_decoder::{
     decode_wap_compilation_unit, WapCompilationUnit, WapConstant, WapDecodeError, WapFunction,

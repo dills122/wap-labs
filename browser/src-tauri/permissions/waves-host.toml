@@ -15,6 +15,7 @@ commands.allow = [
   "engine_render_frame",
   "engine_handle_key",
   "engine_handle_key_frame",
+  "engine_handle_input_frame",
   "engine_navigate_to_card",
   "engine_navigate_to_card_frame",
   "engine_navigate_back",

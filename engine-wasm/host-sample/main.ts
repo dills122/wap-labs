@@ -9,7 +9,7 @@ import { renderExampleMetadata } from './ui/example-metadata';
 import { downloadFile } from './services/download';
 import './ui/runtime-inspector-panel';
 import type { RuntimeInspectorPanel } from './ui/runtime-inspector-panel';
-import type { EngineTraceEntry } from '../contracts/wml-engine';
+import type { EnginePresentationFrame, EngineTraceEntry } from '../contracts/wml-engine';
 
 interface StoryEvidence {
   activeExampleKey: string;
@@ -17,12 +17,14 @@ interface StoryEvidence {
   traceEntries: EngineTraceEntry[];
   status: string;
   eventLog: string;
+  frame: EnginePresentationFrame;
 }
 
 declare global {
   interface Window {
     __WAVENAV_STORY_EVIDENCE__?: {
       collect(): StoryEvidence;
+      activateAction(actionId: string): void;
     };
   }
 }
@@ -203,8 +205,16 @@ async function main() {
       snapshot: host.snapshot(),
       traceEntries: host.traceEntries(),
       status: status.textContent ?? '',
-      eventLog: eventLog.textContent ?? ''
-    })
+      eventLog: eventLog.textContent ?? '',
+      frame: host.renderFrame()
+    }),
+    activateAction: (actionId) => {
+      const frame = host.renderFrame();
+      host.handleInput({ type: 'activate-action', frameId: frame.frameId, actionId });
+      const snapshot = updateRuntimeState();
+      status.textContent = `Activated ${actionId}. Active card: ${snapshot.activeCardId}`;
+      appendEvent(`ACTIVATE_ACTION (${actionId})`, snapshot);
+    }
   };
 
   const reloadFromEditor = (prefix: string, reason: string) => {

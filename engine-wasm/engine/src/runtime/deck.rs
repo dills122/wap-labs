@@ -32,6 +32,12 @@ pub struct DeckMeta {
     pub scheme: Option<String>,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CardEventBindingSource {
+    Card,
+    Template,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Deck {
     pub cards: Vec<Card>,
@@ -128,6 +134,16 @@ impl Deck {
     /// exercises the WML permission to omit explicitly optional `do` actions,
     /// so those bindings remain parsed but are excluded from this active set.
     pub fn active_event_bindings(&self, card_idx: usize) -> Vec<&CardEventBinding> {
+        self.active_event_bindings_with_source(card_idx)
+            .into_iter()
+            .map(|(_, binding)| binding)
+            .collect()
+    }
+
+    fn active_event_bindings_with_source(
+        &self,
+        card_idx: usize,
+    ) -> Vec<(CardEventBindingSource, &CardEventBinding)> {
         let Some(card) = self.cards.get(card_idx) else {
             return Vec::new();
         };
@@ -139,11 +155,17 @@ impl Deck {
         card.event_bindings
             .iter()
             .filter(|binding| !binding.is_noop() && !binding.is_optional_do())
-            .chain(self.template_bindings.iter().filter(|binding| {
-                !binding.is_noop()
-                    && !binding.is_optional_do()
-                    && !card_identities.contains(&binding.identity())
-            }))
+            .map(|binding| (CardEventBindingSource::Card, binding))
+            .chain(
+                self.template_bindings
+                    .iter()
+                    .filter(|binding| {
+                        !binding.is_noop()
+                            && !binding.is_optional_do()
+                            && !card_identities.contains(&binding.identity())
+                    })
+                    .map(|binding| (CardEventBindingSource::Template, binding)),
+            )
             .collect()
     }
 
@@ -154,6 +176,16 @@ impl Deck {
             .collect()
     }
 
+    pub fn active_do_bindings_with_source(
+        &self,
+        card_idx: usize,
+    ) -> Vec<(CardEventBindingSource, &CardEventBinding)> {
+        self.active_event_bindings_with_source(card_idx)
+            .into_iter()
+            .filter(|(_, binding)| matches!(binding.kind, CardEventBindingKind::Do { .. }))
+            .collect()
+    }
+
     pub fn active_do_action(&self, card_idx: usize, do_type: &str) -> Option<&CardTaskAction> {
         self.active_do_bindings(card_idx)
             .into_iter()
@@ -161,7 +193,6 @@ impl Deck {
             .map(|binding| &binding.action)
     }
 
-    #[cfg(test)]
     pub fn active_do_action_by_name(&self, card_idx: usize, name: &str) -> Option<&CardTaskAction> {
         self.active_do_bindings(card_idx)
             .into_iter()

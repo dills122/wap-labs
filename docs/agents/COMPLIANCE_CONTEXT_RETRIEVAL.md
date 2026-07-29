@@ -44,8 +44,9 @@ serialization and fetch ingress. Use `WSP-8` only for sprint-wide WSP planning:
 node scripts/wap-context-pack.mjs WSP-801
 ```
 
-The WML-3 focused targets are `WML-301` through `WML-305`. Use `WML-3` only for sprint-wide
-runtime planning. A focused pack exposes the canonical mappings and gaps that exist now; it does
+The WML-3 focused targets are `WML-301` through `WML-305` plus the additive frame/affordance
+slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pack exposes the
+canonical mappings and gaps that exist now; it does
 not by itself establish implementation readiness or complete a source audit.
 
 For the WMLScript bytecode decoder/verifier lane, use `WMLS-501`. Use `WMLS-5` only for

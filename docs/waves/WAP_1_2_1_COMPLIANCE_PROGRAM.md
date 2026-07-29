@@ -195,9 +195,9 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-Merged R0-06/WSP-805 request serialization plus Runtime C1 advance the evidence rollup to
-41/198 selected parents implemented and 299/762 clauses assessed while the canonical program
-remains 28 work items `done`, 11 `in-progress`, 42 `todo`, and one `blocked`.
+Merged R0-06/WSP-805 request serialization plus Runtime C1 and WML-309 advance the evidence rollup to
+41/198 selected parents implemented and 302/762 clauses assessed while the canonical program records
+29 work items `done`, 11 `in-progress`, 42 `todo`, and one `blocked`.
 The WML-301 focused graph separately exposes 13 direct clauses and seven aggregate
 regression/delegate clauses so Project Atlas cannot infer broad WAE closure from this tranche;
 the aggregate item remains in progress under `WAE-601`.

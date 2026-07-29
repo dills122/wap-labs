@@ -14,7 +14,8 @@ use wavenav_host_lib::command_contract::{
     render_default_capability, render_host_permission, TauriCommandDescriptor, TAURI_COMMANDS,
 };
 use wavenav_host_lib::contract_types::{
-    AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineDebugBufferSnapshot,
+    AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineAffordance, EngineAffordanceSource,
+    EngineCardDisplayMetadata, EngineControlAssociation, EngineDebugBufferSnapshot,
     EngineDebugCapabilities, EngineDebugCloseSessionOutcome, EngineDebugCloseSessionRequest,
     EngineDebugCloseSessionResult, EngineDebugCollectionSummary, EngineDebugError,
     EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch, EngineDebugEventKind,
@@ -23,14 +24,16 @@ use wavenav_host_lib::contract_types::{
     EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest, EngineDebugPostfieldResolution,
     EngineDebugPostfieldResolutionSource, EngineDebugRedactionReason, EngineDebugSession,
     EngineDebugSnapshot, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
-    EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue, EngineFrame, EngineKey,
-    EngineRuntimeSnapshot, ExternalNavigationCacheControlPolicySnapshot,
-    ExternalNavigationMethodSnapshot, ExternalNavigationPostContextSnapshot,
-    ExternalNavigationPostFieldSnapshot, ExternalNavigationRequestIntentSnapshot,
-    ExternalNavigationRequestPolicySnapshot, HandleKeyRequest, LoadDeckContextRequest,
-    LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList,
-    ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest,
-    SetViewportColsRequest,
+    EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue,
+    EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrame,
+    EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey, EngineKey,
+    EnginePresentationFrame, EngineRuntimeSnapshot, EngineSelectionState, EngineViewport,
+    ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationMethodSnapshot,
+    ExternalNavigationPostContextSnapshot, ExternalNavigationPostFieldSnapshot,
+    ExternalNavigationRequestIntentSnapshot, ExternalNavigationRequestPolicySnapshot,
+    HandleInputRequest, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
+    MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
+    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 
 fn push_decl<T: TS>(out: &mut String) {
@@ -133,6 +136,7 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<LoadDeckRequest>(&mut output);
     push_decl::<LoadDeckContextRequest>(&mut output);
     push_decl::<HandleKeyRequest>(&mut output);
+    push_decl::<HandleInputRequest>(&mut output);
     push_decl::<NavigateToCardRequest>(&mut output);
     push_decl::<SetViewportColsRequest>(&mut output);
     push_decl::<AdvanceTimeRequest>(&mut output);
@@ -147,6 +151,20 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<ExternalNavigationPostContextSnapshot>(&mut output);
     push_decl::<ExternalNavigationRequestPolicySnapshot>(&mut output);
     push_decl::<EngineRuntimeSnapshot>(&mut output);
+    push_decl::<EngineViewport>(&mut output);
+    push_decl::<EngineDeckDisplayMetadata>(&mut output);
+    push_decl::<EngineCardDisplayMetadata>(&mut output);
+    push_decl::<EngineFrameRow>(&mut output);
+    push_decl::<EngineFocusTargetKind>(&mut output);
+    push_decl::<EngineFrameSegment>(&mut output);
+    push_decl::<EngineFocusState>(&mut output);
+    push_decl::<EngineSelectionState>(&mut output);
+    push_decl::<EngineAffordanceSource>(&mut output);
+    push_decl::<EngineControlAssociation>(&mut output);
+    push_decl::<EngineAffordance>(&mut output);
+    push_decl::<EnginePresentationFrame>(&mut output);
+    push_decl::<EngineInputKey>(&mut output);
+    push_decl::<EngineInputEvent>(&mut output);
     push_decl::<EngineFrame>(&mut output);
     push_decl::<EngineDebugMaskingPolicy>(&mut output);
     push_decl::<EngineDebugTimestampKind>(&mut output);

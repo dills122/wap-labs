@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "example": "wml309FrameAffordances",
+  "flows": [
+    {
+      "id": "host-frame-affordance-contract",
+      "title": "Host sample consumes ordered frame affordances and activates one by stable id",
+      "workItems": ["WML-309", "WBP-06", "F0-01"],
+      "specItems": [
+        "WML-C-26",
+        "RQ-RMK-002",
+        "WML-CL-DO-ACTIVE-VISIBILITY",
+        "WML-CL-DO-LABEL-BEST-EFFORT",
+        "WML-CL-DO-UNIQUE-WIDGET"
+      ],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+        "frame": {
+          "contractVersion": 1,
+          "profileId": "class-c-reference",
+          "cardId": "home",
+          "affordances": [
+            {
+              "actionId": "do:open",
+              "label": "Open Ada",
+              "source": "card-do",
+              "control": "primary",
+              "enabled": true
+            },
+            {
+              "actionId": "do:alternate",
+              "label": "accept",
+              "source": "card-do",
+              "control": "task",
+              "enabled": true
+            },
+            {
+              "actionId": "do:template-help",
+              "label": "Help Ada",
+              "source": "template-do",
+              "control": "task",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "activate-action", "actionId": "do:alternate" },
+          "expect": {
+            "state": { "activeCardId": "second", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_AFFORDANCE", "ACTION_FRAGMENT"],
+            "frame": {
+              "contractVersion": 1,
+              "profileId": "class-c-reference",
+              "cardId": "second",
+              "affordances": [
+                {
+                  "actionId": "do:template-help",
+                  "label": "Help Ada",
+                  "source": "template-do",
+                  "control": "task",
+                  "enabled": true
+                },
+                {
+                  "actionId": "do:masked",
+                  "label": "options",
+                  "source": "template-do",
+                  "control": "task",
+                  "enabled": true
+                },
+                {
+                  "actionId": "history:back",
+                  "label": "Back",
+                  "source": "history",
+                  "control": "back",
+                  "enabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

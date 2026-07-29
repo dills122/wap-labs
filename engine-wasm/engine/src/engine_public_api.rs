@@ -279,6 +279,201 @@ impl WmlEngine {
         Ok(layout.render_list)
     }
 
+    /// Build the canonical, host-neutral presentation frame for the active card.
+    ///
+    /// Frame construction is pure: repeated calls over the same observable
+    /// engine state return the same content-derived `frameId` and do not add
+    /// trace entries. Legacy [`Self::render`] remains available during F0/F1.
+    pub fn render_frame(&self) -> Result<EnginePresentationFrame, String> {
+        catch_engine_panic(|| self.render_frame_bounded())?
+    }
+
+    fn render_frame_bounded(&self) -> Result<EnginePresentationFrame, String> {
+        let runtime_card = self.runtime_card_for_layout()?;
+        let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
+        let focus_index = if layout.focus_targets.is_empty() {
+            None
+        } else {
+            Some(clamp_focus(
+                self.focused_link_idx,
+                layout.focus_targets.len(),
+            ))
+        };
+
+        let mut rows: Vec<EngineFrameRow> = Vec::new();
+        for segment in &layout.segments {
+            if rows.last().is_none_or(|row| row.index != segment.y) {
+                rows.push(EngineFrameRow {
+                    index: segment.y,
+                    segments: Vec::new(),
+                });
+            }
+            let frame_segment = match segment.focus_index {
+                Some(index) => EngineFrameSegment::Focusable {
+                    x: segment.x,
+                    text: segment.text.clone(),
+                    focus_id: format!("focus:{index}"),
+                    target_kind: layout.focus_targets[index].frame_kind(),
+                    focused: focus_index == Some(index),
+                },
+                None => EngineFrameSegment::Text {
+                    x: segment.x,
+                    text: segment.text.clone(),
+                },
+            };
+            rows.last_mut()
+                .expect("a row is created before its segment")
+                .segments
+                .push(frame_segment);
+        }
+
+        let focus = match focus_index {
+            Some(index) => Some(EngineFocusState {
+                index: u32::try_from(index)
+                    .map_err(|_| "Frame focus index exceeds contract range".to_string())?,
+                focus_id: format!("focus:{index}"),
+                target_kind: layout.focus_targets[index].frame_kind(),
+            }),
+            None => None,
+        };
+        let selection = focus_index
+            .and_then(|index| layout.focus_targets.get(index))
+            .map_or(EngineSelectionState::None, |target| match target {
+                FocusTarget::Link(_) => EngineSelectionState::None,
+                FocusTarget::Input { control_id, name } => EngineSelectionState::Input {
+                    control_id: control_id.clone(),
+                    name: name.clone(),
+                    editing: self
+                        .active_input_edit
+                        .as_ref()
+                        .is_some_and(|edit| edit.control_id == *control_id),
+                },
+                FocusTarget::Select(control_id) => EngineSelectionState::Select {
+                    control_id: control_id.clone(),
+                    editing: self
+                        .active_select_edit
+                        .as_ref()
+                        .is_some_and(|edit| edit.select_name == *control_id),
+                    value: self.active_select_edit.as_ref().and_then(|edit| {
+                        (edit.select_name == *control_id)
+                            .then(|| self.focused_select_edit_value())
+                            .flatten()
+                    }),
+                },
+            });
+
+        let mut affordances = Vec::new();
+        if let Some(index) = focus_index {
+            let target = &layout.focus_targets[index];
+            let label = layout
+                .segments
+                .iter()
+                .filter(|segment| segment.focus_index == Some(index))
+                .map(|segment| segment.text.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            let source = match target {
+                FocusTarget::Link(_) => EngineAffordanceSource::FocusedLink,
+                FocusTarget::Input { .. } => EngineAffordanceSource::FocusedInput,
+                FocusTarget::Select(_) => EngineAffordanceSource::FocusedSelect,
+            };
+            affordances.push(EngineAffordance {
+                action_id: format!("focus:{index}"),
+                label,
+                enabled: true,
+                source,
+                control: EngineControlAssociation::Primary,
+                do_name: None,
+                do_type: None,
+            });
+        }
+
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| "No deck loaded".to_string())?;
+        let mut has_prev_do = false;
+        let mut has_primary_do = focus_index.is_some();
+        for (source, binding) in deck.active_do_bindings_with_source(self.active_card_idx) {
+            let runtime::card::CardEventBindingKind::Do {
+                name,
+                do_type,
+                label,
+                ..
+            } = &binding.kind
+            else {
+                continue;
+            };
+            let is_prev = do_type.eq_ignore_ascii_case("prev");
+            has_prev_do |= is_prev;
+            let label = label
+                .as_deref()
+                .map(|label| engine_runtime_internal::evaluate_vdata(label, &self.vars))
+                .transpose()?
+                .filter(|label| !label.is_empty())
+                .unwrap_or_else(|| do_type.clone());
+            let control = if is_prev {
+                EngineControlAssociation::Back
+            } else if do_type.eq_ignore_ascii_case("accept") && !has_primary_do {
+                has_primary_do = true;
+                EngineControlAssociation::Primary
+            } else {
+                EngineControlAssociation::Task
+            };
+            affordances.push(EngineAffordance {
+                action_id: format!("do:{name}"),
+                label,
+                enabled: true,
+                source: match source {
+                    runtime::deck::CardEventBindingSource::Card => EngineAffordanceSource::CardDo,
+                    runtime::deck::CardEventBindingSource::Template => {
+                        EngineAffordanceSource::TemplateDo
+                    }
+                },
+                control,
+                do_name: Some(name.clone()),
+                do_type: Some(do_type.clone()),
+            });
+        }
+        if !has_prev_do && !self.nav_stack.is_empty() {
+            affordances.push(EngineAffordance {
+                action_id: "history:back".to_string(),
+                label: "Back".to_string(),
+                enabled: true,
+                source: EngineAffordanceSource::History,
+                control: EngineControlAssociation::Back,
+                do_name: None,
+                do_type: None,
+            });
+        }
+
+        let mut frame = EnginePresentationFrame {
+            contract_version: ENGINE_FRAME_CONTRACT_VERSION,
+            frame_id: String::new(),
+            profile_id: ENGINE_FRAME_PROFILE_ID.to_string(),
+            viewport: EngineViewport {
+                cols: u32::try_from(self.viewport_cols)
+                    .map_err(|_| "Frame viewport exceeds contract range".to_string())?,
+            },
+            deck: EngineDeckDisplayMetadata {
+                base_url: self.base_url.clone(),
+                content_type: self.content_type.clone(),
+                language: deck.language.clone(),
+            },
+            card: EngineCardDisplayMetadata {
+                id: runtime_card.id,
+                language: deck.card_language(self.active_card_idx).map(str::to_string),
+            },
+            rows,
+            focus,
+            selection,
+            back_available: has_prev_do || !self.nav_stack.is_empty(),
+            affordances,
+        };
+        frame.assign_content_identity()?;
+        Ok(frame)
+    }
+
     /// Handle one input key (`up`, `down`, `enter`).
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]):
@@ -287,6 +482,56 @@ impl WmlEngine {
     /// crash the host.
     pub fn handle_key(&mut self, key: String) -> Result<(), String> {
         catch_engine_panic(|| self.handle_key_internal(&key))?
+    }
+
+    /// Dispatch the additive typed F0 input surface.
+    ///
+    /// Key events delegate to the legacy key path. Action activation is bound
+    /// to the exact frame that advertised it so stale host controls cannot
+    /// invoke a task after navigation or focus changes.
+    pub fn handle_input(&mut self, event: EngineInputEvent) -> Result<(), String> {
+        catch_engine_panic(|| self.handle_input_bounded(event))?
+    }
+
+    fn handle_input_bounded(&mut self, event: EngineInputEvent) -> Result<(), String> {
+        match event {
+            EngineInputEvent::Key { key } => self.handle_key_internal(key.as_str()),
+            EngineInputEvent::ActivateAction {
+                frame_id,
+                action_id,
+            } => {
+                let frame = self.render_frame_bounded()?;
+                if frame.frame_id != frame_id {
+                    return Err("Engine input references a stale frame".to_string());
+                }
+                if !frame
+                    .affordances
+                    .iter()
+                    .any(|affordance| affordance.enabled && affordance.action_id == action_id)
+                {
+                    return Err("Engine input references an unavailable action".to_string());
+                }
+                if action_id.starts_with("focus:") {
+                    return self.handle_key_internal("enter");
+                }
+                if action_id == "history:back" {
+                    let handled = self.activate_back_internal();
+                    self.last_back_navigation_handled = handled;
+                    return Ok(());
+                }
+                let name = action_id
+                    .strip_prefix("do:")
+                    .ok_or_else(|| "Engine input references an unknown action".to_string())?;
+                let action = self
+                    .deck
+                    .as_ref()
+                    .and_then(|deck| deck.active_do_action_by_name(self.active_card_idx, name))
+                    .cloned()
+                    .ok_or_else(|| "Engine input references an unavailable action".to_string())?;
+                self.push_trace("ACTION_AFFORDANCE", format!("action_id={action_id}"));
+                self.execute_card_task_action(&action)
+            }
+        }
     }
 
     /// Navigate directly to a card id and push history.

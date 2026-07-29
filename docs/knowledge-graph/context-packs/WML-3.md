@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 332
-- Edges: 882
-- Selected work items: 8
+- Nodes: 341
+- Edges: 904
+- Selected work items: 9
 - Direct SCR rows: 5
-- Direct normative clauses: 116
+- Direct normative clauses: 119
 - Aggregate regression/delegate context clauses: 7
 - Work items without direct clause mappings: 1
 - Work items with unmapped declared normative families: 3
@@ -291,6 +291,39 @@ Evidence commands:
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `pnpm --dir browser/frontend test`
 - `pnpm test:story WML-308`
+
+### WML-309: Engine-owned frame and affordance contract for active WML do actions
+
+- Status: `done`
+- Owner layers: `engine-wasm`, `browser`, `qa`
+- Source families: `wml`
+- Existing tickets: `WBP-06`, `F0-01`
+- Direct SCR rows: 0
+- Selected SCR parents: 1 (`WML-C-26`)
+- Direct normative clauses: 3
+- Aggregate regression/delegate context: 0
+- Requirements: `RQ-RMK-002`
+- Spec references: `WAP-191_104-WML section 9.7`
+- Follow-up work items: None
+- Depends on: None
+
+Outputs:
+
+- Engine-owned frame and affordance contract for active WML do actions
+
+Acceptance:
+
+- Every active non-optional do is represented once with stable activation identity and best-effort authored labelling without assuming a vendor-specific physical widget.
+
+Evidence commands:
+
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_309`
+- `wasm-pack test --node engine-wasm/engine`
+- `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `pnpm test:story WML-309`
+- `node scripts/wap-context-pack.mjs WML-309`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ## Direct SCR evidence
 
@@ -1055,6 +1088,27 @@ Evidence commands:
   - Parents: `WML-C-12`, `WML-C-33`, `WML-C-43`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
   - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `implemented`)
+
+### WML-309
+
+- **WML-CL-DO-ACTIVE-VISIBILITY** — Make every active, non-optional do accessible for user activation.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-ACTIVE-VISIBILITY` (`rendering`, `implemented`)
+- **WML-CL-DO-LABEL-BEST-EFFORT** — Make a best-effort to use a supplied do label when the interface action can be labeled.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-LABEL-BEST-EFFORT` (`rendering`, `implemented`)
+- **WML-CL-DO-UNIQUE-WIDGET** — Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §9.7 (9.7 The Do Element)
+  - Parents: `WML-C-26`
+  - Requirements: `RQ-RMK-002`
+  - Fixture: `WML-FX-DO-UNIQUE-WIDGET` (`rendering`, `implemented`)
 
 ## Aggregate regression and delegate context
 

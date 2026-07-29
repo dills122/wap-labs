@@ -75,7 +75,8 @@ function deterministicEvidence(evidence) {
     traceEntries: evidence.traceEntries,
     status: evidence.status,
     session: evidence.session,
-    render: evidence.render
+    render: evidence.render,
+    frame: evidence.frame
   };
 }
 
@@ -89,6 +90,19 @@ async function collectEvidence(page) {
 }
 
 async function applyAction(page, action, target) {
+  if (action.type === 'activate-action') {
+    if (target !== 'host-sample') {
+      throw new Error('activate-action is currently supported by the host-sample story target');
+    }
+    await page.evaluate((actionId) => {
+      const bridge = window.__WAVENAV_STORY_EVIDENCE__;
+      if (!bridge?.activateAction) {
+        throw new Error('WaveNav story action bridge is unavailable');
+      }
+      bridge.activateAction(actionId);
+    }, action.actionId);
+    return;
+  }
   if (action.type === 'key') {
     const selector =
       target === 'waves-browser'
@@ -153,6 +167,11 @@ async function prepareStory(page, story) {
   const target = story.flow.target ?? 'host-sample';
   if (target === 'host-sample') {
     await page.locator('#example-select').selectOption(story.example.key);
+    await page.waitForFunction(
+      (key) => window.__WAVENAV_STORY_EVIDENCE__?.collect().activeExampleKey === key,
+      story.example.key,
+      { timeout: 10_000 }
+    );
     return;
   }
 

@@ -10,6 +10,8 @@ import type {
   EngineDebugSnapshot,
   EngineDebugSnapshotOutcome,
   EngineDebugSnapshotRequest,
+  EngineInputEvent,
+  EnginePresentationFrame,
   EngineTraceEntry,
   RenderList,
   ScriptCallArgLiteral,
@@ -57,6 +59,20 @@ export type {
   EngineDebugTimerSnapshot,
   EngineDebugTimestampKind,
   EngineDebugValue,
+  EngineAffordance,
+  EngineAffordanceSource,
+  EngineCardDisplayMetadata,
+  EngineControlAssociation,
+  EngineDeckDisplayMetadata,
+  EngineFocusState,
+  EngineFocusTargetKind,
+  EngineFrameRow,
+  EngineFrameSegment,
+  EngineInputEvent,
+  EngineInputKey,
+  EnginePresentationFrame,
+  EngineSelectionState,
+  EngineViewport,
   EngineTraceEntry,
   RenderList,
   ScriptCallArgLiteral,
@@ -169,7 +185,13 @@ export interface WmlEngineCommon {
   // A successful load replaces this list with ordered ignored/recoverable warnings.
   lastWmlLoadDiagnostics(): WmlLoadDiagnostic[];
   render(): RenderList;
+  // Canonical engine-owned frame/affordance projection. Legacy render() remains
+  // available until the F1/F4 host cutover is complete.
+  renderFrame(): EnginePresentationFrame;
   handleKey(key: EngineKey): void;
+  // Typed key and stable action dispatch. Pointer/wheel/editor events remain
+  // outside F0 and are added only with their owning input-expansion slices.
+  handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.
   nextTimerWakeupMs(): number | undefined;
@@ -266,6 +288,8 @@ export interface WmlEngineNative extends WmlEngineCommon {
 export interface WmlEngineCompatibilityRules {
   behaviorParityRequired: true;
   renderOutputParityRequired: true;
+  frameOutputParityRequired: true;
+  inputDispatchParityRequired: true;
   navigationParityRequired: true;
   scriptInvocationParityRequired: true;
 }

@@ -1,5 +1,5 @@
 use crate::contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleKeyRequest,
+    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
     LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
     RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
     SetFocusedInputEditDraftRequest, SetViewportColsRequest,
@@ -81,6 +81,7 @@ fn frame(engine: &WmlEngine) -> Result<EngineFrame, String> {
     Ok(EngineFrame {
         snapshot: snapshot(engine),
         render: engine.render()?.into(),
+        presentation: engine.render_frame()?,
     })
 }
 
@@ -131,6 +132,14 @@ pub fn apply_handle_key_frame(
     request: HandleKeyRequest,
 ) -> Result<EngineFrame, String> {
     engine.handle_key(request.key.as_str().to_string())?;
+    frame(engine)
+}
+
+pub fn apply_handle_input_frame(
+    engine: &mut WmlEngine,
+    request: HandleInputRequest,
+) -> Result<EngineFrame, String> {
+    engine.handle_input(request.event)?;
     frame(engine)
 }
 

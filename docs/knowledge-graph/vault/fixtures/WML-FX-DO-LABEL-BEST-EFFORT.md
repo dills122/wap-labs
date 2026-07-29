@@ -4,7 +4,7 @@ key: "WML-FX-DO-LABEL-BEST-EFFORT"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "rendering",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Make a best-effort to use a supplied do label when the interface action can be labeled.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

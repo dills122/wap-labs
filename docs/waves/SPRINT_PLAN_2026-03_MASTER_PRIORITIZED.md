@@ -33,10 +33,11 @@ is `docs/waves/wap-1.2.1-compliance-program.json`, summarized by
 
 Source/spec planning for the selected WAP-215 Class C profile is complete:
 198 selected parent rows, 762 planned clause fixtures, and a
-13-sprint/82-item execution program plus the `TRN-7-CL-C` selected-profile
+13-sprint/83-item execution program plus the `TRN-7-CL-C` selected-profile
 transport gate. The conservative implementation snapshot
 is 41 implemented, 71 partial, and 86 missing parent rows; clause-level
-assessment is 299/762 after WML-301 closed 13 context/history/process-order/card-table clauses,
+assessment is 302/762 after WML-301 closed 13 context/history/process-order/card-table clauses and
+WML-309 closed three frame-affordance presentation clauses,
 WML-302 closed 18 newly implemented clauses,
 retained 2 already implemented shared clauses, WSP-801 directly closed its
 35-clause connectionless matrix, WSP-802 added 22 net assessed header clauses,
@@ -46,8 +47,8 @@ WML-C-14 from missing to partial, and R0-06/WSP-805 added ten directly assessed
 request-serialization clauses without closing multipart part Content-Type or POST replay.
 
 The July 28 bug-fix, desktop, and private-preview merges add regression and release-readiness
-evidence without changing unrelated compliance counts. Project Atlas reports
-28 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 299/762 clauses assessed;
+evidence, while WML-309 adds one work item plus three directly assessed clauses. Project Atlas reports
+29 `done`, 11 `in-progress`, 42 `todo`, and one `blocked` work item with 302/762 clauses assessed;
 the WML-301 graph labels its seven inherited card/WAE clauses as aggregate context rather than direct closure,
 so the direct C1 tranche is complete while the aggregate item remains in progress.
 

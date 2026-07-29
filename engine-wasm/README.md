@@ -117,6 +117,7 @@ Core runtime/rendering support:
 - `engine/src/runtime/node.rs`
 - `engine/src/layout/flow_layout.rs`
 - `engine/src/nav/focus.rs`
+- `engine/src/render/frame.rs` (canonical versioned presentation-frame and typed-input DTOs)
 - `engine/src/render/render_list.rs`
 
 Wavescript runtime:
@@ -164,7 +165,9 @@ Partially supported (phase W0 baseline and active follow-ons):
 - `loadDeck(xml: string)`
 - `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, referringUrl?: string)`
 - `render(): RenderList`
+- `renderFrame(): EnginePresentationFrame`
 - `handleKey(key: 'up' | 'down' | 'enter')`
+- `handleInput(event: EngineInputEvent)`
 - `advanceTimeMs(deltaMs: number)` (deterministic timer simulation)
 - `navigateToCard(id: string)`
 
@@ -193,7 +196,8 @@ Behavior must stay aligned with the WASM API for:
 
 - deck loading and metadata handling
 - navigation and focus transitions
-- render output (`RenderList`) ordering and shape
+- render output (`RenderList` and `EnginePresentationFrame`) ordering and shape
+- typed key/action input behavior and trace semantics
 - script execution/invocation outcomes
 - trace entry semantics
 
@@ -215,11 +219,14 @@ Type contract:
 2. Preserve completed `WML-302` variable/setvar evidence (20/20 directly
    mapped clauses) and `WML-303` task/event/BACK/softkey precedence evidence
    (27/27 directly mapped clauses), plus completed `WML-305` native timer
-   lifecycle and target-parity evidence (10/10).
+   lifecycle and target-parity evidence (10/10) and `WML-309` frame-affordance
+   presentation evidence (3/3).
 3. Keep the remaining `WML-3` work additive without reopening those completed slices.
 4. Keep host fetching at the browser boundary and WBXML decoding in transport;
-   preserve the completed `D0-01` baseline and the `W1-06` boundary while leaving
-   `M1-03` queued unless it directly unblocks an active compliance baton.
+   preserve the completed `D0-01` and WBP-06/F0 contract namespaces and the `W1-06`
+   boundary. Continue the `M1-09` frame renderer/input migration through F1/F2 without removing
+   the legacy compatibility methods until their declared cutover gate, and keep `M1-03` queued
+   unless generator expansion directly unblocks an active compliance baton.
 
 ## Current checklist (planning/execution)
 
