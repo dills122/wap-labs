@@ -4,6 +4,7 @@ import { WAVES_CONFIG } from './waves-config';
 
 describe('mountBrowserShell', () => {
   afterEach(() => {
+    localStorage.clear();
     vi.unstubAllGlobals();
   });
 
@@ -24,6 +25,18 @@ describe('mountBrowserShell', () => {
     expect(softkeyRow?.getAttribute('aria-label')).toBeTruthy();
   });
 
+  it('starts with an empty editable network address and native endpoint suggestions', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('', 'network');
+    const suggestionList = document.querySelector<HTMLDataListElement>('#network-address-options');
+    const suggestedUrls = Array.from(suggestionList?.options ?? [], (option) => option.value);
+
+    expect(refs.fetchUrlInput.value).toBe('');
+    expect(refs.fetchUrlInput.getAttribute('list')).toBe('network-address-options');
+    expect(refs.fetchUrlInput.getAttribute('placeholder')).toBeTruthy();
+    expect(suggestedUrls).toEqual(WAVES_CONFIG.networkAddressSuggestions.map(({ url }) => url));
+  });
+
   it('decomposes the shell into landmark-labelled sections', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');
@@ -32,20 +45,27 @@ describe('mountBrowserShell', () => {
     const handsetStage = document.querySelector('section.handset-stage');
     const utilityRail = document.querySelector('aside.utility-rail');
     const devDrawerSection = document.querySelector('section.developer-drawer-section');
+    const statusBar = document.querySelector('footer.status-bar');
     const primaryHeading = document.querySelector('h1.brand');
 
     expect(nav?.getAttribute('aria-label')).toBeTruthy();
     expect(handsetStage?.getAttribute('aria-label')).toBeTruthy();
     expect(utilityRail?.getAttribute('aria-label')).toBeTruthy();
     expect(devDrawerSection?.getAttribute('aria-label')).toBeTruthy();
+    expect(statusBar?.getAttribute('aria-label')).toBeTruthy();
     expect(primaryHeading?.textContent).toBeTruthy();
 
     // Handset stage still owns the engine viewport adapter directly.
     expect(handsetStage?.querySelector('#viewport')).not.toBeNull();
-    // Developer drawer moved out from under the utility rail to its own
-    // top-level sibling section, per the desktop product IA.
-    expect(utilityRail?.querySelector('#dev-drawer')).toBeNull();
+    // Supporting diagnostics belong to the optional inspector, while live
+    // route and display telemetry remain persistent in the status strip.
+    expect(utilityRail?.querySelector('#dev-drawer')).not.toBeNull();
     expect(devDrawerSection?.querySelector('#dev-drawer')).not.toBeNull();
+    expect(devDrawerSection?.querySelector('[role="tablist"]')).not.toBeNull();
+    expect(devDrawerSection?.querySelectorAll('[role="tabpanel"]')).toHaveLength(5);
+    expect(devDrawerSection?.querySelector('#btn-open-devtools-window')).not.toBeNull();
+    expect(statusBar?.querySelector('#status')).not.toBeNull();
+    expect(statusBar?.querySelector('#viewport-cols')).not.toBeNull();
 
     const phaseBarSlot = document.querySelector('.phase-bar-slot');
     expect(phaseBarSlot?.hasAttribute('hidden')).toBe(true);
@@ -78,12 +98,13 @@ describe('mountBrowserShell', () => {
     expect(brandMark?.textContent).toBe('');
   });
 
-  it('opens the utility rail by default at normal window widths', () => {
+  it('keeps the inspector closed until explicitly requested', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');
 
     const railPanel = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
-    expect(railPanel?.open).toBe(true);
+    expect(railPanel?.open).toBe(false);
+    expect(document.querySelector('#btn-inspector')?.getAttribute('aria-expanded')).toBe('false');
   });
 
   it('wraps the device frame in a handset housing and wires the display-scale control', () => {
@@ -110,7 +131,7 @@ describe('mountBrowserShell', () => {
     );
   });
 
-  it('distinguishes source, route, and compatibility profile in the toolbar', () => {
+  it('distinguishes source, route, and compatibility profile across command and status bars', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('wap://localhost/start.wml', 'local');
 
@@ -136,12 +157,75 @@ describe('mountBrowserShell', () => {
     expect(routeLabelEl?.textContent).toBe('Network — localhost');
   });
 
+  it('proxies the visible mode segments to the controller-bound mode selector', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('wap://localhost/start.wml', 'local');
+    const modeChangeSpy = vi.fn();
+    refs.runModeSelectEl.addEventListener('change', modeChangeSpy);
+
+    const shell = document.querySelector<HTMLElement>('.browser-shell');
+    const localButton = document.querySelector<HTMLButtonElement>('#btn-mode-local');
+    const networkButton = document.querySelector<HTMLButtonElement>('#btn-mode-network');
+
+    expect(shell?.dataset.runMode).toBe('local');
+    expect(localButton?.getAttribute('aria-pressed')).toBe('true');
+    expect(networkButton?.getAttribute('aria-pressed')).toBe('false');
+
+    const welcomePanel = document.querySelector<HTMLElement>('#welcome-help-panel');
+    localButton?.click();
+    expect(welcomePanel?.hidden).toBe(true);
+    expect(modeChangeSpy).not.toHaveBeenCalled();
+
+    document.querySelector<HTMLButtonElement>('#btn-welcome-toggle')?.click();
+    expect(welcomePanel?.hidden).toBe(false);
+
+    networkButton?.click();
+    expect(refs.runModeSelectEl.value).toBe('network');
+    expect(shell?.dataset.runMode).toBe('network');
+    expect(modeChangeSpy).toHaveBeenCalledTimes(1);
+    expect(networkButton?.getAttribute('aria-pressed')).toBe('true');
+    expect(welcomePanel?.hidden).toBe(true);
+  });
+
+  it('opens and closes the inspector from the command bar', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('wap://localhost/start.wml', 'local');
+
+    const railPanel = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
+    const inspectorButton = document.querySelector<HTMLButtonElement>('#btn-inspector');
+
+    inspectorButton?.click();
+    expect(railPanel?.open).toBe(true);
+    expect(document.querySelector<HTMLDetailsElement>('#dev-drawer')?.open).toBe(true);
+    expect(inspectorButton?.getAttribute('aria-expanded')).toBe('true');
+
+    inspectorButton?.click();
+    expect(railPanel?.open).toBe(false);
+    expect(document.querySelector<HTMLDetailsElement>('#dev-drawer')?.open).toBe(false);
+    expect(inspectorButton?.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('exposes the visible utility rail to keyboard intent routing', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('wap://localhost/start.wml', 'local');
+
+    expect(refs.utilityRailPanelEl?.id).toBe('utility-rail-panel');
+    expect(refs.utilityRailPanelEl?.open).toBe(false);
+  });
+
   it('wires the Welcome/Help panel into the ordinary mode/local-example controls', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('wap://localhost/start.wml', 'network');
 
     const welcomePanel = document.querySelector('#welcome-help-panel');
     expect(welcomePanel).not.toBeNull();
+    expect(welcomePanel?.hasAttribute('hidden')).toBe(false);
+    expect(document.querySelector('#btn-welcome-toggle')?.getAttribute('aria-expanded')).toBe(
+      'true'
+    );
+    expect((document.querySelector('#show-welcome-on-launch') as HTMLInputElement).checked).toBe(
+      true
+    );
 
     const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
     const loadLocalBtnEl = document.querySelector<HTMLButtonElement>('#btn-load-local');
@@ -152,6 +236,7 @@ describe('mountBrowserShell', () => {
 
     expect(runModeSelectEl?.value).toBe('local');
     expect(loadClickSpy).toHaveBeenCalledTimes(1);
+    expect(welcomePanel?.hasAttribute('hidden')).toBe(true);
 
     // Mode is already "local" from the tour click above; confirm "Connect to
     // a WAP Server" switches it to network.
@@ -159,10 +244,37 @@ describe('mountBrowserShell', () => {
     expect(runModeSelectEl?.value).toBe('network');
   });
 
-  it('collapses the utility rail when mounted at the configured narrow breakpoint', () => {
+  it('restores Welcome after it is dismissed and respects the saved launch preference', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('', 'local');
+
+    const toggle = document.querySelector<HTMLButtonElement>('#btn-welcome-toggle');
+    const panel = document.querySelector<HTMLElement>('#welcome-help-panel');
+    const launchPreference = document.querySelector<HTMLInputElement>('#show-welcome-on-launch');
+
+    toggle?.click();
+    expect(panel?.hidden).toBe(true);
+
+    toggle?.click();
+    expect(panel?.hidden).toBe(false);
+
+    if (launchPreference) {
+      launchPreference.checked = false;
+      launchPreference.dispatchEvent(new Event('change'));
+    }
+
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('', 'local');
+    expect(document.querySelector<HTMLElement>('#welcome-help-panel')?.hidden).toBe(true);
+    expect(document.querySelector('#btn-welcome-toggle')?.getAttribute('aria-expanded')).toBe(
+      'false'
+    );
+  });
+
+  it('keeps the inspector closed independent of viewport matching', () => {
     vi.stubGlobal(
       'matchMedia',
-      vi.fn(() => ({ matches: true }))
+      vi.fn(() => ({ matches: false }))
     );
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');

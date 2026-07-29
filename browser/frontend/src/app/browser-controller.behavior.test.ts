@@ -48,6 +48,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
   const timelineEl = document.createElement('pre');
   const activeUrlLabelEl = document.createElement('span');
   const devDrawerEl = document.createElement('details');
+  const utilityRailPanelEl = document.createElement('details');
   const toastEl = document.createElement('div');
   const liveAnnouncerEl = document.createElement('div');
   const wmlInput = document.createElement('textarea');
@@ -90,6 +91,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
     timelineEl,
     activeUrlLabelEl,
     devDrawerEl,
+    utilityRailPanelEl,
     toastEl,
     liveAnnouncerEl,
     runModeSelectEl,
@@ -192,6 +194,26 @@ const gatewayTimeoutResponse = (): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('opens and closes the visible Developer Tools rail from the keyboard shortcut', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const controller = new BrowserController(createHostClient() as never, presenter, refs);
+
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
+      new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, shiftKey: true })
+    );
+    expect(refs.utilityRailPanelEl?.open).toBe(true);
+    expect(refs.devDrawerEl.open).toBe(true);
+
+    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
+      new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, shiftKey: true })
+    );
+    expect(refs.utilityRailPanelEl?.open).toBe(false);
+    expect(refs.devDrawerEl.open).toBe(false);
+
+    controller.dispose();
+  });
+
   it('initializes local mode by loading the default local example and populating notes', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

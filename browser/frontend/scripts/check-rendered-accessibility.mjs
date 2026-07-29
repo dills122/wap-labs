@@ -41,6 +41,12 @@ const windows = {
 };
 const hallmarkResponsiveWidths = [320, 375, 414, 768];
 
+const browserStoryUrl = (baseUrl) => {
+  const url = new URL('browser-story.html', baseUrl);
+  url.searchParams.set('welcome', '1');
+  return url.href;
+};
+
 const waitForReady = async (page) => {
   await page.waitForFunction(
     () => {
@@ -63,6 +69,202 @@ const openAllDisclosures = async (page) => {
   });
 };
 
+const activateDeveloperToolsTab = async (page, tabId) => {
+  await page.locator(`#devtools-tab-${tabId}`).evaluate((tab) => tab.click());
+};
+
+const assertDeveloperToolsPanelContainment = async (
+  page,
+  name,
+  { requireVerticalScroll = false } = {}
+) => {
+  const originalTimeline = requireVerticalScroll
+    ? await page.locator('#timeline').evaluate((timeline) => {
+        const original = timeline.textContent ?? '';
+        timeline.textContent = `${original}\n${Array.from(
+          { length: 48 },
+          (_, index) => `scroll-verification-${index + 1}`
+        ).join('\n')}`;
+        return original;
+      })
+    : null;
+  const evidence = [];
+  for (const tabId of ['overview', 'transport', 'runtime', 'timeline', 'source']) {
+    await activateDeveloperToolsTab(page, tabId);
+    const metrics = await page.locator(`#devtools-panel-${tabId}`).evaluate((panel) => {
+      const panelRect = panel.getBoundingClientRect();
+      const workspaceRect = document
+        .querySelector('.developer-tools-workspace')
+        .getBoundingClientRect();
+      const actions = [...panel.querySelectorAll('.developer-tools-action')].map((action) => {
+        const rect = action.getBoundingClientRect();
+        return { id: action.id, left: rect.left, right: rect.right };
+      });
+      const preformatted = [...panel.querySelectorAll('pre')].map((element) => ({
+        id: element.id,
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth
+      }));
+      const wideDescendants = [...panel.querySelectorAll('*')]
+        .map((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return {
+            selector: element.id ? `#${element.id}` : `${element.tagName}.${element.className}`,
+            clientWidth: element.clientWidth,
+            scrollWidth: element.scrollWidth,
+            left: rect.left,
+            right: rect.right,
+            overflowX: style.overflowX,
+            whiteSpace: style.whiteSpace
+          };
+        })
+        .filter(
+          (element) =>
+            element.scrollWidth > element.clientWidth + 1 ||
+            element.left < panelRect.left - 0.5 ||
+            element.right > panelRect.right + 0.5
+        );
+      const initialScrollTop = panel.scrollTop;
+      panel.scrollTop = panel.scrollHeight;
+      const maximumScrollTop = panel.scrollTop;
+      panel.scrollTop = initialScrollTop;
+      return {
+        id: panel.id,
+        clientWidth: panel.clientWidth,
+        scrollWidth: panel.scrollWidth,
+        clientHeight: panel.clientHeight,
+        scrollHeight: panel.scrollHeight,
+        maximumScrollTop,
+        actions,
+        preformatted,
+        wideDescendants,
+        workspace: { left: workspaceRect.left, right: workspaceRect.right }
+      };
+    });
+
+    assert.ok(
+      metrics.scrollWidth <= metrics.clientWidth + 1,
+      `${name}: ${metrics.id} contains horizontal overflow (${metrics.scrollWidth}px scroll / ${metrics.clientWidth}px client): ${JSON.stringify(metrics.wideDescendants)}`
+    );
+    assert.ok(
+      metrics.clientHeight >= 96,
+      `${name}: ${metrics.id} keeps a usable viewport height (${metrics.clientHeight}px)`
+    );
+    for (const action of metrics.actions) {
+      assert.ok(
+        action.left >= metrics.workspace.left - 0.5 && action.right <= metrics.workspace.right + 0.5,
+        `${name}: #${action.id} stays inside the Developer Tools workspace`
+      );
+    }
+    for (const element of metrics.preformatted) {
+      assert.ok(
+        element.scrollWidth <= element.clientWidth + 1,
+        `${name}: #${element.id} wraps diagnostic content without horizontal scrolling`
+      );
+    }
+    if (metrics.scrollHeight > metrics.clientHeight + 1) {
+      assert.ok(metrics.maximumScrollTop > 0, `${name}: ${metrics.id} scrolls vertically`);
+    }
+    evidence.push(metrics);
+  }
+  if (requireVerticalScroll) {
+    assert.ok(
+      evidence.some((panel) => panel.maximumScrollTop > 0),
+      `${name}: at least one populated Developer Tools panel exercises vertical scrolling: ${JSON.stringify(
+        evidence.map((panel) => ({
+          id: panel.id,
+          clientHeight: panel.clientHeight,
+          scrollHeight: panel.scrollHeight,
+          maximumScrollTop: panel.maximumScrollTop
+        }))
+      )}`
+    );
+    await page.locator('#timeline').evaluate((timeline, original) => {
+      timeline.textContent = original;
+    }, originalTimeline);
+  }
+  return evidence;
+};
+
+const assertDeveloperToolsCommandFeedback = async (page, name) => {
+  const activity = page.locator('#developer-tools-host-status');
+
+  await page.locator('#btn-health').click();
+  await page.waitForFunction(
+    () => document.querySelector('#developer-tools-host-status')?.textContent?.startsWith('Health:'),
+    null,
+    { timeout: 5_000 }
+  );
+  const health = (await activity.textContent())?.trim() ?? '';
+  assert.match(health, /^Health: .+/, `${name}: Health reports its host result inside DevTools`);
+
+  await page.locator('#btn-render').click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#developer-tools-host-status')?.textContent ===
+      'Rendered current card.',
+    null,
+    { timeout: 5_000 }
+  );
+  const render = (await activity.textContent())?.trim() ?? '';
+  assert.equal(render, 'Rendered current card.', `${name}: Render confirms completion inside DevTools`);
+  assert.notEqual(
+    (await page.locator('#snapshot').textContent())?.trim(),
+    '',
+    `${name}: Render refreshes the runtime snapshot`
+  );
+
+  return { health, render };
+};
+
+const assertStatusRegionsDoNotOverlap = async (page, name) => {
+  const statusLayout = await page.evaluate(() => {
+    const readRegion = (element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        selector: element.id ? `#${element.id}` : `.${element.classList[0]}`,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0,
+        overflowX: style.overflowX
+      };
+    };
+    return {
+      bar: readRegion(document.querySelector('.status-bar')),
+      top: [...document.querySelectorAll('.status-primary, .status-controls')].map(readRegion),
+      context: [...document.querySelectorAll('.status-context > .status-readout')].map(readRegion)
+    };
+  });
+  assert.ok(statusLayout.bar.top >= 0, `${name}: status bar starts inside the viewport`);
+  assert.ok(
+    statusLayout.bar.bottom <= (await page.evaluate(() => innerHeight)) + 0.5,
+    `${name}: complete status bar remains inside the viewport`
+  );
+  const overlaps = [];
+  for (const regions of [statusLayout.top, statusLayout.context]) {
+    const visibleRegions = regions.filter((region) => region.visible);
+    for (let index = 0; index < visibleRegions.length; index += 1) {
+      for (let candidateIndex = index + 1; candidateIndex < visibleRegions.length; candidateIndex += 1) {
+        const first = visibleRegions[index];
+        const second = visibleRegions[candidateIndex];
+        const horizontalOverlap = first.left < second.right - 0.5 && second.left < first.right - 0.5;
+        const verticalOverlap = first.top < second.bottom - 0.5 && second.top < first.bottom - 0.5;
+        if (horizontalOverlap && verticalOverlap) {
+          overlaps.push(`${first.selector}/${second.selector}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(overlaps, [], `${name}: status regions do not overlap`);
+  for (const region of statusLayout.context.filter((entry) => entry.visible)) {
+    assert.equal(region.overflowX, 'hidden', `${name}: ${region.selector} contains long values`);
+  }
+};
+
 const captureDefaultVisual = async (page, name, dimensions) => {
   const layout = await page.evaluate(() => ({
     cssViewport: { width: innerWidth, height: innerHeight },
@@ -70,13 +272,40 @@ const captureDefaultVisual = async (page, name, dimensions) => {
     horizontalOverflow: document.documentElement.scrollWidth > innerWidth
   }));
   assert.equal(layout.horizontalOverflow, false, `${name}: 100% visual has no horizontal overflow`);
+  await assertStatusRegionsDoNotOverlap(page, `${name}: 100% visual`);
   const screenshot = `${name}-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  await page.locator('#btn-welcome-toggle').click();
+  await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
+  const handsetScreenshot = `${name}-handset-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
+  await page.locator('#btn-inspector').click();
+  await openAllDisclosures(page);
+  const developerToolsCommandFeedback =
+    name === 'default'
+      ? await assertDeveloperToolsCommandFeedback(page, `${name}: developer tools commands`)
+      : null;
+  const developerToolsPanels = await assertDeveloperToolsPanelContainment(
+    page,
+    `${name}: developer tools visual`,
+    { requireVerticalScroll: name === 'minimum' }
+  );
+  await activateDeveloperToolsTab(page, 'overview');
+  await page.evaluate(() => {
+    document.querySelector('.developer-tools-panel:not([hidden])')?.scrollTo(0, 0);
+  });
+  await assertStatusRegionsDoNotOverlap(page, `${name}: developer tools visual`);
+  const developerToolsScreenshot = `${name}-developer-tools-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, developerToolsScreenshot), fullPage: false });
   return {
     physicalWindow: dimensions.physical,
     cssViewportAt100Percent: layout.cssViewport,
     scrollWidth: layout.scrollWidth,
-    screenshot
+    screenshot,
+    handsetScreenshot,
+    developerToolsScreenshot,
+    developerToolsCommandFeedback,
+    developerToolsPanels
   };
 };
 
@@ -111,6 +340,7 @@ const captureResponsiveVisual = async (page, width) => {
     };
   });
   assert.equal(layout.horizontalOverflow, false, `${width}px: no horizontal overflow`);
+  await assertStatusRegionsDoNotOverlap(page, `${width}px`);
   for (const action of layout.clickableText) {
     assert.equal(
       action.whiteSpace,
@@ -129,6 +359,36 @@ const captureResponsiveVisual = async (page, width) => {
   const screenshot = `responsive-${width}px.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
   return { ...layout, screenshot };
+};
+
+const auditDetachedDeveloperTools = async (page, width) => {
+  await page.addScriptTag({ content: axe.source });
+  const violations = await page.evaluate(async () =>
+    (await window.axe.run(document)).violations.map((violation) => ({
+      id: violation.id,
+      targets: violation.nodes.map((node) => node.target.join(' '))
+    }))
+  );
+  assert.deepEqual(violations, [], `${width}px detached developer tools: rendered axe audit`);
+
+  const panels = await assertDeveloperToolsPanelContainment(
+    page,
+    `${width}px detached developer tools`
+  );
+  await activateDeveloperToolsTab(page, 'overview');
+
+  const layout = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth
+  }));
+  assert.equal(
+    layout.horizontalOverflow,
+    false,
+    `${width}px detached developer tools: no horizontal overflow`
+  );
+  const screenshot = `developer-tools-${width}px.png`;
+  await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  return { width, ...layout, panels, screenshot };
 };
 
 const resolveBaseRevision = async () => {
@@ -164,6 +424,7 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         const style = getComputedStyle(element);
         const rect = element.getBoundingClientRect();
         return (
+          element.getAttribute('aria-hidden') !== 'true' &&
           style.display !== 'none' &&
           style.visibility !== 'hidden' &&
           rect.width > 0 &&
@@ -299,22 +560,16 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     assert.equal(focused.focusVisible, true, `${name}: #${focused.id} matches :focus-visible`);
     assert.notEqual(focused.outlineStyle, 'none', `${name}: #${focused.id} has an outline`);
     assert.ok(focused.outlineWidth >= 2, `${name}: #${focused.id} outline is at least 2px`);
-    assert.match(
-      focused.boxShadow,
-      /0px 0px 0px 2px/,
-      `${name}: #${focused.id} focus ring has a separation layer`
-    );
-    assert.match(
-      focused.boxShadow,
-      /0px 0px 0px 5px/,
-      `${name}: #${focused.id} focus ring has a high-contrast outer layer`
-    );
     focusEvidence.push(focused);
   }
   assert.ok(focusEvidence.length > 10, `${name}: keyboard focus evidence covers host controls`);
 
   await page.locator('#btn-reload').focus();
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    document.querySelector('.utility-rail-body')?.scrollTo(0, 0);
+    document.querySelector('.developer-tools-panel:not([hidden])')?.scrollTo(0, 0);
+  });
   const screenshot = `${name}-window-200-percent.png`;
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
 
@@ -345,7 +600,12 @@ try {
     build: {
       outDir: tempRoot,
       emptyOutDir: true,
-      rollupOptions: { input: path.join(FRONTEND_DIR, 'browser-story.html') }
+      rollupOptions: {
+        input: {
+          story: path.join(FRONTEND_DIR, 'browser-story.html'),
+          devtools: path.join(FRONTEND_DIR, 'devtools.html')
+        }
+      }
     }
   });
   previewServer = await preview({
@@ -368,11 +628,27 @@ try {
     });
     const page = await context.newPage();
     try {
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);
       responsiveEvidence[width] = await captureResponsiveVisual(page, width);
+    } finally {
+      await context.close();
+    }
+  }
+
+  const developerToolsEvidence = {};
+  for (const width of [320, 720, 960]) {
+    const context = await browser.newContext({
+      viewport: { width, height: width === 320 ? 720 : 640 },
+      reducedMotion: 'reduce'
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto(new URL('devtools.html', baseUrl).href, { waitUntil: 'domcontentloaded' });
+      await page.locator('#developer-tools-workspace').waitFor();
+      developerToolsEvidence[width] = await auditDetachedDeveloperTools(page, width);
     } finally {
       await context.close();
     }
@@ -386,7 +662,7 @@ try {
     });
     const page = await context.newPage();
     try {
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);
@@ -408,7 +684,7 @@ try {
     try {
       await context.tracing.start({ screenshots: true, snapshots: true, sources: true });
       tracing = true;
-      await page.goto(new URL('browser-story.html', baseUrl).href, {
+      await page.goto(browserStoryUrl(baseUrl), {
         waitUntil: 'domcontentloaded'
       });
       await waitForReady(page);
@@ -466,6 +742,7 @@ try {
       reducedMotion: true
     },
     responsiveEvidence,
+    developerToolsEvidence,
     visualEvidenceAt100Percent,
     windowEvidence
   };

@@ -191,8 +191,12 @@ export class BrowserController {
     this.keyboardIntentRouter = new KeyboardIntentRouter({
       runAction: this.withAction,
       toggleDeveloperTools: () => {
-        this.refs.devDrawerEl.open = !this.refs.devDrawerEl.open;
-        return this.refs.devDrawerEl.open;
+        const open = !(this.refs.utilityRailPanelEl?.open ?? this.refs.devDrawerEl.open);
+        if (this.refs.utilityRailPanelEl) {
+          this.refs.utilityRailPanelEl.open = open;
+        }
+        this.refs.devDrawerEl.open = open;
+        return open;
       },
       applyFocusedControlEditKey: (key) => this.focusedControlEdit.applyKey(key),
       applyEngineKey: (key) => this.applyEngineKey(key),

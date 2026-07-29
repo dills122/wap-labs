@@ -30,6 +30,10 @@ This frontend now includes a browser-style shell with a hidden developer harness
 
 - transport-first URL navigation (`fetch_deck` -> `engine_load_deck_context`)
 - browser chrome with address bar (`Back`, `Reload`, `Go`)
+- empty-by-default network address entry with native suggestions for the local lab and the three
+  first-party hosted WAP endpoints; selecting a suggestion does not navigate until `Go`/Enter
+- welcome/help view shown on launch by default, with a persistent stage toggle and an optional
+  saved “show on launch” preference; choosing an entry action dismisses it for the current session
 - viewport-first deck rendering and softkey controls (`Up`, `Select`, `Down`)
 - global keyboard navigation when not in text-entry fields (`ArrowUp`, `ArrowDown`, `Enter`, `Backspace`)
 - hybrid back behavior: engine card-history first, then browser URL history fallback across fetched decks

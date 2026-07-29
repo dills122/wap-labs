@@ -149,7 +149,7 @@ generation gate.
 ## Transport runtime knobs
 
 - `GATEWAY_HTTP_BASE` (default `http://localhost:13002`)
-- `VITE_WAVES_DEFAULT_URL` (frontend startup URL, default `http://127.0.0.1:3000/`)
+- `VITE_WAVES_DEFAULT_URL` (optional frontend startup URL; the address bar is empty by default)
 - Decoder backend: Lowband's built-in
   `lowband-wml13-wbxml/0.3.0` implementation with bounded output and parser
   depth. No external `wbxml2xml` installation or bundled sidecar is required.

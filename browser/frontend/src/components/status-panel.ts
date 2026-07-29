@@ -10,28 +10,31 @@ export class WvStatusPanel extends LitElement {
   static styles = css`
     :host {
       display: block;
+      min-width: 0;
     }
 
     .status {
-      position: relative;
-      border: 1px solid var(--panel-border-mid);
-      border-radius: var(--radius-control);
-      padding: var(--space-xs) var(--space-sm) var(--space-xs) 2rem;
-      font-size: var(--text-sm);
-      min-height: 44px;
-      background: var(--status-idle-bg);
+      display: flex;
+      min-width: 0;
+      min-height: 22px;
+      align-items: center;
+      gap: var(--space-2xs);
+      padding: 0;
+      border: 0;
       color: var(--status-idle-text);
-      line-height: 1.5;
-      box-shadow: inset 0 1px 0 var(--color-highlight-medium);
+      background: transparent;
+      font-size: var(--text-xs);
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .status::before {
-      position: absolute;
-      inset-block-start: 50%;
-      inset-inline-start: var(--space-sm);
       display: grid;
-      width: 0.875rem;
-      height: 0.875rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      flex: 0 0 0.75rem;
       place-items: center;
       border: 1px solid currentColor;
       border-radius: var(--radius-xs);
@@ -42,16 +45,13 @@ export class WvStatusPanel extends LitElement {
       font-size: 0.625rem;
       font-weight: 700;
       line-height: 1;
-      transform: translateY(-50%);
     }
 
     .status-idle {
-      background: var(--status-idle-bg);
       color: var(--status-idle-text);
     }
 
     .status-loading {
-      background: var(--status-loading-bg);
       color: var(--status-loading-text);
     }
 
@@ -62,7 +62,6 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status-ok {
-      background: var(--status-ok-bg);
       color: var(--status-ok-text);
     }
 
@@ -73,7 +72,6 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status-error {
-      background: var(--status-error-bg);
       color: var(--status-error-text);
     }
 

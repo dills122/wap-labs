@@ -10,6 +10,10 @@ const main = async (): Promise<void> => {
     runMode: 'local'
   });
   await initializeBrowserApplication(application);
+  const retainWelcome = new URLSearchParams(window.location.search).get('welcome') === '1';
+  if (!retainWelcome) {
+    document.querySelector<HTMLButtonElement>('#btn-welcome-toggle')?.click();
+  }
   installWavesStoryObservationBridge(application, host.diagnostics);
   document.body.setAttribute('data-story-target', 'waves-browser');
 };

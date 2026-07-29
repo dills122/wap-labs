@@ -29,14 +29,16 @@ describe('keyboard reachability of host-chrome actions', () => {
     for (const selector of [
       '#btn-back',
       '#btn-reload',
-      '#fetch-url',
-      '#btn-fetch-url',
-      '#run-mode',
       '#local-example',
-      '#btn-load-local'
+      '#btn-load-local',
+      '#btn-mode-local',
+      '#btn-mode-network',
+      '#btn-inspector'
     ]) {
       expectFocusable(selector);
     }
+
+    expect(document.querySelector<HTMLElement>('#run-mode')?.tabIndex).toBe(-1);
   });
 
   it('reaches the softkey row', () => {
@@ -49,13 +51,13 @@ describe('keyboard reachability of host-chrome actions', () => {
     }
   });
 
-  it('reaches the open utility rail, Welcome/Help panel, and its actions', () => {
+  it('reaches persistent display controls and empty-state actions with the inspector closed', () => {
     document.body.innerHTML = '<div id="app"></div>';
     registerBrowserComponents();
     mountBrowserShell('wap://localhost/start.wml', 'local');
 
-    expect(document.querySelector<HTMLDetailsElement>('#utility-rail-panel')?.open).toBe(true);
-    expect(document.querySelector<HTMLDetailsElement>('#welcome-help-panel')?.open).toBe(true);
+    expect(document.querySelector<HTMLDetailsElement>('#utility-rail-panel')?.open).toBe(false);
+    expect(document.querySelector('#welcome-help-panel')?.tagName).toBe('SECTION');
 
     for (const selector of [
       '#viewport-cols',
@@ -75,23 +77,28 @@ describe('keyboard reachability of host-chrome actions', () => {
 
     const drawer = document.querySelector<HTMLDetailsElement>('#dev-drawer');
     expect(drawer).not.toBeNull();
-    // Collapsed by default, matching native <details> semantics -- its
-    // content is intentionally out of the tab order until opened.
     expect(drawer?.open).toBe(false);
-    if (drawer) {
-      drawer.open = true;
-    }
+    document.querySelector<HTMLButtonElement>('#btn-inspector')?.click();
+    expect(drawer?.open).toBe(true);
 
     for (const selector of [
+      '#devtools-tab-overview',
       '#btn-health',
       '#btn-render',
       '#btn-snapshot',
-      '#btn-clear-intent',
-      '#btn-export-timeline',
-      '#btn-clear-timeline',
-      '#btn-load-context'
+      '#btn-open-devtools-window'
     ]) {
       expectFocusable(selector);
     }
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-runtime')?.click();
+    expectFocusable('#btn-clear-intent');
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-timeline')?.click();
+    expectFocusable('#btn-export-timeline');
+    expectFocusable('#btn-clear-timeline');
+
+    document.querySelector<HTMLButtonElement>('#devtools-tab-source')?.click();
+    expectFocusable('#btn-load-context');
   });
 });

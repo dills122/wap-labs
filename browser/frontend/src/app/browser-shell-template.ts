@@ -3,25 +3,15 @@ import { bindHandsetScaleControl } from './handset-scale-control';
 import { bindRouteIndicator } from './route-indicator';
 import { bindWelcomeHelpControls } from './welcome-help-control';
 import { WAVES_CONFIG } from './waves-config';
-import { WAVES_COPY } from './waves-copy';
-import { developerDrawerTemplate } from './shell/developer-drawer-template';
+import { bindDeveloperToolsWorkspace } from './developer-tools-workspace';
 import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
-import {
-  UTILITY_RAIL_NARROW_MEDIA_QUERY,
-  utilityRailTemplate
-} from './shell/utility-rail-template';
+import { statusBarTemplate } from './shell/status-bar-template';
+import { utilityRailTemplate } from './shell/utility-rail-template';
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
     <header class="browser-chrome">
-      <div class="title-row">
-        <h1 class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>${WAVES_COPY.app.brand}</span>
-        </h1>
-        <div class="caption">${WAVES_COPY.app.tagline}</div>
-      </div>
       ${navigationToolbarTemplate()}
     </header>
 
@@ -32,7 +22,7 @@ const browserShellTemplate = () => `
 
     <div class="phase-bar-slot" hidden aria-hidden="true"></div>
 
-    ${developerDrawerTemplate()}
+    ${statusBarTemplate()}
 
     <div
       id="live-announcer"
@@ -57,6 +47,8 @@ export interface BrowserShellRefs {
   timelineEl: HTMLPreElement;
   activeUrlLabelEl: HTMLSpanElement;
   devDrawerEl: HTMLDetailsElement;
+  developerToolsRootEl?: HTMLElement;
+  utilityRailPanelEl?: HTMLDetailsElement;
   toastEl: HTMLDivElement;
   liveAnnouncerEl: HTMLDivElement;
   runModeSelectEl: HTMLSelectElement;
@@ -69,20 +61,6 @@ export interface BrowserShellRefs {
   localExampleGoalEl: HTMLParagraphElement;
   localExampleTestingAcEl: HTMLUListElement;
 }
-
-// Narrow windows start with the utility rail collapsed so the handset stage
-// gets the available width; the native <details> disclosure still lets the
-// user reopen it manually. Guarded because jsdom's matchMedia support is
-// inconsistent across environments running this same mount path in tests.
-const utilityRailPrefersNarrow = (): boolean => {
-  try {
-    return typeof window.matchMedia === 'function'
-      ? window.matchMedia(UTILITY_RAIL_NARROW_MEDIA_QUERY).matches
-      : false;
-  } catch {
-    return false;
-  }
-};
 
 export const mountBrowserShell = (
   defaultUrl: string,
@@ -106,6 +84,7 @@ export const mountBrowserShell = (
   const timelineEl = document.querySelector<HTMLPreElement>('#timeline');
   const activeUrlLabelEl = document.querySelector<HTMLSpanElement>('#active-url-label');
   const devDrawerEl = document.querySelector<HTMLDetailsElement>('#dev-drawer');
+  const developerToolsRootEl = document.querySelector<HTMLElement>('#developer-tools-workspace');
   const toastEl = document.querySelector<HTMLDivElement>('#toast');
   const liveAnnouncerEl = document.querySelector<HTMLDivElement>('#live-announcer');
   const runModeSelectEl = document.querySelector<HTMLSelectElement>('#run-mode');
@@ -136,6 +115,7 @@ export const mountBrowserShell = (
     !timelineEl ||
     !activeUrlLabelEl ||
     !devDrawerEl ||
+    !developerToolsRootEl ||
     !toastEl ||
     !liveAnnouncerEl ||
     !runModeSelectEl ||
@@ -157,9 +137,47 @@ export const mountBrowserShell = (
   baseUrlInput.value = WAVES_CONFIG.defaultDebugBaseUrl;
 
   const utilityRailPanelEl = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
-  if (utilityRailPanelEl && utilityRailPrefersNarrow()) {
-    utilityRailPanelEl.open = false;
+  const inspectorButtonEl = document.querySelector<HTMLButtonElement>('#btn-inspector');
+  const localModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-local');
+  const networkModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-network');
+  const browserShellEl = document.querySelector<HTMLElement>('.browser-shell');
+
+  const syncRunModePresentation = (): void => {
+    const mode = runModeSelectEl.value === 'network' ? 'network' : 'local';
+    browserShellEl?.setAttribute('data-run-mode', mode);
+    localModeButtonEl?.setAttribute('aria-pressed', String(mode === 'local'));
+    networkModeButtonEl?.setAttribute('aria-pressed', String(mode === 'network'));
+  };
+
+  const requestRunMode = (mode: 'local' | 'network'): void => {
+    if (runModeSelectEl.value === mode) {
+      syncRunModePresentation();
+      return;
+    }
+    runModeSelectEl.value = mode;
+    syncRunModePresentation();
+    runModeSelectEl.dispatchEvent(new Event('change', { bubbles: true }));
+  };
+
+  localModeButtonEl?.addEventListener('click', () => requestRunMode('local'));
+  networkModeButtonEl?.addEventListener('click', () => requestRunMode('network'));
+  runModeSelectEl.addEventListener('change', syncRunModePresentation);
+  syncRunModePresentation();
+
+  if (utilityRailPanelEl && inspectorButtonEl) {
+    const syncInspectorPresentation = (): void => {
+      inspectorButtonEl.setAttribute('aria-expanded', String(utilityRailPanelEl.open));
+      devDrawerEl.open = utilityRailPanelEl.open;
+    };
+    inspectorButtonEl.addEventListener('click', () => {
+      utilityRailPanelEl.open = !utilityRailPanelEl.open;
+      syncInspectorPresentation();
+    });
+    utilityRailPanelEl.addEventListener('toggle', syncInspectorPresentation);
+    syncInspectorPresentation();
   }
+
+  bindDeveloperToolsWorkspace(developerToolsRootEl);
 
   const handsetScaleSelectEl = document.querySelector<HTMLSelectElement>('#handset-scale-select');
   if (handsetScaleSelectEl) {
@@ -174,11 +192,30 @@ export const mountBrowserShell = (
   const startTourBtn = document.querySelector<HTMLButtonElement>('#btn-start-tour');
   const tryLocalBtn = document.querySelector<HTMLButtonElement>('#btn-try-local-examples');
   const connectNetworkBtn = document.querySelector<HTMLButtonElement>('#btn-connect-network');
-  if (startTourBtn && tryLocalBtn && connectNetworkBtn) {
+  const welcomeToggleBtn = document.querySelector<HTMLButtonElement>('#btn-welcome-toggle');
+  const welcomePanelEl = document.querySelector<HTMLElement>('#welcome-help-panel');
+  const showWelcomeOnLaunchEl = document.querySelector<HTMLInputElement>('#show-welcome-on-launch');
+  if (
+    startTourBtn &&
+    tryLocalBtn &&
+    connectNetworkBtn &&
+    welcomeToggleBtn &&
+    welcomePanelEl &&
+    showWelcomeOnLaunchEl &&
+    browserShellEl &&
+    localModeButtonEl &&
+    networkModeButtonEl
+  ) {
     bindWelcomeHelpControls({
       startTourBtn,
       tryLocalBtn,
       connectNetworkBtn,
+      localModeButtonEl,
+      networkModeButtonEl,
+      welcomeToggleBtn,
+      welcomePanelEl,
+      showWelcomeOnLaunchEl,
+      browserShellEl,
       runModeSelectEl,
       localExampleSelectEl,
       loadLocalBtnEl,
@@ -199,6 +236,8 @@ export const mountBrowserShell = (
     timelineEl,
     activeUrlLabelEl,
     devDrawerEl,
+    developerToolsRootEl,
+    utilityRailPanelEl: utilityRailPanelEl ?? undefined,
     toastEl,
     liveAnnouncerEl,
     runModeSelectEl,

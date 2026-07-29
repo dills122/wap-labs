@@ -1,4 +1,4 @@
-export const HANDSET_SCALE_STEPS = [1, 2, 3] as const;
+export const HANDSET_SCALE_STEPS = [1, 1.25, 1.5, 1.75, 2, 3] as const;
 
 export type HandsetScaleStep = (typeof HANDSET_SCALE_STEPS)[number];
 
