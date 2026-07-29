@@ -29,7 +29,7 @@ pnpm wap-graph:check
 
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
-evidence state: 32 `direct-test-linked`, 15 `gap-work-item-mapped`, or 29
+evidence state: 33 `direct-test-linked`, 14 `gap-work-item-mapped`, or 29
 `optional-not-assessed`. All 175 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
@@ -108,7 +108,7 @@ The source table contains one explicit SCR dependency:
 - Enhancements are never allowed to replace strict behavior.
 - Every mandatory row maps to a substantive implementation work item in
   addition to `R0-01`.
-- Direct executable evidence is linked for `32/76` rows. Existing thematic
+- Direct executable evidence is linked for `33/76` rows. Existing thematic
   tests are counted only when their path, test name, command, code symbol, and
   limitation are reviewed against the exact SCR feature.
 
@@ -116,32 +116,32 @@ The source table contains one explicit SCR dependency:
 
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
-| `implemented` | 16 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
+| `implemented` | 17 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
 | `partial` | 16 | Direct behavior exists, but the cited clause has known uncovered semantics |
-| `missing` | 15 | No conforming implementation path exists; a substantive Phase R work item is attached |
+| `missing` | 14 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
-The sixteen implemented rows are `WML-C-08` (card/deck task shadowing),
+The seventeen implemented rows are `WML-C-08` (card/deck task shadowing),
 `WML-C-09` (intrinsic events), `WML-C-10` (browser context), `WML-C-11`
 (newcontext initialization), `WML-C-12` (variables), `WML-C-13` (context restrictions),
 `WML-C-16` (error handling), `WML-C-24` (`br`), `WML-C-30` (`head`), `WML-C-35` (`noop`), `WML-C-47`
-(`template`), `WML-C-18` (inter-card navigation), `WML-C-39` (`onevent`), `WML-C-42`
+(`template`), `WML-C-18` (inter-card navigation), `WML-C-25` (card/content boundaries), `WML-C-39` (`onevent`), `WML-C-42`
 (`refresh`), `WML-C-48` (`timer`), and `WML-C-53` (`wml` root). `WML-C-21` (`access`) remains partial:
 the element's `domain`/`path` defaults and component-aware policy are now enforced
 against the host-supplied referring URI before deck commit. WML-304 now preserves
 `sendreferer` opt-in at the engine boundary and the R0-06/WSP-805 transport path emits
 the smallest usable relative referring URI with byte-exact direct evidence. Across the 39 required Class C client rows, the audit
-currently records 16 implemented, 16 partial, and 7 missing. This is not a compliance percentage: nested normative
+currently records 17 implemented, 16 partial, and 6 missing. This is not a compliance percentage: nested normative
 clauses, optional capabilities, cross-target parity, and release evidence
 still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 136
+owner/work mapping and a direct fixture plan. The WML family now has 137
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
-slices plus WML-305 timer, WML-301 context/history closure, and the ten directly
+slices plus WML-305 timer, WML-301 context/history/card-table closure, and the ten directly
 assessed WML-304 request-serialization clauses; shared clauses are deduplicated.
-The other 39 clauses stay
+The other 38 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
@@ -149,11 +149,15 @@ Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
 Their ledger states remain `optional-not-assessed` until the separate
 capability-declaration pass activates the broader optional-profile gate.
 
-The 7 missing required Class C client rows are:
+The 6 missing required Class C client rows are:
 
 - task/structure: `WML-C-20`, `WML-C-52`;
-- rendering/media: `WML-C-32`, `WML-C-46`, `WML-C-49`, `WML-C-50`,
+- rendering/media: `WML-C-32`, `WML-C-49`, `WML-C-50`,
   `WML-C-54`;
+
+`WML-C-46` is now partial: table structure and card-edge line boundaries are
+directly tested, while exact column normalization, alignment designators, and
+non-zero gutter layout remain explicit gaps.
 
 The source-wide mandatory audit additionally tracks eight missing
 encoder/server requirements (`WML-S-60`, `WML-S-61`, and `WML-S-64..69`).

@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "example": "wml301CardTableBoundaries",
+  "flows": [
+    {
+      "id": "card-table-boundaries-and-cross-card-navigation",
+      "title": "Card table boundaries remain stable across fragment navigation",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-301"],
+      "specItems": [
+        "WML-CL-CARD-TABLE-BOUNDARIES",
+        "WML-CL-CARD-CONTENT-ORDER",
+        "WML-CL-CARD-ID-FRAGMENT",
+        "WML-CL-NAVIGATION-REFERENCE-MODEL"
+      ],
+      "initial": {
+        "state": {
+          "activeCardId": "middle",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "render": {
+          "textIncludes": ["Before", "Middle table", "After", "Leading case"]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "leading", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["Leading table", "After leading", "Trailing case"] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "trailing", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["Before trailing", "Trailing table"] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "adjacent", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["First table", "Second table"] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "back" },
+          "expect": {
+            "state": { "activeCardId": "trailing", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["Before trailing", "Trailing table"] }
+          }
+        }
+      ]
+    }
+  ]
+}

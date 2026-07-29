@@ -91,8 +91,8 @@ Each clause records:
 
 A planned fixture is not test evidence. An implemented fixture must name its
 fixture path, test path, and command, and clause implementation status changes
-only after that direct evidence is reviewed. The current ledger records 298
-implemented clauses with reviewed direct evidence and keeps 464 clauses
+only after that direct evidence is reviewed. The current ledger records 299
+implemented clauses with reviewed direct evidence and keeps 463 clauses
 `not-assessed`. The WML-203 slice contributes 47 implemented WBXML clauses and
 21 implemented WML clauses covering alternate-DTD behavior, the mandatory
 text prologue, and selected DTD structures; WML-204 adds 23 implemented WML
@@ -102,20 +102,21 @@ inline line-break clause, and WML-202 adds 30 root/head/access, template,
 task-shadowing, card-context, and newcontext clauses. WML-302 and WML-303 add
 their reviewed variable/substitution and action/event evidence; shared clauses
 across these completed slices are deduplicated in the ledger totals. WML-305
-adds its 10 reviewed timer-lifecycle clauses, and WML-301 adds 12 reviewed
-context, request-shaped history, fragment-selection, and process-order clauses. The
+adds its 10 reviewed timer-lifecycle clauses, WML-301 adds 13 reviewed
+context, request-shaped history, fragment-selection, process-order, and card-table-boundary clauses,
+and R0-06/WSP-805 adds ten reviewed WML-304 request-serialization clauses. The
 validator allowlists the 14-clause
 `TRN-702` direct-work-item overlay so a broad parent-row mapping cannot
 silently substitute for slice adoption.
 
 The generated WML graph has 225 directly mapped clause nodes. That projection
-count describes planning relationships and is not the 298-clause assessed
+count describes planning relationships and is not the 299-clause assessed
 evidence count.
 
 WML-201 directly maps all 175 selected WML clauses for family ownership and
 retrieval. That mapping is not fixture evidence: clause assessment remains
-unchanged, and the canonical 76-row SCR ledger now distinguishes 32 rows
-with direct code/test links from 15 mapped mandatory gaps and 29 optional
+unchanged, and the canonical 76-row SCR ledger now distinguishes 33 rows
+with direct code/test links from 14 mapped mandatory gaps and 29 optional
 rows that have not been assessed.
 
 ## Redistribution boundary

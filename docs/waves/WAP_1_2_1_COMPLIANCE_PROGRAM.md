@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 40 implemented, 71 partial, and 87
+- the selected implementation audit is 41 implemented, 71 partial, and 86
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -56,10 +56,10 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 16 implemented, 16 partial, and
-  15 missing; the selected 39-row client subset is 16 implemented, 16 partial,
-  and 7 missing;
-- 32 rows have direct code symbols and runnable test evidence.
+- the source-wide mandatory code audit finds 17 implemented, 16 partial, and
+  14 missing; the selected 39-row client subset is 17 implemented, 16 partial,
+  and 6 missing;
+- 33 rows have direct code symbols and runnable test evidence.
 - `WML-201` directly projects all 76 WML rows and all 175 selected WML
   clauses; the remaining 16 mandatory gaps and 29 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
@@ -195,14 +195,15 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-Checkpoint at `origin/main` `1f07030a` (2026-07-28): the canonical program remains 28 work items
-`done`, 11 `in-progress`, 42 `todo`, and one `blocked`, with 40/198 selected parents implemented
-and 288/762 clauses assessed. The July 28 bug-fix, desktop UX, and restricted network-preview
-merges strengthen regression and pre-release evidence but do not complete another normative work
-item. Project Atlas should continue to render these machine-backed counts.
+Merged R0-06/WSP-805 request serialization plus Runtime C1 advance the evidence rollup to
+41/198 selected parents implemented and 299/762 clauses assessed while the canonical program
+remains 28 work items `done`, 11 `in-progress`, 42 `todo`, and one `blocked`.
+The WML-301 focused graph separately exposes 13 direct clauses and seven aggregate
+regression/delegate clauses so Project Atlas cannot infer broad WAE closure from this tranche;
+the aggregate item remains in progress under `WAE-601`.
 
-The dispatch baton is native `WML-304`/`WSP-805` request application, residual `WML-301`
-card-table/WAE evidence, and `WMLS-501` verifier closure in parallel-safe lanes. `WML-306` follows
+The dispatch baton is `WMLS-501` verifier closure plus replayable POST history in A2 after the
+landed A1 serializer/fetch handoff. `WML-306` follows
 after request/history work releases the overlapping browser-policy files. Completed-ticket history
 remains immutable; newly exposed gaps require additive follow-ups.
 

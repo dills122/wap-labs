@@ -4,7 +4,7 @@ key: "WML-FX-CARD-TABLE-BOUNDARIES"
 type: "fixture"
 generated: true
 slice: "WML-3"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "rendering",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

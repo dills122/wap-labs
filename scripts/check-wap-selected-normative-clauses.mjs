@@ -186,9 +186,31 @@ const wml301ClauseIds = new Set([
   'WML-CL-NAVIGATION-REFERENCE-MODEL',
   'WML-CL-GO-FRAGMENT-FALLBACK',
   'WML-CL-GO-HISTORY-PUSH',
-  'WML-CL-CARD-ID-FRAGMENT'
+  'WML-CL-CARD-ID-FRAGMENT',
+  'WML-CL-CARD-TABLE-BOUNDARIES'
+]);
+const aggregateContextClauseIdsByWorkItem = new Map([
+  [
+    'WML-301',
+    new Set([
+      'WML-CL-CARD-COLLECTION',
+      'WML-CL-CARD-CONTENT-ORDER',
+      'WML-CL-CARD-CONTEXT-ATTRIBUTE',
+      'WML-CL-CARD-STRUCTURE',
+      'WAE-CL-WML-LANGUAGE-DELEGATE',
+      'WAE-CL-WML-USER-AGENT-COMPOSITION',
+      'WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE'
+    ])
+  ]
 ]);
 const wml301EvidenceByClauseId = new Map([
+  [
+    'WML-CL-CARD-TABLE-BOUNDARIES',
+    {
+      path: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301'
+    }
+  ],
   ...[
     'WML-CL-HISTORY-STACK-MODEL',
     'WML-CL-HISTORY-DUPLICATE-PUSH',
@@ -780,6 +802,10 @@ for (const family of ledger.families ?? []) {
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
       ...(trn708ClauseIds.has(candidate.id) ? ['TRN-708'] : [])
     ].sort();
+    const expectedAggregateContextWorkItems = [...aggregateContextClauseIdsByWorkItem]
+      .filter(([, clauseIds]) => clauseIds.has(candidate.id))
+      .map(([workItem]) => workItem)
+      .sort();
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
     ].sort();
@@ -801,6 +827,8 @@ for (const family of ledger.families ?? []) {
       JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
       JSON.stringify(candidate.directWorkItems ?? []) !==
         JSON.stringify(expectedDirectWorkItems) ||
+      JSON.stringify(candidate.aggregateContextWorkItems ?? []) !==
+        JSON.stringify(expectedAggregateContextWorkItems) ||
       JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
       JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
       JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==

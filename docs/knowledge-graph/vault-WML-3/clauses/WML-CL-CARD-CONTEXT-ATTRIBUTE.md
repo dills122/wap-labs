@@ -15,9 +15,9 @@ tags:
 
 ## Relationships
 
+- `context-for` → [[work-items/WML-301|WML-301]]
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
-- `planned-by` → [[work-items/WML-301|WML-301]]
 - `refines` → [[scr-rows/WML-C-11|WML-C-11]]
 - `refines` → [[scr-rows/WML-C-25|WML-C-25]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
@@ -48,6 +48,17 @@ tags:
     "R0-04",
     "WML-201",
     "WML-202",
+    "WML-301"
+  ],
+  "directWorkItems": [
+    "C5-03",
+    "R0-01",
+    "R0-03",
+    "R0-04",
+    "WML-201",
+    "WML-202"
+  ],
+  "aggregateContextWorkItems": [
     "WML-301"
   ],
   "ownerLayers": [

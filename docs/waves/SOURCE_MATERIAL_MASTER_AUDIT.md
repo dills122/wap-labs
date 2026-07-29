@@ -161,14 +161,14 @@ Cross-source selected-profile accounting is now executable:
 - 712 effective SCR/source rows across the nine mandatory feature families;
 - 198 rows selected by the exact Class C client profile and transport
   dependency path;
-- 40 implemented, 71 partial, and 87 missing in the conservative
+- 41 implemented, 71 partial, and 86 missing in the conservative
   implementation audit;
 - every selected row has an owner and work-item mapping;
 - all 198 selected rows now expand into 762 deduplicated nested clauses with
   source anchors and fixture plans;
-- 298 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed; direct
+- 299 WML, WBXML, WDP, WCMP, and WSP clauses are directly fixture-backed; direct
   conformance fixture implementation remains the principal evidence gap for
-  the other 464.
+  the other 463.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes

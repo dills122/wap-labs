@@ -15,8 +15,8 @@ tags:
 
 ## Relationships
 
+- `context-for` → [[work-items/WML-301|WML-301]]
 - `maps-to` → [[requirements/RQ-RMK-001|RQ-RMK-001]]
-- `planned-by` → [[work-items/WML-301|WML-301]]
 - `refines` → [[scr-rows/WML-C-25|WML-C-25]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 - `verified-by` → [[fixtures/WML-FX-CARD-CONTENT-ORDER|WML-FX-CARD-CONTENT-ORDER]]
@@ -45,6 +45,17 @@ tags:
     "WML-201",
     "WML-202",
     "WML-203",
+    "WML-301"
+  ],
+  "directWorkItems": [
+    "C5-03",
+    "R0-01",
+    "R0-04",
+    "WML-201",
+    "WML-202",
+    "WML-203"
+  ],
+  "aggregateContextWorkItems": [
     "WML-301"
   ],
   "ownerLayers": [

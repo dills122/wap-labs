@@ -348,7 +348,8 @@ const directWorkItemClauseIds = new Map([
       'WML-CL-NAVIGATION-REFERENCE-MODEL',
       'WML-CL-GO-FRAGMENT-FALLBACK',
       'WML-CL-GO-HISTORY-PUSH',
-      'WML-CL-CARD-ID-FRAGMENT'
+      'WML-CL-CARD-ID-FRAGMENT',
+      'WML-CL-CARD-TABLE-BOUNDARIES'
     ])
   ],
   [
@@ -416,6 +417,22 @@ const directWorkItemClauseIds = new Map([
       'WML-CL-POSTFIELD-REQUEST-PAIR',
       'WML-CL-GO-STRUCTURE',
       'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+      'WML-CL-GO-REFERER',
+      'WML-CL-GO-METHOD',
+      'WML-CL-GO-NO-CACHE',
+      'WML-CL-GO-ENCTYPE-SUPPORT',
+      'WML-CL-GO-PART-CONTENT-TYPE',
+      'WML-CL-GO-ACCEPT-CHARSET',
+      'WML-CL-GO-SUBMISSION-ORDER',
+      'WML-CL-GO-GET-QUERY-MERGE',
+      'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+      'WML-CL-GO-FORM-URLENCODING'
+    ])
+  ],
+  [
+    'WSP-805',
+    new Set([
+      'WML-CL-POSTFIELD-REQUEST-PAIR',
       'WML-CL-GO-REFERER',
       'WML-CL-GO-METHOD',
       'WML-CL-GO-NO-CACHE',
@@ -502,6 +519,20 @@ const directWorkItemClauseIds = new Map([
     generalWcmpClauseIds
   ]
 ]);
+const aggregateContextClauseIdsByWorkItem = new Map([
+  [
+    'WML-301',
+    new Set([
+      'WML-CL-CARD-COLLECTION',
+      'WML-CL-CARD-CONTENT-ORDER',
+      'WML-CL-CARD-CONTEXT-ATTRIBUTE',
+      'WML-CL-CARD-STRUCTURE',
+      'WAE-CL-WML-LANGUAGE-DELEGATE',
+      'WAE-CL-WML-USER-AGENT-COMPOSITION',
+      'WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE'
+    ])
+  ]
+]);
 const implementedWml202ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-202')
 );
@@ -520,8 +551,21 @@ const implementedWml301ClauseIds = new Set(
 const implementedWml303ClauseIds = new Set(
   directWorkItemClauseIds.get('WML-303')
 );
+const implementedWml304TransportClauseIds = new Set([
+  'WML-CL-POSTFIELD-REQUEST-PAIR',
+  'WML-CL-GO-REFERER',
+  'WML-CL-GO-METHOD',
+  'WML-CL-GO-NO-CACHE',
+  'WML-CL-GO-ENCTYPE-SUPPORT',
+  'WML-CL-GO-ACCEPT-CHARSET',
+  'WML-CL-GO-SUBMISSION-ORDER',
+  'WML-CL-GO-GET-QUERY-MERGE',
+  'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+  'WML-CL-GO-FORM-URLENCODING'
+]);
 const implementedWml304ClauseIds = new Set([
-  'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION'
+  'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+  ...implementedWml304TransportClauseIds
 ]);
 const implementedWsp801ClauseIds = new Set([
   'WSP-CL-COMMUNICATION-FAILURE-LOCAL',
@@ -683,6 +727,13 @@ function wml205FixtureEvidence(clauseId) {
 }
 
 function wml301FixtureEvidence(clauseId) {
+  if (clauseId === 'WML-CL-CARD-TABLE-BOUNDARIES') {
+    return {
+      path: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      testPath: 'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301'
+    };
+  }
   if (
     [
       'WML-CL-HISTORY-STACK-MODEL',
@@ -729,11 +780,20 @@ const wml303FixtureEvidence = {
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
 };
 
-const wml304FixtureEvidence = {
-  path: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
-  testPath: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
-  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304'
-};
+function wml304FixtureEvidence(clauseId) {
+  if (implementedWml304TransportClauseIds.has(clauseId)) {
+    return {
+      path: 'transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json',
+      testPath: 'transport-rust/src/request_serialization/tests.rs',
+      command: 'cargo test --manifest-path transport-rust/Cargo.toml request_serialization'
+    };
+  }
+  return {
+    path: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+    testPath: 'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
+    command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_304'
+  };
+}
 
 const wsp801FixtureEvidence = {
   path: 'transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json',
@@ -784,6 +844,13 @@ function directWorkItemsForClause(clauseId) {
     mappedWorkItems.push('WML-201');
   }
   return mappedWorkItems.sort();
+}
+
+function aggregateContextWorkItemsForClause(clauseId) {
+  return [...aggregateContextClauseIdsByWorkItem]
+    .filter(([, clauseIds]) => clauseIds.has(clauseId))
+    .map(([workItem]) => workItem)
+    .sort();
 }
 
 function refreshStrictWcmpFamily(manifest) {
@@ -1075,10 +1142,17 @@ if (refreshDirectWorkItems) {
     }
     for (const candidate of family.clauses) {
       const directWorkItems = directWorkItemsForClause(candidate.id);
+      const aggregateContextWorkItems =
+        aggregateContextWorkItemsForClause(candidate.id);
       if (directWorkItems.length) {
         candidate.directWorkItems = directWorkItems;
       } else {
         delete candidate.directWorkItems;
+      }
+      if (aggregateContextWorkItems.length) {
+        candidate.aggregateContextWorkItems = aggregateContextWorkItems;
+      } else {
+        delete candidate.aggregateContextWorkItems;
       }
       candidate.mapping.workItems = [
         ...new Set([
@@ -1090,9 +1164,11 @@ if (refreshDirectWorkItems) {
       ].sort();
       candidate.mapping.ownerLayers = [
         ...new Set(
-          candidate.parentRows.flatMap(
-            (parentId) => parentById.get(parentId).mapping.ownerLayers
-          )
+          candidate.parentRows
+            .flatMap((parentId) => parentById.get(parentId).mapping.ownerLayers)
+            .concat(
+              directWorkItems.includes('WSP-805') ? ['transport-rust'] : []
+            )
         )
       ].sort();
       candidate.mapping.requirementIds = [
@@ -1137,7 +1213,7 @@ if (refreshDirectWorkItems) {
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
       } else if (implementedWml304ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
-        candidate.fixturePlan.evidence = wml304FixtureEvidence;
+        candidate.fixturePlan.evidence = wml304FixtureEvidence(candidate.id);
       } else if (implementedWsp801ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wsp801FixtureEvidence;
@@ -2059,6 +2135,7 @@ function clause(
 ) {
   const clauseId = `${family.toUpperCase()}-CL-${key.toUpperCase().replaceAll('_', '-')}`;
   const directWorkItems = directWorkItemsForClause(clauseId);
+  const aggregateContextWorkItems = aggregateContextWorkItemsForClause(clauseId);
   const directFixtureImplemented =
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
@@ -2095,7 +2172,7 @@ function clause(
       : implementedWml303ClauseIds.has(clauseId)
       ? wml303FixtureEvidence
       : implementedWml304ClauseIds.has(clauseId)
-      ? wml304FixtureEvidence
+      ? wml304FixtureEvidence(clauseId)
       : implementedWsp801ClauseIds.has(clauseId)
       ? wsp801FixtureEvidence
       : implementedWsp802ClauseIds.has(clauseId)
@@ -2136,6 +2213,7 @@ function clause(
     family,
     parentRows,
     ...(directWorkItems.length ? { directWorkItems } : {}),
+    ...(aggregateContextWorkItems.length ? { aggregateContextWorkItems } : {}),
     sourceAnchor: sectionAnchors.get(`${anchorFamily}:${section}`),
     normativeForce,
     obligationLevel:
@@ -3586,7 +3664,15 @@ const families = familyDefinitions.map((definition) => {
     );
     candidate.mapping = {
       ownerLayers: [
-        ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
+        ...new Set(
+          parents
+            .flatMap((parent) => parent.mapping.ownerLayers)
+            .concat(
+              candidate.directWorkItems.includes('WSP-805')
+                ? ['transport-rust']
+                : []
+            )
+        )
       ].sort(),
       workItems: [
         ...new Set([

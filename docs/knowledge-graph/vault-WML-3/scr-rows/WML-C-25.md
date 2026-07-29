@@ -35,7 +35,7 @@ tags:
     "staticConformanceSection": "15.1.5",
     "changeSection": null
   },
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "ownerLayers": [
     "engine-wasm"
   ],

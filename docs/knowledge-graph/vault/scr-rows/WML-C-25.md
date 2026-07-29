@@ -49,17 +49,17 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.",
+  "assessmentNote": "Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/mod.rs",
       "symbol": "parse_wml"
     },
     {
-      "path": "engine-wasm/engine/src/runtime/card.rs",
-      "symbol": "Card"
+      "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+      "symbol": "TableBoundaryPlan"
     }
   ],
   "testEvidence": [
@@ -69,9 +69,14 @@ tags:
       "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
     },
     {
-      "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
-      "test": "wml_202_card_content_order_is_preserved_in_render_output",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_card_content_order_is_preserved_in_render_output"
+      "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+      "test": "wml_301_inserts_source_required_table_boundaries_at_card_content_edges",
+      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+      "test": "wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation",
+      "command": "cd engine-wasm/engine && cargo test wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation"
     }
   ],
   "ownerLayers": [

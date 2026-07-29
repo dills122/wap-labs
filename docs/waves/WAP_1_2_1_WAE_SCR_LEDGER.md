@@ -70,7 +70,7 @@ requirements and cannot be accidentally counted toward current coverage.
 | `WAESpec-C-005` | Character set / encoding characteristics | implemented | `WAE-602`, `T0-05`, `T0-06` |
 | `WAESpec-C-006` | Language characteristics | implemented | `WAE-602`, `T0-05` |
 | `WAESpec-C-007` | Media-type characteristics | implemented | `WAE-602`, `T0-05` |
-| `WAESpec-C-015` | Wireless Markup Language | partial | `WML-201`, `WML-301`, `R0-01` |
+| `WAESpec-C-015` | Wireless Markup Language | partial | `WML-201`, `WAE-601`, `R0-01` |
 | `WAESpec-C-016` | WMLScript | partial | `WMLS-501`, `WMLS-502`, `W1-02`, `W1-04` |
 | `WAESpec-C-017` | WML user agent | partial | `WAE-601`, WML/WMLScript sprints |
 | `WAESpec-C-019` | `application/vnd.wap.wbxml` | missing | `WAE-602`, `R0-08` |

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b621cf0dcb9fc256c7b2f4244ca2c332dc233332d1e9ccef310c371066992d2e"
+        "sha256": "094df802a3f5e3c36c04147c92c1770753f2c9d6a440cae25cdb9af399c1cdf7"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,20 +25,20 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "15a035ce40030053ace3e23e4c050af1985ac715ff0a4d61970e440c6a150697"
+        "sha256": "427e92dde5d4e6fe76924b5dbc9cf874571fca7fc1dc81519513583fe029b724"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
+        "sha256": "312750697c1a4a294325a2ae93a8c6871dea63bdcdb4271b1e9a71f8334f51d0"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "5b3b3599aaa8dc57da87d5c189f57f64edbec1245c25de1f8b0e5cc59a72993e"
+        "sha256": "a85a09d985204f733cbb9834ef1826475446919896985bf0e72546625a47f3ac"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
     "nodeCount": 332,
-    "edgeCount": 884,
+    "edgeCount": 882,
     "nodesByType": {
       "clause": 121,
       "fixture": 121,
@@ -57,12 +57,13 @@
       "applied-before": 8,
       "belongs-to": 29,
       "contains": 8,
+      "context-for": 7,
       "covers-family": 12,
       "depends-on": 5,
       "effective-document": 11,
       "maps-to": 197,
       "owned-by": 24,
-      "planned-by": 136,
+      "planned-by": 127,
       "refines": 177,
       "relates-to": 16,
       "requires-family": 3,
@@ -73,7 +74,7 @@
       "verified-by": 121
     },
     "directClauseCountsByWorkItem": {
-      "WML-301": 20,
+      "WML-301": 13,
       "WML-302": 20,
       "WML-303": 27,
       "WML-304": 15,
@@ -84,7 +85,6 @@
     },
     "directClauseFamiliesByWorkItem": {
       "WML-301": [
-        "wae",
         "wml"
       ],
       "WML-302": [
@@ -106,6 +106,29 @@
       "WML-308": [
         "wml"
       ]
+    },
+    "aggregateContextClauseCountsByWorkItem": {
+      "WML-301": 7,
+      "WML-302": 0,
+      "WML-303": 0,
+      "WML-304": 0,
+      "WML-305": 0,
+      "WML-306": 0,
+      "WML-307": 0,
+      "WML-308": 0
+    },
+    "aggregateContextClauseFamiliesByWorkItem": {
+      "WML-301": [
+        "wae",
+        "wml"
+      ],
+      "WML-302": [],
+      "WML-303": [],
+      "WML-304": [],
+      "WML-305": [],
+      "WML-306": [],
+      "WML-307": [],
+      "WML-308": []
     },
     "directScrRowCountsByWorkItem": {
       "WML-301": 0,
@@ -170,8 +193,16 @@
           "R0-01",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "R0-01",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -211,8 +242,15 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -254,9 +292,19 @@
           "W1-04",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501",
           "WMLS-502"
+        ],
+        "directWorkItems": [
+          "W1-02",
+          "W1-04",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501",
+          "WMLS-502"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -575,6 +623,16 @@
           "WML-202",
           "WML-301"
         ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
+        ],
         "ownerLayers": [
           "engine-wasm"
         ],
@@ -612,6 +670,17 @@
           "WML-201",
           "WML-202",
           "WML-203",
+          "WML-301"
+        ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202",
+          "WML-203"
+        ],
+        "aggregateContextWorkItems": [
           "WML-301"
         ],
         "ownerLayers": [
@@ -652,6 +721,17 @@
           "R0-04",
           "WML-201",
           "WML-202",
+          "WML-301"
+        ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-03",
+          "R0-04",
+          "WML-201",
+          "WML-202"
+        ],
+        "aggregateContextWorkItems": [
           "WML-301"
         ],
         "ownerLayers": [
@@ -736,6 +816,17 @@
           "WML-203",
           "WML-301"
         ],
+        "directWorkItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-202",
+          "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
+        ],
         "ownerLayers": [
           "engine-wasm"
         ],
@@ -782,7 +873,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5065,7 +5156,7 @@
       "title": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6658,7 +6749,7 @@
         ],
         "workItems": [
           "WML-201",
-          "WML-301",
+          "WAE-601",
           "R0-01"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
@@ -6713,7 +6804,6 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
@@ -7091,7 +7181,7 @@
           "staticConformanceSection": "15.1.5",
           "changeSection": null
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "engine-wasm"
         ],
@@ -7490,7 +7580,7 @@
           "staticConformanceSection": "15.1.5",
           "changeSection": null
         },
-        "implementationStatus": "missing",
+        "implementationStatus": "partial",
         "ownerLayers": [
           "engine-wasm",
           "browser"
@@ -7935,7 +8025,7 @@
       "id": "work-item:WML-301",
       "key": "WML-301",
       "type": "work-item",
-      "title": "Deck/card context, history, newcontext, and inter-card process-order closure",
+      "title": "Deck/card context, history, newcontext, inter-card process order, and card/table boundary closure",
       "properties": {
         "status": "in-progress",
         "ownerLayers": [
@@ -7948,10 +8038,10 @@
           "wae"
         ],
         "notes": [
-          "The source-audited WML-301 graph boundary directly maps 20 clauses across 11 selected parents. The implemented direct-fixture set closes history stack order, duplicate access, request-identity fields without card content, browser-context scope/state, independent-navigation context replacement, card-fragment selection/fallback, and destination history push/process ordering.",
+          "The source-audited WML-301 graph boundary now distinguishes 13 direct fixture-backed WML clauses from seven aggregate regression/delegate clauses. The direct set closes history stack order, duplicate access, request-identity fields without card content, browser-context scope/state, independent-navigation context replacement, card-fragment selection/fallback, destination history push/process ordering, and source-required card/table boundaries.",
           "WML-301 consumes WML-302 variable resolution, WML-303 action/BACK ordering, and WML-305 timer ordering as regression evidence without taking over those completed slices. WML-202 newcontext, WML-204 control/vdata commit, and WML-205 atomic failure behavior remain preserved.",
-          "WML-304 exclusively owns GET/POST request construction, postfield serialization, and POST replay. WML-301 limits HISTORY-ENTRY-FIELDS evidence to the request identity already handed across the engine/browser boundary. The user agent elects the permitted old-context termination behavior for independent navigation and exposes that choice through a monotonic context epoch.",
-          "CARD-TABLE-BOUNDARIES and the broad WAE delegation clauses in the focused pack remain planned and visible. They are not context/history/process-order obligations, are not inferred closed by this implementation, and keep the aggregate WML-301 work item in progress."
+          "WML-304 exclusively owns GET/POST request construction and postfield serialization. Replayable POST history remains an explicit WML-CL-HISTORY-POST-REPLAY baton for Request A2 after A1. WML-301 limits HISTORY-ENTRY-FIELDS evidence to the request identity already handed across the engine/browser boundary. The user agent elects the permitted old-context termination behavior for independent navigation and exposes that choice through a monotonic context epoch.",
+          "CARD-TABLE-BOUNDARIES is directly implemented with parser, native, WASM, invalid-structure, cross-card navigation, and executable-story evidence. The four previously implemented card clauses and three broad WAE delegation clauses remain separately labeled aggregate context; the WAE delegates stay not-assessed under WAE-601, so the aggregate WML-301 work item remains in progress without reopening its completed direct history or card/table evidence."
         ],
         "specReferences": [
           "WAP-191_104-WML sections 9.2, 10.1, 10.4, 11.5.2, 12.5, and 12.5.1"
@@ -7962,10 +8052,10 @@
           "A5-01"
         ],
         "outputs": [
-          "Deck/card context, history, newcontext, and inter-card process-order closure"
+          "Deck/card context, history, newcontext, inter-card process order, and card/table boundary closure"
         ],
         "acceptance": [
-          "Forward, backward, reload, failure rollback, and context reset match strict ordering across native and WASM adapters."
+          "Forward, backward, reload, failure rollback, context reset, and source-required table boundaries match strict ordering and layout across native and WASM adapters."
         ],
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
@@ -8293,6 +8383,15 @@
   ],
   "edges": [
     {
+      "id": "clause:WAE-CL-WML-LANGUAGE-DELEGATE|context-for|work-item:WML-301",
+      "from": "clause:WAE-CL-WML-LANGUAGE-DELEGATE",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WAE-CL-WML-LANGUAGE-DELEGATE|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WAE-CL-WML-LANGUAGE-DELEGATE",
       "relation": "maps-to",
@@ -8324,15 +8423,6 @@
       "from": "clause:WAE-CL-WML-LANGUAGE-DELEGATE",
       "relation": "maps-to",
       "to": "requirement:RQ-WAE-017",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WAE-CL-WML-LANGUAGE-DELEGATE|planned-by|work-item:WML-301",
-      "from": "clause:WAE-CL-WML-LANGUAGE-DELEGATE",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8374,6 +8464,15 @@
       ]
     },
     {
+      "id": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION|context-for|work-item:WML-301",
+      "from": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION|maps-to|requirement:RQ-WAE-002",
       "from": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION",
       "relation": "maps-to",
@@ -8401,15 +8500,6 @@
       ]
     },
     {
-      "id": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION|planned-by|work-item:WML-301",
-      "from": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
       "id": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION|refines|scr-row:WAESpec-C-017",
       "from": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION",
       "relation": "refines",
@@ -8432,6 +8522,15 @@
       "from": "clause:WAE-CL-WML-USER-AGENT-COMPOSITION",
       "relation": "verified-by",
       "to": "fixture:WAE-FX-WML-USER-AGENT-COMPOSITION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE|context-for|work-item:WML-301",
+      "from": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8477,15 +8576,6 @@
       "from": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
       "relation": "maps-to",
       "to": "requirement:RQ-WMLS-001",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE|planned-by|work-item:WML-301",
-      "from": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8842,19 +8932,19 @@
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-COLLECTION|maps-to|requirement:RQ-RMK-001",
+      "id": "clause:WML-CL-CARD-COLLECTION|context-for|work-item:WML-301",
       "from": "clause:WML-CL-CARD-COLLECTION",
-      "relation": "maps-to",
-      "to": "requirement:RQ-RMK-001",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-COLLECTION|planned-by|work-item:WML-301",
+      "id": "clause:WML-CL-CARD-COLLECTION|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-CARD-COLLECTION",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8887,19 +8977,19 @@
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-CONTENT-ORDER|maps-to|requirement:RQ-RMK-001",
+      "id": "clause:WML-CL-CARD-CONTENT-ORDER|context-for|work-item:WML-301",
       "from": "clause:WML-CL-CARD-CONTENT-ORDER",
-      "relation": "maps-to",
-      "to": "requirement:RQ-RMK-001",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-CONTENT-ORDER|planned-by|work-item:WML-301",
+      "id": "clause:WML-CL-CARD-CONTENT-ORDER|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-CARD-CONTENT-ORDER",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -8932,6 +9022,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE|context-for|work-item:WML-301",
+      "from": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE",
       "relation": "maps-to",
@@ -8945,15 +9044,6 @@
       "from": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE",
       "relation": "maps-to",
       "to": "requirement:RQ-RMK-003",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE|planned-by|work-item:WML-301",
-      "from": "clause:WML-CL-CARD-CONTEXT-ATTRIBUTE",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -9058,19 +9148,19 @@
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-STRUCTURE|maps-to|requirement:RQ-RMK-001",
+      "id": "clause:WML-CL-CARD-STRUCTURE|context-for|work-item:WML-301",
       "from": "clause:WML-CL-CARD-STRUCTURE",
-      "relation": "maps-to",
-      "to": "requirement:RQ-RMK-001",
+      "relation": "context-for",
+      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
     },
     {
-      "id": "clause:WML-CL-CARD-STRUCTURE|planned-by|work-item:WML-301",
+      "id": "clause:WML-CL-CARD-STRUCTURE|maps-to|requirement:RQ-RMK-001",
       "from": "clause:WML-CL-CARD-STRUCTURE",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -14989,15 +15079,6 @@
       ]
     },
     {
-      "id": "scr-row:WAESpec-C-015|planned-by|work-item:WML-301",
-      "from": "scr-row:WAESpec-C-015",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
       "id": "scr-row:WAESpec-C-016|belongs-to|source-family:wae",
       "from": "scr-row:WAESpec-C-016",
       "relation": "belongs-to",
@@ -15011,15 +15092,6 @@
       "from": "scr-row:WAESpec-C-017",
       "relation": "belongs-to",
       "to": "source-family:wae",
-      "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
-      ]
-    },
-    {
-      "id": "scr-row:WAESpec-C-017|planned-by|work-item:WML-301",
-      "from": "scr-row:WAESpec-C-017",
-      "relation": "planned-by",
-      "to": "work-item:WML-301",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

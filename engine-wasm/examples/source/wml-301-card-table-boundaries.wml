@@ -1,0 +1,43 @@
+<!--
+label: WML-301 Card and Table Boundaries
+description: Exercises leading, middle, trailing, and adjacent tables across fragment navigation and BACK.
+goal: Verify WML 1.3 source-required card/table line boundaries without disturbing card order or history.
+work-items: WML-301
+spec-items: WML-CL-CARD-TABLE-BOUNDARIES,WML-CL-CARD-CONTENT-ORDER,WML-CL-CARD-ID-FRAGMENT,WML-CL-NAVIGATION-REFERENCE-MODEL
+testing-ac:
+- Confirm a middle table has distinct content lines before and after it.
+- Confirm leading and trailing tables do not receive an extra outer boundary at the card edge.
+- Navigate through the table cards and use BACK to confirm the prior card is restored.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="middle">
+    <p>
+      Before
+      <table columns="1"><tr><td>Middle table</td></tr></table>
+      After
+      <a href="#leading">Leading case</a>
+    </p>
+  </card>
+  <card id="leading">
+    <p>
+      <table columns="1"><tr><td>Leading table</td></tr></table>
+      After leading
+      <a href="#trailing">Trailing case</a>
+    </p>
+  </card>
+  <card id="trailing">
+    <do type="accept" label="Adjacent"><go href="#adjacent"/></do>
+    <p>
+      Before trailing
+      <table columns="1"><tr><td>Trailing table</td></tr></table>
+    </p>
+  </card>
+  <card id="adjacent">
+    <p>
+      <table columns="1"><tr><td>First table</td></tr></table>
+      <table columns="1"><tr><td>Second table</td></tr></table>
+    </p>
+  </card>
+</wml>

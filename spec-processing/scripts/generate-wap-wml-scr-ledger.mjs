@@ -559,19 +559,31 @@ const mandatoryImplementationAudit = new Map(
       ]
     },
     'WML-C-25': {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'Card collection, event/timer/content ordering, source presentation order, language, newcontext, and ordered attributes are parsed and applied with deterministic defaults. The parent stays partial because card-fragment and table-boundary clauses remain assigned to additive WML-301 outside WML-202.',
+        'Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/mod.rs',
           'parse_wml'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
+          'TableBoundaryPlan'
         )
       ],
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'parses_cards_and_links'
+          'wml_202_enforces_card_event_timer_content_order'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+          'wml_301_inserts_source_required_table_boundaries_at_card_content_edges'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+          'wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation'
         )
       ]
     },
@@ -947,11 +959,29 @@ const mandatoryImplementationAudit = new Map(
       ]
     },
     'WML-C-46': {
-      status: 'missing',
+      status: 'partial',
       note:
-        'Table structure, column normalization, alignment, and layout are not represented.',
-      implementationEvidence: [],
-      testEvidence: []
+        'WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/validation.rs',
+          'validate_content_model'
+        ),
+        codeEvidence(
+          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
+          'TableBoundaryPlan'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
+          'wml_203_invalid_content_model_mutations_are_rejected_deterministically'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_301_context_history.rs',
+          'wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation'
+        )
+      ]
     },
     'WML-C-47': {
       status: 'implemented',

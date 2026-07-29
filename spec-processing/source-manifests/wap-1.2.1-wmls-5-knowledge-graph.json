@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b621cf0dcb9fc256c7b2f4244ca2c332dc233332d1e9ccef310c371066992d2e"
+        "sha256": "094df802a3f5e3c36c04147c92c1770753f2c9d6a440cae25cdb9af399c1cdf7"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,10 +25,10 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "15a035ce40030053ace3e23e4c050af1985ac715ff0a4d61970e440c6a150697"
+        "sha256": "427e92dde5d4e6fe76924b5dbc9cf874571fca7fc1dc81519513583fe029b724"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "56f088aafa79eafb94c03d873ec26b3f601dbfdf0d1937b9891ec9244e5fcd79"
+        "sha256": "312750697c1a4a294325a2ae93a8c6871dea63bdcdb4271b1e9a71f8334f51d0"
       },
       "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json": {
         "sha256": "43a900970f32178860d30ab76e211cbe4a2e1d8cb75cf80494196324703a69a8"
@@ -100,6 +100,22 @@
         "wmlscript",
         "wmlscript-libraries"
       ],
+      "WMLS-506": []
+    },
+    "aggregateContextClauseCountsByWorkItem": {
+      "WMLS-501": 0,
+      "WMLS-502": 0,
+      "WMLS-503": 0,
+      "WMLS-504": 0,
+      "WMLS-505": 0,
+      "WMLS-506": 0
+    },
+    "aggregateContextClauseFamiliesByWorkItem": {
+      "WMLS-501": [],
+      "WMLS-502": [],
+      "WMLS-503": [],
+      "WMLS-504": [],
+      "WMLS-505": [],
       "WMLS-506": []
     },
     "directScrRowCountsByWorkItem": {
@@ -248,8 +264,16 @@
           "R0-01",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "R0-01",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -289,8 +313,15 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
+        ],
+        "directWorkItems": [
+          "WAE-601",
+          "WML-201",
+          "WMLS-501"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -332,9 +363,19 @@
           "W1-04",
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501",
           "WMLS-502"
+        ],
+        "directWorkItems": [
+          "W1-02",
+          "W1-04",
+          "WAE-601",
+          "WML-201",
+          "WMLS-501",
+          "WMLS-502"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-301"
         ],
         "ownerLayers": [
           "browser",
@@ -16486,7 +16527,7 @@
         ],
         "workItems": [
           "WML-201",
-          "WML-301",
+          "WAE-601",
           "R0-01"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
@@ -16541,7 +16582,6 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"

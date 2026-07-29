@@ -5,6 +5,8 @@ use crate::{
 };
 
 const CONTENT_TYPE: &str = "text/vnd.wap.wml";
+const CARD_TABLE_BOUNDARIES: &str =
+    include_str!("../../../examples/source/wml-301-card-table-boundaries.wml");
 
 fn load_for_navigation(
     engine: &mut WmlEngine,
@@ -22,6 +24,119 @@ fn load_for_navigation(
             DeckNavigationContext::new(None, Some(navigation_url), kind),
         )
         .expect("navigation-shaped deck load should succeed");
+}
+
+#[test]
+fn wml_301_card_table_boundaries_render_at_card_edges_and_survive_navigation() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(CARD_TABLE_BOUNDARIES)
+        .expect("source-derived card/table fixture should load");
+
+    assert_eq!(
+        render_snapshot_lines(&engine),
+        vec![
+            "text:0:0:Before",
+            "text:0:2:Middle table",
+            "text:0:4:After",
+            "link:0:5:focused=true:href=#leading:text=Leading case",
+        ]
+    );
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("middle-card link should open the leading-table card");
+    assert_eq!(engine.active_card_id().as_deref(), Ok("leading"));
+    assert_eq!(
+        render_snapshot_lines(&engine),
+        vec![
+            "text:0:0:Leading table",
+            "text:0:2:After leading",
+            "link:0:3:focused=true:href=#trailing:text=Trailing case",
+        ]
+    );
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("leading-card link should open the trailing-table card");
+    assert_eq!(engine.active_card_id().as_deref(), Ok("trailing"));
+    assert_eq!(
+        render_snapshot_lines(&engine),
+        vec!["text:0:0:Before trailing", "text:0:2:Trailing table",]
+    );
+
+    engine
+        .handle_key("enter".to_string())
+        .expect("card action should open the adjacent-table card");
+    assert_eq!(engine.active_card_id().as_deref(), Ok("adjacent"));
+    assert_eq!(
+        render_snapshot_lines(&engine),
+        vec!["text:0:0:First table", "text:0:3:Second table"]
+    );
+
+    assert!(engine.navigate_back());
+    assert_eq!(engine.active_card_id().as_deref(), Ok("trailing"));
+    assert_eq!(
+        render_snapshot_lines(&engine),
+        vec!["text:0:0:Before trailing", "text:0:2:Trailing table",]
+    );
+}
+
+#[test]
+fn wml_301_invalid_card_table_structures_are_rejected_without_state_drift() {
+    let canonical = |body: &str| {
+        format!(
+            "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n{body}"
+        )
+    };
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck_context(
+            &canonical(r#"<wml><card id="stable"><p>Stable</p></card></wml>"#),
+            "http://example.test/stable.wml",
+            "text/vnd.wap.wml; validation=strict",
+            None,
+        )
+        .expect("stable baseline should load");
+
+    let cases = [
+        (
+            "direct card table",
+            r#"<wml><card id="bad"><table columns="1"><tr><td>Bad</td></tr></table></card></wml>"#,
+            "expected onevent*, timer?, then zero or more do, p, or pre elements",
+        ),
+        (
+            "table in pre",
+            r#"<wml><card id="bad"><pre><table columns="1"><tr><td>Bad</td></tr></table></pre></card></wml>"#,
+            "unexpected child <table> for WML 1.3 DTD",
+        ),
+        (
+            "nested table",
+            r#"<wml><card id="bad"><p><table columns="1"><tr><td><em><table columns="1"><tr><td>Bad</td></tr></table></em></td></tr></table></p></card></wml>"#,
+            "nested tables are prohibited",
+        ),
+    ];
+
+    for (label, source, expected) in cases {
+        let error = engine
+            .load_deck_context(
+                &canonical(source),
+                "http://example.test/invalid.wml",
+                "text/vnd.wap.wml; validation=strict",
+                None,
+            )
+            .expect_err("invalid card/table structure should fail");
+        assert!(
+            error.contains(expected),
+            "{label}: expected {expected:?}, got {error:?}"
+        );
+        assert_eq!(engine.active_card_id().as_deref(), Ok("stable"), "{label}");
+        assert_eq!(
+            render_snapshot_lines(&engine),
+            vec!["text:0:0:Stable"],
+            "{label}"
+        );
+    }
 }
 
 #[test]

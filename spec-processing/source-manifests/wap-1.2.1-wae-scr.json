@@ -395,7 +395,7 @@
         ],
         "workItems": [
           "WML-201",
-          "WML-301",
+          "WAE-601",
           "R0-01"
         ],
         "implementationStatus": "partial",
@@ -513,7 +513,6 @@
         "workItems": [
           "WAE-601",
           "WML-201",
-          "WML-301",
           "WMLS-501"
         ],
         "implementationStatus": "partial",

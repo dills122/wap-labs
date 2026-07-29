@@ -84,8 +84,8 @@ test('active rollup guard rejects a stale parent-status table', (context) => {
 
   const planningPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md');
   const planning = readFileSync(planningPath, 'utf8');
-  const currentFragment = '| **Total** | **198** | **762** | **40** | **71** | **87** |';
-  const staleFragment = '| **Total** | **198** | **762** | **40** | **70** | **88** |';
+  const currentFragment = '| **Total** | **198** | **762** | **41** | **71** | **86** |';
+  const staleFragment = '| **Total** | **198** | **762** | **41** | **70** | **87** |';
   assert.ok(planning.includes(currentFragment));
   writeFileSync(planningPath, planning.replace(currentFragment, staleFragment));
 
@@ -100,12 +100,12 @@ test('active rollup guard rejects stale WML evidence-state counts', (context) =>
 
   const ledgerPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md');
   const ledger = readFileSync(ledgerPath, 'utf8');
-  assert.ok(ledger.includes('32 `direct-test-linked`, 15 `gap-work-item-mapped`'));
+  assert.ok(ledger.includes('33 `direct-test-linked`, 14 `gap-work-item-mapped`'));
   writeFileSync(
     ledgerPath,
     ledger.replace(
-      '32 `direct-test-linked`, 15 `gap-work-item-mapped`',
-      '31 `direct-test-linked`, 16 `gap-work-item-mapped`'
+      '33 `direct-test-linked`, 14 `gap-work-item-mapped`',
+      '32 `direct-test-linked`, 15 `gap-work-item-mapped`'
     )
   );
 

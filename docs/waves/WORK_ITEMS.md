@@ -115,8 +115,8 @@ Current priority order is:
 5. Preserve completed `WML-302` variable/substitution, `WML-303`
    action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
-   while `WSP-8` remains behind `WAE-6`. Preserve WML-301's implemented
-   context/history subset, WML-304's merged request-intent boundary, and WMLS-501's
+   while `WSP-8` remains behind `WAE-6`. Preserve completed WML-301
+   context/history/card-table evidence, WML-304's merged request-intent boundary, and WMLS-501's
    merged decoder/verifier plus verified-unit runtime routing. Advance native request
    application and verifier/dataflow closure as separate implementation lanes. Preserve the completed `D0-01` contract
    baseline; keep frame migration, generators, and maintenance non-preemptive
@@ -139,12 +139,14 @@ Current implementation batch, ordered within each lane:
    form-urlencoded POST, charset/content-type, smallest-relative referer, and no-cache transport
    behavior. This owns request serialization and the browser fetch handoff.
 2. **Request lane A2:** add replayable POST history only after A1 stabilizes the serialized request
-   identity. Coordinate engine navigation/history ownership with runtime lane C1.
+   identity. C1 leaves `WML-CL-HISTORY-POST-REPLAY` untouched as the explicit A2 baton.
 3. **Script lane B1:** finish `WMLS-501` library-index and stack-dataflow verification.
 4. **Script lane B2:** begin bounded `WMLS-502` operator/conversion execution after B1. B1 and B2
    share `engine-wasm/engine/src/wavescript/*` and remain sequential.
-5. **Runtime lane C1:** finish the additive `WML-301` card-table-boundary/WAE delegate mapping and
-   direct fixtures without changing its completed 12-clause history evidence.
+5. **Runtime lane C1 direct tranche (complete):** the additive `WML-301` card-table boundary now has direct
+   parser/native/WASM/story fixtures. The graph separates 13 direct clauses from seven aggregate
+   card/WAE context clauses; the three broad WAE delegates remain not-assessed under `WAE-601`,
+   keeping the aggregate work item in progress.
 6. **Desktop contract lane D1:** activate the ready `WBP-06`/`F0-01` frame-and-affordance contract
    with one owner. Sequence its generated contract integration with A1 and preserve the additive
    `EngineDebug*` namespace; this is not the pending visual-refinement stream.
@@ -2680,8 +2682,8 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  16 implemented, 16 partial, and 15 missing rows, with validated code/test
-  evidence for 32 rows. `WML-201` directly projects all 76 rows and maps all
+  17 implemented, 16 partial, and 14 missing rows, with validated code/test
+  evidence for 33 rows. `WML-201` directly projects all 76 rows and maps all
   175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
   ticket is not done.

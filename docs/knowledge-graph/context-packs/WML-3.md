@@ -7,17 +7,18 @@
 - Target: `WML-3`
 - Release/profile: WAP 1.2.1, WML 1.3, `CCR-CLASSC-C-001`
 - Compatibility floor: `strict-historical-observable-behavior`
-- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.
+- Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.
 - Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.
 - Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.
 
 ## Graph summary
 
 - Nodes: 332
-- Edges: 884
+- Edges: 882
 - Selected work items: 8
 - Direct SCR rows: 5
-- Direct normative clauses: 123
+- Direct normative clauses: 116
+- Aggregate regression/delegate context clauses: 7
 - Work items without direct clause mappings: 1
 - Work items with unmapped declared normative families: 3
 
@@ -38,27 +39,28 @@ Exit gates:
 
 ## Work items
 
-### WML-301: Deck/card context, history, newcontext, and inter-card process-order closure
+### WML-301: Deck/card context, history, newcontext, inter-card process order, and card/table boundary closure
 
 - Status: `in-progress`
 - Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`, `wae`
 - Existing tickets: `R0-02`, `R0-03`, `A5-01`
 - Direct SCR rows: 0
-- Selected SCR parents: 11 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-07`, `WML-C-10`, `WML-C-11`, `WML-C-13`, `WML-C-18`, `WML-C-25`, `WML-C-29`, `WML-C-46`)
-- Direct normative clauses: 20
-- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
+- Selected SCR parents: 7 (`WML-C-07`, `WML-C-10`, `WML-C-13`, `WML-C-18`, `WML-C-25`, `WML-C-29`, `WML-C-46`)
+- Direct normative clauses: 13
+- Aggregate regression/delegate context: 7 (4 additional parents: `WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-11`)
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 10.1, 10.4, 11.5.2, 12.5, and 12.5.1`
 - Follow-up work items: None
 - Depends on: None
 
 Outputs:
 
-- Deck/card context, history, newcontext, and inter-card process-order closure
+- Deck/card context, history, newcontext, inter-card process order, and card/table boundary closure
 
 Acceptance:
 
-- Forward, backward, reload, failure rollback, and context reset match strict ordering across native and WASM adapters.
+- Forward, backward, reload, failure rollback, context reset, and source-required table boundaries match strict ordering and layout across native and WASM adapters.
 
 Evidence commands:
 
@@ -80,6 +82,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 9 (`WML-C-07`, `WML-C-12`, `WML-C-18`, `WML-C-29`, `WML-C-33`, `WML-C-38`, `WML-C-42`, `WML-C-43`, `WML-C-52`)
 - Direct normative clauses: 20
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-005`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 9.4, 10.3 through 10.3.5, and 12.5.1, 12.5.2, and 12.5.4`
 - Follow-up work items: `WML-301`, `WML-304`, `WML-305`
@@ -111,6 +114,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 12 (`WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-16`, `WML-C-18`, `WML-C-26`, `WML-C-29`, `WML-C-35`, `WML-C-38`, `WML-C-39`, `WML-C-42`, `WML-C-47`)
 - Direct normative clauses: 27
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-012`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 9.5, 9.6, 9.7, 9.10, 11.4, and 12.5`, `RQ-WAE-017 / WAP-236 section 7.11.2 (successor delta evidence only)`
 - Follow-up work items: `WML-302`, `WML-304`, `WML-305`
@@ -144,6 +148,7 @@ Evidence commands:
 - Direct SCR rows: 5 (5 `direct-test-linked`)
 - Selected SCR parents: 5 (`WML-C-07`, `WML-C-14`, `WML-C-29`, `WML-C-37`, `WML-C-38`)
 - Direct normative clauses: 15
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-011`, `RQ-WAE-016`
 - Spec references: `WAP-191_104-WML sections 9.2, 9.3, and 9.5.1 as amended by WAP-191_105-WML section 4.3`
 - Follow-up work items: None
@@ -176,6 +181,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-18`, `WML-C-29`, `WML-C-42`, `WML-C-48`)
 - Direct normative clauses: 10
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`
 - Spec references: `WAP-191_104-WML sections 11.7, 12.5.1, and 12.5.4`
 - Follow-up work items: `WML-301`, `WML-304`, `WML-306`
@@ -209,6 +215,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 2 (`WML-C-14`, `WML-C-21`)
 - Direct normative clauses: 8
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-011`
 - Spec references: None
 - Follow-up work items: None
@@ -236,6 +243,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 0
 - Direct normative clauses: 0
+- Aggregate regression/delegate context: 0
 - Requirements: None
 - Spec references: None
 - Follow-up work items: None
@@ -264,6 +272,7 @@ Evidence commands:
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
 - Direct normative clauses: 23
+- Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
 - Spec references: None
 - Follow-up work items: None
@@ -332,60 +341,18 @@ Evidence commands:
 
 ### WML-301
 
-- **WAE-CL-WML-LANGUAGE-DELEGATE** — Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.
-  - Family: `wae`; force: `implicit-must`; level: `required`
-  - Source: `WAP-190-WAESpec` §5.1.5 (5.1.5 Wireless Markup Language)
-  - Parents: `WAESpec-C-015`, `WAESpec-C-017`
-  - Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
-  - Fixture: `WAE-FX-WML-LANGUAGE-DELEGATE` (`runtime`, `planned`)
-- **WAE-CL-WML-USER-AGENT-COMPOSITION** — Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.
-  - Family: `wae`; force: `implicit-must`; level: `required`
-  - Source: `WAP-190-WAESpec` §5.1.7.2 (5.1.7.2 WML User Agent)
-  - Parents: `WAESpec-C-017`
-  - Requirements: `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
-  - Fixture: `WAE-FX-WML-USER-AGENT-COMPOSITION` (`runtime`, `planned`)
-- **WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE** — Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.
-  - Family: `wae`; force: `implicit-must`; level: `required`
-  - Source: `WAP-190-WAESpec` §5.1.6 (5.1.6 WMLScript)
-  - Parents: `WAESpec-C-016`, `WAESpec-C-017`
-  - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
-  - Fixture: `WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE` (`runtime`, `planned`)
-- **WML-CL-CARD-COLLECTION** — Represent a WML deck as a collection containing at least one card.
-  - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.5 (11.5 The Card Element)
-  - Parents: `WML-C-25`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-COLLECTION` (`parser`, `implemented`)
-- **WML-CL-CARD-CONTENT-ORDER** — Preserve significant card element order during presentation.
-  - Family: `wml`; force: `explicit-should`; level: `recommended`
-  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
-  - Parents: `WML-C-25`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `implemented`)
-- **WML-CL-CARD-CONTEXT-ATTRIBUTE** — Apply the card newcontext flag when entering through the defined go process.
-  - Family: `wml`; force: `implicit-must`; level: `required`
-  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
-  - Parents: `WML-C-25`, `WML-C-11`
-  - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
-  - Fixture: `WML-FX-CARD-CONTEXT-ATTRIBUTE` (`state-machine`, `implemented`)
 - **WML-CL-CARD-ID-FRAGMENT** — Use a card id as its fragment-navigation anchor.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-18`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
   - Fixture: `WML-FX-CARD-ID-FRAGMENT` (`state-machine`, `implemented`)
-- **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
-  - Family: `wml`; force: `grammar`; level: `required`
-  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
-  - Parents: `WML-C-25`
-  - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `implemented`)
 - **WML-CL-CARD-TABLE-BOUNDARIES** — Insert table boundary line breaks unless the table is respectively the first or last significant card content.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
   - Parents: `WML-C-25`, `WML-C-46`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `planned`)
+  - Fixture: `WML-FX-CARD-TABLE-BOUNDARIES` (`rendering`, `implemented`)
 - **WML-CL-CONTEXT-SINGLE-SCOPE** — Store WML runtime state in one browser-context scope.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §10.1 (10.1 The Browser Context)
@@ -1088,6 +1055,53 @@ Evidence commands:
   - Parents: `WML-C-12`, `WML-C-33`, `WML-C-43`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-005`
   - Fixture: `WML-FX-VARIABLE-COMMIT-BEFORE-TASK` (`runtime`, `implemented`)
+
+## Aggregate regression and delegate context
+
+### WML-301
+
+- **WAE-CL-WML-LANGUAGE-DELEGATE** — Process Wireless Markup Language using the effective selected WML 1.3 family ledger and its Class C user-agent requirements.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.5 (5.1.5 Wireless Markup Language)
+  - Parents: `WAESpec-C-015`, `WAESpec-C-017`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
+  - Fixture: `WAE-FX-WML-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+- **WAE-CL-WML-USER-AGENT-COMPOSITION** — Compose the WML and WMLScript requirements and guidelines into one WML user agent without moving network fetch behavior into the language runtime.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.7.2 (5.1.7.2 WML User Agent)
+  - Parents: `WAESpec-C-017`
+  - Requirements: `RQ-WAE-002`, `RQ-WAE-016`, `RQ-WAE-017`
+  - Fixture: `WAE-FX-WML-USER-AGENT-COMPOSITION` (`runtime`, `planned`)
+- **WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE** — Process WMLScript using the effective selected WMLScript family ledger and its Class C interpreter requirements.
+  - Family: `wae`; force: `implicit-must`; level: `required`
+  - Source: `WAP-190-WAESpec` §5.1.6 (5.1.6 WMLScript)
+  - Parents: `WAESpec-C-016`, `WAESpec-C-017`
+  - Requirements: `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WMLS-001`
+  - Fixture: `WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE` (`runtime`, `planned`)
+- **WML-CL-CARD-COLLECTION** — Represent a WML deck as a collection containing at least one card.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5 (11.5 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-COLLECTION` (`parser`, `implemented`)
+- **WML-CL-CARD-CONTENT-ORDER** — Preserve significant card element order during presentation.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-CONTENT-ORDER` (`rendering`, `implemented`)
+- **WML-CL-CARD-CONTEXT-ATTRIBUTE** — Apply the card newcontext flag when entering through the defined go process.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`, `WML-C-11`
+  - Requirements: `RQ-RMK-001`, `RQ-RMK-003`
+  - Fixture: `WML-FX-CARD-CONTEXT-ATTRIBUTE` (`state-machine`, `implemented`)
+- **WML-CL-CARD-STRUCTURE** — Enforce card child ordering: event handlers, optional timer, then declared action or flow content.
+  - Family: `wml`; force: `grammar`; level: `required`
+  - Source: `WAP-191_104-WML` §11.5.2 (11.5.2 The Card Element)
+  - Parents: `WML-C-25`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-CARD-STRUCTURE` (`parser`, `implemented`)
 
 ## Explicit mapping gaps
 

@@ -43,8 +43,15 @@ tags:
   "workItems": [
     "WAE-601",
     "WML-201",
-    "WML-301",
     "WMLS-501"
+  ],
+  "directWorkItems": [
+    "WAE-601",
+    "WML-201",
+    "WMLS-501"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-301"
   ],
   "ownerLayers": [
     "browser",

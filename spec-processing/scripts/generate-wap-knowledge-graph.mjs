@@ -206,8 +206,12 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       manifestFamily: family.family
     }))
   );
-  const selectedClauses = allClauses.filter((clause) =>
-    clause.mapping.workItems.some((workItem) => targetWorkItemIds.has(workItem))
+  const selectedClauses = allClauses.filter(
+    (clause) =>
+      clause.mapping.workItems.some((workItem) => targetWorkItemIds.has(workItem)) ||
+      (clause.aggregateContextWorkItems ?? []).some((workItem) =>
+        targetWorkItemIds.has(workItem)
+      )
   );
   const scrMatrices = targetSprint.workItems
     .filter((workItem) => workItem.scrMatrix)
@@ -619,6 +623,10 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
   }
 
   for (const clause of selectedClauses) {
+    const aggregateContextWorkItems = clause.aggregateContextWorkItems ?? [];
+    const directGraphWorkItems = clause.mapping.workItems.filter(
+      (workItem) => !aggregateContextWorkItems.includes(workItem)
+    );
     const clauseNode = addNode('clause', clause.id, clause.obligationSynopsis, {
       family: clause.family,
       parentRows: clause.parentRows,
@@ -628,16 +636,24 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       profileApplicability: clause.profileApplicability,
       obligationSynopsis: clause.obligationSynopsis,
       workItems: clause.mapping.workItems,
+      ...(aggregateContextWorkItems.length
+        ? { directWorkItems: directGraphWorkItems, aggregateContextWorkItems }
+        : {}),
       ownerLayers: clause.mapping.ownerLayers,
       requirementIds: clause.mapping.requirementIds,
       implementationStatus: clause.mapping.clauseImplementationStatus,
       evidenceGate: clause.mapping.evidenceGate,
       source: clauseRef
     });
-    for (const workItem of clause.mapping.workItems.filter((candidate) =>
+    for (const workItem of directGraphWorkItems.filter((candidate) =>
       targetWorkItemIds.has(candidate)
     )) {
       addEdge(clauseNode, 'planned-by', nodeId('work-item', workItem), [clauseRef]);
+    }
+    for (const workItem of aggregateContextWorkItems.filter((candidate) =>
+      targetWorkItemIds.has(candidate)
+    )) {
+      addEdge(clauseNode, 'context-for', nodeId('work-item', workItem), [clauseRef]);
     }
     for (const parent of clause.parentRows) {
       addEdge(clauseNode, 'refines', nodeId('scr-row', parent), [clauseRef]);
@@ -700,6 +716,33 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       )
     ])
   );
+  const aggregateContextClauseCountsByWorkItem = Object.fromEntries(
+    targetSprint.workItems.map((workItem) => [
+      workItem.id,
+      orderedEdges.filter(
+        (edge) =>
+          edge.relation === 'context-for' &&
+          edge.to === nodeId('work-item', workItem.id) &&
+          edge.from.startsWith('clause:')
+      ).length
+    ])
+  );
+  const aggregateContextClauseFamiliesByWorkItem = Object.fromEntries(
+    targetSprint.workItems.map((workItem) => [
+      workItem.id,
+      sortedUnique(
+        orderedEdges
+          .filter(
+            (edge) =>
+              edge.relation === 'context-for' &&
+              edge.to === nodeId('work-item', workItem.id) &&
+              edge.from.startsWith('clause:')
+          )
+          .map((edge) => nodes.get(edge.from)?.properties.family)
+          .filter(Boolean)
+      )
+    ])
+  );
   const directScrRowCountsByWorkItem = Object.fromEntries(
     targetSprint.workItems.map((workItem) => [
       workItem.id,
@@ -733,7 +776,11 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
         workItem.sourceFamilies
           .filter((family) => normativeFamilyIds.has(family))
           .concat(workItem.explicitUnmappedFamilies ?? [])
-          .filter((family) => !directClauseFamiliesByWorkItem[workItem.id].includes(family))
+          .filter(
+            (family) =>
+              !directClauseFamiliesByWorkItem[workItem.id].includes(family) &&
+              !aggregateContextClauseFamiliesByWorkItem[workItem.id].includes(family)
+          )
           .filter((family, index, families) => families.indexOf(family) === index)
           .sort((left, right) => left.localeCompare(right))
       ])
@@ -776,6 +823,8 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       edgesByRelation: countBy(orderedEdges.map((edge) => edge.relation)),
       directClauseCountsByWorkItem,
       directClauseFamiliesByWorkItem,
+      aggregateContextClauseCountsByWorkItem,
+      aggregateContextClauseFamiliesByWorkItem,
       directScrRowCountsByWorkItem,
       directScrRowEvidenceStatesByWorkItem,
       unmappedNormativeFamiliesByWorkItem,
@@ -928,6 +977,49 @@ function directClausesForWorkItem(graph, workItemId) {
     .sort((left, right) => left.key.localeCompare(right.key));
 }
 
+function aggregateContextClausesForWorkItem(graph, workItemId) {
+  const clauseIds = graph.edges
+    .filter(
+      (edge) =>
+        edge.relation === 'context-for' &&
+        edge.to === nodeId('work-item', workItemId) &&
+        edge.from.startsWith('clause:')
+    )
+    .map((edge) => edge.from);
+  return clauseIds
+    .map((id) => findNode(graph, id))
+    .sort((left, right) => left.key.localeCompare(right.key));
+}
+
+function renderClauseEvidenceLines(graph, clauses) {
+  return clauses.map((clause) => {
+    const fixtureEdge = graph.edges.find(
+      (edge) => edge.from === clause.id && edge.relation === 'verified-by'
+    );
+    const fixture = fixtureEdge ? findNode(graph, fixtureEdge.to) : undefined;
+    return `- **${clause.key}** — ${clause.properties.obligationSynopsis}
+  - Family: \`${clause.properties.family}\`; force: \`${
+    clause.properties.normativeForce
+  }\`; level: \`${clause.properties.obligationLevel}\`${
+    clause.properties.profileApplicability
+      ? `\n  - Applicability: \`${clause.properties.profileApplicability}\``
+      : ''
+  }
+  - Source: \`${clause.properties.sourceAnchor.documentId}\` §${
+    clause.properties.sourceAnchor.section
+  } (${clause.properties.sourceAnchor.heading})
+  - Parents: ${clause.properties.parentRows.map((item) => `\`${item}\``).join(', ')}
+  - Requirements: ${
+    clause.properties.requirementIds.map((item) => `\`${item}\``).join(', ') || 'None'
+  }
+  - Fixture: ${
+    fixture
+      ? `\`${fixture.key}\` (\`${fixture.properties.kind}\`, \`${fixture.properties.status}\`)`
+      : 'Missing'
+  }`;
+  });
+}
+
 function directScrRowsForWorkItem(graph, workItemId) {
   return graph.nodes
     .filter(
@@ -967,7 +1059,10 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     workItems.flatMap((workItem) => [
       ...workItem.properties.sourceFamilies,
       ...directScrRowsForWorkItem(graph, workItem.key).map((row) => row.properties.family),
-      ...directClausesForWorkItem(graph, workItem.key).map((clause) => clause.properties.family)
+      ...directClausesForWorkItem(graph, workItem.key).map((clause) => clause.properties.family),
+      ...aggregateContextClausesForWorkItem(graph, workItem.key).map(
+        (clause) => clause.properties.family
+      )
     ])
   );
   const contextualSourceDocumentIds = new Set(
@@ -989,6 +1084,7 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     .sort((left, right) => left.key.localeCompare(right.key));
   const workItemSections = workItems.map((workItem) => {
     const directClauses = directClausesForWorkItem(graph, workItem.key);
+    const aggregateContextClauses = aggregateContextClausesForWorkItem(graph, workItem.key);
     const capabilityOnly =
       directClauses.length > 0 &&
       directClauses.every(
@@ -1000,6 +1096,11 @@ export function renderContextPack(graph, focusWorkItemId = null) {
     );
     const directRequirementIds = sortedUnique(
       directClauses.flatMap((clause) => clause.properties.requirementIds)
+    );
+    const additionalContextParentIds = sortedUnique(
+      aggregateContextClauses
+        .flatMap((clause) => clause.properties.parentRows)
+        .filter((parent) => !directParentIds.includes(parent))
     );
     const evidenceStates = graph.summary.directScrRowEvidenceStatesByWorkItem[workItem.key];
     return `### ${workItem.key}: ${workItem.title}
@@ -1023,6 +1124,13 @@ export function renderContextPack(graph, focusWorkItemId = null) {
         : ''
     }
 - Direct normative clauses: ${directClauses.length}
+- Aggregate regression/delegate context: ${aggregateContextClauses.length}${
+      additionalContextParentIds.length
+        ? ` (${additionalContextParentIds.length} additional parents: ${additionalContextParentIds
+            .map((item) => `\`${item}\``)
+            .join(', ')})`
+        : ''
+    }
 - Requirements: ${
       directRequirementIds.map((item) => `\`${item}\``).join(', ') || 'None'
     }
@@ -1105,35 +1213,22 @@ ${lines.join('\n')}
       if (!clauses.length) {
         return '';
       }
-      const lines = clauses.map((clause) => {
-        const fixtureEdge = graph.edges.find(
-          (edge) => edge.from === clause.id && edge.relation === 'verified-by'
-        );
-        const fixture = fixtureEdge ? findNode(graph, fixtureEdge.to) : undefined;
-        return `- **${clause.key}** — ${clause.properties.obligationSynopsis}
-  - Family: \`${clause.properties.family}\`; force: \`${
-          clause.properties.normativeForce
-        }\`; level: \`${clause.properties.obligationLevel}\`${
-          clause.properties.profileApplicability
-            ? `\n  - Applicability: \`${clause.properties.profileApplicability}\``
-            : ''
-        }
-  - Source: \`${clause.properties.sourceAnchor.documentId}\` §${
-          clause.properties.sourceAnchor.section
-        } (${clause.properties.sourceAnchor.heading})
-  - Parents: ${clause.properties.parentRows.map((item) => `\`${item}\``).join(', ')}
-  - Requirements: ${
-    clause.properties.requirementIds.map((item) => `\`${item}\``).join(', ') || 'None'
-  }
-  - Fixture: ${
-    fixture
-      ? `\`${fixture.key}\` (\`${fixture.properties.kind}\`, \`${fixture.properties.status}\`)`
-      : 'Missing'
-  }`;
-      });
+      const lines = renderClauseEvidenceLines(graph, clauses);
       return `### ${workItem.key}
 
 ${lines.join('\n')}
+`;
+    })
+    .filter(Boolean);
+  const aggregateContextSections = workItems
+    .map((workItem) => {
+      const clauses = aggregateContextClausesForWorkItem(graph, workItem.key);
+      if (!clauses.length) {
+        return '';
+      }
+      return `### ${workItem.key}
+
+${renderClauseEvidenceLines(graph, clauses).join('\n')}
 `;
     })
     .filter(Boolean);
@@ -1178,14 +1273,19 @@ ${lines.join('\n')}
     (sum, workItem) => sum + directClausesForWorkItem(graph, workItem.key).length,
     0
   );
+  const aggregateContextClauseCount = workItems.reduce(
+    (sum, workItem) =>
+      sum + aggregateContextClausesForWorkItem(graph, workItem.key).length,
+    0
+  );
   const directScrRowCount = workItems.reduce(
     (sum, workItem) => sum + directScrRowsForWorkItem(graph, workItem.key).length,
     0
   );
   const focusLine = focusedWorkItem ? `- Focus work item: \`${focusedWorkItem.key}\`\n` : '';
   const selectionRule = focusedWorkItem
-    ? 'include the target sprint, its direct dependency/downstream neighbors, the focused work item, and only normative clauses explicitly mapped to that work item.'
-    : 'include the target sprint, its direct dependency/downstream neighbors, all target work items, and only normative clauses explicitly mapped to those work items.';
+    ? 'include the target sprint, its direct dependency/downstream neighbors, the focused work item, its explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.'
+    : 'include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.';
 
   const projectionKind = graph.target.sprint === 'WML-2' ? 'pilot' : 'slice';
   return `# ${focusedWorkItem?.key ?? graph.target.sprint} AI Context Pack
@@ -1210,6 +1310,7 @@ ${focusLine}- Release/profile: ${graph.target.release}, ${graph.target.markup}, 
 - Selected work items: ${workItems.length}
 - Direct SCR rows: ${directScrRowCount}
 - Direct normative clauses: ${directClauseCount}
+- Aggregate regression/delegate context clauses: ${aggregateContextClauseCount}
 - Work items without direct clause mappings: ${workItemsWithoutDirectClauses.length}
 - Work items with unmapped declared normative families: ${
     Object.keys(unmappedNormativeFamiliesByWorkItem).length
@@ -1246,6 +1347,13 @@ ${
   obligationSections.length
     ? obligationSections.join('\n')
     : '- None directly mapped for this selection. Treat the explicit mapping gaps below as unresolved.'
+}
+## Aggregate regression and delegate context
+
+${
+  aggregateContextSections.length
+    ? aggregateContextSections.join('\n')
+    : '- None mapped for this selection.'
 }
 ## Explicit mapping gaps
 

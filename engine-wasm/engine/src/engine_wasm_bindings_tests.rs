@@ -20,6 +20,8 @@ const FIXTURE_BASIC_TWO_CARD: &str = include_str!("../tests/fixtures/phase-a/bas
 const FIXTURE_MISSING_FRAGMENT: &str =
     include_str!("../tests/fixtures/phase-a/missing-fragment.wml");
 const WML_203_DTD_FAMILY: &str = include_str!("../../examples/source/wml-203-dtd-family.wml");
+const WML_301_CARD_TABLE_BOUNDARIES: &str =
+    include_str!("../../examples/source/wml-301-card-table-boundaries.wml");
 const WMLS_501_MINIMAL_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
 const WMLS_501_NAMED_UNIT: &str =
@@ -277,6 +279,22 @@ fn draw_text(render_value: &JsValue) -> Vec<String> {
         .collect()
 }
 
+fn draw_text_with_y(render_value: &JsValue) -> Vec<(String, u32)> {
+    let draw = Reflect::get(render_value, &JsValue::from_str("draw")).expect("draw property");
+    Array::from(&draw)
+        .iter()
+        .filter_map(|command| {
+            let text = Reflect::get(&command, &JsValue::from_str("text"))
+                .ok()?
+                .as_string()?;
+            let y = Reflect::get(&command, &JsValue::from_str("y"))
+                .ok()?
+                .as_f64()? as u32;
+            Some((text, y))
+        })
+        .collect()
+}
+
 fn trace_kinds(trace_value: &JsValue) -> Vec<String> {
     Array::from(trace_value)
         .iter()
@@ -405,6 +423,61 @@ fn wasm_wml_301_forward_deck_load_preserves_context_and_selects_fragment() {
         Some("Ada")
     );
     assert_eq!(engine.browser_context_epoch_wasm(), 1);
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_301_card_table_boundaries_match_native_render_and_navigation() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(WML_301_CARD_TABLE_BOUNDARIES)
+        .expect("source-derived table fixture should load through WASM");
+
+    assert_eq!(
+        draw_text_with_y(&engine.render_wasm().expect("middle card should render")),
+        vec![
+            ("Before".to_string(), 0),
+            ("Middle table".to_string(), 2),
+            ("After".to_string(), 4),
+            ("Leading case".to_string(), 5),
+        ]
+    );
+
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("middle card should navigate to leading card");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("leading"));
+    assert_eq!(
+        draw_text_with_y(&engine.render_wasm().expect("leading card should render")),
+        vec![
+            ("Leading table".to_string(), 0),
+            ("After leading".to_string(), 2),
+            ("Trailing case".to_string(), 3),
+        ]
+    );
+
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("leading card should navigate to trailing card");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("trailing"));
+    assert_eq!(
+        draw_text_with_y(&engine.render_wasm().expect("trailing card should render")),
+        vec![
+            ("Before trailing".to_string(), 0),
+            ("Trailing table".to_string(), 2),
+        ]
+    );
+
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("trailing card action should navigate to adjacent cards");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("adjacent"));
+    assert_eq!(
+        draw_text_with_y(&engine.render_wasm().expect("adjacent card should render")),
+        vec![
+            ("First table".to_string(), 0),
+            ("Second table".to_string(), 3),
+        ]
+    );
 }
 
 #[wasm_bindgen_test]

@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 298
+    "assessedClauseCount": 299
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "5b3b3599aaa8dc57da87d5c189f57f64edbec1245c25de1f8b0e5cc59a72993e",
+      "parentLedgerSha256": "a85a09d985204f733cbb9834ef1826475446919896985bf0e72546625a47f3ac",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -543,7 +543,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm"
           ],
@@ -943,7 +943,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -7231,7 +7231,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial"
+              "WML-C-25": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -7239,6 +7239,9 @@
           "directWorkItems": [
             "WML-201",
             "WML-202"
+          ],
+          "aggregateContextWorkItems": [
+            "WML-301"
           ]
         },
         {
@@ -7284,7 +7287,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial"
+              "WML-C-25": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -7293,6 +7296,9 @@
             "WML-201",
             "WML-202",
             "WML-203"
+          ],
+          "aggregateContextWorkItems": [
+            "WML-301"
           ]
         },
         {
@@ -7338,7 +7344,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial"
+              "WML-C-25": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -7347,6 +7353,9 @@
             "WML-201",
             "WML-202",
             "WML-203"
+          ],
+          "aggregateContextWorkItems": [
+            "WML-301"
           ]
         },
         {
@@ -7394,7 +7403,7 @@
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial",
+              "WML-C-25": "implemented",
               "WML-C-18": "implemented"
             },
             "clauseImplementationStatus": "implemented",
@@ -7451,7 +7460,7 @@
               "RQ-RMK-003"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial",
+              "WML-C-25": "implemented",
               "WML-C-11": "implemented"
             },
             "clauseImplementationStatus": "implemented",
@@ -7460,6 +7469,9 @@
           "directWorkItems": [
             "WML-201",
             "WML-202"
+          ],
+          "aggregateContextWorkItems": [
+            "WML-301"
           ]
         },
         {
@@ -7481,8 +7493,13 @@
           "fixturePlan": {
             "id": "WML-FX-CARD-TABLE-BOUNDARIES",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Insert table boundary line breaks unless the table is respectively the first or last significant card content."
+            "status": "implemented",
+            "assertion": "Insert table boundary line breaks unless the table is respectively the first or last significant card content.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -7501,14 +7518,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-25": "partial",
-              "WML-C-46": "missing"
+              "WML-C-25": "implemented",
+              "WML-C-46": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-301"
           ]
         },
         {
@@ -9522,7 +9540,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing"
+              "WML-C-46": "partial"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -9567,7 +9585,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing"
+              "WML-C-46": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -9612,7 +9630,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing",
+              "WML-C-46": "partial",
               "WML-C-50": "missing"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -9658,7 +9676,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing",
+              "WML-C-46": "partial",
               "WML-C-50": "missing"
             },
             "clauseImplementationStatus": "not-assessed",
@@ -9703,7 +9721,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing"
+              "WML-C-46": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -9747,7 +9765,7 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-46": "missing"
+              "WML-C-46": "partial"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -10191,7 +10209,7 @@
       "family": "wae",
       "status": "nested-clauses-anchored-fixtures-planned",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wae-scr.json",
-      "parentLedgerSha256": "07df89fa37d079110e019560a418a2ae9bc325dc46dcf1e8e3809a273d6ad38b",
+      "parentLedgerSha256": "5e096d15598d27e64518fb2c90ff15dfb1451b27bb6a16759364cdf347a10775",
       "effectiveSequence": [
         "WAP-190-WAESpec",
         "WAP-190_101-WAESpec",
@@ -10411,7 +10429,7 @@
           ],
           "workItems": [
             "WML-201",
-            "WML-301",
+            "WAE-601",
             "R0-01"
           ],
           "clauseIds": [
@@ -10460,7 +10478,6 @@
           "workItems": [
             "WAE-601",
             "WML-201",
-            "WML-301",
             "WMLS-501"
           ],
           "clauseIds": [
@@ -11791,7 +11808,6 @@
               "R0-01",
               "WAE-601",
               "WML-201",
-              "WML-301",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -11806,7 +11822,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "aggregateContextWorkItems": [
+            "WML-301"
+          ]
         },
         {
           "id": "WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
@@ -11841,7 +11860,6 @@
               "W1-04",
               "WAE-601",
               "WML-201",
-              "WML-301",
               "WMLS-501",
               "WMLS-502"
             ],
@@ -11858,7 +11876,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "aggregateContextWorkItems": [
+            "WML-301"
+          ]
         },
         {
           "id": "WAE-CL-WML-USER-AGENT-COMPOSITION",
@@ -11890,7 +11911,6 @@
             "workItems": [
               "WAE-601",
               "WML-201",
-              "WML-301",
               "WMLS-501"
             ],
             "requirementIds": [
@@ -11903,7 +11923,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "aggregateContextWorkItems": [
+            "WML-301"
+          ]
         },
         {
           "id": "WAE-CL-MEDIA-TYPE-DISPATCH",

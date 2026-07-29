@@ -402,6 +402,9 @@
         "mapping": { "$ref": "#/$defs/mapping" },
         "directWorkItems": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
+        },
+        "aggregateContextWorkItems": {
+          "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"
         }
       }
     },

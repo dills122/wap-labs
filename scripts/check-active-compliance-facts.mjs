@@ -213,7 +213,7 @@ const activeRollupFragments = new Map([
     'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
     [
       `selected implementation audit is ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, and ${parentStatusCounts.missing} missing`,
-      `selected 39-row client subset is 16 implemented, 16 partial, and 7 missing`,
+      `selected 39-row client subset is 17 implemented, 16 partial, and 6 missing`,
       `selected connectionless transport path resolves to 19 rows`,
       `selected transport audit is 19 implemented, 0 partial, and 0 missing`
     ]
