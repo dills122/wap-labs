@@ -1,6 +1,8 @@
 mod kannel_support;
 
-use kannel_support::{assert_engine_input_contains, post_request, request};
+use kannel_support::{
+    assert_engine_input_contains, assert_wbxml_13_response, post_request, request,
+};
 use lowband_transport_rust::{
     fetch_deck_in_process_with_profile, FetchDeckResponse, FetchTransportProfile,
 };
@@ -75,20 +77,52 @@ fn kannel_wap_home_smoke_normalizes_expected_root_deck() {
 
 #[test]
 #[ignore = "runs against external Kannel dev stack (make up)"]
-fn kannel_wap_static_example_smoke_normalizes_expected_deck() {
-    let target = std::env::var("WAP_SMOKE_EXAMPLE_URL")
-        .unwrap_or_else(|_| "wap://localhost/examples/index.wml".to_string());
-    let response = fetch_ok_response(&target);
-    assert_engine_input_contains(
-        &response,
-        &target,
-        &[
-            "card id=\"welcome\"",
-            "title=\"Static Demo\"",
-            "This is a static WML sample deck.",
-            "href=\"#nav\"",
-        ],
-    );
+fn kannel_wap_examples_smoke_normalizes_wml13_decks() {
+    let cases = [
+        (
+            "WAP_SMOKE_EXAMPLE_URL",
+            "wap://localhost/examples/index.wml",
+            [
+                "card id=\"welcome\"",
+                "title=\"Static Demo\"",
+                "href=\"#nav\"",
+            ],
+        ),
+        (
+            "WAP_SMOKE_PORTAL_EXAMPLE_URL",
+            "wap://localhost/examples/pocket-portal.wml",
+            [
+                "card id=\"portal\"",
+                "title=\"Pocket Portal\"",
+                "Local Services",
+            ],
+        ),
+        (
+            "WAP_SMOKE_PREFERENCES_EXAMPLE_URL",
+            "wap://localhost/examples/preferences.wml",
+            [
+                "card id=\"preferences\"",
+                "title=\"Local Preferences\"",
+                "select name=\"layout\"",
+            ],
+        ),
+        (
+            "WAP_SMOKE_INTEROP_EXAMPLE_URL",
+            "wap://localhost/examples/interop-check.wml",
+            [
+                "card id=\"wire-check\"",
+                "title=\"Interop Wire Check\"",
+                "W13-A",
+            ],
+        ),
+    ];
+
+    for (environment, default_url, markers) in cases {
+        let target = std::env::var(environment).unwrap_or_else(|_| default_url.to_string());
+        let response = fetch_ok_response(&target);
+        assert_wbxml_13_response(&response);
+        assert_engine_input_contains(&response, &target, &markers);
+    }
 }
 
 #[test]

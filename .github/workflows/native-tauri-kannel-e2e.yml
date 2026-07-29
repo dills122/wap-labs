@@ -9,6 +9,7 @@ on:
       - 'browser/frontend/package.json'
       - 'browser/frontend/scripts/native-tauri-kannel-e2e.mjs'
       - 'scripts/native-tauri-kannel-e2e.sh'
+      - 'wml-server/**'
   schedule:
     - cron: '17 5 * * 1'
   workflow_dispatch:

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml_1.3.xml">
+<wml>
+  <card id="wire-check" title="Interop Wire Check">
+    <p>Deterministic WML 1.3 target.</p>
+    <p>
+      <table columns="2" align="LL">
+        <tr><td>Media</td><td>WMLC</td></tr>
+        <tr><td>Public ID</td><td>10</td></tr>
+        <tr><td>Cache</td><td>no-store</td></tr>
+        <tr><td>Token</td><td>W13-A</td></tr>
+      </table>
+    </p>
+    <p><a href="/examples/interop-check.wml?probe=repeat">Repeat Check</a></p>
+    <p><a href="#meaning">Read Marker Guide</a></p>
+    <do type="accept" label="Repeat"><go href="/examples/interop-check.wml?probe=repeat"/></do>
+    <do type="prev" label="Back"><prev/></do>
+  </card>
+
+  <card id="meaning" title="Marker Guide">
+    <p>W13-A is fixed synthetic content for transport tests.</p>
+    <p>The client verifies the compiled WBXML header separately.</p>
+    <do type="prev" label="Back"><prev/></do>
+  </card>
+</wml>

@@ -367,7 +367,9 @@ Behavior:
 
 - starts Docker services (`kannel`, `wml-server`)
 - serves WML 1.3 through an explicit test-only DTD setting; the server default remains WML 1.1
-- fetches the static `/examples/index.wml` route through Kannel and verifies its normalized deck
+- fetches the example directory plus the Pocket Portal, Local Preferences, and Interop Wire Check
+  routes through Kannel; verifies `application/vnd.wap.wmlc`, the raw `03 0a` WBXML
+  version/public-ID prefix, and each normalized deck marker
 - sends `Encoding-Version: 1.3` as the WSP-defined short-integer version-value, and uses the
   locally patched Kannel connectionless path to decode and carry that request negotiation into WML
   compilation
@@ -408,6 +410,8 @@ Behavior:
 - pins `wap-net-core` and disables gateway fallback
 - serves WML 1.3 through the same explicit WML-server test boundary and requires Kannel to emit
   the negotiated WBXML 1.3 envelope accepted by the pinned decoder
+- fetches and renders every first-party example through the visible native path, and observes the
+  origin counter for two seconds to require one successful repeat navigation to issue one request
 - uses Selenium to click the real Go and Select controls, assert the gateway-served home/menu UI,
   traverse menu option 4 into the static example deck, assert a visible invalid-URL failure, and
   recover with another real gateway load

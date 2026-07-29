@@ -10,6 +10,9 @@ WAP_SMOKE_URL="${WAP_SMOKE_URL:-wap://localhost/}"
 WAP_SMOKE_LOGIN_URL="${WAP_SMOKE_LOGIN_URL:-wap://localhost/login}"
 WAP_SMOKE_REGISTER_URL="${WAP_SMOKE_REGISTER_URL:-wap://localhost/register}"
 WAP_SMOKE_EXAMPLE_URL="${WAP_SMOKE_EXAMPLE_URL:-wap://localhost/examples/index.wml}"
+WAP_SMOKE_PORTAL_EXAMPLE_URL="${WAP_SMOKE_PORTAL_EXAMPLE_URL:-wap://localhost/examples/pocket-portal.wml}"
+WAP_SMOKE_PREFERENCES_EXAMPLE_URL="${WAP_SMOKE_PREFERENCES_EXAMPLE_URL:-wap://localhost/examples/preferences.wml}"
+WAP_SMOKE_INTEROP_EXAMPLE_URL="${WAP_SMOKE_INTEROP_EXAMPLE_URL:-wap://localhost/examples/interop-check.wml}"
 WAP_SMOKE_DENIED_URL="${WAP_SMOKE_DENIED_URL:-wap://127.0.0.1:9200/}"
 TRANSPORT_WAP_TIMEOUT_MS="${TRANSPORT_WAP_TIMEOUT_MS:-15000}"
 TRANSPORT_WAP_RETRIES="${TRANSPORT_WAP_RETRIES:-1}"
@@ -103,7 +106,7 @@ fi
 echo "==> Running transport-rust WAP smoke integration test"
 (
   cd "${ROOT_DIR}/transport-rust"
-  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_EXAMPLE_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_EXAMPLE_URL WAP_SMOKE_PORTAL_EXAMPLE_URL WAP_SMOKE_PREFERENCES_EXAMPLE_URL WAP_SMOKE_INTEROP_EXAMPLE_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
     cargo test --test kannel_smoke -- --ignored --test-threads=1
 )
@@ -119,9 +122,9 @@ echo "==> Running browser host native Kannel smoke unit test"
 echo "==> Running browser engine/render native Kannel smoke integration test"
 (
   cd "${ROOT_DIR}/browser/src-tauri"
-  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
+  export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_EXAMPLE_URL WAP_SMOKE_PORTAL_EXAMPLE_URL WAP_SMOKE_PREFERENCES_EXAMPLE_URL WAP_SMOKE_INTEROP_EXAMPLE_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/browser-render-native-smoke.log" \
-    cargo test kannel_fetch_deck_smoke_navigates_into_menu_card -- --ignored --test-threads=1
+    cargo test kannel_fetch_deck_smoke -- --ignored --test-threads=1
 )
 
 echo "==> Running browser auth-form privacy native Kannel smoke integration test"

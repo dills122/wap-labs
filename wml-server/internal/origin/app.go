@@ -33,6 +33,7 @@ const (
 	maxUsernameBytes   = 32
 	maxPINBytes        = 6
 	maxSessionIDBytes  = 64
+	maxExampleBytes    = 4 << 10
 	pageSize           = 2
 )
 
@@ -452,6 +453,14 @@ func (a *App) example(w http.ResponseWriter, r *http.Request) {
 	body, err = configureExampleDTD(body, a.dtdVersion)
 	if err != nil {
 		a.logger.Error("invalid embedded example", "file", fileName, "error", err)
+		a.sendWML(w,
+			`<card id="error" title="Error"><p>Unable to load `+xmlEscape(fileName)+`</p><do type="prev" label="Back"><prev/></do></card>`,
+			http.StatusInternalServerError,
+		)
+		return
+	}
+	if len(body) > maxExampleBytes {
+		a.logger.Error("embedded example exceeds response limit", "file", fileName, "bytes", len(body))
 		a.sendWML(w,
 			`<card id="error" title="Error"><p>Unable to load `+xmlEscape(fileName)+`</p><do type="prev" label="Back"><prev/></do></card>`,
 			http.StatusInternalServerError,

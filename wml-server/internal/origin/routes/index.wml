@@ -1,19 +1,23 @@
 <?xml version="1.0"?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml_1.3.xml">
 <wml>
   <card id="welcome" title="Static Demo">
     <p>This is a static WML sample deck.</p>
+    <p>Original examples for the Waves compatibility lab.</p>
     <p><a href="#nav">Open Navigation</a></p>
     <do type="accept" label="Next">
       <go href="#nav"/>
     </do>
   </card>
 
-  <card id="nav" title="Navigation">
-    <p>Use anchor links and softkeys.</p>
-    <p><a href="#form">Open Form Card</a></p>
-    <do type="accept" label="Form">
-      <go href="#form"/>
+  <card id="nav" title="Example Directory">
+    <p>Use links, softkeys, and history.</p>
+    <p><a href="/examples/pocket-portal.wml">Pocket Portal</a></p>
+    <p><a href="/examples/preferences.wml">Local Preferences</a></p>
+    <p><a href="/examples/interop-check.wml">Interop Wire Check</a></p>
+    <p><a href="#form">Legacy Form Card</a></p>
+    <do type="accept" label="Portal">
+      <go href="/examples/pocket-portal.wml"/>
     </do>
     <do type="prev" label="Back">
       <prev/>

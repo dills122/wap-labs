@@ -1,3 +1,4 @@
+use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
 use lowband_transport_rust::{
     FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestIntent,
     FetchRequestMethod, FetchRequestPolicy, FetchRequestPostField,
@@ -8,6 +9,23 @@ fn smoke_timeout_ms() -> u64 {
         .ok()
         .and_then(|value| value.parse::<u64>().ok())
         .unwrap_or(15000)
+}
+
+pub fn assert_wbxml_13_response(response: &FetchDeckResponse) {
+    assert_eq!(response.content_type, "application/vnd.wap.wmlc");
+    let encoded = response
+        .engine_deck_input
+        .as_ref()
+        .and_then(|deck| deck.raw_bytes_base64.as_deref())
+        .expect("compiled WML response should retain raw WBXML bytes");
+    let raw = BASE64
+        .decode(encoded)
+        .expect("rawBytesBase64 should contain valid base64");
+    assert!(
+        raw.starts_with(&[0x03, 0x0a]),
+        "expected WBXML 1.3 version/public-id prefix 03 0a, got {:02x?}",
+        raw.get(..2).unwrap_or(&raw)
+    );
 }
 
 fn smoke_retries() -> u8 {

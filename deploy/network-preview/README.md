@@ -71,12 +71,18 @@ policy:
 WAP_SMOKE_URL=wap://waves-network-preview/ \
 WAP_SMOKE_LOGIN_URL=wap://waves-network-preview/login \
 WAP_SMOKE_REGISTER_URL=wap://waves-network-preview/register \
+WAP_SMOKE_EXAMPLE_URL=wap://waves-network-preview/examples/index.wml \
+WAP_SMOKE_PORTAL_EXAMPLE_URL=wap://waves-network-preview/examples/pocket-portal.wml \
+WAP_SMOKE_PREFERENCES_EXAMPLE_URL=wap://waves-network-preview/examples/preferences.wml \
+WAP_SMOKE_INTEROP_EXAMPLE_URL=wap://waves-network-preview/examples/interop-check.wml \
 WAP_SMOKE_DENIED_URL=wap://waves-network-preview:9200/ \
 TRANSPORT_WAP_SKIP_INTERNAL_HEALTH=1 \
   make smoke-transport-wap
 ```
 
-The smoke suite also requests an intentionally unmapped origin and requires an explicit failure.
+The smoke suite requires each compiled example to return `application/vnd.wap.wmlc`, retain raw
+WBXML bytes beginning `03 0a`, and normalize to its stable WML markers. It also requests an
+intentionally unmapped origin and requires an explicit failure.
 Kannel's final catch-all maps both HTTP and HTTPS origins to a local 404 route, while the host
 firewall independently prevents container egress.
 
