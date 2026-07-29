@@ -4,6 +4,7 @@ import { defaultRunMode, defaultStartUrl, defaultStartUrlFallback } from './defa
 describe('defaultStartUrl', () => {
   it('returns fallback when value is missing or invalid', () => {
     const fallback = defaultStartUrlFallback();
+    expect(fallback).toBe('');
     expect(defaultStartUrl(undefined)).toBe(fallback);
     expect(defaultStartUrl('')).toBe(fallback);
     expect(defaultStartUrl('   ')).toBe(fallback);
@@ -22,6 +23,10 @@ describe('defaultStartUrl', () => {
 });
 
 describe('defaultRunMode', () => {
+  it('starts in local mode when the address bar has no configured URL', () => {
+    expect(defaultRunMode(undefined, defaultStartUrlFallback())).toBe('local');
+  });
+
   it('defaults to local for http targets', () => {
     expect(defaultRunMode(undefined, 'http://example.test/start.wml')).toBe('local');
     expect(defaultRunMode(undefined, 'https://example.test/start.wml')).toBe('local');

@@ -77,19 +77,13 @@ const initialSession: HostSessionState = {
 };
 
 describe('BrowserController startup probe behavior', () => {
-  it('does not block network mode entry on startup probe completion', async () => {
+  it('enters network mode without probing when the address is empty', async () => {
     const refs = createRefs();
-    refs.fetchUrlInput.value = 'wap://gateway.test/';
+    refs.fetchUrlInput.value = '';
     const presenter = new BrowserPresenter(refs, initialSession, 20);
-    let resolveProbe: ((value: unknown) => void) | undefined;
     const hostClient = {
       health: vi.fn(async () => 'ok'),
-      fetchDeck: vi.fn(
-        () =>
-          new Promise((resolve) => {
-            resolveProbe = resolve;
-          })
-      ),
+      fetchDeck: vi.fn(),
       engineLoadDeck: vi.fn(),
       engineLoadDeckContext: vi.fn(async () => snapshot({ activeCardId: 'home' })),
       engineLoadDeckContextFrame: vi.fn(async () => frame({ activeCardId: 'home' })),
@@ -136,19 +130,8 @@ describe('BrowserController startup probe behavior', () => {
     await Promise.resolve();
 
     expect(settled).toBe(true);
-    expect(hostClient.fetchDeck).toHaveBeenCalledTimes(1);
-
-    resolveProbe?.(
-      Promise.resolve({
-        ok: true,
-        status: 200,
-        finalUrl: 'wap://localhost/',
-        contentType: 'text/vnd.wap.wml',
-        wml: undefined,
-        timingMs: { encode: 0, udpRtt: 0, decode: 0 },
-        engineDeckInput: undefined
-      })
-    );
+    expect(hostClient.fetchDeck).not.toHaveBeenCalled();
+    expect(presenter.getSessionState().navigationStatus).not.toBe('error');
   });
 
   it('ignores stale probe results after switching back to local mode', async () => {

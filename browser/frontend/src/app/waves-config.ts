@@ -2,7 +2,13 @@ export const WAVES_CONFIG = {
   appName: 'Waves Browser',
   appTagline: 'WAP/WML based browser 1.x',
   appDescription: 'Waves is a WAP/WML based browser 1.x.',
-  defaultStartUrl: 'wap://localhost/',
+  defaultStartUrl: '',
+  networkAddressSuggestions: [
+    { label: 'Local WAP Lab', url: 'wap://localhost/' },
+    { label: 'Hosted Home', url: 'wap://home.wap.shrimpworks.dev/' },
+    { label: 'Hosted Forms', url: 'wap://forms.wap.shrimpworks.dev/' },
+    { label: 'Hosted Interop', url: 'wap://interop.wap.shrimpworks.dev/' }
+  ],
   defaultDebugBaseUrl: 'http://local.test/start.wml',
   defaultViewportCols: 20,
   maxTimelineEvents: 200,

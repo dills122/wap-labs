@@ -24,6 +24,18 @@ describe('mountBrowserShell', () => {
     expect(softkeyRow?.getAttribute('aria-label')).toBeTruthy();
   });
 
+  it('starts with an empty editable network address and native endpoint suggestions', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('', 'network');
+    const suggestionList = document.querySelector<HTMLDataListElement>('#network-address-options');
+    const suggestedUrls = Array.from(suggestionList?.options ?? [], (option) => option.value);
+
+    expect(refs.fetchUrlInput.value).toBe('');
+    expect(refs.fetchUrlInput.getAttribute('list')).toBe('network-address-options');
+    expect(refs.fetchUrlInput.getAttribute('placeholder')).toBeTruthy();
+    expect(suggestedUrls).toEqual(WAVES_CONFIG.networkAddressSuggestions.map(({ url }) => url));
+  });
+
   it('decomposes the shell into landmark-labelled sections', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');

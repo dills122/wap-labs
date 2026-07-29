@@ -11,6 +11,7 @@ const locale = {
     reload: 'Reload',
     go: 'Go',
     address: 'Address',
+    addressPlaceholder: 'Enter a WAP or WML URL',
     historyControls: 'History controls',
     deckView: 'Deck View',
     deckViewport: 'Deck viewport',
@@ -109,7 +110,8 @@ const locale = {
     bootEngineReady: 'Engine ready.',
     bootDeckReady: 'Deck ready.',
     localModeEnabled: 'Local mode enabled. Network fetches are disabled.',
-    networkModeEnabled: (url: string) => `Checking WAP gateway at ${url}...`,
+    networkModeEnabled: (url: string) =>
+      url ? `Checking WAP gateway at ${url}...` : 'Network mode ready. Enter or choose an address.',
     loadedLocalDeck: (label: string) => `Loaded local example: ${label}`,
     localExternalIntentCaptured: (url: string) =>
       `Local mode captured external intent: ${url} (not fetched).`,

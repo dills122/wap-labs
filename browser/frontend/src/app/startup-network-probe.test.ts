@@ -67,25 +67,6 @@ describe('StartupNetworkProbeController', () => {
     expect(deps.fetchDeck).not.toHaveBeenCalled();
   });
 
-  it('does not probe the built-in placeholder target before user navigation', async () => {
-    const deps = createDeps({
-      getTargetUrl: vi.fn(() => 'wap://localhost/')
-    });
-
-    const controller = new StartupNetworkProbeController(deps);
-    controller.start();
-    await flushAsyncWork();
-
-    expect(deps.fetchDeck).not.toHaveBeenCalled();
-    expect(deps.setStatus).not.toHaveBeenCalled();
-    expect(deps.patchSessionState).not.toHaveBeenCalled();
-    expect(deps.showToast).not.toHaveBeenCalled();
-    expect(deps.recordTimeline).toHaveBeenCalledWith('startup-network-probe-skipped', {
-      reason: 'placeholder-target',
-      targetUrl: 'wap://localhost/'
-    });
-  });
-
   it('reports the checked gateway when a reachable probe succeeds', async () => {
     const deps = createDeps();
 

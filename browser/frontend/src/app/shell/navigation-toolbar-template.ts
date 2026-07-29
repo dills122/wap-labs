@@ -1,4 +1,9 @@
 import { WAVES_COPY } from '../waves-copy';
+import { WAVES_CONFIG } from '../waves-config';
+
+const networkAddressOptions = WAVES_CONFIG.networkAddressSuggestions
+  .map(({ label, url }) => `<option value="${url}" label="${label}"></option>`)
+  .join('');
 
 export const navigationToolbarTemplate = () => `
   <nav class="nav-toolbar" aria-label="Browser navigation">
@@ -36,7 +41,13 @@ export const navigationToolbarTemplate = () => `
           type="text"
           value=""
           aria-label="${WAVES_COPY.shell.address}"
+          placeholder="${WAVES_COPY.shell.addressPlaceholder}"
+          list="network-address-options"
+          inputmode="url"
+          autocapitalize="none"
+          spellcheck="false"
         />
+        <datalist id="network-address-options">${networkAddressOptions}</datalist>
         <label id="local-example-wrap" class="omnibox-local">
           <span class="visually-hidden">${WAVES_COPY.shell.localExample}</span>
           <select id="local-example" class="host-control"></select>
