@@ -16,7 +16,10 @@ const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
     <header class="browser-chrome">
       <div class="title-row">
-        <h1 class="brand">${WAVES_COPY.app.brand}</h1>
+        <h1 class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>${WAVES_COPY.app.brand}</span>
+        </h1>
         <div class="caption">${WAVES_COPY.app.tagline}</div>
       </div>
       ${navigationToolbarTemplate()}

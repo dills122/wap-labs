@@ -62,6 +62,23 @@ const openAllDisclosures = async (page) => {
   });
 };
 
+const captureDefaultVisual = async (page, name, dimensions) => {
+  const layout = await page.evaluate(() => ({
+    cssViewport: { width: innerWidth, height: innerHeight },
+    scrollWidth: document.documentElement.scrollWidth,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth
+  }));
+  assert.equal(layout.horizontalOverflow, false, `${name}: 100% visual has no horizontal overflow`);
+  const screenshot = `${name}-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  return {
+    physicalWindow: dimensions.physical,
+    cssViewportAt100Percent: layout.cssViewport,
+    scrollWidth: layout.scrollWidth,
+    screenshot
+  };
+};
+
 const resolveBaseRevision = async () => {
   if (requestedBaseRevision) {
     assert.match(
@@ -219,8 +236,16 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     assert.equal(focused.focusVisible, true, `${name}: #${focused.id} matches :focus-visible`);
     assert.notEqual(focused.outlineStyle, 'none', `${name}: #${focused.id} has an outline`);
     assert.ok(focused.outlineWidth >= 2, `${name}: #${focused.id} outline is at least 2px`);
-    assert.ok(focused.outlineOffset >= 2, `${name}: #${focused.id} outline is offset`);
-    assert.notEqual(focused.boxShadow, 'none', `${name}: #${focused.id} has two-tone separation`);
+    assert.match(
+      focused.boxShadow,
+      /rgb\(255, 255, 255\)/,
+      `${name}: #${focused.id} focus ring has light separation`
+    );
+    assert.match(
+      focused.boxShadow,
+      /rgb\(11, 87, 208\)/,
+      `${name}: #${focused.id} focus ring has a high-contrast outer edge`
+    );
     focusEvidence.push(focused);
   }
   assert.ok(focusEvidence.length > 10, `${name}: keyboard focus evidence covers host controls`);
@@ -272,6 +297,24 @@ try {
   }
 
   browser = await chromium.launch({ headless: true });
+  const visualEvidenceAt100Percent = {};
+  for (const [name, dimensions] of Object.entries(windows)) {
+    const context = await browser.newContext({
+      viewport: dimensions.physical,
+      reducedMotion: 'reduce'
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto(new URL('browser-story.html', baseUrl).href, {
+        waitUntil: 'domcontentloaded'
+      });
+      await waitForReady(page);
+      visualEvidenceAt100Percent[name] = await captureDefaultVisual(page, name, dimensions);
+    } finally {
+      await context.close();
+    }
+  }
+
   const windowEvidence = {};
   for (const [name, dimensions] of Object.entries(windows)) {
     const context = await browser.newContext({
@@ -341,6 +384,7 @@ try {
       headless: true,
       reducedMotion: true
     },
+    visualEvidenceAt100Percent,
     windowEvidence
   };
   const resultPath = path.join(outputDir, 'rendered-accessibility.json');

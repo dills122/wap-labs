@@ -11,7 +11,7 @@ export const handsetStageTemplate = () => `
     <div class="handset-housing">
       <div class="device-frame">
         <div class="device-header">
-          <span>${WAVES_COPY.shell.deckView}</span>
+          <span class="device-title">${WAVES_COPY.shell.deckView}</span>
           <span id="active-url-label" class="muted-url">${WAVES_COPY.shell.idle}</span>
         </div>
         <div

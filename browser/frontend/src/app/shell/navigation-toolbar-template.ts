@@ -23,11 +23,11 @@ export const navigationToolbarTemplate = () => `
       <button id="btn-load-local" class="btn chrome-btn">${WAVES_COPY.shell.loadLocal}</button>
     </div>
     <div class="toolbar-meta">
-      <span class="toolbar-meta-item">
+      <span class="toolbar-meta-item route-meta">
         <span class="toolbar-meta-label">${WAVES_COPY.shell.route}</span>
         <span id="route-label"></span>
       </span>
-      <span class="toolbar-meta-item">
+      <span class="toolbar-meta-item profile-meta">
         <span class="toolbar-meta-label">${WAVES_COPY.shell.profile}</span>
         <span id="profile-label">${WAVES_COPY.shell.classCReferenceProfile}</span>
       </span>

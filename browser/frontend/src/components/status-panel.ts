@@ -13,14 +13,17 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status {
+      position: relative;
       border: 1px solid var(--panel-border-mid);
-      border-radius: 5px;
-      padding: 8px;
+      border-left: 4px solid var(--status-idle-indicator);
+      border-radius: 6px;
+      padding: 9px 10px;
       font-size: 13px;
       min-height: 44px;
       background: var(--status-idle-bg);
       color: var(--status-idle-text);
       line-height: 1.35;
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%);
     }
 
     .status-idle {
@@ -29,16 +32,19 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status-loading {
+      border-left-color: var(--status-loading-indicator);
       background: var(--status-loading-bg);
       color: var(--status-loading-text);
     }
 
     .status-ok {
+      border-left-color: var(--status-ok-indicator);
       background: var(--status-ok-bg);
       color: var(--status-ok-text);
     }
 
     .status-error {
+      border-left-color: var(--status-error-indicator);
       background: var(--status-error-bg);
       color: var(--status-error-text);
     }

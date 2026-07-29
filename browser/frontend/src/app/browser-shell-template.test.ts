@@ -66,6 +66,18 @@ describe('mountBrowserShell', () => {
     expect(document.querySelector('.form-95')).toBeNull();
   });
 
+  it('adds a decorative Waves identity without changing the accessible heading', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('http://example.test/start.wml', 'local');
+
+    const brand = document.querySelector<HTMLHeadingElement>('h1.brand');
+    const brandMark = brand?.querySelector<HTMLElement>('.brand-mark');
+
+    expect(brand?.textContent?.trim()).toBe('Waves');
+    expect(brandMark?.getAttribute('aria-hidden')).toBe('true');
+    expect(brandMark?.textContent).toBe('');
+  });
+
   it('opens the utility rail by default at normal window widths', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');
