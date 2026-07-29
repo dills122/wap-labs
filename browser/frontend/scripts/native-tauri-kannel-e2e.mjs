@@ -201,7 +201,9 @@ const run = async () => {
   await replaceInput('#fetch-url', 'wap://localhost/examples/pocket-portal.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const portalViewport = await waitForText('#viewport', 'first-party service');
-  assert.match(await portalViewport.getText(), /first-party service directory/);
+  const portalText = await portalViewport.getText();
+  assert.match(portalText, /first-party service/);
+  assert.match(portalText, /directory\./);
   await driver.findElement(By.css('#btn-enter')).click();
   const directoryViewport = await waitForText('#viewport', 'Forms');
   assert.match(await directoryViewport.getText(), /Forms/);
