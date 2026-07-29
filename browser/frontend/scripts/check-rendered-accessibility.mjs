@@ -39,6 +39,7 @@ const windows = {
     cssViewport: { width: windowConfig.minWidth / 2, height: windowConfig.minHeight / 2 }
   }
 };
+const hallmarkResponsiveWidths = [320, 375, 414, 768];
 
 const waitForReady = async (page) => {
   await page.waitForFunction(
@@ -60,6 +61,74 @@ const openAllDisclosures = async (page) => {
       details.open = true;
     }
   });
+};
+
+const captureDefaultVisual = async (page, name, dimensions) => {
+  const layout = await page.evaluate(() => ({
+    cssViewport: { width: innerWidth, height: innerHeight },
+    scrollWidth: document.documentElement.scrollWidth,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth
+  }));
+  assert.equal(layout.horizontalOverflow, false, `${name}: 100% visual has no horizontal overflow`);
+  const screenshot = `${name}-window-100-percent.png`;
+  await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  return {
+    physicalWindow: dimensions.physical,
+    cssViewportAt100Percent: layout.cssViewport,
+    scrollWidth: layout.scrollWidth,
+    screenshot
+  };
+};
+
+const captureResponsiveVisual = async (page, width) => {
+  const layout = await page.evaluate(() => {
+    const clickableText = [...document.querySelectorAll('button, summary, .btn')]
+      .filter((element) => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0;
+      })
+      .map((element) => {
+        const style = getComputedStyle(element);
+        return {
+          id: element.id,
+          text: element.textContent?.trim() ?? '',
+          whiteSpace: style.whiteSpace,
+          scrollWidth: element.scrollWidth,
+          clientWidth: element.clientWidth
+        };
+      });
+    const handsetControls = [...document.querySelectorAll('.softkey-row .btn')].map((element) => {
+      const rect = element.getBoundingClientRect();
+      return { id: element.id, left: rect.left, right: rect.right };
+    });
+    return {
+      cssViewport: { width: innerWidth, height: innerHeight },
+      scrollWidth: document.documentElement.scrollWidth,
+      horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+      clickableText,
+      handsetControls
+    };
+  });
+  assert.equal(layout.horizontalOverflow, false, `${width}px: no horizontal overflow`);
+  for (const action of layout.clickableText) {
+    assert.equal(
+      action.whiteSpace,
+      'nowrap',
+      `${width}px: ${action.id || action.text} stays on one line`
+    );
+    assert.ok(
+      action.scrollWidth <= action.clientWidth,
+      `${width}px: ${action.id || action.text} label is not clipped`
+    );
+  }
+  for (const control of layout.handsetControls) {
+    assert.ok(control.left >= 0, `${width}px: #${control.id} is not clipped left`);
+    assert.ok(control.right <= width, `${width}px: #${control.id} is not clipped right`);
+  }
+  const screenshot = `responsive-${width}px.png`;
+  await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
+  return { ...layout, screenshot };
 };
 
 const resolveBaseRevision = async () => {
@@ -122,6 +191,7 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     const shell = document.querySelector('.browser-shell');
     const viewport = document.querySelector('#viewport');
     const focusedWmlItem = document.querySelector('.wml-segment-link.is-focused');
+    const rootStyle = getComputedStyle(document.documentElement);
     return {
       cssViewport: { width: innerWidth, height: innerHeight },
       document: {
@@ -138,9 +208,14 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         ).length,
         hostFontFamily: getComputedStyle(document.body).fontFamily,
         lcdFontFamily: viewport ? getComputedStyle(viewport).fontFamily : null,
+        lcdBackground: viewport ? getComputedStyle(viewport).backgroundColor : null,
+        lcdForeground: viewport ? getComputedStyle(viewport).color : null,
         focusedWmlBackground: focusedWmlItem
           ? getComputedStyle(focusedWmlItem).backgroundColor
           : null,
+        focusedWmlForeground: focusedWmlItem ? getComputedStyle(focusedWmlItem).color : null,
+        focusRingColor: rootStyle.getPropertyValue('--focus-ring-color').trim(),
+        focusRingOuterColor: rootStyle.getPropertyValue('--focus-ring-outer-color').trim(),
         runningAnimationCount: document.getAnimations().length
       }
     };
@@ -170,8 +245,13 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
   );
   assert.equal(
     layout.presentation.focusedWmlBackground,
-    'rgb(28, 43, 28)',
-    `${name}: inverse-video WML focus remains visible`
+    layout.presentation.lcdForeground,
+    `${name}: focused WML background inverts the LCD foreground`
+  );
+  assert.equal(
+    layout.presentation.focusedWmlForeground,
+    layout.presentation.lcdBackground,
+    `${name}: focused WML foreground inverts the LCD background`
   );
   assert.equal(
     layout.presentation.runningAnimationCount,
@@ -219,8 +299,16 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     assert.equal(focused.focusVisible, true, `${name}: #${focused.id} matches :focus-visible`);
     assert.notEqual(focused.outlineStyle, 'none', `${name}: #${focused.id} has an outline`);
     assert.ok(focused.outlineWidth >= 2, `${name}: #${focused.id} outline is at least 2px`);
-    assert.ok(focused.outlineOffset >= 2, `${name}: #${focused.id} outline is offset`);
-    assert.notEqual(focused.boxShadow, 'none', `${name}: #${focused.id} has two-tone separation`);
+    assert.match(
+      focused.boxShadow,
+      /0px 0px 0px 2px/,
+      `${name}: #${focused.id} focus ring has a separation layer`
+    );
+    assert.match(
+      focused.boxShadow,
+      /0px 0px 0px 5px/,
+      `${name}: #${focused.id} focus ring has a high-contrast outer layer`
+    );
     focusEvidence.push(focused);
   }
   assert.ok(focusEvidence.length > 10, `${name}: keyboard focus evidence covers host controls`);
@@ -272,6 +360,42 @@ try {
   }
 
   browser = await chromium.launch({ headless: true });
+  const responsiveEvidence = {};
+  for (const width of hallmarkResponsiveWidths) {
+    const context = await browser.newContext({
+      viewport: { width, height: 900 },
+      reducedMotion: 'reduce'
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto(new URL('browser-story.html', baseUrl).href, {
+        waitUntil: 'domcontentloaded'
+      });
+      await waitForReady(page);
+      responsiveEvidence[width] = await captureResponsiveVisual(page, width);
+    } finally {
+      await context.close();
+    }
+  }
+
+  const visualEvidenceAt100Percent = {};
+  for (const [name, dimensions] of Object.entries(windows)) {
+    const context = await browser.newContext({
+      viewport: dimensions.physical,
+      reducedMotion: 'reduce'
+    });
+    const page = await context.newPage();
+    try {
+      await page.goto(new URL('browser-story.html', baseUrl).href, {
+        waitUntil: 'domcontentloaded'
+      });
+      await waitForReady(page);
+      visualEvidenceAt100Percent[name] = await captureDefaultVisual(page, name, dimensions);
+    } finally {
+      await context.close();
+    }
+  }
+
   const windowEvidence = {};
   for (const [name, dimensions] of Object.entries(windows)) {
     const context = await browser.newContext({
@@ -341,6 +465,8 @@ try {
       headless: true,
       reducedMotion: true
     },
+    responsiveEvidence,
+    visualEvidenceAt100Percent,
     windowEvidence
   };
   const resultPath = path.join(outputDir, 'rendered-accessibility.json');
