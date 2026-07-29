@@ -1,0 +1,169 @@
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+
+  /* Dependency-free typography: native application chrome, technical readouts,
+     and the deterministic period LCD face remain deliberately distinct. */
+  --font-display: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  --font-lcd: 'Courier New', Courier, monospace;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 180ms;
+  --dur-long: 420ms;
+
+  --rule-hair: 1px;
+  --rule-strong: 2px;
+  --rule-lcd: 4px;
+  --radius-xs: 2px;
+  --radius-control: 6px;
+  --radius-panel: 8px;
+  --radius-device: 14px;
+  --radius-handset: 24px;
+  --radius-pill: 999px;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 400;
+  --z-toast: 500;
+  --z-tooltip: 600;
+
+  /* Almanac-inspired host palette: warm reference-book paper and cool
+     instrument-panel neutrals, with one teal signal and one amber action. */
+  --color-canvas: oklch(91% 0.018 165);
+  --color-canvas-deep: oklch(87% 0.022 165);
+  --color-paper: oklch(97% 0.014 92);
+  --color-paper-2: oklch(94% 0.016 96);
+  --color-paper-3: oklch(90% 0.02 150);
+  --color-panel: oklch(98% 0.012 92);
+  --color-rule: oklch(77% 0.025 165);
+  --color-rule-2: oklch(60% 0.035 175);
+  --color-ink: oklch(24% 0.028 175);
+  --color-ink-2: oklch(31% 0.03 175);
+  --color-muted: oklch(43% 0.03 175);
+  --color-disabled: oklch(61% 0.014 170);
+
+  --color-accent: oklch(51% 0.095 188);
+  --color-accent-hover: oklch(43% 0.09 188);
+  --color-accent-deep: oklch(34% 0.07 188);
+  --color-accent-soft: oklch(90% 0.04 180);
+  --color-accent-ink: oklch(98% 0.012 92);
+  --color-highlight: oklch(68% 0.14 75);
+  --color-highlight-hover: oklch(63% 0.15 72);
+  --color-highlight-soft: oklch(91% 0.065 84);
+  --color-highlight-ink: oklch(27% 0.045 70);
+  --color-focus: oklch(52% 0.2 255);
+  --color-focus-outer: oklch(98% 0.012 92);
+  --color-contrast-rule: oklch(54% 0.025 175);
+  --color-contrast-rule-strong: oklch(32% 0.03 175);
+  --color-contrast-muted: oklch(34% 0.025 175);
+  --color-contrast-accent: oklch(42% 0.1 188);
+
+  --color-idle-bg: oklch(95% 0.012 165);
+  --color-idle-ink: oklch(31% 0.025 175);
+  --color-idle-signal: oklch(56% 0.025 175);
+  --color-loading-bg: oklch(94% 0.06 86);
+  --color-loading-ink: oklch(35% 0.08 78);
+  --color-loading-signal: oklch(58% 0.14 68);
+  --color-success-bg: oklch(93% 0.045 150);
+  --color-success-ink: oklch(34% 0.09 150);
+  --color-success-signal: oklch(53% 0.14 150);
+  --color-error-bg: oklch(93% 0.045 30);
+  --color-error-ink: oklch(38% 0.13 30);
+  --color-error-signal: oklch(55% 0.17 30);
+
+  /* Functional Class C reference handset and deterministic monochrome LCD. */
+  --color-handset: oklch(36% 0.035 180);
+  --color-handset-raised: oklch(48% 0.03 180);
+  --color-handset-shadow: oklch(20% 0.025 180);
+  --color-bezel: oklch(27% 0.03 180);
+  --color-bezel-raised: oklch(39% 0.035 180);
+  --color-device-label: oklch(94% 0.012 105);
+  --color-device-muted: oklch(84% 0.025 175);
+  --color-led: oklch(73% 0.12 160);
+  --color-lcd: oklch(88% 0.06 120);
+  --color-lcd-ink: oklch(25% 0.04 130);
+  --color-lcd-link: oklch(42% 0.17 255);
+  --color-lcd-skeleton: oklch(25% 0.04 130 / 0.13);
+  --color-lcd-scanline: oklch(25% 0.04 130 / 0.025);
+  --color-lcd-glare: oklch(99% 0.018 110 / 0.14);
+
+  /* Optical highlights and shadows are named modifiers, not palette entries. */
+  --color-highlight-strong: oklch(99% 0.012 92 / 0.8);
+  --color-highlight-medium: oklch(99% 0.012 92 / 0.55);
+  --color-highlight-faint: oklch(99% 0.012 92 / 0.24);
+  --color-shadow-faint: oklch(22% 0.025 175 / 0.07);
+  --color-shadow-soft: oklch(22% 0.025 175 / 0.12);
+  --color-shadow-medium: oklch(20% 0.025 175 / 0.2);
+  --color-shadow-device: oklch(17% 0.025 180 / 0.34);
+
+  --shadow-panel: 0 2px 8px var(--color-shadow-faint);
+  --shadow-chrome: 0 3px 12px var(--color-shadow-soft);
+  --shadow-device: 0 12px 28px var(--color-shadow-device);
+  --shadow-toast: 0 10px 28px var(--color-shadow-medium);
+
+  /* Compatibility aliases consumed by the existing shell and Web Components. */
+  --host-canvas: var(--color-canvas);
+  --host-canvas-deep: var(--color-canvas-deep);
+  --host-surface: var(--color-paper-2);
+  --host-surface-raised: var(--color-paper);
+  --host-panel: var(--color-panel);
+  --host-border: var(--color-rule);
+  --host-border-strong: var(--color-rule-2);
+  --host-text: var(--color-ink);
+  --host-muted: var(--color-muted);
+  --host-accent: var(--color-accent);
+  --host-accent-hover: var(--color-accent-hover);
+  --host-accent-deep: var(--color-accent-deep);
+  --host-accent-soft: var(--color-accent-soft);
+  --host-highlight: var(--color-highlight);
+  --host-highlight-soft: var(--color-highlight-soft);
+  --panel-border-mid: var(--color-rule);
+  --panel-bg: var(--color-panel);
+  --panel-heading-bg: var(--color-paper-3);
+  --panel-heading-text: var(--color-accent-deep);
+  --status-idle-bg: var(--color-idle-bg);
+  --status-idle-text: var(--color-idle-ink);
+  --status-idle-indicator: var(--color-idle-signal);
+  --status-loading-bg: var(--color-loading-bg);
+  --status-loading-text: var(--color-loading-ink);
+  --status-loading-indicator: var(--color-loading-signal);
+  --status-ok-bg: var(--color-success-bg);
+  --status-ok-text: var(--color-success-ink);
+  --status-ok-indicator: var(--color-success-signal);
+  --status-error-bg: var(--color-error-bg);
+  --status-error-text: var(--color-error-ink);
+  --status-error-indicator: var(--color-error-signal);
+  --toast-ok-bg: var(--color-success-bg);
+  --toast-error-bg: var(--color-error-bg);
+  --handset-housing-bg: var(--color-handset);
+  --handset-housing-highlight: var(--color-handset-raised);
+  --handset-housing-shadow: var(--color-handset-shadow);
+  --handset-bezel: var(--color-bezel);
+  --lcd-bg: var(--color-lcd);
+  --lcd-fg: var(--color-lcd-ink);
+  --lcd-focus-bg: var(--color-lcd-ink);
+  --lcd-focus-fg: var(--color-lcd);
+  --focus-ring-color: var(--color-focus);
+  --focus-ring-outer-color: var(--color-focus-outer);
+}

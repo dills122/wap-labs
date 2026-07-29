@@ -15,15 +15,34 @@ export class WvStatusPanel extends LitElement {
     .status {
       position: relative;
       border: 1px solid var(--panel-border-mid);
-      border-left: 4px solid var(--status-idle-indicator);
-      border-radius: 6px;
-      padding: 9px 10px;
-      font-size: 13px;
+      border-radius: var(--radius-control);
+      padding: var(--space-xs) var(--space-sm) var(--space-xs) 2rem;
+      font-size: var(--text-sm);
       min-height: 44px;
       background: var(--status-idle-bg);
       color: var(--status-idle-text);
-      line-height: 1.35;
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%);
+      line-height: 1.5;
+      box-shadow: inset 0 1px 0 var(--color-highlight-medium);
+    }
+
+    .status::before {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: var(--space-sm);
+      display: grid;
+      width: 0.875rem;
+      height: 0.875rem;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: var(--radius-xs);
+      background: var(--status-idle-indicator);
+      color: var(--status-idle-bg);
+      content: '–';
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 700;
+      line-height: 1;
+      transform: translateY(-50%);
     }
 
     .status-idle {
@@ -32,21 +51,36 @@ export class WvStatusPanel extends LitElement {
     }
 
     .status-loading {
-      border-left-color: var(--status-loading-indicator);
       background: var(--status-loading-bg);
       color: var(--status-loading-text);
     }
 
+    .status-loading::before {
+      background: var(--status-loading-indicator);
+      color: var(--status-loading-bg);
+      content: '…';
+    }
+
     .status-ok {
-      border-left-color: var(--status-ok-indicator);
       background: var(--status-ok-bg);
       color: var(--status-ok-text);
     }
 
+    .status-ok::before {
+      background: var(--status-ok-indicator);
+      color: var(--status-ok-bg);
+      content: '✓';
+    }
+
     .status-error {
-      border-left-color: var(--status-error-indicator);
       background: var(--status-error-bg);
       color: var(--status-error-text);
+    }
+
+    .status-error::before {
+      background: var(--status-error-indicator);
+      color: var(--status-error-bg);
+      content: '!';
     }
   `;
 

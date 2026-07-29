@@ -1,0 +1,15 @@
+{
+  "date": "2026-07-28",
+  "scope": "browser/frontend",
+  "font_stack": "Native system UI host, system mono technical labels, deterministic Courier LCD",
+  "palette": "OKLCH tokens in browser/frontend/src/tokens.css",
+  "motion": "motion-cut; no animation framework",
+  "spacing": "4pt semantic token scale",
+  "framework": "Lit + Vite",
+  "preserved": [
+    "Tauri native window frame",
+    "HTML/CSS/TypeScript WebView rendering",
+    "WML inverse-video focus semantics",
+    "controller bindings and keyboard order"
+  ]
+}

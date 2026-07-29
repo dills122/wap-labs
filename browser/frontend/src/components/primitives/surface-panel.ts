@@ -12,26 +12,26 @@ export class WvSurfacePanel extends LitElement {
 
     .panel {
       overflow: clip;
-      border: 1px solid var(--panel-border-mid);
-      border-radius: 9px;
-      background: var(--panel-bg);
-      box-shadow: 0 2px 8px rgb(31 52 49 / 7%);
+      border-block: 1px solid var(--panel-border-mid);
+      color: var(--host-text);
+      background: transparent;
     }
 
     .heading {
       margin: 0;
-      padding: 7px 9px;
+      padding: var(--space-xs) var(--space-sm);
       border-bottom: 1px solid var(--panel-border-mid);
-      font-size: 12px;
-      letter-spacing: 0.045em;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--panel-heading-text);
       font-weight: 700;
-      background: var(--panel-heading-bg);
+      background: transparent;
     }
 
     .body {
-      padding: 8px;
+      padding: var(--space-sm);
     }
   `;
 
