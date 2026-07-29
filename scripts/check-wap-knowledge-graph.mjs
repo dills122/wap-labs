@@ -512,6 +512,7 @@ const wspGraph = wspArtifacts.graph;
 const wspNodeIds = new Set(wspGraph.nodes.map((node) => node.id));
 const wsp801Pack = renderContextPack(wspGraph, 'WSP-801');
 const wsp802Pack = renderContextPack(wspGraph, 'WSP-802');
+const wsp805Pack = renderContextPack(wspGraph, 'WSP-805');
 if (
   wspGraph.target.sprint !== 'WSP-8' ||
   wspGraph.target.profile !== 'CCR-CLASSC-C-001' ||
@@ -523,7 +524,7 @@ if (
     JSON.stringify({
       'WSP-803': ['wsp'],
       'WSP-804': ['wdp'],
-      'WSP-805': ['wae', 'wdp', 'wml'],
+      'WSP-805': ['wae', 'wdp'],
       'WSP-806': ['wsp']
     })
 ) {
@@ -564,6 +565,30 @@ if (
 ) {
   failures.push(
     'WSP-802 context rendering must expose its 25 mapped WSP clauses, six direct parents, effective WSP source order, and no declared-family gap'
+  );
+}
+if (
+  !wsp805Pack.startsWith('# WSP-805 AI Context Pack') ||
+  !wsp805Pack.includes('### WSP-805:') ||
+  wsp805Pack.includes('### WSP-804:') ||
+  !wsp805Pack.includes('- Selected work items: 1') ||
+  !wsp805Pack.includes('- Selected SCR parents: 9') ||
+  !wsp805Pack.includes('- Direct normative clauses: 37') ||
+  !wsp805Pack.includes('**WML-CL-GO-FORM-URLENCODING**') ||
+  !wsp805Pack.includes('**WML-CL-GO-GET-QUERY-MERGE**') ||
+  !wsp805Pack.includes('**WML-CL-GO-POST-CONTENT-TYPE-CHARSET**') ||
+  !wsp805Pack.includes('**WML-CL-GO-REFERER**') ||
+  !wsp805Pack.includes('**WML-CL-GO-NO-CACHE**') ||
+  !wsp805Pack.includes('**WSP-CL-POST-PDU-LAYOUT**') ||
+  !wsp805Pack.includes('declares `wae`, `wdp` scope without a direct clause mapping') ||
+  wspGraph.summary.workItemsWithoutDirectClauses.includes('WSP-805') ||
+  JSON.stringify(wspGraph.summary.directClauseFamiliesByWorkItem['WSP-805']) !==
+    JSON.stringify(['wml', 'wsp']) ||
+  JSON.stringify(wspGraph.summary.unmappedNormativeFamiliesByWorkItem['WSP-805']) !==
+    JSON.stringify(['wae', 'wdp'])
+) {
+  failures.push(
+    'WSP-805 context rendering must expose its 37 directly mapped WML/WSP request-ingress clauses, nine selected parents, and explicit WAE/WDP family gaps'
   );
 }
 

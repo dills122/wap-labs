@@ -4,7 +4,7 @@ key: "WML-FX-GO-FORM-URLENCODING"
 type: "fixture"
 generated: true
 slice: "WML-3"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "transport-boundary",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

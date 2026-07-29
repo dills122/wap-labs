@@ -223,12 +223,16 @@ export const createNavigationStateMachine = (
       requestedUrl,
       hostSessionState.finalUrl
     );
-    const requestPolicy = options.requestPolicy
+    const mergedRequestPolicy = options.requestPolicy
       ? {
           ...defaultRequestPolicy,
           ...options.requestPolicy
         }
       : defaultRequestPolicy;
+    const requestPolicy = withSubmissionSourceContentType(
+      mergedRequestPolicy,
+      hostSessionState.contentType
+    );
     const method = resolveTransportMethod(options.method, requestPolicy);
     const pushHistory = options.pushHistory ?? true;
     const referringUrl =
@@ -645,12 +649,31 @@ const resolveTransportMethod = (
   method: string | undefined,
   requestPolicy: FetchRequestPolicy | undefined
 ): string => {
-  // Engine emits POST body via requestPolicy.postContext for WML <go method="post"> intents.
-  // Treat that as authoritative even if caller defaulted method to GET.
+  // The typed engine intent is authoritative. Legacy postContext remains a
+  // compatibility fallback until its callers migrate to requestIntent.
+  if (requestPolicy?.requestIntent) {
+    return requestPolicy.requestIntent.method.toUpperCase();
+  }
   if (requestPolicy?.postContext) {
     return 'POST';
   }
   return normalizeMethod(method);
+};
+
+const withSubmissionSourceContentType = (
+  requestPolicy: FetchRequestPolicy | undefined,
+  sourceContentType: string | undefined
+): FetchRequestPolicy | undefined => {
+  if (!requestPolicy?.requestIntent || requestPolicy.requestIntent.sourceContentType) {
+    return requestPolicy;
+  }
+  return {
+    ...requestPolicy,
+    requestIntent: {
+      ...requestPolicy.requestIntent,
+      sourceContentType
+    }
+  };
 };
 
 export const shouldRenderTimerSnapshot = (

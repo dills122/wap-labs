@@ -100,6 +100,7 @@ pub fn apply_default_destination_policy(request: &mut FetchDeckRequest) {
                 cache_control: None,
                 referer_url: None,
                 post_context: None,
+                request_intent: None,
                 ua_capability_profile: None,
             });
         }

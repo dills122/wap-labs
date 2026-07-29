@@ -1,6 +1,7 @@
 use lowband_transport_rust::{
     fetch_deck_in_process_with_profile, FetchCacheControlPolicy, FetchDeckRequest,
-    FetchDestinationPolicy, FetchPostContext, FetchRequestPolicy, FetchTransportProfile,
+    FetchDestinationPolicy, FetchRequestIntent, FetchRequestMethod, FetchRequestPolicy,
+    FetchRequestPostField, FetchTransportProfile,
 };
 use wavenav_engine::{DrawCmd, WmlEngine};
 
@@ -17,6 +18,7 @@ fn request(url: &str) -> FetchDeckRequest {
             cache_control: None,
             referer_url: None,
             post_context: None,
+            request_intent: None,
             ua_capability_profile: None,
         }),
     }
@@ -34,10 +36,26 @@ fn post_request(url: &str, payload: &str) -> FetchDeckRequest {
             destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
             cache_control: Some(FetchCacheControlPolicy::NoCache),
             referer_url: Some(url.to_string()),
-            post_context: Some(FetchPostContext {
-                same_deck: Some(false),
-                content_type: Some("application/x-www-form-urlencoded".to_string()),
-                payload: Some(payload.to_string()),
+            post_context: None,
+            request_intent: Some(FetchRequestIntent {
+                method: FetchRequestMethod::Post,
+                enctype: "application/x-www-form-urlencoded".to_string(),
+                send_referer: true,
+                accept_charset: Some("utf-8".to_string()),
+                same_deck: false,
+                post_fields: payload
+                    .split('&')
+                    .map(|pair| {
+                        let (name, value) = pair
+                            .split_once('=')
+                            .expect("smoke form payload should contain name/value pairs");
+                        FetchRequestPostField {
+                            name: name.to_string(),
+                            value: value.to_string(),
+                        }
+                    })
+                    .collect(),
+                source_content_type: Some("text/vnd.wap.wml; charset=utf-8".to_string()),
             }),
             ua_capability_profile: None,
         }),

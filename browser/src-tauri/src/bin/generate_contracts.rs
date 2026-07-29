@@ -3,7 +3,8 @@ use std::path::PathBuf;
 
 use lowband_transport_rust::{
     EngineDeckInputPayload, FetchCacheControlPolicy, FetchDeckRequest, FetchDeckResponse,
-    FetchDestinationPolicy, FetchErrorInfo, FetchPostContext, FetchRequestPolicy, FetchTiming,
+    FetchDestinationPolicy, FetchErrorInfo, FetchPostContext, FetchRequestIntent,
+    FetchRequestMethod, FetchRequestPolicy, FetchRequestPostField, FetchTiming,
     FetchUaCapabilityProfile,
 };
 use ts_rs::{Config, TS};
@@ -208,6 +209,9 @@ fn write_transport_contracts() -> Result<(), Box<dyn std::error::Error>> {
     push_decl::<FetchCacheControlPolicy>(&mut output);
     push_decl::<FetchDestinationPolicy>(&mut output);
     push_decl::<FetchPostContext>(&mut output);
+    push_decl::<FetchRequestMethod>(&mut output);
+    push_decl::<FetchRequestPostField>(&mut output);
+    push_decl::<FetchRequestIntent>(&mut output);
     push_decl::<FetchUaCapabilityProfile>(&mut output);
     push_decl::<FetchRequestPolicy>(&mut output);
     push_decl::<FetchDeckRequest>(&mut output);

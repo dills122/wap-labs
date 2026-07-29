@@ -82,11 +82,13 @@ The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP
 - `docs/knowledge-graph/vault-WSP-8/`;
 - `docs/knowledge-graph/context-packs/WSP-8.md`.
 
-Its focused `WSP-801` and `WSP-802` targets use only canonical direct-clause mappings. `WSP-801`
-exposes the connectionless PDU, primitive, and method obligations and their selected SCR parents.
-`WSP-802` exposes header and encoding-version obligations. Its source-scope audit removed the
-unrelated `general-formats` family declaration because WAP-188 contains no WSP header grammar.
-The canonical WSP SCR ledger remains authoritative.
+Its focused `WSP-801`, `WSP-802`, and `WSP-805` targets use only canonical direct-clause mappings.
+`WSP-801` exposes the connectionless PDU, primitive, and method obligations and their selected
+SCR parents. `WSP-802` exposes header and encoding-version obligations. `WSP-805` combines its
+WSP method/PDU obligations with only the WML request-serialization clauses directly owned by the
+native ingress lane; WAE and WDP remain explicit family gaps until source clauses are selected.
+The WSP-802 source-scope audit removed the unrelated `general-formats` family declaration because
+WAP-188 contains no WSP header grammar. The canonical WSP SCR ledger remains authoritative.
 
 The `WMLS-5` slice is the adoption checkpoint for WMLScript language, bytecode, VM, and library
 work:
@@ -127,7 +129,7 @@ node scripts/wap-context-pack.mjs WML-203
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
 through `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
-`WSP-8`, `WSP-801`, `WSP-802`, `WMLS-5`, and `WMLS-501`. A work-item target keeps sprint dependencies and conformance
+`WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, and `WMLS-501`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice
 starts, so graph expansion is explicit and reviewable.

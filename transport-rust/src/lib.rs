@@ -9,6 +9,7 @@ mod gateway;
 mod native_fetch;
 pub mod network;
 mod request_meta;
+mod request_serialization;
 mod responses;
 pub mod smpp_profile;
 pub mod tcp_profile;
@@ -66,6 +67,39 @@ pub struct FetchPostContext {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum FetchRequestMethod {
+    Get,
+    Post,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct FetchRequestPostField {
+    pub name: String,
+    pub value: String,
+}
+
+/// Engine-authored WML request semantics consumed by the transport serializer.
+///
+/// The engine owns only the ordered semantic intent. The browser supplies the
+/// referring deck content type as opaque source context; transport chooses the
+/// submission charset, escapes fields, and constructs the wire request.
+#[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct FetchRequestIntent {
+    pub method: FetchRequestMethod,
+    pub enctype: String,
+    pub send_referer: bool,
+    #[ts(optional)]
+    pub accept_charset: Option<String>,
+    pub same_deck: bool,
+    pub post_fields: Vec<FetchRequestPostField>,
+    #[ts(optional)]
+    pub source_content_type: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct FetchRequestPolicy {
     #[ts(optional)]
@@ -76,6 +110,8 @@ pub struct FetchRequestPolicy {
     pub referer_url: Option<String>,
     #[ts(optional)]
     pub post_context: Option<FetchPostContext>,
+    #[ts(optional)]
+    pub request_intent: Option<FetchRequestIntent>,
     #[ts(optional)]
     pub ua_capability_profile: Option<FetchUaCapabilityProfile>,
 }

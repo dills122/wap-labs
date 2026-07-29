@@ -7,9 +7,15 @@ export type FetchDestinationPolicy = "public-only" | "allow-private";
 
 export type FetchPostContext = { sameDeck?: boolean, contentType?: string, payload?: string, };
 
+export type FetchRequestMethod = "get" | "post";
+
+export type FetchRequestPostField = { name: string, value: string, };
+
+export type FetchRequestIntent = { method: FetchRequestMethod, enctype: string, sendReferer: boolean, acceptCharset?: string, sameDeck: boolean, postFields: Array<FetchRequestPostField>, sourceContentType?: string, };
+
 export type FetchUaCapabilityProfile = "disabled" | "wap-baseline";
 
-export type FetchRequestPolicy = { destinationPolicy?: FetchDestinationPolicy, cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, uaCapabilityProfile?: FetchUaCapabilityProfile, };
+export type FetchRequestPolicy = { destinationPolicy?: FetchDestinationPolicy, cacheControl?: FetchCacheControlPolicy, refererUrl?: string, postContext?: FetchPostContext, requestIntent?: FetchRequestIntent, uaCapabilityProfile?: FetchUaCapabilityProfile, };
 
 export type FetchDeckRequest = { url: string, method?: string, headers?: { [key in string]: string }, timeoutMs?: number, retries?: number, requestId?: string, requestPolicy?: FetchRequestPolicy, };
 

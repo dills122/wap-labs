@@ -1,0 +1,21 @@
+name = "wml-304-request-serialization"
+description = "Byte-exact WML request intent serialization and malformed-combination evidence for the R0-06/WSP-805 desktop handoff."
+mode = "mapped"
+work_items = ["WML-304", "WSP-805"]
+spec_items = [
+  "WML-CL-POSTFIELD-REQUEST-PAIR",
+  "WML-CL-GO-REFERER",
+  "WML-CL-GO-METHOD",
+  "WML-CL-GO-NO-CACHE",
+  "WML-CL-GO-ENCTYPE-SUPPORT",
+  "WML-CL-GO-ACCEPT-CHARSET",
+  "WML-CL-GO-SUBMISSION-ORDER",
+  "WML-CL-GO-GET-QUERY-MERGE",
+  "WML-CL-GO-POST-CONTENT-TYPE-CHARSET",
+  "WML-CL-GO-FORM-URLENCODING",
+]
+testing_ac = [
+  "Asserts deterministic ordered GET query merging and UTF-8 byte escaping.",
+  "Asserts form-urlencoded POST bytes, charset-bearing Content-Type, no-cache preservation, and the smallest relative Referer.",
+  "Rejects GET multipart, unsupported charset lists, and sendreferer without an absolute referring deck URL before transport execution.",
+]

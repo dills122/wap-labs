@@ -748,25 +748,25 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-ACCEPT-CHARSET` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-ENCTYPE-SUPPORT** — Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-ENCTYPE-SUPPORT` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-FORM-URLENCODING** — URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`, `WML-C-37`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-FORM-URLENCODING` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-GET-QUERY-MERGE** — For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-GET-QUERY-MERGE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION** — Ignore go postfields for same-deck card navigation unless no-cache is explicitly requested.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -778,13 +778,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-METHOD` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-NO-CACHE** — For cache-control no-cache, reload from the origin and send the matching request cache-control value.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-NO-CACHE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-PART-CONTENT-TYPE** — Provide a content type for each multipart part and a charset when its content is not US-ASCII.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -796,13 +796,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-POST-CONTENT-TYPE-CHARSET` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-REFERER** — When sendreferer is true, transmit the smallest usable relative URI for the referring deck.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-14`, `WML-C-29`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-011`
-  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-REFERER` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-STRUCTURE** — Parse go with a required target, declared request attributes, and zero or more postfield or setvar children.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
@@ -814,7 +814,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`, `WML-C-37`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-SUBMISSION-ORDER` (`transport-boundary`, `implemented`)
 - **WML-CL-HISTORY-POST-REPLAY** — When a prior deck must be fetched again, replay the original POST data values associated with that history entry.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
@@ -826,7 +826,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)
   - Parents: `WML-C-37`, `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-POSTFIELD-REQUEST-PAIR` (`transport-boundary`, `implemented`)
 - **WML-CL-POSTFIELD-STRUCTURE** — Require postfield name and value attributes and treat both as variable-bearing data.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)

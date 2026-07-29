@@ -1494,12 +1494,23 @@
             "Native WSP form POST ingress"
           ],
           "acceptance": [
-            "Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP."
+            "Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP.",
+            "The focused WSP-805 context directly maps only selected WML request-serialization and WSP method/PDU clauses; unresolved WAE and WDP source-family mappings remain explicit gaps."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
+            "transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json",
+            "cargo test --manifest-path transport-rust/Cargo.toml request_serialization",
             "cargo test --manifest-path transport-rust/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml fetch_deck_command_serializes_typed_post_intent_before_http_handoff",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "node scripts/wap-context-pack.mjs WSP-805",
+            "pnpm wap-graph:check"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 9.3 and 9.5.1 as amended by WAP-191_105-WML section 4.3",
+            "WAP-203-WSP sections 6.4 and 8.2.3"
           ]
         },
         {

@@ -15,6 +15,9 @@ tags:
 
 ## Relationships
 
+- `belongs-to` ← [[scr-rows/WML-C-14|WML-C-14]]
+- `belongs-to` ← [[scr-rows/WML-C-29|WML-C-29]]
+- `belongs-to` ← [[scr-rows/WML-C-37|WML-C-37]]
 - `covers-family` ← [[work-items/WSP-805|WSP-805]]
 - `effective-document` → [[source-documents/WAP-191_102-WML|WAP-191_102-WML]]
 - `effective-document` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]

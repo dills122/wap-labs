@@ -68,6 +68,7 @@ fn request_policy_with_destination(
         cache_control: None,
         referer_url: None,
         post_context: None,
+        request_intent: None,
         ua_capability_profile: None,
     }
 }

@@ -299,6 +299,36 @@ const wml304ClauseIds = new Set([
   'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
   'WML-CL-GO-FORM-URLENCODING'
 ]);
+const wsp805WmlClauseIds = new Set([
+  'WML-CL-POSTFIELD-REQUEST-PAIR',
+  'WML-CL-GO-REFERER',
+  'WML-CL-GO-METHOD',
+  'WML-CL-GO-NO-CACHE',
+  'WML-CL-GO-ENCTYPE-SUPPORT',
+  'WML-CL-GO-PART-CONTENT-TYPE',
+  'WML-CL-GO-ACCEPT-CHARSET',
+  'WML-CL-GO-SUBMISSION-ORDER',
+  'WML-CL-GO-GET-QUERY-MERGE',
+  'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+  'WML-CL-GO-FORM-URLENCODING'
+]);
+const implementedWml304TransportClauseIds = new Set([
+  'WML-CL-POSTFIELD-REQUEST-PAIR',
+  'WML-CL-GO-REFERER',
+  'WML-CL-GO-METHOD',
+  'WML-CL-GO-NO-CACHE',
+  'WML-CL-GO-ENCTYPE-SUPPORT',
+  'WML-CL-GO-ACCEPT-CHARSET',
+  'WML-CL-GO-SUBMISSION-ORDER',
+  'WML-CL-GO-GET-QUERY-MERGE',
+  'WML-CL-GO-POST-CONTENT-TYPE-CHARSET',
+  'WML-CL-GO-FORM-URLENCODING'
+]);
+const wml304TransportFixturePath =
+  'transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json';
+const wml304TransportTestPath = 'transport-rust/src/request_serialization/tests.rs';
+const wml304TransportTestCommand =
+  'cargo test --manifest-path transport-rust/Cargo.toml request_serialization';
 const wml305ClauseIds = new Set([
   'WML-CL-GO-TIMER-THEN-DISPLAY',
   'WML-CL-REFRESH-TIMER-RESTART',
@@ -448,6 +478,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+  ...implementedWml304TransportClauseIds,
   ...wml203ClauseIds,
   ...wml204ClauseIds,
   ...wml205ClauseIds,
@@ -707,7 +738,10 @@ for (const family of ledger.families ?? []) {
     globalClauseKeys.add(clauseKey);
 
     const expectedOwners = [
-      ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
+      ...new Set([
+        ...parents.flatMap((parent) => parent.mapping.ownerLayers),
+        ...(wsp805WmlClauseIds.has(candidate.id) ? ['transport-rust'] : [])
+      ])
     ].sort();
     const expectedWorkItems = [
       ...new Set([
@@ -721,6 +755,7 @@ for (const family of ledger.families ?? []) {
         ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
         ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
         ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
+        ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
@@ -738,6 +773,7 @@ for (const family of ledger.families ?? []) {
       ...(wml302ClauseIds.has(candidate.id) ? ['WML-302'] : []),
       ...(wml303ClauseIds.has(candidate.id) ? ['WML-303'] : []),
       ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
+      ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
@@ -803,9 +839,15 @@ for (const family of ledger.families ?? []) {
                 : 'wcmp_cdpd_icmp_profile'
           ))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
-        (candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
-          !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
-          (wml301EvidenceByClauseId.has(candidate.id)
+        (implementedWml304TransportClauseIds.has(candidate.id)
+          ? candidate.fixturePlan.evidence?.path !== wml304TransportFixturePath ||
+            candidate.fixturePlan.evidence?.testPath !== wml304TransportTestPath ||
+            !fs.existsSync(path.join(root, wml304TransportFixturePath)) ||
+            !fs.existsSync(path.join(root, wml304TransportTestPath)) ||
+            candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
+          : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
+            !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
+            (wml301EvidenceByClauseId.has(candidate.id)
             ? candidate.fixturePlan.evidence?.path !==
                 wml301EvidenceByClauseId.get(candidate.id).path ||
               candidate.fixturePlan.evidence?.command !==
