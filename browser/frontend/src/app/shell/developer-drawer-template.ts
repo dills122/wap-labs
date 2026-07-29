@@ -44,6 +44,13 @@ export const developerDrawerTemplate = (surface: DeveloperToolsSurface = 'docked
                 : ''
             }
           </div>
+          <p class="developer-tools-activity">
+            <span>${WAVES_COPY.shell.status}</span>
+            <output
+              id="developer-tools-host-status"
+              ${surface === 'window' ? 'role="status" aria-live="polite" aria-atomic="true"' : ''}
+            >${WAVES_COPY.status.ready}</output>
+          </p>
         </header>
 
         <div

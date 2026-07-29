@@ -27,6 +27,7 @@ class TestBroadcastChannel extends EventTarget {
 }
 
 const state: DeveloperToolsState = {
+  hostStatus: 'Ready.',
   sessionState: { runMode: 'local', navigationStatus: 'idle', requestedUrl: '' },
   transportResponse: null,
   runtimeSnapshot: null,

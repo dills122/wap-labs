@@ -121,6 +121,33 @@
   cursor: progress;
 }
 
+.developer-tools-activity {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  flex: 0 0 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-xs);
+  margin: 0;
+  padding-block-start: var(--space-xs);
+  border-top: var(--rule-hair) solid var(--host-border);
+  color: var(--host-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.35;
+}
+
+.developer-tools-activity span {
+  color: var(--host-text);
+  font-family: var(--font-body);
+  font-weight: 650;
+}
+
+.developer-tools-activity output {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .developer-tools-tabs {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -476,7 +503,8 @@ body.developer-tools-window textarea {
 }
 
 [data-developer-tools-surface='docked'] .developer-tools-heading,
-[data-developer-tools-surface='docked'] .developer-tools-actions {
+[data-developer-tools-surface='docked'] .developer-tools-actions,
+[data-developer-tools-surface='docked'] .developer-tools-activity {
   width: 100%;
   flex: 0 1 auto;
 }
@@ -513,7 +541,8 @@ body.developer-tools-window textarea {
   }
 
   .developer-tools-window .developer-tools-heading,
-  .developer-tools-window .developer-tools-actions {
+  .developer-tools-window .developer-tools-actions,
+  .developer-tools-window .developer-tools-activity {
     width: 100%;
     flex: 0 1 auto;
   }

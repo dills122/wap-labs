@@ -187,6 +187,37 @@ const assertDeveloperToolsPanelContainment = async (
   return evidence;
 };
 
+const assertDeveloperToolsCommandFeedback = async (page, name) => {
+  const activity = page.locator('#developer-tools-host-status');
+
+  await page.locator('#btn-health').click();
+  await page.waitForFunction(
+    () => document.querySelector('#developer-tools-host-status')?.textContent?.startsWith('Health:'),
+    null,
+    { timeout: 5_000 }
+  );
+  const health = (await activity.textContent())?.trim() ?? '';
+  assert.match(health, /^Health: .+/, `${name}: Health reports its host result inside DevTools`);
+
+  await page.locator('#btn-render').click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('#developer-tools-host-status')?.textContent ===
+      'Rendered current card.',
+    null,
+    { timeout: 5_000 }
+  );
+  const render = (await activity.textContent())?.trim() ?? '';
+  assert.equal(render, 'Rendered current card.', `${name}: Render confirms completion inside DevTools`);
+  assert.notEqual(
+    (await page.locator('#snapshot').textContent())?.trim(),
+    '',
+    `${name}: Render refreshes the runtime snapshot`
+  );
+
+  return { health, render };
+};
+
 const assertStatusRegionsDoNotOverlap = async (page, name) => {
   const statusLayout = await page.evaluate(() => {
     const readRegion = (element) => {
@@ -250,6 +281,10 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
   await page.locator('#btn-inspector').click();
   await openAllDisclosures(page);
+  const developerToolsCommandFeedback =
+    name === 'default'
+      ? await assertDeveloperToolsCommandFeedback(page, `${name}: developer tools commands`)
+      : null;
   const developerToolsPanels = await assertDeveloperToolsPanelContainment(
     page,
     `${name}: developer tools visual`,
@@ -269,6 +304,7 @@ const captureDefaultVisual = async (page, name, dimensions) => {
     screenshot,
     handsetScreenshot,
     developerToolsScreenshot,
+    developerToolsCommandFeedback,
     developerToolsPanels
   };
 };

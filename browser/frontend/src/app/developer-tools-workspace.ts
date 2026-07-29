@@ -15,6 +15,7 @@ export interface DeveloperToolsSourceState {
 }
 
 export interface DeveloperToolsState {
+  hostStatus: string;
   sessionState: HostSessionState;
   transportResponse: FetchResponse | null;
   runtimeSnapshot: EngineRuntimeSnapshot | null;
@@ -53,6 +54,7 @@ const transportDuration = (response: FetchResponse | null): string => {
 
 export const renderDeveloperToolsSummary = (root: ParentNode, state: DeveloperToolsState): void => {
   const { sessionState, runtimeSnapshot, transportResponse, timeline, document } = state;
+  setText(root, '#developer-tools-host-status', state.hostStatus);
   setText(
     root,
     '#developer-tools-target',

@@ -113,6 +113,7 @@ export class BrowserPresenter {
 
   getDeveloperToolsState(): DeveloperToolsState {
     return {
+      hostStatus: this.statusText || WAVES_COPY.status.ready,
       sessionState: { ...this.hostSessionState },
       transportResponse: this.latestTransportResponse ? { ...this.latestTransportResponse } : null,
       runtimeSnapshot: this.latestSnapshot ? { ...this.latestSnapshot } : null,
@@ -188,6 +189,7 @@ export class BrowserPresenter {
     this.refs.statusEl.setStatus(message, tone);
     this.announce(message);
     uiEvents.emit('status', { message, tone });
+    this.scheduleDeveloperPanelFlush();
   }
 
   getStatus(): string {

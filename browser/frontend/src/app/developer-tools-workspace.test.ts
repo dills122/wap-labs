@@ -7,6 +7,7 @@ import {
 } from './developer-tools-workspace';
 
 const state: DeveloperToolsState = {
+  hostStatus: 'Health: ok',
   sessionState: {
     runMode: 'local',
     navigationStatus: 'loaded',
@@ -95,6 +96,11 @@ describe('Developer Tools workspace', () => {
   it('renders structured summaries while retaining exact raw diagnostics', () => {
     renderDeveloperToolsState(root, state);
 
+    expect(root.querySelector('#developer-tools-host-status')?.textContent).toBe('Health: ok');
+    expect(root.querySelector('#developer-tools-host-status')?.getAttribute('role')).toBe('status');
+    expect(root.querySelector('#developer-tools-host-status')?.getAttribute('aria-live')).toBe(
+      'polite'
+    );
     expect(root.querySelector('[data-devtools-value="run-mode"]')?.textContent).toBe('local');
     expect(root.querySelector('[data-devtools-value="transport-time"]')?.textContent).toBe('7 ms');
     expect(root.querySelector('[data-devtools-value="next-timer"]')?.textContent).toBe('250 ms');
