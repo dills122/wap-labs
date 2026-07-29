@@ -200,10 +200,10 @@ const run = async () => {
 
   await replaceInput('#fetch-url', 'wap://localhost/examples/pocket-portal.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const portalViewport = await waitForText('#viewport', 'Pocket Portal');
+  const portalViewport = await waitForText('#viewport', 'first-party service');
   assert.match(await portalViewport.getText(), /first-party service directory/);
   await driver.findElement(By.css('#btn-enter')).click();
-  const directoryViewport = await waitForText('#viewport', 'Local Services');
+  const directoryViewport = await waitForText('#viewport', 'Forms');
   assert.match(await directoryViewport.getText(), /Forms/);
   assert.match(await directoryViewport.getText(), /Examples/);
   recordAssertion(
@@ -214,7 +214,7 @@ const run = async () => {
 
   await replaceInput('#fetch-url', 'wap://localhost/examples/preferences.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const preferencesViewport = await waitForText('#viewport', 'Local Preferences');
+  const preferencesViewport = await waitForText('#viewport', 'made-up alias');
   const preferencesText = await preferencesViewport.getText();
   assert.match(preferencesText, /made-up alias/);
   assert.match(preferencesText, /Layout/);
@@ -227,18 +227,18 @@ const run = async () => {
 
   await replaceInput('#fetch-url', 'wap://localhost/examples/interop-check.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const interopViewport = await waitForText('#viewport', 'Interop Wire Check');
+  const interopViewport = await waitForText('#viewport', 'W13-A');
   assert.match(await interopViewport.getText(), /W13-A/);
   const requestsBeforeRepeat = await readOriginRequestCount();
   await driver.findElement(By.css('#btn-enter')).click();
   await driver.wait(
     async () =>
-      (
-        await driver.findElement(By.css('#fetch-url')).getAttribute('value')
-      ).endsWith('/examples/interop-check.wml?probe=repeat'),
+      (await driver.findElement(By.css('#fetch-url')).getAttribute('value')).endsWith(
+        '/examples/interop-check.wml?probe=repeat'
+      ),
     timeoutMs
   );
-  const repeatedInteropViewport = await waitForText('#viewport', 'Interop Wire Check');
+  const repeatedInteropViewport = await waitForText('#viewport', 'W13-A');
   assert.match(await repeatedInteropViewport.getText(), /W13-A/);
   await delay(2000);
   const requestsAfterRepeat = await readOriginRequestCount();
@@ -279,7 +279,7 @@ const run = async () => {
 try {
   await run();
 } catch (error) {
-  const message = error instanceof Error ? error.stack ?? error.message : String(error);
+  const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
   process.stderr.write(`native-tauri-kannel-e2e: FAIL\n${message}\n`);
   if (driver) {
     await capture('failure').catch(() => undefined);
