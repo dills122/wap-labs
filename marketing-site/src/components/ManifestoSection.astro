@@ -1,103 +1,64 @@
 ---
 ---
 
-<section class="purpose section-block" id="why" aria-labelledby="why-title">
+<section class="manifesto section-block" id="why" aria-labelledby="why-title">
   <div class="section-heading" data-reveal>
-    <h2 id="why-title">What is the desktop browser for?</h2>
-    <p>A real-world WAP/WML testing and exploration harness—not a modern browser in retro dress.</p>
+    <p class="section-number">01 / Why it exists</p>
+    <h2 id="why-title">Old protocol.<br />Serious tooling.</h2>
   </div>
-
-  <div class="purpose-body" data-reveal>
+  <div class="manifesto-copy" data-reveal>
     <p class="statement">
-      Waves gives old mobile-web behavior a dependable desktop place to run, inspect, and explain.
+      Most WAP tooling is either inaccurate, unfinished, or painful to work with.
     </p>
     <p>
-      Deck and card transitions, focus, forms, timers, and scripts stay in the WaveNav engine.
-      Constrained fetch and WBXML work stay in Lowband and the gateway. The native host turns those
-      layers into one usable session without taking their jobs away.
+      Waves is the practical middle ground: close enough to the original platform to be worth
+      trusting, but modern enough to support debugging, iteration, and real development work.
     </p>
-
-    <ul class="outcome-list" aria-label="Product principles">
-      <li><strong>Authentic core.</strong> Engine-owned navigation and presentation.</li>
-      <li><strong>Constrained path.</strong> Transport behavior remains visible and bounded.</li>
-      <li><strong>Desktop workbench.</strong> Browse, interact, recover, and inspect in one host.</li>
+    <ul class="outcome-list" aria-label="Core outcomes">
+      <li>Load local examples and live decks in one tool.</li>
+      <li>Inspect runtime state and transport behavior while you browse.</li>
     </ul>
-
-    <figure class="product-capture">
-      <img
-        src="./waves-browser-handset.webp"
-        alt="Current Waves development build showing a local WML deck in the canonical handset stage"
-        width="1024"
-        height="768"
-        loading="lazy"
-        decoding="async"
-      />
-      <figcaption>
-        Current <code>origin/main</code> capture · real WaveNav WASM path · bundled Basic Navigation deck
-      </figcaption>
-    </figure>
   </div>
 </section>
 
 <style>
   .statement {
-    max-width: 26ch;
-    font-size: var(--text-xl);
+    max-width: 24ch;
+    font-size: clamp(1.65rem, 2.5vw, 2.75rem);
     font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 1.04;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
   }
 
-  .purpose-body > p:nth-child(2) {
-    max-width: 68ch;
-    margin-top: var(--space-lg);
+  .manifesto-copy > p:nth-child(2) {
+    max-width: 43rem;
+    margin-top: var(--space-5);
     color: var(--color-ink-soft);
-    font-size: var(--text-lg);
+    font-size: 1.05rem;
     line-height: 1.65;
   }
 
   .outcome-list {
     display: grid;
-    gap: var(--space-xs);
-    margin-top: var(--space-lg);
+    gap: 0.8rem;
+    margin-top: var(--space-5);
     list-style: none;
   }
 
   .outcome-list li {
-    padding-block: var(--space-sm);
-    border-top: var(--rule-soft);
-    line-height: 1.5;
+    display: grid;
+    grid-template-columns: 1.4rem 1fr;
+    gap: 0.65rem;
+    align-items: start;
+    font: 700 0.78rem/1.5 var(--font-mono);
   }
 
-  .outcome-list li:last-child {
-    border-bottom: var(--rule-soft);
-  }
-
-  .product-capture {
-    min-width: 0;
-    margin-top: var(--space-xl);
-    background: var(--color-paper-strong);
-    border: var(--rule-thick);
-    box-shadow: var(--shadow-capture);
-  }
-
-  .product-capture img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-
-  .product-capture figcaption {
-    padding: var(--space-xs) var(--space-sm);
-    color: var(--color-ink-soft);
-    background: var(--color-canvas);
-    border-top: var(--rule-thin);
-    font: 700 var(--text-xs)/1.45 var(--font-mono);
-  }
-
-  @media (max-width: 36rem) {
-    .product-capture {
-      box-shadow: 0.35rem 0.35rem 0 var(--color-rule);
-    }
+  .outcome-list li::before {
+    display: grid;
+    height: 1.4rem;
+    place-items: center;
+    content: '+';
+    color: var(--color-paper);
+    background: var(--color-terminal);
   }
 </style>

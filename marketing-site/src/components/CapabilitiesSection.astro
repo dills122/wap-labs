@@ -1,21 +1,18 @@
 ---
 const capabilities = [
-  ['Load', 'Run bundled local examples through the ordinary engine path.'],
-  ['Browse', 'Use the native transport path for HTTP, WAP gateway, and linked-deck navigation.'],
+  ['Browse', 'Open bundled examples and follow HTTP, WAP gateway, and linked-deck paths.'],
   ['Interact', 'Drive focus, text/select editing, forms, timers, and softkey-style actions.'],
-  ['Recover', 'Keep navigation state stable when a request fails or an external intent is blocked.'],
-  ['Inspect', 'Open bounded session, transport, runtime, source, and timeline views.'],
-  ['Repeat', 'Exercise deterministic stories and parity-critical behavior without a mock runtime.']
+  ['Inspect', 'Use current Developer Tools while the broader WAP Inspector remains release work.'],
+  ['Repeat', 'Run deterministic stories and parity-critical checks against the real runtime.']
 ];
 ---
 
 <section class="capabilities section-block" aria-labelledby="capabilities-title">
   <div class="section-heading" data-reveal>
-    <h2 id="capabilities-title">What can the current development build exercise?</h2>
-    <p>These foundations are on current main. They are not a packaged or downloadable pre-release.</p>
+    <p class="section-number">03 / In practice</p>
+    <h2 id="capabilities-title">A browser,<br />not just a harness.</h2>
   </div>
-
-  <div class="capabilities-body">
+  <div class="capabilities-detail">
     <ol class="capability-list">
       {
         capabilities.map(([title, detail], index) => (
@@ -28,79 +25,91 @@ const capabilities = [
       }
     </ol>
 
-    <figure class="inspector-capture" data-reveal>
+    <figure class="capability-capture" data-reveal>
       <img
         src="./waves-browser-inspector.webp"
-        alt="Current Waves development build with the Developer Tools drawer open beside a WML handset view"
+        alt="Current Waves development build with Developer Tools open beside the handset view"
         width="1024"
         height="768"
         loading="lazy"
         decoding="async"
       />
       <figcaption>
-        Current Developer Tools view. Host attachment and the broader WAP Inspector remain release-path work.
+        Current Developer Tools overview. Host attachment and the full WAP Inspector remain on the
+        release path.
       </figcaption>
     </figure>
   </div>
 </section>
 
 <style>
-  .capabilities-body {
+  .capabilities-detail {
     min-width: 0;
   }
 
   .capability-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     border-top: var(--rule-thick);
+    border-left: var(--rule-thin);
     list-style: none;
   }
 
   .capability-list li {
     display: grid;
-    grid-template-columns: 2.5rem minmax(7rem, 0.45fr) minmax(0, 1.55fr);
-    gap: var(--space-sm);
-    align-items: baseline;
-    padding-block: var(--space-sm);
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem 1rem;
+    min-height: 11rem;
+    align-content: start;
+    padding: var(--space-4);
+    border-right: var(--rule-thin);
     border-bottom: var(--rule-thin);
   }
 
   .capability-list li > span {
+    grid-row: span 2;
     color: var(--color-signal-dark);
-    font: 700 var(--text-xs)/1 var(--font-mono);
+    font: 700 0.7rem/1 var(--font-mono);
   }
 
   .capability-list p {
+    max-width: 25rem;
     color: var(--color-ink-soft);
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
-  .inspector-capture {
-    min-width: 0;
-    margin-top: var(--space-xl);
-    background: var(--color-paper-strong);
+  .capability-capture {
+    margin-top: var(--space-4);
     border: var(--rule-thick);
+    background: var(--color-paper);
   }
 
-  .inspector-capture img {
+  .capability-capture img {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
   }
 
-  .inspector-capture figcaption {
-    padding: var(--space-xs) var(--space-sm);
-    color: var(--color-ink-soft);
-    background: var(--color-canvas);
+  .capability-capture figcaption {
+    padding: 0.75rem 1rem;
     border-top: var(--rule-thin);
-    font: 700 var(--text-xs)/1.45 var(--font-mono);
+    color: var(--color-ink-soft);
+    font: 700 0.68rem/1.45 var(--font-mono);
+  }
+
+  @media (max-width: 50rem) {
+    .capability-list {
+      grid-template-columns: 1fr;
+    }
+
+    .capability-list li {
+      min-height: 9rem;
+    }
   }
 
   @media (max-width: 36rem) {
     .capability-list li {
-      grid-template-columns: 2rem minmax(0, 1fr);
-    }
-
-    .capability-list p {
-      grid-column: 2;
+      padding: 1.2rem 1rem;
     }
   }
 </style>
