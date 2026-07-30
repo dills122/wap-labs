@@ -8,6 +8,7 @@ import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
 import { statusBarTemplate } from './shell/status-bar-template';
 import { utilityRailTemplate } from './shell/utility-rail-template';
+import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
@@ -39,6 +40,8 @@ export interface BrowserShellRefs {
   baseUrlInput: HTMLInputElement;
   viewportColsInput: HTMLInputElement;
   viewportEl: HTMLDivElement;
+  viewportCanvasEl?: HTMLCanvasElement;
+  viewportAccessibleTextEl?: HTMLSpanElement;
   snapshotEl: HTMLPreElement;
   statusEl: WvStatusPanel;
   fetchUrlInput: HTMLInputElement;
@@ -136,6 +139,8 @@ export const mountBrowserShell = (
   runModeSelectEl.value = defaultRunMode;
   baseUrlInput.value = WAVES_CONFIG.defaultDebugBaseUrl;
 
+  const viewportSurface = ensureCanvasViewportElements(viewportEl);
+
   const utilityRailPanelEl = document.querySelector<HTMLDetailsElement>('#utility-rail-panel');
   const inspectorButtonEl = document.querySelector<HTMLButtonElement>('#btn-inspector');
   const localModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-local');
@@ -228,6 +233,8 @@ export const mountBrowserShell = (
     baseUrlInput,
     viewportColsInput,
     viewportEl,
+    viewportCanvasEl: viewportSurface.canvas,
+    viewportAccessibleTextEl: viewportSurface.accessibleText,
     snapshotEl,
     statusEl,
     fetchUrlInput,
