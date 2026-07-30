@@ -179,7 +179,7 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-05 Bounded request ingress and typed host errors
 
 1. `Issue`: [#507](https://github.com/dills122/wap-labs/issues/507)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P2`
 4. `Depends On`: coordinate after the separate `wapcurl` task releases the overlapping transport
    request/serialization files
@@ -206,6 +206,17 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 9. `Coordination`:
 - Do not change `transport-rust/src/request_meta.rs`, transport retry semantics, or `wapcurl` CLI
   exit diagnostics as part of this item.
+10. `Resolution`:
+- Rust-owned request and host ingress budgets are generated into the TypeScript contracts. Every
+  ticketed field and aggregate has a one-over test, with command-level coverage proving rejection
+  precedes fetch registration, task admission, transport execution, and engine locking.
+- RSL-05 transport and engine host commands return the generated `HostCommandError` taxonomy; the
+  generated invoke client derives runtime validators from the same Rust-projected declarations.
+  Invalid non-null response shapes fail closed, opaque failures are redacted, and recovery tests
+  call commands successfully after boundary, mutex, and malformed-response failures.
+- Evidence: `make lint-rust-transport`, `make test-rust-transport`, browser-host `cargo clippy` and
+  serialized `cargo test`, frontend test/lint/typecheck/format checks, `contracts:check`,
+  `tauri:schemas:check`, and `git diff --check` pass.
 
 ## Lane D: Diagnostic and UI State Bounds
 

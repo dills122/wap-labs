@@ -71,8 +71,10 @@ fn transport_fetch_invalid_url_maps_invalid_request() {
 
 #[test]
 fn transport_fetch_rejects_url_longer_than_1024_octets() {
-    let long_path = "a".repeat(MAX_URI_OCTETS + 1);
-    let long_url = format!("http://example.test/{long_path}");
+    let prefix = "http://example.test/";
+    let long_path = "a".repeat((MAX_URI_OCTETS + 1) - prefix.len());
+    let long_url = format!("{prefix}{long_path}");
+    assert_eq!(long_url.len(), MAX_URI_OCTETS + 1);
     let response = fetch_deck_in_process(FetchDeckRequest {
         request_id: Some("req-uri-too-long".to_string()),
         ..basic_request(long_url.clone())
@@ -83,11 +85,11 @@ fn transport_fetch_rejects_url_longer_than_1024_octets() {
         response.error.as_ref().map(|err| err.code.as_str()),
         Some("INVALID_REQUEST")
     );
-    assert_eq!(response.final_url, long_url);
+    assert_eq!(response.final_url, "");
     assert!(response
         .error
         .as_ref()
-        .map(|err| err.message.contains("1024-octet limit"))
+        .map(|err| err.message.contains("1024-byte limit"))
         .unwrap_or(false));
 }
 

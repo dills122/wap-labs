@@ -1,33 +1,54 @@
-import type { TauriInvoke } from '../../../contracts/generated/tauri-host-client';
+import type { HostCommandError, HostCommandErrorCode } from '../../../contracts/host';
+import {
+  isHostCommandError,
+  type TauriInvoke,
+  validateTauriCommandResponse
+} from '../../../contracts/generated/tauri-host-client';
+
+export class HostCommandFailure extends Error {
+  readonly code: HostCommandErrorCode;
+  readonly recoverable: boolean;
+
+  constructor(error: HostCommandError) {
+    super(error.message);
+    this.name = 'HostCommandFailure';
+    this.code = error.code;
+    this.recoverable = error.recoverable;
+  }
+}
+
+const unknownHostFailure = (): HostCommandError => ({
+  code: 'HOST_FAILURE',
+  message: 'Host command failed.',
+  recoverable: true
+});
+
+const malformedHostResponse = (command: string): HostCommandError => ({
+  code: 'MALFORMED_RESPONSE',
+  message: `Host command "${command}" returned malformed data.`,
+  recoverable: true
+});
 
 /**
- * Wraps a `TauriInvoke` implementation with a minimal runtime guard at the
- * IPC trust boundary.
- *
- * `browser/contracts/generated/tauri-host-client.ts` is generated (see
- * AGENTS.md) and every one of its ~30 wrapper methods trusts
- * `invokeFn<T>(...)` responses at compile time only -- there is no runtime
- * shape check before the value is cast to `T` and, for
- * `EngineRuntimeSnapshot`/`EngineFrame` results, fed into the deep-equality
- * comparators in navigation-state.ts (`engineSnapshotsEqual`,
- * `shouldRenderTimerSnapshot`, ...).
- *
- * Full structural validation of every response shape would require either
- * hand-editing the generated file (not allowed) or duplicating the
- * generated contract in a schema-validation library, which is a much
- * larger integration than this trust boundary warrants right now. This
- * guard instead closes the narrowest, highest-value gap: none of
- * `TauriHostClient`'s methods are typed to resolve with `null`/`undefined`,
- * so a host response that comes back empty (e.g. IPC deserialization
- * failure) is treated as a hard error here instead of silently flowing
- * into snapshot comparisons as if it were valid data.
+ * Enforces the Rust-generated host error and response contracts at the IPC
+ * trust boundary. Runtime response schemas are generated from the same ts-rs
+ * declarations as the compile-time client, so the guard does not maintain a
+ * second hand-authored contract.
  */
 export const createGuardedTauriInvoke =
   (invokeFn: TauriInvoke): TauriInvoke =>
   async <T>(command: string, args?: Record<string, unknown>): Promise<T> => {
-    const result = await invokeFn<T>(command, args);
-    if (result === null || result === undefined) {
-      throw new Error(`Host command "${command}" returned no data.`);
+    let result: unknown;
+    try {
+      result = await invokeFn<unknown>(command, args);
+    } catch (error) {
+      if (error instanceof HostCommandFailure) {
+        throw error;
+      }
+      throw new HostCommandFailure(isHostCommandError(error) ? error : unknownHostFailure());
     }
-    return result;
+    if (!validateTauriCommandResponse(command, result)) {
+      throw new HostCommandFailure(malformedHostResponse(command));
+    }
+    return result as T;
   };

@@ -633,7 +633,11 @@
       }
     }
   ],
+  "error": {
+    "name": "HostCommandError",
+    "source": "host"
+  },
   "generatedBy": "cargo run --bin generate_contracts",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "source": "browser/src-tauri/src/command_contract.rs"
 }

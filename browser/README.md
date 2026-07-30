@@ -20,6 +20,9 @@ Implemented now:
 - AST-sourced typed Tauri invoke client generation:
   - generator: `scripts/generate-contract-wrappers.mjs`
   - output: `contracts/generated/tauri-host-client.ts`
+- Rust-sourced host ingress limits and typed command errors:
+  - source: `src-tauri/src/host_contract.rs`
+  - output: `contracts/generated/host.ts`
 - Frontend basic smoke harness under `frontend/` (load/render/key loop)
 - Ordinary-browser Waves story entry backed by the real WaveNav WASM engine and deterministic
   canonical fixture fetching (`pnpm test:story:waves`)
@@ -94,6 +97,7 @@ The desktop host will be a WAP-only browser shell:
 - Engine contract: `engine-wasm/contracts/wml-engine.ts`
 - Rust (`ts-rs`) + AST-generated host engine contract: `browser/contracts/generated/engine-host.ts`
 - Rust (`ts-rs`) + AST-generated host transport contract: `browser/contracts/generated/transport-host.ts`
+- Rust (`ts-rs`) + AST-generated host error contract: `browser/contracts/generated/host.ts`
 - AST-generated typed Tauri client: `browser/contracts/generated/tauri-host-client.ts`
 - Rust-owned Tauri command descriptor: `browser/src-tauri/src/command_contract.rs`
 - Rust-owned application command registry:
@@ -104,6 +108,15 @@ The desktop host will be a WAP-only browser shell:
 feeds Tauri's restricted app manifest, and generates the TypeScript client/facade metadata plus the
 aggregate permission and capability configuration. Command functions remain explicit adapters in
 `src-tauri/src/lib.rs`; runtime and transport behavior is not generated.
+
+The host rejects oversized IPC input before task admission, transport execution, or engine locking.
+The generated `HOST_INGRESS_LIMITS` projection publishes byte limits for correlation IDs (128), card
+IDs (256), edit drafts (65,536), context URLs (4,096), and deck content types (1,024). Command
+rejections use the generated `HostCommandError` envelope. Its codes keep invalid input,
+cancellation, task admission and join failures, unavailable engine state, engine resource limits,
+engine failures, opaque host failures, and malformed responses distinguishable without including
+the rejected values. The frontend invoke guard derives runtime response validators from the same
+Rust-generated TypeScript declarations and fails closed on invalid response shapes.
 
 `application_commands.rs` separately owns browser application command IDs, labels, menu groups,
 default enablement, and macOS/Linux shortcut mappings. The frontend command registry and visible

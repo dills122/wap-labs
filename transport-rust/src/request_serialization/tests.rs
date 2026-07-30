@@ -300,3 +300,94 @@ fn multipart_post_uses_the_permitted_form_urlencoded_fallback() {
         Some("application/x-www-form-urlencoded; charset=utf-8")
     );
 }
+
+#[test]
+fn encoded_post_body_accepts_limit_and_rejects_one_over() {
+    let mut at_limit = intent(FetchRequestMethod::Post);
+    at_limit.post_fields = vec![
+        FetchRequestPostField {
+            name: String::new(),
+            value: "a".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "b".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "c".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "d".repeat(crate::MAX_POST_FIELD_VALUE_BYTES - 7),
+        },
+    ];
+    let serialized = serialize_fetch_request(
+        "https://example.test/submit",
+        "GET".to_string(),
+        HashMap::new(),
+        Some(&policy(at_limit)),
+    )
+    .expect("encoded body at the limit should succeed");
+    assert_eq!(
+        serialized.body.as_ref().map(Vec::len),
+        Some(MAX_ENCODED_REQUEST_BODY_BYTES)
+    );
+
+    let mut one_over = intent(FetchRequestMethod::Post);
+    one_over.post_fields = vec![
+        FetchRequestPostField {
+            name: String::new(),
+            value: "a".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "b".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "c".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        },
+        FetchRequestPostField {
+            name: String::new(),
+            value: "s".repeat(crate::MAX_POST_FIELD_VALUE_BYTES - 6),
+        },
+    ];
+    let error = serialize_fetch_request(
+        "https://example.test/submit",
+        "GET".to_string(),
+        HashMap::new(),
+        Some(&policy(one_over)),
+    )
+    .expect_err("encoded body one over the limit must fail");
+    assert_eq!(
+        error,
+        format!("encoded request body exceeds the {MAX_ENCODED_REQUEST_BODY_BYTES}-byte limit")
+    );
+    assert!(!error.contains(&"s".repeat(128)));
+}
+
+#[test]
+fn legacy_post_body_rejects_one_over_before_copying() {
+    let secret = "p".repeat(MAX_ENCODED_REQUEST_BODY_BYTES + 1);
+    let request_policy = FetchRequestPolicy {
+        destination_policy: None,
+        cache_control: None,
+        referer_url: None,
+        post_context: Some(crate::FetchPostContext {
+            same_deck: None,
+            content_type: None,
+            payload: Some(secret.clone()),
+        }),
+        request_intent: None,
+        ua_capability_profile: None,
+    };
+    let error = serialize_fetch_request(
+        "https://example.test/submit",
+        "POST".to_string(),
+        HashMap::new(),
+        Some(&request_policy),
+    )
+    .expect_err("legacy body one over the limit must fail");
+    assert!(!error.contains(&secret));
+}

@@ -678,7 +678,11 @@ fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
         },
     )
     .expect_err("oversized raw payload should fail");
-    assert!(error.contains("Raw deck payload exceeds"));
+    assert_eq!(
+        error.code,
+        crate::host_contract::HostCommandErrorCode::EngineFailure
+    );
+    assert!(!error.message.contains(&"A".repeat(128)));
 }
 
 #[test]

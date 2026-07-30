@@ -25,6 +25,9 @@ pub(crate) fn fetch_deck_in_process_impl(
     transport_options: Option<FetchTransportOptions>,
     cancellation: Option<FetchCancellationToken>,
 ) -> FetchDeckResponse {
+    if let Err(error) = crate::validate_fetch_deck_request(&request) {
+        return invalid_request_response(String::new(), error.to_string(), None);
+    }
     let FetchDeckRequest {
         url,
         method,
@@ -41,18 +44,6 @@ pub(crate) fn fetch_deck_in_process_impl(
     {
         return cancelled_response(url, request_id.as_deref());
     }
-    let url_octets = url.len();
-    if url_octets > MAX_URI_OCTETS {
-        return invalid_request_response(
-            url,
-            format!(
-                "URL exceeds {}-octet limit (got {} octets)",
-                MAX_URI_OCTETS, url_octets
-            ),
-            request_id.as_deref(),
-        );
-    }
-
     let method = method
         .unwrap_or_else(|| "GET".to_string())
         .to_ascii_uppercase();

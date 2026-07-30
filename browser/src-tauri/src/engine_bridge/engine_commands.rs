@@ -19,166 +19,183 @@ use crate::contract_types::{
     HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
     NavigateToCardRequest, RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
+use crate::host_contract::HostCommandError;
 use wavenav_engine::WmlEngine;
 
-fn lock_engine<'a>(state: &'a AppState) -> Result<std::sync::MutexGuard<'a, WmlEngine>, String> {
-    state
-        .engine
-        .lock()
-        .map_err(|_| "engine state lock poisoned".to_string())
+fn map_engine_result<T>(result: Result<T, String>) -> Result<T, HostCommandError> {
+    result.map_err(HostCommandError::from)
+}
+
+fn lock_engine<'a>(
+    state: &'a AppState,
+) -> Result<std::sync::MutexGuard<'a, WmlEngine>, HostCommandError> {
+    match state.engine.lock() {
+        Ok(engine) => Ok(engine),
+        Err(_) => {
+            state.engine.clear_poison();
+            Err(HostCommandError::mutex_unavailable())
+        }
+    }
 }
 
 pub fn command_engine_load_deck(
     state: &AppState,
     request: LoadDeckRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_load_deck(&mut engine, request)
+    map_engine_result(apply_load_deck(&mut engine, request))
 }
 
 pub fn command_engine_load_deck_context(
     state: &AppState,
     request: LoadDeckContextRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
-    apply_load_deck_context(&mut engine, request)
+    map_engine_result(apply_load_deck_context(&mut engine, request))
 }
 
-pub fn command_engine_render(state: &AppState) -> Result<RenderList, String> {
+pub fn command_engine_render(state: &AppState) -> Result<RenderList, HostCommandError> {
     let engine = lock_engine(state)?;
-    apply_render(&engine)
+    map_engine_result(apply_render(&engine))
 }
 
-pub fn command_engine_render_frame(state: &AppState) -> Result<EngineFrame, String> {
+pub fn command_engine_render_frame(state: &AppState) -> Result<EngineFrame, HostCommandError> {
     let engine = lock_engine(state)?;
-    apply_render_frame(&engine)
+    map_engine_result(apply_render_frame(&engine))
 }
 
 pub fn command_engine_handle_key(
     state: &AppState,
     request: HandleKeyRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_handle_key(&mut engine, request)
+    map_engine_result(apply_handle_key(&mut engine, request))
 }
 
 pub fn command_engine_handle_key_frame(
     state: &AppState,
     request: HandleKeyRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_handle_key_frame(&mut engine, request)
+    map_engine_result(apply_handle_key_frame(&mut engine, request))
 }
 
 pub fn command_engine_handle_input_frame(
     state: &AppState,
     request: HandleInputRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_handle_input_frame(&mut engine, request)
+    map_engine_result(apply_handle_input_frame(&mut engine, request))
 }
 
 pub fn command_engine_navigate_to_card(
     state: &AppState,
     request: NavigateToCardRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
-    apply_navigate_to_card(&mut engine, request)
+    map_engine_result(apply_navigate_to_card(&mut engine, request))
 }
 
 pub fn command_engine_navigate_to_card_frame(
     state: &AppState,
     request: NavigateToCardRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
-    apply_navigate_to_card_frame(&mut engine, request)
+    map_engine_result(apply_navigate_to_card_frame(&mut engine, request))
 }
 
-pub fn command_engine_navigate_back(state: &AppState) -> Result<EngineRuntimeSnapshot, String> {
+pub fn command_engine_navigate_back(
+    state: &AppState,
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
     Ok(apply_navigate_back(&mut engine))
 }
 
-pub fn command_engine_navigate_back_frame(state: &AppState) -> Result<EngineFrame, String> {
+pub fn command_engine_navigate_back_frame(
+    state: &AppState,
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_navigate_back_frame(&mut engine)
+    map_engine_result(apply_navigate_back_frame(&mut engine))
 }
 
 pub fn command_engine_set_viewport_cols(
     state: &AppState,
     request: SetViewportColsRequest,
-) -> Result<EngineRuntimeSnapshot, EngineCommandError> {
-    let mut engine =
-        state
-            .engine
-            .lock()
-            .map_err(|_| EngineCommandError::EngineStateUnavailable {
-                message: "engine state lock poisoned".to_string(),
-            })?;
-    apply_set_viewport_cols(&mut engine, request).map_err(EngineCommandError::from)
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
+    let mut engine = lock_engine(state)?;
+    apply_set_viewport_cols(&mut engine, request)
+        .map_err(EngineCommandError::from)
+        .map_err(HostCommandError::from)
 }
 
 pub fn command_engine_advance_time_ms(
     state: &AppState,
     request: AdvanceTimeRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_advance_time_ms(&mut engine, request)
+    map_engine_result(apply_advance_time_ms(&mut engine, request))
 }
 
 pub fn command_engine_advance_time_ms_frame(
     state: &AppState,
     request: AdvanceTimeRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_advance_time_ms_frame(&mut engine, request)
+    map_engine_result(apply_advance_time_ms_frame(&mut engine, request))
 }
 
-pub fn command_engine_snapshot(state: &AppState) -> Result<EngineRuntimeSnapshot, String> {
+pub fn command_engine_snapshot(
+    state: &AppState,
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let engine = lock_engine(state)?;
     Ok(apply_engine_snapshot(&engine))
 }
 
 pub fn command_engine_clear_external_navigation_intent(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
     Ok(apply_clear_external_navigation_intent(&mut engine))
 }
 
 pub fn command_engine_clear_external_navigation_intent_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_clear_external_navigation_intent_frame(&mut engine)
+    map_engine_result(apply_clear_external_navigation_intent_frame(&mut engine))
 }
 
 pub fn command_engine_load_deck_context_frame(
     state: &AppState,
     request: LoadDeckContextRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
-    apply_load_deck_context_frame(&mut engine, request)
+    map_engine_result(apply_load_deck_context_frame(&mut engine, request))
 }
 
 pub fn command_engine_begin_focused_input_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_begin_focused_input_edit(&mut engine)
+    map_engine_result(apply_begin_focused_input_edit(&mut engine))
 }
 
 pub fn command_engine_begin_focused_input_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_begin_focused_input_edit_frame(&mut engine)
+    map_engine_result(apply_begin_focused_input_edit_frame(&mut engine))
 }
 
 pub fn command_engine_set_focused_input_edit_draft(
     state: &AppState,
     request: SetFocusedInputEditDraftRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
     Ok(apply_set_focused_input_edit_draft(&mut engine, request))
 }
@@ -186,57 +203,61 @@ pub fn command_engine_set_focused_input_edit_draft(
 pub fn command_engine_set_focused_input_edit_draft_frame(
     state: &AppState,
     request: SetFocusedInputEditDraftRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
+    request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
-    apply_set_focused_input_edit_draft_frame(&mut engine, request)
+    map_engine_result(apply_set_focused_input_edit_draft_frame(
+        &mut engine,
+        request,
+    ))
 }
 
 pub fn command_engine_commit_focused_input_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_commit_focused_input_edit(&mut engine)
+    map_engine_result(apply_commit_focused_input_edit(&mut engine))
 }
 
 pub fn command_engine_commit_focused_input_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_commit_focused_input_edit_frame(&mut engine)
+    map_engine_result(apply_commit_focused_input_edit_frame(&mut engine))
 }
 
 pub fn command_engine_cancel_focused_input_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
     Ok(apply_cancel_focused_input_edit(&mut engine))
 }
 
 pub fn command_engine_cancel_focused_input_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_cancel_focused_input_edit_frame(&mut engine)
+    map_engine_result(apply_cancel_focused_input_edit_frame(&mut engine))
 }
 
 pub fn command_engine_begin_focused_select_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_begin_focused_select_edit(&mut engine)
+    map_engine_result(apply_begin_focused_select_edit(&mut engine))
 }
 
 pub fn command_engine_begin_focused_select_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_begin_focused_select_edit_frame(&mut engine)
+    map_engine_result(apply_begin_focused_select_edit_frame(&mut engine))
 }
 
 pub fn command_engine_move_focused_select_edit(
     state: &AppState,
     request: MoveFocusedSelectEditRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
     Ok(apply_move_focused_select_edit(&mut engine, request))
 }
@@ -244,35 +265,35 @@ pub fn command_engine_move_focused_select_edit(
 pub fn command_engine_move_focused_select_edit_frame(
     state: &AppState,
     request: MoveFocusedSelectEditRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_move_focused_select_edit_frame(&mut engine, request)
+    map_engine_result(apply_move_focused_select_edit_frame(&mut engine, request))
 }
 
 pub fn command_engine_commit_focused_select_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_commit_focused_select_edit(&mut engine)
+    map_engine_result(apply_commit_focused_select_edit(&mut engine))
 }
 
 pub fn command_engine_commit_focused_select_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_commit_focused_select_edit_frame(&mut engine)
+    map_engine_result(apply_commit_focused_select_edit_frame(&mut engine))
 }
 
 pub fn command_engine_cancel_focused_select_edit(
     state: &AppState,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     let mut engine = lock_engine(state)?;
     Ok(apply_cancel_focused_select_edit(&mut engine))
 }
 
 pub fn command_engine_cancel_focused_select_edit_frame(
     state: &AppState,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     let mut engine = lock_engine(state)?;
-    apply_cancel_focused_select_edit_frame(&mut engine)
+    map_engine_result(apply_cancel_focused_select_edit_frame(&mut engine))
 }

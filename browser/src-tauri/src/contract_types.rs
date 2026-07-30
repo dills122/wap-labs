@@ -45,6 +45,20 @@ pub struct LoadDeckContextRequest {
     pub navigation_kind: Option<DeckNavigationKind>,
 }
 
+impl LoadDeckContextRequest {
+    pub fn validate_host_ingress(&self) -> Result<(), crate::host_contract::HostCommandError> {
+        crate::host_contract::validate_context_url(&self.base_url, "Deck base URL")?;
+        crate::host_contract::validate_content_type(&self.content_type)?;
+        if let Some(referring_url) = self.referring_url.as_deref() {
+            crate::host_contract::validate_context_url(referring_url, "Referring URL")?;
+        }
+        if let Some(navigation_url) = self.navigation_url.as_deref() {
+            crate::host_contract::validate_context_url(navigation_url, "Navigation URL")?;
+        }
+        Ok(())
+    }
+}
+
 #[derive(Clone, Copy, Debug, Default, Deserialize, Serialize, TS)]
 #[serde(rename_all = "kebab-case")]
 pub enum DeckNavigationKind {
@@ -102,6 +116,12 @@ pub struct NavigateToCardRequest {
     pub card_id: String,
 }
 
+impl NavigateToCardRequest {
+    pub fn validate_host_ingress(&self) -> Result<(), crate::host_contract::HostCommandError> {
+        crate::host_contract::validate_card_id(&self.card_id)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct SetViewportColsRequest {
@@ -143,6 +163,15 @@ impl From<engine::EngineViewportError> for EngineCommandError {
     }
 }
 
+impl From<EngineCommandError> for crate::host_contract::HostCommandError {
+    fn from(error: EngineCommandError) -> Self {
+        match error {
+            EngineCommandError::InvalidViewport { message, .. } => Self::invalid_request(message),
+            EngineCommandError::EngineStateUnavailable { .. } => Self::mutex_unavailable(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct AdvanceTimeRequest {
@@ -153,6 +182,12 @@ pub struct AdvanceTimeRequest {
 #[serde(rename_all = "camelCase")]
 pub struct SetFocusedInputEditDraftRequest {
     pub value: String,
+}
+
+impl SetFocusedInputEditDraftRequest {
+    pub fn validate_host_ingress(&self) -> Result<(), crate::host_contract::HostCommandError> {
+        crate::host_contract::validate_edit_draft(&self.value)
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, TS)]

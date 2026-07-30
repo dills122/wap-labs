@@ -1,4 +1,7 @@
-use crate::{FetchRequestIntent, FetchRequestMethod, FetchRequestPolicy, FetchRequestPostField};
+use crate::{
+    FetchRequestIntent, FetchRequestMethod, FetchRequestPolicy, FetchRequestPostField,
+    MAX_ENCODED_REQUEST_BODY_BYTES,
+};
 use encoding_rs::{Encoding, UTF_8};
 use mime::CHARSET;
 use std::collections::HashMap;
@@ -104,7 +107,15 @@ fn serialize_legacy_request(
         let post_context = policy.and_then(|policy| policy.post_context.as_ref());
         let body = post_context
             .and_then(|post| post.payload.as_ref())
-            .map(|payload| payload.as_bytes().to_vec());
+            .map(|payload| {
+                if payload.len() > MAX_ENCODED_REQUEST_BODY_BYTES {
+                    return Err(format!(
+                        "legacy POST body exceeds the {MAX_ENCODED_REQUEST_BODY_BYTES}-byte limit"
+                    ));
+                }
+                Ok(payload.as_bytes().to_vec())
+            })
+            .transpose()?;
         let content_type = post_context
             .and_then(|post| post.content_type.clone())
             .or_else(|| body.as_ref().map(|_| FORM_URLENCODED.to_string()));
@@ -209,14 +220,50 @@ fn encode_form_fields(
 ) -> Result<String, String> {
     let mut output = String::new();
     for (index, field) in fields.iter().enumerate() {
+        let encoded_name = encode_form_component(&field.name, encoding)?;
+        let encoded_value = encode_form_component(&field.value, encoding)?;
+        let added = usize::from(index > 0)
+            .checked_add(encoded_name.len())
+            .and_then(|sum| sum.checked_add(1))
+            .and_then(|sum| sum.checked_add(encoded_value.len()))
+            .ok_or_else(encoded_body_limit_error)?;
+        if output
+            .len()
+            .checked_add(added)
+            .is_none_or(|total| total > MAX_ENCODED_REQUEST_BODY_BYTES)
+        {
+            return Err(encoded_body_limit_error());
+        }
         if index > 0 {
             output.push('&');
         }
-        output.push_str(&encode_form_component(&field.name, encoding)?);
+        output.push_str(&encoded_name);
         output.push('=');
-        output.push_str(&encode_form_component(&field.value, encoding)?);
+        output.push_str(&encoded_value);
     }
     Ok(output)
+}
+
+fn encoded_body_limit_error() -> String {
+    format!("encoded request body exceeds the {MAX_ENCODED_REQUEST_BODY_BYTES}-byte limit")
+}
+
+pub(crate) fn encoded_request_body_exceeds_limit(policy: Option<&FetchRequestPolicy>) -> bool {
+    let Some(intent) = policy.and_then(|policy| policy.request_intent.as_ref()) else {
+        return false;
+    };
+    let Ok(charset) = select_submission_encoding(intent) else {
+        return false;
+    };
+    let fields = if intent.same_deck && !is_no_cache(policy) {
+        &[][..]
+    } else {
+        intent.post_fields.as_slice()
+    };
+    matches!(
+        encode_form_fields(fields, &charset),
+        Err(error) if error == encoded_body_limit_error()
+    )
 }
 
 fn encode_form_component(value: &str, encoding: &SubmissionEncoding) -> Result<String, String> {

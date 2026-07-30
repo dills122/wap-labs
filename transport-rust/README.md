@@ -94,6 +94,26 @@ personal data. Ordinary tests use local fixtures and never depend on this servic
 - content-type normalization and WML payload mapping
 - WBXML decode path (`application/vnd.wap.wmlc` -> textual WML)
 
+## Request ingress limits
+
+`FetchDeckRequest` is validated before network or gateway work. The Rust-owned limits are exported
+to the generated browser transport contract as `FETCH_REQUEST_INGRESS_LIMITS`:
+
+| Input | Limit |
+| --- | ---: |
+| Request or referring URL | 1,024 bytes |
+| Request method | 16 bytes |
+| Request/correlation ID | 128 bytes |
+| Headers | 64 entries / 32,768 aggregate name-and-value bytes |
+| POST fields | 128 entries |
+| POST field name | 256 bytes |
+| POST field value | 16,384 bytes |
+| Encoded or legacy POST body | 65,536 bytes |
+| POST metadata value | 1,024 bytes |
+
+Limit failures identify only the bounded field and limit; request values are never included in the
+error text. Form serialization checks the encoded aggregate incrementally before appending it.
+
 The runtime decoder is built into this crate and pinned as
 `lowband-wml13-wbxml/0.3.0`; it does not require a sidecar binary or FFI
 dependency. WBXML parsing remains transport-owned, and the engine receives

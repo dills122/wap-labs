@@ -4,6 +4,7 @@
 import { type ApplicationStateLoadResult, type ApplicationStateV1, type ClearApplicationStateComponentRequest, type SaveApplicationStateRequest } from "./application-state-host";
 import { type AdvanceTimeRequest, type EngineFrame, type EngineRuntimeSnapshot, type HandleInputRequest, type HandleKeyRequest, type LoadDeckContextRequest, type LoadDeckRequest, type MoveFocusedSelectEditRequest, type NavigateToCardRequest, type RenderList, type SetFocusedInputEditDraftRequest, type SetViewportColsRequest } from "./engine-host";
 import { type FetchDeckRequest, type FetchDeckResponse } from "./transport-host";
+import { type HostCommandError } from "./host";
 export type TauriInvoke = <T>(command: string, args?: Record<string, unknown>) => Promise<T>;
 export interface TauriHostClient {
     health(): Promise<string>;
@@ -91,3 +92,1596 @@ export const createTauriHostClient = (invokeFn: TauriInvoke): TauriHostClient =>
     engineCancelFocusedSelectEdit: () => invokeFn<EngineRuntimeSnapshot>("engine_cancel_focused_select_edit"),
     engineCancelFocusedSelectEditFrame: () => invokeFn<EngineFrame>("engine_cancel_focused_select_edit_frame")
 });
+
+type RuntimeSchema =
+    | { kind: "string" | "number" | "boolean" | "unknown" }
+    | { kind: "literal"; value: string | number | boolean | null }
+    | { kind: "array"; item: RuntimeSchema }
+    | { kind: "record"; value: RuntimeSchema }
+    | { kind: "union"; anyOf: RuntimeSchema[] }
+    | { kind: "object"; required: string[]; properties: Record<string, RuntimeSchema> }
+    | { kind: "ref"; name: string };
+
+const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
+  "HostCommandError": {
+    "kind": "object",
+    "required": [
+      "code",
+      "message",
+      "recoverable"
+    ],
+    "properties": {
+      "code": {
+        "kind": "ref",
+        "name": "HostCommandErrorCode"
+      },
+      "message": {
+        "kind": "string"
+      },
+      "recoverable": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "ApplicationStateLoadResult": {
+    "kind": "object",
+    "required": [
+      "state",
+      "status",
+      "writeAllowed",
+      "removedMonitorWindowState"
+    ],
+    "properties": {
+      "state": {
+        "kind": "ref",
+        "name": "ApplicationStateV1"
+      },
+      "status": {
+        "kind": "ref",
+        "name": "ApplicationStateLoadStatus"
+      },
+      "writeAllowed": {
+        "kind": "boolean"
+      },
+      "futureSchemaVersion": {
+        "kind": "number"
+      },
+      "removedMonitorWindowState": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "ApplicationStateV1": {
+    "kind": "object",
+    "required": [
+      "schemaVersion",
+      "settings",
+      "onboarding",
+      "favorites",
+      "windowState",
+      "safeSession",
+      "diagnosticPreferences"
+    ],
+    "properties": {
+      "schemaVersion": {
+        "kind": "number"
+      },
+      "settings": {
+        "kind": "ref",
+        "name": "ApplicationSettingsV1"
+      },
+      "onboarding": {
+        "kind": "ref",
+        "name": "OnboardingStateV1"
+      },
+      "favorites": {
+        "kind": "ref",
+        "name": "FavoritesStateV1"
+      },
+      "windowState": {
+        "kind": "ref",
+        "name": "WindowStateV1"
+      },
+      "safeSession": {
+        "kind": "ref",
+        "name": "SafeSessionStateV1"
+      },
+      "diagnosticPreferences": {
+        "kind": "ref",
+        "name": "DiagnosticPreferencesV1"
+      }
+    }
+  },
+  "FetchDeckResponse": {
+    "kind": "object",
+    "required": [
+      "ok",
+      "status",
+      "finalUrl",
+      "contentType",
+      "timingMs"
+    ],
+    "properties": {
+      "ok": {
+        "kind": "boolean"
+      },
+      "status": {
+        "kind": "number"
+      },
+      "finalUrl": {
+        "kind": "string"
+      },
+      "contentType": {
+        "kind": "string"
+      },
+      "wml": {
+        "kind": "string"
+      },
+      "error": {
+        "kind": "ref",
+        "name": "FetchErrorInfo"
+      },
+      "timingMs": {
+        "kind": "ref",
+        "name": "FetchTiming"
+      },
+      "engineDeckInput": {
+        "kind": "ref",
+        "name": "EngineDeckInputPayload"
+      }
+    }
+  },
+  "EngineRuntimeSnapshot": {
+    "kind": "object",
+    "required": [
+      "focusedLinkIndex",
+      "baseUrl",
+      "contentType",
+      "lastBackNavigationHandled",
+      "lastScriptDialogRequests",
+      "lastScriptTimerRequests"
+    ],
+    "properties": {
+      "activeCardId": {
+        "kind": "string"
+      },
+      "focusedLinkIndex": {
+        "kind": "number"
+      },
+      "nextTimerWakeupMs": {
+        "kind": "number"
+      },
+      "focusedInputEditName": {
+        "kind": "string"
+      },
+      "focusedInputEditValue": {
+        "kind": "string"
+      },
+      "focusedSelectEditName": {
+        "kind": "string"
+      },
+      "focusedSelectEditValue": {
+        "kind": "string"
+      },
+      "baseUrl": {
+        "kind": "string"
+      },
+      "contentType": {
+        "kind": "string"
+      },
+      "browserContextEpoch": {
+        "kind": "number"
+      },
+      "deckLanguage": {
+        "kind": "string"
+      },
+      "activeCardLanguage": {
+        "kind": "string"
+      },
+      "lastBackNavigationHandled": {
+        "kind": "boolean"
+      },
+      "externalNavigationIntent": {
+        "kind": "string"
+      },
+      "externalNavigationRequestPolicy": {
+        "kind": "ref",
+        "name": "ExternalNavigationRequestPolicySnapshot"
+      },
+      "lastScriptExecutionOk": {
+        "kind": "boolean"
+      },
+      "lastScriptExecutionTrap": {
+        "kind": "string"
+      },
+      "lastScriptExecutionErrorClass": {
+        "kind": "string"
+      },
+      "lastScriptExecutionErrorCategory": {
+        "kind": "string"
+      },
+      "lastScriptRequiresRefresh": {
+        "kind": "boolean"
+      },
+      "lastScriptDialogRequests": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "ScriptDialogRequestSnapshot"
+        }
+      },
+      "lastScriptTimerRequests": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "ScriptTimerRequestSnapshot"
+        }
+      }
+    }
+  },
+  "EngineFrame": {
+    "kind": "object",
+    "required": [
+      "snapshot",
+      "render",
+      "presentation"
+    ],
+    "properties": {
+      "snapshot": {
+        "kind": "ref",
+        "name": "EngineRuntimeSnapshot"
+      },
+      "render": {
+        "kind": "ref",
+        "name": "RenderList"
+      },
+      "presentation": {
+        "kind": "ref",
+        "name": "EnginePresentationFrame"
+      }
+    }
+  },
+  "RenderList": {
+    "kind": "object",
+    "required": [
+      "draw"
+    ],
+    "properties": {
+      "draw": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "DrawCmd"
+        }
+      }
+    }
+  },
+  "HostCommandErrorCode": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "INVALID_REQUEST"
+      },
+      {
+        "kind": "literal",
+        "value": "CANCELLED"
+      },
+      {
+        "kind": "literal",
+        "value": "TASK_SPAWN_FAILED"
+      },
+      {
+        "kind": "literal",
+        "value": "TASK_JOIN_FAILED"
+      },
+      {
+        "kind": "literal",
+        "value": "MUTEX_UNAVAILABLE"
+      },
+      {
+        "kind": "literal",
+        "value": "ENGINE_RESOURCE_LIMIT"
+      },
+      {
+        "kind": "literal",
+        "value": "ENGINE_FAILURE"
+      },
+      {
+        "kind": "literal",
+        "value": "HOST_FAILURE"
+      },
+      {
+        "kind": "literal",
+        "value": "MALFORMED_RESPONSE"
+      }
+    ]
+  },
+  "ApplicationStateLoadStatus": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "loaded"
+      },
+      {
+        "kind": "literal",
+        "value": "defaulted-absent"
+      },
+      {
+        "kind": "literal",
+        "value": "defaulted-corrupt"
+      },
+      {
+        "kind": "literal",
+        "value": "defaulted-future-version"
+      },
+      {
+        "kind": "literal",
+        "value": "defaulted-read-failed"
+      }
+    ]
+  },
+  "ApplicationSettingsV1": {
+    "kind": "object",
+    "required": [
+      "displayScalePercent",
+      "theme",
+      "highContrast",
+      "reducedMotion",
+      "defaultRunMode",
+      "startBehavior",
+      "developerMode",
+      "timelineRetention",
+      "safeSessionRestore"
+    ],
+    "properties": {
+      "displayScalePercent": {
+        "kind": "number"
+      },
+      "theme": {
+        "kind": "ref",
+        "name": "HostThemePreference"
+      },
+      "highContrast": {
+        "kind": "boolean"
+      },
+      "reducedMotion": {
+        "kind": "boolean"
+      },
+      "defaultRunMode": {
+        "kind": "ref",
+        "name": "DefaultRunModePreference"
+      },
+      "startBehavior": {
+        "kind": "ref",
+        "name": "StartBehaviorPreference"
+      },
+      "developerMode": {
+        "kind": "boolean"
+      },
+      "timelineRetention": {
+        "kind": "number"
+      },
+      "safeSessionRestore": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "OnboardingStateV1": {
+    "kind": "object",
+    "required": [
+      "showWelcomeOnLaunch",
+      "completedFirstDeckTour"
+    ],
+    "properties": {
+      "showWelcomeOnLaunch": {
+        "kind": "boolean"
+      },
+      "completedFirstDeckTour": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "FavoritesStateV1": {
+    "kind": "object",
+    "required": [
+      "entries"
+    ],
+    "properties": {
+      "entries": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "PersistedFavoriteV1"
+        }
+      }
+    }
+  },
+  "WindowStateV1": {
+    "kind": "object",
+    "required": [
+      "maximized"
+    ],
+    "properties": {
+      "bounds": {
+        "kind": "ref",
+        "name": "WindowBoundsV1"
+      },
+      "maximized": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "SafeSessionStateV1": {
+    "kind": "object",
+    "required": [
+      "recoveryPending"
+    ],
+    "properties": {
+      "recoveryPending": {
+        "kind": "boolean"
+      },
+      "session": {
+        "kind": "ref",
+        "name": "SafeSessionV1"
+      }
+    }
+  },
+  "DiagnosticPreferencesV1": {
+    "kind": "object",
+    "required": [
+      "timeoutMs",
+      "retryLimit",
+      "maxResponseBytes",
+      "constrainedNetwork"
+    ],
+    "properties": {
+      "timeoutMs": {
+        "kind": "number"
+      },
+      "retryLimit": {
+        "kind": "number"
+      },
+      "maxResponseBytes": {
+        "kind": "number"
+      },
+      "constrainedNetwork": {
+        "kind": "boolean"
+      },
+      "routeOverride": {
+        "kind": "ref",
+        "name": "DiagnosticRouteOverrideV1"
+      }
+    }
+  },
+  "FetchErrorInfo": {
+    "kind": "object",
+    "required": [
+      "code",
+      "message"
+    ],
+    "properties": {
+      "code": {
+        "kind": "union",
+        "anyOf": [
+          {
+            "kind": "literal",
+            "value": "INVALID_REQUEST"
+          },
+          {
+            "kind": "literal",
+            "value": "GATEWAY_TIMEOUT"
+          },
+          {
+            "kind": "literal",
+            "value": "UNSUPPORTED_CONTENT_TYPE"
+          },
+          {
+            "kind": "literal",
+            "value": "WBXML_DECODE_FAILED"
+          },
+          {
+            "kind": "literal",
+            "value": "PROTOCOL_ERROR"
+          },
+          {
+            "kind": "literal",
+            "value": "PAYLOAD_TOO_LARGE"
+          },
+          {
+            "kind": "literal",
+            "value": "TRANSPORT_UNAVAILABLE"
+          },
+          {
+            "kind": "literal",
+            "value": "CANCELLED"
+          }
+        ]
+      },
+      "message": {
+        "kind": "string"
+      },
+      "details": {
+        "kind": "record",
+        "value": {
+          "kind": "unknown"
+        }
+      }
+    }
+  },
+  "FetchTiming": {
+    "kind": "object",
+    "required": [
+      "encode",
+      "udpRtt",
+      "decode"
+    ],
+    "properties": {
+      "encode": {
+        "kind": "number"
+      },
+      "udpRtt": {
+        "kind": "number"
+      },
+      "decode": {
+        "kind": "number"
+      }
+    }
+  },
+  "EngineDeckInputPayload": {
+    "kind": "object",
+    "required": [
+      "wmlXml",
+      "baseUrl",
+      "contentType"
+    ],
+    "properties": {
+      "wmlXml": {
+        "kind": "string"
+      },
+      "baseUrl": {
+        "kind": "string"
+      },
+      "contentType": {
+        "kind": "string"
+      },
+      "rawBytesBase64": {
+        "kind": "string"
+      }
+    }
+  },
+  "ExternalNavigationRequestPolicySnapshot": {
+    "kind": "object",
+    "required": [],
+    "properties": {
+      "cacheControl": {
+        "kind": "ref",
+        "name": "ExternalNavigationCacheControlPolicySnapshot"
+      },
+      "refererUrl": {
+        "kind": "string"
+      },
+      "postContext": {
+        "kind": "ref",
+        "name": "ExternalNavigationPostContextSnapshot"
+      },
+      "requestIntent": {
+        "kind": "ref",
+        "name": "ExternalNavigationRequestIntentSnapshot"
+      }
+    }
+  },
+  "ScriptDialogRequestSnapshot": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "alert"
+          },
+          "message": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "confirm"
+          },
+          "message": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "message"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "prompt"
+          },
+          "message": {
+            "kind": "string"
+          },
+          "defaultValue": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "ScriptTimerRequestSnapshot": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "delayMs"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "schedule"
+          },
+          "delayMs": {
+            "kind": "number"
+          },
+          "token": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "token"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "cancel"
+          },
+          "token": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "EnginePresentationFrame": {
+    "kind": "object",
+    "required": [
+      "contractVersion",
+      "frameId",
+      "profileId",
+      "viewport",
+      "deck",
+      "card",
+      "rows",
+      "selection",
+      "affordances",
+      "backAvailable"
+    ],
+    "properties": {
+      "contractVersion": {
+        "kind": "number"
+      },
+      "frameId": {
+        "kind": "string"
+      },
+      "profileId": {
+        "kind": "string"
+      },
+      "viewport": {
+        "kind": "ref",
+        "name": "EngineViewport"
+      },
+      "deck": {
+        "kind": "ref",
+        "name": "EngineDeckDisplayMetadata"
+      },
+      "card": {
+        "kind": "ref",
+        "name": "EngineCardDisplayMetadata"
+      },
+      "rows": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "EngineFrameRow"
+        }
+      },
+      "focus": {
+        "kind": "ref",
+        "name": "EngineFocusState"
+      },
+      "selection": {
+        "kind": "ref",
+        "name": "EngineSelectionState"
+      },
+      "affordances": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "EngineAffordance"
+        }
+      },
+      "backAvailable": {
+        "kind": "boolean"
+      }
+    }
+  },
+  "DrawCmd": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "x",
+          "y",
+          "text"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "text"
+          },
+          "x": {
+            "kind": "number"
+          },
+          "y": {
+            "kind": "number"
+          },
+          "text": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "x",
+          "y",
+          "text",
+          "focused",
+          "href"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "link"
+          },
+          "x": {
+            "kind": "number"
+          },
+          "y": {
+            "kind": "number"
+          },
+          "text": {
+            "kind": "string"
+          },
+          "focused": {
+            "kind": "boolean"
+          },
+          "href": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "HostThemePreference": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "system"
+      },
+      {
+        "kind": "literal",
+        "value": "light"
+      },
+      {
+        "kind": "literal",
+        "value": "dark"
+      }
+    ]
+  },
+  "DefaultRunModePreference": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "local"
+      },
+      {
+        "kind": "literal",
+        "value": "network"
+      }
+    ]
+  },
+  "StartBehaviorPreference": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "home"
+      },
+      {
+        "kind": "literal",
+        "value": "safe-session"
+      }
+    ]
+  },
+  "PersistedFavoriteV1": {
+    "kind": "object",
+    "required": [
+      "id",
+      "title",
+      "target",
+      "createdAt",
+      "updatedAt"
+    ],
+    "properties": {
+      "id": {
+        "kind": "string"
+      },
+      "title": {
+        "kind": "string"
+      },
+      "target": {
+        "kind": "ref",
+        "name": "PersistedFavoriteTargetV1"
+      },
+      "createdAt": {
+        "kind": "string"
+      },
+      "updatedAt": {
+        "kind": "string"
+      },
+      "profileId": {
+        "kind": "string"
+      }
+    }
+  },
+  "WindowBoundsV1": {
+    "kind": "object",
+    "required": [
+      "monitorId",
+      "x",
+      "y",
+      "width",
+      "height"
+    ],
+    "properties": {
+      "monitorId": {
+        "kind": "string"
+      },
+      "x": {
+        "kind": "number"
+      },
+      "y": {
+        "kind": "number"
+      },
+      "width": {
+        "kind": "number"
+      },
+      "height": {
+        "kind": "number"
+      }
+    }
+  },
+  "SafeSessionV1": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "kind",
+          "exampleId"
+        ],
+        "properties": {
+          "kind": {
+            "kind": "literal",
+            "value": "local-example"
+          },
+          "exampleId": {
+            "kind": "string"
+          },
+          "fragment": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "kind",
+          "url"
+        ],
+        "properties": {
+          "kind": {
+            "kind": "literal",
+            "value": "network-get"
+          },
+          "url": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "DiagnosticRouteOverrideV1": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "direct"
+      },
+      {
+        "kind": "literal",
+        "value": "gateway"
+      }
+    ]
+  },
+  "ExternalNavigationCacheControlPolicySnapshot": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "default"
+      },
+      {
+        "kind": "literal",
+        "value": "no-cache"
+      }
+    ]
+  },
+  "ExternalNavigationPostContextSnapshot": {
+    "kind": "object",
+    "required": [],
+    "properties": {
+      "sameDeck": {
+        "kind": "boolean"
+      },
+      "contentType": {
+        "kind": "string"
+      },
+      "payload": {
+        "kind": "string"
+      }
+    }
+  },
+  "ExternalNavigationRequestIntentSnapshot": {
+    "kind": "object",
+    "required": [
+      "method",
+      "enctype",
+      "sendReferer",
+      "sameDeck",
+      "postFields"
+    ],
+    "properties": {
+      "method": {
+        "kind": "ref",
+        "name": "ExternalNavigationMethodSnapshot"
+      },
+      "enctype": {
+        "kind": "string"
+      },
+      "sendReferer": {
+        "kind": "boolean"
+      },
+      "acceptCharset": {
+        "kind": "string"
+      },
+      "sameDeck": {
+        "kind": "boolean"
+      },
+      "postFields": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "ExternalNavigationPostFieldSnapshot"
+        }
+      }
+    }
+  },
+  "EngineViewport": {
+    "kind": "object",
+    "required": [
+      "cols"
+    ],
+    "properties": {
+      "cols": {
+        "kind": "number"
+      }
+    }
+  },
+  "EngineDeckDisplayMetadata": {
+    "kind": "object",
+    "required": [
+      "baseUrl",
+      "contentType"
+    ],
+    "properties": {
+      "baseUrl": {
+        "kind": "string"
+      },
+      "contentType": {
+        "kind": "string"
+      },
+      "language": {
+        "kind": "string"
+      }
+    }
+  },
+  "EngineCardDisplayMetadata": {
+    "kind": "object",
+    "required": [
+      "id"
+    ],
+    "properties": {
+      "id": {
+        "kind": "string"
+      },
+      "language": {
+        "kind": "string"
+      }
+    }
+  },
+  "EngineFrameRow": {
+    "kind": "object",
+    "required": [
+      "index",
+      "segments"
+    ],
+    "properties": {
+      "index": {
+        "kind": "number"
+      },
+      "segments": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "EngineFrameSegment"
+        }
+      }
+    }
+  },
+  "EngineFocusState": {
+    "kind": "object",
+    "required": [
+      "index",
+      "focusId",
+      "targetKind"
+    ],
+    "properties": {
+      "index": {
+        "kind": "number"
+      },
+      "focusId": {
+        "kind": "string"
+      },
+      "targetKind": {
+        "kind": "ref",
+        "name": "EngineFocusTargetKind"
+      }
+    }
+  },
+  "EngineSelectionState": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "none"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "controlId",
+          "name",
+          "editing"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "input"
+          },
+          "controlId": {
+            "kind": "string"
+          },
+          "name": {
+            "kind": "string"
+          },
+          "editing": {
+            "kind": "boolean"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "controlId",
+          "editing"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "select"
+          },
+          "controlId": {
+            "kind": "string"
+          },
+          "editing": {
+            "kind": "boolean"
+          },
+          "value": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "EngineAffordance": {
+    "kind": "object",
+    "required": [
+      "actionId",
+      "label",
+      "enabled",
+      "source",
+      "control"
+    ],
+    "properties": {
+      "actionId": {
+        "kind": "string"
+      },
+      "label": {
+        "kind": "string"
+      },
+      "enabled": {
+        "kind": "boolean"
+      },
+      "source": {
+        "kind": "ref",
+        "name": "EngineAffordanceSource"
+      },
+      "control": {
+        "kind": "ref",
+        "name": "EngineControlAssociation"
+      },
+      "doName": {
+        "kind": "string"
+      },
+      "doType": {
+        "kind": "string"
+      }
+    }
+  },
+  "PersistedFavoriteTargetV1": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "kind",
+          "url",
+          "canonicalUrl"
+        ],
+        "properties": {
+          "kind": {
+            "kind": "literal",
+            "value": "network"
+          },
+          "url": {
+            "kind": "string"
+          },
+          "canonicalUrl": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "kind",
+          "exampleId"
+        ],
+        "properties": {
+          "kind": {
+            "kind": "literal",
+            "value": "local-example"
+          },
+          "exampleId": {
+            "kind": "string"
+          },
+          "fragment": {
+            "kind": "string"
+          }
+        }
+      }
+    ]
+  },
+  "ExternalNavigationMethodSnapshot": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "get"
+      },
+      {
+        "kind": "literal",
+        "value": "post"
+      }
+    ]
+  },
+  "ExternalNavigationPostFieldSnapshot": {
+    "kind": "object",
+    "required": [
+      "name",
+      "value"
+    ],
+    "properties": {
+      "name": {
+        "kind": "string"
+      },
+      "value": {
+        "kind": "string"
+      }
+    }
+  },
+  "EngineFrameSegment": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "x",
+          "text"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "text"
+          },
+          "x": {
+            "kind": "number"
+          },
+          "text": {
+            "kind": "string"
+          }
+        }
+      },
+      {
+        "kind": "object",
+        "required": [
+          "type",
+          "x",
+          "text",
+          "focusId",
+          "targetKind",
+          "focused"
+        ],
+        "properties": {
+          "type": {
+            "kind": "literal",
+            "value": "focusable"
+          },
+          "x": {
+            "kind": "number"
+          },
+          "text": {
+            "kind": "string"
+          },
+          "focusId": {
+            "kind": "string"
+          },
+          "targetKind": {
+            "kind": "ref",
+            "name": "EngineFocusTargetKind"
+          },
+          "focused": {
+            "kind": "boolean"
+          }
+        }
+      }
+    ]
+  },
+  "EngineFocusTargetKind": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "link"
+      },
+      {
+        "kind": "literal",
+        "value": "input"
+      },
+      {
+        "kind": "literal",
+        "value": "select"
+      }
+    ]
+  },
+  "EngineAffordanceSource": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "focused-link"
+      },
+      {
+        "kind": "literal",
+        "value": "focused-input"
+      },
+      {
+        "kind": "literal",
+        "value": "focused-select"
+      },
+      {
+        "kind": "literal",
+        "value": "card-do"
+      },
+      {
+        "kind": "literal",
+        "value": "template-do"
+      },
+      {
+        "kind": "literal",
+        "value": "history"
+      }
+    ]
+  },
+  "EngineControlAssociation": {
+    "kind": "union",
+    "anyOf": [
+      {
+        "kind": "literal",
+        "value": "primary"
+      },
+      {
+        "kind": "literal",
+        "value": "task"
+      },
+      {
+        "kind": "literal",
+        "value": "back"
+      }
+    ]
+  }
+};
+const TAURI_RESPONSE_SCHEMAS: Record<string, RuntimeSchema> = {
+  "health": {
+    "kind": "string"
+  },
+  "application_state_load": {
+    "kind": "ref",
+    "name": "ApplicationStateLoadResult"
+  },
+  "application_state_save": {
+    "kind": "ref",
+    "name": "ApplicationStateV1"
+  },
+  "application_state_reset": {
+    "kind": "ref",
+    "name": "ApplicationStateV1"
+  },
+  "application_state_clear_component": {
+    "kind": "ref",
+    "name": "ApplicationStateV1"
+  },
+  "fetch_deck": {
+    "kind": "ref",
+    "name": "FetchDeckResponse"
+  },
+  "cancel_fetch": {
+    "kind": "boolean"
+  },
+  "engine_load_deck": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_load_deck_context": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_load_deck_context_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_render": {
+    "kind": "ref",
+    "name": "RenderList"
+  },
+  "engine_render_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_handle_key": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_handle_key_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_handle_input_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_navigate_to_card": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_navigate_to_card_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_navigate_back": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_navigate_back_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_set_viewport_cols": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_advance_time_ms": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_advance_time_ms_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_snapshot": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_clear_external_navigation_intent": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_clear_external_navigation_intent_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_begin_focused_input_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_begin_focused_input_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_set_focused_input_edit_draft": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_set_focused_input_edit_draft_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_commit_focused_input_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_commit_focused_input_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_cancel_focused_input_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_cancel_focused_input_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_begin_focused_select_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_begin_focused_select_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_move_focused_select_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_move_focused_select_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_commit_focused_select_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_commit_focused_select_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_cancel_focused_select_edit": {
+    "kind": "ref",
+    "name": "EngineRuntimeSnapshot"
+  },
+  "engine_cancel_focused_select_edit_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const matchesRuntimeSchema = (schema: RuntimeSchema, value: unknown, depth = 0): boolean => {
+  if (depth > 64) return false;
+  switch (schema.kind) {
+    case "unknown": return true;
+    case "string": return typeof value === "string";
+    case "number": return typeof value === "number" && Number.isFinite(value);
+    case "boolean": return typeof value === "boolean";
+    case "literal": return value === schema.value;
+    case "array": return Array.isArray(value) && value.every((item) => matchesRuntimeSchema(schema.item, item, depth + 1));
+    case "record": return isRecord(value) && Object.values(value).every((item) => matchesRuntimeSchema(schema.value, item, depth + 1));
+    case "union": return schema.anyOf.some((candidate) => matchesRuntimeSchema(candidate, value, depth + 1));
+    case "ref": {
+      const referenced = RUNTIME_SCHEMAS[schema.name];
+      return referenced !== undefined && matchesRuntimeSchema(referenced, value, depth + 1);
+    }
+    case "object":
+      // ts-rs optional properties project Rust Option<T>; Serde emits None as null.
+      return isRecord(value)
+        && schema.required.every((key) => Object.hasOwn(value, key))
+        && Object.entries(schema.properties).every(([key, propertySchema]) =>
+          !Object.hasOwn(value, key)
+          || (!schema.required.includes(key) && value[key] === null)
+          || matchesRuntimeSchema(propertySchema, value[key], depth + 1));
+  }
+};
+
+export const isHostCommandError = (value: unknown): value is HostCommandError =>
+  matchesRuntimeSchema({ kind: "ref", name: "HostCommandError" }, value);
+
+export const validateTauriCommandResponse = (command: string, value: unknown): boolean => {
+  const schema = TAURI_RESPONSE_SCHEMAS[command];
+  return schema !== undefined && matchesRuntimeSchema(schema, value);
+};
