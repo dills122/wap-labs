@@ -223,6 +223,30 @@ describe('BrowserController behavior coverage', () => {
     expect(hostClient.engineSetViewportCols).toHaveBeenCalledWith({ cols: 20 });
   });
 
+  it('reports an unrelated action failure without corrupting committed navigation state', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const committedSession = presenter.getSessionState();
+    refs.viewportColsInput.value = '0';
+
+    document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+    await flushAsyncWork();
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+    expect(presenter.getSessionState()).toEqual(committedSession);
+    expect(presenter.getSessionState().navigationStatus).toBe('loaded');
+    expect(presenter.getSessionState().lastError).toBeUndefined();
+    expect(refs.statusMessages.at(-1)).toBe(
+      WAVES_COPY.status.error('viewport cols must be an integer from 1 through 4294967295')
+    );
+
+    controller.dispose();
+  });
+
   it('leaves application shortcuts to the shared command registry', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

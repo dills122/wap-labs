@@ -715,7 +715,6 @@ export class BrowserController {
         this.presenter.recordTimeline(actionName, 'ok');
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        this.presenter.patchSessionState({ navigationStatus: 'error', lastError: message });
         this.presenter.setStatus(WAVES_COPY.status.error(message));
         this.presenter.recordTimeline(actionName, 'error', { message });
       }
