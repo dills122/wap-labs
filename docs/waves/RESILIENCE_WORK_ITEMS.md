@@ -3,7 +3,7 @@
 Purpose: track the additive browser, Tauri-host, and engine resilience work found by the
 2026-07-29 current-main failure-containment audit.
 
-Audit base: `origin/main` `20c3f8eff5e5823a7bdf36ca28da220f6b8a9d74`.
+Audit base: `origin/main` `eaf8fc0e` (planning sync 2026-07-30).
 
 Status keys:
 
@@ -29,13 +29,16 @@ error, preserve usable state where appropriate, and leave an explicit recovery p
 - WBXML decoding, transport retry semantics, and network policy stay in `transport-rust`.
 - The separately owned public service/deployment/examples work does not satisfy or replace these
   client-side containment items.
-- Coordinate `browser-presenter.ts` work with the separate visual-refinement stream; these tickets
+- Coordinate `browser-presenter.ts` work through one active presenter/history owner; these tickets
   change behavior and data handling, not styling.
 
 ## Immediate Containment Gate
 
-`RSL-01` is the immediate release-blocking slice. A backend correction can remove the known public
-WBXML trigger, but current main will still replay an equivalent terminal external-intent failure.
+The P1 containment gate is closed: `RSL-01` quarantines terminal external-intent failures,
+`RSL-02` bounds and cancels navigation work, `RSL-03` makes mutating frame commands transactional,
+and `RSL-04` bounds single-pass render output. `RSL-05` also closes malformed IPC admission and
+typed host failures. The active resilience baton is `RSL-06`, followed serially by `RSL-07` on the
+shared presenter/history surface.
 
 ## Lane A: Navigation Containment
 
@@ -47,26 +50,35 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
    public content
 4. `Depends On`: none
 5. `Files`:
+
 - `browser/frontend/src/app/navigation-state.ts`
 - `browser/frontend/src/app/engine-timer-runtime.ts`
 - `browser/frontend/src/app/browser-controller.ts`
 - focused tests for those modules
+
 6. `Build`:
+
 - Quarantine a terminally failed external intent by request identity plus engine/navigation
   generation.
 - Preserve the invoking engine state and pending intent; do not weaken WML-205 rollback behavior by
   clearing engine state.
 - Permit a new automatic follow only when intent identity changes, or one explicit attempt when the
   user chooses Reload/retry.
+
 7. `Tests`:
+
 - A `WBXML_DECODE_FAILED` target followed by 50 timer ticks produces one automatic target fetch.
 - Explicit Reload causes exactly one new attempt.
 - A known-good URL or local deck loads afterward and stops the failed-intent loop.
 - The invoking deck, card, history, focus, variables, and pending engine intent remain intact.
+
 8. `Accept`:
+
 - Terminal failure produces one bounded outcome and one useful error surface.
 - No timer-driven automatic replay occurs without a changed intent or explicit user action.
+
 9. `Resolution`:
+
 - Browser navigation now quarantines terminally failed external intents by resolved request identity
   and navigation generation without clearing engine state. Timer snapshots suppress the same
   quarantined intent, while explicit Reload/Go and changed intents receive one fresh attempt.
@@ -81,25 +93,34 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 3. `Priority`: `P1`
 4. `Depends On`: `RSL-01`
 5. `Files`:
+
 - `browser/frontend/src/app/navigation-state.ts`
 - `browser/frontend/src/app/browser-controller.ts`
 - `browser/frontend/src/app/shell-event-bindings.ts`
 - `browser/src-tauri/src/lib.rs`
 - fetch command/client contracts and focused tests
+
 6. `Build`:
+
 - Admit or coalesce one logical navigation operation instead of starting an independent fetch for
   every rapid action.
 - Add a cancellable host fetch contract and stop superseded attempts/retries.
 - Bound concurrent native fetch tasks while keeping generation checks as the final state-integrity
   guard.
+
 7. `Tests`:
+
 - Eight rapid identical actions produce at most one active fetch.
 - Back or a new URL stops superseded work and cannot receive a stale toast, transport-panel update,
   or history mutation.
 - A hung response can be cancelled and followed by a successful known-good load.
+
 8. `Accept`:
+
 - Both active work and committed state remain bounded under conflicting navigation.
+
 9. `Resolution`:
+
 - Browser navigation now coalesces identical active request identities, assigns each admitted
   operation a cancellable request ID, and cancels superseded work for changed URLs, Back, Stop,
   mode changes, and disposal before admitting replacement transport work.
@@ -116,27 +137,41 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-03 Transactional frame commands and viewport validation
 
 1. `Issue`: [#508](https://github.com/dills122/wap-labs/issues/508)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P1`
 4. `Depends On`: none
 5. `Files`:
+
 - `browser/frontend/src/app/browser-controller.ts`
 - `browser/src-tauri/src/contract_types.rs`
 - `browser/src-tauri/src/engine_bridge/engine_adapter.rs`
 - `engine-wasm/engine/src/engine_public_api.rs`
 - native/WASM/Tauri boundary tests
+
 6. `Build`:
+
 - Define and validate one shared viewport range before engine mutation.
 - Make every mutating frame command transactional: construct a valid candidate frame before commit
   or restore the exact previous engine state when frame construction fails.
 - Return a typed invalid-input or resource error rather than a generic parse string.
+
 7. `Tests`:
+
 - `u32::MAX + 1` fails before mutation.
 - Forced frame failure after load, input/key, timer, Back, edit, and clear-intent preserves the
   complete previous state.
 - A valid viewport and known-good deck succeed after each failure.
+
 8. `Accept`:
+
 - No failed frame command leaves engine and frontend state out of sync.
+
+9. `Resolution`:
+
+- Shared viewport bounds now reject out-of-range values with a typed error before mutation.
+- Every mutating frame adapter builds the candidate result against a cloned engine and commits
+  only after frame construction succeeds; focused tests cover load, key/input/action, timer, Back,
+  external-intent, input-edit, and select-edit failure paths plus successful recovery.
 
 ### RSL-04 Bounded, single-pass render output
 
@@ -145,23 +180,32 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 3. `Priority`: `P1`
 4. `Depends On`: `RSL-03`
 5. `Files`:
+
 - `engine-wasm/engine/src/layout/flow_layout.rs`
 - `engine-wasm/engine/src/engine_public_api.rs`
 - `browser/src-tauri/src/engine_bridge/engine_adapter.rs`
 - `browser/frontend/src/app/browser-presenter.ts`
 - native/WASM/Tauri/frontend tests
+
 6. `Build`:
+
 - Bound layout rows, segments, draw commands, and serialized frame bytes in the engine.
 - Return a typed resource-limit failure with no partial state/presentation commit.
 - Derive legacy render and presentation output from one layout pass during migration.
 - Retain a defensive frontend output cap before HTML/DOM work.
+
 7. `Tests`:
+
 - Native and WASM fixtures exactly at and one unit above each output limit.
 - Rejected pathological output leaves the last good frame visible and a small deck renders next.
 - Tauri frame construction proves one layout pass and native/WASM frame parity remains stable.
+
 8. `Accept`:
+
 - Any accepted deck has a deterministic upper bound on render work and host-visible output.
+
 9. `Resolution`:
+
 - The engine now stops layout at 4,096 rows, 4,096 segments, and 4,096 legacy draw commands, and
   caps the combined legacy/presentation JSON projection at 2 MiB. Rust-generated
   `EngineRenderError`/`ENGINE_RENDER_LIMITS` contracts keep native, WASM, Tauri, and frontend
@@ -181,32 +225,42 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 1. `Issue`: [#507](https://github.com/dills122/wap-labs/issues/507)
 2. `Status`: `done`
 3. `Priority`: `P2`
-4. `Depends On`: coordinate after the separate `wapcurl` task releases the overlapping transport
-   request/serialization files
+4. `Depends On`: none; the `wapcurl` stream is landed, but its CLI behavior remains out of scope
 5. `Files`:
+
 - `transport-rust/src/lib.rs`
 - `transport-rust/src/request_serialization.rs`
 - `browser/src-tauri/src/lib.rs`
 - `browser/src-tauri/src/contract_types.rs`
 - generated host contracts
 - `browser/frontend/src/app/tauri-invoke-guard.ts`
+
 6. `Build`:
+
 - Define aggregate limits for request headers, IDs, POST fields, encoded request bodies, card IDs,
   and edit drafts at their owning Rust boundaries.
 - Reject before transport/spawn work and never echo sensitive payloads in error details.
 - Generate a typed host error envelope and validate non-null IPC responses structurally without
   hand-copying contract schemas.
+
 7. `Tests`:
+
 - One-over-limit tests for every bounded field and aggregate.
 - Invalid request, cancellation, spawn/join, mutex, engine resource, and response-shape failures
   remain distinguishable and recoverable.
 - Contract-generation and drift checks pass.
+
 8. `Accept`:
+
 - Malformed IPC terminates predictably before expensive work and all commands remain usable.
+
 9. `Coordination`:
+
 - Do not change `transport-rust/src/request_meta.rs`, transport retry semantics, or `wapcurl` CLI
   exit diagnostics as part of this item.
+
 10. `Resolution`:
+
 - Rust-owned request and host ingress budgets are generated into the TypeScript contracts. Every
   ticketed field and aggregate has a one-over test, with command-level coverage proving rejection
   precedes fetch registration, task admission, transport execution, and engine locking.
@@ -227,20 +281,27 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 3. `Priority`: `P2` security
 4. `Depends On`: none
 5. `Files`:
+
 - `browser/frontend/src/session-history.ts`
 - `browser/frontend/src/app/timeline.ts`
 - `browser/frontend/src/app/browser-presenter.ts`
 - associated history/timeline/presenter tests
+
 6. `Build`:
+
 - Keep exact internal request identity for WML history replay.
 - Build explicit allowlisted/redacted developer-panel and export DTOs.
 - Redact secret headers, legacy payloads, and typed form values while retaining safe method/count/
   content-type/length metadata.
+
 7. `Tests`:
+
 - PIN/password, Authorization, Cookie, Proxy-Authorization, legacy payload, and typed post-field
   values never appear in panel/export JSON.
 - Internal Back still replays the byte-exact original POST.
+
 8. `Accept`:
+
 - Diagnostic artifacts are useful without disclosing replay credentials.
 
 ### RSL-07 Bounded toast and host-history state
@@ -250,41 +311,45 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 3. `Priority`: `P2`
 4. `Depends On`: `RSL-06`
 5. `Files`:
+
 - `browser/frontend/src/app/browser-presenter.ts`
 - `browser/frontend/src/session-history.ts`
 - `browser/frontend/src/app/timeline.ts`
 - associated tests
+
 6. `Build`:
+
 - Deduplicate and cap identical queued toasts.
 - Let successful recovery supersede stale failure notifications.
 - Define deterministic oldest-entry history eviction with a documented retained WML back depth.
+
 7. `Tests`:
+
 - 97 identical failures remain within capacity and create one accessible failure announcement.
 - A later successful load becomes visible immediately.
 - A 10,000-navigation simulation keeps history and exported state bounded while Back/index/forward
   truncation remain deterministic within the retained window.
+
 8. `Accept`:
+
 - UI and host-session collections remain bounded and preserve an obvious recovery signal.
 
 ## Dispatch Order and Conflict Map
 
-Recommended first parallel batch:
+Completed containment and IPC batches:
 
 1. `RSL-01` navigation quarantine
-2. `RSL-03` transactional frame commands
-3. `RSL-06` diagnostic redaction
+2. `RSL-02` cancellable/admission-controlled navigation
+3. `RSL-03` transactional frame commands
+4. `RSL-04` bounded single-pass render output
+5. `RSL-05` bounded ingress and typed host errors
 
-Follow with:
+Recommended next resilience sequence:
 
-1. `RSL-02` after `RSL-01` because both touch navigation/controller ownership.
-2. `RSL-04` after `RSL-03` because both touch the engine/Tauri frame boundary.
-3. `RSL-07` after `RSL-06` because both touch presenter/history projections.
-4. `RSL-05` after the separate `wapcurl` stream releases transport request and serialization files.
+1. `RSL-06` diagnostic and export redaction.
+2. `RSL-07` bounded toast/history state after `RSL-06` because both touch presenter/history
+   projections.
 
 Likely conflicts:
 
-- `RSL-01` / `RSL-02`: `navigation-state.ts`, `browser-controller.ts`
-- `RSL-03` / `RSL-04`: `engine_adapter.rs`, `engine_public_api.rs`
-- `RSL-06` / `RSL-07` / visual refinement: `browser-presenter.ts`
-- `RSL-05` / `wapcurl`: `transport-rust/src/lib.rs`, `fetch_runtime.rs`, and
-  `request_serialization.rs`
+- `RSL-06` / `RSL-07` / merged shell presentation: `browser-presenter.ts`

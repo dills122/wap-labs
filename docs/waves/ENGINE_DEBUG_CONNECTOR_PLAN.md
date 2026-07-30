@@ -14,8 +14,8 @@ debugger or external local tool can observe bounded runtime state and event flow
 core engine behavior.
 
 This is a diagnostics surface, not a transport/runtime control plane. D0-01 defines contracts and
-ownership only. It does not add runtime event emission, storage, polling behavior, Tauri commands,
-or UI.
+ownership, and D0-02 implements the bounded engine-owned recorder and sanitized snapshot source.
+Host sessions, Tauri commands, polling policy, and UI remain D0-03/D0-04 work.
 
 ## D0-01 Decisions
 
@@ -83,17 +83,17 @@ without exceeding JavaScript's safe-integer range.
 
 The generated `ENGINE_DEBUG_CONTRACT_BASELINE` pins the D0 defaults:
 
-| Limit | Value |
-| --- | ---: |
-| Protocol version | `1` |
-| Enabled by default | `false` |
-| Concurrent sessions | `1` |
-| Engine event capacity | `2048` |
-| Default events per poll | `100` |
-| Maximum events per poll | `256` |
-| Snapshot runtime variables | `256` |
-| Snapshot timers | `64` |
-| Text value bytes | `4096` |
+| Limit                      |   Value |
+| -------------------------- | ------: |
+| Protocol version           |     `1` |
+| Enabled by default         | `false` |
+| Concurrent sessions        |     `1` |
+| Engine event capacity      |  `2048` |
+| Default events per poll    |   `100` |
+| Maximum events per poll    |   `256` |
+| Snapshot runtime variables |   `256` |
+| Snapshot timers            |    `64` |
+| Text value bytes           |  `4096` |
 
 D0-02 must use fixed-capacity drop-oldest storage. A cursor older than the retained window is not a
 fatal error: polling resumes at the oldest retained event and reports the exact unavailable count
@@ -180,16 +180,16 @@ engine recorder. Frontend-only masking is insufficient and forbidden as the prim
 All errors use stable `EngineDebugErrorCode`, a deterministic non-sensitive message, and
 `retryable`:
 
-| Code | Meaning | Retryable |
-| --- | --- | --- |
-| `DEBUG_DISABLED` | Local host policy has not enabled the connector | `false` until policy changes |
-| `UNSUPPORTED_PROTOCOL_VERSION` | Requested version is not `1` | `false` |
-| `SESSION_LIMIT_REACHED` | The single MVP session is already open | `true` after close |
-| `SESSION_NOT_FOUND` | Poll/snapshot session is absent or expired | `false`; reopen |
-| `INVALID_CURSOR` | Cursor is malformed, foreign, or ahead of the source | `false`; reopen/snapshot |
-| `INVALID_REQUEST` | Bounds or request fields are invalid | `false` until corrected |
-| `DEBUG_SOURCE_UNAVAILABLE` | Recorder/source cannot currently serve data | `true` |
-| `INTERNAL_ERROR` | Sanitized implementation failure | `true` |
+| Code                           | Meaning                                              | Retryable                    |
+| ------------------------------ | ---------------------------------------------------- | ---------------------------- |
+| `DEBUG_DISABLED`               | Local host policy has not enabled the connector      | `false` until policy changes |
+| `UNSUPPORTED_PROTOCOL_VERSION` | Requested version is not `1`                         | `false`                      |
+| `SESSION_LIMIT_REACHED`        | The single MVP session is already open               | `true` after close           |
+| `SESSION_NOT_FOUND`            | Poll/snapshot session is absent or expired           | `false`; reopen              |
+| `INVALID_CURSOR`               | Cursor is malformed, foreign, or ahead of the source | `false`; reopen/snapshot     |
+| `INVALID_REQUEST`              | Bounds or request fields are invalid                 | `false` until corrected      |
+| `DEBUG_SOURCE_UNAVAILABLE`     | Recorder/source cannot currently serve data          | `true`                       |
+| `INTERNAL_ERROR`               | Sanitized implementation failure                     | `true`                       |
 
 An unknown or already-closed session on `closeDebugSession` is the idempotent success
 `{ closed: false }`; `SESSION_NOT_FOUND` applies to poll and snapshot operations. Implementations
@@ -209,17 +209,17 @@ must not include raw internal errors, WML values, URLs, credentials, or panic pa
 ## Delivery Sequence and WBP-06/F0 Gate
 
 1. `D0-01` lands the additive `EngineDebug*` namespace and generated projections first.
-2. `WBP-06` remains planning-ready and inactive. Once D0-01 is merged and active planning/status
-   authorities record the gate, a separately authorized lane may start `F0-01`.
-3. `F0-01` owns frame/input types and must not rename, fold into, or reuse `EngineDebug*` DTOs.
+2. `WBP-06` and F0-01 through F0-03 are complete in a separate frame/input namespace.
+3. The completed `F0-01` frame/input types do not rename, fold into, or reuse `EngineDebug*` DTOs.
    Debug snapshots may reference future frame identifiers only through a later additive contract.
 4. `D0-02` implements the engine recorder/sanitizer against this baseline without session or UI
    ownership.
 5. `D0-03` implements host policy, open/poll/snapshot/close commands, and engine activation glue.
 6. `D0-04` implements an optional first-party consumer and capture/export workflow.
 
-This sequence removes the contract-file collision that blocked WBP-06/F0, but does not itself
-activate WBP-06 or implement F0.
+This sequence removed the contract-file collision that blocked WBP-06/F0. D0-02 is now complete
+without changing the frame/input namespace; D0-03 and D0-04 remain independently sequenced host
+and consumer work.
 
 ## Delivery Status and Deferred Work
 

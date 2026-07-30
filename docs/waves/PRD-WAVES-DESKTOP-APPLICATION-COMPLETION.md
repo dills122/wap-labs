@@ -1,16 +1,17 @@
 # PRD: Waves Desktop Application Completion
 
 Status: decision-ready discovery and implementation plan
-Last updated: 2026-07-29
-Discovery baseline: `origin/main` `20c3f8eff5e5823a7bdf36ca28da220f6b8a9d74`
+Last updated: 2026-07-30
+Implementation checkpoint: `origin/main` `eaf8fc0e`
 Owner lane: `browser`, with explicit dependencies on `engine-wasm`, `transport-rust`, and the
 public WAP lab program
 
 ## 1. Summary
 
-Waves already has a credible WAP/WML runtime, transport path, native shell, local examples, and
-debug scaffolding. It does not yet provide the continuity, organization, native commands, recovery,
-or WAP-specific inspection expected from a complete desktop application.
+Waves has a credible WAP/WML runtime, bounded transport/frame path, native shell and commands,
+versioned application-state foundation, local examples, Favorites domain, and bounded engine debug
+recorder. It does not yet provide the integrated organization, safe diagnostic projection,
+phase-aware recovery, or WAP-specific inspection expected from a complete desktop application.
 
 This plan turns Waves into a focused, single-session desktop WAP workbench. It prioritizes fast
 entry into useful WAP content, safe favorites and application state, truthful recovery, native
@@ -75,31 +76,34 @@ transport behavior in the frontend.
 
 ### 3.3 Current-state inventory
 
-| Capability       | Implemented at the discovery baseline                                                                                                       | Gap                                                                                                                         |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Desktop identity | Tauri window, icon, application metadata, native File/Edit/Window/Help menus, About, update placeholder                                     | No production packaging, updater, window-state restore, native import/export workflow, or shared command registry           |
-| Browsing shell   | Back, Reload, location, Go, Local/Network, route/profile readouts, handset stage, status, Welcome/Help, local examples                      | No Home command, favorites library, visible history, recent locations, or settings surface                                  |
-| Runtime path     | Transport-first load into engine, deterministic session state, external-intent loop, local examples, forms, timers, scripts, error rollback | F1/F2 frame renderer and pointer/input cutover remain open                                                                  |
-| History          | In-memory engine card history plus request-shaped host deck history                                                                         | No persistence, search, retention policy, or complete duplicate same-card preservation across deck replacement              |
-| Diagnostics      | Health, raw WML load, session/transport/runtime JSON, bounded 200-entry host timeline, JSON export                                          | No source-level export redaction, network stages, hex view, deck tree, filters, engine event recorder, or controlled replay |
-| Settings         | Compile-time defaults for start URL, timeout, retries, viewport, probe timing, and timeline bound                                           | No versioned store, schema migration, reset workflow, persisted accessibility settings, or diagnostic-override UI           |
-| Onboarding       | Welcome/Help panel and first-deck tutorial on the ordinary engine path                                                                      | No durable application-wide onboarding model; an unmerged shell refinement adds one isolated `localStorage` preference      |
-| Public services  | Private exact-host deployment and deterministic first-party origin                                                                          | Public publication, guided entry, safety messaging, external verification, and desktop release gates remain open            |
+| Capability       | Implemented at the 2026-07-30 checkpoint                                                                                                                                     | Gap                                                                                                               |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Desktop identity | Tauri identity and native menus plus one shared application-command registry and versioned native application-state store                                                    | Production packaging/updater, integrated window restore, and user-facing import/export workflows                  |
+| Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface            |
+| Runtime path     | Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication | F2 pointer/scroll/softkey cutover and final legacy-path removal                                                   |
+| History          | In-memory engine card history plus request-shaped host deck history                                                                                                          | Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (`#450`)      |
+| Diagnostics      | Existing host timeline/export plus bounded, masked engine-owned D0-02 event recorder and snapshots                                                                           | Safe export projection (`#506`), D0-03 host sessions, D0-04 Inspector consumption, filters, and controlled replay |
+| Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                         |
+| Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                                 |
+| Public services  | Private exact-host deployment, deterministic first-party origin, safe Favorites/service-catalog domain, and publication-state model                                          | Public authorization, guided entry, external verification, and desktop release gates remain open                  |
 
 ### 3.4 Current overlap and blockers
 
-At the discovery baseline:
+At the synchronized `eaf8fc0e` baseline:
 
-- GitHub pull request `#502` is the only open PR. It redesigns the shared browser shell and touches
-  most templates, copy, styles, and tokens. Feature UI must rebase after that shell decision.
+- PRs `#502` and `#517` through `#528` are merged. The redesigned shell, canonical Canvas/frame
+  path, cancellation, bounded render/IPC surfaces, Favorites domain, application state, native
+  command registry, and engine debug recorder are the current integration baseline. The
+  open/draft PR queue is empty at this checkpoint.
 - Issue `#450` blocks persistent/searchable history because same-card entries can be lost across a
   deck boundary.
 - Issues `#466` and `#467` affect trustworthy application error state and failure classification.
-- Issue `#434` affects WASM panic containment and may overlap engine-boundary work such as `D0-02`.
+- Issue `#506` blocks safe diagnostic sharing, while `#504` follows it on the same
+  presenter/history surface.
 
 Independent streams retain their own responsibilities:
 
-- visual refinement owns shell structure and presentation only;
+- the landed visual/shell baseline owns shell structure and presentation only;
 - browser resilience owns lockup, failure containment, and current correctness issues;
 - the WAP testing CLI owns batch execution, corpus traversal, scripting, and conformance reporting;
 - the public-service stream owns deployment, service content, publication state, and rollback; and
@@ -609,30 +613,31 @@ persisted history or expanded diagnostic export.
 
 Before feature UI begins:
 
-1. Merge, close, or explicitly supersede PR `#502`, then use its resulting shell as the integration
-   baseline.
+1. Use the merged PR `#502` shell as the integration baseline; do not fork a competing root shell.
 2. Keep one shell integration owner for root template, controller, copy, and global-style edits.
-3. Resolve or sequence around `#434`, `#450`, `#466`, and `#467`.
+3. Sequence around `#450`, `#466`, and `#467`; `#434` is resolved by PR `#518`.
 4. Do not persist visible history until the request/history identity problem in `#450` is fixed.
 5. Do not expand diagnostic export until the safe projection/redaction boundary is implemented.
 6. Respect the canonical sprint plan's P0/P1 WAP implementation priority and WIP limits.
 
 ### 8.2 Phase A: pre-release essentials
 
-1. Complete the F1 primary frame renderer path needed to remove HTML injection from deck content.
-2. Complete `WBP-10`/`WBP-11` cancellation, phases, and recovery.
-3. Add versioned application state, safe projection, minimal settings, window restore, and
-   local/GET-safe recovery.
-4. Add WAP Home and basic Favorites.
+1. F1 primary frame rendering and deterministic navigation publication are complete in PRs
+   `#519`, `#520`, and `#526`.
+2. Cancellable/admission-controlled navigation is complete in PR `#521`; `WBP-11` phases and
+   recovery presentation remain.
+3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
+   window restore, and local/GET-safe recovery remain.
+4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.
 5. Sanitize the existing timeline export and provide a minimal support bundle.
-6. Add shared native commands and platform shortcuts.
+6. Shared native commands and platform shortcuts are complete in PR `#523`.
 7. Complete public-lab desktop profile/resource separation and guided safety messaging only after
    its publication dependencies authorize them.
 8. Complete the packaged desktop success/failure matrix, signing, checksums, and install guidance.
 
 ### 8.3 Phase B: next application-quality increment
 
-- complete `D0-02`, `D0-03`, and `D0-04` for the WAP Inspector;
+- complete `D0-03` and `D0-04` on the landed D0-02 recorder for the WAP Inspector;
 - add visible searchable history with explicit retention after `#450`;
 - complete Favorites import/export UX;
 - add broader Developer/Diagnostic preferences and redaction controls;
@@ -668,7 +673,10 @@ Before feature UI begins:
 
 ### 8.6 First parallel-safe implementation batch
 
-These identifiers are proposed adoption units. They are not active until added to an owning ledger.
+Checkpoint at `eaf8fc0e`: `APP-STATE-01` (`#522`), `APP-FAV-01` (`#517`), `APP-CMD-01`
+(`#523`), and D0-02 (`#524`) are implemented. `APP-PRIV-01` is the remaining Wave A security
+boundary; `APP-SHELL-01` remains sequenced after it because both integrate shared browser state and
+presentation. The table is retained as the ownership map for completed and remaining slices.
 
 | Slice                                              | Initial owner               | Sequence | Main output                                                                        | High-conflict surfaces                                            |
 | -------------------------------------------------- | --------------------------- | -------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -677,10 +685,10 @@ These identifiers are proposed adoption units. They are not active until added t
 | `APP-FAV-01` Favorites/service-catalog domain      | browser product-model owner | Wave A   | Favorite model, target validation, duplicates, import/export, publication metadata | New leaf modules; public catalog ownership                        |
 | `APP-CMD-01` Shared application commands           | native-shell owner          | Wave A   | Stable command IDs, enabled state, menu/shortcut bridge                            | `bootstrap.rs`, menu constants, later shell handlers              |
 | Existing `D0-02` debug recorder                    | engine owner                | Wave A   | Bounded engine events/snapshots and source masking                                 | Sequence with `#434`; engine boundary/runtime files               |
-| `APP-SHELL-01` Library and Preferences integration | one shell integrator        | Wave B   | User-facing Home/Favorites/Preferences and command integration                     | PR `#502` files, root shell, copy, styles, controller             |
+| `APP-SHELL-01` Library and Preferences integration | one shell integrator        | Wave B   | User-facing Home/Favorites/Preferences and command integration                     | Merged `#502` shell, copy, styles, and controller                 |
 
 ```text
-PR #502 decision/merge ----------------------------------------+
+Merged #502 shell baseline ------------------------------------+
 APP-STATE-01 ------------------+                               |
 APP-PRIV-01 -------------------+--> APP-SHELL-01 <--------------+
 APP-FAV-01 --------------------+
@@ -696,7 +704,7 @@ WBP-10 --> WBP-11 --> safe-session integration and release matrix
 #### APP-STATE-01 Versioned desktop application state
 
 1. `Owner`: `browser`, Tauri host boundary.
-2. `Depends On`: PR `#502` only for migration of its Welcome preference, not for core schema work.
+2. `Depends On`: the merged shell only for migration of its Welcome preference, not for core schema work.
 3. `Build`:
    - define schema version 1 and `ApplicationStateStore`;
    - implement a native app-data backend with atomic replacement and a memory/test adapter;
@@ -764,7 +772,7 @@ WBP-10 --> WBP-11 --> safe-session integration and release matrix
 #### APP-CMD-01 Shared native application command registry
 
 1. `Owner`: browser native-shell boundary.
-2. `Depends On`: stable command names; visual integration waits for PR `#502`.
+2. `Depends On`: stable command names; visual integration uses the merged `#502` shell baseline.
 3. `Build`:
    - define stable command IDs and enabled/disabled projection;
    - route native menu events, keyboard shortcuts, and frontend controls to the same handlers;
@@ -802,7 +810,7 @@ Use the existing ticket and contract unchanged.
 #### APP-SHELL-01 Integrated Library and Preferences
 
 1. `Owner`: one browser shell integrator.
-2. `Depends On`: PR `#502`, `APP-STATE-01`, `APP-PRIV-01`, `APP-FAV-01`, and `APP-CMD-01`.
+2. `Depends On`: merged shell baseline, `APP-STATE-01`, `APP-PRIV-01`, `APP-FAV-01`, and `APP-CMD-01`.
 3. `Build`:
    - add the integrated Home/Favorites/Services Library;
    - add Preferences for launch behavior, display scale, accessibility, safe restore, developer
@@ -818,7 +826,8 @@ Use the existing ticket and contract unchanged.
    - announcements occur once;
    - no setting silently changes engine semantics or transport policy;
    - unpublished public services remain disabled with accurate explanation.
-5. `Risk`: shared-shell edits collide with visual refinement or D0-04 Inspector UI.
+5. `Risk`: shared-shell edits collide with the merged shell/Developer Tools baseline or D0-04
+   Inspector UI.
 6. `Validation`: rendered accessibility audit, task-based usability check, and all Waves stories.
 7. `Suggested branch`: `codex/wap-library-preferences`.
 8. `Suggested PR title`: `feat(browser): add integrated favorites and preferences`.
@@ -839,7 +848,7 @@ Rules:
 1. One owner integrates root shell, controller, copy, and global styles.
 2. Frame and debug contract changes are sequenced; generated artifacts have one owner per migration.
 3. Persistence never serializes live transport/engine structures directly.
-4. Distinct domain modules and engine recorder work may proceed while visual refinement is active.
+4. Distinct domain modules and engine recorder work may proceed against the stable merged shell baseline.
 5. The service catalog consumes deployment-owned status rather than inferring availability.
 6. CLI and Inspector share artifacts, not control flow or feature ownership.
 
@@ -912,6 +921,6 @@ Code and contracts:
   command inventory;
 - transport app/generated contracts, generated engine frame/debug DTOs, generated Tauri client,
   and `engine-wasm/contracts/wml-engine.ts`; and
-- the open PR `#502` shell and Welcome-preference proposal.
+- merged PR `#502` shell and Welcome-preference implementation.
 
 Archive folders and date-stamped historical snapshots were excluded as normative sources.

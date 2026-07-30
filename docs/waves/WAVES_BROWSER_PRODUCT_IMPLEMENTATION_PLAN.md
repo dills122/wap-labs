@@ -1,7 +1,7 @@
 # Waves Browser Product Implementation Plan
 
 Status: planning-ready
-Last updated: 2026-07-28 (`origin/main` `1f07030a`)
+Last updated: 2026-07-30 (`origin/main` `eaf8fc0e`)
 Design source: [Waves Desktop Product and Interaction Design](WAVES_DESKTOP_PRODUCT_DESIGN.md)
 
 ## Purpose
@@ -305,6 +305,8 @@ Delivered boundary:
 
 ### WBP-07 Canvas handset renderer integration
 
+- `Status`: in progress; F1 host cutover is complete, while the remaining WBP-07 performance gate
+  and broader WBP-08/WBP-09 integration are not inferred complete
 - `Lane`: B
 - `Depends On`: `WBP-02`, `WBP-06`, frame F1
 - `Likely Files`:
@@ -373,6 +375,8 @@ Accept:
 
 ### WBP-10 Cancellable fetch lifecycle
 
+- `Status`: in progress; cancellation/admission is complete in PR `#521`, while phase metadata and
+  the WBP-11 presentation handoff remain
 - `Lane`: C
 - `Depends On`: owning transport/WSP slice
 - `Likely Files`:
@@ -585,22 +589,24 @@ packaged macOS VoiceOver manual-only smoke are recorded in
 The canonical compliance program records `WML-2`, engine-internal WML-302
 variable/substitution semantics, and engine-owned WML-303 task/BACK/softkey precedence as `done`;
 WML-302 made no host-contract edit, and D0-01 settled the additive `EngineDebug*` namespace and
-merge sequence. WBP-06 and F0-01 through F0-03 now close the canonical frame/input contract,
-additive APIs, host projection, WML-309 presentation clauses, and existing CI drift gates without
-renaming or folding debug DTOs into frame/input types. F1 renderer cutover and F2 pointer/scroll
-expansion remain dependency-ordered follow-ups.
+merge sequence. WBP-06 and F0-01 through F0-03 close the canonical frame/input contract, additive
+APIs, host projection, WML-309 presentation clauses, and CI drift gates without renaming or folding
+debug DTOs into frame/input types. F1-01 through F1-03 now complete the host-sample and Canvas
+renderer cutover plus deterministic committed-frame navigation publication. F2 pointer/scroll and
+softkey input remain dependency-ordered follow-ups.
 
-`WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It does not reopen
-the completed `WBP-01`/`WBP-02` history or activate `WBP-06`; it only changes the default host
-presentation and its evidence.
+`WBP-02A` is complete as the additive, browser-only native-host-chrome follow-up. It did not reopen
+the completed `WBP-01`/`WBP-02` history or itself activate `WBP-06`; the later F0 contract tranche
+closed WBP-06 independently.
 
-The July 28 hardening pass is also landed without changing the product-phase status: focused-input
-Backspace handling, blocked timer wakeup re-arming, effective-profile gateway fallback, and
-generation-scoped navigation coordination now have direct regression tests. Those fixes preserve
-the completed Phase 1 tickets and are not a basis for reopening them or claiming `WBP-06` through
-`WBP-14` complete.
+The July 28-30 hardening pass is also landed without changing the product-phase status. Focused-input
+Backspace, timer re-arming, gateway fallback, terminal external intents, failed frame commands,
+cancellable navigation, bounded single-pass render output, and bounded typed host ingress have
+direct regression coverage. Those fixes preserve completed Phase 1 tickets and do not by
+themselves claim WBP-07 through WBP-14 complete.
 
-A separate second-pass visual refinement is pending outside `main`. Its coordination boundary is
-to preserve the `WBP-02A` native-host structure and avoid implementing `WBP-02B` Handheld Focus
-View. Treat it as an unmerged presentation iteration, not as completion evidence or a dependency
-for the next contract/runtime batch.
+The redesigned shell/Developer Tools workspace, pre-release marketing refresh, versioned
+application-state foundation, Favorites domain, native command registry, and D0-02 engine recorder
+are merged. The next browser integration sequence is safe diagnostic projection (`APP-PRIV-01` /
+`RSL-06`), phase-aware recovery (`WBP-11`), and the integrated Library/Preferences shell
+(`APP-SHELL-01`), while `RSL-07` follows `RSL-06` on the shared presenter/history surface.
