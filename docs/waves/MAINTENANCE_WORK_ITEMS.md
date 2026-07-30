@@ -327,7 +327,7 @@ Completed maintenance tickets are archived in:
 
 ### M1-26 Suppress automatic re-follow of a terminally failed external intent (2026-07-29)
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Priority`: `P1`
 3. `Depends On`: `WML-205`
 4. `Files`:
@@ -347,6 +347,12 @@ Completed maintenance tickets are archived in:
 - Timer ticks cannot turn one terminal external-navigation failure into repeated network requests.
 - The original card and failed intent remain available for diagnosis and explicit retry.
 - No decoder compatibility broadening or service-side workaround is used to hide the client state bug.
+9. `Resolution`:
+- The browser records the failed intent's resolved request identity and navigation generation at the
+  terminal host boundary. Automatic timer re-follow is suppressed without mutating the engine,
+  while explicit Reload/Go and distinct intents remain eligible for one fresh attempt.
+- A bounded WBXML regression covers 50 timer ticks, state/history preservation, notification
+  deduplication, explicit retry, distinct-intent admission, and successful recovery.
 
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 

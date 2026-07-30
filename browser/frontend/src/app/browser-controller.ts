@@ -164,6 +164,14 @@ export class BrowserController {
           await this.handleExternalIntentInLocalMode(intentUrl);
           return;
         }
+        if (
+          this.navigation.isExternalIntentQuarantined(
+            intentUrl,
+            snapshot.externalNavigationRequestPolicy
+          )
+        ) {
+          return;
+        }
         this.refs.fetchUrlInput.value = intentUrl;
         await this.loadTransportUrl(
           intentUrl,
@@ -319,6 +327,27 @@ export class BrowserController {
   private readonly handleReloadClick = async (): Promise<void> => {
     if (this.runMode === 'local') {
       await this.loadSelectedLocalDeck();
+      return;
+    }
+    const snapshot = this.presenter.getSnapshot();
+    // Reload is the explicit retry affordance for a quarantined engine task;
+    // retry its preserved request once instead of clearing the engine intent.
+    if (
+      snapshot?.externalNavigationIntent &&
+      this.navigation.isExternalIntentQuarantined(
+        snapshot.externalNavigationIntent,
+        snapshot.externalNavigationRequestPolicy
+      )
+    ) {
+      this.refs.fetchUrlInput.value = snapshot.externalNavigationIntent;
+      await this.loadTransportUrl(
+        snapshot.externalNavigationIntent,
+        'external-intent',
+        true,
+        true,
+        snapshot.externalNavigationRequestPolicy,
+        this.defaultNavigationHeaders()
+      );
       return;
     }
     const state = this.presenter.getSessionState();
@@ -786,9 +815,23 @@ export class BrowserController {
       }
 
       const state = this.navigation.getSessionState();
+      const currentSnapshot = snapshot ?? this.presenter.getSnapshot();
+      const pendingExternalIntent = currentSnapshot?.externalNavigationIntent;
+      const failedExternalIntent =
+        state.navigationStatus === 'error' &&
+        pendingExternalIntent &&
+        (state.navigationSource === 'external-intent' || requestedUrl === pendingExternalIntent)
+          ? pendingExternalIntent
+          : undefined;
+      if (failedExternalIntent) {
+        this.navigation.quarantineExternalIntent(
+          failedExternalIntent,
+          currentSnapshot?.externalNavigationRequestPolicy
+        );
+      }
       if (state.finalUrl) {
         this.lastNetworkUrl = state.finalUrl;
-        this.refs.fetchUrlInput.value = state.finalUrl;
+        this.refs.fetchUrlInput.value = failedExternalIntent ?? state.finalUrl;
       } else if (requestedUrl) {
         this.lastNetworkUrl = requestedUrl;
       }

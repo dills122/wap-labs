@@ -52,6 +52,16 @@ describe('navigation-state external intent behavior', () => {
     let fetchCount = 0;
     let clearCount = 0;
     const navigationErrors: string[] = [];
+    const targetUrl = 'http://example.test/target.wml';
+    const requestPolicy = {
+      requestIntent: {
+        method: 'post' as const,
+        enctype: 'application/x-www-form-urlencoded',
+        sendReferer: true,
+        sameDeck: false,
+        postFields: [{ name: 'token', value: 'preserved' }]
+      }
+    };
     const host = createHostClientMock({
       fetchDeck: async (request) => {
         fetchCount += 1;
@@ -60,10 +70,10 @@ describe('navigation-state external intent behavior', () => {
         }
         return fetchOk({
           ok: false,
-          status: 504,
+          status: 502,
           finalUrl: request.url,
-          contentType: 'text/plain',
-          error: { code: 'GATEWAY_TIMEOUT', message: 'target fetch failed' },
+          contentType: 'application/vnd.wap.wmlc',
+          error: { code: 'WBXML_DECODE_FAILED', message: 'target fetch failed' },
           engineDeckInput: undefined,
           wml: undefined
         });
@@ -73,7 +83,8 @@ describe('navigation-state external intent behavior', () => {
           activeCardId: 'invoking-card',
           focusedLinkIndex: 1,
           baseUrl: 'http://example.test/start.wml',
-          externalNavigationIntent: 'http://example.test/target.wml'
+          externalNavigationIntent: targetUrl,
+          externalNavigationRequestPolicy: requestPolicy
         }),
       engineClearExternalNavigationIntent: async () => {
         clearCount += 1;
@@ -93,21 +104,35 @@ describe('navigation-state external intent behavior', () => {
     expect(result).toMatchObject({
       activeCardId: 'invoking-card',
       focusedLinkIndex: 1,
-      externalNavigationIntent: 'http://example.test/target.wml'
+      externalNavigationIntent: targetUrl,
+      externalNavigationRequestPolicy: requestPolicy
     });
     expect(clearCount).toBe(0);
     expect(machine.getSessionState()).toMatchObject({
       navigationStatus: 'error',
-      requestedUrl: 'http://example.test/target.wml',
+      requestedUrl: targetUrl,
       finalUrl: 'http://example.test/start.wml',
       contentType: 'text/vnd.wap.wml',
       activeCardId: 'invoking-card',
       focusedLinkIndex: 1,
-      externalNavigationIntent: 'http://example.test/target.wml',
+      externalNavigationIntent: targetUrl,
       lastError: 'target fetch failed'
     });
     expect(machine.getHistoryState().entries).toHaveLength(1);
     expect(navigationErrors).toEqual(['target fetch failed']);
+    expect(machine.isExternalIntentQuarantined(targetUrl, requestPolicy)).toBe(true);
+    expect(
+      machine.isExternalIntentQuarantined(targetUrl, {
+        requestIntent: {
+          ...requestPolicy.requestIntent,
+          postFields: [{ name: 'token', value: 'changed' }]
+        }
+      })
+    ).toBe(false);
+
+    const nextGeneration = machine.beginNavigationOperation();
+    expect(machine.isExternalIntentQuarantined(targetUrl, requestPolicy)).toBe(false);
+    machine.finishNavigationOperation(nextGeneration);
   });
 
   it('uses runtime-provided external intent request policy when following intents', async () => {

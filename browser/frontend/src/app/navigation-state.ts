@@ -96,6 +96,8 @@ export interface NavigationStateMachine {
   captureNavigationGeneration(): number;
   isCurrentNavigation(generation: number): boolean;
   isNavigationInFlight(): boolean;
+  isExternalIntentQuarantined(intentUrl: string, requestPolicy?: FetchRequestPolicy): boolean;
+  quarantineExternalIntent(intentUrl: string, requestPolicy?: FetchRequestPolicy): void;
   cancelPendingNavigation(): void;
   getSessionState(): HostSessionState;
   getHistoryState(): HostHistoryState;
@@ -121,6 +123,17 @@ export const createNavigationStateMachine = (
   let activeNavigationGeneration = 0;
   let navigationInFlightGeneration: number | undefined;
   let observedBrowserContextEpoch: number | undefined;
+  // WML-205 keeps a failed task's engine state and intent intact. This
+  // browser-only record prevents that preserved intent from becoming an
+  // implicit retry loop while retaining it for an explicit user retry.
+  let quarantinedExternalIntent:
+    | {
+        generation: number;
+        requestedUrl: string;
+        method: string;
+        requestPolicy?: FetchRequestPolicy;
+      }
+    | undefined;
 
   const emitSession = (): void => {
     hooks.onSessionState?.(hostSessionState);
@@ -209,6 +222,78 @@ export const createNavigationStateMachine = (
     navigationInFlightGeneration = undefined;
   };
 
+  const externalIntentRequestIdentity = (
+    intentUrl: string,
+    requestPolicy?: FetchRequestPolicy
+  ): Omit<NonNullable<typeof quarantinedExternalIntent>, 'generation'> => {
+    const requestedUrl = intentUrl.trim();
+    const defaultRequestPolicy = defaultRequestPolicyForSource(
+      'external-intent',
+      requestedUrl,
+      hostSessionState.finalUrl
+    );
+    const mergedRequestPolicy = requestPolicy
+      ? { ...defaultRequestPolicy, ...requestPolicy }
+      : defaultRequestPolicy;
+    const resolvedRequestPolicy = withSubmissionSourceContentType(
+      mergedRequestPolicy,
+      hostSessionState.contentType
+    );
+    return {
+      requestedUrl,
+      method: resolveTransportMethod('GET', resolvedRequestPolicy),
+      requestPolicy: resolvedRequestPolicy
+    };
+  };
+
+  const quarantineExternalIntentRequest = (
+    requestedUrl: string,
+    method: string,
+    requestPolicy: FetchRequestPolicy | undefined,
+    generation: number
+  ): void => {
+    const next = { generation, requestedUrl, method, requestPolicy };
+    if (
+      quarantinedExternalIntent?.generation === next.generation &&
+      externalIntentRequestIdentitiesEqual(quarantinedExternalIntent, next)
+    ) {
+      return;
+    }
+    quarantinedExternalIntent = next;
+    hooks.onStateEvent?.('external-intent-quarantined', {
+      generation,
+      requestedUrl,
+      method
+    });
+  };
+
+  const quarantineExternalIntent = (
+    intentUrl: string,
+    requestPolicy?: FetchRequestPolicy
+  ): void => {
+    const identity = externalIntentRequestIdentity(intentUrl, requestPolicy);
+    quarantineExternalIntentRequest(
+      identity.requestedUrl,
+      identity.method,
+      identity.requestPolicy,
+      activeNavigationGeneration
+    );
+  };
+
+  const isExternalIntentQuarantined = (
+    intentUrl: string,
+    requestPolicy?: FetchRequestPolicy
+  ): boolean => {
+    if (!quarantinedExternalIntent) {
+      return false;
+    }
+    const identity = externalIntentRequestIdentity(intentUrl, requestPolicy);
+    return (
+      quarantinedExternalIntent.generation === activeNavigationGeneration &&
+      externalIntentRequestIdentitiesEqual(quarantinedExternalIntent, identity)
+    );
+  };
+
   const loadTransportUrlForGeneration = async (
     options: LoadTransportOptions,
     generation: number
@@ -283,6 +368,9 @@ export const createNavigationStateMachine = (
       if (transport.error?.code === 'TRANSPORT_UNAVAILABLE') {
         hooks.onNetworkUnavailable?.();
       }
+      if (options.source === 'external-intent') {
+        quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
+      }
       hooks.onNavigationError?.(errorMessage, 'network');
       return null;
     }
@@ -299,6 +387,9 @@ export const createNavigationStateMachine = (
         navigationStatus: 'error',
         lastError: WAVES_COPY.errors.missingWmlPayload
       });
+      if (options.source === 'external-intent') {
+        quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
+      }
       hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse');
       return null;
     }
@@ -323,6 +414,9 @@ export const createNavigationStateMachine = (
         navigationStatus: 'error',
         lastError: message
       });
+      if (options.source === 'external-intent') {
+        quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
+      }
       hooks.onNavigationError?.(message, 'parse');
       return null;
     }
@@ -342,6 +436,9 @@ export const createNavigationStateMachine = (
       externalNavigationIntent: frame.snapshot.externalNavigationIntent
     });
     applyFrame(frame);
+    // A committed navigation establishes a fresh engine state, so a prior
+    // terminal-intent quarantine no longer applies.
+    quarantinedExternalIntent = undefined;
 
     mergeSessionState({
       navigationStatus: 'loaded',
@@ -588,6 +685,8 @@ export const createNavigationStateMachine = (
     captureNavigationGeneration: () => activeNavigationGeneration,
     isCurrentNavigation,
     isNavigationInFlight,
+    isExternalIntentQuarantined,
+    quarantineExternalIntent,
     cancelPendingNavigation,
     getSessionState: () => hostSessionState,
     getHistoryState: () => hostHistory
@@ -764,7 +863,16 @@ const requestPolicyEqual = (a?: FetchRequestPolicy, b?: FetchRequestPolicy): boo
     a.cacheControl === b.cacheControl &&
     a.refererUrl === b.refererUrl &&
     a.uaCapabilityProfile === b.uaCapabilityProfile &&
-    postContextEqual(a.postContext, b.postContext));
+    postContextEqual(a.postContext, b.postContext) &&
+    requestIntentEqual(a.requestIntent, b.requestIntent));
+
+const externalIntentRequestIdentitiesEqual = (
+  a: { requestedUrl: string; method: string; requestPolicy?: FetchRequestPolicy },
+  b: { requestedUrl: string; method: string; requestPolicy?: FetchRequestPolicy }
+): boolean =>
+  a.requestedUrl === b.requestedUrl &&
+  a.method === b.method &&
+  requestPolicyEqual(a.requestPolicy, b.requestPolicy);
 
 const postContextEqual = (
   a?: FetchRequestPolicy['postContext'],
@@ -776,3 +884,22 @@ const postContextEqual = (
     a.sameDeck === b.sameDeck &&
     a.contentType === b.contentType &&
     a.payload === b.payload);
+
+const requestIntentEqual = (
+  a?: FetchRequestPolicy['requestIntent'],
+  b?: FetchRequestPolicy['requestIntent']
+): boolean =>
+  a === b ||
+  (!!a &&
+    !!b &&
+    a.method === b.method &&
+    a.enctype === b.enctype &&
+    a.sendReferer === b.sendReferer &&
+    a.acceptCharset === b.acceptCharset &&
+    a.sameDeck === b.sameDeck &&
+    a.sourceContentType === b.sourceContentType &&
+    a.postFields.length === b.postFields.length &&
+    a.postFields.every(
+      (field, index) =>
+        field.name === b.postFields[index]?.name && field.value === b.postFields[index]?.value
+    ));

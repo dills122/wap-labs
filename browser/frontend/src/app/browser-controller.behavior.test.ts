@@ -193,6 +193,16 @@ const gatewayTimeoutResponse = (): FetchResponse => ({
   engineDeckInput: undefined
 });
 
+const wbxmlDecodeFailureResponse = (url: string): FetchResponse => ({
+  ok: false,
+  status: 502,
+  finalUrl: url,
+  contentType: 'application/vnd.wap.wmlc',
+  error: { code: 'WBXML_DECODE_FAILED', message: 'WML public ID mismatch' },
+  timingMs: { encode: 0, udpRtt: 1, decode: 0 },
+  engineDeckInput: undefined
+});
+
 describe('BrowserController behavior coverage', () => {
   it('rejects one-over-limit viewport input before IPC and accepts a later valid value', async () => {
     const refs = createRefs();
@@ -495,6 +505,132 @@ describe('BrowserController behavior coverage', () => {
       }
     });
     await flushAsyncWork();
+  });
+
+  it('does not replay a terminally failed external intent on later timer ticks', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const invokingUrl = 'http://example.test/invoking.wml';
+    const targetUrl = 'http://example.test/invalid.wml';
+    const changedTargetUrl = 'http://example.test/recovered.wml';
+    let timerIntent: string | undefined = targetUrl;
+    const invokingSnapshot = snapshot({
+      activeCardId: 'invoking-card',
+      focusedLinkIndex: 2,
+      baseUrl: invokingUrl,
+      externalNavigationIntent: targetUrl
+    });
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockImplementation(async (request) => {
+      if (request.baseUrl === changedTargetUrl) {
+        timerIntent = undefined;
+        return frame({ activeCardId: 'recovered-card', baseUrl: changedTargetUrl });
+      }
+      return frame({ activeCardId: 'invoking-card', focusedLinkIndex: 2, baseUrl: invokingUrl });
+    });
+    vi.mocked(hostClient.engineHandleKeyFrame).mockResolvedValue(frame(invokingSnapshot));
+    vi.mocked(hostClient.engineAdvanceTimeMs).mockImplementation(async () =>
+      snapshot({
+        activeCardId: timerIntent ? 'invoking-card' : 'recovered-card',
+        focusedLinkIndex: timerIntent ? 2 : 0,
+        baseUrl: timerIntent ? invokingUrl : changedTargetUrl,
+        externalNavigationIntent: timerIntent
+      })
+    );
+    vi.mocked(hostClient.fetchDeck).mockImplementation(async (request) =>
+      request.url === targetUrl
+        ? wbxmlDecodeFailureResponse(request.url)
+        : {
+            ok: true,
+            status: 200,
+            finalUrl: request.url,
+            contentType: 'text/vnd.wap.wml',
+            wml: '<wml><card id="invoking-card"><p>state</p></card></wml>',
+            timingMs: { encode: 0, udpRtt: 1, decode: 0 },
+            engineDeckInput: {
+              wmlXml: '<wml><card id="invoking-card"><p>state</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }
+    );
+    const showToast = vi.spyOn(presenter, 'showToast');
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    vi.mocked(hostClient.fetchDeck).mockClear();
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    showToast.mockClear();
+
+    refs.fetchUrlInput.value = invokingUrl;
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+    await controllerPrivates(controller).applyEngineKey('enter');
+
+    const stateAfterFailure = presenter.getSessionState();
+    const snapshotAfterFailure = presenter.getSnapshot();
+    for (let tick = 0; tick < 50; tick += 1) {
+      await controllerPrivates(controller).tickEngineTimerRuntime();
+    }
+
+    const targetFetches = vi
+      .mocked(hostClient.fetchDeck)
+      .mock.calls.filter(([request]) => request.url === targetUrl);
+    expect(targetFetches).toHaveLength(1);
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+    expect(hostClient.engineClearExternalNavigationIntent).not.toHaveBeenCalled();
+    expect(presenter.getSessionState()).toEqual(stateAfterFailure);
+    expect(presenter.getSnapshot()).toEqual(snapshotAfterFailure);
+    expect(stateAfterFailure).toMatchObject({
+      navigationStatus: 'error',
+      finalUrl: invokingUrl,
+      activeCardId: 'invoking-card',
+      focusedLinkIndex: 2,
+      externalNavigationIntent: targetUrl,
+      history: [expect.objectContaining({ url: invokingUrl, activeCardId: 'invoking-card' })]
+    });
+    expect(showToast).toHaveBeenCalledTimes(1);
+    expect(refs.fetchUrlInput.value).toBe(targetUrl);
+
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+    for (let tick = 0; tick < 50; tick += 1) {
+      await controllerPrivates(controller).tickEngineTimerRuntime();
+    }
+    expect(
+      vi.mocked(hostClient.fetchDeck).mock.calls.filter(([request]) => request.url === targetUrl)
+    ).toHaveLength(2);
+    expect(showToast).toHaveBeenCalledTimes(2);
+
+    document.querySelector<HTMLButtonElement>('#btn-reload')?.click();
+    await flushAsyncWork();
+    for (let tick = 0; tick < 50; tick += 1) {
+      await controllerPrivates(controller).tickEngineTimerRuntime();
+    }
+    expect(
+      vi.mocked(hostClient.fetchDeck).mock.calls.filter(([request]) => request.url === targetUrl)
+    ).toHaveLength(3);
+    expect(showToast).toHaveBeenCalledTimes(3);
+
+    timerIntent = changedTargetUrl;
+    await controllerPrivates(controller).tickEngineTimerRuntime();
+
+    expect(
+      vi
+        .mocked(hostClient.fetchDeck)
+        .mock.calls.filter(([request]) => request.url === changedTargetUrl)
+    ).toHaveLength(1);
+    expect(presenter.getSessionState()).toMatchObject({
+      navigationStatus: 'loaded',
+      finalUrl: changedTargetUrl,
+      activeCardId: 'recovered-card',
+      externalNavigationIntent: undefined,
+      lastError: undefined
+    });
+
+    controller.dispose();
   });
 
   it('discards an engine key result after its starting run mode changes', async () => {
