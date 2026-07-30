@@ -195,15 +195,10 @@ fn tauri_viewport_command_returns_typed_range_error_before_mutation() {
     )
     .expect_err("one-over-limit viewport should fail at the Tauri boundary");
 
-    assert!(matches!(
-        error,
-        crate::contract_types::EngineCommandError::InvalidViewport {
-            requested_cols,
-            min_cols: 1,
-            max_cols: u32::MAX,
-            ..
-        } if requested_cols == "4294967296"
-    ));
+    assert_eq!(
+        error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
     let snapshot = super::super::engine_snapshot(borrowed_state(&state))
         .expect("engine should remain available after rejection");
     assert_eq!(snapshot.active_card_id, None);
@@ -248,15 +243,15 @@ fn host_fetch_admission_is_bounded_and_cancel_command_marks_active_work() {
     let state = HostFetchState::default();
     let active = state.register("navigation-1");
 
-    assert!(super::super::cancel_fetch(
-        borrowed_fetch_state(&state),
-        "navigation-1".to_string()
-    ));
+    assert!(
+        super::super::cancel_fetch(borrowed_fetch_state(&state), "navigation-1".to_string())
+            .expect("bounded cancellation identifier should be accepted")
+    );
     assert!(active.cancellation.is_cancelled());
-    assert!(!super::super::cancel_fetch(
-        borrowed_fetch_state(&state),
-        "missing".to_string()
-    ));
+    assert!(
+        !super::super::cancel_fetch(borrowed_fetch_state(&state), "missing".to_string())
+            .expect("bounded cancellation identifier should be accepted")
+    );
 
     let first = state
         .admission
@@ -272,6 +267,223 @@ fn host_fetch_admission_is_bounded_and_cancel_command_marks_active_work() {
     drop(first);
     assert!(state.admission.clone().try_acquire_owned().is_ok());
     drop(second);
+}
+
+#[test]
+fn oversized_fetch_ingress_is_rejected_before_registration_or_spawn() {
+    let state = HostFetchState::default();
+    let secret = "s".repeat(lowband_transport_rust::MAX_REQUEST_HEADER_BYTES);
+    let error = tauri::async_runtime::block_on(super::super::fetch_deck(
+        borrowed_fetch_state(&state),
+        FetchDeckRequest {
+            url: "http://example.test/deck.wml".to_string(),
+            method: None,
+            headers: Some(std::collections::HashMap::from([(
+                "x".to_string(),
+                secret.clone(),
+            )])),
+            timeout_ms: None,
+            retries: None,
+            request_id: None,
+            request_policy: None,
+        },
+    ))
+    .expect_err("oversized headers must fail before host work");
+
+    assert_eq!(
+        error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
+    assert!(!error.message.contains(&secret));
+    assert!(state.active().is_empty());
+    assert_eq!(
+        state.admission.available_permits(),
+        super::super::MAX_CONCURRENT_HOST_FETCHES
+    );
+}
+
+#[test]
+fn oversized_encoded_body_is_rejected_before_registration_or_spawn() {
+    let state = HostFetchState::default();
+    let secret = "s".repeat(lowband_transport_rust::MAX_POST_FIELD_VALUE_BYTES - 6);
+    let fields = [
+        ("a", lowband_transport_rust::MAX_POST_FIELD_VALUE_BYTES),
+        ("b", lowband_transport_rust::MAX_POST_FIELD_VALUE_BYTES),
+        ("c", lowband_transport_rust::MAX_POST_FIELD_VALUE_BYTES),
+    ]
+    .into_iter()
+    .map(
+        |(value, count)| lowband_transport_rust::FetchRequestPostField {
+            name: String::new(),
+            value: value.repeat(count),
+        },
+    )
+    .chain(std::iter::once(
+        lowband_transport_rust::FetchRequestPostField {
+            name: String::new(),
+            value: secret.clone(),
+        },
+    ))
+    .collect();
+    let error = tauri::async_runtime::block_on(super::super::fetch_deck(
+        borrowed_fetch_state(&state),
+        FetchDeckRequest {
+            url: "http://example.test/submit".to_string(),
+            method: Some("POST".to_string()),
+            headers: None,
+            timeout_ms: None,
+            retries: None,
+            request_id: None,
+            request_policy: Some(lowband_transport_rust::FetchRequestPolicy {
+                destination_policy: None,
+                cache_control: None,
+                referer_url: None,
+                post_context: None,
+                request_intent: Some(lowband_transport_rust::FetchRequestIntent {
+                    method: lowband_transport_rust::FetchRequestMethod::Post,
+                    enctype: "application/x-www-form-urlencoded".to_string(),
+                    send_referer: false,
+                    accept_charset: Some("utf-8".to_string()),
+                    same_deck: false,
+                    post_fields: fields,
+                    source_content_type: None,
+                }),
+                ua_capability_profile: None,
+            }),
+        },
+    ))
+    .expect_err("oversized encoded body must fail before host work");
+
+    assert_eq!(
+        error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
+    assert!(!error.message.contains(&secret));
+    assert!(state.active().is_empty());
+    assert_eq!(
+        state.admission.available_permits(),
+        super::super::MAX_CONCURRENT_HOST_FETCHES
+    );
+}
+
+#[test]
+fn correlation_id_one_over_limit_is_recoverable() {
+    let state = HostFetchState::default();
+    let oversized = "c".repeat(lowband_transport_rust::MAX_REQUEST_ID_BYTES + 1);
+    let error = super::super::cancel_fetch(borrowed_fetch_state(&state), oversized.clone())
+        .expect_err("one-over correlation identifier must fail");
+    assert_eq!(
+        error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
+    assert!(!error.message.contains(&oversized));
+
+    let active = state.register("bounded-id");
+    assert!(
+        super::super::cancel_fetch(borrowed_fetch_state(&state), "bounded-id".to_string())
+            .expect("command should remain usable")
+    );
+    assert!(active.cancellation.is_cancelled());
+}
+
+#[test]
+fn card_id_and_edit_draft_one_over_limits_fail_before_engine_lock() {
+    let state = AppState::default();
+    let poison_result = std::panic::catch_unwind(|| {
+        let _guard = state
+            .engine
+            .lock()
+            .expect("engine lock should start healthy");
+        panic!("poison engine lock for ordering test");
+    });
+    assert!(poison_result.is_err());
+
+    let oversized_card = "c".repeat(crate::host_contract::MAX_HOST_CARD_ID_BYTES + 1);
+    let card_error = super::super::engine_navigate_to_card(
+        borrowed_state(&state),
+        NavigateToCardRequest {
+            card_id: oversized_card.clone(),
+        },
+    )
+    .expect_err("one-over card id must fail");
+    assert_eq!(
+        card_error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
+    assert!(!card_error.message.contains(&oversized_card));
+
+    let oversized_draft = "d".repeat(crate::host_contract::MAX_HOST_EDIT_DRAFT_BYTES + 1);
+    let draft_error = super::super::engine_set_focused_input_edit_draft(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: oversized_draft.clone(),
+        },
+    )
+    .expect_err("one-over edit draft must fail");
+    assert_eq!(
+        draft_error.code,
+        crate::host_contract::HostCommandErrorCode::InvalidRequest
+    );
+    assert!(!draft_error.message.contains(&oversized_draft));
+
+    let mutex_error = super::super::engine_snapshot(borrowed_state(&state))
+        .expect_err("first lock after poison must surface a typed error");
+    assert_eq!(
+        mutex_error.code,
+        crate::host_contract::HostCommandErrorCode::MutexUnavailable
+    );
+    super::super::engine_snapshot(borrowed_state(&state))
+        .expect("mutex recovery must leave later commands usable");
+}
+
+#[test]
+fn host_context_metadata_one_over_limit_is_recoverable() {
+    let state = AppState::default();
+    for field in ["base", "referring", "navigation", "content-type"] {
+        let limit = if field == "content-type" {
+            crate::host_contract::MAX_HOST_CONTENT_TYPE_BYTES
+        } else {
+            crate::host_contract::MAX_HOST_CONTEXT_URL_BYTES
+        };
+        let oversized = "u".repeat(limit + 1);
+        let mut request = LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        };
+        match field {
+            "base" => request.base_url = oversized.clone(),
+            "referring" => request.referring_url = Some(oversized.clone()),
+            "navigation" => request.navigation_url = Some(oversized.clone()),
+            "content-type" => request.content_type = oversized.clone(),
+            _ => unreachable!(),
+        }
+        let error = super::super::engine_load_deck_context(borrowed_state(&state), request)
+            .expect_err("one-over context metadata must fail");
+        assert_eq!(
+            error.code,
+            crate::host_contract::HostCommandErrorCode::InvalidRequest
+        );
+        assert!(!error.message.contains(&oversized));
+    }
+
+    super::super::engine_load_deck_context(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
+            base_url: "http://local.test/recovery.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("valid context must succeed after rejection");
 }
 
 #[test]
@@ -414,7 +626,10 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
         },
     )
     .expect_err("oversized xml should fail");
-    assert!(xml_error.contains("Deck payload exceeds"));
+    assert_eq!(
+        xml_error.code,
+        crate::host_contract::HostCommandErrorCode::EngineFailure
+    );
 
     let raw_error = super::super::engine_load_deck_context(
         borrowed_state(&state),
@@ -429,7 +644,10 @@ fn tauri_command_wrappers_surface_oversized_load_deck_context_errors() {
         },
     )
     .expect_err("oversized raw payload should fail");
-    assert!(raw_error.contains("Raw deck payload exceeds"));
+    assert_eq!(
+        raw_error.code,
+        crate::host_contract::HostCommandErrorCode::EngineFailure
+    );
 }
 
 #[test]

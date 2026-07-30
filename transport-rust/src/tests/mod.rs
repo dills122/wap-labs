@@ -7,15 +7,18 @@ pub(super) use super::{
             WtpRetransmissionPolicy, WtpRetransmissionState,
         },
     },
-    preflight_wbxml_decoder,
+    preflight_wbxml_decoder, validate_fetch_deck_request,
     wtp_replay_window::{
         decide_initiator_tid, decide_responder_tid, WtpDuplicateAssumption, WtpInitiatorPolicy,
         WtpInitiatorState, WtpInitiatorTidDecision, WtpReplayCacheMode, WtpResponderPolicy,
         WtpResponderState, WtpResponderTidDecision,
     },
     FetchCacheControlPolicy, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
-    FetchPostContext, FetchRequestPolicy, FetchTransportProfile, FetchUaCapabilityProfile,
-    MAX_RESPONSE_BODY_BYTES, MAX_URI_OCTETS,
+    FetchPostContext, FetchRequestIntent, FetchRequestMethod, FetchRequestPolicy,
+    FetchRequestPostField, FetchTransportProfile, FetchUaCapabilityProfile,
+    MAX_ENCODED_REQUEST_BODY_BYTES, MAX_POST_FIELD_COUNT, MAX_POST_FIELD_NAME_BYTES,
+    MAX_POST_FIELD_VALUE_BYTES, MAX_REQUEST_HEADER_BYTES, MAX_REQUEST_HEADER_COUNT,
+    MAX_REQUEST_ID_BYTES, MAX_RESPONSE_BODY_BYTES, MAX_URI_OCTETS,
 };
 pub(super) use crate::fetch_policy::{
     apply_request_policy, classify_destination_host, classify_ip, resolve_fetch_destination_policy,
@@ -486,5 +489,6 @@ fn run_duplicate_cache_fixture_case(case: &WtpDuplicateCacheCase) {
 mod fetch_mapping;
 mod replay_profiles;
 mod request_gateway_policy;
+mod request_ingress;
 mod wbxml_conformance;
 mod wbxml_env;

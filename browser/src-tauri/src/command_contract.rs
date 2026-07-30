@@ -8,6 +8,7 @@ pub enum TypeSource {
     Primitive,
     ApplicationState,
     Engine,
+    Host,
     Transport,
 }
 
@@ -17,6 +18,7 @@ impl TypeSource {
             Self::Primitive => "primitive",
             Self::ApplicationState => "applicationState",
             Self::Engine => "engine",
+            Self::Host => "host",
             Self::Transport => "transport",
         }
     }
@@ -50,6 +52,13 @@ impl CommandType {
         }
     }
 
+    pub const fn host(name: &'static str) -> Self {
+        Self {
+            name,
+            source: TypeSource::Host,
+        }
+    }
+
     pub const fn transport(name: &'static str) -> Self {
         Self {
             name,
@@ -57,6 +66,8 @@ impl CommandType {
         }
     }
 }
+
+pub const HOST_COMMAND_ERROR_TYPE: CommandType = CommandType::host("HostCommandError");
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct CommandParameter {

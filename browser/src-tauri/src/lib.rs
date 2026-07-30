@@ -2,6 +2,7 @@ pub mod application_commands;
 pub mod application_state;
 pub mod command_contract;
 pub mod contract_types;
+pub mod host_contract;
 pub mod waves_config;
 
 pub mod bootstrap;
@@ -13,9 +14,9 @@ use application_state::{
     ClearApplicationStateComponentRequest, SaveApplicationStateRequest,
 };
 use contract_types::{
-    AdvanceTimeRequest, EngineCommandError, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest,
-    HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
-    NavigateToCardRequest, RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
+    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
+    RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use engine_bridge::{
     command_engine_advance_time_ms, command_engine_advance_time_ms_frame,
@@ -37,6 +38,7 @@ use engine_bridge::{
     command_engine_set_viewport_cols, command_engine_snapshot, AppState,
 };
 use fetch_host::fetch_deck_cancellable as host_fetch_deck_cancellable;
+use host_contract::{validate_correlation_id, HostCommandError};
 use lowband_transport_rust::{FetchCancellationToken, FetchDeckRequest, FetchDeckResponse};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -185,7 +187,9 @@ async fn application_state_clear_component(
 async fn fetch_deck(
     state: State<'_, HostFetchState>,
     mut request: FetchDeckRequest,
-) -> Result<FetchDeckResponse, String> {
+) -> Result<FetchDeckResponse, HostCommandError> {
+    lowband_transport_rust::validate_fetch_deck_request(&request)
+        .map_err(|error| HostCommandError::invalid_request(error.to_string()))?;
     fetch_host::ensure_request_id(&mut request);
     let request_id = request
         .request_id
@@ -204,54 +208,23 @@ async fn fetch_deck(
             host_fetch_deck_cancellable(request, cancellation)
         })
         .await
-        .unwrap_or_else(|join_error| {
-            host_fetch_failure(
-                String::new(),
-                format!("host fetch task failed: {join_error}"),
-                None,
-            )
-        }),
-        None if cancellation.is_cancelled() => {
-            lowband_transport_rust::cancelled_fetch_response(request_url, Some(&request_id))
-        }
-        None => host_fetch_failure(
-            request_url,
-            "host fetch concurrency limit reached".to_string(),
-            Some(&request_id),
+        .map_err(|_| HostCommandError::task_join_failed()),
+        None if cancellation.is_cancelled() => Ok(
+            lowband_transport_rust::cancelled_fetch_response(request_url, Some(&request_id)),
         ),
+        None => Err(HostCommandError::task_spawn_failed()),
     };
     state.complete(&request_id, &active_fetch);
-    Ok(response)
-}
-
-fn host_fetch_failure(
-    final_url: String,
-    message: String,
-    request_id: Option<&str>,
-) -> FetchDeckResponse {
-    FetchDeckResponse {
-        ok: false,
-        status: 0,
-        final_url,
-        content_type: "text/plain".to_string(),
-        wml: None,
-        error: Some(lowband_transport_rust::FetchErrorInfo {
-            code: "TRANSPORT_UNAVAILABLE".to_string(),
-            message,
-            details: request_id.map(|request_id| serde_json::json!({ "requestId": request_id })),
-        }),
-        timing_ms: lowband_transport_rust::FetchTiming {
-            encode: 0.0,
-            udp_rtt: 0.0,
-            decode: 0.0,
-        },
-        engine_deck_input: None,
-    }
+    response
 }
 
 #[tauri::command]
-fn cancel_fetch(state: State<HostFetchState>, request_id: String) -> bool {
-    state.cancel(request_id.trim())
+fn cancel_fetch(
+    state: State<HostFetchState>,
+    request_id: String,
+) -> Result<bool, HostCommandError> {
+    validate_correlation_id(&request_id)?;
+    Ok(state.cancel(request_id.trim()))
 }
 
 #[tauri::command]
@@ -259,7 +232,7 @@ fn cancel_fetch(state: State<HostFetchState>, request_id: String) -> bool {
 fn engine_load_deck(
     state: State<AppState>,
     request: LoadDeckRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_load_deck(state.inner(), request)
 }
 
@@ -268,19 +241,19 @@ fn engine_load_deck(
 fn engine_load_deck_context(
     state: State<AppState>,
     request: LoadDeckContextRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_load_deck_context(state.inner(), request)
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_render(state: State<AppState>) -> Result<RenderList, String> {
+fn engine_render(state: State<AppState>) -> Result<RenderList, HostCommandError> {
     command_engine_render(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_render_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_render_frame(state: State<AppState>) -> Result<EngineFrame, HostCommandError> {
     command_engine_render_frame(state.inner())
 }
 
@@ -289,7 +262,7 @@ fn engine_render_frame(state: State<AppState>) -> Result<EngineFrame, String> {
 fn engine_handle_key(
     state: State<AppState>,
     request: HandleKeyRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_handle_key(state.inner(), request)
 }
 
@@ -298,7 +271,7 @@ fn engine_handle_key(
 fn engine_handle_key_frame(
     state: State<AppState>,
     request: HandleKeyRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_handle_key_frame(state.inner(), request)
 }
 
@@ -307,7 +280,7 @@ fn engine_handle_key_frame(
 fn engine_handle_input_frame(
     state: State<AppState>,
     request: HandleInputRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_handle_input_frame(state.inner(), request)
 }
 
@@ -316,7 +289,7 @@ fn engine_handle_input_frame(
 fn engine_navigate_to_card(
     state: State<AppState>,
     request: NavigateToCardRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_navigate_to_card(state.inner(), request)
 }
 
@@ -325,19 +298,19 @@ fn engine_navigate_to_card(
 fn engine_navigate_to_card_frame(
     state: State<AppState>,
     request: NavigateToCardRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_navigate_to_card_frame(state.inner(), request)
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_navigate_back(state: State<AppState>) -> Result<EngineRuntimeSnapshot, String> {
+fn engine_navigate_back(state: State<AppState>) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_navigate_back(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_navigate_back_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_navigate_back_frame(state: State<AppState>) -> Result<EngineFrame, HostCommandError> {
     command_engine_navigate_back_frame(state.inner())
 }
 
@@ -346,7 +319,7 @@ fn engine_navigate_back_frame(state: State<AppState>) -> Result<EngineFrame, Str
 fn engine_set_viewport_cols(
     state: State<AppState>,
     request: SetViewportColsRequest,
-) -> Result<EngineRuntimeSnapshot, EngineCommandError> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_set_viewport_cols(state.inner(), request)
 }
 
@@ -355,7 +328,7 @@ fn engine_set_viewport_cols(
 fn engine_advance_time_ms(
     state: State<AppState>,
     request: AdvanceTimeRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_advance_time_ms(state.inner(), request)
 }
 
@@ -364,13 +337,13 @@ fn engine_advance_time_ms(
 fn engine_advance_time_ms_frame(
     state: State<AppState>,
     request: AdvanceTimeRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_advance_time_ms_frame(state.inner(), request)
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, String> {
+fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_snapshot(state.inner())
 }
 
@@ -378,7 +351,7 @@ fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, Stri
 #[cfg_attr(test, allow(dead_code))]
 fn engine_clear_external_navigation_intent(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_clear_external_navigation_intent(state.inner())
 }
 
@@ -386,7 +359,7 @@ fn engine_clear_external_navigation_intent(
 #[cfg_attr(test, allow(dead_code))]
 fn engine_clear_external_navigation_intent_frame(
     state: State<AppState>,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_clear_external_navigation_intent_frame(state.inner())
 }
 
@@ -395,7 +368,7 @@ fn engine_clear_external_navigation_intent_frame(
 fn engine_load_deck_context_frame(
     state: State<AppState>,
     request: LoadDeckContextRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_load_deck_context_frame(state.inner(), request)
 }
 
@@ -403,13 +376,15 @@ fn engine_load_deck_context_frame(
 #[cfg_attr(test, allow(dead_code))]
 fn engine_begin_focused_input_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_begin_focused_input_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_begin_focused_input_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_begin_focused_input_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_begin_focused_input_edit_frame(state.inner())
 }
 
@@ -418,7 +393,7 @@ fn engine_begin_focused_input_edit_frame(state: State<AppState>) -> Result<Engin
 fn engine_set_focused_input_edit_draft(
     state: State<AppState>,
     request: SetFocusedInputEditDraftRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_set_focused_input_edit_draft(state.inner(), request)
 }
 
@@ -427,7 +402,7 @@ fn engine_set_focused_input_edit_draft(
 fn engine_set_focused_input_edit_draft_frame(
     state: State<AppState>,
     request: SetFocusedInputEditDraftRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_set_focused_input_edit_draft_frame(state.inner(), request)
 }
 
@@ -435,13 +410,15 @@ fn engine_set_focused_input_edit_draft_frame(
 #[cfg_attr(test, allow(dead_code))]
 fn engine_commit_focused_input_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_commit_focused_input_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_commit_focused_input_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_commit_focused_input_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_commit_focused_input_edit_frame(state.inner())
 }
 
@@ -449,13 +426,15 @@ fn engine_commit_focused_input_edit_frame(state: State<AppState>) -> Result<Engi
 #[cfg_attr(test, allow(dead_code))]
 fn engine_cancel_focused_input_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_cancel_focused_input_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_cancel_focused_input_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_cancel_focused_input_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_cancel_focused_input_edit_frame(state.inner())
 }
 
@@ -463,13 +442,15 @@ fn engine_cancel_focused_input_edit_frame(state: State<AppState>) -> Result<Engi
 #[cfg_attr(test, allow(dead_code))]
 fn engine_begin_focused_select_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_begin_focused_select_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_begin_focused_select_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_begin_focused_select_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_begin_focused_select_edit_frame(state.inner())
 }
 
@@ -478,7 +459,7 @@ fn engine_begin_focused_select_edit_frame(state: State<AppState>) -> Result<Engi
 fn engine_move_focused_select_edit(
     state: State<AppState>,
     request: MoveFocusedSelectEditRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_move_focused_select_edit(state.inner(), request)
 }
 
@@ -487,7 +468,7 @@ fn engine_move_focused_select_edit(
 fn engine_move_focused_select_edit_frame(
     state: State<AppState>,
     request: MoveFocusedSelectEditRequest,
-) -> Result<EngineFrame, String> {
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_move_focused_select_edit_frame(state.inner(), request)
 }
 
@@ -495,13 +476,15 @@ fn engine_move_focused_select_edit_frame(
 #[cfg_attr(test, allow(dead_code))]
 fn engine_commit_focused_select_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_commit_focused_select_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_commit_focused_select_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_commit_focused_select_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_commit_focused_select_edit_frame(state.inner())
 }
 
@@ -509,13 +492,15 @@ fn engine_commit_focused_select_edit_frame(state: State<AppState>) -> Result<Eng
 #[cfg_attr(test, allow(dead_code))]
 fn engine_cancel_focused_select_edit(
     state: State<AppState>,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_cancel_focused_select_edit(state.inner())
 }
 
 #[tauri::command]
 #[cfg_attr(test, allow(dead_code))]
-fn engine_cancel_focused_select_edit_frame(state: State<AppState>) -> Result<EngineFrame, String> {
+fn engine_cancel_focused_select_edit_frame(
+    state: State<AppState>,
+) -> Result<EngineFrame, HostCommandError> {
     command_engine_cancel_focused_select_edit_frame(state.inner())
 }
 

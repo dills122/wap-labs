@@ -1,55 +1,78 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createGuardedTauriInvoke } from './tauri-invoke-guard';
+import { createGuardedTauriInvoke, HostCommandFailure } from './tauri-invoke-guard';
 
 describe('createGuardedTauriInvoke', () => {
-  it('passes through well-formed responses unchanged', async () => {
-    const invokeFn = vi.fn().mockResolvedValue({ activeCardId: 'home' });
-    const guarded = createGuardedTauriInvoke(invokeFn);
-
-    const result = await guarded('engine_snapshot');
-
-    expect(result).toEqual({ activeCardId: 'home' });
-    expect(invokeFn).toHaveBeenCalledWith('engine_snapshot', undefined);
-  });
-
-  it('forwards command name and args to the wrapped invoke', async () => {
+  it('passes through structurally valid responses unchanged', async () => {
     const invokeFn = vi.fn().mockResolvedValue('ok');
     const guarded = createGuardedTauriInvoke(invokeFn);
 
-    await guarded('health', { request: { key: 'up' } });
-
-    expect(invokeFn).toHaveBeenCalledWith('health', { request: { key: 'up' } });
+    await expect(guarded('health')).resolves.toBe('ok');
+    expect(invokeFn).toHaveBeenCalledWith('health', undefined);
   });
 
-  it('rejects when the host returns undefined instead of a value', async () => {
-    const invokeFn = vi.fn().mockResolvedValue(undefined);
+  it('forwards command name and args to the wrapped invoke', async () => {
+    const invokeFn = vi.fn().mockResolvedValue(true);
     const guarded = createGuardedTauriInvoke(invokeFn);
 
-    await expect(guarded('engine_render_frame')).rejects.toThrow(
-      'Host command "engine_render_frame" returned no data.'
+    await guarded('cancel_fetch', { requestId: 'bounded-id' });
+
+    expect(invokeFn).toHaveBeenCalledWith('cancel_fetch', { requestId: 'bounded-id' });
+  });
+
+  it.each([undefined, null, {}, [], { ok: 'yes' }])(
+    'rejects malformed non-null and empty response shape %#',
+    async (response) => {
+      const guarded = createGuardedTauriInvoke(vi.fn().mockResolvedValue(response));
+
+      await expect(guarded('fetch_deck')).rejects.toMatchObject({
+        name: 'HostCommandFailure',
+        code: 'MALFORMED_RESPONSE',
+        recoverable: true
+      });
+    }
+  );
+
+  it.each([
+    'INVALID_REQUEST',
+    'CANCELLED',
+    'TASK_SPAWN_FAILED',
+    'TASK_JOIN_FAILED',
+    'MUTEX_UNAVAILABLE',
+    'ENGINE_RESOURCE_LIMIT',
+    'ENGINE_FAILURE',
+    'HOST_FAILURE',
+    'MALFORMED_RESPONSE'
+  ] as const)('preserves the typed %s host rejection', async (code) => {
+    const guarded = createGuardedTauriInvoke(
+      vi.fn().mockRejectedValue({
+        code,
+        message: 'Safe host failure.',
+        recoverable: true
+      })
     );
+
+    await expect(guarded('engine_snapshot')).rejects.toMatchObject({
+      name: 'HostCommandFailure',
+      code,
+      recoverable: true
+    });
   });
 
-  it('rejects when the host returns null instead of a value', async () => {
-    const invokeFn = vi.fn().mockResolvedValue(null);
-    const guarded = createGuardedTauriInvoke(invokeFn);
+  it('normalizes opaque rejections without echoing sensitive values', async () => {
+    const secret = 'pin=1234';
+    const guarded = createGuardedTauriInvoke(vi.fn().mockRejectedValue(new Error(secret)));
 
-    await expect(guarded('engine_handle_key_frame')).rejects.toThrow(
-      'Host command "engine_handle_key_frame" returned no data.'
-    );
+    const error = await guarded('fetch_deck').catch((failure: unknown) => failure);
+    expect(error).toBeInstanceOf(HostCommandFailure);
+    expect(error).toMatchObject({ code: 'HOST_FAILURE', recoverable: true });
+    expect(String(error)).not.toContain(secret);
   });
 
-  it('propagates rejections from the wrapped invoke unchanged', async () => {
-    const invokeFn = vi.fn().mockRejectedValue(new Error('ipc failure'));
+  it('remains usable after a malformed response failure', async () => {
+    const invokeFn = vi.fn().mockResolvedValueOnce({}).mockResolvedValueOnce('healthy');
     const guarded = createGuardedTauriInvoke(invokeFn);
 
-    await expect(guarded('fetch_deck')).rejects.toThrow('ipc failure');
-  });
-
-  it('allows falsy-but-defined values through (e.g. empty string, zero, false)', async () => {
-    const invokeFn = vi.fn().mockResolvedValue('');
-    const guarded = createGuardedTauriInvoke(invokeFn);
-
-    await expect(guarded('health')).resolves.toBe('');
+    await expect(guarded('health')).rejects.toMatchObject({ code: 'MALFORMED_RESPONSE' });
+    await expect(guarded('health')).resolves.toBe('healthy');
   });
 });

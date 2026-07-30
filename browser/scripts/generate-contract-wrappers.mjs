@@ -67,6 +67,22 @@ function collectExportedValueNames(filePath) {
   return exported.sort();
 }
 
+function collectTypeDeclarations(filePaths) {
+  const declarations = new Map();
+  for (const filePath of filePaths) {
+    const source = readSourceFile(filePath);
+    for (const stmt of source.statements) {
+      if (
+        hasExportModifier(stmt) &&
+        (ts.isTypeAliasDeclaration(stmt) || ts.isInterfaceDeclaration(stmt))
+      ) {
+        declarations.set(stmt.name.text, stmt);
+      }
+    }
+  }
+  return declarations;
+}
+
 function ensureRequired(name, values, required) {
   const missing = required.filter((item) => !values.includes(item));
   if (missing.length) {
@@ -76,14 +92,17 @@ function ensureRequired(name, values, required) {
 
 function loadCommandContract(filePath) {
   const contract = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  if (contract.schemaVersion !== 1 || !Array.isArray(contract.commands)) {
+  if (contract.schemaVersion !== 2 || !contract.error || !Array.isArray(contract.commands)) {
     throw new Error('tauri-command-contract.json has an unsupported schema');
   }
 
   const commandNames = new Set();
   const clientMethods = new Set();
   const facadeMethods = new Set();
-  const validSources = new Set(['primitive', 'applicationState', 'engine', 'transport']);
+  const validSources = new Set(['primitive', 'applicationState', 'engine', 'host', 'transport']);
+  if (!validSources.has(contract.error.source) || contract.error.source !== 'host') {
+    throw new Error('tauri-command-contract.json has an unsupported error type source');
+  }
   for (const command of contract.commands) {
     if (!command.command || !command.clientMethod || !command.response) {
       throw new Error('tauri-command-contract.json contains an incomplete command');
@@ -113,7 +132,195 @@ function loadCommandContract(filePath) {
     commandNames.add(command.command);
     clientMethods.add(command.clientMethod);
   }
-  return contract.commands;
+  return { commands: contract.commands, error: contract.error };
+}
+
+function propertyNameText(name) {
+  if (ts.isIdentifier(name) || ts.isStringLiteral(name) || ts.isNumericLiteral(name)) {
+    return name.text;
+  }
+  throw new Error(`unsupported runtime contract property name: ${name.getText()}`);
+}
+
+function runtimeSchemaForTypeNode(node, referenced) {
+  if (ts.isParenthesizedTypeNode(node)) {
+    return runtimeSchemaForTypeNode(node.type, referenced);
+  }
+  switch (node.kind) {
+    case ts.SyntaxKind.StringKeyword:
+      return { kind: 'string' };
+    case ts.SyntaxKind.NumberKeyword:
+      return { kind: 'number' };
+    case ts.SyntaxKind.BooleanKeyword:
+      return { kind: 'boolean' };
+    case ts.SyntaxKind.UnknownKeyword:
+    case ts.SyntaxKind.AnyKeyword:
+      return { kind: 'unknown' };
+    case ts.SyntaxKind.NullKeyword:
+      return { kind: 'literal', value: null };
+    default:
+      break;
+  }
+  if (ts.isLiteralTypeNode(node)) {
+    if (node.literal.kind === ts.SyntaxKind.TrueKeyword) {
+      return { kind: 'literal', value: true };
+    }
+    if (node.literal.kind === ts.SyntaxKind.FalseKeyword) {
+      return { kind: 'literal', value: false };
+    }
+    if (ts.isStringLiteral(node.literal)) {
+      return { kind: 'literal', value: node.literal.text };
+    }
+    if (ts.isNumericLiteral(node.literal)) {
+      return { kind: 'literal', value: Number(node.literal.text) };
+    }
+  }
+  if (ts.isArrayTypeNode(node)) {
+    return { kind: 'array', item: runtimeSchemaForTypeNode(node.elementType, referenced) };
+  }
+  if (ts.isUnionTypeNode(node)) {
+    return {
+      kind: 'union',
+      anyOf: node.types.map((member) => runtimeSchemaForTypeNode(member, referenced))
+    };
+  }
+  if (ts.isTypeReferenceNode(node)) {
+    const name = node.typeName.getText();
+    if (name === 'Array' || name === 'ReadonlyArray') {
+      if (node.typeArguments?.length !== 1) {
+        throw new Error(`${name} runtime contract requires one type argument`);
+      }
+      return { kind: 'array', item: runtimeSchemaForTypeNode(node.typeArguments[0], referenced) };
+    }
+    if (name === 'Record') {
+      if (node.typeArguments?.length !== 2) {
+        throw new Error('Record runtime contract requires two type arguments');
+      }
+      return { kind: 'record', value: runtimeSchemaForTypeNode(node.typeArguments[1], referenced) };
+    }
+    referenced.add(name);
+    return { kind: 'ref', name };
+  }
+  if (ts.isTypeLiteralNode(node)) {
+    const properties = {};
+    const required = [];
+    for (const member of node.members) {
+      if (!ts.isPropertySignature(member) || !member.type || !member.name) {
+        throw new Error(`unsupported runtime contract member: ${member.getText()}`);
+      }
+      const name = propertyNameText(member.name);
+      properties[name] = runtimeSchemaForTypeNode(member.type, referenced);
+      if (!member.questionToken) {
+        required.push(name);
+      }
+    }
+    return { kind: 'object', required, properties };
+  }
+  throw new Error(`unsupported runtime contract type: ${node.getText()}`);
+}
+
+function compileRuntimeSchemas(commands, hostError, declarationPaths) {
+  const declarations = collectTypeDeclarations(declarationPaths);
+  const schemas = {};
+  const pending = new Set([
+    hostError.name,
+    ...commands
+      .filter((command) => command.response.source !== 'primitive')
+      .map((command) => command.response.name)
+  ]);
+  while (pending.size > 0) {
+    const [name] = pending;
+    pending.delete(name);
+    if (schemas[name]) {
+      continue;
+    }
+    const declaration = declarations.get(name);
+    if (!declaration) {
+      throw new Error(`runtime contract declaration not found: ${name}`);
+    }
+    const referenced = new Set();
+    const typeNode = ts.isTypeAliasDeclaration(declaration)
+      ? declaration.type
+      : factory.createTypeLiteralNode([...declaration.members]);
+    schemas[name] = runtimeSchemaForTypeNode(typeNode, referenced);
+    for (const reference of referenced) {
+      if (!schemas[reference]) {
+        pending.add(reference);
+      }
+    }
+  }
+
+  const primitiveSchemas = {
+    string: { kind: 'string' },
+    boolean: { kind: 'boolean' },
+    number: { kind: 'number' }
+  };
+  const responseSchemas = Object.fromEntries(
+    commands.map((command) => [
+      command.command,
+      command.response.source === 'primitive'
+        ? primitiveSchemas[command.response.name]
+        : { kind: 'ref', name: command.response.name }
+    ])
+  );
+  if (Object.values(responseSchemas).some((schema) => !schema)) {
+    throw new Error('runtime contract contains an unsupported primitive response');
+  }
+  return { schemas, responseSchemas };
+}
+
+function renderRuntimeValidators(commands, hostError, declarationPaths) {
+  const { schemas, responseSchemas } = compileRuntimeSchemas(
+    commands,
+    hostError,
+    declarationPaths
+  );
+  return `type RuntimeSchema =
+    | { kind: "string" | "number" | "boolean" | "unknown" }
+    | { kind: "literal"; value: string | number | boolean | null }
+    | { kind: "array"; item: RuntimeSchema }
+    | { kind: "record"; value: RuntimeSchema }
+    | { kind: "union"; anyOf: RuntimeSchema[] }
+    | { kind: "object"; required: string[]; properties: Record<string, RuntimeSchema> }
+    | { kind: "ref"; name: string };
+
+const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = ${JSON.stringify(schemas, null, 2)};
+const TAURI_RESPONSE_SCHEMAS: Record<string, RuntimeSchema> = ${JSON.stringify(responseSchemas, null, 2)};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const matchesRuntimeSchema = (schema: RuntimeSchema, value: unknown, depth = 0): boolean => {
+  if (depth > 64) return false;
+  switch (schema.kind) {
+    case "unknown": return true;
+    case "string": return typeof value === "string";
+    case "number": return typeof value === "number" && Number.isFinite(value);
+    case "boolean": return typeof value === "boolean";
+    case "literal": return value === schema.value;
+    case "array": return Array.isArray(value) && value.every((item) => matchesRuntimeSchema(schema.item, item, depth + 1));
+    case "record": return isRecord(value) && Object.values(value).every((item) => matchesRuntimeSchema(schema.value, item, depth + 1));
+    case "union": return schema.anyOf.some((candidate) => matchesRuntimeSchema(candidate, value, depth + 1));
+    case "ref": {
+      const referenced = RUNTIME_SCHEMAS[schema.name];
+      return referenced !== undefined && matchesRuntimeSchema(referenced, value, depth + 1);
+    }
+    case "object":
+      return isRecord(value)
+        && schema.required.every((key) => Object.hasOwn(value, key))
+        && Object.entries(schema.properties).every(([key, propertySchema]) =>
+          !Object.hasOwn(value, key) || matchesRuntimeSchema(propertySchema, value[key], depth + 1));
+  }
+};
+
+export const isHostCommandError = (value: unknown): value is HostCommandError =>
+  matchesRuntimeSchema({ kind: "ref", name: ${JSON.stringify(hostError.name)} }, value);
+
+export const validateTauriCommandResponse = (command: string, value: unknown): boolean => {
+  const schema = TAURI_RESPONSE_SCHEMAS[command];
+  return schema !== undefined && matchesRuntimeSchema(schema, value);
+};
+`;
 }
 
 function commandMethodSpec(command, methodName = command.clientMethod) {
@@ -317,7 +524,7 @@ function createTypeOnlyImport(names, modulePath) {
   );
 }
 
-function generateTauriClient(filePath, commands) {
+function generateTauriClient(filePath, commands, hostError, declarationPaths) {
   const applicationStateImports = typeImportsFor(commands, 'applicationState');
   const engineImports = typeImportsFor(commands, 'engine');
   const transportImports = typeImportsFor(commands, 'transport');
@@ -398,9 +605,25 @@ function generateTauriClient(filePath, commands) {
     createTypeOnlyImport(applicationStateImports, './application-state-host'),
     createTypeOnlyImport(engineImports, './engine-host'),
     createTypeOnlyImport(transportImports, './transport-host'),
+    createTypeOnlyImport([hostError.name], './host'),
     tauriInvoke,
     tauriHostClient,
     createClient
+  ];
+
+  writeIfChanged(
+    filePath,
+    withHeader(
+      `${printStatements(statements)}\n${renderRuntimeValidators(commands, hostError, declarationPaths)}`,
+      'node ./scripts/generate-contract-wrappers.mjs'
+    )
+  );
+}
+
+function generateApplicationStateWrapper(filePath, exportedTypes, exportedValues) {
+  const statements = [
+    exportValueFrom(exportedValues, './generated/application-state-host'),
+    exportTypeFrom(exportedTypes, './generated/application-state-host')
   ];
 
   writeIfChanged(
@@ -409,10 +632,10 @@ function generateTauriClient(filePath, commands) {
   );
 }
 
-function generateApplicationStateWrapper(filePath, exportedTypes, exportedValues) {
+function generateHostWrapper(filePath, exportedTypes, exportedValues) {
   const statements = [
-    exportValueFrom(exportedValues, './generated/application-state-host'),
-    exportTypeFrom(exportedTypes, './generated/application-state-host')
+    exportValueFrom(exportedValues, './generated/host'),
+    exportTypeFrom(exportedTypes, './generated/host')
   ];
 
   writeIfChanged(
@@ -451,8 +674,9 @@ function generateEngineWrapper(filePath, engineExportedTypes, engineExportedValu
   );
 }
 
-function generateTransportWrapper(filePath, transportExportedTypes) {
+function generateTransportWrapper(filePath, transportExportedTypes, transportExportedValues) {
   const statements = [
+    exportValueFrom(transportExportedValues, './generated/transport-host'),
     exportTypeFrom(transportExportedTypes, './generated/transport-host'),
     factory.createTypeAliasDeclaration(
       [factory.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -490,18 +714,23 @@ fs.mkdirSync(contractsDir, { recursive: true });
 const applicationStateGeneratedPath = path.join(generatedDir, 'application-state-host.ts');
 const engineGeneratedPath = path.join(generatedDir, 'engine-host.ts');
 const transportGeneratedPath = path.join(generatedDir, 'transport-host.ts');
+const hostGeneratedPath = path.join(generatedDir, 'host.ts');
 const tauriClientPath = path.join(generatedDir, 'tauri-host-client.ts');
 const tauriCommandContractPath = path.join(generatedDir, 'tauri-command-contract.json');
 const applicationStateWrapperPath = path.join(contractsDir, 'application-state.ts');
 const engineWrapperPath = path.join(contractsDir, 'engine.ts');
 const transportWrapperPath = path.join(contractsDir, 'transport.ts');
+const hostWrapperPath = path.join(contractsDir, 'host.ts');
 
 const applicationStateExportedTypes = collectExportedTypeNames(applicationStateGeneratedPath);
 const applicationStateExportedValues = collectExportedValueNames(applicationStateGeneratedPath);
 const engineExportedTypes = collectExportedTypeNames(engineGeneratedPath);
 const engineExportedValues = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypes = collectExportedTypeNames(transportGeneratedPath);
-const commands = loadCommandContract(tauriCommandContractPath);
+const transportExportedValues = collectExportedValueNames(transportGeneratedPath);
+const hostExportedTypes = collectExportedTypeNames(hostGeneratedPath);
+const hostExportedValues = collectExportedValueNames(hostGeneratedPath);
+const { commands, error: hostError } = loadCommandContract(tauriCommandContractPath);
 const commandApplicationStateTypes = typeImportsFor(commands, 'applicationState');
 const commandEngineTypes = typeImportsFor(commands, 'engine');
 const commandTransportTypes = typeImportsFor(commands, 'transport');
@@ -534,6 +763,11 @@ ensureRequired('engine-host.ts values', engineExportedValues, [
   'SCRIPT_ERROR_CATEGORY_LABELS'
 ]);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);
+ensureRequired('transport-host.ts values', transportExportedValues, [
+  'FETCH_REQUEST_INGRESS_LIMITS'
+]);
+ensureRequired('host.ts', hostExportedTypes, ['HostCommandError', 'HostCommandErrorCode']);
+ensureRequired('host.ts values', hostExportedValues, ['HOST_INGRESS_LIMITS']);
 ensureRequired(
   'application-state-host.ts command types',
   applicationStateExportedTypes,
@@ -564,7 +798,12 @@ const engineExportedTypesWithInterfaces = collectExportedTypeNames(engineGenerat
 const engineExportedValuesWithInterfaces = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypesWithInterfaces = collectExportedTypeNames(transportGeneratedPath);
 
-generateTauriClient(tauriClientPath, commands);
+generateTauriClient(tauriClientPath, commands, hostError, [
+  applicationStateGeneratedPath,
+  engineGeneratedPath,
+  transportGeneratedPath,
+  hostGeneratedPath
+]);
 generateApplicationStateWrapper(
   applicationStateWrapperPath,
   applicationStateExportedTypes,
@@ -575,4 +814,9 @@ generateEngineWrapper(
   engineExportedTypesWithInterfaces,
   engineExportedValuesWithInterfaces
 );
-generateTransportWrapper(transportWrapperPath, transportExportedTypesWithInterfaces);
+generateTransportWrapper(
+  transportWrapperPath,
+  transportExportedTypesWithInterfaces,
+  transportExportedValues
+);
+generateHostWrapper(hostWrapperPath, hostExportedTypes, hostExportedValues);
