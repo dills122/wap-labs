@@ -8,6 +8,7 @@ description = "Allows the browser frontend to invoke the complete generated Wave
 commands.allow = [
   "health",
   "fetch_deck",
+  "cancel_fetch",
   "engine_load_deck",
   "engine_load_deck_context",
   "engine_load_deck_context_frame",

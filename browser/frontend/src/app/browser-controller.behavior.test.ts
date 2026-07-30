@@ -28,6 +28,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
   createButton('btn-load-context');
   createButton('btn-fetch-url');
   createButton('btn-reload');
+  createButton('btn-stop-navigation');
   createButton('btn-render');
   createButton('btn-up');
   createButton('btn-down');
@@ -130,6 +131,7 @@ const createHostClient = () => {
         contentType: 'text/vnd.wap.wml'
       }
     })),
+    cancelFetch: vi.fn(async () => true),
     engineLoadDeck: vi.fn(),
     engineLoadDeckContext: vi.fn(async () => snapshot({ activeCardId: 'home' })),
     engineLoadDeckContextFrame: vi.fn(
@@ -927,4 +929,49 @@ describe('BrowserController behavior coverage', () => {
     expect(backBtn?.disabled).toBe(false);
     expect(backBtn?.dataset.historyAvailable).toBe('true');
   });
+});
+
+it('admits one fetch for eight rapid identical URL actions', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const hostClient = createHostClient();
+  const controller = new BrowserController(hostClient as never, presenter, refs);
+
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(hostClient.fetchDeck).mockClear();
+
+  let resolveFetch: ((response: FetchResponse) => void) | undefined;
+  vi.mocked(hostClient.fetchDeck).mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolveFetch = resolve;
+      })
+  );
+  refs.fetchUrlInput.value = 'http://example.test/coalesced.wml';
+  const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
+  for (let action = 0; action < 8; action += 1) {
+    fetchButton?.click();
+  }
+  await flushAsyncWork();
+
+  expect(hostClient.fetchDeck).toHaveBeenCalledTimes(1);
+  expect(hostClient.cancelFetch).not.toHaveBeenCalled();
+
+  resolveFetch?.({
+    ok: true,
+    status: 200,
+    finalUrl: 'http://example.test/coalesced.wml',
+    contentType: 'text/vnd.wap.wml',
+    wml: '<wml><card id="coalesced"><p>ok</p></card></wml>',
+    timingMs: { encode: 0, udpRtt: 0, decode: 0 },
+    engineDeckInput: {
+      wmlXml: '<wml><card id="coalesced"><p>ok</p></card></wml>',
+      baseUrl: 'http://example.test/coalesced.wml',
+      contentType: 'text/vnd.wap.wml'
+    }
+  });
+  await flushAsyncWork();
 });

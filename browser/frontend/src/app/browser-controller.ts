@@ -226,6 +226,7 @@ export class BrowserController {
         fetchUrl: this.handleFetchUrlClick,
         fetchUrlEnter: this.handleFetchUrlClick,
         reload: this.handleReloadClick,
+        stopNavigation: this.handleStopNavigationClick,
         changeMode: this.handleChangeModeClick,
         selectLocalExample: this.handleSelectLocalExampleClick,
         loadLocalExample: this.handleLoadLocalExampleClick,
@@ -266,6 +267,7 @@ export class BrowserController {
 
   dispose(): void {
     this.startupProbe.cancel();
+    void this.navigation.cancelPendingNavigation();
     this.timerRuntime.stop();
     this.shellEventBindings.unbind();
     this.presenter.dispose();
@@ -361,6 +363,14 @@ export class BrowserController {
       undefined,
       this.defaultNavigationHeaders()
     );
+  };
+
+  private readonly handleStopNavigationClick = async (): Promise<void> => {
+    const cancellation = this.navigation.cancelPendingNavigation();
+    if (cancellation) {
+      await cancellation;
+    }
+    this.updateBackButtonAvailability();
   };
 
   private readonly handleChangeModeClick = async (): Promise<void> => {
@@ -487,7 +497,10 @@ export class BrowserController {
 
   private async setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void> {
     this.startupProbe.cancel();
-    this.navigation.cancelPendingNavigation();
+    const cancellation = this.navigation.cancelPendingNavigation();
+    if (cancellation) {
+      await cancellation;
+    }
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
     this.applyModeUiState();
@@ -722,6 +735,10 @@ export class BrowserController {
     const endNavigationProgress = this.presenter.beginNavigationProgress();
     try {
       if (startingRunMode === 'local') {
+        const cancellation = this.navigation.cancelPendingNavigation();
+        if (cancellation) {
+          await cancellation;
+        }
         const generation = this.navigation.beginNavigationOperation();
         try {
           const frame = await this.hostClient.engineNavigateBackFrame();

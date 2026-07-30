@@ -14,10 +14,10 @@ use crate::network::wsp::header_registry::DEFAULT_HEADER_CODE_PAGE;
 use crate::network::wsp::WspEncodingVersion;
 use crate::request_meta::log_transport_event;
 use crate::responses::{
-    invalid_request_response, map_success_payload_response, map_terminal_send_error,
-    FetchAttemptFailure, SuccessPayloadParams,
+    cancelled_response, invalid_request_response, map_success_payload_response,
+    map_terminal_send_error, FetchAttemptFailure, SuccessPayloadParams,
 };
-use crate::{FetchDeckResponse, FetchDestinationPolicy};
+use crate::{FetchCancellationToken, FetchDeckResponse, FetchDestinationPolicy};
 use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::net::SocketAddr;
@@ -46,6 +46,7 @@ pub(crate) struct NativeFetchPlan {
     pub(crate) attempts: u8,
     pub(crate) request_id: Option<String>,
     pub(crate) destination_policy: FetchDestinationPolicy,
+    pub(crate) cancellation: Option<FetchCancellationToken>,
 }
 
 /// Media type this transport negotiates when the caller sends no `Accept`.
@@ -222,6 +223,13 @@ pub(crate) fn execute_native_wap_request_with_transport(
     let mut failure = FetchAttemptFailure::default();
 
     for attempt in 1..=plan.attempts {
+        if plan
+            .cancellation
+            .as_ref()
+            .is_some_and(FetchCancellationToken::is_cancelled)
+        {
+            return cancelled_response(plan.request_url, plan.request_id.as_deref());
+        }
         let send_start = Instant::now();
         let outbound = WdpDatagram {
             src_addr: WdpAddress::unspecified(),
@@ -254,6 +262,13 @@ pub(crate) fn execute_native_wap_request_with_transport(
 
         match transport.receive() {
             Ok(reply_datagram) => {
+                if plan
+                    .cancellation
+                    .as_ref()
+                    .is_some_and(FetchCancellationToken::is_cancelled)
+                {
+                    return cancelled_response(plan.request_url, plan.request_id.as_deref());
+                }
                 let elapsed_ms = send_start.elapsed().as_secs_f64() * 1000.0;
                 if reply_datagram.src_addr != WdpAddress::from_socket_addr(peer)
                     || reply_datagram.src_port != peer.port()
@@ -556,6 +571,7 @@ mod tests {
     struct FakeDatagramTransport {
         sent: Vec<WdpDatagram>,
         next_receive: WdpResult<WdpDatagram>,
+        cancel_on_receive: Option<FetchCancellationToken>,
     }
 
     impl DatagramTransport for FakeDatagramTransport {
@@ -565,6 +581,9 @@ mod tests {
         }
 
         fn receive(&mut self) -> WdpResult<WdpDatagram> {
+            if let Some(cancellation) = self.cancel_on_receive.take() {
+                cancellation.cancel();
+            }
             self.next_receive.clone()
         }
     }
@@ -667,6 +686,7 @@ mod tests {
         let mut transport = FakeDatagramTransport {
             sent: Vec::new(),
             next_receive: Ok(reply_datagram),
+            cancel_on_receive: None,
         };
 
         let response = execute_native_wap_request_with_transport(
@@ -686,6 +706,7 @@ mod tests {
                 attempts: 1,
                 request_id: Some("req-native-get".to_string()),
                 destination_policy: FetchDestinationPolicy::AllowPrivate,
+                cancellation: None,
             },
         );
 
@@ -717,6 +738,7 @@ mod tests {
         let mut transport = FakeDatagramTransport {
             sent: Vec::new(),
             next_receive: Err(WdpError::Timeout),
+            cancel_on_receive: None,
         };
         let response = execute_native_wap_request_with_transport(
             &mut transport,
@@ -732,6 +754,7 @@ mod tests {
                 attempts: 1,
                 request_id: Some("req-native-timeout".to_string()),
                 destination_policy: FetchDestinationPolicy::AllowPrivate,
+                cancellation: None,
             },
         );
 
@@ -743,6 +766,39 @@ mod tests {
         assert_eq!(
             detail_string(&response, "requestId").as_deref(),
             Some("req-native-timeout")
+        );
+    }
+
+    #[test]
+    fn native_fetch_cancellation_stops_retries_after_active_receive_returns() {
+        let cancellation = FetchCancellationToken::default();
+        let mut transport = FakeDatagramTransport {
+            sent: Vec::new(),
+            next_receive: Err(WdpError::Timeout),
+            cancel_on_receive: Some(cancellation.clone()),
+        };
+        let response = execute_native_wap_request_with_transport(
+            &mut transport,
+            "127.0.0.1:9200".parse().expect("literal should parse"),
+            NativeFetchPlan {
+                request_url: "wap://127.0.0.1/".to_string(),
+                gateway_endpoint: None,
+                method: "GET".to_string(),
+                outbound_headers: HashMap::new(),
+                post_body: None,
+                post_content_type: None,
+                timeout_ms: 100,
+                attempts: 3,
+                request_id: Some("req-native-cancel".to_string()),
+                destination_policy: FetchDestinationPolicy::AllowPrivate,
+                cancellation: Some(cancellation),
+            },
+        );
+
+        assert_eq!(transport.sent.len(), 1);
+        assert_eq!(
+            response.error.as_ref().map(|error| error.code.as_str()),
+            Some("CANCELLED")
         );
     }
 
@@ -768,6 +824,7 @@ mod tests {
         let mut transport = FakeDatagramTransport {
             sent: Vec::new(),
             next_receive: Ok(spoofed_reply),
+            cancel_on_receive: None,
         };
 
         let response = execute_native_wap_request_with_transport(
@@ -784,6 +841,7 @@ mod tests {
                 attempts: 2,
                 request_id: Some("req-native-spoofed".to_string()),
                 destination_policy: FetchDestinationPolicy::AllowPrivate,
+                cancellation: None,
             },
         );
 
@@ -1113,6 +1171,7 @@ mod tests {
         let mut transport = FakeDatagramTransport {
             sent: Vec::new(),
             next_receive: Ok(reply_datagram),
+            cancel_on_receive: None,
         };
 
         let response = execute_native_wap_request_with_transport(
@@ -1129,6 +1188,7 @@ mod tests {
                 attempts: 1,
                 request_id: Some("req-native-mismatch".to_string()),
                 destination_policy: FetchDestinationPolicy::AllowPrivate,
+                cancellation: None,
             },
         );
 

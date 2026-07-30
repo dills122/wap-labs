@@ -6,7 +6,7 @@ use crate::request_meta::details_with_request_id;
 use crate::wbxml::decode_wbxml_for_content_type;
 use crate::{
     EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming,
-    FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
+    FETCH_ERROR_CODE_CANCELLED, FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
 };
 
 /// Builds the shared shape of every failed `FetchDeckResponse`.
@@ -35,6 +35,20 @@ fn error_response(
         },
         engine_deck_input: None,
     }
+}
+
+pub(crate) fn cancelled_response(url: String, request_id: Option<&str>) -> FetchDeckResponse {
+    error_response(
+        0,
+        url,
+        "text/plain".to_string(),
+        FetchErrorInfo {
+            code: FETCH_ERROR_CODE_CANCELLED.to_string(),
+            message: "Fetch was cancelled".to_string(),
+            details: details_with_request_id(request_id, None),
+        },
+        0.0,
+    )
 }
 
 pub(crate) fn transport_unavailable_response(

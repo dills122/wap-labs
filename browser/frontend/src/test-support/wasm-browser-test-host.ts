@@ -50,6 +50,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
   const client: TauriHostClient = {
     health: async () => 'waves-browser-test-host:ok',
     fetchDeck,
+    cancelFetch: async () => false,
     engineLoadDeck: async ({ wmlXml }) => {
       engine.loadDeck(wmlXml);
       return snapshot();

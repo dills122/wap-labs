@@ -40,6 +40,7 @@ export type NavigationErrorKind = 'network' | 'parse';
 
 export interface NavigationHostClient {
   fetchDeck(request: FetchRequest): Promise<FetchResponse>;
+  cancelFetch(requestId: string): Promise<boolean>;
   engineLoadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
   engineLoadDeckContextFrame(request: LoadDeckContextRequest): Promise<EngineFrame>;
   engineRender(): Promise<RenderList>;
@@ -98,7 +99,7 @@ export interface NavigationStateMachine {
   isNavigationInFlight(): boolean;
   isExternalIntentQuarantined(intentUrl: string, requestPolicy?: FetchRequestPolicy): boolean;
   quarantineExternalIntent(intentUrl: string, requestPolicy?: FetchRequestPolicy): void;
-  cancelPendingNavigation(): void;
+  cancelPendingNavigation(): Promise<void> | undefined;
   getSessionState(): HostSessionState;
   getHistoryState(): HostHistoryState;
 }
@@ -122,6 +123,16 @@ export const createNavigationStateMachine = (
   // ownership, so stale async completions cannot reclaim it.
   let activeNavigationGeneration = 0;
   let navigationInFlightGeneration: number | undefined;
+  let navigationRequestSequence = 0;
+  let pendingHostCancellation: Promise<void> | undefined;
+  let activeTransportOperation:
+    | {
+        generation: number;
+        identity: NavigationOperationIdentity;
+        requestId: string;
+        promise: Promise<EngineRuntimeSnapshot | null>;
+      }
+    | undefined;
   let observedBrowserContextEpoch: number | undefined;
   // WML-205 keeps a failed task's engine state and intent intact. This
   // browser-only record prevents that preserved intent from becoming an
@@ -181,6 +192,21 @@ export const createNavigationStateMachine = (
     navigationInFlightGeneration === activeNavigationGeneration;
 
   const beginNavigationOperation = (): number => {
+    const superseded = activeTransportOperation;
+    activeTransportOperation = undefined;
+    if (superseded) {
+      pendingHostCancellation = hostClient
+        .cancelFetch(superseded.requestId)
+        .then(() => undefined)
+        .catch((error: unknown) => {
+          hooks.onStateEvent?.('cancel-fetch-failed', {
+            requestId: superseded.requestId,
+            message: error instanceof Error ? error.message : String(error)
+          });
+        });
+    } else {
+      pendingHostCancellation = undefined;
+    }
     activeNavigationGeneration += 1;
     navigationInFlightGeneration = activeNavigationGeneration;
     return activeNavigationGeneration;
@@ -189,6 +215,9 @@ export const createNavigationStateMachine = (
   const finishNavigationOperation = (generation: number): void => {
     if (isCurrentNavigation(generation) && navigationInFlightGeneration === generation) {
       navigationInFlightGeneration = undefined;
+    }
+    if (activeTransportOperation?.generation === generation) {
+      activeTransportOperation = undefined;
     }
   };
 
@@ -217,9 +246,13 @@ export const createNavigationStateMachine = (
     });
   };
 
-  const cancelPendingNavigation = (): void => {
-    activeNavigationGeneration += 1;
+  const cancelPendingNavigation = (): Promise<void> | undefined => {
+    beginNavigationOperation();
     navigationInFlightGeneration = undefined;
+    if (hostSessionState.navigationStatus === 'loading') {
+      mergeSessionState({ navigationStatus: 'idle', lastError: undefined });
+    }
+    return pendingHostCancellation;
   };
 
   const externalIntentRequestIdentity = (
@@ -296,7 +329,8 @@ export const createNavigationStateMachine = (
 
   const loadTransportUrlForGeneration = async (
     options: LoadTransportOptions,
-    generation: number
+    generation: number,
+    requestId: string
   ): Promise<EngineRuntimeSnapshot | null> => {
     const requestedUrl = options.url.trim();
     const navigationUrl = options.navigationUrl?.trim() || requestedUrl;
@@ -346,6 +380,7 @@ export const createNavigationStateMachine = (
       headers: options.headers,
       timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
       retries: WAVES_CONFIG.transportFetchRetries,
+      requestId,
       requestPolicy
     });
     if (!isCurrentNavigation(generation)) {
@@ -483,7 +518,8 @@ export const createNavigationStateMachine = (
             pushHistory: true,
             requestPolicy: nextRequestPolicy
           },
-          generation
+          generation,
+          requestId
         );
         if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
           break;
@@ -504,12 +540,44 @@ export const createNavigationStateMachine = (
   const loadTransportUrl = async (
     options: LoadTransportOptions
   ): Promise<EngineRuntimeSnapshot | null> => {
-    const generation = beginNavigationOperation();
-    try {
-      return await loadTransportUrlForGeneration(options, generation);
-    } finally {
-      finishNavigationOperation(generation);
+    const identity = navigationOperationIdentity(options, hostSessionState);
+    if (
+      activeTransportOperation &&
+      navigationOperationIdentitiesEqual(activeTransportOperation.identity, identity)
+    ) {
+      hooks.onStateEvent?.('navigation-coalesced', {
+        requestedUrl: identity.requestedUrl,
+        requestId: activeTransportOperation.requestId
+      });
+      return activeTransportOperation.promise;
     }
+    const generation = beginNavigationOperation();
+    navigationRequestSequence += 1;
+    const requestId = `waves-navigation-${generation}-${navigationRequestSequence}`;
+    let resolveOperation: (value: EngineRuntimeSnapshot | null) => void = () => undefined;
+    let rejectOperation: (reason: unknown) => void = () => undefined;
+    const operationPromise = new Promise<EngineRuntimeSnapshot | null>((resolve, reject) => {
+      resolveOperation = resolve;
+      rejectOperation = reject;
+    });
+    activeTransportOperation = { generation, identity, requestId, promise: operationPromise };
+    void (async () => {
+      try {
+        if (pendingHostCancellation) {
+          await pendingHostCancellation;
+        }
+        if (!isCurrentNavigation(generation)) {
+          resolveOperation(null);
+          return;
+        }
+        resolveOperation(await loadTransportUrlForGeneration(options, generation, requestId));
+      } catch (error) {
+        rejectOperation(error);
+      } finally {
+        finishNavigationOperation(generation);
+      }
+    })();
+    return operationPromise;
   };
 
   const applyEngineKey = async (
@@ -575,6 +643,12 @@ export const createNavigationStateMachine = (
   const navigateBackWithFallback = async (): Promise<BackNavigationMode> => {
     const generation = beginNavigationOperation();
     try {
+      if (pendingHostCancellation) {
+        await pendingHostCancellation;
+      }
+      if (!isCurrentNavigation(generation)) {
+        return 'none';
+      }
       const afterFrame = await hostClient.engineNavigateBackFrame();
       if (!isCurrentNavigation(generation)) {
         return 'none';
@@ -618,7 +692,8 @@ export const createNavigationStateMachine = (
               pushHistory: false,
               requestPolicy: previous.requestPolicy
             },
-            generation
+            generation,
+            `waves-navigation-${generation}-history`
           );
           if (prevSnapshot && isCurrentNavigation(generation)) {
             let restoredSnapshot = prevSnapshot;
@@ -708,6 +783,71 @@ const historyNavigationUrl = (url: string, activeCardId?: string): string => {
 
 const sameHistoryDocument = (left: string, right: string): boolean =>
   left.split('#', 1)[0] === right.split('#', 1)[0];
+
+interface NavigationOperationIdentity {
+  requestedUrl: string;
+  navigationUrl: string;
+  method: string;
+  source: HostNavigationSource;
+  followExternalIntent: boolean;
+  pushHistory: boolean;
+  headers?: Record<string, string>;
+  requestPolicy?: FetchRequestPolicy;
+}
+
+const navigationOperationIdentity = (
+  options: LoadTransportOptions,
+  session: HostSessionState
+): NavigationOperationIdentity => {
+  const requestedUrl = options.url.trim();
+  const defaultRequestPolicy = defaultRequestPolicyForSource(
+    options.source,
+    requestedUrl,
+    session.finalUrl
+  );
+  const mergedRequestPolicy = options.requestPolicy
+    ? { ...defaultRequestPolicy, ...options.requestPolicy }
+    : defaultRequestPolicy;
+  const requestPolicy = withSubmissionSourceContentType(mergedRequestPolicy, session.contentType);
+  return {
+    requestedUrl,
+    navigationUrl: options.navigationUrl?.trim() || requestedUrl,
+    method: resolveTransportMethod(options.method, requestPolicy),
+    source: options.source,
+    followExternalIntent: options.followExternalIntent,
+    pushHistory: options.pushHistory ?? true,
+    headers: options.headers,
+    requestPolicy
+  };
+};
+
+const navigationOperationIdentitiesEqual = (
+  a: NavigationOperationIdentity,
+  b: NavigationOperationIdentity
+): boolean =>
+  a.requestedUrl === b.requestedUrl &&
+  a.navigationUrl === b.navigationUrl &&
+  a.method === b.method &&
+  a.source === b.source &&
+  a.followExternalIntent === b.followExternalIntent &&
+  a.pushHistory === b.pushHistory &&
+  stringRecordsEqual(a.headers, b.headers) &&
+  requestPolicyEqual(a.requestPolicy, b.requestPolicy);
+
+const stringRecordsEqual = (a?: Record<string, string>, b?: Record<string, string>): boolean => {
+  if (a === b) {
+    return true;
+  }
+  if (!a || !b) {
+    return false;
+  }
+  const aKeys = Object.keys(a).sort();
+  const bKeys = Object.keys(b).sort();
+  return (
+    aKeys.length === bKeys.length &&
+    aKeys.every((key, index) => key === bKeys[index] && a[key] === b[key])
+  );
+};
 
 export const defaultRequestPolicyForSource = (
   source: HostNavigationSource,

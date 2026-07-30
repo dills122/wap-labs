@@ -177,6 +177,12 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the cancel_fetch command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-cancel-fetch",
+          "markdownDescription": "Enables the cancel_fetch command without any pre-configured scope."
+        },
+        {
           "description": "Enables the engine_advance_time_ms command without any pre-configured scope.",
           "type": "string",
           "const": "allow-engine-advance-time-ms",
@@ -391,6 +397,12 @@
           "type": "string",
           "const": "allow-health",
           "markdownDescription": "Enables the health command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the cancel_fetch command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-cancel-fetch",
+          "markdownDescription": "Denies the cancel_fetch command without any pre-configured scope."
         },
         {
           "description": "Denies the engine_advance_time_ms command without any pre-configured scope.",

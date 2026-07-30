@@ -5,6 +5,11 @@ fn borrowed_state(state: &AppState) -> tauri::State<'_, AppState> {
     unsafe { std::mem::transmute::<&AppState, tauri::State<'_, AppState>>(state) }
 }
 
+fn borrowed_fetch_state(state: &HostFetchState) -> tauri::State<'_, HostFetchState> {
+    // `tauri::State<'_, T>` is a tuple wrapper around `&T`; tests can borrow it directly.
+    unsafe { std::mem::transmute::<&HostFetchState, tauri::State<'_, HostFetchState>>(state) }
+}
+
 #[test]
 fn tauri_command_wrappers_drive_managed_state_roundtrip() {
     let state = AppState::default();
@@ -212,15 +217,20 @@ fn tauri_viewport_command_returns_typed_range_error_before_mutation() {
 
 #[test]
 fn tauri_fetch_deck_command_executes_through_async_boundary() {
-    let response = tauri::async_runtime::block_on(super::super::fetch_deck(FetchDeckRequest {
-        url: "http://example.test".to_string(),
-        method: Some("POST".to_string()),
-        headers: None,
-        timeout_ms: None,
-        retries: None,
-        request_id: Some("async-fetch-command".to_string()),
-        request_policy: None,
-    }));
+    let fetch_state = HostFetchState::default();
+    let response = tauri::async_runtime::block_on(super::super::fetch_deck(
+        borrowed_fetch_state(&fetch_state),
+        FetchDeckRequest {
+            url: "http://example.test".to_string(),
+            method: Some("POST".to_string()),
+            headers: None,
+            timeout_ms: None,
+            retries: None,
+            request_id: Some("async-fetch-command".to_string()),
+            request_policy: None,
+        },
+    ))
+    .expect("fetch command should return its transport response");
     assert!(!response.ok);
     assert_eq!(
         response
@@ -230,6 +240,61 @@ fn tauri_fetch_deck_command_executes_through_async_boundary() {
             .and_then(|details| details.get("requestId"))
             .and_then(|value| value.as_str()),
         Some("async-fetch-command")
+    );
+}
+
+#[test]
+fn host_fetch_admission_is_bounded_and_cancel_command_marks_active_work() {
+    let state = HostFetchState::default();
+    let active = state.register("navigation-1");
+
+    assert!(super::super::cancel_fetch(
+        borrowed_fetch_state(&state),
+        "navigation-1".to_string()
+    ));
+    assert!(active.cancellation.is_cancelled());
+    assert!(!super::super::cancel_fetch(
+        borrowed_fetch_state(&state),
+        "missing".to_string()
+    ));
+
+    let first = state
+        .admission
+        .clone()
+        .try_acquire_owned()
+        .expect("first fetch should be admitted");
+    let second = state
+        .admission
+        .clone()
+        .try_acquire_owned()
+        .expect("replacement fetch should be admitted");
+    assert!(state.admission.clone().try_acquire_owned().is_err());
+    drop(first);
+    assert!(state.admission.clone().try_acquire_owned().is_ok());
+    drop(second);
+}
+
+#[test]
+fn cancellable_host_fetch_stops_before_transport_work_when_pre_cancelled() {
+    let cancellation = FetchCancellationToken::default();
+    cancellation.cancel();
+    let response = fetch_deck_cancellable(
+        FetchDeckRequest {
+            url: "http://example.test/hung.wml".to_string(),
+            method: Some("GET".to_string()),
+            headers: None,
+            timeout_ms: Some(30_000),
+            retries: Some(2),
+            request_id: Some("cancelled-before-admission".to_string()),
+            request_policy: None,
+        },
+        cancellation,
+    );
+
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|error| error.code.as_str()),
+        Some("CANCELLED")
     );
 }
 

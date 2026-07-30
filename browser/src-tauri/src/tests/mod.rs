@@ -20,16 +20,17 @@ pub(super) use crate::engine_bridge::{
     command_engine_navigate_back, command_engine_navigate_to_card, command_engine_render,
     command_engine_set_viewport_cols, command_engine_snapshot, force_next_frame_failure, AppState,
 };
-pub(super) use crate::fetch_host::fetch_deck;
 pub(super) use crate::fetch_host::{
     default_fetch_destination_policy, default_fetch_transport_fallback,
     default_fetch_transport_profile, ensure_request_id, next_request_id,
     HostFetchTransportFallback, HostFetchTransportProfile,
 };
+pub(super) use crate::fetch_host::{fetch_deck, fetch_deck_cancellable};
 pub(super) use crate::waves_config;
+pub(super) use crate::HostFetchState;
 pub(super) use lowband_transport_rust::{
-    EngineDeckInputPayload, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
-    FetchRequestPolicy, FetchTiming,
+    EngineDeckInputPayload, FetchCancellationToken, FetchDeckRequest, FetchDeckResponse,
+    FetchDestinationPolicy, FetchRequestPolicy, FetchTiming,
 };
 pub(super) use std::sync::{Mutex, OnceLock};
 pub(super) use wavenav_engine::WmlEngine;

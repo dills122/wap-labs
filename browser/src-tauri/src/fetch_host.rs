@@ -1,7 +1,8 @@
 use crate::waves_config;
 use lowband_transport_rust::{
-    fetch_deck_in_process, fetch_deck_in_process_with_profile, FetchDeckRequest, FetchDeckResponse,
-    FetchDestinationPolicy, FetchRequestPolicy, FetchTransportProfile,
+    fetch_deck_in_process, fetch_deck_in_process_cancellable, fetch_deck_in_process_with_profile,
+    fetch_deck_in_process_with_profile_cancellable, FetchCancellationToken, FetchDeckRequest,
+    FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy, FetchTransportProfile,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -18,6 +19,7 @@ pub enum HostFetchTransportFallback {
     GatewayBridged,
 }
 
+#[cfg_attr(not(test), allow(dead_code))]
 pub fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
     ensure_request_id(&mut request);
     apply_default_destination_policy(&mut request);
@@ -25,6 +27,27 @@ pub fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
         Some(profile) => fetch_deck_in_process_with_profile(request, profile),
         None => fetch_deck_in_process(request),
     })
+}
+
+pub fn fetch_deck_cancellable(
+    mut request: FetchDeckRequest,
+    cancellation: FetchCancellationToken,
+) -> FetchDeckResponse {
+    ensure_request_id(&mut request);
+    apply_default_destination_policy(&mut request);
+    let fetch_cancellation = cancellation.clone();
+    fetch_deck_with_transport_executor_inner(
+        request,
+        Some(&cancellation),
+        move |request, profile| match profile {
+            Some(profile) => fetch_deck_in_process_with_profile_cancellable(
+                request,
+                profile,
+                fetch_cancellation.clone(),
+            ),
+            None => fetch_deck_in_process_cancellable(request, fetch_cancellation.clone()),
+        },
+    )
 }
 
 pub(crate) fn next_request_id() -> String {
@@ -107,14 +130,29 @@ pub fn apply_default_destination_policy(request: &mut FetchDeckRequest) {
     }
 }
 
+#[cfg_attr(not(test), allow(dead_code))]
 pub(crate) fn fetch_deck_with_transport_executor(
     request: FetchDeckRequest,
+    fetch_impl: impl Fn(FetchDeckRequest, Option<FetchTransportProfile>) -> FetchDeckResponse,
+) -> FetchDeckResponse {
+    fetch_deck_with_transport_executor_inner(request, None, fetch_impl)
+}
+
+fn fetch_deck_with_transport_executor_inner(
+    request: FetchDeckRequest,
+    cancellation: Option<&FetchCancellationToken>,
     fetch_impl: impl Fn(FetchDeckRequest, Option<FetchTransportProfile>) -> FetchDeckResponse,
 ) -> FetchDeckResponse {
     let profile = default_fetch_transport_profile();
     let fallback = default_fetch_transport_fallback();
     let profile_override = resolve_transport_profile_override(profile, &request.url);
     let response = fetch_impl(request.clone(), profile_override);
+    if cancellation.is_some_and(FetchCancellationToken::is_cancelled) {
+        return lowband_transport_rust::cancelled_fetch_response(
+            request.url,
+            request.request_id.as_deref(),
+        );
+    }
     if should_retry_with_gateway_fallback(&request, &response, profile_override, fallback) {
         return fetch_impl(request, Some(FetchTransportProfile::GatewayBridged));
     }

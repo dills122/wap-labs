@@ -1,5 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc,
+};
 use ts_rs::TS;
 
 mod fetch_body;
@@ -30,6 +34,27 @@ pub use wbxml::preflight_wbxml_decoder;
 pub(crate) const MAX_URI_OCTETS: usize = 1024;
 pub(crate) const MAX_RESPONSE_BODY_BYTES: usize = 512 * 1024;
 pub(crate) const FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE: &str = "PAYLOAD_TOO_LARGE";
+pub(crate) const FETCH_ERROR_CODE_CANCELLED: &str = "CANCELLED";
+
+/// Cooperative cancellation shared with host adapters.
+///
+/// Blocking socket calls still obey their configured timeout, but cancellation
+/// is observed before another attempt/fallback and before a completed response
+/// is decoded or committed by the caller.
+#[derive(Clone, Debug, Default)]
+pub struct FetchCancellationToken {
+    cancelled: Arc<AtomicBool>,
+}
+
+impl FetchCancellationToken {
+    pub fn cancel(&self) {
+        self.cancelled.store(true, Ordering::Release);
+    }
+
+    pub fn is_cancelled(&self) -> bool {
+        self.cancelled.load(Ordering::Acquire)
+    }
+}
 
 #[derive(Clone, Debug, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
@@ -161,7 +186,7 @@ pub struct FetchTiming {
 #[serde(rename_all = "camelCase")]
 pub struct FetchErrorInfo {
     #[ts(
-        type = "\"INVALID_REQUEST\" | \"GATEWAY_TIMEOUT\" | \"UNSUPPORTED_CONTENT_TYPE\" | \"WBXML_DECODE_FAILED\" | \"PROTOCOL_ERROR\" | \"PAYLOAD_TOO_LARGE\" | \"TRANSPORT_UNAVAILABLE\""
+        type = "\"INVALID_REQUEST\" | \"GATEWAY_TIMEOUT\" | \"UNSUPPORTED_CONTENT_TYPE\" | \"WBXML_DECODE_FAILED\" | \"PROTOCOL_ERROR\" | \"PAYLOAD_TOO_LARGE\" | \"TRANSPORT_UNAVAILABLE\" | \"CANCELLED\""
     )]
     pub code: String,
     pub message: String,
@@ -196,7 +221,18 @@ pub struct FetchDeckResponse {
 }
 
 pub fn fetch_deck_in_process(request: FetchDeckRequest) -> FetchDeckResponse {
-    fetch_deck_in_process_impl(request, None)
+    fetch_deck_in_process_impl(request, None, None)
+}
+
+pub fn fetch_deck_in_process_cancellable(
+    request: FetchDeckRequest,
+    cancellation: FetchCancellationToken,
+) -> FetchDeckResponse {
+    fetch_deck_in_process_impl(request, None, Some(cancellation))
+}
+
+pub fn cancelled_fetch_response(url: String, request_id: Option<&str>) -> FetchDeckResponse {
+    responses::cancelled_response(url, request_id)
 }
 
 pub fn fetch_deck_in_process_with_profile(
@@ -209,6 +245,22 @@ pub fn fetch_deck_in_process_with_profile(
             profile,
             gateway_endpoint: None,
         }),
+        None,
+    )
+}
+
+pub fn fetch_deck_in_process_with_profile_cancellable(
+    request: FetchDeckRequest,
+    profile: FetchTransportProfile,
+    cancellation: FetchCancellationToken,
+) -> FetchDeckResponse {
+    fetch_deck_in_process_impl(
+        request,
+        Some(FetchTransportOptions {
+            profile,
+            gateway_endpoint: None,
+        }),
+        Some(cancellation),
     )
 }
 
@@ -217,7 +269,7 @@ pub fn fetch_deck_in_process_with_options(
     request: FetchDeckRequest,
     options: FetchTransportOptions,
 ) -> FetchDeckResponse {
-    fetch_deck_in_process_impl(request, Some(options))
+    fetch_deck_in_process_impl(request, Some(options), None)
 }
 
 #[cfg(test)]

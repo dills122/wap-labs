@@ -16,6 +16,7 @@ export interface ShellEventBindingActions {
   fetchUrl(): Promise<void>;
   fetchUrlEnter(event: Event): Promise<void>;
   reload(): Promise<void>;
+  stopNavigation(): Promise<void>;
   changeMode(): Promise<void>;
   selectLocalExample(): Promise<void>;
   loadLocalExample(): Promise<void>;
@@ -59,17 +60,26 @@ export class ShellEventBindings {
     this.bindButton('#btn-load-context', runAction('load-raw-wml', actions.loadRawWml));
     this.bindButton('#btn-fetch-url', runAction('fetch-url', actions.fetchUrl));
     this.bindButton('#btn-reload', runAction('reload', actions.reload));
+    this.bindButton('#btn-stop-navigation', runAction('stop-navigation', actions.stopNavigation));
 
-    this.bindEvent(
-      refs.fetchUrlInput,
-      'keydown',
-      runAction('fetch-url-enter', async (event?: Event) => {
-        if (event instanceof KeyboardEvent && event.key === 'Enter') {
-          event.preventDefault();
-          await actions.fetchUrlEnter(event);
-        }
-      })
-    );
+    const fetchUrlEnter = runAction('fetch-url-enter', async (event) => {
+      if (event) {
+        await actions.fetchUrlEnter(event);
+      }
+    });
+    const stopNavigation = runAction('stop-navigation', actions.stopNavigation);
+    this.bindEvent(refs.fetchUrlInput, 'keydown', (event) => {
+      if (!(event instanceof KeyboardEvent)) {
+        return;
+      }
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        void fetchUrlEnter(event);
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        void stopNavigation(event);
+      }
+    });
 
     this.bindEvent(refs.runModeSelectEl, 'change', runAction('change-mode', actions.changeMode));
     this.bindEvent(

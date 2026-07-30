@@ -3,6 +3,8 @@ use crate::engine_bridge::AppState;
 #[cfg(not(test))]
 use crate::waves_config;
 #[cfg(not(test))]
+use crate::HostFetchState;
+#[cfg(not(test))]
 use lowband_transport_rust::preflight_wbxml_decoder;
 #[cfg(not(test))]
 use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
@@ -129,6 +131,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
 pub fn run() {
     tauri::Builder::default()
         .manage(AppState::default())
+        .manage(HostFetchState::default())
         .menu(build_app_menu)
         .on_menu_event(|app, event| {
             if event.id() == waves_config::MENU_CHECK_FOR_UPDATES_ID {

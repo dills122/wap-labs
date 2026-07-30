@@ -27,7 +27,126 @@ const load = (machine: ReturnType<typeof createNavigationStateMachine>, url: str
     followExternalIntent: false
   });
 
+const fetchOkFor = (url: string): FetchResponse => {
+  const response = fetchOk({ finalUrl: url });
+  return {
+    ...response,
+    engineDeckInput: response.engineDeckInput
+      ? { ...response.engineDeckInput, baseUrl: url }
+      : undefined
+  };
+};
+
 describe('NavigationStateMachine concurrency ownership', () => {
+  it('coalesces eight rapid identical loads into one active fetch', async () => {
+    const pendingFetch = deferred<FetchResponse>();
+    const fetchDeck = vi.fn(() => pendingFetch.promise);
+    const cancelFetch = vi.fn(async () => true);
+    const engineLoadDeckContextFrame = vi.fn(async () => frame({ activeCardId: 'loaded' }));
+    const machine = createNavigationStateMachine(
+      createHostClientMock({ fetchDeck, cancelFetch, engineLoadDeckContextFrame }),
+      'http://seed.test'
+    );
+
+    const loads = Array.from({ length: 8 }, () =>
+      load(machine, 'http://example.test/coalesced.wml')
+    );
+    await Promise.resolve();
+
+    expect(fetchDeck).toHaveBeenCalledTimes(1);
+    expect(cancelFetch).not.toHaveBeenCalled();
+    expect(machine.isNavigationInFlight()).toBe(true);
+
+    pendingFetch.resolve(fetchOk({ finalUrl: 'http://example.test/coalesced.wml' }));
+    await expect(Promise.all(loads)).resolves.toHaveLength(8);
+    expect(engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a superseded fetch before admitting a changed URL and ignores every stale projection', async () => {
+    const staleFetch = deferred<FetchResponse>();
+    const cancelFetch = vi.fn(async () => true);
+    const transportUrls: Array<string | null> = [];
+    const snapshots: string[] = [];
+    const errors: string[] = [];
+    const engineLoadDeckContextFrame = vi.fn(async (request) =>
+      frame({ activeCardId: request.baseUrl.includes('good') ? 'good' : 'stale' })
+    );
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: vi.fn((request) =>
+          request.url.includes('stale')
+            ? staleFetch.promise
+            : Promise.resolve(fetchOkFor(request.url))
+        ),
+        cancelFetch,
+        engineLoadDeckContextFrame
+      }),
+      'http://seed.test',
+      {
+        onTransportResponse: (response) => transportUrls.push(response?.finalUrl ?? null),
+        onSnapshot: (snapshot) => snapshots.push(snapshot.activeCardId ?? ''),
+        onNavigationError: (message) => errors.push(message)
+      }
+    );
+
+    const staleLoad = load(machine, 'http://example.test/stale.wml');
+    await Promise.resolve();
+    const goodLoad = load(machine, 'http://example.test/good.wml');
+    await goodLoad;
+
+    expect(cancelFetch).toHaveBeenCalledTimes(1);
+    expect(cancelFetch).toHaveBeenCalledWith(expect.stringMatching(/^waves-navigation-/));
+    expect(machine.getSessionState().finalUrl).toBe('http://example.test/good.wml');
+    expect(machine.getHistoryState().entries.map((entry) => entry.url)).toEqual([
+      'http://example.test/good.wml'
+    ]);
+
+    staleFetch.resolve({
+      ...fetchOk({ finalUrl: 'http://example.test/stale.wml' }),
+      ok: false,
+      error: { code: 'GATEWAY_TIMEOUT', message: 'stale timeout' }
+    });
+    await staleLoad;
+
+    expect(transportUrls).toEqual(['http://example.test/good.wml']);
+    expect(snapshots).toEqual(['good']);
+    expect(errors).toEqual([]);
+    expect(engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops a hung load and admits a known-good recovery load', async () => {
+    const hungFetch = deferred<FetchResponse>();
+    const cancelFetch = vi.fn(async () => true);
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: vi.fn((request) =>
+          request.url.includes('hung')
+            ? hungFetch.promise
+            : Promise.resolve(fetchOkFor(request.url))
+        ),
+        cancelFetch,
+        engineLoadDeckContextFrame: vi.fn(async (request) =>
+          frame({ activeCardId: request.baseUrl.includes('good') ? 'good' : 'hung' })
+        )
+      }),
+      'http://seed.test'
+    );
+
+    const hungLoad = load(machine, 'http://example.test/hung.wml');
+    await Promise.resolve();
+    await machine.cancelPendingNavigation();
+
+    expect(cancelFetch).toHaveBeenCalledTimes(1);
+    expect(machine.getSessionState().navigationStatus).toBe('idle');
+    await expect(load(machine, 'http://example.test/good.wml')).resolves.toMatchObject({
+      activeCardId: 'good'
+    });
+
+    hungFetch.resolve(fetchOk({ finalUrl: 'http://example.test/hung.wml' }));
+    await expect(hungLoad).resolves.toBeNull();
+    expect(machine.getSessionState().finalUrl).toBe('http://example.test/good.wml');
+  });
+
   it('does not begin key or timer engine work while a transport navigation is in flight', async () => {
     const pendingFetch = deferred<FetchResponse>();
     const engineHandleKeyFrame = vi.fn(async () => frame({ activeCardId: 'stale-key' }));
@@ -153,6 +272,7 @@ describe('NavigationStateMachine concurrency ownership', () => {
   it('Back cancels a pending fetch before awaiting or applying engine history state', async () => {
     const pendingFetch = deferred<FetchResponse>();
     const pendingBack = deferred<EngineFrame>();
+    const cancelFetch = vi.fn(async () => true);
     const engineLoadDeckContextFrame = vi.fn(async (request) =>
       frame({
         activeCardId: request.baseUrl.includes('/one.wml') ? 'one' : 'two',
@@ -169,6 +289,7 @@ describe('NavigationStateMachine concurrency ownership', () => {
             ? Promise.resolve(fetchOk({ finalUrl: request.url }))
             : pendingFetch.promise;
         }),
+        cancelFetch,
         engineLoadDeckContextFrame,
         engineNavigateBackFrame: vi.fn(() => pendingBack.promise)
       }),
@@ -181,6 +302,8 @@ describe('NavigationStateMachine concurrency ownership', () => {
     await Promise.resolve();
     const back = machine.navigateBackWithFallback();
     await Promise.resolve();
+
+    expect(cancelFetch).toHaveBeenCalledTimes(1);
 
     pendingFetch.resolve(fetchOk({ finalUrl: 'http://example.test/stale.wml' }));
     await interruptedLoad;
