@@ -1,4 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { ApplicationStateLoadResult } from '../../../contracts/application-state';
+import {
+  MemoryApplicationStateStore,
+  configureApplicationStateStore,
+  defaultApplicationStateV1
+} from './application-state-store';
 import {
   TUTORIAL_EXAMPLE_KEY,
   WELCOME_STARTUP_STORAGE_KEY,
@@ -73,6 +79,7 @@ describe('bindWelcomeHelpControls', () => {
   afterEach(() => {
     document.body.innerHTML = '';
     localStorage.clear();
+    configureApplicationStateStore(new MemoryApplicationStateStore());
   });
 
   it('shows Welcome by default and lets the persistent stage control hide or restore it', () => {
@@ -93,23 +100,58 @@ describe('bindWelcomeHelpControls', () => {
     expect(refs.welcomePanelEl.hidden).toBe(false);
   });
 
-  it('persists the launch preference without removing the current-session toggle', () => {
+  it('persists the launch preference without removing the current-session toggle', async () => {
     const refs = setup();
     bindWelcomeHelpControls(refs);
 
     refs.showWelcomeOnLaunchEl.checked = false;
     refs.showWelcomeOnLaunchEl.dispatchEvent(new Event('change'));
 
-    expect(localStorage.getItem(WELCOME_STARTUP_STORAGE_KEY)).toBe('false');
+    await vi.waitFor(() => {
+      expect(localStorage.getItem(WELCOME_STARTUP_STORAGE_KEY)).toBeNull();
+    });
 
     const nextRefs = setup();
     bindWelcomeHelpControls(nextRefs);
-    expect(nextRefs.welcomePanelEl.hidden).toBe(true);
-    expect(nextRefs.welcomeToggleBtn.getAttribute('aria-expanded')).toBe('false');
+    await vi.waitFor(() => {
+      expect(nextRefs.welcomePanelEl.hidden).toBe(true);
+      expect(nextRefs.welcomeToggleBtn.getAttribute('aria-expanded')).toBe('false');
+    });
 
     nextRefs.welcomeToggleBtn.click();
     expect(nextRefs.welcomePanelEl.hidden).toBe(false);
     expect(nextRefs.showWelcomeOnLaunchEl.checked).toBe(false);
+  });
+
+  it('paints from the safe synchronous preference before an asynchronous state read finishes', async () => {
+    const refs = setup();
+    let resolveLoad: ((result: ApplicationStateLoadResult) => void) | undefined;
+    const load = new Promise<ApplicationStateLoadResult>((resolve) => {
+      resolveLoad = resolve;
+    });
+    const store = {
+      load: () => load,
+      save: vi.fn(),
+      reset: vi.fn(),
+      clear: vi.fn()
+    };
+
+    bindWelcomeHelpControls(refs, store);
+
+    expect(refs.welcomePanelEl.hidden).toBe(false);
+    const state = defaultApplicationStateV1();
+    state.onboarding.showWelcomeOnLaunch = false;
+    resolveLoad?.({
+      state,
+      status: 'loaded',
+      writeAllowed: true,
+      removedMonitorWindowState: false
+    });
+    await load;
+    await Promise.resolve();
+
+    expect(refs.welcomePanelEl.hidden).toBe(true);
+    expect(refs.showWelcomeOnLaunchEl.checked).toBe(false);
   });
 
   it('dismisses Welcome when either header mode segment is chosen', () => {

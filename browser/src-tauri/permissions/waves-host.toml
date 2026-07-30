@@ -7,6 +7,10 @@ identifier = "waves-host-commands"
 description = "Allows the browser frontend to invoke the complete generated Waves host command contract."
 commands.allow = [
   "health",
+  "application_state_load",
+  "application_state_save",
+  "application_state_reset",
+  "application_state_clear_component",
   "fetch_deck",
   "cancel_fetch",
   "engine_load_deck",

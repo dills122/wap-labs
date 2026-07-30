@@ -4177,6 +4177,7 @@ dependencies = [
  "tauri-build",
  "tokio",
  "ts-rs",
+ "url",
  "wavenav_engine",
 ]
 

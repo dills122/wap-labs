@@ -83,7 +83,7 @@ function loadCommandContract(filePath) {
   const commandNames = new Set();
   const clientMethods = new Set();
   const facadeMethods = new Set();
-  const validSources = new Set(['primitive', 'engine', 'transport']);
+  const validSources = new Set(['primitive', 'applicationState', 'engine', 'transport']);
   for (const command of contract.commands) {
     if (!command.command || !command.clientMethod || !command.response) {
       throw new Error('tauri-command-contract.json contains an incomplete command');
@@ -318,6 +318,7 @@ function createTypeOnlyImport(names, modulePath) {
 }
 
 function generateTauriClient(filePath, commands) {
+  const applicationStateImports = typeImportsFor(commands, 'applicationState');
   const engineImports = typeImportsFor(commands, 'engine');
   const transportImports = typeImportsFor(commands, 'transport');
   const methods = commands.map((command) => commandMethodSpec(command));
@@ -394,11 +395,24 @@ function generateTauriClient(filePath, commands) {
   );
 
   const statements = [
+    createTypeOnlyImport(applicationStateImports, './application-state-host'),
     createTypeOnlyImport(engineImports, './engine-host'),
     createTypeOnlyImport(transportImports, './transport-host'),
     tauriInvoke,
     tauriHostClient,
     createClient
+  ];
+
+  writeIfChanged(
+    filePath,
+    withHeader(printStatements(statements), 'node ./scripts/generate-contract-wrappers.mjs')
+  );
+}
+
+function generateApplicationStateWrapper(filePath, exportedTypes, exportedValues) {
+  const statements = [
+    exportValueFrom(exportedValues, './generated/application-state-host'),
+    exportTypeFrom(exportedTypes, './generated/application-state-host')
   ];
 
   writeIfChanged(
@@ -473,20 +487,38 @@ const generatedDir = path.join(browserRoot, 'contracts', 'generated');
 const contractsDir = path.join(browserRoot, 'contracts');
 fs.mkdirSync(contractsDir, { recursive: true });
 
+const applicationStateGeneratedPath = path.join(generatedDir, 'application-state-host.ts');
 const engineGeneratedPath = path.join(generatedDir, 'engine-host.ts');
 const transportGeneratedPath = path.join(generatedDir, 'transport-host.ts');
 const tauriClientPath = path.join(generatedDir, 'tauri-host-client.ts');
 const tauriCommandContractPath = path.join(generatedDir, 'tauri-command-contract.json');
+const applicationStateWrapperPath = path.join(contractsDir, 'application-state.ts');
 const engineWrapperPath = path.join(contractsDir, 'engine.ts');
 const transportWrapperPath = path.join(contractsDir, 'transport.ts');
 
+const applicationStateExportedTypes = collectExportedTypeNames(applicationStateGeneratedPath);
+const applicationStateExportedValues = collectExportedValueNames(applicationStateGeneratedPath);
 const engineExportedTypes = collectExportedTypeNames(engineGeneratedPath);
 const engineExportedValues = collectExportedValueNames(engineGeneratedPath);
 const transportExportedTypes = collectExportedTypeNames(transportGeneratedPath);
 const commands = loadCommandContract(tauriCommandContractPath);
+const commandApplicationStateTypes = typeImportsFor(commands, 'applicationState');
 const commandEngineTypes = typeImportsFor(commands, 'engine');
 const commandTransportTypes = typeImportsFor(commands, 'transport');
 
+ensureRequired('application-state-host.ts', applicationStateExportedTypes, [
+  'ApplicationStateLoadResult',
+  'ApplicationStateV1',
+  'ClearApplicationStateComponentRequest',
+  'SaveApplicationStateRequest'
+]);
+ensureRequired('application-state-host.ts values', applicationStateExportedValues, [
+  'APPLICATION_STATE_ALLOWED_NETWORK_SCHEMES',
+  'APPLICATION_STATE_SAFE_KEYS',
+  'APPLICATION_STATE_SCHEMA_VERSION',
+  'APPLICATION_STATE_SENSITIVE_QUERY_KEYS',
+  'DEFAULT_APPLICATION_STATE_V1'
+]);
 ensureRequired('engine-host.ts', engineExportedTypes, [
   'EngineDebugConnector',
   'EngineDebugEvent',
@@ -502,6 +534,11 @@ ensureRequired('engine-host.ts values', engineExportedValues, [
   'SCRIPT_ERROR_CATEGORY_LABELS'
 ]);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);
+ensureRequired(
+  'application-state-host.ts command types',
+  applicationStateExportedTypes,
+  commandApplicationStateTypes
+);
 ensureRequired('engine-host.ts command types', engineExportedTypes, commandEngineTypes);
 ensureRequired('transport-host.ts command types', transportExportedTypes, commandTransportTypes);
 
@@ -528,6 +565,11 @@ const engineExportedValuesWithInterfaces = collectExportedValueNames(engineGener
 const transportExportedTypesWithInterfaces = collectExportedTypeNames(transportGeneratedPath);
 
 generateTauriClient(tauriClientPath, commands);
+generateApplicationStateWrapper(
+  applicationStateWrapperPath,
+  applicationStateExportedTypes,
+  applicationStateExportedValues
+);
 generateEngineWrapper(
   engineWrapperPath,
   engineExportedTypesWithInterfaces,

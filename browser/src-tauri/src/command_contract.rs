@@ -6,6 +6,7 @@
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TypeSource {
     Primitive,
+    ApplicationState,
     Engine,
     Transport,
 }
@@ -14,6 +15,7 @@ impl TypeSource {
     pub const fn as_str(self) -> &'static str {
         match self {
             Self::Primitive => "primitive",
+            Self::ApplicationState => "applicationState",
             Self::Engine => "engine",
             Self::Transport => "transport",
         }
@@ -38,6 +40,13 @@ impl CommandType {
         Self {
             name,
             source: TypeSource::Engine,
+        }
+    }
+
+    pub const fn application_state(name: &'static str) -> Self {
+        Self {
+            name,
+            source: TypeSource::ApplicationState,
         }
     }
 
@@ -114,6 +123,30 @@ macro_rules! with_tauri_commands {
                 client: "health",
                 parameter: None,
                 response: CommandType::primitive("string"),
+                facade: None
+            };
+            application_state_load => {
+                client: "applicationStateLoad",
+                parameter: None,
+                response: CommandType::application_state("ApplicationStateLoadResult"),
+                facade: None
+            };
+            application_state_save => {
+                client: "applicationStateSave",
+                parameter: Some(CommandParameter::new("request", CommandType::application_state("SaveApplicationStateRequest"))),
+                response: CommandType::application_state("ApplicationStateV1"),
+                facade: None
+            };
+            application_state_reset => {
+                client: "applicationStateReset",
+                parameter: None,
+                response: CommandType::application_state("ApplicationStateV1"),
+                facade: None
+            };
+            application_state_clear_component => {
+                client: "applicationStateClearComponent",
+                parameter: Some(CommandParameter::new("request", CommandType::application_state("ClearApplicationStateComponentRequest"))),
+                response: CommandType::application_state("ApplicationStateV1"),
                 facade: None
             };
             fetch_deck => {

@@ -11,6 +11,58 @@
       }
     },
     {
+      "clientMethod": "applicationStateLoad",
+      "command": "application_state_load",
+      "facadeMethod": null,
+      "parameter": null,
+      "response": {
+        "name": "ApplicationStateLoadResult",
+        "source": "applicationState"
+      }
+    },
+    {
+      "clientMethod": "applicationStateSave",
+      "command": "application_state_save",
+      "facadeMethod": null,
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "SaveApplicationStateRequest",
+          "source": "applicationState"
+        }
+      },
+      "response": {
+        "name": "ApplicationStateV1",
+        "source": "applicationState"
+      }
+    },
+    {
+      "clientMethod": "applicationStateReset",
+      "command": "application_state_reset",
+      "facadeMethod": null,
+      "parameter": null,
+      "response": {
+        "name": "ApplicationStateV1",
+        "source": "applicationState"
+      }
+    },
+    {
+      "clientMethod": "applicationStateClearComponent",
+      "command": "application_state_clear_component",
+      "facadeMethod": null,
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "ClearApplicationStateComponentRequest",
+          "source": "applicationState"
+        }
+      },
+      "response": {
+        "name": "ApplicationStateV1",
+        "source": "applicationState"
+      }
+    },
+    {
       "clientMethod": "fetchDeck",
       "command": "fetch_deck",
       "facadeMethod": {
