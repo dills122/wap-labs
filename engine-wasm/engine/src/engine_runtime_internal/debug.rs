@@ -160,7 +160,7 @@ impl WmlEngine {
         };
 
         let mut variables: Vec<_> = self.vars.iter().collect();
-        variables.sort_by(|(left, _), (right, _)| left.cmp(right));
+        variables.sort_by_key(|(name, _)| *name);
         let total_variables = variables.len();
         let runtime_vars = variables
             .into_iter()
