@@ -15,7 +15,7 @@ pub use engine::{
     EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
     EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
     EngineFocusTargetKind, EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey,
-    EnginePresentationFrame, EngineSelectionState, EngineViewport,
+    EnginePresentationFrame, EngineSelectionState, EngineViewport, EngineViewportError,
 };
 
 #[derive(Clone, Debug, Deserialize, TS)]
@@ -105,6 +105,41 @@ pub struct NavigateToCardRequest {
 #[serde(rename_all = "camelCase")]
 pub struct SetViewportColsRequest {
     pub cols: usize,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, TS)]
+#[serde(tag = "type", rename_all = "kebab-case")]
+pub enum EngineCommandError {
+    InvalidViewport {
+        #[serde(rename = "requestedCols")]
+        requested_cols: String,
+        #[serde(rename = "minCols")]
+        min_cols: u32,
+        #[serde(rename = "maxCols")]
+        max_cols: u32,
+        message: String,
+    },
+    EngineStateUnavailable {
+        message: String,
+    },
+}
+
+impl From<engine::EngineViewportError> for EngineCommandError {
+    fn from(error: engine::EngineViewportError) -> Self {
+        match error {
+            engine::EngineViewportError::InvalidViewport {
+                requested_cols,
+                min_cols,
+                max_cols,
+                message,
+            } => Self::InvalidViewport {
+                requested_cols,
+                min_cols,
+                max_cols,
+                message,
+            },
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, TS)]

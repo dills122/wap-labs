@@ -6,13 +6,19 @@ pub(super) use crate::contract_types::{
     ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 pub(super) use crate::engine_bridge::{
-    apply_advance_time_ms, apply_clear_external_navigation_intent, apply_engine_snapshot,
-    apply_handle_key, apply_load_deck, apply_load_deck_context, apply_navigate_back,
-    apply_navigate_to_card, apply_render, apply_set_viewport_cols, command_engine_advance_time_ms,
-    command_engine_clear_external_navigation_intent, command_engine_handle_key,
-    command_engine_load_deck, command_engine_load_deck_context, command_engine_navigate_back,
-    command_engine_navigate_to_card, command_engine_render, command_engine_set_viewport_cols,
-    command_engine_snapshot, AppState,
+    apply_advance_time_ms, apply_advance_time_ms_frame, apply_begin_focused_input_edit_frame,
+    apply_begin_focused_select_edit_frame, apply_cancel_focused_input_edit_frame,
+    apply_cancel_focused_select_edit_frame, apply_clear_external_navigation_intent,
+    apply_clear_external_navigation_intent_frame, apply_commit_focused_input_edit_frame,
+    apply_commit_focused_select_edit_frame, apply_engine_snapshot, apply_handle_input_frame,
+    apply_handle_key, apply_handle_key_frame, apply_load_deck, apply_load_deck_context,
+    apply_load_deck_context_frame, apply_move_focused_select_edit_frame, apply_navigate_back,
+    apply_navigate_back_frame, apply_navigate_to_card, apply_navigate_to_card_frame, apply_render,
+    apply_set_focused_input_edit_draft_frame, apply_set_viewport_cols,
+    command_engine_advance_time_ms, command_engine_clear_external_navigation_intent,
+    command_engine_handle_key, command_engine_load_deck, command_engine_load_deck_context,
+    command_engine_navigate_back, command_engine_navigate_to_card, command_engine_render,
+    command_engine_set_viewport_cols, command_engine_snapshot, force_next_frame_failure, AppState,
 };
 pub(super) use crate::fetch_host::fetch_deck;
 pub(super) use crate::fetch_host::{

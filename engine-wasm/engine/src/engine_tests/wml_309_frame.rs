@@ -99,10 +99,47 @@ fn wml_309_frame_identity_is_pure_and_changes_with_visible_focus_and_viewport() 
     let focused = engine.render_frame().expect("focused frame should render");
     assert_ne!(initial.frame_id, focused.frame_id);
 
-    engine.set_viewport_cols(10);
+    engine.set_viewport_cols(10).expect("valid viewport");
     let resized = engine.render_frame().expect("resized frame should render");
     assert_ne!(focused.frame_id, resized.frame_id);
     assert_eq!(resized.viewport.cols, 10);
+}
+
+#[test]
+fn viewport_contract_rejects_one_over_limit_without_mutation_and_recovers() {
+    let mut engine = frame_engine();
+    let before = engine.render_frame().expect("initial frame should render");
+
+    let error = engine
+        .set_viewport_cols(u64::from(u32::MAX) + 1)
+        .expect_err("one-over-limit viewport must be rejected");
+    assert!(matches!(
+        error,
+        crate::EngineViewportError::InvalidViewport {
+            requested_cols,
+            min_cols: 1,
+            max_cols: u32::MAX,
+            ..
+        } if requested_cols == "4294967296"
+    ));
+    assert_eq!(
+        engine
+            .render_frame()
+            .expect("prior frame should remain valid"),
+        before
+    );
+
+    engine
+        .set_viewport_cols(10)
+        .expect("valid viewport must succeed after rejection");
+    assert_eq!(
+        engine
+            .render_frame()
+            .expect("recovery frame should render")
+            .viewport
+            .cols,
+        10
+    );
 }
 
 #[test]

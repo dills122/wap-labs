@@ -572,7 +572,7 @@ fn wml_fx_input_password_display_conceals_entry_and_preserves_variable() {
         )
         .expect("deck should load");
 
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
     assert_eq!(
         engine.get_var("PhonePin".to_string()),
         Some("12345-123".to_string())
@@ -712,7 +712,7 @@ fn wml_204_same_name_inputs_keep_independent_control_state() {
             "#,
         )
         .expect("deck should load");
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
     engine
         .handle_key("down".to_string())
         .expect("focus should move to the second input");

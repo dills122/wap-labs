@@ -64,7 +64,7 @@ fn wml_fx_select_init_order_precedence_validation_and_serialization() {
         Some("gamma;beta".to_string())
     );
 
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()
@@ -174,7 +174,7 @@ fn wml_204_absent_option_value_is_empty_while_label_remains_visible() {
         engine.get_var("ChoiceIndex".to_string()).as_deref(),
         Some("1")
     );
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
     assert!(render_snapshot_lines(&engine)
         .iter()
         .any(|line| line.contains("href=select:Choice:text=[Choice: Visible label]")));
@@ -261,7 +261,7 @@ fn wml_204_same_name_selects_keep_independent_control_state() {
             "#,
         )
         .expect("deck should load");
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
     engine
         .handle_key("down".to_string())
         .expect("focus should move to the second select");

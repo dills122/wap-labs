@@ -15,9 +15,9 @@ use super::engine_adapter::{
     apply_set_viewport_cols, AppState,
 };
 use crate::contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
-    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
-    RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    AdvanceTimeRequest, EngineCommandError, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest,
+    HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
+    NavigateToCardRequest, RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use wavenav_engine::WmlEngine;
 
@@ -107,9 +107,15 @@ pub fn command_engine_navigate_back_frame(state: &AppState) -> Result<EngineFram
 pub fn command_engine_set_viewport_cols(
     state: &AppState,
     request: SetViewportColsRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
-    let mut engine = lock_engine(state)?;
-    Ok(apply_set_viewport_cols(&mut engine, request))
+) -> Result<EngineRuntimeSnapshot, EngineCommandError> {
+    let mut engine =
+        state
+            .engine
+            .lock()
+            .map_err(|_| EngineCommandError::EngineStateUnavailable {
+                message: "engine state lock poisoned".to_string(),
+            })?;
+    apply_set_viewport_cols(&mut engine, request).map_err(EngineCommandError::from)
 }
 
 pub fn command_engine_advance_time_ms(

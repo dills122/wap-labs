@@ -5,7 +5,12 @@ use crate::contract_types::{
     SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use std::sync::Mutex;
-use wavenav_engine::{DeckNavigationContext, WmlEngine};
+use wavenav_engine::{DeckNavigationContext, EngineViewportError, WmlEngine};
+
+#[cfg(test)]
+std::thread_local! {
+    static FORCE_NEXT_FRAME_FAILURE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
 
 pub struct AppState {
     pub(crate) engine: Mutex<WmlEngine>,
@@ -78,11 +83,36 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
 }
 
 fn frame(engine: &WmlEngine) -> Result<EngineFrame, String> {
+    #[cfg(test)]
+    if FORCE_NEXT_FRAME_FAILURE.with(|force| force.replace(false)) {
+        return Err("forced frame failure".to_string());
+    }
     Ok(EngineFrame {
         snapshot: snapshot(engine),
         render: engine.render()?.into(),
         presentation: engine.render_frame()?,
     })
+}
+
+fn mutate_then_frame(
+    engine: &mut WmlEngine,
+    mutate: impl FnOnce(&mut WmlEngine) -> Result<(), String>,
+) -> Result<EngineFrame, String> {
+    let mut candidate = engine.clone();
+    mutate(&mut candidate)?;
+    let candidate_frame = frame(&candidate)?;
+    *engine = candidate;
+    Ok(candidate_frame)
+}
+
+#[cfg(test)]
+pub(crate) fn force_next_frame_failure() {
+    FORCE_NEXT_FRAME_FAILURE.with(|force| {
+        assert!(
+            !force.replace(true),
+            "a forced frame failure is already pending"
+        );
+    });
 }
 
 pub fn apply_load_deck(
@@ -131,16 +161,16 @@ pub fn apply_handle_key_frame(
     engine: &mut WmlEngine,
     request: HandleKeyRequest,
 ) -> Result<EngineFrame, String> {
-    engine.handle_key(request.key.as_str().to_string())?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.handle_key(request.key.as_str().to_string())
+    })
 }
 
 pub fn apply_handle_input_frame(
     engine: &mut WmlEngine,
     request: HandleInputRequest,
 ) -> Result<EngineFrame, String> {
-    engine.handle_input(request.event)?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| candidate.handle_input(request.event))
 }
 
 pub fn apply_navigate_to_card(
@@ -155,8 +185,9 @@ pub fn apply_navigate_to_card_frame(
     engine: &mut WmlEngine,
     request: NavigateToCardRequest,
 ) -> Result<EngineFrame, String> {
-    engine.navigate_to_card(request.card_id)?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.navigate_to_card(request.card_id)
+    })
 }
 
 pub fn apply_navigate_back(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
@@ -165,16 +196,20 @@ pub fn apply_navigate_back(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
 }
 
 pub fn apply_navigate_back_frame(engine: &mut WmlEngine) -> Result<EngineFrame, String> {
-    engine.navigate_back();
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.navigate_back();
+        Ok(())
+    })
 }
 
 pub fn apply_set_viewport_cols(
     engine: &mut WmlEngine,
     request: SetViewportColsRequest,
-) -> EngineRuntimeSnapshot {
-    engine.set_viewport_cols(request.cols);
-    snapshot(engine)
+) -> Result<EngineRuntimeSnapshot, EngineViewportError> {
+    let cols =
+        u64::try_from(request.cols).map_err(|_| EngineViewportError::invalid(request.cols))?;
+    engine.set_viewport_cols(cols)?;
+    Ok(snapshot(engine))
 }
 
 pub fn apply_advance_time_ms(
@@ -189,26 +224,28 @@ pub fn apply_advance_time_ms_frame(
     engine: &mut WmlEngine,
     request: AdvanceTimeRequest,
 ) -> Result<EngineFrame, String> {
-    engine.advance_time_ms(request.delta_ms)?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.advance_time_ms(request.delta_ms)
+    })
 }
 
 pub fn apply_load_deck_context_frame(
     engine: &mut WmlEngine,
     request: LoadDeckContextRequest,
 ) -> Result<EngineFrame, String> {
-    engine.load_deck_context_for_navigation(
-        &request.wml_xml,
-        &request.base_url,
-        &request.content_type,
-        request.raw_bytes_base64,
-        DeckNavigationContext::new(
-            request.referring_url.as_deref(),
-            request.navigation_url.as_deref(),
-            request.navigation_kind.unwrap_or_default().into(),
-        ),
-    )?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.load_deck_context_for_navigation(
+            &request.wml_xml,
+            &request.base_url,
+            &request.content_type,
+            request.raw_bytes_base64,
+            DeckNavigationContext::new(
+                request.referring_url.as_deref(),
+                request.navigation_url.as_deref(),
+                request.navigation_kind.unwrap_or_default().into(),
+            ),
+        )
+    })
 }
 
 pub fn apply_engine_snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
@@ -223,8 +260,10 @@ pub fn apply_clear_external_navigation_intent(engine: &mut WmlEngine) -> EngineR
 pub fn apply_clear_external_navigation_intent_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.clear_external_navigation_intent();
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.clear_external_navigation_intent();
+        Ok(())
+    })
 }
 
 pub fn apply_begin_focused_input_edit(
@@ -235,8 +274,9 @@ pub fn apply_begin_focused_input_edit(
 }
 
 pub fn apply_begin_focused_input_edit_frame(engine: &mut WmlEngine) -> Result<EngineFrame, String> {
-    engine.begin_focused_input_edit()?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.begin_focused_input_edit().map(|_| ())
+    })
 }
 
 pub fn apply_set_focused_input_edit_draft(
@@ -251,8 +291,10 @@ pub fn apply_set_focused_input_edit_draft_frame(
     engine: &mut WmlEngine,
     request: SetFocusedInputEditDraftRequest,
 ) -> Result<EngineFrame, String> {
-    engine.set_focused_input_edit_draft(request.value);
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.set_focused_input_edit_draft(request.value);
+        Ok(())
+    })
 }
 
 pub fn apply_commit_focused_input_edit(
@@ -265,8 +307,9 @@ pub fn apply_commit_focused_input_edit(
 pub fn apply_commit_focused_input_edit_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.commit_focused_input_edit()?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.commit_focused_input_edit().map(|_| ())
+    })
 }
 
 pub fn apply_cancel_focused_input_edit(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
@@ -277,8 +320,10 @@ pub fn apply_cancel_focused_input_edit(engine: &mut WmlEngine) -> EngineRuntimeS
 pub fn apply_cancel_focused_input_edit_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.cancel_focused_input_edit();
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.cancel_focused_input_edit();
+        Ok(())
+    })
 }
 
 pub fn apply_begin_focused_select_edit(
@@ -291,8 +336,9 @@ pub fn apply_begin_focused_select_edit(
 pub fn apply_begin_focused_select_edit_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.begin_focused_select_edit()?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.begin_focused_select_edit().map(|_| ())
+    })
 }
 
 pub fn apply_move_focused_select_edit(
@@ -307,8 +353,10 @@ pub fn apply_move_focused_select_edit_frame(
     engine: &mut WmlEngine,
     request: MoveFocusedSelectEditRequest,
 ) -> Result<EngineFrame, String> {
-    engine.move_focused_select_edit(request.delta);
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.move_focused_select_edit(request.delta);
+        Ok(())
+    })
 }
 
 pub fn apply_commit_focused_select_edit(
@@ -321,8 +369,9 @@ pub fn apply_commit_focused_select_edit(
 pub fn apply_commit_focused_select_edit_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.commit_focused_select_edit()?;
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.commit_focused_select_edit().map(|_| ())
+    })
 }
 
 pub fn apply_cancel_focused_select_edit(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
@@ -333,6 +382,8 @@ pub fn apply_cancel_focused_select_edit(engine: &mut WmlEngine) -> EngineRuntime
 pub fn apply_cancel_focused_select_edit_frame(
     engine: &mut WmlEngine,
 ) -> Result<EngineFrame, String> {
-    engine.cancel_focused_select_edit();
-    frame(engine)
+    mutate_then_frame(engine, |candidate| {
+        candidate.cancel_focused_select_edit();
+        Ok(())
+    })
 }

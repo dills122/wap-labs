@@ -57,6 +57,280 @@ fn apply_load_deck_context_rejects_oversized_raw_payload() {
 }
 
 #[test]
+fn one_over_limit_viewport_is_typed_and_recovery_load_succeeds() {
+    let mut engine = WmlEngine::new();
+    let error = apply_set_viewport_cols(
+        &mut engine,
+        SetViewportColsRequest {
+            cols: (u32::MAX as usize) + 1,
+        },
+    )
+    .expect_err("one over the frame contract range must be rejected");
+
+    assert!(matches!(
+        error,
+        wavenav_engine::EngineViewportError::InvalidViewport {
+            requested_cols,
+            min_cols: 1,
+            max_cols: u32::MAX,
+            ..
+        } if requested_cols == "4294967296"
+    ));
+    assert!(
+        engine.active_card_id().is_err(),
+        "viewport validation must happen before engine mutation"
+    );
+
+    apply_set_viewport_cols(&mut engine, SetViewportColsRequest { cols: 20 })
+        .expect("a valid viewport must succeed after rejection");
+    let frame = apply_load_deck_context_frame(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(BASIC_NAV_WML),
+            base_url: "http://local.test/start.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("a valid load must succeed after viewport rejection");
+    assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("home"));
+}
+
+fn frame_test_engine(wml: &str) -> WmlEngine {
+    let mut engine = WmlEngine::new();
+    apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(wml),
+            base_url: "http://local.test/atomic.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("atomicity fixture should load");
+    engine
+}
+
+fn observable_engine_state(engine: &WmlEngine) -> serde_json::Value {
+    serde_json::json!({
+        "snapshot": apply_engine_snapshot(engine),
+        "render": engine.render().map(|render| serde_json::to_value(render).expect("render serializes")),
+        "presentation": engine.render_frame().map(|frame| serde_json::to_value(frame).expect("frame serializes")),
+        "variables": (["UserName", "Choice", "marker"]
+            .into_iter()
+            .map(|name| (name, engine.get_var(name.to_string())))
+            .collect::<Vec<_>>()),
+        "trace": engine.trace_entries(),
+        "diagnostics": engine.last_wml_load_diagnostics(),
+    })
+}
+
+fn assert_forced_frame_failure_is_atomic(
+    operation_name: &str,
+    mut engine: WmlEngine,
+    mut operation: impl FnMut(&mut WmlEngine) -> Result<crate::contract_types::EngineFrame, String>,
+) {
+    let before = observable_engine_state(&engine);
+    force_next_frame_failure();
+    let error = operation(&mut engine).expect_err("fault injection must reject the frame command");
+    assert_eq!(error, "forced frame failure", "{operation_name}");
+    assert_eq!(
+        observable_engine_state(&engine),
+        before,
+        "{operation_name} must preserve the exact prior observable state"
+    );
+    operation(&mut engine)
+        .unwrap_or_else(|error| panic!("{operation_name} must recover after rejection: {error}"));
+}
+
+#[test]
+fn every_mutating_frame_adapter_is_atomic_on_frame_failure() {
+    const FORM_WML: &str = r##"
+    <wml>
+      <card id="home">
+        <p>
+          <input name="UserName" value="before" type="text"/>
+          <select name="Choice" value="a">
+            <option value="a">Alpha</option>
+            <option value="b">Beta</option>
+          </select>
+        </p>
+      </card>
+    </wml>
+    "##;
+    const TIMER_WML: &str = r##"
+    <wml>
+      <card id="home">
+        <onevent type="ontimer"><go href="#done"/></onevent>
+        <timer value="1"/>
+        <p>Waiting</p>
+      </card>
+      <card id="done"><p>Done</p></card>
+    </wml>
+    "##;
+
+    let replacement = LoadDeckContextRequest {
+        wml_xml: canonical_text_wml(r#"<wml><card id="replacement"><p>New</p></card></wml>"#),
+        base_url: "http://local.test/replacement.wml".to_string(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        raw_bytes_base64: None,
+        referring_url: None,
+        navigation_url: None,
+        navigation_kind: None,
+    };
+    assert_forced_frame_failure_is_atomic(
+        "load deck context",
+        frame_test_engine(BASIC_NAV_WML),
+        |engine| apply_load_deck_context_frame(engine, replacement.clone()),
+    );
+
+    assert_forced_frame_failure_is_atomic(
+        "handle key",
+        frame_test_engine(BASIC_NAV_WML),
+        |engine| {
+            apply_handle_key_frame(
+                engine,
+                HandleKeyRequest {
+                    key: EngineKey::Enter,
+                },
+            )
+        },
+    );
+    assert_forced_frame_failure_is_atomic(
+        "handle input",
+        frame_test_engine(BASIC_NAV_WML),
+        |engine| {
+            apply_handle_input_frame(
+                engine,
+                HandleInputRequest {
+                    event: EngineInputEvent::Key {
+                        key: wavenav_engine::EngineInputKey::Enter,
+                    },
+                },
+            )
+        },
+    );
+    assert_forced_frame_failure_is_atomic(
+        "navigate to card",
+        frame_test_engine(BASIC_NAV_WML),
+        |engine| {
+            apply_navigate_to_card_frame(
+                engine,
+                NavigateToCardRequest {
+                    card_id: "next".to_string(),
+                },
+            )
+        },
+    );
+
+    let mut back_engine = frame_test_engine(BASIC_NAV_WML);
+    back_engine
+        .navigate_to_card("next".to_string())
+        .expect("back fixture should have history");
+    assert_forced_frame_failure_is_atomic("navigate back", back_engine, |engine| {
+        apply_navigate_back_frame(engine)
+    });
+
+    assert_forced_frame_failure_is_atomic("advance time", frame_test_engine(TIMER_WML), |engine| {
+        apply_advance_time_ms_frame(engine, AdvanceTimeRequest { delta_ms: 100 })
+    });
+
+    let mut intent_engine = frame_test_engine(EXTERNAL_LINK_WML);
+    intent_engine
+        .handle_key("enter".to_string())
+        .expect("intent fixture should create an external request");
+    assert_forced_frame_failure_is_atomic("clear external intent", intent_engine, |engine| {
+        apply_clear_external_navigation_intent_frame(engine)
+    });
+
+    assert_forced_frame_failure_is_atomic(
+        "begin input edit",
+        frame_test_engine(FORM_WML),
+        apply_begin_focused_input_edit_frame,
+    );
+
+    let mut input_draft_engine = frame_test_engine(FORM_WML);
+    input_draft_engine
+        .begin_focused_input_edit()
+        .expect("input edit should begin");
+    assert_forced_frame_failure_is_atomic("set input draft", input_draft_engine, |engine| {
+        apply_set_focused_input_edit_draft_frame(
+            engine,
+            SetFocusedInputEditDraftRequest {
+                value: "after".to_string(),
+            },
+        )
+    });
+
+    let mut input_commit_engine = frame_test_engine(FORM_WML);
+    input_commit_engine
+        .begin_focused_input_edit()
+        .expect("input edit should begin");
+    input_commit_engine.set_focused_input_edit_draft("after".to_string());
+    assert_forced_frame_failure_is_atomic("commit input edit", input_commit_engine, |engine| {
+        apply_commit_focused_input_edit_frame(engine)
+    });
+
+    let mut input_cancel_engine = frame_test_engine(FORM_WML);
+    input_cancel_engine
+        .begin_focused_input_edit()
+        .expect("input edit should begin");
+    input_cancel_engine.set_focused_input_edit_draft("after".to_string());
+    assert_forced_frame_failure_is_atomic("cancel input edit", input_cancel_engine, |engine| {
+        apply_cancel_focused_input_edit_frame(engine)
+    });
+
+    let mut select_begin_engine = frame_test_engine(FORM_WML);
+    select_begin_engine
+        .handle_key("down".to_string())
+        .expect("select fixture should focus the select");
+    assert_forced_frame_failure_is_atomic("begin select edit", select_begin_engine, |engine| {
+        apply_begin_focused_select_edit_frame(engine)
+    });
+
+    let mut select_move_engine = frame_test_engine(FORM_WML);
+    select_move_engine
+        .handle_key("down".to_string())
+        .expect("select fixture should focus the select");
+    select_move_engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    assert_forced_frame_failure_is_atomic("move select edit", select_move_engine, |engine| {
+        apply_move_focused_select_edit_frame(engine, MoveFocusedSelectEditRequest { delta: 1 })
+    });
+
+    let mut select_commit_engine = frame_test_engine(FORM_WML);
+    select_commit_engine
+        .handle_key("down".to_string())
+        .expect("select fixture should focus the select");
+    select_commit_engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    select_commit_engine.move_focused_select_edit(1);
+    assert_forced_frame_failure_is_atomic("commit select edit", select_commit_engine, |engine| {
+        apply_commit_focused_select_edit_frame(engine)
+    });
+
+    let mut select_cancel_engine = frame_test_engine(FORM_WML);
+    select_cancel_engine
+        .handle_key("down".to_string())
+        .expect("select fixture should focus the select");
+    select_cancel_engine
+        .begin_focused_select_edit()
+        .expect("select edit should begin");
+    select_cancel_engine.move_focused_select_edit(1);
+    assert_forced_frame_failure_is_atomic("cancel select edit", select_cancel_engine, |engine| {
+        apply_cancel_focused_select_edit_frame(engine)
+    });
+}
+
+#[test]
 fn apply_load_deck_context_enforces_referring_uri_and_exposes_language_atomically() {
     let mut engine = WmlEngine::new();
     let stable = apply_load_deck_context(
@@ -167,7 +441,7 @@ fn load_transport_response_into_engine_requires_ok_and_engine_input() {
 }
 
 #[test]
-fn apply_set_viewport_cols_clamps_to_minimum_one() {
+fn apply_set_viewport_cols_rejects_zero_without_changing_the_previous_viewport() {
     let mut engine = WmlEngine::new();
     apply_load_deck_context(
         &mut engine,
@@ -183,11 +457,18 @@ fn apply_set_viewport_cols_clamps_to_minimum_one() {
     )
     .expect("deck should load");
 
-    apply_set_viewport_cols(&mut engine, super::SetViewportColsRequest { cols: 0 });
-    let render = apply_render(&engine).expect("render should succeed");
-    assert!(
-        !render.draw.is_empty(),
-        "render should still succeed at clamped cols"
+    let before = engine.render_frame().expect("initial frame should render");
+    let error = apply_set_viewport_cols(&mut engine, super::SetViewportColsRequest { cols: 0 })
+        .expect_err("zero must be rejected");
+    assert!(matches!(
+        error,
+        wavenav_engine::EngineViewportError::InvalidViewport { .. }
+    ));
+    assert_eq!(
+        engine
+            .render_frame()
+            .expect("prior viewport should remain valid"),
+        before
     );
 }
 

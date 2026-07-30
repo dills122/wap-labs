@@ -73,11 +73,14 @@ pub use engine_wml_types::{
     WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,
     WmlLoadDiagnosticOutcomeLiteral,
 };
+#[cfg(feature = "contract-codegen")]
+pub use render::frame::engine_viewport_typescript_contract;
 pub use render::frame::{
     EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
     EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
     EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
-    EngineSelectionState, EngineViewport, ENGINE_FRAME_CONTRACT_VERSION, ENGINE_FRAME_PROFILE_ID,
+    EngineSelectionState, EngineViewport, EngineViewportError, ENGINE_FRAME_CONTRACT_VERSION,
+    ENGINE_FRAME_PROFILE_ID, ENGINE_VIEWPORT_MAX_COLS, ENGINE_VIEWPORT_MIN_COLS,
 };
 pub use render::render_list::{DrawCmd, RenderList};
 pub use wavescript::wap_decoder::{
@@ -219,6 +222,7 @@ impl<'a> DeckNavigationContext<'a> {
     }
 }
 
+#[derive(Clone)]
 #[cfg_attr(all(feature = "wasm-bindings", target_arch = "wasm32"), wasm_bindgen)]
 pub struct WmlEngine {
     deck: Option<Deck>,

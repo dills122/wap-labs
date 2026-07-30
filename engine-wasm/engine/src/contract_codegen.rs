@@ -4,22 +4,23 @@ use std::path::{Path, PathBuf};
 use ts_rs::{Config, TS};
 
 use crate::{
-    engine_debug_typescript_contract, DrawCmd, EngineAffordance, EngineAffordanceSource,
-    EngineCardDisplayMetadata, EngineControlAssociation, EngineDebugBufferSnapshot,
-    EngineDebugCapabilities, EngineDebugCloseSessionOutcome, EngineDebugCloseSessionRequest,
-    EngineDebugCloseSessionResult, EngineDebugCollectionSummary, EngineDebugError,
-    EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch, EngineDebugEventKind,
-    EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot, EngineDebugMaskingPolicy,
-    EngineDebugNamedValue, EngineDebugOpenSessionOutcome, EngineDebugOpenSessionRequest,
-    EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest, EngineDebugPostfieldResolution,
-    EngineDebugPostfieldResolutionSource, EngineDebugRedactionReason, EngineDebugSession,
-    EngineDebugSnapshot, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
-    EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue,
-    EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
-    EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
-    EngineSelectionState, EngineTraceEntry, EngineViewport, RenderList, ScriptCallArgLiteral,
-    ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral, ScriptErrorClassLiteral,
-    ScriptExecutionOutcome, ScriptInvocationOutcome, ScriptNavigationCacheControlPolicyLiteral,
+    engine_debug_typescript_contract, engine_viewport_typescript_contract, DrawCmd,
+    EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
+    EngineDebugBufferSnapshot, EngineDebugCapabilities, EngineDebugCloseSessionOutcome,
+    EngineDebugCloseSessionRequest, EngineDebugCloseSessionResult, EngineDebugCollectionSummary,
+    EngineDebugError, EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch,
+    EngineDebugEventKind, EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot,
+    EngineDebugMaskingPolicy, EngineDebugNamedValue, EngineDebugOpenSessionOutcome,
+    EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest,
+    EngineDebugPostfieldResolution, EngineDebugPostfieldResolutionSource,
+    EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
+    EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
+    EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
+    EngineFocusTargetKind, EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey,
+    EnginePresentationFrame, EngineSelectionState, EngineTraceEntry, EngineViewport,
+    EngineViewportError, RenderList, ScriptCallArgLiteral, ScriptDialogRequestLiteral,
+    ScriptErrorCategoryLiteral, ScriptErrorClassLiteral, ScriptExecutionOutcome,
+    ScriptInvocationOutcome, ScriptNavigationCacheControlPolicyLiteral,
     ScriptNavigationIntentLiteral, ScriptNavigationMethodLiteral,
     ScriptNavigationPostContextLiteral, ScriptNavigationPostFieldLiteral,
     ScriptNavigationRequestIntentLiteral, ScriptNavigationRequestPolicyLiteral,
@@ -94,6 +95,9 @@ pub fn render_runtime_contract() -> String {
     output.push_str(&engine_debug_typescript_contract());
     output.push('\n');
     push_decl::<EngineViewport>(&mut output);
+    push_decl::<EngineViewportError>(&mut output);
+    output.push_str(&engine_viewport_typescript_contract());
+    output.push('\n');
     push_decl::<EngineDeckDisplayMetadata>(&mut output);
     push_decl::<EngineCardDisplayMetadata>(&mut output);
     push_decl::<EngineFrameRow>(&mut output);
@@ -158,6 +162,8 @@ mod tests {
         assert!(output.contains("requiresRefresh: boolean"));
         assert!(output.contains("export interface EngineDebugConnector"));
         assert!(output.contains("export const ENGINE_DEBUG_CONTRACT_BASELINE"));
+        assert!(output.contains("export const ENGINE_VIEWPORT_RANGE"));
+        assert!(output.contains("maxCols: 4294967295"));
         assert!(output.contains("openDebugSession(request: EngineDebugOpenSessionRequest)"));
         assert!(output.contains("supportsSensitiveUnmasking: boolean"));
         assert!(output.contains(r#"{ "state": "masked", reason: EngineDebugRedactionReason, }"#));

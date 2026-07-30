@@ -194,6 +194,23 @@ const gatewayTimeoutResponse = (): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('rejects one-over-limit viewport input before IPC and accepts a later valid value', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    refs.viewportColsInput.value = String(2 ** 32);
+    await expect(controllerPrivates(controller).setViewportCols()).rejects.toThrow(
+      'viewport cols must be an integer from 1 through 4294967295'
+    );
+    expect(hostClient.engineSetViewportCols).not.toHaveBeenCalled();
+
+    refs.viewportColsInput.value = '20';
+    await controllerPrivates(controller).setViewportCols();
+    expect(hostClient.engineSetViewportCols).toHaveBeenCalledWith({ cols: 20 });
+  });
+
   it('opens and closes the visible Developer Tools rail from the keyboard shortcut', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

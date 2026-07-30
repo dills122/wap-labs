@@ -180,6 +180,37 @@ fn tauri_command_wrappers_cover_viewport_and_direct_navigation_paths() {
 }
 
 #[test]
+fn tauri_viewport_command_returns_typed_range_error_before_mutation() {
+    let state = AppState::default();
+    let error = super::super::engine_set_viewport_cols(
+        borrowed_state(&state),
+        SetViewportColsRequest {
+            cols: (u32::MAX as usize) + 1,
+        },
+    )
+    .expect_err("one-over-limit viewport should fail at the Tauri boundary");
+
+    assert!(matches!(
+        error,
+        crate::contract_types::EngineCommandError::InvalidViewport {
+            requested_cols,
+            min_cols: 1,
+            max_cols: u32::MAX,
+            ..
+        } if requested_cols == "4294967296"
+    ));
+    let snapshot = super::super::engine_snapshot(borrowed_state(&state))
+        .expect("engine should remain available after rejection");
+    assert_eq!(snapshot.active_card_id, None);
+
+    super::super::engine_set_viewport_cols(
+        borrowed_state(&state),
+        SetViewportColsRequest { cols: 20 },
+    )
+    .expect("valid viewport should succeed after rejection");
+}
+
+#[test]
 fn tauri_fetch_deck_command_executes_through_async_boundary() {
     let response = tauri::async_runtime::block_on(super::super::fetch_deck(FetchDeckRequest {
         url: "http://example.test".to_string(),

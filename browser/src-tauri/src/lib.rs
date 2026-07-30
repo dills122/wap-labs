@@ -7,9 +7,9 @@ mod engine_bridge;
 mod fetch_host;
 
 use contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
-    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
-    RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    AdvanceTimeRequest, EngineCommandError, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest,
+    HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
+    NavigateToCardRequest, RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use engine_bridge::{
     command_engine_advance_time_ms, command_engine_advance_time_ms_frame,
@@ -155,7 +155,7 @@ fn engine_navigate_back_frame(state: State<AppState>) -> Result<EngineFrame, Str
 fn engine_set_viewport_cols(
     state: State<AppState>,
     request: SetViewportColsRequest,
-) -> Result<EngineRuntimeSnapshot, String> {
+) -> Result<EngineRuntimeSnapshot, EngineCommandError> {
     command_engine_set_viewport_cols(state.inner(), request)
 }
 

@@ -21,7 +21,7 @@ fn wml_302_text_and_link_targets_substitute_after_xml_parsing() {
     assert!(engine.set_var("Raw".to_string(), "A B".to_string()));
     assert!(engine.set_var("Encoded".to_string(), "A%20B".to_string()));
     assert!(engine.set_var("raw".to_string(), "lower".to_string()));
-    engine.set_viewport_cols(80);
+    engine.set_viewport_cols(80).expect("valid viewport");
 
     let lines = render_snapshot_lines(&engine);
     assert!(lines.iter().any(|line| line.contains("Cash $ A B")));

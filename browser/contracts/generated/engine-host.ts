@@ -17,6 +17,8 @@ export type NavigateToCardRequest = { cardId: string, };
 
 export type SetViewportColsRequest = { cols: number, };
 
+export type EngineCommandError = { "type": "invalid-viewport", requestedCols: string, minCols: number, maxCols: number, message: string, } | { "type": "engine-state-unavailable", message: string, };
+
 export type AdvanceTimeRequest = { deltaMs: number, };
 
 export type SetFocusedInputEditDraftRequest = { value: string, };
@@ -42,6 +44,13 @@ export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalN
 export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, nextTimerWakeupMs?: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, browserContextEpoch?: number, deckLanguage?: string, activeCardLanguage?: string, lastBackNavigationHandled: boolean, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
 export type EngineViewport = { cols: number, };
+
+export type EngineViewportError = { "type": "invalid-viewport", requestedCols: string, minCols: number, maxCols: number, message: string, };
+
+export const ENGINE_VIEWPORT_RANGE = {
+  minCols: 1,
+  maxCols: 4294967295,
+} as const;
 
 export type EngineDeckDisplayMetadata = { baseUrl: string, contentType: string, language?: string, };
 

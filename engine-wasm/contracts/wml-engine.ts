@@ -25,7 +25,7 @@ import type {
   WmlLoadDiagnostic
 } from './generated/runtime-dtos';
 
-export { ENGINE_DEBUG_CONTRACT_BASELINE } from './generated/runtime-dtos';
+export { ENGINE_DEBUG_CONTRACT_BASELINE, ENGINE_VIEWPORT_RANGE } from './generated/runtime-dtos';
 
 export type {
   DrawCmd,
@@ -73,6 +73,7 @@ export type {
   EnginePresentationFrame,
   EngineSelectionState,
   EngineViewport,
+  EngineViewportError,
   EngineTraceEntry,
   RenderList,
   ScriptCallArgLiteral,
@@ -200,6 +201,8 @@ export interface WmlEngineCommon {
   // Reports whether the most recent BACK activation was consumed by either
   // an effective WML `do type="prev"` binding or intrinsic history fallback.
   lastBackNavigationHandled(): boolean;
+  // Accepts only the generated ENGINE_VIEWPORT_RANGE. Invalid numeric values
+  // reject with EngineViewportError before changing runtime state.
   setViewportCols(cols: number): void;
   activeCardId(): string;
   focusedLinkIndex(): number;

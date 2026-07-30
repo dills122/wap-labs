@@ -8,26 +8,27 @@ use lowband_transport_rust::{
     FetchUaCapabilityProfile,
 };
 use ts_rs::{Config, TS};
-use wavenav_engine::engine_debug_typescript_contract;
 use wavenav_engine::SCRIPT_ERROR_CATEGORY_METADATA;
+use wavenav_engine::{engine_debug_typescript_contract, engine_viewport_typescript_contract};
 use wavenav_host_lib::command_contract::{
     render_default_capability, render_host_permission, TauriCommandDescriptor, TAURI_COMMANDS,
 };
 use wavenav_host_lib::contract_types::{
     AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineAffordance, EngineAffordanceSource,
-    EngineCardDisplayMetadata, EngineControlAssociation, EngineDebugBufferSnapshot,
-    EngineDebugCapabilities, EngineDebugCloseSessionOutcome, EngineDebugCloseSessionRequest,
-    EngineDebugCloseSessionResult, EngineDebugCollectionSummary, EngineDebugError,
-    EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch, EngineDebugEventKind,
-    EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot, EngineDebugMaskingPolicy,
-    EngineDebugNamedValue, EngineDebugOpenSessionOutcome, EngineDebugOpenSessionRequest,
-    EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest, EngineDebugPostfieldResolution,
-    EngineDebugPostfieldResolutionSource, EngineDebugRedactionReason, EngineDebugSession,
-    EngineDebugSnapshot, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
-    EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue,
-    EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrame,
-    EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey, EngineKey,
-    EnginePresentationFrame, EngineRuntimeSnapshot, EngineSelectionState, EngineViewport,
+    EngineCardDisplayMetadata, EngineCommandError, EngineControlAssociation,
+    EngineDebugBufferSnapshot, EngineDebugCapabilities, EngineDebugCloseSessionOutcome,
+    EngineDebugCloseSessionRequest, EngineDebugCloseSessionResult, EngineDebugCollectionSummary,
+    EngineDebugError, EngineDebugErrorCode, EngineDebugEvent, EngineDebugEventBatch,
+    EngineDebugEventKind, EngineDebugEventPayload, EngineDebugExternalNavigationSnapshot,
+    EngineDebugMaskingPolicy, EngineDebugNamedValue, EngineDebugOpenSessionOutcome,
+    EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest,
+    EngineDebugPostfieldResolution, EngineDebugPostfieldResolutionSource,
+    EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
+    EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
+    EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
+    EngineFocusTargetKind, EngineFrame, EngineFrameRow, EngineFrameSegment, EngineInputEvent,
+    EngineInputKey, EngineKey, EnginePresentationFrame, EngineRuntimeSnapshot,
+    EngineSelectionState, EngineViewport, EngineViewportError,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationMethodSnapshot,
     ExternalNavigationPostContextSnapshot, ExternalNavigationPostFieldSnapshot,
     ExternalNavigationRequestIntentSnapshot, ExternalNavigationRequestPolicySnapshot,
@@ -139,6 +140,7 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<HandleInputRequest>(&mut output);
     push_decl::<NavigateToCardRequest>(&mut output);
     push_decl::<SetViewportColsRequest>(&mut output);
+    push_decl::<EngineCommandError>(&mut output);
     push_decl::<AdvanceTimeRequest>(&mut output);
     push_decl::<SetFocusedInputEditDraftRequest>(&mut output);
     push_decl::<MoveFocusedSelectEditRequest>(&mut output);
@@ -152,6 +154,9 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<ExternalNavigationRequestPolicySnapshot>(&mut output);
     push_decl::<EngineRuntimeSnapshot>(&mut output);
     push_decl::<EngineViewport>(&mut output);
+    push_decl::<EngineViewportError>(&mut output);
+    output.push_str(&engine_viewport_typescript_contract());
+    output.push('\n');
     push_decl::<EngineDeckDisplayMetadata>(&mut output);
     push_decl::<EngineCardDisplayMetadata>(&mut output);
     push_decl::<EngineFrameRow>(&mut output);
@@ -290,6 +295,8 @@ mod tests {
         let output = render_engine_contracts().expect("engine contracts should render");
 
         assert!(output.contains("export const ENGINE_DEBUG_CONTRACT_BASELINE"));
+        assert!(output.contains("export const ENGINE_VIEWPORT_RANGE"));
+        assert!(output.contains("maxCols: 4294967295"));
         assert!(output.contains("export interface EngineDebugConnector"));
         assert!(output.contains("EngineDebugOpenSessionOutcome"));
         assert!(output.contains("EngineDebugSnapshotOutcome"));
