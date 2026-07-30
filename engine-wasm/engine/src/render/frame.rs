@@ -2,6 +2,58 @@ use serde::{Deserialize, Serialize};
 
 pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 1;
 pub const ENGINE_FRAME_PROFILE_ID: &str = "class-c-reference";
+pub const ENGINE_VIEWPORT_MIN_COLS: u32 = 1;
+pub const ENGINE_VIEWPORT_MAX_COLS: u32 = u32::MAX;
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[serde(tag = "type", rename_all = "kebab-case")]
+pub enum EngineViewportError {
+    InvalidViewport {
+        #[serde(rename = "requestedCols")]
+        requested_cols: String,
+        #[serde(rename = "minCols")]
+        min_cols: u32,
+        #[serde(rename = "maxCols")]
+        max_cols: u32,
+        message: String,
+    },
+}
+
+impl EngineViewportError {
+    pub fn invalid(requested_cols: impl ToString) -> Self {
+        Self::InvalidViewport {
+            requested_cols: requested_cols.to_string(),
+            min_cols: ENGINE_VIEWPORT_MIN_COLS,
+            max_cols: ENGINE_VIEWPORT_MAX_COLS,
+            message: format!(
+                "Viewport columns must be an integer from {} through {}",
+                ENGINE_VIEWPORT_MIN_COLS, ENGINE_VIEWPORT_MAX_COLS
+            ),
+        }
+    }
+}
+
+impl std::fmt::Display for EngineViewportError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidViewport { message, .. } => formatter.write_str(message),
+        }
+    }
+}
+
+#[cfg(feature = "contract-codegen")]
+pub fn engine_viewport_typescript_contract() -> String {
+    format!(
+        concat!(
+            "export const ENGINE_VIEWPORT_RANGE = {{\n",
+            "  minCols: {},\n",
+            "  maxCols: {},\n",
+            "}} as const;\n"
+        ),
+        ENGINE_VIEWPORT_MIN_COLS, ENGINE_VIEWPORT_MAX_COLS
+    )
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]

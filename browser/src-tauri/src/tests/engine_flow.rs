@@ -125,7 +125,8 @@ fn smoke_external_intent_set_and_clear() {
     )
     .expect("deck should load");
 
-    apply_set_viewport_cols(&mut engine, super::SetViewportColsRequest { cols: 20 });
+    apply_set_viewport_cols(&mut engine, super::SetViewportColsRequest { cols: 20 })
+        .expect("valid viewport should be accepted");
     let after_enter = apply_handle_key(
         &mut engine,
         HandleKeyRequest {

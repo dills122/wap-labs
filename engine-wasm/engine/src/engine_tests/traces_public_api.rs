@@ -238,7 +238,7 @@ fn phase_a_link_wrap_fixture_snapshots_widths_and_focus_stability() {
         .load_deck(FIXTURE_LINK_WRAP)
         .expect("fixture should load");
 
-    engine.set_viewport_cols(16);
+    engine.set_viewport_cols(16).expect("valid viewport");
     assert_eq!(
         render_snapshot_lines(&engine),
         vec![
@@ -250,7 +250,7 @@ fn phase_a_link_wrap_fixture_snapshots_widths_and_focus_stability() {
         ]
     );
 
-    engine.set_viewport_cols(20);
+    engine.set_viewport_cols(20).expect("valid viewport");
     assert_eq!(
         render_snapshot_lines(&engine),
         vec![
@@ -262,7 +262,7 @@ fn phase_a_link_wrap_fixture_snapshots_widths_and_focus_stability() {
         ]
     );
 
-    engine.set_viewport_cols(24);
+    engine.set_viewport_cols(24).expect("valid viewport");
     assert_eq!(
         render_snapshot_lines(&engine),
         vec![
@@ -272,7 +272,7 @@ fn phase_a_link_wrap_fixture_snapshots_widths_and_focus_stability() {
         ]
     );
 
-    engine.set_viewport_cols(8);
+    engine.set_viewport_cols(8).expect("valid viewport");
     engine
         .handle_key("down".to_string())
         .expect("down should move focus to second logical link");

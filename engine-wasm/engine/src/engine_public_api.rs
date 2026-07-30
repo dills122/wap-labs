@@ -453,7 +453,7 @@ impl WmlEngine {
             profile_id: ENGINE_FRAME_PROFILE_ID.to_string(),
             viewport: EngineViewport {
                 cols: u32::try_from(self.viewport_cols)
-                    .map_err(|_| "Frame viewport exceeds contract range".to_string())?,
+                    .expect("viewport range is validated before engine state mutation"),
             },
             deck: EngineDeckDisplayMetadata {
                 base_url: self.base_url.clone(),
@@ -579,9 +579,14 @@ impl WmlEngine {
         self.active_timer.as_ref().map(|timer| timer.remaining_ms)
     }
 
-    /// Set viewport width in columns.
-    pub fn set_viewport_cols(&mut self, cols: usize) {
-        self.viewport_cols = cols.max(1);
+    /// Set viewport width in columns within the shared native/WASM frame contract range.
+    pub fn set_viewport_cols(&mut self, cols: u64) -> Result<(), EngineViewportError> {
+        let cols = u32::try_from(cols).map_err(|_| EngineViewportError::invalid(cols))?;
+        if cols < ENGINE_VIEWPORT_MIN_COLS {
+            return Err(EngineViewportError::invalid(cols));
+        }
+        self.viewport_cols = cols as usize;
+        Ok(())
     }
 
     /// Start edit session for the currently focused input control.

@@ -1048,6 +1048,54 @@ fn wasm_handle_key_unknown_is_noop_for_navigation_state() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_viewport_range_matches_native_and_recovers_after_rejection() {
+    let mut engine = WmlEngine::wasm_new();
+    let error = engine
+        .set_viewport_cols_wasm(f64::from(u32::MAX) + 1.0)
+        .expect_err("one-over-limit viewport must be rejected");
+
+    assert_eq!(
+        Reflect::get(&error, &JsValue::from_str("type"))
+            .expect("typed error discriminator")
+            .as_string()
+            .as_deref(),
+        Some("invalid-viewport")
+    );
+    assert_eq!(
+        Reflect::get(&error, &JsValue::from_str("requestedCols"))
+            .expect("requested viewport")
+            .as_string()
+            .as_deref(),
+        Some("4294967296")
+    );
+    assert_eq!(
+        Reflect::get(&error, &JsValue::from_str("maxCols"))
+            .expect("maximum viewport")
+            .as_f64(),
+        Some(f64::from(u32::MAX))
+    );
+    assert!(engine.active_card_id_wasm().is_err());
+
+    engine
+        .set_viewport_cols_wasm(20.0)
+        .expect("valid viewport must succeed after rejection");
+    engine
+        .load_deck_wasm(SAMPLE)
+        .expect("valid operation must succeed after rejection");
+    let frame = engine
+        .render_frame_wasm()
+        .expect("frame should render after recovery");
+    let viewport = Reflect::get(&frame, &JsValue::from_str("viewport"))
+        .expect("frame viewport should be present");
+    assert_eq!(
+        Reflect::get(&viewport, &JsValue::from_str("cols"))
+            .expect("frame viewport columns")
+            .as_f64(),
+        Some(20.0)
+    );
+}
+
+#[wasm_bindgen_test]
 fn wasm_load_deck_context_rejects_oversized_wml_payload() {
     let mut engine = WmlEngine::wasm_new();
     let oversized_xml = format!(

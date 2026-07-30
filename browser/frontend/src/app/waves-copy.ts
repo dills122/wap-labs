@@ -122,7 +122,8 @@ const locale = {
     urlRequired: 'URL is required',
     unknownTransportFailure: 'unknown transport failure',
     missingWmlPayload: 'Fetch succeeded but returned no WML payload.',
-    viewportColsPositive: 'viewport cols must be a positive number',
+    viewportColsRange: (minCols: number, maxCols: number) =>
+      `viewport cols must be an integer from ${minCols} through ${maxCols}`,
     timelineRequiresEvent: 'Timeline export requires at least one event.',
     timelineRequiresChronology: 'Timeline export must contain both action and state chronology.'
   },

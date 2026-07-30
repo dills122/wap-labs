@@ -3,7 +3,12 @@ import type {
   HostNavigationSource,
   HostSessionState
 } from '../../../contracts/transport';
-import type { EngineFrame, EngineKey, EngineRuntimeSnapshot } from '../../../contracts/engine';
+import {
+  ENGINE_VIEWPORT_RANGE,
+  type EngineFrame,
+  type EngineKey,
+  type EngineRuntimeSnapshot
+} from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { EngineTimerRuntime } from './engine-timer-runtime';
 import { FocusedControlEditController } from './focused-control-edit';
@@ -612,8 +617,17 @@ export class BrowserController {
 
   private async setViewportCols(): Promise<void> {
     const cols = Number(this.refs.viewportColsInput.value);
-    if (!Number.isFinite(cols) || cols < 1) {
-      throw new Error(WAVES_COPY.errors.viewportColsPositive);
+    if (
+      !Number.isSafeInteger(cols) ||
+      cols < ENGINE_VIEWPORT_RANGE.minCols ||
+      cols > ENGINE_VIEWPORT_RANGE.maxCols
+    ) {
+      throw new Error(
+        WAVES_COPY.errors.viewportColsRange(
+          ENGINE_VIEWPORT_RANGE.minCols,
+          ENGINE_VIEWPORT_RANGE.maxCols
+        )
+      );
     }
     await this.hostClient.engineSetViewportCols({ cols });
   }

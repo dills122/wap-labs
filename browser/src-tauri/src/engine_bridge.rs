@@ -8,13 +8,18 @@ mod engine_commands;
 // subset only by the test target, so no fixed narrower split of this list is
 // warning-free across both `cargo build` and `cargo test`. `AppState` below
 // is the one name always used regardless of target and doesn't need this.
+#[cfg(test)]
+pub(crate) use engine_adapter::force_next_frame_failure;
 #[allow(unused_imports)]
 pub use engine_adapter::{
-    apply_advance_time_ms, apply_begin_focused_input_edit, apply_begin_focused_input_edit_frame,
-    apply_begin_focused_select_edit, apply_begin_focused_select_edit_frame,
-    apply_cancel_focused_input_edit, apply_cancel_focused_select_edit,
-    apply_clear_external_navigation_intent, apply_commit_focused_input_edit,
-    apply_commit_focused_select_edit, apply_engine_snapshot, apply_handle_input_frame,
+    apply_advance_time_ms, apply_advance_time_ms_frame, apply_begin_focused_input_edit,
+    apply_begin_focused_input_edit_frame, apply_begin_focused_select_edit,
+    apply_begin_focused_select_edit_frame, apply_cancel_focused_input_edit,
+    apply_cancel_focused_input_edit_frame, apply_cancel_focused_select_edit,
+    apply_cancel_focused_select_edit_frame, apply_clear_external_navigation_intent,
+    apply_clear_external_navigation_intent_frame, apply_commit_focused_input_edit,
+    apply_commit_focused_input_edit_frame, apply_commit_focused_select_edit,
+    apply_commit_focused_select_edit_frame, apply_engine_snapshot, apply_handle_input_frame,
     apply_handle_key, apply_handle_key_frame, apply_load_deck, apply_load_deck_context,
     apply_load_deck_context_frame, apply_move_focused_select_edit,
     apply_move_focused_select_edit_frame, apply_navigate_back, apply_navigate_back_frame,

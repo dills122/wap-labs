@@ -39,6 +39,14 @@ native/WASM parity suites pin their output, trace, serialization, and stale-fram
 hit regions, scroll semantics, editor event expansion, renderer cutover, and physical softkey
 placement remain later frame-migration work.
 
+`ENGINE_VIEWPORT_RANGE` is generated from the Rust-owned frame contract and is shared by native,
+WASM, Tauri, and frontend validation. `setViewportCols()` accepts integer columns from `1` through
+`u32::MAX`; an out-of-range value rejects with the serialized `EngineViewportError` before state
+mutation. Tauri frame-producing mutation adapters operate on a complete candidate engine state
+and commit it only after legacy render and presentation-frame construction both succeed, so a
+frame error preserves the prior deck, card, history, variables, focus, timers, and navigation
+intent.
+
 `WmlGoRequestPolicy.requestIntent` is the WML-304 engine handoff for method, ordered resolved
 postfields, `sendreferer`, `cache-control`, `enctype`, `accept-charset`, and same-deck
 classification. The native Rust and WASM serializers expose the same shape. This contract does

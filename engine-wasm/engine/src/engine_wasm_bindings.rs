@@ -186,8 +186,15 @@ impl WmlEngine {
     }
 
     #[wasm_bindgen(js_name = setViewportCols)]
-    pub fn set_viewport_cols_wasm(&mut self, cols: usize) {
-        self.set_viewport_cols(cols);
+    pub fn set_viewport_cols_wasm(&mut self, cols: f64) -> Result<(), JsValue> {
+        if !cols.is_finite()
+            || cols.fract() != 0.0
+            || cols < f64::from(ENGINE_VIEWPORT_MIN_COLS)
+            || cols > f64::from(ENGINE_VIEWPORT_MAX_COLS)
+        {
+            return Err(viewport_js_err(EngineViewportError::invalid(cols)));
+        }
+        self.set_viewport_cols(cols as u64).map_err(viewport_js_err)
     }
 
     #[wasm_bindgen(js_name = activeCardId)]
@@ -387,6 +394,11 @@ fn to_js_value<T: Serialize>(value: &T) -> Result<JsValue, JsValue> {
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 fn as_js_err(message: String) -> JsValue {
     JsValue::from_str(&message)
+}
+
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+fn viewport_js_err(error: EngineViewportError) -> JsValue {
+    to_js_value(&error).unwrap_or_else(|serialization_error| serialization_error)
 }
 
 #[cfg(all(test, feature = "wasm-bindings", target_arch = "wasm32"))]

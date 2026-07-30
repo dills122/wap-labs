@@ -10,6 +10,7 @@ import type { KeyboardIntentRouter } from './keyboard-intent-router';
  */
 interface BrowserControllerPrivates {
   setRunMode(mode: RunMode, options: { loadLocalOnEnter: boolean }): Promise<void>;
+  setViewportCols(): Promise<void>;
   applyEngineKey(key: EngineKey): Promise<void>;
   tickEngineTimerRuntime(): Promise<void>;
   readonly timerRuntime: EngineTimerRuntime;

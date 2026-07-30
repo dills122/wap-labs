@@ -125,6 +125,13 @@ export interface EngineDebugConnector {
 
 export type EngineViewport = { cols: number, };
 
+export type EngineViewportError = { "type": "invalid-viewport", requestedCols: string, minCols: number, maxCols: number, message: string, };
+
+export const ENGINE_VIEWPORT_RANGE = {
+  minCols: 1,
+  maxCols: 4294967295,
+} as const;
+
 export type EngineDeckDisplayMetadata = { baseUrl: string, contentType: string, language?: string, };
 
 export type EngineCardDisplayMetadata = { id: string, language?: string, };
