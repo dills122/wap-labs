@@ -63,9 +63,12 @@ const waitForPort = async () => {
   throw new Error(`timed out waiting for tauri-driver at ${driverUrl.origin}`);
 };
 
+const readElementText = async (element) =>
+  driver.executeScript('return arguments[0].textContent ?? "";', element);
+
 const waitForText = async (selector, expected) => {
   const element = await driver.wait(until.elementLocated(By.css(selector)), timeoutMs);
-  await driver.wait(async () => (await element.getText()).includes(expected), timeoutMs);
+  await driver.wait(async () => (await readElementText(element)).includes(expected), timeoutMs);
   return element;
 };
 
@@ -188,15 +191,15 @@ const run = async () => {
 
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const homeViewport = await waitForText('#viewport', 'Local WAP training');
-  assert.match(await homeViewport.getText(), /environment\./);
-  assert.match(await homeViewport.getText(), /Open Menu/);
+  assert.match(await readElementText(homeViewport), /environment\./);
+  assert.match(await readElementText(homeViewport), /Open Menu/);
   assert.equal(await body.getAttribute('data-boot-phase'), 'deck-ready');
   recordAssertion('gateway deck render', 'wap://localhost/ rendered the Kannel-served home deck');
   await capture('02-gateway-home');
 
   await driver.findElement(By.css('#btn-enter')).click();
   const menuViewport = await waitForText('#viewport', '1. Login');
-  assert.match(await menuViewport.getText(), /2\. Register/);
+  assert.match(await readElementText(menuViewport), /2\. Register/);
   recordAssertion(
     'visible card navigation',
     'Select navigated the native engine from home to menu'
@@ -208,7 +211,7 @@ const run = async () => {
   }
   await driver.findElement(By.css('#btn-enter')).click();
   const staticExampleViewport = await waitForText('#viewport', 'Open Navigation');
-  const staticExampleText = await staticExampleViewport.getText();
+  const staticExampleText = await readElementText(staticExampleViewport);
   assert.match(staticExampleText, /This is a static WML/);
   assert.match(staticExampleText, /sample deck\./);
   assert.match(
@@ -224,13 +227,13 @@ const run = async () => {
   await replaceInput('#fetch-url', 'wap://localhost/examples/pocket-portal.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const portalViewport = await waitForText('#viewport', 'first-party service');
-  const portalText = await portalViewport.getText();
+  const portalText = await readElementText(portalViewport);
   assert.match(portalText, /first-party service/);
   assert.match(portalText, /directory\./);
   await driver.findElement(By.css('#btn-enter')).click();
   const directoryViewport = await waitForText('#viewport', 'Forms');
-  assert.match(await directoryViewport.getText(), /Forms/);
-  assert.match(await directoryViewport.getText(), /Examples/);
+  assert.match(await readElementText(directoryViewport), /Forms/);
+  assert.match(await readElementText(directoryViewport), /Examples/);
   recordAssertion(
     'pocket portal navigation',
     'the native WSP/WBXML path rendered the portal and followed its fragment directory link'
@@ -240,7 +243,7 @@ const run = async () => {
   await replaceInput('#fetch-url', 'wap://localhost/examples/preferences.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const preferencesViewport = await waitForText('#viewport', 'made-up alias');
-  const preferencesText = await preferencesViewport.getText();
+  const preferencesText = await readElementText(preferencesViewport);
   assert.match(preferencesText, /made-up alias/);
   assert.match(preferencesText, /Layout/);
   assert.match(preferencesText, /Review Preference/);
@@ -253,7 +256,7 @@ const run = async () => {
   await replaceInput('#fetch-url', 'wap://localhost/examples/interop-check.wml');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const interopViewport = await waitForText('#viewport', 'W13-A');
-  assert.match(await interopViewport.getText(), /W13-A/);
+  assert.match(await readElementText(interopViewport), /W13-A/);
   const requestsBeforeRepeat = await readOriginRequestCount();
   await driver.findElement(By.css('#btn-enter')).click();
   await driver.wait(
@@ -264,7 +267,7 @@ const run = async () => {
     timeoutMs
   );
   const repeatedInteropViewport = await waitForText('#viewport', 'W13-A');
-  assert.match(await repeatedInteropViewport.getText(), /W13-A/);
+  assert.match(await readElementText(repeatedInteropViewport), /W13-A/);
   await delay(2000);
   const requestsAfterRepeat = await readOriginRequestCount();
   assert.equal(
@@ -293,8 +296,8 @@ const run = async () => {
   await replaceInput('#fetch-url', 'wap://localhost/');
   await driver.findElement(By.css('#btn-fetch-url')).click();
   const recoveredViewport = await waitForText('#viewport', 'Local WAP training');
-  assert.match(await recoveredViewport.getText(), /environment\./);
-  assert.match(await recoveredViewport.getText(), /Open Menu/);
+  assert.match(await readElementText(recoveredViewport), /environment\./);
+  assert.match(await readElementText(recoveredViewport), /Open Menu/);
   recordAssertion('failure recovery', 'a subsequent native Kannel load restored the home deck');
   await capture('09-recovered-home');
 

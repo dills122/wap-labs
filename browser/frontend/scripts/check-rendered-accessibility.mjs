@@ -153,7 +153,8 @@ const assertDeveloperToolsPanelContainment = async (
     );
     for (const action of metrics.actions) {
       assert.ok(
-        action.left >= metrics.workspace.left - 0.5 && action.right <= metrics.workspace.right + 0.5,
+        action.left >= metrics.workspace.left - 0.5 &&
+          action.right <= metrics.workspace.right + 0.5,
         `${name}: #${action.id} stays inside the Developer Tools workspace`
       );
     }
@@ -192,7 +193,8 @@ const assertDeveloperToolsCommandFeedback = async (page, name) => {
 
   await page.locator('#btn-health').click();
   await page.waitForFunction(
-    () => document.querySelector('#developer-tools-host-status')?.textContent?.startsWith('Health:'),
+    () =>
+      document.querySelector('#developer-tools-host-status')?.textContent?.startsWith('Health:'),
     null,
     { timeout: 5_000 }
   );
@@ -208,7 +210,11 @@ const assertDeveloperToolsCommandFeedback = async (page, name) => {
     { timeout: 5_000 }
   );
   const render = (await activity.textContent())?.trim() ?? '';
-  assert.equal(render, 'Rendered current card.', `${name}: Render confirms completion inside DevTools`);
+  assert.equal(
+    render,
+    'Rendered current card.',
+    `${name}: Render confirms completion inside DevTools`
+  );
   assert.notEqual(
     (await page.locator('#snapshot').textContent())?.trim(),
     '',
@@ -248,10 +254,15 @@ const assertStatusRegionsDoNotOverlap = async (page, name) => {
   for (const regions of [statusLayout.top, statusLayout.context]) {
     const visibleRegions = regions.filter((region) => region.visible);
     for (let index = 0; index < visibleRegions.length; index += 1) {
-      for (let candidateIndex = index + 1; candidateIndex < visibleRegions.length; candidateIndex += 1) {
+      for (
+        let candidateIndex = index + 1;
+        candidateIndex < visibleRegions.length;
+        candidateIndex += 1
+      ) {
         const first = visibleRegions[index];
         const second = visibleRegions[candidateIndex];
-        const horizontalOverlap = first.left < second.right - 0.5 && second.left < first.right - 0.5;
+        const horizontalOverlap =
+          first.left < second.right - 0.5 && second.left < first.right - 0.5;
         const verticalOverlap = first.top < second.bottom - 0.5 && second.top < first.bottom - 0.5;
         if (horizontalOverlap && verticalOverlap) {
           overlaps.push(`${first.selector}/${second.selector}`);
@@ -451,8 +462,17 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     }));
     const shell = document.querySelector('.browser-shell');
     const viewport = document.querySelector('#viewport');
-    const focusedWmlItem = document.querySelector('.wml-segment-link.is-focused');
     const rootStyle = getComputedStyle(document.documentElement);
+    const resolveColor = (propertyName) => {
+      const probe = document.createElement('span');
+      probe.style.color = `var(${propertyName})`;
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      document.body.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    };
     return {
       cssViewport: { width: innerWidth, height: innerHeight },
       document: {
@@ -471,10 +491,11 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
         lcdFontFamily: viewport ? getComputedStyle(viewport).fontFamily : null,
         lcdBackground: viewport ? getComputedStyle(viewport).backgroundColor : null,
         lcdForeground: viewport ? getComputedStyle(viewport).color : null,
-        focusedWmlBackground: focusedWmlItem
-          ? getComputedStyle(focusedWmlItem).backgroundColor
-          : null,
-        focusedWmlForeground: focusedWmlItem ? getComputedStyle(focusedWmlItem).color : null,
+        focusedWmlBackground: resolveColor('--lcd-focus-bg'),
+        focusedWmlForeground: resolveColor('--lcd-focus-fg'),
+        canvasSurfaceCount: document.querySelectorAll('#viewport > canvas.viewport-canvas').length,
+        legacyWmlDomCount: document.querySelectorAll('#viewport .line, #viewport .wml-segment')
+          .length,
         focusRingColor: rootStyle.getPropertyValue('--focus-ring-color').trim(),
         focusRingOuterColor: rootStyle.getPropertyValue('--focus-ring-outer-color').trim(),
         runningAnimationCount: document.getAnimations().length
@@ -503,6 +524,12 @@ const auditRenderedPage = async (page, name, windowEvidence) => {
     layout.presentation.lcdFontFamily ?? '',
     /Courier New/,
     `${name}: period LCD font remains scoped to the viewport`
+  );
+  assert.equal(layout.presentation.canvasSurfaceCount, 1, `${name}: one Canvas2D WML surface`);
+  assert.equal(
+    layout.presentation.legacyWmlDomCount,
+    0,
+    `${name}: no legacy WML line injection remains`
   );
   assert.equal(
     layout.presentation.focusedWmlBackground,
