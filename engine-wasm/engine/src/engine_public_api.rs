@@ -367,14 +367,8 @@ impl WmlEngine {
     /// layout is parity-critical and driven by deck content, so a
     /// defensive-programming bug here should degrade to a typed error, not
     /// crash the host.
-    pub fn render(&self) -> Result<RenderList, String> {
-        self.read_with_panic_boundary(Self::render_bounded)?
-    }
-
-    fn render_bounded(&self) -> Result<RenderList, String> {
-        let runtime_card = self.runtime_card_for_layout()?;
-        let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
-        Ok(layout.render_list)
+    pub fn render(&self) -> Result<RenderList, EngineRenderError> {
+        self.render_output().map(|output| output.render)
     }
 
     /// Build the canonical, host-neutral presentation frame for the active card.
@@ -382,13 +376,38 @@ impl WmlEngine {
     /// Frame construction is pure: repeated calls over the same observable
     /// engine state return the same content-derived `frameId` and do not add
     /// trace entries. Legacy [`Self::render`] remains available during F0/F1.
-    pub fn render_frame(&self) -> Result<EnginePresentationFrame, String> {
-        self.read_with_panic_boundary(Self::render_frame_bounded)?
+    pub fn render_frame(&self) -> Result<EnginePresentationFrame, EngineRenderError> {
+        self.render_output().map(|output| output.presentation)
     }
 
-    fn render_frame_bounded(&self) -> Result<EnginePresentationFrame, String> {
-        let runtime_card = self.runtime_card_for_layout()?;
-        let layout = layout_card(&runtime_card, self.viewport_cols, self.focused_link_idx);
+    /// Build legacy and presentation output from one bounded layout pass.
+    ///
+    /// The Tauri migration adapter uses this method so the compatibility
+    /// render list and canonical presentation frame cannot diverge or cause
+    /// duplicate layout work.
+    pub fn render_output(&self) -> Result<EngineRenderOutput, EngineRenderError> {
+        self.read_with_panic_boundary(Self::render_output_bounded)
+            .map_err(EngineRenderError::engine_failure)?
+    }
+
+    fn render_output_bounded(&self) -> Result<EngineRenderOutput, EngineRenderError> {
+        self.render_output_with_limits(EngineRenderLimits::default())
+    }
+
+    pub(crate) fn render_output_with_limits(
+        &self,
+        limits: EngineRenderLimits,
+    ) -> Result<EngineRenderOutput, EngineRenderError> {
+        let runtime_card = self
+            .runtime_card_for_layout()
+            .map_err(EngineRenderError::engine_failure)?;
+        let layout = layout_card_with_limits(
+            &runtime_card,
+            self.viewport_cols,
+            self.focused_link_idx,
+            limits,
+        )?;
+        let render = layout.render_list.clone();
         let focus_index = if layout.focus_targets.is_empty() {
             None
         } else {
@@ -568,8 +587,15 @@ impl WmlEngine {
             back_available: has_prev_do || !self.nav_stack.is_empty(),
             affordances,
         };
-        frame.assign_content_identity()?;
-        Ok(frame)
+        frame
+            .assign_content_identity()
+            .map_err(EngineRenderError::engine_failure)?;
+        let output = EngineRenderOutput {
+            render,
+            presentation: frame,
+        };
+        output.enforce_serialized_limit(limits.serialized_bytes)?;
+        Ok(output)
     }
 
     /// Handle one input key (`up`, `down`, `enter`).
@@ -598,7 +624,10 @@ impl WmlEngine {
                 frame_id,
                 action_id,
             } => {
-                let frame = self.render_frame_bounded()?;
+                let frame = self
+                    .render_output_bounded()
+                    .map_err(|error| error.to_string())?
+                    .presentation;
                 if frame.frame_id != frame_id {
                     return Err("Engine input references a stale frame".to_string());
                 }

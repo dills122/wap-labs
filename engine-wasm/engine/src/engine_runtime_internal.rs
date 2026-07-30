@@ -243,7 +243,8 @@ impl WmlEngine {
     pub(crate) fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         self.push_trace("KEY", format!("key={key}"));
         let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
+            .map_err(|error| error.to_string())?;
         let accept_action = self.active_do_action_internal("accept")?;
         let target_total = layout.focus_targets.len();
         self.focused_link_idx = clamp_focus(self.focused_link_idx, target_total);
@@ -537,7 +538,8 @@ impl WmlEngine {
 
     fn focused_input_internal(&self) -> Result<Option<(String, String)>, String> {
         let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
+            .map_err(|error| error.to_string())?;
         let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
         let Some(target) = layout.focus_targets.get(focused_idx) else {
             return Ok(None);
@@ -550,7 +552,8 @@ impl WmlEngine {
 
     fn focused_select_name_internal(&self) -> Result<Option<String>, String> {
         let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx);
+        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
+            .map_err(|error| error.to_string())?;
         let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
         let Some(target) = layout.focus_targets.get(focused_idx) else {
             return Ok(None);

@@ -39,6 +39,13 @@ native/WASM parity suites pin their output, trace, serialization, and stale-fram
 hit regions, scroll semantics, editor event expansion, renderer cutover, and physical softkey
 placement remain later frame-migration work.
 
+`ENGINE_RENDER_LIMITS` is generated from the Rust-owned render contract: 4,096 layout rows,
+segments, and legacy draw commands, plus 2 MiB for the combined legacy/presentation JSON
+projection. Native and WASM builds return the generated `EngineRenderError` resource-limit
+variant without committing partial state or presentation. During migration, the Tauri adapter
+derives both output forms from one layout pass; hosts still reject malformed output beyond these
+generated limits before presentation work.
+
 `ENGINE_VIEWPORT_RANGE` is generated from the Rust-owned frame contract and is shared by native,
 WASM, Tauri, and frontend validation. `setViewportCols()` accepts integer columns from `1` through
 `u32::MAX`; an out-of-range value rejects with the serialized `EngineViewportError` before state

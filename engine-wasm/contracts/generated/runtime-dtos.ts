@@ -132,6 +132,17 @@ export const ENGINE_VIEWPORT_RANGE = {
   maxCols: 4294967295,
 } as const;
 
+export type EngineRenderResource = "layout-rows" | "layout-segments" | "draw-commands" | "serialized-bytes";
+
+export type EngineRenderError = { "type": "resource-limit", resource: EngineRenderResource, limit: number, observed: number, message: string, } | { "type": "engine-failure", message: string, };
+
+export const ENGINE_RENDER_LIMITS = {
+  maxLayoutRows: 4096,
+  maxLayoutSegments: 4096,
+  maxDrawCommands: 4096,
+  maxSerializedBytes: 2097152,
+} as const;
+
 export type EngineDeckDisplayMetadata = { baseUrl: string, contentType: string, language?: string, };
 
 export type EngineCardDisplayMetadata = { id: string, language?: string, };

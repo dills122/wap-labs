@@ -531,6 +531,7 @@ ensureRequired('engine-host.ts', engineExportedTypes, [
 ]);
 ensureRequired('engine-host.ts values', engineExportedValues, [
   'ENGINE_DEBUG_CONTRACT_BASELINE',
+  'ENGINE_RENDER_LIMITS',
   'SCRIPT_ERROR_CATEGORY_LABELS'
 ]);
 ensureRequired('transport-host.ts', transportExportedTypes, ['FetchDeckRequest']);

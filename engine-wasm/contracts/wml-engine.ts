@@ -25,7 +25,11 @@ import type {
   WmlLoadDiagnostic
 } from './generated/runtime-dtos';
 
-export { ENGINE_DEBUG_CONTRACT_BASELINE, ENGINE_VIEWPORT_RANGE } from './generated/runtime-dtos';
+export {
+  ENGINE_DEBUG_CONTRACT_BASELINE,
+  ENGINE_RENDER_LIMITS,
+  ENGINE_VIEWPORT_RANGE
+} from './generated/runtime-dtos';
 
 export type {
   DrawCmd,
@@ -71,6 +75,8 @@ export type {
   EngineInputEvent,
   EngineInputKey,
   EnginePresentationFrame,
+  EngineRenderError,
+  EngineRenderResource,
   EngineSelectionState,
   EngineViewport,
   EngineViewportError,

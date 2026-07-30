@@ -28,7 +28,7 @@ mod wavescript;
 #[cfg(test)]
 mod engine_tests;
 
-use layout::flow_layout::{layout_card, FocusTarget};
+use layout::flow_layout::{layout_card, layout_card_with_limits, FocusTarget};
 use nav::focus::{clamp_focus, move_focus_down, move_focus_up};
 use parser::wml_parser::parse_wml_report_for_content_type;
 use runtime::card::CardTaskAction;
@@ -74,15 +74,23 @@ pub use engine_wml_types::{
     WmlLoadDiagnostic, WmlLoadDiagnosticClassLiteral, WmlLoadDiagnosticCodeLiteral,
     WmlLoadDiagnosticOutcomeLiteral,
 };
+use render::frame::EngineRenderLimits;
 #[cfg(feature = "contract-codegen")]
-pub use render::frame::engine_viewport_typescript_contract;
+pub use render::frame::{
+    engine_render_limits_typescript_contract, engine_viewport_typescript_contract,
+};
 pub use render::frame::{
     EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
     EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
     EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
-    EngineSelectionState, EngineViewport, EngineViewportError, ENGINE_FRAME_CONTRACT_VERSION,
-    ENGINE_FRAME_PROFILE_ID, ENGINE_VIEWPORT_MAX_COLS, ENGINE_VIEWPORT_MIN_COLS,
+    EngineRenderError, EngineRenderOutput, EngineRenderResource, EngineSelectionState,
+    EngineViewport, EngineViewportError, ENGINE_FRAME_CONTRACT_VERSION, ENGINE_FRAME_PROFILE_ID,
+    ENGINE_MAX_DRAW_COMMANDS, ENGINE_MAX_LAYOUT_ROWS, ENGINE_MAX_LAYOUT_SEGMENTS,
+    ENGINE_MAX_SERIALIZED_RENDER_BYTES, ENGINE_VIEWPORT_MAX_COLS, ENGINE_VIEWPORT_MIN_COLS,
 };
+
+#[cfg(feature = "render-test-instrumentation")]
+pub use layout::flow_layout::{layout_pass_count, reset_layout_pass_count};
 pub use render::render_list::{DrawCmd, RenderList};
 pub use wavescript::wap_decoder::{
     decode_wap_compilation_unit, WapCompilationUnit, WapConstant, WapDecodeError, WapFunction,

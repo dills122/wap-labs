@@ -141,7 +141,7 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-04 Bounded, single-pass render output
 
 1. `Issue`: [#505](https://github.com/dills122/wap-labs/issues/505)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P1`
 4. `Depends On`: `RSL-03`
 5. `Files`:
@@ -161,6 +161,18 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 - Tauri frame construction proves one layout pass and native/WASM frame parity remains stable.
 8. `Accept`:
 - Any accepted deck has a deterministic upper bound on render work and host-visible output.
+9. `Resolution`:
+- The engine now stops layout at 4,096 rows, 4,096 segments, and 4,096 legacy draw commands, and
+  caps the combined legacy/presentation JSON projection at 2 MiB. Rust-generated
+  `EngineRenderError`/`ENGINE_RENDER_LIMITS` contracts keep native, WASM, Tauri, and frontend
+  enforcement aligned.
+- The Tauri compatibility frame consumes one engine `render_output()` result, so legacy and
+  presentation projections share one instrumented layout pass. Candidate mutation still commits
+  only after bounded frame construction succeeds; focused host tests preserve the last good frame
+  and render a small replacement immediately after rejection.
+- Exact-limit and one-over-limit native/WASM tests cover every budget, the presenter rejects
+  oversized host output before cloning or canvas work, and the `RSL-04` wrapping story remains
+  navigable through the generated example corpus.
 
 ## Lane C: IPC Contract Hardening
 

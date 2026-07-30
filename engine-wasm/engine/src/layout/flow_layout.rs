@@ -1,3 +1,4 @@
+use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderResource};
 use crate::render::render_list::{DrawCmd, RenderList};
 use crate::runtime::card::Card;
 use crate::runtime::node::{InlineNode, Node};
@@ -58,13 +59,58 @@ enum ParagraphPart {
     Break,
 }
 
-pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -> LayoutResult {
+pub fn layout_card(
+    card: &Card,
+    viewport_cols: usize,
+    focused_link_idx: usize,
+) -> Result<LayoutResult, EngineRenderError> {
+    layout_card_impl(
+        card,
+        viewport_cols,
+        focused_link_idx,
+        EngineRenderLimits::default(),
+        false,
+    )
+}
+
+pub(crate) fn layout_card_with_limits(
+    card: &Card,
+    viewport_cols: usize,
+    focused_link_idx: usize,
+    limits: EngineRenderLimits,
+) -> Result<LayoutResult, EngineRenderError> {
+    layout_card_impl(card, viewport_cols, focused_link_idx, limits, true)
+}
+
+fn layout_card_impl(
+    card: &Card,
+    viewport_cols: usize,
+    focused_link_idx: usize,
+    limits: EngineRenderLimits,
+    count_render_pass: bool,
+) -> Result<LayoutResult, EngineRenderError> {
+    #[cfg(feature = "render-test-instrumentation")]
+    if count_render_pass {
+        LAYOUT_PASS_COUNT.with(|count| count.set(count.get() + 1));
+    }
+    #[cfg(not(feature = "render-test-instrumentation"))]
+    let _ = count_render_pass;
+
     let mut result = LayoutResult::default();
     let mut line = 0u32;
+    let mut row_count = 0usize;
 
     for node in &card.nodes {
         match node {
             Node::Break => {
+                check_next_output(
+                    &limits,
+                    row_count,
+                    result.segments.len(),
+                    result.render_list.draw.len(),
+                    true,
+                )?;
+                row_count += 1;
                 line += 1;
             }
             Node::Paragraph(inline) => {
@@ -145,13 +191,38 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                         // words for a blank string) and would otherwise silently swallow the
                         // break.
                         ParagraphPart::Break => {
+                            check_next_output(
+                                &limits,
+                                row_count,
+                                result.segments.len(),
+                                result.render_list.draw.len(),
+                                true,
+                            )?;
+                            row_count += 1;
                             line += 1;
                             continue;
                         }
                         ParagraphPart::Segment(segment, target) => (segment, target),
                     };
 
-                    let chunks = wrap_text(&segment, viewport_cols);
+                    let remaining_chunks = limits
+                        .rows
+                        .saturating_sub(row_count)
+                        .min(limits.segments.saturating_sub(result.segments.len()))
+                        .min(
+                            limits
+                                .draw_commands
+                                .saturating_sub(result.render_list.draw.len()),
+                        );
+                    let chunks =
+                        wrap_text(&segment, viewport_cols, remaining_chunks).map_err(|_| {
+                            next_output_error(
+                                &limits,
+                                row_count,
+                                result.segments.len(),
+                                remaining_chunks,
+                            )
+                        })?;
                     let focus_index = target.as_ref().map(|target| {
                         let idx = result.focus_targets.len();
                         result.focus_targets.push(target.clone());
@@ -161,6 +232,13 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                     let href = target.as_ref().map(FocusTarget::to_render_href);
 
                     for chunk in chunks {
+                        check_next_output(
+                            &limits,
+                            row_count,
+                            result.segments.len(),
+                            result.render_list.draw.len(),
+                            false,
+                        )?;
                         result.segments.push(LayoutSegment {
                             x: 0,
                             y: line,
@@ -185,6 +263,7 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
                                 });
                             }
                         }
+                        row_count += 1;
                         line += 1;
                     }
                 }
@@ -192,77 +271,235 @@ pub fn layout_card(card: &Card, viewport_cols: usize, focused_link_idx: usize) -
         }
     }
 
-    result
+    Ok(result)
 }
 
-fn wrap_text(text: &str, width: usize) -> Vec<String> {
-    let width = width.max(1);
-    let words: Vec<String> = text
-        .split_whitespace()
-        .flat_map(|word| split_long_word(word, width))
-        .collect();
-    if words.is_empty() {
-        return Vec::new();
+fn check_next_output(
+    limits: &EngineRenderLimits,
+    rows: usize,
+    segments: usize,
+    draw_commands: usize,
+    row_only: bool,
+) -> Result<(), EngineRenderError> {
+    if rows >= limits.rows {
+        return Err(EngineRenderError::resource_limit(
+            EngineRenderResource::LayoutRows,
+            limits.rows,
+            rows.saturating_add(1),
+        ));
     }
+    if !row_only && segments >= limits.segments {
+        return Err(EngineRenderError::resource_limit(
+            EngineRenderResource::LayoutSegments,
+            limits.segments,
+            segments.saturating_add(1),
+        ));
+    }
+    if !row_only && draw_commands >= limits.draw_commands {
+        return Err(EngineRenderError::resource_limit(
+            EngineRenderResource::DrawCommands,
+            limits.draw_commands,
+            draw_commands.saturating_add(1),
+        ));
+    }
+    Ok(())
+}
 
+fn next_output_error(
+    limits: &EngineRenderLimits,
+    rows: usize,
+    segments: usize,
+    additional_outputs: usize,
+) -> EngineRenderError {
+    if limits.rows.saturating_sub(rows) == additional_outputs {
+        return EngineRenderError::resource_limit(
+            EngineRenderResource::LayoutRows,
+            limits.rows,
+            limits.rows.saturating_add(1),
+        );
+    }
+    if limits.segments.saturating_sub(segments) == additional_outputs {
+        return EngineRenderError::resource_limit(
+            EngineRenderResource::LayoutSegments,
+            limits.segments,
+            limits.segments.saturating_add(1),
+        );
+    }
+    EngineRenderError::resource_limit(
+        EngineRenderResource::DrawCommands,
+        limits.draw_commands,
+        limits.draw_commands.saturating_add(1),
+    )
+}
+
+fn wrap_text(text: &str, width: usize, max_lines: usize) -> Result<Vec<String>, ()> {
+    let width = width.max(1);
     let mut lines = Vec::new();
     let mut current = String::new();
 
-    for word in &words {
-        if current.is_empty() {
+    {
+        let mut push_word = |word: &str| -> Result<(), ()> {
+            if !current.is_empty() {
+                let candidate_len = current.len() + 1 + word.len();
+                if candidate_len <= width {
+                    current.push(' ');
+                    current.push_str(word);
+                    return Ok(());
+                }
+                if lines.len() >= max_lines {
+                    return Err(());
+                }
+                lines.push(std::mem::take(&mut current));
+            }
             current.push_str(word);
-            continue;
-        }
+            Ok(())
+        };
 
-        let candidate_len = current.len() + 1 + word.len();
-        if candidate_len <= width {
-            current.push(' ');
-            current.push_str(word);
-        } else {
-            lines.push(current);
-            current = word.to_string();
+        for word in text.split_whitespace() {
+            if word.chars().count() <= width {
+                push_word(word)?;
+            } else {
+                let mut chunk = String::new();
+                let mut count = 0usize;
+                for character in word.chars() {
+                    chunk.push(character);
+                    count += 1;
+                    if count == width {
+                        push_word(&chunk)?;
+                        chunk.clear();
+                        count = 0;
+                    }
+                }
+                if !chunk.is_empty() {
+                    push_word(&chunk)?;
+                }
+            }
         }
     }
 
     if !current.is_empty() {
+        if lines.len() >= max_lines {
+            return Err(());
+        }
         lines.push(current);
     }
 
-    lines
+    Ok(lines)
 }
 
-fn split_long_word(word: &str, width: usize) -> Vec<String> {
-    if word.chars().count() <= width {
-        return vec![word.to_string()];
-    }
+#[cfg(feature = "render-test-instrumentation")]
+std::thread_local! {
+    static LAYOUT_PASS_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 
-    let mut out = Vec::new();
-    let mut current = String::new();
-    let mut count = 0usize;
+#[cfg(feature = "render-test-instrumentation")]
+pub fn reset_layout_pass_count() {
+    LAYOUT_PASS_COUNT.with(|count| count.set(0));
+}
 
-    for ch in word.chars() {
-        current.push(ch);
-        count += 1;
-        if count == width {
-            out.push(current);
-            current = String::new();
-            count = 0;
-        }
-    }
-
-    if !current.is_empty() {
-        out.push(current);
-    }
-
-    out
+#[cfg(feature = "render-test-instrumentation")]
+pub fn layout_pass_count() -> usize {
+    LAYOUT_PASS_COUNT.with(std::cell::Cell::get)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{layout_card, FocusTarget};
+    use super::{layout_card, layout_card_with_limits, FocusTarget};
+    use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderResource};
     use crate::render::render_list::DrawCmd;
     use crate::runtime::card::Card;
     use crate::runtime::node::{InlineNode, Node};
+
+    fn text_rows(count: usize) -> Card {
+        Card {
+            id: "limits".to_string(),
+            language: None,
+            new_context: false,
+            ordered: true,
+            nodes: vec![Node::Paragraph(vec![InlineNode::Text("a ".repeat(count))])],
+            event_bindings: vec![],
+            timer: None,
+        }
+    }
+
+    fn assert_resource_limit(error: EngineRenderError, expected: EngineRenderResource) {
+        assert!(matches!(
+            error,
+            EngineRenderError::ResourceLimit {
+                resource,
+                limit: 3,
+                observed: 4,
+                ..
+            } if resource == expected
+        ));
+    }
+
+    #[test]
+    fn every_structural_budget_accepts_exactly_at_limit_and_rejects_one_over() {
+        let exact = text_rows(3);
+        let one_over = text_rows(4);
+
+        let segment_limits = EngineRenderLimits {
+            rows: 4,
+            segments: 3,
+            draw_commands: 4,
+            serialized_bytes: usize::MAX,
+        };
+        assert_eq!(
+            layout_card_with_limits(&exact, 1, 0, segment_limits)
+                .expect("exact segment limit should render")
+                .segments
+                .len(),
+            3
+        );
+        assert_resource_limit(
+            layout_card_with_limits(&one_over, 1, 0, segment_limits)
+                .expect_err("one over segment limit should fail"),
+            EngineRenderResource::LayoutSegments,
+        );
+
+        let draw_limits = EngineRenderLimits {
+            rows: 4,
+            segments: 4,
+            draw_commands: 3,
+            serialized_bytes: usize::MAX,
+        };
+        assert_eq!(
+            layout_card_with_limits(&exact, 1, 0, draw_limits)
+                .expect("exact draw limit should render")
+                .render_list
+                .draw
+                .len(),
+            3
+        );
+        assert_resource_limit(
+            layout_card_with_limits(&one_over, 1, 0, draw_limits)
+                .expect_err("one over draw limit should fail"),
+            EngineRenderResource::DrawCommands,
+        );
+
+        let exact_rows = Card {
+            nodes: vec![Node::Break; 3],
+            ..text_rows(0)
+        };
+        let one_over_rows = Card {
+            nodes: vec![Node::Break; 4],
+            ..text_rows(0)
+        };
+        let row_limits = EngineRenderLimits {
+            rows: 3,
+            segments: 0,
+            draw_commands: 0,
+            serialized_bytes: usize::MAX,
+        };
+        layout_card_with_limits(&exact_rows, 1, 0, row_limits)
+            .expect("exact row limit should render");
+        assert_resource_limit(
+            layout_card_with_limits(&one_over_rows, 1, 0, row_limits)
+                .expect_err("one over row limit should fail"),
+            EngineRenderResource::LayoutRows,
+        );
+    }
 
     #[test]
     fn wraps_and_marks_focus() {
@@ -282,7 +519,7 @@ mod tests {
             timer: None,
         };
 
-        let out = layout_card(&card, 10, 0);
+        let out = layout_card(&card, 10, 0).expect("layout should fit budgets");
         assert_eq!(out.focus_targets.len(), 1);
         assert!(out.render_list.draw.iter().any(|cmd| matches!(
             cmd,
@@ -312,7 +549,7 @@ mod tests {
             timer: None,
         };
 
-        let out = layout_card(&card, 20, 0);
+        let out = layout_card(&card, 20, 0).expect("layout should fit budgets");
         let lines: Vec<(u32, String)> = out
             .render_list
             .draw
@@ -345,7 +582,7 @@ mod tests {
             timer: None,
         };
 
-        let out = layout_card(&card, 5, 0);
+        let out = layout_card(&card, 5, 0).expect("layout should fit budgets");
         let lines: Vec<String> = out
             .render_list
             .draw
@@ -374,7 +611,7 @@ mod tests {
             timer: None,
         };
 
-        let out = layout_card(&card, 4, 0);
+        let out = layout_card(&card, 4, 0).expect("layout should fit budgets");
         assert_eq!(
             out.focus_targets,
             vec![FocusTarget::Link("#next".to_string())]
@@ -448,7 +685,7 @@ mod tests {
             timer: None,
         };
 
-        let out = layout_card(&card, 40, 1);
+        let out = layout_card(&card, 40, 1).expect("layout should fit budgets");
         assert_eq!(
             out.focus_targets,
             vec![

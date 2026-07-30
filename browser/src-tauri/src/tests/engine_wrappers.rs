@@ -99,6 +99,73 @@ fn one_over_limit_viewport_is_typed_and_recovery_load_succeeds() {
     assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("home"));
 }
 
+#[test]
+fn tauri_frame_adapter_uses_one_layout_pass() {
+    let engine = frame_test_engine(BASIC_NAV_WML);
+    wavenav_engine::reset_layout_pass_count();
+
+    let frame = apply_render_frame(&engine).expect("frame should render");
+
+    assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("home"));
+    assert_eq!(
+        wavenav_engine::layout_pass_count(),
+        1,
+        "legacy and presentation output must share one engine layout pass"
+    );
+}
+
+#[test]
+fn over_budget_candidate_frame_is_not_committed_and_small_load_recovers() {
+    let mut engine = frame_test_engine(BASIC_NAV_WML);
+    engine
+        .set_viewport_cols(1)
+        .expect("narrow pathological fixture viewport should be valid");
+    let before = apply_render_frame(&engine).expect("initial frame should render");
+    let pathological = format!(
+        "<wml><card id=\"pathological\"><p>{}</p></card></wml>",
+        "a ".repeat(wavenav_engine::ENGINE_MAX_LAYOUT_ROWS + 1)
+    );
+
+    let error = apply_load_deck_context_frame(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(&pathological),
+            base_url: "http://local.test/pathological.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect_err("over-budget candidate frame must be rejected");
+    assert!(error.contains("layout rows"), "unexpected error: {error}");
+    assert_eq!(
+        apply_render_frame(&engine)
+            .expect("last good frame should remain available")
+            .presentation,
+        before.presentation
+    );
+
+    let recovered = apply_load_deck_context_frame(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml("<wml><card id=\"recovered\"><p>Ready</p></card></wml>"),
+            base_url: "http://local.test/recovered.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("small frame should render after rejection");
+    assert_eq!(
+        recovered.snapshot.active_card_id.as_deref(),
+        Some("recovered")
+    );
+}
+
 fn frame_test_engine(wml: &str) -> WmlEngine {
     let mut engine = WmlEngine::new();
     apply_load_deck_context(
