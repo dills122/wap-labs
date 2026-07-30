@@ -106,55 +106,68 @@ const MAX_NAV_DISPATCH_DEPTH: u8 = 8;
 const MAX_DECK_WML_XML_BYTES: usize = 512 * 1024;
 const MAX_DECK_RAW_BYTES_BASE64_BYTES: usize = 1024 * 1024;
 const CARD_ID_NOT_FOUND_ERROR: &str = "Card id not found";
+const CONTAINED_ENGINE_PANIC_ERROR: &str = "engine: internal panic contained";
+#[cfg(test)]
+const PANIC_BOUNDARY_TEST_WML: &str = "<!-- test-only engine panic boundary probe -->";
 
 /// Panic-containment boundary for public engine entrypoints.
 ///
-/// Runs `f` under [`std::panic::catch_unwind`] and converts an unwinding
-/// panic into the engine's existing typed `Result<_, String>` error path
-/// instead of letting it propagate. This exists so a defensive-programming
-/// bug elsewhere in the engine (parser, navigation, VM, ...) degrades to a
-/// recoverable error the host can observe, rather than an uncaught panic —
-/// which, at the `#[wasm_bindgen]` boundary, traps the whole WASM instance
-/// uncatchably from JS (the instance cannot be used again after that).
+/// Native targets use [`std::panic::catch_unwind`]. The shipping
+/// `wasm32-unknown-unknown` target cannot unwind on stable Rust, so its
+/// implementation calls `f` through a small JavaScript re-entry boundary and
+/// converts the resulting WebAssembly trap into the same deterministic error.
 ///
-/// `AssertUnwindSafe` is used because these entrypoints take `&mut self`,
-/// which is not `UnwindSafe` by default: unwinding through a mutable
-/// reference can leave the pointee in a partially-updated state. That
-/// tradeoff is accepted deliberately here — surfacing a typed error and
-/// keeping the host process/instance alive is strictly better than crashing
-/// it, even if the caught-panic path leaves engine state non-pristine. Call
-/// sites that care about state precision (e.g. navigation cycles) already
-/// guard against runaway recursion with typed errors before a panic would
-/// ever occur (see `MAX_NAV_DISPATCH_DEPTH`, `MAX_TIMER_DISPATCH_DEPTH`);
-/// this boundary is a last-resort net for bugs those guards don't cover.
-///
-/// Kept target-agnostic (native and `wasm32` both support unwind-based
-/// `catch_unwind` here, since this crate does not set
-/// `[profile.release] panic = "abort"`) and crate-private: it is glue for
-/// the public API surface, not parser/runtime/layout core logic.
-pub(crate) fn catch_engine_panic<T>(f: impl FnOnce() -> T) -> Result<T, String> {
-    std::panic::catch_unwind(std::panic::AssertUnwindSafe(f)).map_err(|payload| {
-        // NOTE: pass `payload.as_ref()` here, not `&payload`. `payload` is a
-        // `Box<dyn Any + Send>`, and `Box<T: 'static>` itself implements
-        // `Any` via the blanket impl — so `&payload` coerces (via unsized
-        // coercion, not `Deref`) to a `&(dyn Any + Send)` describing the
-        // *Box*, not the panic payload it holds, and every `downcast_ref`
-        // below silently misses. `.as_ref()` forces the `Deref` step first.
-        format!(
-            "engine: internal panic contained: {}",
-            panic_payload_message(payload.as_ref())
-        )
-    })
+/// Mutating entrypoints invoke this boundary only against a cloned candidate
+/// engine and commit the candidate after `f` returns. A panic therefore never
+/// exposes partially-mutated live state, including on wasm where aborting a
+/// nested callback does not run that callback's Rust destructors.
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) fn catch_engine_panic<T: 'static>(f: impl FnMut() -> T + 'static) -> Result<T, String> {
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(f))
+        .map_err(|_| CONTAINED_ENGINE_PANIC_ERROR.to_string())
 }
 
-fn panic_payload_message(payload: &(dyn std::any::Any + Send)) -> String {
-    if let Some(message) = payload.downcast_ref::<&str>() {
-        (*message).to_string()
-    } else if let Some(message) = payload.downcast_ref::<String>() {
-        message.clone()
-    } else {
-        "non-string panic payload".to_string()
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+#[wasm_bindgen(inline_js = r#"
+export function wavenavCatchEngineTrap(callback) {
+    try {
+        callback();
+        return false;
+    } catch (_) {
+        return true;
     }
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(js_name = wavenavCatchEngineTrap)]
+    fn catch_engine_trap(callback: &wasm_bindgen::JsValue) -> bool;
+}
+
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+pub(crate) fn catch_engine_panic<T: 'static>(
+    mut f: impl FnMut() -> T + 'static,
+) -> Result<T, String> {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use wasm_bindgen::closure::Closure;
+
+    let output = Rc::new(RefCell::new(None));
+    let callback_output = Rc::clone(&output);
+    let callback = Closure::wrap(Box::new(move || {
+        callback_output.borrow_mut().replace(f());
+    }) as Box<dyn FnMut()>);
+
+    let trapped = catch_engine_trap(callback.as_ref());
+    drop(callback);
+    if trapped {
+        return Err(CONTAINED_ENGINE_PANIC_ERROR.to_string());
+    }
+
+    let result = output
+        .borrow_mut()
+        .take()
+        .ok_or_else(|| "engine: panic boundary callback did not run".to_string());
+    result
 }
 
 #[derive(Clone, Debug)]

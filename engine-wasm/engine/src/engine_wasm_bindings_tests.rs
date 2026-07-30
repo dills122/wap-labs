@@ -45,6 +45,40 @@ fn wmls_501_fixture_bytes(fixture: &str) -> Vec<u8> {
 }
 
 #[wasm_bindgen_test]
+fn wasm_panic_boundary_returns_typed_error_rolls_back_and_remains_usable() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm("<wml><card id=\"home\"><p>Home</p></card></wml>")
+        .expect("initial deck should load");
+    assert!(engine.set_var_wasm("status".to_string(), "before".to_string()));
+
+    let result = engine.load_deck_wasm(crate::PANIC_BOUNDARY_TEST_WML);
+    assert_eq!(
+        result
+            .expect_err("wasm load panic must become a typed engine error")
+            .as_string()
+            .as_deref(),
+        Some(crate::CONTAINED_ENGINE_PANIC_ERROR)
+    );
+    assert_eq!(
+        engine.get_var_wasm("status".to_string()).as_deref(),
+        Some("before")
+    );
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("home"));
+    assert_eq!(
+        engine
+            .get_var_wasm("panic-boundary-probe".to_string())
+            .as_deref(),
+        None
+    );
+
+    engine
+        .load_deck_wasm("<wml><card id=\"next\"><p>Next</p></card></wml>")
+        .expect("engine must remain usable after a contained wasm panic");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("next"));
+}
+
+#[wasm_bindgen_test]
 fn wasm_wmls_501_decoder_matches_native_fixture_and_failure_semantics() {
     let fixture = wmls_501_fixture_bytes(WMLS_501_MINIMAL_UNIT);
     let decoded = decode_wap_compilation_unit(&fixture).expect("WAP-193 fixture must decode");

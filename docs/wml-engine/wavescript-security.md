@@ -39,18 +39,24 @@ Purpose: define mandatory safety controls for executing WaveScript bytecode in `
 - Deterministic traps on overflow/underflow.
 
 3. Panic containment at public entrypoints
-- The engine crate does not set `[profile.release] panic = "abort"`, so
-  the public entrypoints most exposed to untrusted deck/script content
-  (`loadDeckContext`, `render`, `handleKey`, `navigateToCard`,
-  `navigateBack`, `advanceTimeMs`, focused-edit session methods, and the
-  `executeScriptRef*`/`invokeScriptRef*` family) run under
-  `std::panic::catch_unwind` and convert an unwinding panic into the
-  engine's existing typed `Result<_, String>` (or, for the two methods
-  with no `Result` in their public signature, a trace entry plus the
-  existing "no-op" return value/outcome shape). This exists as a
-  last-resort net so a future defensive-programming bug degrades to a
-  recoverable error instead of trapping the whole WASM instance
-  uncatchably from JS.
+- Public entrypoints most exposed to untrusted deck/script content
+  (`loadDeckContext`, `render`, `handleKey`, `navigateToCard`, `navigateBack`,
+  `advanceTimeMs`, focused-edit session methods, and the
+  `executeScriptRef*`/`invokeScriptRef*` family) run against an isolated engine
+  candidate and commit it only after the boundary returns. A panic therefore
+  cannot expose partially-mutated live engine state.
+- Native targets use `std::panic::catch_unwind`. Stable
+  `wasm32-unknown-unknown` cannot unwind, so the WASM implementation invokes
+  the candidate operation through a JavaScript re-entry boundary and converts
+  its WebAssembly trap into the same deterministic
+  `engine: internal panic contained` error. The wasm-target test suite
+  deliberately panics inside this boundary, verifies the typed error and state
+  rollback, and then reuses the engine instance.
+- Platform limitation: allocating/cloning the isolated candidate and creating
+  the JavaScript callback happen before the trap boundary. An allocation
+  failure while establishing that boundary still aborts on
+  `wasm32-unknown-unknown`; bounded deck, script, and variable state remains
+  the primary protection for that class of failure.
 
 4. Runtime-owned side effects only
 - `WMLBrowser` mutations happen only in engine runtime state.
@@ -93,8 +99,9 @@ Required recurring checks:
   typed error (nav dispatch-depth guard) instead of overflowing the stack
 - deeply-nested-but-well-formed WML tag trees are rejected during parse
   (parse-tree depth budget), not only in the later semantic walkers
-- `catch_engine_panic` converts an unwinding panic into the engine's
-  typed error path
+- native and wasm panic boundaries convert a deliberate panic into the same
+  typed error, preserve the pre-call engine state, and leave the instance
+  usable for subsequent operations
 
 ## Operational Commands
 
