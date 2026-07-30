@@ -1,9 +1,216 @@
+use std::io::{self, Write};
+
 use serde::{Deserialize, Serialize};
+
+use super::render_list::RenderList;
 
 pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 1;
 pub const ENGINE_FRAME_PROFILE_ID: &str = "class-c-reference";
 pub const ENGINE_VIEWPORT_MIN_COLS: u32 = 1;
 pub const ENGINE_VIEWPORT_MAX_COLS: u32 = u32::MAX;
+pub const ENGINE_MAX_LAYOUT_ROWS: usize = 4_096;
+pub const ENGINE_MAX_LAYOUT_SEGMENTS: usize = 4_096;
+pub const ENGINE_MAX_DRAW_COMMANDS: usize = 4_096;
+pub const ENGINE_MAX_SERIALIZED_RENDER_BYTES: usize = 2 * 1024 * 1024;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[serde(rename_all = "kebab-case")]
+pub enum EngineRenderResource {
+    LayoutRows,
+    LayoutSegments,
+    DrawCommands,
+    SerializedBytes,
+}
+
+impl EngineRenderResource {
+    fn label(self) -> &'static str {
+        match self {
+            Self::LayoutRows => "layout rows",
+            Self::LayoutSegments => "layout segments",
+            Self::DrawCommands => "draw commands",
+            Self::SerializedBytes => "serialized render bytes",
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[serde(tag = "type", rename_all = "kebab-case")]
+pub enum EngineRenderError {
+    ResourceLimit {
+        resource: EngineRenderResource,
+        limit: usize,
+        observed: usize,
+        message: String,
+    },
+    EngineFailure {
+        message: String,
+    },
+}
+
+impl EngineRenderError {
+    pub(crate) fn resource_limit(
+        resource: EngineRenderResource,
+        limit: usize,
+        observed: usize,
+    ) -> Self {
+        Self::ResourceLimit {
+            resource,
+            limit,
+            observed,
+            message: format!(
+                "Engine render exceeds the {} limit of {} (observed {})",
+                resource.label(),
+                limit,
+                observed
+            ),
+        }
+    }
+
+    pub(crate) fn engine_failure(message: impl Into<String>) -> Self {
+        Self::EngineFailure {
+            message: message.into(),
+        }
+    }
+}
+
+impl std::fmt::Display for EngineRenderError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ResourceLimit { message, .. } | Self::EngineFailure { message } => {
+                formatter.write_str(message)
+            }
+        }
+    }
+}
+
+impl From<String> for EngineRenderError {
+    fn from(message: String) -> Self {
+        Self::engine_failure(message)
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct EngineRenderLimits {
+    pub rows: usize,
+    pub segments: usize,
+    pub draw_commands: usize,
+    pub serialized_bytes: usize,
+}
+
+impl Default for EngineRenderLimits {
+    fn default() -> Self {
+        Self {
+            rows: ENGINE_MAX_LAYOUT_ROWS,
+            segments: ENGINE_MAX_LAYOUT_SEGMENTS,
+            draw_commands: ENGINE_MAX_DRAW_COMMANDS,
+            serialized_bytes: ENGINE_MAX_SERIALIZED_RENDER_BYTES,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct EngineRenderOutput {
+    pub render: RenderList,
+    pub presentation: EnginePresentationFrame,
+}
+
+impl EngineRenderOutput {
+    pub(crate) fn enforce_serialized_limit(&self, limit: usize) -> Result<(), EngineRenderError> {
+        let mut writer = BoundedCountingWriter::new(limit);
+        match serde_json::to_writer(&mut writer, self) {
+            Ok(()) => Ok(()),
+            Err(_) if writer.exceeded => Err(EngineRenderError::resource_limit(
+                EngineRenderResource::SerializedBytes,
+                limit,
+                writer.written,
+            )),
+            Err(error) => Err(EngineRenderError::engine_failure(format!(
+                "Engine render serialization failed: {error}"
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "contract-codegen")]
+pub fn engine_render_limits_typescript_contract() -> String {
+    format!(
+        concat!(
+            "export const ENGINE_RENDER_LIMITS = {{\n",
+            "  maxLayoutRows: {},\n",
+            "  maxLayoutSegments: {},\n",
+            "  maxDrawCommands: {},\n",
+            "  maxSerializedBytes: {},\n",
+            "}} as const;\n"
+        ),
+        ENGINE_MAX_LAYOUT_ROWS,
+        ENGINE_MAX_LAYOUT_SEGMENTS,
+        ENGINE_MAX_DRAW_COMMANDS,
+        ENGINE_MAX_SERIALIZED_RENDER_BYTES
+    )
+}
+
+struct BoundedCountingWriter {
+    limit: usize,
+    written: usize,
+    exceeded: bool,
+}
+
+impl BoundedCountingWriter {
+    fn new(limit: usize) -> Self {
+        Self {
+            limit,
+            written: 0,
+            exceeded: false,
+        }
+    }
+}
+
+impl Write for BoundedCountingWriter {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        let remaining = self.limit.saturating_sub(self.written);
+        if bytes.len() > remaining {
+            self.written = self.limit.saturating_add(1);
+            self.exceeded = true;
+            return Err(io::Error::other(
+                "engine render serialization limit exceeded",
+            ));
+        }
+        self.written += bytes.len();
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
+
+#[derive(Default)]
+struct ContentIdentityWriter {
+    hash: u64,
+}
+
+impl ContentIdentityWriter {
+    fn new() -> Self {
+        Self {
+            hash: 0xcbf29ce484222325,
+        }
+    }
+}
+
+impl Write for ContentIdentityWriter {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        for byte in bytes {
+            self.hash = (self.hash ^ u64::from(*byte)).wrapping_mul(0x100000001b3);
+        }
+        Ok(bytes.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
@@ -76,12 +283,10 @@ pub struct EnginePresentationFrame {
 impl EnginePresentationFrame {
     pub(crate) fn assign_content_identity(&mut self) -> Result<(), String> {
         self.frame_id.clear();
-        let bytes = serde_json::to_vec(self)
+        let mut writer = ContentIdentityWriter::new();
+        serde_json::to_writer(&mut writer, self)
             .map_err(|_| "Engine frame identity serialization failed".to_string())?;
-        let hash = bytes.iter().fold(0xcbf29ce484222325_u64, |hash, byte| {
-            (hash ^ u64::from(*byte)).wrapping_mul(0x100000001b3)
-        });
-        self.frame_id = format!("{hash:016x}");
+        self.frame_id = format!("{:016x}", writer.hash);
         Ok(())
     }
 }

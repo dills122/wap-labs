@@ -1129,6 +1129,173 @@ fn wasm_viewport_range_matches_native_and_recovers_after_rejection() {
     );
 }
 
+fn wasm_limit_fixture(rows: usize) -> WmlEngine {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .set_viewport_cols_wasm(1.0)
+        .expect("limit viewport should be valid");
+    engine
+        .load_deck_wasm(&format!(
+            "<wml><card id=\"limits\"><p>{}</p></card></wml>",
+            "a ".repeat(rows)
+        ))
+        .expect("limit fixture should load");
+    engine
+}
+
+fn assert_wasm_resource_limit(
+    error: EngineRenderError,
+    expected_resource: &str,
+    expected_limit: usize,
+) {
+    let value = to_js_value(&error).expect("typed render error should serialize to JS");
+    assert_eq!(
+        Reflect::get(&value, &JsValue::from_str("type"))
+            .expect("error type")
+            .as_string()
+            .as_deref(),
+        Some("resource-limit")
+    );
+    assert_eq!(
+        Reflect::get(&value, &JsValue::from_str("resource"))
+            .expect("resource")
+            .as_string()
+            .as_deref(),
+        Some(expected_resource)
+    );
+    assert_eq!(
+        Reflect::get(&value, &JsValue::from_str("limit"))
+            .expect("limit")
+            .as_f64(),
+        Some(expected_limit as f64)
+    );
+    assert_eq!(
+        Reflect::get(&value, &JsValue::from_str("observed"))
+            .expect("observed")
+            .as_f64(),
+        Some((expected_limit + 1) as f64)
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_render_budgets_accept_exactly_at_limit_and_reject_one_over() {
+    let exact = wasm_limit_fixture(3);
+    let one_over = wasm_limit_fixture(4);
+
+    for (limits, resource) in [
+        (
+            EngineRenderLimits {
+                rows: 4,
+                segments: 3,
+                draw_commands: 4,
+                serialized_bytes: usize::MAX,
+            },
+            "layout-segments",
+        ),
+        (
+            EngineRenderLimits {
+                rows: 4,
+                segments: 4,
+                draw_commands: 3,
+                serialized_bytes: usize::MAX,
+            },
+            "draw-commands",
+        ),
+    ] {
+        exact
+            .render_output_with_limits(limits)
+            .expect("exact structural limit should render in WASM");
+        assert_wasm_resource_limit(
+            one_over
+                .render_output_with_limits(limits)
+                .expect_err("one over structural limit should fail in WASM"),
+            resource,
+            3,
+        );
+    }
+
+    let mut exact_rows = WmlEngine::wasm_new();
+    exact_rows
+        .load_deck_wasm("<wml><card id=\"limits\"><br/><br/><br/></card></wml>")
+        .expect("exact row fixture should load");
+    let mut one_over_rows = WmlEngine::wasm_new();
+    one_over_rows
+        .load_deck_wasm("<wml><card id=\"limits\"><br/><br/><br/><br/></card></wml>")
+        .expect("one-over row fixture should load");
+    let row_limits = EngineRenderLimits {
+        rows: 3,
+        segments: 0,
+        draw_commands: 0,
+        serialized_bytes: usize::MAX,
+    };
+    exact_rows
+        .render_output_with_limits(row_limits)
+        .expect("exact row limit should render in WASM");
+    assert_wasm_resource_limit(
+        one_over_rows
+            .render_output_with_limits(row_limits)
+            .expect_err("one over row limit should fail in WASM"),
+        "layout-rows",
+        3,
+    );
+
+    let unbounded = exact
+        .render_output_with_limits(EngineRenderLimits {
+            serialized_bytes: usize::MAX,
+            ..EngineRenderLimits::default()
+        })
+        .expect("WASM fixture should render without a byte cap");
+    let serialized_len = serde_json::to_vec(&unbounded)
+        .expect("WASM render output should serialize")
+        .len();
+    exact
+        .render_output_with_limits(EngineRenderLimits {
+            serialized_bytes: serialized_len,
+            ..EngineRenderLimits::default()
+        })
+        .expect("exact serialized-byte limit should render in WASM");
+    assert_wasm_resource_limit(
+        exact
+            .render_output_with_limits(EngineRenderLimits {
+                serialized_bytes: serialized_len - 1,
+                ..EngineRenderLimits::default()
+            })
+            .expect_err("one over serialized-byte limit should fail in WASM"),
+        "serialized-bytes",
+        serialized_len - 1,
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_resource_rejection_is_typed_and_small_deck_renders_afterward() {
+    let mut engine = wasm_limit_fixture(ENGINE_MAX_LAYOUT_ROWS + 1);
+    let error = engine
+        .render_frame_wasm()
+        .expect_err("one-over production output must fail at the WASM boundary");
+    assert_eq!(
+        Reflect::get(&error, &JsValue::from_str("type"))
+            .expect("error type")
+            .as_string()
+            .as_deref(),
+        Some("resource-limit")
+    );
+
+    engine
+        .load_deck_wasm("<wml><card id=\"recovered\"><p>Ready</p></card></wml>")
+        .expect("small deck should load after rejection");
+    let frame = engine
+        .render_frame_wasm()
+        .expect("small deck should render after rejection");
+    let card = Reflect::get(&frame, &JsValue::from_str("card")).expect("frame card");
+    assert_eq!(
+        Reflect::get(&card, &JsValue::from_str("id"))
+            .expect("card id")
+            .as_string()
+            .as_deref(),
+        Some("recovered")
+    );
+}
+
 #[wasm_bindgen_test]
 fn wasm_load_deck_context_rejects_oversized_wml_payload() {
     let mut engine = WmlEngine::wasm_new();

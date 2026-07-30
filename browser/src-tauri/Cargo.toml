@@ -24,6 +24,9 @@ ts-rs = { version = "12", features = ["serde-compat"] }
 url = "2"
 wavenav_engine = { path = "../../engine-wasm/engine", default-features = false, features = ["contract-codegen"] }
 
+[dev-dependencies]
+wavenav_engine = { path = "../../engine-wasm/engine", default-features = false, features = ["contract-codegen", "render-test-instrumentation"] }
+
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]

@@ -15,7 +15,8 @@ pub use engine::{
     EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
     EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
     EngineFocusTargetKind, EngineFrameRow, EngineFrameSegment, EngineInputEvent, EngineInputKey,
-    EnginePresentationFrame, EngineSelectionState, EngineViewport, EngineViewportError,
+    EnginePresentationFrame, EngineRenderError, EngineRenderResource, EngineSelectionState,
+    EngineViewport, EngineViewportError,
 };
 
 #[derive(Clone, Debug, Deserialize, TS)]

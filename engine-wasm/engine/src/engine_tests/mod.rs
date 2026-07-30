@@ -148,6 +148,7 @@ mod actions_timers;
 mod debug_recorder;
 mod navigation_metadata;
 mod panic_containment;
+mod render_limits;
 mod script_runtime;
 mod select_semantics;
 mod serialized_contracts;

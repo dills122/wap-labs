@@ -5714,13 +5714,15 @@ export const EXAMPLES: HostExample[] = [
     "description": "Long unbroken token fixture for deterministic wrapping checks.",
     "goal": "Detect layout regressions in char-width wrapping and ensure navigation remains usable.",
     "workItems": [
-      "A3-01"
+      "A3-01",
+      "RSL-04"
     ],
     "specItems": [
       "WML-R-004"
     ],
     "testingAc": [
       "Load the deck and confirm the long token wraps consistently in the canvas viewport.",
+      "Confirm bounded legacy and presentation output render together without duplicate layout work.",
       "Reload the same deck multiple times and verify visual wrapping does not drift.",
       "Press Enter on \"Continue\" and confirm activeCardId transitions to next.",
       "Press Enter on \"Back\" and confirm return to home."
@@ -5731,7 +5733,8 @@ export const EXAMPLES: HostExample[] = [
         "title": "Long unbroken token wraps and navigation remains usable",
         "target": "host-sample",
         "workItems": [
-          "A3-01"
+          "A3-01",
+          "RSL-04"
         ],
         "specItems": [
           "WML-R-004"

@@ -87,10 +87,11 @@ fn frame(engine: &WmlEngine) -> Result<EngineFrame, String> {
     if FORCE_NEXT_FRAME_FAILURE.with(|force| force.replace(false)) {
         return Err("forced frame failure".to_string());
     }
+    let output = engine.render_output().map_err(|error| error.to_string())?;
     Ok(EngineFrame {
         snapshot: snapshot(engine),
-        render: engine.render()?.into(),
-        presentation: engine.render_frame()?,
+        render: output.render.into(),
+        presentation: output.presentation,
     })
 }
 
@@ -142,7 +143,7 @@ pub fn apply_load_deck_context(
 }
 
 pub fn apply_render(engine: &WmlEngine) -> Result<RenderList, String> {
-    Ok(engine.render()?.into())
+    Ok(engine.render().map_err(|error| error.to_string())?.into())
 }
 
 pub fn apply_render_frame(engine: &WmlEngine) -> Result<EngineFrame, String> {

@@ -9,7 +9,10 @@ use lowband_transport_rust::{
 };
 use ts_rs::{Config, TS};
 use wavenav_engine::SCRIPT_ERROR_CATEGORY_METADATA;
-use wavenav_engine::{engine_debug_typescript_contract, engine_viewport_typescript_contract};
+use wavenav_engine::{
+    engine_debug_typescript_contract, engine_render_limits_typescript_contract,
+    engine_viewport_typescript_contract,
+};
 use wavenav_host_lib::application_commands::render_typescript_registry;
 use wavenav_host_lib::application_state::{
     ApplicationSettingsV1, ApplicationStateComponent, ApplicationStateLoadResult,
@@ -38,8 +41,8 @@ use wavenav_host_lib::contract_types::{
     EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
     EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
     EngineFocusTargetKind, EngineFrame, EngineFrameRow, EngineFrameSegment, EngineInputEvent,
-    EngineInputKey, EngineKey, EnginePresentationFrame, EngineRuntimeSnapshot,
-    EngineSelectionState, EngineViewport, EngineViewportError,
+    EngineInputKey, EngineKey, EnginePresentationFrame, EngineRenderError, EngineRenderResource,
+    EngineRuntimeSnapshot, EngineSelectionState, EngineViewport, EngineViewportError,
     ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationMethodSnapshot,
     ExternalNavigationPostContextSnapshot, ExternalNavigationPostFieldSnapshot,
     ExternalNavigationRequestIntentSnapshot, ExternalNavigationRequestPolicySnapshot,
@@ -174,6 +177,10 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<EngineViewport>(&mut output);
     push_decl::<EngineViewportError>(&mut output);
     output.push_str(&engine_viewport_typescript_contract());
+    output.push('\n');
+    push_decl::<EngineRenderResource>(&mut output);
+    push_decl::<EngineRenderError>(&mut output);
+    output.push_str(&engine_render_limits_typescript_contract());
     output.push('\n');
     push_decl::<EngineDeckDisplayMetadata>(&mut output);
     push_decl::<EngineCardDisplayMetadata>(&mut output);

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
+import { ENGINE_RENDER_LIMITS, type RenderList } from '../../../contracts/engine';
 import type { BrowserShellRefs } from './browser-shell-template';
 import { BrowserPresenter } from './browser-presenter';
 import { WAVES_COPY } from './waves-copy';
@@ -107,6 +108,30 @@ describe('BrowserPresenter', () => {
     expect(refs.viewportEl.querySelector('canvas.viewport-canvas')).not.toBeNull();
     expect(refs.viewportEl.querySelector('.line')).toBeNull();
     expect(innerHtmlSetter).not.toHaveBeenCalled();
+  });
+
+  it('rejects oversized host output before cloning or rendering and preserves the last frame', () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const lastGood: RenderList = {
+      draw: [{ type: 'text', text: 'last good', x: 0, y: 0 }]
+    };
+    presenter.drawRenderList(lastGood);
+
+    const oversized: RenderList = {
+      draw: Array.from({ length: ENGINE_RENDER_LIMITS.maxDrawCommands + 1 }, (_, y) => ({
+        type: 'text' as const,
+        text: 'x',
+        x: 0,
+        y
+      }))
+    };
+
+    expect(() => presenter.drawRenderList(oversized)).toThrow(
+      `Host render output exceeds the ${ENGINE_RENDER_LIMITS.maxDrawCommands}-command limit.`
+    );
+    expect(presenter.getRenderList()).toEqual(lastGood);
+    expect(refs.viewportEl.textContent).toContain('last good');
   });
 
   it('does not append timeline entries when replacing session state directly', () => {

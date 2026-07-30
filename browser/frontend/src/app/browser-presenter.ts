@@ -1,5 +1,5 @@
 import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
-import { SCRIPT_ERROR_CATEGORY_LABELS } from '../../../contracts/engine';
+import { ENGINE_RENDER_LIMITS, SCRIPT_ERROR_CATEGORY_LABELS } from '../../../contracts/engine';
 import type {
   EngineRuntimeSnapshot,
   RenderList,
@@ -390,6 +390,7 @@ export class BrowserPresenter {
   }
 
   drawRenderList(renderList: RenderList): void {
+    assertHostRenderOutputWithinLimits(renderList);
     this.latestRenderList = {
       draw: renderList.draw.map((command) => ({ ...command }))
     };
@@ -566,6 +567,36 @@ export class BrowserPresenter {
     }
     element.textContent = nextText;
     return nextText;
+  }
+}
+
+function assertHostRenderOutputWithinLimits(renderList: RenderList): void {
+  if (!Array.isArray(renderList.draw)) {
+    throw new TypeError('Host render output must contain a draw-command array.');
+  }
+  if (renderList.draw.length > ENGINE_RENDER_LIMITS.maxDrawCommands) {
+    throw new RangeError(
+      `Host render output exceeds the ${ENGINE_RENDER_LIMITS.maxDrawCommands}-command limit.`
+    );
+  }
+
+  let payloadUnits = 0;
+  for (const command of renderList.draw) {
+    if (typeof command.text !== 'string') {
+      throw new TypeError('Host render output contains a command without bounded text.');
+    }
+    payloadUnits += command.text.length;
+    if (command.type === 'link') {
+      if (typeof command.href !== 'string') {
+        throw new TypeError('Host render output contains a link without a bounded target.');
+      }
+      payloadUnits += command.href.length;
+    }
+    if (payloadUnits > ENGINE_RENDER_LIMITS.maxSerializedBytes) {
+      throw new RangeError(
+        `Host render output exceeds the ${ENGINE_RENDER_LIMITS.maxSerializedBytes}-unit payload limit.`
+      );
+    }
   }
 }
 

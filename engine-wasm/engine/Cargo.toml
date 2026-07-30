@@ -13,6 +13,7 @@ crate-type = ["cdylib", "rlib"]
 default = ["wasm-bindings"]
 wasm-bindings = ["dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
 contract-codegen = ["dep:ts-rs"]
+render-test-instrumentation = []
 
 [dependencies]
 percent-encoding = "2"

@@ -140,12 +140,12 @@ impl WmlEngine {
 
     #[wasm_bindgen(js_name = render)]
     pub fn render_wasm(&self) -> Result<JsValue, JsValue> {
-        to_js_value(&self.render().map_err(as_js_err)?)
+        to_js_value(&self.render().map_err(render_js_err)?)
     }
 
     #[wasm_bindgen(js_name = renderFrame)]
     pub fn render_frame_wasm(&self) -> Result<JsValue, JsValue> {
-        to_js_value(&self.render_frame().map_err(as_js_err)?)
+        to_js_value(&self.render_frame().map_err(render_js_err)?)
     }
 
     #[wasm_bindgen(js_name = handleKey)]
@@ -398,6 +398,11 @@ fn as_js_err(message: String) -> JsValue {
 
 #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
 fn viewport_js_err(error: EngineViewportError) -> JsValue {
+    to_js_value(&error).unwrap_or_else(|serialization_error| serialization_error)
+}
+
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+fn render_js_err(error: EngineRenderError) -> JsValue {
     to_js_value(&error).unwrap_or_else(|serialization_error| serialization_error)
 }
 

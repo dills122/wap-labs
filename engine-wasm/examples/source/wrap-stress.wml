@@ -1,11 +1,12 @@
 <!--
 label: Long Token Wrap
-work-items: A3-01
+work-items: A3-01, RSL-04
 spec-items: WML-R-004
 description: Long unbroken token fixture for deterministic wrapping checks.
 goal: Detect layout regressions in char-width wrapping and ensure navigation remains usable.
 testing-ac:
 - Load the deck and confirm the long token wraps consistently in the canvas viewport.
+- Confirm bounded legacy and presentation output render together without duplicate layout work.
 - Reload the same deck multiple times and verify visual wrapping does not drift.
 - Press Enter on "Continue" and confirm activeCardId transitions to next.
 - Press Enter on "Back" and confirm return to home.
