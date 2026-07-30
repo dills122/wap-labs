@@ -111,8 +111,9 @@ impl WmlEngine {
         // state, so the engine ends up back on the last card that was fully,
         // successfully entered before the cycle was detected.
         let nav = NavRollbackGuard::forward(self);
+        nav.engine.debug_emit(EngineDebugEventPayload::CardExit);
         nav.engine.stop_active_timer_for_exit();
-        nav.engine.active_input_edit = None;
+        nav.engine.cancel_active_input_edit_with_debug();
         nav.engine.active_select_edit = None;
         let previous_idx = nav.engine.active_card_idx;
         if reset_context {
@@ -122,7 +123,8 @@ impl WmlEngine {
             nav.engine.nav_stack.push(previous_idx);
         }
         nav.engine.active_card_idx = next_idx;
-        nav.engine.focused_link_idx = 0;
+        nav.engine.set_focused_link_idx_with_debug(0);
+        nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         nav.engine.initialize_controls_on_active_card()?;
         if nav.engine.run_onenterforward_for_active_card()? {
             nav.commit();
@@ -153,12 +155,13 @@ impl WmlEngine {
     pub(crate) fn reset_browser_context_state(&mut self) {
         self.browser_context_epoch = self.browser_context_epoch.saturating_add(1);
         self.vars.clear();
+        self.debug_clear_variable_marks();
         self.nav_stack.clear();
         self.focused_link_idx = 0;
         self.external_nav_intent = None;
         self.external_nav_request_policy = None;
         self.active_timer = None;
-        self.active_input_edit = None;
+        self.cancel_active_input_edit_with_debug();
         self.active_select_edit = None;
     }
 
@@ -190,11 +193,13 @@ impl WmlEngine {
             return false;
         };
 
+        nav.engine.debug_emit(EngineDebugEventPayload::CardExit);
         nav.engine.stop_active_timer_for_exit();
-        nav.engine.active_input_edit = None;
+        nav.engine.cancel_active_input_edit_with_debug();
         nav.engine.active_select_edit = None;
         nav.engine.active_card_idx = back_target_idx;
-        nav.engine.focused_link_idx = 0;
+        nav.engine.set_focused_link_idx_with_debug(0);
+        nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         if let Err(err) = nav.engine.apply_set_var_assignments(assignments) {
             nav.engine.push_trace("SETVAR_BUDGET_ERROR", err);
             return true;
@@ -334,24 +339,41 @@ impl WmlEngine {
             if request.cache_control.as_deref() == Some("no-cache") {
                 let resolved_href = self.resolve_external_href(href);
                 self.push_trace("ACTION_EXTERNAL", resolved_href.clone());
+                if self.debug_recorder.is_some() {
+                    let target = crate::engine_debug_recorder::sanitize_url(&resolved_href);
+                    self.debug_emit(EngineDebugEventPayload::ActionExternal {
+                        target: target.clone(),
+                    });
+                    self.debug_emit(EngineDebugEventPayload::NavigationIntent { target });
+                }
                 self.external_nav_intent = Some(resolved_href.clone());
                 self.external_nav_request_policy =
                     Some(self.wml_go_request_policy(&resolved_href, request)?);
-                self.active_input_edit = None;
+                self.cancel_active_input_edit_with_debug();
                 self.active_select_edit = None;
                 return Ok(());
             }
             self.push_trace("ACTION_FRAGMENT", card_id.to_string());
+            self.debug_emit_lazy(|| EngineDebugEventPayload::NavigationIntent {
+                target: crate::engine_debug_recorder::sanitize_url(href),
+            });
             self.navigate_to_card_internal(card_id)?;
             return Ok(());
         }
 
-        self.push_trace("ACTION_EXTERNAL", href.to_string());
         let resolved_href = self.resolve_external_href(href);
+        self.push_trace("ACTION_EXTERNAL", href.to_string());
+        if self.debug_recorder.is_some() {
+            let target = crate::engine_debug_recorder::sanitize_url(&resolved_href);
+            self.debug_emit(EngineDebugEventPayload::ActionExternal {
+                target: target.clone(),
+            });
+            self.debug_emit(EngineDebugEventPayload::NavigationIntent { target });
+        }
         self.external_nav_intent = Some(resolved_href.clone());
         self.external_nav_request_policy =
             Some(self.wml_go_request_policy(&resolved_href, request)?);
-        self.active_input_edit = None;
+        self.cancel_active_input_edit_with_debug();
         self.active_select_edit = None;
         Ok(())
     }
@@ -372,12 +394,17 @@ impl WmlEngine {
         &mut self,
         assignments: &[(String, String)],
     ) -> Result<(), String> {
+        let debug_marks = self.debug_assignment_marks(assignments);
         let valid_assignments: Vec<(String, String)> = assignments
             .iter()
             .filter(|(name, _)| is_valid_name(name))
             .cloned()
             .collect();
-        checked_apply_assignments(&mut self.vars, &valid_assignments)
+        checked_apply_assignments(&mut self.vars, &valid_assignments)?;
+        for (name, reason) in debug_marks {
+            self.debug_mark_variable(name, reason);
+        }
+        Ok(())
     }
 
     pub(crate) fn resolve_external_href(&self, href: &str) -> String {
@@ -407,7 +434,7 @@ impl WmlEngine {
     }
 
     fn wml_go_request_policy(
-        &self,
+        &mut self,
         resolved_href: &str,
         request: &CardGoRequest,
     ) -> Result<ScriptNavigationRequestPolicyLiteral, String> {
@@ -454,37 +481,76 @@ impl WmlEngine {
     }
 
     fn resolve_post_fields(
-        &self,
+        &mut self,
         post_fields: &[CardPostField],
     ) -> Result<Vec<ScriptNavigationPostFieldLiteral>, String> {
-        post_fields
-            .iter()
-            .map(|field| {
-                let name = evaluate_vdata(&field.name, &self.vars)?;
-                let value = if field.value.is_empty() {
+        let recording = self.debug_recorder.is_some();
+        let mut resolved_fields = Vec::with_capacity(post_fields.len());
+        let mut debug_fields = Vec::new();
+        for field in post_fields {
+            let name = evaluate_vdata(&field.name, &self.vars)?;
+            let mut source_name = None;
+            let (value, source) = if field.value.is_empty() {
+                self.resolve_post_field_name_fallback(&name)
+            } else if let Some(variable_name) = field
+                .value
+                .strip_prefix("$(")
+                .and_then(|value| value.strip_suffix(')'))
+            {
+                let variable_name = variable_name.trim();
+                if recording {
+                    source_name = Some(variable_name.to_string());
+                }
+                let resolved = self.resolve_post_field_name_fallback(variable_name);
+                if resolved.0.is_empty() {
                     self.resolve_post_field_name_fallback(&name)
-                } else if let Some(variable_name) = field
-                    .value
-                    .strip_prefix("$(")
-                    .and_then(|value| value.strip_suffix(')'))
-                {
-                    let resolved = self.resolve_post_field_name_fallback(variable_name.trim());
-                    if resolved.is_empty() {
-                        self.resolve_post_field_name_fallback(&name)
-                    } else {
-                        resolved
-                    }
                 } else {
-                    let resolved = evaluate_vdata(&field.value, &self.vars)?;
-                    if resolved.is_empty() {
-                        self.resolve_post_field_name_fallback(&name)
+                    resolved
+                }
+            } else {
+                let resolved = evaluate_vdata(&field.value, &self.vars)?;
+                if resolved.is_empty() {
+                    self.resolve_post_field_name_fallback(&name)
+                } else {
+                    let source = if field.value.contains("$(") {
+                        EngineDebugPostfieldResolutionSource::Variable
                     } else {
-                        resolved
-                    }
+                        EngineDebugPostfieldResolutionSource::Fallback
+                    };
+                    (resolved, source)
+                }
+            };
+
+            if recording {
+                let reason = [
+                    self.debug_variable_reason(&name),
+                    source_name
+                        .as_deref()
+                        .and_then(|source_name| self.debug_variable_reason(source_name)),
+                    self.debug_value_reason(&value),
+                ]
+                .into_iter()
+                .flatten()
+                .min_by_key(crate::engine_debug_recorder::redaction_priority);
+                let debug_name = if self.debug_value_reason(&name).is_some() {
+                    "<masked>".to_string()
+                } else {
+                    name.clone()
                 };
-                Ok(ScriptNavigationPostFieldLiteral { name, value })
-            })
-            .collect()
+                debug_fields.push(EngineDebugPostfieldResolution {
+                    name: debug_name,
+                    value: crate::engine_debug_recorder::sanitize_text(&value, reason),
+                    source,
+                });
+            }
+            resolved_fields.push(ScriptNavigationPostFieldLiteral { name, value });
+        }
+        if recording && !debug_fields.is_empty() {
+            self.debug_emit(EngineDebugEventPayload::PostfieldResolve {
+                fields: debug_fields,
+            });
+        }
+        Ok(resolved_fields)
     }
 
     fn encode_post_fields(post_fields: &[ScriptNavigationPostFieldLiteral]) -> String {
@@ -495,19 +561,28 @@ impl WmlEngine {
         serializer.finish()
     }
 
-    fn resolve_post_field_name_fallback(&self, name: &str) -> String {
+    fn resolve_post_field_name_fallback(
+        &self,
+        name: &str,
+    ) -> (String, EngineDebugPostfieldResolutionSource) {
         if let Some(edit) = &self.active_input_edit {
             if edit.input_name == name {
-                return edit.draft_value.clone();
+                return (
+                    edit.draft_value.clone(),
+                    EngineDebugPostfieldResolutionSource::Draft,
+                );
             }
         }
         if let Some(value) = self.vars.get(name).cloned() {
-            return value;
+            return (value, EngineDebugPostfieldResolutionSource::Variable);
         }
         if let Some(value) = self.input_value_for_name_on_active_card(name) {
-            return value;
+            return (value, EngineDebugPostfieldResolutionSource::Card);
         }
-        String::new()
+        (
+            String::new(),
+            EngineDebugPostfieldResolutionSource::Fallback,
+        )
     }
 
     fn is_same_document_navigation(&self, resolved_href: &str) -> bool {

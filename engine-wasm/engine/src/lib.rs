@@ -12,6 +12,7 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "contract-codegen")]
 pub mod contract_codegen;
 mod engine_debug_contract;
+mod engine_debug_recorder;
 mod engine_public_api;
 mod engine_runtime_internal;
 mod engine_script_types;
@@ -265,6 +266,7 @@ pub struct WmlEngine {
     last_back_navigation_handled: bool,
     last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
     browser_context_epoch: u32,
+    debug_recorder: Option<engine_debug_recorder::EngineDebugRecorder>,
 }
 
 impl Default for WmlEngine {

@@ -4,6 +4,7 @@ use crate::runtime::variable::{
 };
 use crate::*;
 
+mod debug;
 mod navigation;
 mod node_lookup;
 mod script_effects;
@@ -45,6 +46,31 @@ impl WmlEngine {
     }
 
     pub(crate) fn execute_script_ref_call_internal(
+        &mut self,
+        src: &str,
+        function_name: &str,
+        args: &[ScriptValue],
+    ) -> ScriptExecutionOutcome {
+        if self.debug_recorder.is_some() {
+            self.debug_emit(EngineDebugEventPayload::ScriptInvoke {
+                source: crate::engine_debug_recorder::sanitize_url(src),
+                function_name: self.debug_safe_function_name(function_name),
+            });
+        }
+        let outcome = self.execute_script_ref_call_uninstrumented(src, function_name, args);
+        if outcome.trap.is_some() && self.debug_recorder.is_some() {
+            self.debug_emit(EngineDebugEventPayload::ScriptTrap {
+                source: crate::engine_debug_recorder::sanitize_url(src),
+                function_name: self.debug_safe_function_name(function_name),
+                detail: EngineDebugValue::Omitted {
+                    reason: EngineDebugRedactionReason::Policy,
+                },
+            });
+        }
+        outcome
+    }
+
+    fn execute_script_ref_call_uninstrumented(
         &mut self,
         src: &str,
         function_name: &str,
@@ -231,7 +257,10 @@ impl WmlEngine {
                 if self.active_input_edit.is_some() {
                     self.commit_focused_input_edit_internal()?;
                 }
-                self.focused_link_idx = move_focus_up(self.focused_link_idx, target_total);
+                self.set_focused_link_idx_with_debug(move_focus_up(
+                    self.focused_link_idx,
+                    target_total,
+                ));
             }
             "down" => {
                 if self.active_select_edit.is_some() {
@@ -241,12 +270,19 @@ impl WmlEngine {
                 if self.active_input_edit.is_some() {
                     self.commit_focused_input_edit_internal()?;
                 }
-                self.focused_link_idx = move_focus_down(self.focused_link_idx, target_total);
+                self.set_focused_link_idx_with_debug(move_focus_down(
+                    self.focused_link_idx,
+                    target_total,
+                ));
             }
             "enter" => {
                 if target_total == 0 {
                     if let Some(action) = accept_action {
                         self.push_trace("ACTION_ACCEPT", String::new());
+                        self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
+                            action_type: "accept".to_string(),
+                            name: None,
+                        });
                         self.execute_card_task_action(&action)?;
                     }
                     return Ok(());
@@ -263,10 +299,18 @@ impl WmlEngine {
                             self.commit_focused_input_edit_internal()?;
                             if let Some(action) = accept_action {
                                 self.push_trace("ACTION_ACCEPT", String::new());
+                                self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
+                                    action_type: "accept".to_string(),
+                                    name: None,
+                                });
                                 self.execute_card_task_action(&action)?;
                             }
                         } else if let Some(action) = accept_action {
                             self.push_trace("ACTION_ACCEPT", String::new());
+                            self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
+                                action_type: "accept".to_string(),
+                                name: None,
+                            });
                             self.execute_card_task_action(&action)?;
                         } else {
                             self.begin_focused_input_edit_internal()?;
@@ -274,7 +318,7 @@ impl WmlEngine {
                         return Ok(());
                     }
                     FocusTarget::Select(name) => {
-                        self.active_input_edit = None;
+                        self.cancel_active_input_edit_with_debug();
                         self.push_trace("ACTION_SELECT", name.clone());
                         if self.active_select_edit.is_some() {
                             self.commit_focused_select_edit_internal()?;
@@ -284,7 +328,7 @@ impl WmlEngine {
                         return Ok(());
                     }
                     FocusTarget::Link(href) => {
-                        self.active_input_edit = None;
+                        self.cancel_active_input_edit_with_debug();
                         self.active_select_edit = None;
                         self.execute_action_href(href)?;
                     }
@@ -304,11 +348,22 @@ impl WmlEngine {
             .input_value_on_active_card(&control_id)
             .unwrap_or_default();
         self.active_select_edit = None;
+        let debug_reason = self
+            .debug_recorder
+            .is_some()
+            .then(|| self.debug_input_reason(&control_id, &input_name))
+            .flatten();
         self.active_input_edit = Some(InputEditState {
             control_id,
             input_name: input_name.clone(),
             original_value: current.clone(),
             draft_value: current,
+        });
+        if let Some(reason) = debug_reason {
+            self.debug_mark_variable(input_name.clone(), reason);
+        }
+        self.debug_emit_lazy(|| EngineDebugEventPayload::InputEditStart {
+            name: input_name.clone(),
         });
         self.push_trace("INPUT_EDIT_START", input_name);
         Ok(true)
@@ -343,6 +398,16 @@ impl WmlEngine {
             return Ok(false);
         }
         self.set_var(edit.input_name.clone(), edit.draft_value.clone());
+        if self.debug_recorder.is_some() {
+            let reason = self.debug_input_reason(&edit.control_id, &edit.input_name);
+            if let Some(reason) = reason.clone() {
+                self.debug_mark_variable(edit.input_name.clone(), reason);
+            }
+            self.debug_emit(EngineDebugEventPayload::InputEditCommit {
+                name: edit.input_name.clone(),
+                value: crate::engine_debug_recorder::sanitize_text(&edit.draft_value, reason),
+            });
+        }
         self.active_input_edit = None;
         self.push_trace("INPUT_EDIT_COMMIT", edit.input_name);
         Ok(true)
@@ -414,7 +479,7 @@ impl WmlEngine {
         let Some(current_index) = self.select_selected_index_on_active_card(&select_name) else {
             return Ok(false);
         };
-        self.active_input_edit = None;
+        self.cancel_active_input_edit_with_debug();
         self.active_select_edit = Some(SelectEditState {
             select_name: select_name.clone(),
             draft_index: current_index,

@@ -39,9 +39,29 @@ impl WmlEngine {
                             token.clone().unwrap_or_default()
                         ),
                     );
+                    let token = token.as_deref().unwrap_or("timer");
+                    if self.debug_recorder.is_some() {
+                        let reason = self.debug_value_reason(token).or_else(|| {
+                            crate::engine_debug_recorder::is_sensitive_name(token)
+                                .then_some(EngineDebugRedactionReason::SensitiveName)
+                        });
+                        self.debug_emit(EngineDebugEventPayload::TimerSchedule {
+                            delay_ms: *delay_ms,
+                            token: crate::engine_debug_recorder::sanitize_text(token, reason),
+                        });
+                    }
                 }
                 ScriptTimerRequest::Cancel { token } => {
                     self.push_trace("TIMER_CANCEL", token.clone());
+                    if self.debug_recorder.is_some() {
+                        let reason = self.debug_value_reason(token).or_else(|| {
+                            crate::engine_debug_recorder::is_sensitive_name(token)
+                                .then_some(EngineDebugRedactionReason::SensitiveName)
+                        });
+                        self.debug_emit(EngineDebugEventPayload::TimerCancel {
+                            token: crate::engine_debug_recorder::sanitize_text(token, reason),
+                        });
+                    }
                 }
             }
         }
@@ -65,9 +85,29 @@ impl WmlEngine {
         match effective_nav_intent {
             ScriptNavigationIntent::None => {}
             ScriptNavigationIntent::Prev => {
+                self.debug_emit_lazy(|| EngineDebugEventPayload::NavigationIntent {
+                    target: EngineDebugValue::Visible {
+                        value: "prev".to_string(),
+                    },
+                });
                 self.navigate_back_internal();
             }
             ScriptNavigationIntent::Go(href) => {
+                if self.debug_recorder.is_some() {
+                    let target = if href.starts_with('#') {
+                        crate::engine_debug_recorder::sanitize_url(&href)
+                    } else {
+                        crate::engine_debug_recorder::sanitize_url(
+                            &self.resolve_external_href(&href),
+                        )
+                    };
+                    self.debug_emit(EngineDebugEventPayload::NavigationIntent {
+                        target: target.clone(),
+                    });
+                    if !href.is_empty() && !href.starts_with('#') {
+                        self.debug_emit(EngineDebugEventPayload::ActionExternal { target });
+                    }
+                }
                 if let Some(card_id) = href.strip_prefix('#') {
                     self.navigate_to_card_internal(card_id)?;
                 } else if !href.is_empty() {

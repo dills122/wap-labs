@@ -30,6 +30,7 @@ impl WmlEngine {
             last_back_navigation_handled: false,
             last_wml_load_diagnostics: Vec::new(),
             browser_context_epoch: 0,
+            debug_recorder: None,
         }
     }
 
@@ -202,10 +203,33 @@ impl WmlEngine {
             ));
         }
         let previous_context_epoch = self.browser_context_epoch;
+        let previous_card_id = self.debug_recorder.as_ref().and_then(|_| {
+            self.deck
+                .as_ref()
+                .and_then(|deck| deck.cards.get(self.active_card_idx))
+                .map(|card| card.id.clone())
+        });
+        let previous_timer_token = self
+            .debug_recorder
+            .as_ref()
+            .and(self.active_timer.as_ref())
+            .map(|timer| {
+                timer
+                    .name
+                    .clone()
+                    .unwrap_or_else(|| "card-timer".to_string())
+            });
+        let previous_input_edit_name = self
+            .debug_recorder
+            .as_ref()
+            .and(self.active_input_edit.as_ref())
+            .map(|edit| edit.input_name.clone());
         let mut next = WmlEngine::new();
         next.viewport_cols = self.viewport_cols;
+        next.debug_recorder = self.debug_recorder.clone();
         if navigation.kind == DeckNavigationKind::Independent {
             next.browser_context_epoch = previous_context_epoch.saturating_add(1);
+            next.debug_clear_variable_marks();
         } else {
             next.browser_context_epoch = previous_context_epoch;
             next.vars = self.vars.clone();
@@ -237,6 +261,37 @@ impl WmlEngine {
                 "NEWCONTEXT",
                 format!("target={}", next.active_card_id().unwrap_or_default()),
             );
+        }
+        if next.debug_recorder.is_some() {
+            if previous_card_id.is_some() {
+                next.debug_emit_for_card(
+                    previous_card_id.clone(),
+                    EngineDebugEventPayload::CardExit,
+                );
+            }
+            if let Some(token) = previous_timer_token {
+                let reason = crate::engine_debug_recorder::is_sensitive_name(&token)
+                    .then_some(EngineDebugRedactionReason::SensitiveName);
+                next.debug_emit_for_card(
+                    previous_card_id.clone(),
+                    EngineDebugEventPayload::TimerCancel {
+                        token: crate::engine_debug_recorder::sanitize_text(&token, reason),
+                    },
+                );
+            }
+            if let Some(name) = previous_input_edit_name {
+                next.debug_emit_for_card(
+                    previous_card_id,
+                    EngineDebugEventPayload::InputEditCancel { name },
+                );
+            }
+            let card_count = next.deck.as_ref().map_or(0, |deck| deck.cards.len());
+            next.debug_emit(EngineDebugEventPayload::DeckLoad {
+                base_url: crate::engine_debug_recorder::sanitize_url(base_url),
+                content_type: content_type.to_string(),
+                card_count: u32::try_from(card_count).unwrap_or(u32::MAX),
+            });
+            next.debug_emit(EngineDebugEventPayload::CardEnter);
         }
         next.push_trace("LOAD_DECK", format!("contentType={content_type}"));
         next.initialize_controls_on_active_card()
@@ -571,6 +626,12 @@ impl WmlEngine {
                     .and_then(|deck| deck.active_do_action_by_name(self.active_card_idx, name))
                     .cloned()
                     .ok_or_else(|| "Engine input references an unavailable action".to_string())?;
+                if name == "accept" {
+                    self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
+                        action_type: "accept".to_string(),
+                        name: Some(name.to_string()),
+                    });
+                }
                 self.push_trace("ACTION_AFFORDANCE", format!("action_id={action_id}"));
                 self.execute_card_task_action(&action)
             }
@@ -652,12 +713,27 @@ impl WmlEngine {
         };
         let max_len = self.input_max_len_on_active_card(&control_id);
         let draft = truncate_to_chars(&value, max_len);
-        if let Some(edit) = self.active_input_edit.as_mut() {
+        let recording = self.debug_recorder.is_some();
+        let event = if let Some(edit) = self.active_input_edit.as_mut() {
             edit.draft_value = draft;
-            true
+            recording.then(|| {
+                (
+                    edit.control_id.clone(),
+                    edit.input_name.clone(),
+                    edit.draft_value.clone(),
+                )
+            })
         } else {
-            false
+            None
+        };
+        if let Some((control_id, input_name, draft_value)) = event {
+            let reason = self.debug_input_reason(&control_id, &input_name);
+            self.debug_emit(EngineDebugEventPayload::InputEditDraft {
+                name: input_name,
+                value: crate::engine_debug_recorder::sanitize_text(&draft_value, reason),
+            });
         }
+        true
     }
 
     /// Commit active focused-input edit session.
@@ -669,11 +745,7 @@ impl WmlEngine {
 
     /// Cancel active focused-input edit session.
     pub fn cancel_focused_input_edit(&mut self) -> bool {
-        if self.active_input_edit.is_none() {
-            return false;
-        }
-        self.active_input_edit = None;
-        true
+        self.cancel_active_input_edit_with_debug()
     }
 
     /// Start edit session for the currently focused select control.
@@ -1023,6 +1095,60 @@ impl WmlEngine {
     pub fn clear_trace_entries(&mut self) {
         self.trace_entries.clear();
         self.next_trace_seq = 1;
+    }
+
+    /// Enable or disable the engine-owned debug source.
+    ///
+    /// Enabling starts a fresh bounded recorder. Repeating the current state
+    /// is idempotent. Host policy and session lifecycle remain D0-03-owned.
+    pub fn set_debug_recording_enabled(&mut self, enabled: bool) {
+        match (enabled, self.debug_recorder.is_some()) {
+            (true, false) => {
+                self.debug_recorder = Some(crate::engine_debug_recorder::EngineDebugRecorder::new())
+            }
+            (false, true) => self.debug_recorder = None,
+            (true, true) | (false, false) => {}
+        }
+    }
+
+    /// Return whether the engine-owned debug source is active.
+    pub fn debug_recording_enabled(&self) -> bool {
+        self.debug_recorder.is_some()
+    }
+
+    /// Return the recorder's current cursor for a newly attached host session.
+    pub fn debug_event_cursor(&self) -> Result<String, EngineDebugError> {
+        self.debug_recorder
+            .as_ref()
+            .map(crate::engine_debug_recorder::EngineDebugRecorder::cursor)
+            .ok_or_else(|| {
+                crate::engine_debug_recorder::debug_error(
+                    EngineDebugErrorCode::DebugSourceUnavailable,
+                    "debug recorder is disabled",
+                )
+            })
+    }
+
+    /// Read a bounded debug event batch without mutating recorder state.
+    pub fn poll_debug_events(
+        &self,
+        cursor: &str,
+        max_events: u16,
+    ) -> Result<EngineDebugEventBatch, EngineDebugError> {
+        self.debug_recorder
+            .as_ref()
+            .ok_or_else(|| {
+                crate::engine_debug_recorder::debug_error(
+                    EngineDebugErrorCode::DebugSourceUnavailable,
+                    "debug recorder is disabled",
+                )
+            })?
+            .poll(cursor, max_events)
+    }
+
+    /// Construct a bounded, sanitized, read-only runtime snapshot.
+    pub fn debug_snapshot(&self) -> Result<EngineDebugSnapshot, EngineDebugError> {
+        self.debug_snapshot_internal()
     }
 }
 
