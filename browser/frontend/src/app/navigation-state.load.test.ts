@@ -212,6 +212,55 @@ describe('navigation-state load behavior', () => {
     expect(navigationErrors).toEqual([{ message: 'gateway timed out', kind: 'network' }]);
   });
 
+  it.each([
+    ['WBXML_DECODE_FAILED', 'application/vnd.wap.wmlc', 'WML public ID mismatch'],
+    ['UNSUPPORTED_CONTENT_TYPE', 'image/png', 'unsupported deck content type']
+  ] as const)(
+    'reports %s transport failures as the "parse" error kind',
+    async (code, contentType, message) => {
+      let engineLoads = 0;
+      const publishedCards: string[] = [];
+      const navigationErrors: Array<{ message: string; kind: string }> = [];
+      const host = createHostClientMock({
+        fetchDeck: async () =>
+          fetchOk({
+            ok: false,
+            status: 502,
+            contentType,
+            error: { code, message },
+            engineDeckInput: undefined,
+            wml: undefined
+          }),
+        engineLoadDeckContextFrame: async () => {
+          engineLoads += 1;
+          return frame({ activeCardId: 'unexpected' });
+        }
+      });
+      const machine = createNavigationStateMachine(host, 'http://seed.test', {
+        onFrame: (committedFrame) =>
+          publishedCards.push(committedFrame.snapshot.activeCardId ?? ''),
+        onNavigationError: (errorMessage, kind) => {
+          navigationErrors.push({ message: errorMessage, kind });
+        }
+      });
+
+      const result = await machine.loadTransportUrl({
+        url: 'http://example.test/deck.wmlc',
+        source: 'user',
+        followExternalIntent: true
+      });
+
+      expect(result).toBeNull();
+      expect(machine.getSessionState()).toMatchObject({
+        navigationStatus: 'error',
+        lastError: message
+      });
+      expect(navigationErrors).toEqual([{ message, kind: 'parse' }]);
+      expect(engineLoads).toBe(0);
+      expect(publishedCards).toEqual([]);
+    }
+  );
+
   it('fires onNavigationError when the fetch succeeds but returns no WML payload', async () => {
     const navigationErrors: string[] = [];
     const host = createHostClientMock({

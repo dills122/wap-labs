@@ -849,6 +849,31 @@ describe('BrowserController behavior coverage', () => {
     expect(refs.statusMessages.at(-1)).toBe(expectedMessage);
   });
 
+  it('surfaces a WBXML decode failure as a deck parse error', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const targetUrl = 'http://example.test/deck.wmlc';
+    vi.mocked(hostClient.fetchDeck).mockResolvedValue(
+      wbxmlDecodeFailureResponse(targetUrl) as never
+    );
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+
+    refs.fetchUrlInput.value = targetUrl;
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+
+    const expectedMessage = WAVES_COPY.status.deckParseFailed('WML public ID mismatch');
+    expect(refs.toastEl.textContent).toBe(expectedMessage);
+    expect(refs.statusMessages.at(-1)).toBe(expectedMessage);
+    expect(presenter.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      lastError: 'WML public ID mismatch'
+    });
+  });
+
   it('shows a delayed in-progress hint for a slow network navigation but not for the enabling mode-switch load', async () => {
     // U1: repeat navigations (not just the very first render) get an
     // in-progress indicator once they run past the short delay threshold.
