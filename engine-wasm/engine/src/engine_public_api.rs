@@ -33,6 +33,34 @@ impl WmlEngine {
         }
     }
 
+    fn read_with_panic_boundary<T: 'static>(
+        &self,
+        mut operation: impl FnMut(&Self) -> T + 'static,
+    ) -> Result<T, String> {
+        let candidate = self.clone();
+        catch_engine_panic(move || operation(&candidate))
+    }
+
+    fn mutate_with_panic_boundary<T: 'static>(
+        &mut self,
+        mut operation: impl FnMut(&mut Self) -> T + 'static,
+    ) -> Result<T, String> {
+        use std::cell::RefCell;
+        use std::rc::Rc;
+
+        let candidate = Rc::new(RefCell::new(self.clone()));
+        let operation_candidate = Rc::clone(&candidate);
+        let result = catch_engine_panic(move || {
+            let mut candidate = operation_candidate.borrow_mut();
+            operation(&mut candidate)
+        })?;
+        let candidate = Rc::try_unwrap(candidate)
+            .map_err(|_| "engine: panic boundary retained candidate state".to_string())?
+            .into_inner();
+        *self = candidate;
+        Ok(result)
+    }
+
     /// Load a WML deck using default metadata (`text/vnd.wap.wml`).
     pub fn load_deck(&mut self, xml: &str) -> Result<(), String> {
         self.load_deck_context(xml, "", "text/vnd.wap.wml", None)
@@ -95,13 +123,23 @@ impl WmlEngine {
         raw_bytes_base64: Option<String>,
         navigation: DeckNavigationContext<'_>,
     ) -> Result<(), String> {
-        let result = match catch_engine_panic(|| {
-            self.load_deck_context_bounded(
-                wml_xml,
-                base_url,
-                content_type,
-                raw_bytes_base64,
-                navigation,
+        let wml_xml = wml_xml.to_string();
+        let base_url = base_url.to_string();
+        let content_type = content_type.to_string();
+        let referring_url = navigation.referring_url.map(str::to_string);
+        let navigation_url = navigation.navigation_url.map(str::to_string);
+        let navigation_kind = navigation.kind;
+        let result = match self.mutate_with_panic_boundary(move |engine| {
+            engine.load_deck_context_bounded(
+                &wml_xml,
+                &base_url,
+                &content_type,
+                raw_bytes_base64.clone(),
+                DeckNavigationContext::new(
+                    referring_url.as_deref(),
+                    navigation_url.as_deref(),
+                    navigation_kind,
+                ),
             )
         }) {
             Ok(result) => result,
@@ -126,6 +164,11 @@ impl WmlEngine {
         raw_bytes_base64: Option<String>,
         navigation: DeckNavigationContext<'_>,
     ) -> Result<(), WmlLoadDiagnostic> {
+        #[cfg(test)]
+        if wml_xml == PANIC_BOUNDARY_TEST_WML {
+            self.set_var("panic-boundary-probe".to_string(), "partial".to_string());
+            panic!("test-only engine panic boundary probe");
+        }
         if wml_xml.len() > MAX_DECK_WML_XML_BYTES {
             return Err(WmlLoadDiagnostic::invalid(format!(
                 "Deck payload exceeds {}-byte limit (got {} bytes)",
@@ -270,7 +313,7 @@ impl WmlEngine {
     /// defensive-programming bug here should degrade to a typed error, not
     /// crash the host.
     pub fn render(&self) -> Result<RenderList, String> {
-        catch_engine_panic(|| self.render_bounded())?
+        self.read_with_panic_boundary(Self::render_bounded)?
     }
 
     fn render_bounded(&self) -> Result<RenderList, String> {
@@ -285,7 +328,7 @@ impl WmlEngine {
     /// engine state return the same content-derived `frameId` and do not add
     /// trace entries. Legacy [`Self::render`] remains available during F0/F1.
     pub fn render_frame(&self) -> Result<EnginePresentationFrame, String> {
-        catch_engine_panic(|| self.render_frame_bounded())?
+        self.read_with_panic_boundary(Self::render_frame_bounded)?
     }
 
     fn render_frame_bounded(&self) -> Result<EnginePresentationFrame, String> {
@@ -481,7 +524,7 @@ impl WmlEngine {
     /// defensive-programming bug here should degrade to a typed error, not
     /// crash the host.
     pub fn handle_key(&mut self, key: String) -> Result<(), String> {
-        catch_engine_panic(|| self.handle_key_internal(&key))?
+        self.mutate_with_panic_boundary(move |engine| engine.handle_key_internal(&key))?
     }
 
     /// Dispatch the additive typed F0 input surface.
@@ -490,7 +533,7 @@ impl WmlEngine {
     /// to the exact frame that advertised it so stale host controls cannot
     /// invoke a task after navigation or focus changes.
     pub fn handle_input(&mut self, event: EngineInputEvent) -> Result<(), String> {
-        catch_engine_panic(|| self.handle_input_bounded(event))?
+        self.mutate_with_panic_boundary(move |engine| engine.handle_input_bounded(event.clone()))?
     }
 
     fn handle_input_bounded(&mut self, event: EngineInputEvent) -> Result<(), String> {
@@ -538,7 +581,9 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn navigate_to_card(&mut self, id: String) -> Result<(), String> {
-        catch_engine_panic(|| self.navigate_to_card_without_newcontext_internal(&id))?
+        self.mutate_with_panic_boundary(move |engine| {
+            engine.navigate_to_card_without_newcontext_internal(&id)
+        })?
     }
 
     /// Activate BACK. An effective WML `do type="prev"` binding takes
@@ -551,7 +596,7 @@ impl WmlEngine {
     /// observable outcome as the existing empty-history and
     /// dispatch-depth-exceeded cases.
     pub fn navigate_back(&mut self) -> bool {
-        let handled = match catch_engine_panic(|| self.activate_back_internal()) {
+        let handled = match self.mutate_with_panic_boundary(Self::activate_back_internal) {
             Ok(handled) => handled,
             Err(message) => {
                 self.push_trace("ENGINE_PANIC_CONTAINED", message);
@@ -571,7 +616,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn advance_time_ms(&mut self, delta_ms: u32) -> Result<(), String> {
-        catch_engine_panic(|| self.advance_time_ms_internal(delta_ms))?
+        self.mutate_with_panic_boundary(move |engine| engine.advance_time_ms_internal(delta_ms))?
     }
 
     /// Return the deterministic delay until the active native WML timer expires.
@@ -593,7 +638,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn begin_focused_input_edit(&mut self) -> Result<bool, String> {
-        catch_engine_panic(|| self.begin_focused_input_edit_internal())?
+        self.mutate_with_panic_boundary(Self::begin_focused_input_edit_internal)?
     }
 
     /// Replace edit-session draft value for the focused input.
@@ -619,7 +664,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn commit_focused_input_edit(&mut self) -> Result<bool, String> {
-        catch_engine_panic(|| self.commit_focused_input_edit_internal())?
+        self.mutate_with_panic_boundary(Self::commit_focused_input_edit_internal)?
     }
 
     /// Cancel active focused-input edit session.
@@ -635,7 +680,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn begin_focused_select_edit(&mut self) -> Result<bool, String> {
-        catch_engine_panic(|| self.begin_focused_select_edit_internal())?
+        self.mutate_with_panic_boundary(Self::begin_focused_select_edit_internal)?
     }
 
     /// Move the draft selection for the active focused-select edit session.
@@ -665,7 +710,7 @@ impl WmlEngine {
     ///
     /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
     pub fn commit_focused_select_edit(&mut self) -> Result<bool, String> {
-        catch_engine_panic(|| self.commit_focused_select_edit_internal())?
+        self.mutate_with_panic_boundary(Self::commit_focused_select_edit_internal)?
     }
 
     /// Cancel active focused-select edit session.
@@ -776,7 +821,7 @@ impl WmlEngine {
     /// typed `ScriptExecutionOutcome::fatal` instead of unwinding raw through
     /// the `#[wasm_bindgen]` boundary as an uncaught JS exception.
     pub fn execute_script_unit(&self, bytes: Vec<u8>) -> ScriptExecutionOutcome {
-        catch_engine_panic(|| self.execute_script_unit_internal(&bytes))
+        self.read_with_panic_boundary(move |engine| engine.execute_script_unit_internal(&bytes))
             .unwrap_or_else(contained_panic_script_outcome)
     }
 
@@ -832,10 +877,11 @@ impl WmlEngine {
     /// `classify_vm_trap_outcome`), not a bespoke error shape.
     fn execute_script_contained(
         &mut self,
-        execute: impl FnOnce(&mut Self) -> ScriptExecutionOutcome,
+        execute: impl FnMut(&mut Self) -> ScriptExecutionOutcome + 'static,
     ) -> ScriptExecutionOutcome {
-        let outcome =
-            catch_engine_panic(|| execute(self)).unwrap_or_else(contained_panic_script_outcome);
+        let outcome = self
+            .mutate_with_panic_boundary(execute)
+            .unwrap_or_else(contained_panic_script_outcome);
         self.last_script_outcome = Some(outcome.clone());
         self.pending_script_effects = ScriptRuntimeEffects::default();
         self.last_script_dialog_requests.clear();
@@ -852,14 +898,16 @@ impl WmlEngine {
     /// navigation degrades to a typed error instead of crashing the host.
     fn invoke_script_contained(
         &mut self,
-        invoke: impl FnOnce(&mut Self) -> Result<ScriptInvocationOutcome, String>,
+        invoke: impl FnMut(&mut Self) -> Result<ScriptInvocationOutcome, String> + 'static,
     ) -> Result<ScriptInvocationOutcome, String> {
-        catch_engine_panic(|| invoke(self))?
+        self.mutate_with_panic_boundary(invoke)?
     }
 
     /// Execute script reference without applying deferred runtime effects.
     pub fn execute_script_ref(&mut self, src: String) -> ScriptExecutionOutcome {
-        self.execute_script_contained(|engine| engine.execute_script_ref_internal(&src, "main"))
+        self.execute_script_contained(move |engine| {
+            engine.execute_script_ref_internal(&src, "main")
+        })
     }
 
     /// Execute script function without applying deferred runtime effects.
@@ -868,7 +916,7 @@ impl WmlEngine {
         src: String,
         function_name: String,
     ) -> ScriptExecutionOutcome {
-        self.execute_script_contained(|engine| {
+        self.execute_script_contained(move |engine| {
             engine.execute_script_ref_internal(&src, &function_name)
         })
     }
@@ -881,14 +929,16 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> ScriptExecutionOutcome {
         let vm_args = convert_script_call_args(&args);
-        self.execute_script_contained(|engine| {
+        self.execute_script_contained(move |engine| {
             engine.execute_script_ref_call_internal(&src, &function_name, &vm_args)
         })
     }
 
     /// Invoke script reference and apply deferred runtime effects at boundary.
     pub fn invoke_script_ref(&mut self, src: String) -> Result<ScriptInvocationOutcome, String> {
-        self.invoke_script_contained(|engine| engine.invoke_script_ref_internal(&src, "main", &[]))
+        self.invoke_script_contained(move |engine| {
+            engine.invoke_script_ref_internal(&src, "main", &[])
+        })
     }
 
     /// Invoke script function and apply deferred runtime effects at boundary.
@@ -897,7 +947,7 @@ impl WmlEngine {
         src: String,
         function_name: String,
     ) -> Result<ScriptInvocationOutcome, String> {
-        self.invoke_script_contained(|engine| {
+        self.invoke_script_contained(move |engine| {
             engine.invoke_script_ref_internal(&src, &function_name, &[])
         })
     }
@@ -910,7 +960,7 @@ impl WmlEngine {
         args: Vec<ScriptCallArgLiteral>,
     ) -> Result<ScriptInvocationOutcome, String> {
         let vm_args = convert_script_call_args(&args);
-        self.invoke_script_contained(|engine| {
+        self.invoke_script_contained(move |engine| {
             engine.invoke_script_ref_internal(&src, &function_name, &vm_args)
         })
     }
