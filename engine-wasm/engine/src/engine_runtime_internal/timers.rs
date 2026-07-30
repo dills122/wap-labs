@@ -39,6 +39,22 @@ impl WmlEngine {
             name: timer.name,
             ontimer_action,
         });
+        if self.debug_recorder.is_some() {
+            let token = self
+                .active_timer
+                .as_ref()
+                .and_then(|timer| timer.name.as_deref())
+                .unwrap_or("card-timer")
+                .to_string();
+            self.debug_emit(EngineDebugEventPayload::TimerSchedule {
+                delay_ms: remaining_ms,
+                token: crate::engine_debug_recorder::sanitize_text(
+                    &token,
+                    crate::engine_debug_recorder::is_sensitive_name(&token)
+                        .then_some(EngineDebugRedactionReason::SensitiveName),
+                ),
+            });
+        }
         self.push_trace("TIMER_START", format!("valueDs={value_ds}"));
         Ok(())
     }
@@ -47,6 +63,14 @@ impl WmlEngine {
         let Some(timer) = self.active_timer.take() else {
             return;
         };
+        let token = timer.name.as_deref().unwrap_or("card-timer");
+        self.debug_emit_lazy(|| EngineDebugEventPayload::TimerCancel {
+            token: crate::engine_debug_recorder::sanitize_text(
+                token,
+                crate::engine_debug_recorder::is_sensitive_name(token)
+                    .then_some(EngineDebugRedactionReason::SensitiveName),
+            ),
+        });
         self.persist_timer_value(&timer, Self::remaining_timer_deciseconds(&timer));
         self.push_trace("TIMER_STOP", format!("remainingMs={}", timer.remaining_ms));
     }
@@ -55,6 +79,14 @@ impl WmlEngine {
         let Some(timer) = self.active_timer.take() else {
             return Ok(());
         };
+        let token = timer.name.as_deref().unwrap_or("card-timer");
+        self.debug_emit_lazy(|| EngineDebugEventPayload::TimerFire {
+            token: crate::engine_debug_recorder::sanitize_text(
+                token,
+                crate::engine_debug_recorder::is_sensitive_name(token)
+                    .then_some(EngineDebugRedactionReason::SensitiveName),
+            ),
+        });
         self.persist_timer_value(&timer, 0);
         self.push_trace("TIMER_EXPIRE", String::new());
         let Some(action) = timer.ontimer_action else {
@@ -71,6 +103,7 @@ impl WmlEngine {
     }
 
     pub(crate) fn advance_time_ms_internal(&mut self, delta_ms: u32) -> Result<(), String> {
+        self.debug_advance_time(delta_ms);
         let Some(timer_card_idx) = self.active_timer.as_ref().map(|timer| timer.card_idx) else {
             return Ok(());
         };

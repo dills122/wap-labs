@@ -1957,7 +1957,7 @@ Reference plan:
 
 ### D0-02 Engine event stream and snapshot emitter
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `D0-01`
 3. `Owner`: `engine-wasm`
 4. `Files`:
@@ -1989,6 +1989,22 @@ Reference plan:
 9. `Notes`:
 
 - keep emitter path allocation-light and side-effect free for non-debug execution
+- implemented in `engine-wasm/engine/src/engine_debug_recorder.rs` and
+  `engine-wasm/engine/src/engine_runtime_internal/debug.rs`, with recorder state absent until the
+  D0-03-owned host policy activates it
+- all 17 D0-01 event kinds are emitted through payload-derived kind construction; fixed-capacity
+  polling, retained-window drop accounting, bounded snapshots, sorted variables, and deterministic
+  runtime-logical timestamps have direct native tests
+- password/sensitive-name and derived-variable values, credential-bearing URLs, transport-secret
+  post bodies, script trap details, and oversized values are masked or omitted before DTO insertion;
+  native and WASM canary tests assert the raw values never serialize
+- evidence: `engine-wasm/engine/src/engine_tests/debug_recorder.rs` and
+  `engine-wasm/engine/src/engine_wasm_bindings_tests.rs`; `cargo fmt --all -- --check`, `cargo test`
+  (410 tests), warning-denied all-target/all-feature Clippy, and `wasm-pack test --node` (37 tests)
+  pass; `make coverage-rust-engine` reports 94.88% line and 93.04% function coverage, while
+  Rust-owned contract regeneration produces no DTO drift
+- no executable story was added because D0-03 host attach/poll IPC and D0-04 consumer UI remain
+  explicitly out of scope; D0-02 exposes only the engine-owned source hooks
 
 ### D0-03 Host bridge integration for attach/poll/close
 

@@ -1742,3 +1742,49 @@ fn wasm_wml_304_request_intent_matches_native_serialization() {
         Some("no-cache")
     );
 }
+
+#[wasm_bindgen_test]
+fn wasm_debug_events_and_snapshot_match_native_dtos_and_mask_before_serialization() {
+    const CANARY: &str = "WASM_D0_02_SECRET_CANARY";
+    let mut engine = WmlEngine::wasm_new();
+    engine.set_debug_recording_enabled(true);
+    engine
+        .load_deck_context_wasm(
+            r#"<wml><card id="login"><input name="password" type="password"/></card></wml>"#,
+            "https://user:WASM_D0_02_SECRET_CANARY@example.test/login.wml",
+            "text/vnd.wap.wml",
+            None,
+            None,
+        )
+        .expect("debug fixture should load through WASM");
+    assert!(engine
+        .begin_focused_input_edit_wasm()
+        .expect("password edit should start through WASM"));
+    assert!(engine.set_focused_input_edit_draft_wasm(CANARY.to_string()));
+
+    let events = engine
+        .poll_debug_events("0", 32)
+        .expect("native DTO source should poll on WASM");
+    let snapshot = engine
+        .debug_snapshot()
+        .expect("native snapshot DTO should build on WASM");
+    assert_eq!(events.events[0].kind, EngineDebugEventKind::DeckLoad);
+    assert_eq!(events.events[1].kind, EngineDebugEventKind::CardEnter);
+    assert_eq!(events.events[2].kind, EngineDebugEventKind::InputEditStart);
+    assert_eq!(events.events[3].kind, EngineDebugEventKind::InputEditDraft);
+
+    let events_js = to_js_value(&events).expect("events should serialize through wasm serde");
+    let snapshot_js = to_js_value(&snapshot).expect("snapshot should serialize through wasm serde");
+    let events_json = js_sys::JSON::stringify(&events_js)
+        .expect("events JSON should stringify")
+        .as_string()
+        .expect("events JSON should be a string");
+    let snapshot_json = js_sys::JSON::stringify(&snapshot_js)
+        .expect("snapshot JSON should stringify")
+        .as_string()
+        .expect("snapshot JSON should be a string");
+    assert!(!events_json.contains(CANARY));
+    assert!(!snapshot_json.contains(CANARY));
+    assert!(events_json.contains("password-input"));
+    assert!(snapshot_json.contains("password-input"));
+}

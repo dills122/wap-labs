@@ -1,6 +1,6 @@
 # Engine Debug Connector Plan
 
-Status: D0-01 done; implementation deferred to D0-02 through D0-04
+Status: D0-01 and D0-02 done; host and consumer implementation deferred to D0-03 and D0-04
 Owner lane: `engine-wasm` + `browser`
 
 Related reference:
@@ -221,16 +221,18 @@ must not include raw internal errors, WML values, URLs, credentials, or panic pa
 This sequence removes the contract-file collision that blocked WBP-06/F0, but does not itself
 activate WBP-06 or implement F0.
 
-## Explicitly Deferred Work
+## Delivery Status and Deferred Work
 
-### D0-02
+### D0-02 (implemented)
 
-- runtime emission points
-- fixed-capacity ring buffer and cursor/drop accounting
-- snapshot construction and ordering
-- sensitive-name derivation tracking and sanitization
-- recorder activation/deactivation hooks
-- native/WASM parity tests for emitted events and snapshots
+- Runtime emission points cover the contract event families at existing deterministic boundaries.
+- The engine-owned source uses fixed-capacity drop-oldest storage with decimal sequence/cursor and
+  exact retained-window drop accounting.
+- Snapshot construction bounds and orders variables/timers and reports collection/buffer summaries.
+- Password inputs, sensitive names and derivations, credential-bearing URLs, transport material,
+  and oversized values are masked or omitted before entering debug DTOs.
+- Recorder activation/deactivation hooks remain separate from D0-03 host policy and sessions.
+- Native and WASM tests cover event/snapshot parity, ordering, overflow, and secret canaries.
 
 ### D0-03
 

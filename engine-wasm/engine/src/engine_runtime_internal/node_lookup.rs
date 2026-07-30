@@ -14,6 +14,7 @@ pub(crate) struct InputRef<'a> {
     pub(crate) control_id: &'a str,
     pub(crate) name: &'a str,
     pub(crate) value: &'a str,
+    pub(crate) is_password: bool,
     pub(crate) max_length: Option<usize>,
     pub(crate) mask: &'a InputMask,
     pub(crate) empty_ok: bool,
@@ -75,6 +76,11 @@ pub(crate) fn find_input_by_name<'a>(card: &'a Card, name: &str) -> Option<Input
     inline_nodes(card)
         .filter_map(as_input)
         .find(|input| input.name == name)
+}
+
+/// Every input on a card, in document order.
+pub(crate) fn inputs(card: &Card) -> impl Iterator<Item = InputRef<'_>> {
+    inline_nodes(card).filter_map(as_input)
 }
 
 /// Input with `control_id`, in document order, for mutation.
@@ -152,6 +158,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
             control_id,
             name,
             value,
+            is_password,
             max_length,
             mask,
             empty_ok,
@@ -160,6 +167,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
             control_id,
             name,
             value,
+            is_password: *is_password,
             max_length: *max_length,
             mask,
             empty_ok: *empty_ok,
