@@ -19,6 +19,10 @@ describe('mountBrowserShell', () => {
     expect(document.querySelectorAll('#fetch-url')).toHaveLength(1);
     expect(document.querySelectorAll('#base-url')).toHaveLength(1);
     expect(refs.viewportEl.getAttribute('tabindex')).toBe('0');
+    expect(refs.viewportCanvasEl?.classList.contains('viewport-canvas')).toBe(true);
+    expect(refs.viewportCanvasEl?.getAttribute('aria-hidden')).toBe('true');
+    expect(refs.viewportAccessibleTextEl?.dataset.canvasTextFallback).toBe('');
+    expect(refs.viewportEl.querySelectorAll('canvas.viewport-canvas')).toHaveLength(1);
 
     const softkeyRow = document.querySelector('.softkey-row');
     expect(softkeyRow?.getAttribute('role')).toBe('group');

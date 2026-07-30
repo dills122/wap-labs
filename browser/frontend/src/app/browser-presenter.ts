@@ -18,13 +18,26 @@ import type { BrowserShellRefs } from './browser-shell-template';
 import { inferStatusTone, uiEvents } from '../ui-helpers';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
-import { renderWmlViewportHtml } from '../components/primitives/wml-render-primitives';
 import type { DeveloperToolsHostBridge } from './developer-tools-bridge';
 import { renderDeveloperToolsSummary, type DeveloperToolsState } from './developer-tools-workspace';
+import {
+  canvasFrameFromRenderList,
+  CanvasViewportRenderer,
+  ensureCanvasViewportElements
+} from './canvas-viewport-renderer';
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
 const REPEAT_NAV_HINT_CLASS = 'viewport-navigation-hint';
+const SKELETON_LINE_CLASSES = [
+  'skeleton-line',
+  'skeleton-line skeleton-line-wide',
+  'skeleton-line',
+  'skeleton-line skeleton-line-short',
+  'skeleton-line',
+  'skeleton-line skeleton-line-wide',
+  'skeleton-line'
+] as const;
 
 export class BrowserPresenter {
   private readonly refs: BrowserShellRefs;
@@ -64,6 +77,7 @@ export class BrowserPresenter {
   private transportResponseDirty = true;
   private navigationProgressTimer: ReturnType<typeof setTimeout> | undefined;
   private developerToolsBridge: DeveloperToolsHostBridge | undefined;
+  private readonly viewportRenderer: CanvasViewportRenderer;
   // U7: flushDeveloperPanels() re-serializes whichever dev-panel sub-object
   // is dirty via JSON.stringify(..., null, 2). Each mutating setter used to
   // call it immediately and synchronously, so a burst of same-tick mutations
@@ -84,6 +98,11 @@ export class BrowserPresenter {
     this.refs = refs;
     this.maxTimelineEvents = maxTimelineEvents;
     this.hostSessionState = initialSession;
+    const viewportElements =
+      refs.viewportCanvasEl && refs.viewportAccessibleTextEl
+        ? { canvas: refs.viewportCanvasEl, accessibleText: refs.viewportAccessibleTextEl }
+        : ensureCanvasViewportElements(refs.viewportEl);
+    this.viewportRenderer = new CanvasViewportRenderer(refs.viewportEl, viewportElements);
     this.refs.devDrawerEl.addEventListener('toggle', this.handleDevDrawerToggle);
   }
 
@@ -104,6 +123,7 @@ export class BrowserPresenter {
     }
     this.developerToolsBridge?.dispose();
     this.developerToolsBridge = undefined;
+    this.viewportRenderer.dispose();
   }
 
   attachDeveloperToolsBridge(bridge: DeveloperToolsHostBridge): void {
@@ -210,16 +230,7 @@ export class BrowserPresenter {
       this.refs.viewportEl.classList.add('viewport-skeleton');
       this.refs.viewportEl.setAttribute('aria-busy', 'true');
       if (!this.hasRenderedContent) {
-        this.refs.viewportEl.innerHTML = `
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line skeleton-line-wide"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line skeleton-line-short"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-line skeleton-line-wide"></div>
-          <div class="skeleton-line"></div>
-          <div class="skeleton-hint">${escapeHtml(WAVES_COPY.shell.firstRenderPending)}</div>
-        `;
+        this.showInitialSkeleton();
       } else {
         // A repeat navigation (link click, reload, back/forward, external
         // intent) -- content is already on screen, so don't wipe it. Append a
@@ -233,14 +244,7 @@ export class BrowserPresenter {
     this.refs.viewportEl.classList.remove('viewport-skeleton');
     this.refs.viewportEl.setAttribute('aria-busy', 'false');
     if (!this.hasRenderedContent) {
-      // Nothing has ever successfully rendered yet, so the viewport still
-      // contains the injected skeleton placeholder markup (shimmering bars +
-      // "waiting for first render" hint). Removing just the CSS class above
-      // does not stop that markup from sitting there indefinitely if the
-      // load that was supposed to replace it instead failed. Clear it so a
-      // failed first load doesn't leave a frozen "still loading" viewport
-      // behind the real error, which is surfaced via status/toast instead.
-      this.refs.viewportEl.innerHTML = '';
+      this.clearSkeletonElements();
     } else {
       this.hideRepeatNavigationHint();
     }
@@ -293,6 +297,27 @@ export class BrowserPresenter {
     hint.className = `skeleton-hint ${REPEAT_NAV_HINT_CLASS}`;
     hint.textContent = WAVES_COPY.shell.navigationPending;
     this.refs.viewportEl.append(hint);
+  }
+
+  private showInitialSkeleton(): void {
+    if (this.refs.viewportEl.querySelector('.skeleton-line')) {
+      return;
+    }
+    for (const className of SKELETON_LINE_CLASSES) {
+      const line = document.createElement('div');
+      line.className = className;
+      this.refs.viewportEl.append(line);
+    }
+    const hint = document.createElement('div');
+    hint.className = 'skeleton-hint';
+    hint.textContent = WAVES_COPY.shell.firstRenderPending;
+    this.refs.viewportEl.append(hint);
+  }
+
+  private clearSkeletonElements(): void {
+    this.refs.viewportEl
+      .querySelectorAll('.skeleton-line, .skeleton-hint')
+      .forEach((element) => element.remove());
   }
 
   private hideRepeatNavigationHint(): void {
@@ -368,7 +393,6 @@ export class BrowserPresenter {
     this.latestRenderList = {
       draw: renderList.draw.map((command) => ({ ...command }))
     };
-    this.hasRenderedContent = true;
     // Real content just landed -- cancel any pending delayed in-progress
     // indicator so it can't appear after the fact (see beginNavigationProgress).
     if (this.navigationProgressTimer) {
@@ -376,7 +400,9 @@ export class BrowserPresenter {
       this.navigationProgressTimer = undefined;
     }
     this.setViewportSkeleton(false);
-    this.refs.viewportEl.innerHTML = renderWmlViewportHtml(renderList);
+    this.hasRenderedContent = true;
+    this.refs.viewportEl.classList.add('viewport-has-content');
+    this.viewportRenderer.render(canvasFrameFromRenderList(renderList));
   }
 
   getRenderList(): RenderList | null {
@@ -542,14 +568,6 @@ export class BrowserPresenter {
     return nextText;
   }
 }
-
-const escapeHtml = (input: string): string =>
-  input
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
 
 const dialogRequestListsEqual = (
   a: readonly ScriptDialogRequestSnapshot[],

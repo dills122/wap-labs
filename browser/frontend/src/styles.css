@@ -548,6 +548,7 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .viewport {
+  position: relative;
   width: calc(320px * var(--handset-scale));
   max-width: calc(100vw - 4rem);
   min-height: calc(400px * var(--handset-scale));
@@ -572,10 +573,28 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
 }
 
 .viewport-skeleton {
+  position: relative;
   display: grid;
   align-content: start;
   gap: calc(8px * var(--handset-scale));
   padding: calc(16px * var(--handset-scale));
+}
+
+.viewport-skeleton.viewport-has-content {
+  display: block;
+  padding: 0;
+}
+
+.viewport-canvas {
+  display: block;
+  width: 100%;
+  min-height: calc(396px * var(--handset-scale));
+}
+
+.viewport-skeleton:not(.viewport-has-content) .viewport-canvas {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
 }
 
 .skeleton-line {
@@ -611,28 +630,14 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
   content: '';
 }
 
-.line {
-  min-height: calc(1.25em * var(--handset-scale));
-  padding-inline: calc(3px * var(--handset-scale));
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.wml-segment {
-  display: inline;
-}
-
-.wml-segment-link {
-  color: var(--color-lcd-link);
-  text-decoration: underline;
-  text-decoration-thickness: max(1px, calc(1px * var(--handset-scale)));
-  text-underline-offset: calc(1px * var(--handset-scale));
-}
-
-.wml-segment-link.is-focused {
-  color: var(--lcd-focus-fg);
-  background: var(--lcd-focus-bg);
-  text-decoration: none;
+.viewport-navigation-hint {
+  position: absolute;
+  z-index: var(--z-raised);
+  inset-inline: calc(10px * var(--handset-scale));
+  inset-block-end: calc(10px * var(--handset-scale));
+  width: fit-content;
+  padding: calc(4px * var(--handset-scale)) calc(6px * var(--handset-scale));
+  background: var(--lcd-bg);
 }
 
 .softkey-row {

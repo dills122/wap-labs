@@ -90,6 +90,7 @@ describe('BrowserPresenter', () => {
   it('clears viewport skeleton after first render', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const innerHtmlSetter = vi.spyOn(refs.viewportEl, 'innerHTML', 'set');
 
     presenter.setViewportSkeleton(true);
     expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
@@ -103,6 +104,9 @@ describe('BrowserPresenter', () => {
     expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
     expect(refs.viewportEl.getAttribute('aria-busy')).toBe('false');
     expect(refs.viewportEl.textContent).toContain('hello');
+    expect(refs.viewportEl.querySelector('canvas.viewport-canvas')).not.toBeNull();
+    expect(refs.viewportEl.querySelector('.line')).toBeNull();
+    expect(innerHtmlSetter).not.toHaveBeenCalled();
   });
 
   it('does not append timeline entries when replacing session state directly', () => {
@@ -225,7 +229,8 @@ describe('BrowserPresenter', () => {
     expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
     expect(refs.viewportEl.getAttribute('aria-busy')).toBe('false');
     expect(refs.viewportEl.querySelector('.skeleton-hint')).toBeNull();
-    expect(refs.viewportEl.innerHTML).toBe('');
+    expect(refs.viewportEl.querySelectorAll('.skeleton-line, .skeleton-hint')).toHaveLength(0);
+    expect(refs.viewportEl.querySelector('canvas.viewport-canvas')).not.toBeNull();
   });
 
   it('does not touch viewport markup when hiding the skeleton after a successful render', () => {
@@ -332,7 +337,8 @@ describe('BrowserPresenter', () => {
 
     endProgress();
     expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
-    expect(refs.viewportEl.innerHTML).toBe('');
+    expect(refs.viewportEl.querySelectorAll('.skeleton-line, .skeleton-hint')).toHaveLength(0);
+    expect(refs.viewportEl.querySelector('canvas.viewport-canvas')).not.toBeNull();
   });
 
   it('does not flash an in-progress indicator for a repeat navigation that resolves within the delay', () => {
