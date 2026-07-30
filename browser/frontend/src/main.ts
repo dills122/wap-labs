@@ -3,6 +3,7 @@ import { createTauriHostClient } from '../../contracts/generated/tauri-host-clie
 import './styles.css';
 import {
   composeBrowserApplication,
+  disposeBrowserApplication,
   initializeBrowserApplication,
   type BrowserApplication
 } from './app/browser-application';
@@ -12,7 +13,9 @@ import { WAVES_COPY } from './app/waves-copy';
 let activeApplication: BrowserApplication | undefined;
 
 const bootstrap = async (): Promise<void> => {
-  activeApplication?.controller.dispose();
+  if (activeApplication) {
+    disposeBrowserApplication(activeApplication);
+  }
   activeApplication = undefined;
   const hostClient = createTauriHostClient(createGuardedTauriInvoke(invoke));
   const application = composeBrowserApplication(hostClient);
@@ -54,7 +57,9 @@ void bootstrap().catch(reportBootFailure);
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
-    activeApplication?.controller.dispose();
+    if (activeApplication) {
+      disposeBrowserApplication(activeApplication);
+    }
     activeApplication = undefined;
   });
 }

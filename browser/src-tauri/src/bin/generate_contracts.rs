@@ -10,6 +10,7 @@ use lowband_transport_rust::{
 use ts_rs::{Config, TS};
 use wavenav_engine::SCRIPT_ERROR_CATEGORY_METADATA;
 use wavenav_engine::{engine_debug_typescript_contract, engine_viewport_typescript_contract};
+use wavenav_host_lib::application_commands::render_typescript_registry;
 use wavenav_host_lib::command_contract::{
     render_default_capability, render_host_permission, TauriCommandDescriptor, TAURI_COMMANDS,
 };
@@ -101,6 +102,13 @@ fn write_tauri_command_contract() -> Result<(), Box<dyn std::error::Error>> {
     let capability_path = manifest_dir.join("capabilities/default.json");
     fs::write(&capability_path, render_default_capability())?;
     println!("generated {}", capability_path.display());
+    Ok(())
+}
+
+fn write_application_command_registry() -> Result<(), Box<dyn std::error::Error>> {
+    let out_path = contracts_out_dir().join("application-commands.ts");
+    fs::write(&out_path, render_typescript_registry()?)?;
+    println!("generated {}", out_path.display());
     Ok(())
 }
 
@@ -252,6 +260,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     write_engine_contracts()?;
     write_transport_contracts()?;
     write_tauri_command_contract()?;
+    write_application_command_registry()?;
     Ok(())
 }
 

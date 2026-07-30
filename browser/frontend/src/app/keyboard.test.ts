@@ -2,13 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { resolveKeyboardIntent } from './keyboard';
 
 describe('app/keyboard', () => {
-  it('maps ctrl+shift+d to dev tools toggle', () => {
-    expect(resolveKeyboardIntent('d', true, true, false)).toEqual({
-      type: 'toggle-dev-tools'
-    });
-    expect(resolveKeyboardIntent('D', true, true, false)).toEqual({
-      type: 'toggle-dev-tools'
-    });
+  it('leaves application shortcuts to the shared command registry', () => {
+    expect(resolveKeyboardIntent('d', true, true, false)).toEqual({ type: 'none' });
+    expect(resolveKeyboardIntent('D', true, true, false)).toEqual({ type: 'none' });
   });
 
   it('suppresses engine keys when a browser-owned control is targeted', () => {

@@ -6,13 +6,10 @@ export type KeyboardIntent =
 
 export const resolveKeyboardIntent = (
   key: string,
-  ctrlKey: boolean,
-  shiftKey: boolean,
+  _ctrlKey: boolean,
+  _shiftKey: boolean,
   isHostControlTarget: boolean
 ): KeyboardIntent => {
-  if (ctrlKey && shiftKey && key.toLowerCase() === 'd') {
-    return { type: 'toggle-dev-tools' };
-  }
   if (isHostControlTarget) {
     return { type: 'none' };
   }

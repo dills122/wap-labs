@@ -1,4 +1,8 @@
 #[cfg(not(test))]
+use crate::application_commands::{
+    self, ApplicationCommandGroup, NativeMenuPlatform, APPLICATION_COMMAND_EVENT,
+};
+#[cfg(not(test))]
 use crate::engine_bridge::AppState;
 #[cfg(not(test))]
 use crate::waves_config;
@@ -7,7 +11,9 @@ use crate::HostFetchState;
 #[cfg(not(test))]
 use lowband_transport_rust::preflight_wbxml_decoder;
 #[cfg(not(test))]
-use tauri::menu::{AboutMetadataBuilder, Menu, MenuBuilder, SubmenuBuilder};
+use tauri::menu::{
+    AboutMetadataBuilder, Menu, MenuBuilder, MenuItemBuilder, Submenu, SubmenuBuilder,
+};
 #[cfg(not(test))]
 use tauri::Emitter;
 
@@ -33,17 +39,57 @@ fn preflight_wbxml_decoder_available() -> Result<(), String> {
 }
 
 #[cfg(not(test))]
-fn handle_check_for_updates_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
-    if let Err(error) = app.emit(
-        waves_config::EVENT_UPDATER_CHECK_REQUESTED,
-        serde_json::json!({
-            "source": "menu",
-            "placeholder": true
-        }),
+fn emit_application_command<R: tauri::Runtime>(app: &tauri::AppHandle<R>, id: &str) -> bool {
+    let Some(request) = application_commands::native_menu_request(id) else {
+        return application_commands::command_by_id(id).is_some();
+    };
+    if let Err(error) = app.emit_to(
+        waves_config::MAIN_WINDOW_LABEL,
+        APPLICATION_COMMAND_EVENT,
+        request,
     ) {
-        eprintln!("{}: {error}", waves_config::LOG_UPDATER_EVENT_EMIT_FAILED);
+        eprintln!(
+            "failed to emit application command `{}`: {error}",
+            request.command_id
+        );
     }
-    println!("{}", waves_config::LOG_UPDATER_CHECK_REQUESTED);
+    true
+}
+
+#[cfg(not(test))]
+fn build_command_submenu<R: tauri::Runtime>(
+    app: &tauri::AppHandle<R>,
+    group: ApplicationCommandGroup,
+) -> tauri::Result<Submenu<R>> {
+    let mut submenu = SubmenuBuilder::new(app, group.label());
+    for projected in application_commands::project_application_commands(&[])
+        .filter(|projected| projected.command.group == group)
+    {
+        // Shortcuts stay in the generated frontend bridge so focused DOM/WML editing can reject
+        // them before execution. Native OS accelerators would bypass that focus-aware boundary.
+        let item = MenuItemBuilder::with_id(projected.command.id, projected.command.label)
+            .enabled(projected.enabled)
+            .build(app)?;
+        submenu = submenu.item(&item);
+    }
+    if group == ApplicationCommandGroup::File {
+        submenu = submenu.separator().close_window();
+        #[cfg(not(target_os = "macos"))]
+        {
+            submenu = submenu.separator().quit();
+        }
+    }
+    submenu.build()
+}
+
+#[cfg(all(not(test), target_os = "macos"))]
+const fn native_menu_platform() -> NativeMenuPlatform {
+    NativeMenuPlatform::Macos
+}
+
+#[cfg(all(not(test), not(target_os = "macos")))]
+const fn native_menu_platform() -> NativeMenuPlatform {
+    NativeMenuPlatform::Linux
 }
 
 #[cfg(not(test))]
@@ -58,11 +104,31 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
 
     let mut menu = MenuBuilder::new(app);
 
+    let native_groups = application_commands::native_menu_groups(native_menu_platform());
+    let help_command =
+        application_commands::projected_command_by_id(application_commands::COMMAND_HELP, &[])
+            .expect("help command must be registered");
+    let help_command =
+        MenuItemBuilder::with_id(help_command.command.id, help_command.command.label)
+            .enabled(help_command.enabled)
+            .build(app)?;
+
     #[cfg(target_os = "macos")]
     {
+        let preferences_item = application_commands::projected_command_by_id(
+            application_commands::COMMAND_PREFERENCES,
+            &[],
+        )
+        .expect("preferences command must be registered");
+        let preferences_item =
+            MenuItemBuilder::with_id(preferences_item.command.id, preferences_item.command.label)
+                .enabled(preferences_item.enabled)
+                .build(app)?;
         menu = menu.item(
             &SubmenuBuilder::new(app, waves_config::APP_NAME)
                 .about(Some(about_metadata.clone()))
+                .separator()
+                .item(&preferences_item)
                 .separator()
                 .services()
                 .separator()
@@ -75,21 +141,12 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
         );
     }
 
-    #[cfg(not(any(
-        target_os = "linux",
-        target_os = "dragonfly",
-        target_os = "freebsd",
-        target_os = "netbsd",
-        target_os = "openbsd"
-    )))]
-    {
-        menu = menu.item(
-            &SubmenuBuilder::new(app, waves_config::MENU_FILE_LABEL)
-                .close_window()
-                .separator()
-                .quit()
-                .build()?,
-        );
+    for group in native_groups.iter().copied() {
+        if group == ApplicationCommandGroup::Help {
+            continue;
+        }
+        let submenu = build_command_submenu(app, group)?;
+        menu = menu.item(&submenu);
     }
 
     menu = menu
@@ -112,17 +169,26 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
                 .separator()
                 .close_window()
                 .build()?,
-        )
-        .item(
+        );
+
+    if native_groups.contains(&ApplicationCommandGroup::Help) {
+        menu = menu.item(
             &SubmenuBuilder::new(app, waves_config::MENU_HELP_LABEL)
-                .text(
-                    waves_config::MENU_CHECK_FOR_UPDATES_ID,
-                    waves_config::MENU_CHECK_FOR_UPDATES_LABEL,
+                .item(&help_command)
+                .separator()
+                .item(
+                    &MenuItemBuilder::with_id(
+                        waves_config::MENU_CHECK_FOR_UPDATES_ID,
+                        waves_config::MENU_CHECK_FOR_UPDATES_LABEL,
+                    )
+                    .enabled(false)
+                    .build(app)?,
                 )
                 .separator()
                 .about(Some(about_metadata))
                 .build()?,
         );
+    }
 
     menu.build()
 }
@@ -134,9 +200,7 @@ pub fn run() {
         .manage(HostFetchState::default())
         .menu(build_app_menu)
         .on_menu_event(|app, event| {
-            if event.id() == waves_config::MENU_CHECK_FOR_UPDATES_ID {
-                handle_check_for_updates_menu(app);
-            }
+            emit_application_command(app, event.id().as_ref());
         })
         .setup(|_| {
             preflight_wbxml_decoder_available()?;

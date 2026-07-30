@@ -96,6 +96,8 @@ const locale = {
     controlsReferenceTitle: 'Controls',
     controlsReferenceBody:
       'Up and Down move focus between links. Select activates the focused link. Back returns through card history.',
+    applicationShortcutsTitle: 'Application shortcuts',
+    commandUnavailable: 'Unavailable',
     troubleshootingTitle: 'Troubleshooting',
     troubleshootingBody:
       'No network available? Switch Mode to Local to keep browsing bundled examples without a WAP gateway.'
