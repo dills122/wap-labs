@@ -32,6 +32,47 @@ describe('createGuardedTauriInvoke', () => {
     }
   );
 
+  it('accepts Serde-null optional fields in a valid fetch response', async () => {
+    const response = {
+      ok: true,
+      status: 200,
+      finalUrl: 'wap://localhost/',
+      contentType: 'text/vnd.wap.wml',
+      wml: '<wml><card id="home"/></wml>',
+      error: null,
+      timingMs: { encode: 1, udpRtt: 2, decode: 3 },
+      engineDeckInput: {
+        wmlXml: '<wml><card id="home"/></wml>',
+        baseUrl: 'wap://localhost/',
+        contentType: 'text/vnd.wap.wml',
+        rawBytesBase64: null
+      }
+    };
+    const guarded = createGuardedTauriInvoke(vi.fn().mockResolvedValue(response));
+
+    await expect(guarded('fetch_deck')).resolves.toBe(response);
+  });
+
+  it('rejects an invalid non-null value in an optional response field', async () => {
+    const guarded = createGuardedTauriInvoke(
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        finalUrl: 'wap://localhost/',
+        contentType: 'text/vnd.wap.wml',
+        wml: 42,
+        error: null,
+        timingMs: { encode: 1, udpRtt: 2, decode: 3 },
+        engineDeckInput: null
+      })
+    );
+
+    await expect(guarded('fetch_deck')).rejects.toMatchObject({
+      code: 'MALFORMED_RESPONSE',
+      recoverable: true
+    });
+  });
+
   it.each([
     'INVALID_REQUEST',
     'CANCELLED',

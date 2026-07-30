@@ -270,11 +270,7 @@ function compileRuntimeSchemas(commands, hostError, declarationPaths) {
 }
 
 function renderRuntimeValidators(commands, hostError, declarationPaths) {
-  const { schemas, responseSchemas } = compileRuntimeSchemas(
-    commands,
-    hostError,
-    declarationPaths
-  );
+  const { schemas, responseSchemas } = compileRuntimeSchemas(commands, hostError, declarationPaths);
   return `type RuntimeSchema =
     | { kind: "string" | "number" | "boolean" | "unknown" }
     | { kind: "literal"; value: string | number | boolean | null }
@@ -306,10 +302,13 @@ const matchesRuntimeSchema = (schema: RuntimeSchema, value: unknown, depth = 0):
       return referenced !== undefined && matchesRuntimeSchema(referenced, value, depth + 1);
     }
     case "object":
+      // ts-rs optional properties project Rust Option<T>; Serde emits None as null.
       return isRecord(value)
         && schema.required.every((key) => Object.hasOwn(value, key))
         && Object.entries(schema.properties).every(([key, propertySchema]) =>
-          !Object.hasOwn(value, key) || matchesRuntimeSchema(propertySchema, value[key], depth + 1));
+          !Object.hasOwn(value, key)
+          || (!schema.required.includes(key) && value[key] === null)
+          || matchesRuntimeSchema(propertySchema, value[key], depth + 1));
   }
 };
 
