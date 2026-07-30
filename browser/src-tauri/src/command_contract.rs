@@ -122,6 +122,12 @@ macro_rules! with_tauri_commands {
                 response: CommandType::transport("FetchDeckResponse"),
                 facade: Some(FacadeMethod::transport("fetchDeck"))
             };
+            cancel_fetch => {
+                client: "cancelFetch",
+                parameter: Some(CommandParameter::new("requestId", CommandType::primitive("string"))),
+                response: CommandType::primitive("boolean"),
+                facade: Some(FacadeMethod::transport("cancelFetch"))
+            };
             engine_load_deck => {
                 client: "engineLoadDeck",
                 parameter: Some(CommandParameter::new("request", CommandType::engine("LoadDeckRequest"))),

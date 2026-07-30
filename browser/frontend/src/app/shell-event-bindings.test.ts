@@ -12,6 +12,7 @@ import {
 const BUTTON_IDS = [
   'btn-back',
   'btn-reload',
+  'btn-stop-navigation',
   'btn-fetch-url',
   'btn-up',
   'btn-enter',
@@ -72,6 +73,7 @@ const createActions = (): ShellEventBindingActions & Record<string, ReturnType<t
   fetchUrl: vi.fn(async () => undefined),
   fetchUrlEnter: vi.fn(async () => undefined),
   reload: vi.fn(async () => undefined),
+  stopNavigation: vi.fn(async () => undefined),
   changeMode: vi.fn(async () => undefined),
   selectLocalExample: vi.fn(async () => undefined),
   loadLocalExample: vi.fn(async () => undefined),
@@ -124,6 +126,7 @@ describe('ShellEventBindings', () => {
     document.querySelector<HTMLButtonElement>('#btn-clear-timeline')?.click();
     document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
     document.querySelector<HTMLButtonElement>('#btn-reload')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-stop-navigation')?.click();
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
     document.querySelector<HTMLButtonElement>('#btn-back')?.click();
     refs.loadLocalBtnEl.click();
@@ -140,6 +143,7 @@ describe('ShellEventBindings', () => {
     expect(actions.clearTimeline).toHaveBeenCalledTimes(1);
     expect(actions.loadRawWml).toHaveBeenCalledTimes(1);
     expect(actions.reload).toHaveBeenCalledTimes(1);
+    expect(actions.stopNavigation).toHaveBeenCalledTimes(1);
     expect(actions.fetchUrl).toHaveBeenCalledTimes(1);
     expect(actions.navigateBack).toHaveBeenCalledTimes(1);
     expect(actions.loadLocalExample).toHaveBeenCalledTimes(1);
@@ -178,6 +182,21 @@ describe('ShellEventBindings', () => {
     );
     await Promise.resolve();
     expect(actions.fetchUrlEnter).toHaveBeenCalledTimes(1);
+  });
+
+  it('routes Escape in the URL field to Stop navigation', async () => {
+    const refs = createRefs();
+    const actions = createActions();
+    const bindings = new ShellEventBindings(createDeps(actions, refs));
+    bindings.bind();
+
+    refs.fetchUrlInput.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })
+    );
+    await Promise.resolve();
+
+    expect(actions.stopNavigation).toHaveBeenCalledTimes(1);
+    expect(actions.fetchUrlEnter).not.toHaveBeenCalled();
   });
 
   it('forwards window keydown events to onWindowKeydown', () => {

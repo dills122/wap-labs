@@ -4,11 +4,13 @@ use crate::fetch_policy::{
 };
 use crate::request_meta::{log_fetch_attempt_failure, log_transport_event};
 use crate::responses::{
-    invalid_request_response, map_success_payload_response, normalize_content_type,
-    payload_too_large_response, transport_unavailable_response, FetchAttemptFailure,
-    PayloadTooLargeParams, SuccessPayloadParams,
+    cancelled_response, invalid_request_response, map_success_payload_response,
+    normalize_content_type, payload_too_large_response, transport_unavailable_response,
+    FetchAttemptFailure, PayloadTooLargeParams, SuccessPayloadParams,
 };
-use crate::{FetchDeckResponse, FetchDestinationPolicy, MAX_RESPONSE_BODY_BYTES};
+use crate::{
+    FetchCancellationToken, FetchDeckResponse, FetchDestinationPolicy, MAX_RESPONSE_BODY_BYTES,
+};
 use reqwest::blocking::{Client, ClientBuilder};
 use reqwest::dns::{Addrs, Name, Resolve, Resolving};
 use reqwest::redirect::Policy;
@@ -31,6 +33,7 @@ pub(super) struct FetchExecutionPlan {
     pub(super) is_wap_scheme: bool,
     pub(super) request_id: Option<String>,
     pub(super) destination_policy: FetchDestinationPolicy,
+    pub(super) cancellation: Option<FetchCancellationToken>,
 }
 
 /// Carries a typed [`FetchDestinationError`] through `reqwest`'s boxed error
@@ -113,6 +116,7 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
         is_wap_scheme,
         request_id,
         destination_policy,
+        cancellation,
     } = plan;
     let request_url = url.clone();
     let client = match http_client_builder(timeout_ms, destination_policy).build() {
@@ -137,6 +141,12 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
     let mut failure = FetchAttemptFailure::default();
 
     for attempt in 1..=attempts {
+        if cancellation
+            .as_ref()
+            .is_some_and(FetchCancellationToken::is_cancelled)
+        {
+            return cancelled_response(url, request_id.as_deref());
+        }
         let start = Instant::now();
         let mut req = match method.as_str() {
             "POST" => client.post(&upstream_url),
@@ -151,6 +161,12 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
 
         match req.send() {
             Ok(mut resp) => {
+                if cancellation
+                    .as_ref()
+                    .is_some_and(FetchCancellationToken::is_cancelled)
+                {
+                    return cancelled_response(url, request_id.as_deref());
+                }
                 let elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
                 let status = resp.status().as_u16();
                 let final_url = if is_wap_scheme {
@@ -239,6 +255,12 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                         });
                     }
                 };
+                if cancellation
+                    .as_ref()
+                    .is_some_and(FetchCancellationToken::is_cancelled)
+                {
+                    return cancelled_response(url, request_id.as_deref());
+                }
                 log_transport_event(
                     "transport.fetch.success",
                     request_id.as_deref(),

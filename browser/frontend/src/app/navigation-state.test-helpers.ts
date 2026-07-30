@@ -69,6 +69,7 @@ export const createHostClientMock = (
 ): NavigationHostClient => {
   const base = {
     fetchDeck: async () => fetchOk(),
+    cancelFetch: async () => true,
     engineLoadDeckContext: async () => snapshot({ activeCardId: 'home' }),
     engineRender: async () => renderStub,
     engineHandleKey: async () => snapshot({ activeCardId: 'home' }),

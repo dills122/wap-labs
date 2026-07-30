@@ -30,6 +30,25 @@
       }
     },
     {
+      "clientMethod": "cancelFetch",
+      "command": "cancel_fetch",
+      "facadeMethod": {
+        "facade": "transport",
+        "method": "cancelFetch"
+      },
+      "parameter": {
+        "name": "requestId",
+        "type": {
+          "name": "string",
+          "source": "primitive"
+        }
+      },
+      "response": {
+        "name": "boolean",
+        "source": "primitive"
+      }
+    },
+    {
       "clientMethod": "engineLoadDeck",
       "command": "engine_load_deck",
       "facadeMethod": {

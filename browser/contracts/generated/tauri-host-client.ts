@@ -7,6 +7,7 @@ export type TauriInvoke = <T>(command: string, args?: Record<string, unknown>) =
 export interface TauriHostClient {
     health(): Promise<string>;
     fetchDeck(request: FetchDeckRequest): Promise<FetchDeckResponse>;
+    cancelFetch(requestId: string): Promise<boolean>;
     engineLoadDeck(request: LoadDeckRequest): Promise<EngineRuntimeSnapshot>;
     engineLoadDeckContext(request: LoadDeckContextRequest): Promise<EngineRuntimeSnapshot>;
     engineLoadDeckContextFrame(request: LoadDeckContextRequest): Promise<EngineFrame>;
@@ -45,6 +46,7 @@ export interface TauriHostClient {
 export const createTauriHostClient = (invokeFn: TauriInvoke): TauriHostClient => ({
     health: () => invokeFn<string>("health"),
     fetchDeck: request => invokeFn<FetchDeckResponse>("fetch_deck", { request }),
+    cancelFetch: requestId => invokeFn<boolean>("cancel_fetch", { requestId }),
     engineLoadDeck: request => invokeFn<EngineRuntimeSnapshot>("engine_load_deck", { request }),
     engineLoadDeckContext: request => invokeFn<EngineRuntimeSnapshot>("engine_load_deck_context", { request }),
     engineLoadDeckContextFrame: request => invokeFn<EngineFrame>("engine_load_deck_context_frame", { request }),

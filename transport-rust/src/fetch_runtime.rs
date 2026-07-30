@@ -9,10 +9,12 @@ use crate::native_fetch::{
 };
 use crate::request_meta::{log_transport_event, normalized_request_id};
 use crate::request_serialization::serialize_fetch_request;
-use crate::responses::{invalid_request_response, transport_unavailable_response};
+use crate::responses::{
+    cancelled_response, invalid_request_response, transport_unavailable_response,
+};
 use crate::{
-    FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy,
-    FetchTransportOptions, FetchTransportProfile, MAX_URI_OCTETS,
+    FetchCancellationToken, FetchDeckRequest, FetchDeckResponse, FetchDestinationPolicy,
+    FetchRequestPolicy, FetchTransportOptions, FetchTransportProfile, MAX_URI_OCTETS,
 };
 use url::Url;
 
@@ -21,6 +23,7 @@ use self::execution::{execute_fetch, FetchExecutionPlan};
 pub(crate) fn fetch_deck_in_process_impl(
     request: FetchDeckRequest,
     transport_options: Option<FetchTransportOptions>,
+    cancellation: Option<FetchCancellationToken>,
 ) -> FetchDeckResponse {
     let FetchDeckRequest {
         url,
@@ -32,6 +35,12 @@ pub(crate) fn fetch_deck_in_process_impl(
         request_policy,
     } = request;
     let request_id = normalized_request_id(request_id.as_deref()).map(str::to_string);
+    if cancellation
+        .as_ref()
+        .is_some_and(FetchCancellationToken::is_cancelled)
+    {
+        return cancelled_response(url, request_id.as_deref());
+    }
     let url_octets = url.len();
     if url_octets > MAX_URI_OCTETS {
         return invalid_request_response(
@@ -139,6 +148,7 @@ pub(crate) fn fetch_deck_in_process_impl(
             attempts,
             request_id,
             destination_policy,
+            cancellation,
         });
     }
 
@@ -190,6 +200,7 @@ pub(crate) fn fetch_deck_in_process_impl(
         } else {
             destination_policy
         },
+        cancellation,
     })
 }
 

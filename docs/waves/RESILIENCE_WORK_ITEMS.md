@@ -77,7 +77,7 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-02 Cancellable and admission-controlled navigation
 
 1. `Issue`: [#509](https://github.com/dills122/wap-labs/issues/509)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P1`
 4. `Depends On`: `RSL-01`
 5. `Files`:
@@ -99,6 +99,17 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 - A hung response can be cancelled and followed by a successful known-good load.
 8. `Accept`:
 - Both active work and committed state remain bounded under conflicting navigation.
+9. `Resolution`:
+- Browser navigation now coalesces identical active request identities, assigns each admitted
+  operation a cancellable request ID, and cancels superseded work for changed URLs, Back, Stop,
+  mode changes, and disposal before admitting replacement transport work.
+- The generated Tauri contract exposes `cancel_fetch`; the host admits at most two native fetch
+  tasks so one cancelled request still blocked in kernel I/O cannot prevent its replacement. The
+  shared transport cancellation token prevents cancelled responses, retries, and gateway fallback
+  from continuing after the active blocking call returns.
+- Focused frontend and host/transport tests cover eight-way coalescing, stale projection
+  suppression, Back/Stop cancellation, hung-request recovery, bounded admission, and retry
+  cancellation. Navigation generation checks remain the final frontend state-integrity guard.
 
 ## Lane B: Engine and Frame Resource Safety
 
