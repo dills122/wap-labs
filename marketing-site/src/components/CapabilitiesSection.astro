@@ -1,9 +1,9 @@
 ---
 const capabilities = [
-  ['Browse', 'Open local examples and follow linked WML pages in the same session.'],
-  ['Interact', 'Edit fields, move focus, and submit forms through the real runtime.'],
-  ['Inspect', 'Check state, snapshots, and timelines to understand every transition.'],
-  ['Recover', 'Keep loading and failure states visible instead of hitting a dead end.']
+  ['Browse', 'Open bundled examples and follow HTTP, WAP gateway, and linked-deck paths.'],
+  ['Interact', 'Drive focus, text/select editing, forms, timers, and softkey-style actions.'],
+  ['Inspect', 'Use current Developer Tools while the broader WAP Inspector remains release work.'],
+  ['Repeat', 'Run deterministic stories and parity-critical checks against the real runtime.']
 ];
 ---
 
@@ -12,20 +12,41 @@ const capabilities = [
     <p class="section-number">03 / In practice</p>
     <h2 id="capabilities-title">A browser,<br />not just a harness.</h2>
   </div>
-  <ol class="capability-list">
-    {
-      capabilities.map(([title, detail], index) => (
-        <li data-reveal style={`--reveal-order: ${index}`}>
-          <span>{String(index + 1).padStart(2, '0')}</span>
-          <h3>{title}</h3>
-          <p>{detail}</p>
-        </li>
-      ))
-    }
-  </ol>
+  <div class="capabilities-detail">
+    <ol class="capability-list">
+      {
+        capabilities.map(([title, detail], index) => (
+          <li data-reveal style={`--reveal-order: ${index}`}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h3>{title}</h3>
+            <p>{detail}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <figure class="capability-capture" data-reveal>
+      <img
+        src="./waves-browser-inspector.webp"
+        alt="Current Waves development build with Developer Tools open beside the handset view"
+        width="1024"
+        height="768"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>
+        Current Developer Tools overview. Host attachment and the full WAP Inspector remain on the
+        release path.
+      </figcaption>
+    </figure>
+  </div>
 </section>
 
 <style>
+  .capabilities-detail {
+    min-width: 0;
+  }
+
   .capability-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -55,6 +76,25 @@ const capabilities = [
     max-width: 25rem;
     color: var(--color-ink-soft);
     line-height: 1.55;
+  }
+
+  .capability-capture {
+    margin-top: var(--space-4);
+    border: var(--rule-thick);
+    background: var(--color-paper);
+  }
+
+  .capability-capture img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .capability-capture figcaption {
+    padding: 0.75rem 1rem;
+    border-top: var(--rule-thin);
+    color: var(--color-ink-soft);
+    font: 700 0.68rem/1.45 var(--font-mono);
   }
 
   @media (max-width: 50rem) {

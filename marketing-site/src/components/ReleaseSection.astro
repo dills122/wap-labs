@@ -1,0 +1,107 @@
+---
+const releaseStages = [
+  {
+    label: 'Current main',
+    title: 'A real browser foundation',
+    detail:
+      'Local examples, native network browsing, Canvas handset rendering, focused input, safe application state, deterministic stories, and bounded engine debug recording are in the repository.',
+    note: 'Development behavior—not a packaged desktop release.'
+  },
+  {
+    label: 'Initial pre-release',
+    title: 'A bounded daily testing path',
+    detail:
+      'Recovery, Home, basic Favorites, state and settings integration, native commands, sanitized support diagnostics, accessibility, packaging, signing, and install guidance form the intended first cut.',
+    note: 'There is no public download or announced release date yet.'
+  },
+  {
+    label: 'Later v1',
+    title: 'Deeper inspection and continuity',
+    detail:
+      'The broader WAP Inspector, searchable history, Favorites import/export, stronger redaction controls, semantic accessibility support, replay, frame export, network presets, and evidence-backed profiles remain later direction.',
+    note: 'Planned follow-on work, subject to implementation evidence.'
+  }
+];
+---
+
+<section class="release section-block" id="release" aria-labelledby="release-title">
+  <div class="section-heading" data-reveal>
+    <p class="section-number">05 / Release path</p>
+    <h2 id="release-title">Moving toward the first pre-release.</h2>
+    <p>
+      Waves is being prepared as a native desktop WAP/WML testing workbench. The release path keeps
+      current behavior, initial pre-release intent, and later v1 direction separate.
+    </p>
+  </div>
+
+  <ol class="release-list">
+    {
+      releaseStages.map((stage, index) => (
+        <li data-reveal style={`--reveal-order: ${index}`}>
+          <span class="release-index">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <p class="release-label">{stage.label}</p>
+            <h3>{stage.title}</h3>
+            <p class="release-detail">{stage.detail}</p>
+            <p class="release-note">{stage.note}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .release .section-heading h2 {
+    max-width: 11ch;
+  }
+
+  .release-list {
+    border-top: var(--rule-thick);
+    list-style: none;
+  }
+
+  .release-list li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding: 1.65rem 0;
+    border-bottom: var(--rule-thin);
+  }
+
+  .release-index {
+    color: var(--color-signal-dark);
+    font: 700 0.72rem/1 var(--font-mono);
+  }
+
+  .release-label {
+    margin-bottom: 0.55rem;
+    color: var(--color-terminal);
+    font: 700 0.64rem/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .release-detail {
+    max-width: 38rem;
+    margin-top: 0.65rem;
+    color: var(--color-ink-soft);
+    line-height: 1.5;
+  }
+
+  .release-note {
+    max-width: 38rem;
+    margin-top: 0.85rem;
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--color-signal);
+    color: var(--color-ink);
+    font: 700 0.72rem/1.45 var(--font-mono);
+  }
+
+  @media (max-width: 36rem) {
+    .release-list li {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: var(--space-3);
+    }
+  }
+</style>
