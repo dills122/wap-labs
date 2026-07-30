@@ -638,18 +638,17 @@ describe('navigation-state load behavior', () => {
   });
 
   it('skips render and session-state churn for no-op timer ticks', async () => {
-    let renderCount = 0;
+    let publishedFrameCount = 0;
     const stateEvents: string[] = [];
     const machine = createNavigationStateMachine(
       createHostClientMock({
-        engineRender: async () => {
-          renderCount += 1;
-          return { draw: [{ type: 'text', x: 0, y: 0, text: 'ok' }] };
-        },
-        engineAdvanceTimeMs: async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
+        engineAdvanceTimeMsFrame: async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       }),
       'http://seed.test',
       {
+        onFrame: () => {
+          publishedFrameCount += 1;
+        },
         onStateEvent: (action) => stateEvents.push(action)
       }
     );
@@ -659,12 +658,12 @@ describe('navigation-state load behavior', () => {
       source: 'user',
       followExternalIntent: false
     });
-    const renderCountAfterLoad = renderCount;
+    const publishedFramesAfterLoad = publishedFrameCount;
     const stateEventsAfterLoad = stateEvents.length;
 
     await machine.applyEngineTimerTick(50);
 
-    expect(renderCount).toBe(renderCountAfterLoad);
+    expect(publishedFrameCount).toBe(publishedFramesAfterLoad);
     expect(stateEvents.length).toBe(stateEventsAfterLoad);
   });
 

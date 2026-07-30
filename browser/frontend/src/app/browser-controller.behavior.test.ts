@@ -438,7 +438,7 @@ describe('BrowserController behavior coverage', () => {
     const controller = new BrowserController(hostClient as never, presenter, refs);
 
     await controller.init('<wml><card id="seed"/></wml>');
-    vi.mocked(hostClient.engineAdvanceTimeMs).mockClear();
+    vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockClear();
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
 
@@ -449,7 +449,7 @@ describe('BrowserController behavior coverage', () => {
     await (
       controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
     ).tickEngineTimerRuntime();
-    expect(hostClient.engineAdvanceTimeMs).not.toHaveBeenCalled();
+    expect(hostClient.engineAdvanceTimeMsFrame).not.toHaveBeenCalled();
 
     await flushAsyncWork();
 
@@ -457,7 +457,7 @@ describe('BrowserController behavior coverage', () => {
     await (
       controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
     ).tickEngineTimerRuntime();
-    expect(hostClient.engineAdvanceTimeMs).toHaveBeenCalledTimes(1);
+    expect(hostClient.engineAdvanceTimeMsFrame).toHaveBeenCalledTimes(1);
   });
 
   it('does not tick the network engine while a transport navigation is in flight', async () => {
@@ -470,7 +470,7 @@ describe('BrowserController behavior coverage', () => {
     controllerPrivates(controller).timerRuntime.stop();
     await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
     await flushAsyncWork();
-    vi.mocked(hostClient.engineAdvanceTimeMs).mockClear();
+    vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockClear();
 
     let resolveFetch: ((response: FetchResponse) => void) | undefined;
     vi.mocked(hostClient.fetchDeck).mockImplementationOnce(
@@ -485,7 +485,7 @@ describe('BrowserController behavior coverage', () => {
     await Promise.resolve();
 
     await controllerPrivates(controller).tickEngineTimerRuntime();
-    expect(hostClient.engineAdvanceTimeMs).not.toHaveBeenCalled();
+    expect(hostClient.engineAdvanceTimeMsFrame).not.toHaveBeenCalled();
 
     resolveFetch?.({
       ok: true,
@@ -525,8 +525,8 @@ describe('BrowserController behavior coverage', () => {
       return frame({ activeCardId: 'invoking-card', focusedLinkIndex: 2, baseUrl: invokingUrl });
     });
     vi.mocked(hostClient.engineHandleKeyFrame).mockResolvedValue(frame(invokingSnapshot));
-    vi.mocked(hostClient.engineAdvanceTimeMs).mockImplementation(async () =>
-      snapshot({
+    vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockImplementation(async () =>
+      frame({
         activeCardId: timerIntent ? 'invoking-card' : 'recovered-card',
         focusedLinkIndex: timerIntent ? 2 : 0,
         baseUrl: timerIntent ? invokingUrl : changedTargetUrl,
@@ -837,7 +837,7 @@ describe('BrowserController behavior coverage', () => {
 
       await controller.init('<wml><card id="seed"/></wml>');
       // The periodic engine timer tick is irrelevant to this test and its
-      // mocked engineAdvanceTimeMs response would otherwise trigger an
+      // mocked engineAdvanceTimeMsFrame response would otherwise trigger an
       // unrelated re-render mid-delay, incidentally canceling the pending
       // indicator this test is trying to observe.
       controllerPrivates(controller).timerRuntime.stop();
