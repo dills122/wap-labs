@@ -161,6 +161,17 @@ const run = async () => {
   const mode = await driver.findElement(By.css('#run-mode')).getAttribute('value');
   assert.equal(mode, 'network');
   recordAssertion('native startup', 'production frontend reached engine-ready in Network mode');
+
+  const welcomePanel = await driver.findElement(By.css('#welcome-help-panel'));
+  if (await welcomePanel.isDisplayed()) {
+    await driver.findElement(By.css('#btn-connect-network')).click();
+    await driver.wait(until.elementIsNotVisible(welcomePanel), timeoutMs);
+  }
+  assert.equal(await welcomePanel.isDisplayed(), false);
+  recordAssertion(
+    'network welcome entry',
+    'the ordinary Connect to a WAP Server entry point exposed the network viewport'
+  );
   await capture('01-startup');
 
   await driver.findElement(By.css('#btn-fetch-url')).click();
