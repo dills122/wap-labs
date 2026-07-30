@@ -42,7 +42,7 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-01 Terminal external-intent failure quarantine
 
 1. `Issue`: [#510](https://github.com/dills122/wap-labs/issues/510)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P1` release blocker; treat as `P0` for a distributed build exposed to uncontrolled
    public content
 4. `Depends On`: none
@@ -66,6 +66,13 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 8. `Accept`:
 - Terminal failure produces one bounded outcome and one useful error surface.
 - No timer-driven automatic replay occurs without a changed intent or explicit user action.
+9. `Resolution`:
+- Browser navigation now quarantines terminally failed external intents by resolved request identity
+  and navigation generation without clearing engine state. Timer snapshots suppress the same
+  quarantined intent, while explicit Reload/Go and changed intents receive one fresh attempt.
+- Focused controller coverage proves one WBXML decode failure plus 50 timer ticks issues one target
+  fetch, preserves the invoking state, deduplicates the failure notification, permits one explicit
+  retry, and recovers through a changed known-good target.
 
 ### RSL-02 Cancellable and admission-controlled navigation
 
