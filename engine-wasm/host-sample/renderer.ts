@@ -80,7 +80,6 @@ export interface EngineHost {
   lastScriptRequiresRefresh(): boolean | undefined;
   traceEntries(): EngineTraceEntry[];
   clearTraceEntries(): void;
-  render(): void;
   getEngine(): WmlEngine;
 }
 
@@ -105,26 +104,27 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     ctx.font = '14px "IBM Plex Mono", monospace';
     ctx.textBaseline = 'top';
 
-    const renderList = engine.render();
+    const frame = engine.renderFrame();
 
-    for (const cmd of renderList.draw) {
-      const x = cmd.x * charWidth;
-      const y = cmd.y * lineHeight;
+    for (const row of frame.rows) {
+      const y = row.index * lineHeight;
 
-      if (cmd.type === 'text') {
-        ctx.fillStyle = '#171914';
-        ctx.fillText(cmd.text, x, y);
-        continue;
-      }
+      for (const segment of row.segments) {
+        const x = segment.x * charWidth;
 
-      if (cmd.type === 'link') {
-        if (cmd.focused) {
+        if (segment.type === 'text') {
+          ctx.fillStyle = '#171914';
+          ctx.fillText(segment.text, x, y);
+          continue;
+        }
+
+        if (segment.focused) {
           ctx.fillStyle = '#d8dcef';
           ctx.fillRect(0, y - 1, canvas.width, lineHeight + 2);
         }
 
-        ctx.fillStyle = cmd.focused ? '#171914' : '#1538a1';
-        ctx.fillText(cmd.text, x, y);
+        ctx.fillStyle = segment.focused ? '#171914' : '#1538a1';
+        ctx.fillText(segment.text, x, y);
       }
     }
   }
@@ -255,7 +255,6 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
     clearTraceEntries() {
       engine.clearTraceEntries();
     },
-    render: paint,
     getEngine() {
       return rawEngine;
     }
