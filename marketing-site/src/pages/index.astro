@@ -60,32 +60,4 @@ import SiteFooter from '../components/SiteFooter.astro';
     for (const item of revealItems) item.classList.add('is-visible');
   }
 
-  const sectionLinks = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('[data-section-link]')
-  );
-  const linkedSections = sectionLinks
-    .map((link) => {
-      const id = link.hash.slice(1);
-      return id ? document.getElementById(id) : null;
-    })
-    .filter((section): section is HTMLElement => section !== null);
-
-  if ('IntersectionObserver' in window) {
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        const activeSection = entries.find((entry) => entry.isIntersecting);
-        if (!activeSection) return;
-
-        for (const link of sectionLinks) {
-          const isActive = link.hash === `#${activeSection.target.id}`;
-          link.classList.toggle('is-active', isActive);
-          if (isActive) link.setAttribute('aria-current', 'location');
-          else link.removeAttribute('aria-current');
-        }
-      },
-      { rootMargin: '-24% 0px -62% 0px', threshold: 0 }
-    );
-
-    for (const section of linkedSections) sectionObserver.observe(section);
-  }
 </script>

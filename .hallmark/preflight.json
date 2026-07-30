@@ -1,15 +1,10 @@
 {
-  "date": "2026-07-28",
-  "scope": "browser/frontend",
-  "font_stack": "Native system UI host, system mono technical labels, deterministic Courier LCD",
-  "palette": "OKLCH tokens in browser/frontend/src/tokens.css",
-  "motion": "motion-cut; no animation framework",
-  "spacing": "4pt semantic token scale",
-  "framework": "Lit + Vite",
-  "preserved": [
-    "Tauri native window frame",
-    "HTML/CSS/TypeScript WebView rendering",
-    "WML inverse-video focus semantics",
-    "controller bindings and keyboard order"
-  ]
+  "date": "2026-07-30",
+  "target": "marketing-site",
+  "framework": "Astro 7 static output",
+  "fontStack": "Arial Black display / Helvetica Neue body and technical labels",
+  "palette": "warm paper with cobalt and orange signal tokens",
+  "motion": "CSS only, reduced-motion cut",
+  "spacing": "named 4-point-derived custom properties",
+  "assets": "first-party Waves product captures"
 }

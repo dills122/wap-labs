@@ -1,130 +1,214 @@
 ---
-const shippingNow = [
-  {
-    label: 'Session',
-    title: 'Faster navigation loops',
-    detail: 'Back, history, and follow-link behavior stay stable while you iterate.',
-    outcome: 'Follow a link and continue without restarting the browsing loop.'
-  },
-  {
-    label: 'Diagnostics',
-    title: 'Actionable runtime detail',
-    detail: 'Transport state, runtime snapshots, and timelines stay visible in the browser.',
-    outcome: 'Understand why a transition happened without attaching extra tooling.'
-  },
-  {
-    label: 'Sources',
-    title: 'Local and live parity',
-    detail: 'Move between local examples and live WML pages with the same browser shell.',
-    outcome: 'Keep one input model and inspection workflow across both sources.'
-  },
-  {
-    label: 'Recovery',
-    title: 'Explicit degraded states',
-    detail: 'Loading and network failures keep the current browser context visible.',
-    outcome: 'Inspect what happened and continue instead of landing on a frozen shell.'
-  }
+const currentMain = [
+  'Native single-window host with local examples and a native network browsing path.',
+  'Canvas handset rendering fed by the engine presentation-frame contract.',
+  'Keyboard, softkey-style controls, focused text/select editing, and hybrid Back behavior.',
+  'Collapsed Developer Tools, deterministic browser stories, rendered accessibility evidence, and bounded engine debug recording.',
+  'Safe favorites foundations, versioned safe application state, and one generated native command registry.'
+];
+
+const initialPrerelease = [
+  'Finish the canonical frame and typed-input cutover without moving WML semantics into the host.',
+  'Add real cancellation, truthful loading phases, last-good-frame retention, and useful recovery.',
+  'Finish integrating Home, basic safe Favorites, versioned application state, settings, and safe session recovery.',
+  'Provide bounded, sanitized support diagnostics and complete keyboard-accessible native commands.',
+  'Guide testers to the public lab only after publication gates close, with unencrypted/no-real-credentials warnings.',
+  'Pass the packaged success/failure, accessibility, signing, checksum, and install-guidance gates.'
+];
+
+const laterV1 = [
+  'Grow Developer Tools into a WAP Inspector for network, bytes, source, deck, runtime, events, errors, and export.',
+  'Add searchable visible history and complete Favorites import/export after retention and safety policy are proven.',
+  'Add broader diagnostic preferences, redaction controls, and a semantic frame accessibility adapter or reading view.',
+  'Explore controlled fixture replay, screenshot/frame export, and constrained-network presets.',
+  'Add named handset/browser profiles only when primary evidence and the frame/input path support them.'
 ];
 ---
 
-<section class="shipping section-block" id="shipping" aria-labelledby="shipping-title">
-  <div class="section-heading" data-reveal>
-    <p class="section-number">04 / Shipping now</p>
-    <h2 id="shipping-title">Core flows, turned into day-to-day tools.</h2>
-    <p>Open a deck, interact, inspect, and continue in one stable loop—even when the network slows down or fails.</p>
-    <ol class="shipping-flow" aria-label="Current browser workflow">
-      <li><span>01</span>Open deck</li>
-      <li><span>02</span>Interact</li>
-      <li><span>03</span>Inspect</li>
-      <li><span>04</span>Continue</li>
-    </ol>
+<section class="shipping" id="release-path" aria-labelledby="shipping-title">
+  <header class="release-heading" data-reveal>
+    <p class="status-label">Release path</p>
+    <h2 id="shipping-title">What is landing first—and what waits for v1?</h2>
+    <p>
+      The split below is intent from active plans, not an availability promise. There is no public
+      desktop download or announced release date yet.
+    </p>
+  </header>
+
+  <div class="release-columns">
+    <article class="release-column release-column-current" data-reveal>
+      <div>
+        <p class="release-state">On current main</p>
+        <h3>A credible browser foundation.</h3>
+        <p>Shipped repository behavior—not a packaged pre-release.</p>
+      </div>
+      <ul>
+        {currentMain.map((item) => <li>{item}</li>)}
+      </ul>
+      <p class="release-note">
+        Safe application state and bounded engine debug recording are now on current main. Host
+        attachment and full Inspector surfaces remain release-path work.
+      </p>
+    </article>
+
+    <article class="release-column release-column-initial" data-reveal>
+      <div>
+        <p class="release-state">Initial pre-release intent</p>
+        <h3>A daily WAP testing workbench.</h3>
+        <p>The bounded release target.</p>
+      </div>
+      <ul>
+        {initialPrerelease.map((item) => <li>{item}</li>)}
+      </ul>
+    </article>
+
+    <article class="release-column release-column-v1" data-reveal>
+      <div>
+        <p class="release-state">Later v1 direction</p>
+        <h3>Deeper inspection and continuity.</h3>
+        <p>Planned follow-on work, subject to evidence.</p>
+      </div>
+      <ul>
+        {laterV1.map((item) => <li>{item}</li>)}
+      </ul>
+    </article>
   </div>
-  <ol class="shipping-list">
-    {
-      shippingNow.map((item, index) => (
-        <li data-reveal style={`--reveal-order: ${index}`}>
-          <span class="shipping-index">{String(index + 1).padStart(2, '0')}</span>
-          <div>
-            <p class="shipping-label">{item.label}</p>
-            <h3>{item.title}</h3>
-            <p>{item.detail}</p>
-            <p class="shipping-outcome">{item.outcome}</p>
-          </div>
-        </li>
-      ))
-    }
-  </ol>
 </section>
 
 <style>
-  .shipping .section-heading h2 {
-    max-width: 11ch;
+  .shipping {
+    padding-block: var(--space-4xl);
+    border-bottom: var(--rule-thick);
   }
 
-  .shipping-flow {
+  .release-heading {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-top: var(--space-5);
-    border-top: var(--rule-thick);
-    border-left: var(--rule-thin);
-    list-style: none;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+    padding-bottom: var(--space-xl);
   }
 
-  .shipping-flow li {
+  .release-heading h2 {
+    max-width: 14ch;
+    font-size: var(--text-2xl);
+    line-height: 1;
+  }
+
+  .release-heading > p:last-child {
+    max-width: 60ch;
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+
+  .release-columns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: var(--rule-thick);
+    border-inline-start: var(--rule-thin);
+  }
+
+  .release-column {
     display: flex;
-    gap: 0.6rem;
-    min-height: 2.8rem;
-    align-items: center;
-    padding: 0.65rem 0.75rem;
-    border-right: var(--rule-thin);
-    border-bottom: var(--rule-thin);
-    font: 700 0.66rem/1.2 var(--font-mono);
-    text-transform: uppercase;
-  }
-
-  .shipping-flow span {
-    color: var(--color-signal-dark);
-  }
-
-  .shipping-list {
-    border-top: var(--rule-thick);
-    list-style: none;
-  }
-
-  .shipping-list li {
-    display: grid;
-    grid-template-columns: 3rem 1fr;
-    gap: var(--space-4);
-    padding: 1.65rem 0;
+    min-width: 0;
+    min-height: 45rem;
+    flex-direction: column;
+    padding: var(--space-lg);
+    border-inline-end: var(--rule-thin);
     border-bottom: var(--rule-thin);
   }
 
-  .shipping-index {
-    color: var(--color-signal-dark);
-    font: 700 0.72rem/1 var(--font-mono);
+  .release-column-initial {
+    color: var(--color-paper);
+    background: var(--color-terminal);
   }
 
-  .shipping-label {
-    margin-bottom: 0.55rem;
-    color: var(--color-terminal);
-    font: 700 0.64rem/1 var(--font-mono);
-    letter-spacing: 0.06em;
+  .release-state {
+    color: var(--color-signal-dark);
+    font: 700 var(--text-xs)/1 var(--font-mono);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
-  .shipping-list li > div > p:not(.shipping-label, .shipping-outcome) {
-    max-width: 34rem;
-    margin-top: 0.65rem;
+  .release-column-initial .release-state {
+    color: var(--color-terminal-accent);
+  }
+
+  .release-column h3 {
+    max-width: 16ch;
+    margin-top: var(--space-md);
+    font: 900 clamp(1.6rem, 2.5vw, 2.6rem)/1.02 var(--font-display);
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  .release-column > div > p:last-child {
+    margin-top: var(--space-sm);
     color: var(--color-ink-soft);
     line-height: 1.5;
   }
 
-  .shipping-outcome {
-    max-width: 37rem;
-    margin-top: 0.85rem;
-    padding-left: 0.8rem;
-    border-left: 3px solid var(--color-signal);
-    color: var(--color-ink);
-    font: 700 0.72rem/1.45 var(--font-mono);
+  .release-column-initial > div > p:last-child {
+    color: var(--color-terminal-copy);
+  }
+
+  .release-column ul {
+    display: grid;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    list-style: none;
+  }
+
+  .release-column li {
+    display: grid;
+    grid-template-columns: 1rem minmax(0, 1fr);
+    gap: var(--space-xs);
+    color: var(--color-ink-soft);
+    line-height: 1.5;
+  }
+
+  .release-column li::before {
+    content: '→';
+    color: var(--color-signal-dark);
+    font-family: var(--font-mono);
+  }
+
+  .release-column-initial li {
+    color: var(--color-terminal-copy);
+  }
+
+  .release-column-initial li::before {
+    color: var(--color-terminal-accent);
+  }
+
+  .release-note {
+    margin-top: auto;
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-rule-soft);
+    color: var(--color-ink-soft);
+    font: 700 var(--text-xs)/1.5 var(--font-mono);
+  }
+
+  @media (max-width: 68rem) {
+    .release-columns {
+      grid-template-columns: 1fr;
+    }
+
+    .release-column {
+      min-height: 0;
+    }
+
+    .release-note {
+      margin-top: var(--space-xl);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .shipping {
+      padding-block: var(--space-3xl);
+    }
+
+    .release-column {
+      padding: var(--space-md);
+    }
   }
 </style>

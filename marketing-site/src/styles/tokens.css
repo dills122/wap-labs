@@ -1,0 +1,70 @@
+/* WAP Labs marketing tokens. Product captures are owned separately in public/. */
+:root {
+  --color-canvas: oklch(93% 0.025 90);
+  --color-paper: oklch(97% 0.018 91);
+  --color-paper-strong: oklch(99% 0.006 91);
+  --color-ink: oklch(20% 0.018 120);
+  --color-ink-soft: oklch(42% 0.02 112);
+  --color-rule: oklch(25% 0.02 120);
+  --color-rule-soft: oklch(76% 0.026 94);
+  --color-signal: oklch(64% 0.19 40);
+  --color-signal-dark: oklch(47% 0.17 37);
+  --color-accent: var(--color-signal);
+  --color-accent-ink: var(--color-ink);
+  --color-terminal: oklch(38% 0.16 263);
+  --color-terminal-dark: oklch(23% 0.055 155);
+  --color-terminal-copy: oklch(89% 0.025 278);
+  --color-terminal-accent: oklch(77% 0.15 38);
+  --color-positive: oklch(51% 0.12 153);
+  --color-focus: oklch(53% 0.2 263);
+  --color-selection-ink: var(--color-paper);
+  --color-selection-fill: var(--color-terminal);
+  --color-canvas-grid: oklch(20% 0.018 120 / 7.5%);
+  --color-canvas-fold: oklch(20% 0.018 120 / 3.5%);
+  --color-positive-ring: oklch(51% 0.12 153 / 18%);
+  --color-terminal-watermark: oklch(97% 0.018 91 / 8%);
+
+  --font-display: 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-body);
+
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 8rem;
+
+  --text-xs: 0.72rem;
+  --text-sm: 0.84rem;
+  --text-md: 1rem;
+  --text-lg: 1.2rem;
+  --text-xl: clamp(1.75rem, 3vw, 3rem);
+  --text-2xl: clamp(2.4rem, 5.5vw, 5.8rem);
+  --text-display: clamp(3.25rem, 8vw, 6.25rem);
+
+  --content-width: 84rem;
+  --reading-width: 46rem;
+  --page-gutter: clamp(1rem, 4vw, 3.75rem);
+
+  --rule-thin: 1px solid var(--color-rule);
+  --rule-soft: 1px solid var(--color-rule-soft);
+  --rule-thick: 3px solid var(--color-rule);
+  --shadow-control: 4px 4px 0 var(--color-rule);
+  --shadow-capture: 0.65rem 0.65rem 0 var(--color-rule);
+
+  --radius-none: 0;
+  --radius-control: 0;
+  --radius-capture: 0;
+
+  --dur-fast: 140ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}

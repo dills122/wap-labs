@@ -1,68 +1,82 @@
 ---
+const signals = [
+  ['Current main', 'Local + network paths'],
+  ['Current main', 'Canvas + safe app state'],
+  ['Release work', 'Recovery + Home + packaging'],
+  ['Public lab', 'Private and gated']
+];
 ---
 
-<aside class="signal-strip" aria-label="Product highlights">
-  <p><span>01</span> Softkey-style input</p>
-  <p><span>02</span> Visible session trace</p>
-  <p><span>03</span> Constrained transport</p>
-  <p class="signal-strip-end" aria-hidden="true">WAVES // ONLINE</p>
+<aside class="signal-strip" aria-label="Current project status">
+  {
+    signals.map(([label, detail]) => (
+      <p>
+        <span>{label}</span>
+        <strong>{detail}</strong>
+      </p>
+    ))
+  }
 </aside>
 
 <style>
   .signal-strip {
     display: grid;
-    grid-template-columns: repeat(3, auto) 1fr;
-    align-items: center;
-    border-top: var(--rule-thick);
-    border-bottom: var(--rule-thick);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     color: var(--color-paper);
-    background: var(--color-night);
-    animation: tune-in var(--motion-duration-slow) var(--motion-ease-out) 420ms both;
+    background: var(--color-terminal-dark);
+    border-bottom: var(--rule-thick);
   }
 
   .signal-strip p {
-    display: flex;
-    gap: 0.7rem;
-    align-items: center;
-    min-height: 3.7rem;
-    padding: 0.75rem clamp(0.8rem, 2vw, 1.5rem);
-    border-right: 1px solid var(--color-night-soft);
-    font: 700 0.66rem/1.2 var(--font-mono);
+    display: grid;
+    min-height: 5rem;
+    gap: var(--space-2xs);
+    align-content: center;
+    padding: var(--space-sm) var(--space-md);
+    border-inline-end: 1px solid var(--color-ink-soft);
+  }
+
+  .signal-strip p:last-child {
+    border-inline-end: 0;
+  }
+
+  .signal-strip span {
+    color: var(--color-terminal-accent);
+    font: 700 var(--text-xs)/1 var(--font-mono);
     text-transform: uppercase;
   }
 
-  .signal-strip p span {
-    color: var(--color-signal);
+  .signal-strip strong {
+    font: 700 var(--text-sm)/1.3 var(--font-body);
   }
 
-  .signal-strip .signal-strip-end {
-    justify-content: flex-end;
-    color: var(--color-night-muted);
-    border-right: 0;
-  }
-
-  @media (max-width: 68rem) {
+  @media (max-width: 54rem) {
     .signal-strip {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .signal-strip .signal-strip-end {
-      display: none;
+    .signal-strip p:nth-child(2) {
+      border-inline-end: 0;
+    }
+
+    .signal-strip p:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--color-ink-soft);
     }
   }
 
-  @media (max-width: 36rem) {
+  @media (max-width: 26rem) {
     .signal-strip {
       grid-template-columns: 1fr;
     }
 
-    .signal-strip p {
-      min-height: 2.8rem;
-      border-right: 0;
-      border-bottom: 1px solid var(--color-night-soft);
+    .signal-strip p,
+    .signal-strip p:nth-child(2) {
+      min-height: 4.25rem;
+      border-inline-end: 0;
+      border-bottom: 1px solid var(--color-ink-soft);
     }
 
-    .signal-strip p:last-of-type {
+    .signal-strip p:last-child {
       border-bottom: 0;
     }
   }

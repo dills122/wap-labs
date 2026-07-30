@@ -2,56 +2,81 @@
 ---
 
 <footer class="footer">
-  <a class="brand footer-brand" href="./" aria-label="WaveNav Labs home">
-    <span class="brand-mark" aria-hidden="true">W</span>
-    <span><strong>WaveNav Labs</strong><small>WAP/WML browser, runtime, and protocol tooling</small></span>
-  </a>
-  <p>Built for the small-screen web that started it all.</p>
-  <a href="#main-content">Back to top ↑</a>
+  <p class="footer-statement">The small-screen web deserves a serious desktop tool.</p>
+  <div class="footer-meta">
+    <a class="brand footer-brand" href="./" aria-label="WAP Labs home">
+      <span class="brand-mark" aria-hidden="true">W</span>
+      <span><strong>WAP Labs</strong><small>Waves · WaveNav · Lowband</small></span>
+    </a>
+    <nav aria-label="Footer navigation">
+      <a href="./atlas/">Atlas</a>
+      <a href="https://github.com/dills122/wap-labs">GitHub</a>
+      <a href="#main-content">Back to top ↑</a>
+    </nav>
+  </div>
 </footer>
 
 <style>
   .footer {
     display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: var(--space-5);
-    align-items: center;
-    min-height: 8rem;
+    gap: var(--space-xl);
+    padding-block: var(--space-3xl) var(--space-xl);
     border-top: var(--rule-thick);
   }
 
-  .footer p,
-  .footer > a:last-child {
-    color: var(--color-ink-soft);
-    font: 700 0.62rem/1.4 var(--font-mono);
+  .footer-statement {
+    max-width: 28ch;
+    font: 900 var(--text-xl)/1 var(--font-display);
+    letter-spacing: -0.04em;
     text-transform: uppercase;
   }
 
-  .footer > a:last-child {
-    text-underline-offset: 0.3rem;
-    transition: color var(--motion-duration-fast) ease;
+  .footer-meta {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-md);
+    border-top: var(--rule-soft);
   }
 
-  .footer > a:last-child:hover {
+  .footer nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .footer nav a {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    color: var(--color-ink-soft);
+    font: 700 var(--text-xs)/1 var(--font-mono);
+    text-transform: uppercase;
+    text-underline-offset: 0.3rem;
+    white-space: nowrap;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .footer nav a:hover {
     color: var(--color-terminal);
   }
 
-  @media (max-width: 50rem) {
-    .footer {
-      grid-template-columns: 1fr auto;
+  @media (max-width: 42rem) {
+    .footer-meta {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
-    .footer p {
-      display: none;
+    .footer nav {
+      gap: var(--space-sm);
     }
   }
 
-  @media (max-width: 36rem) {
-    .footer {
-      display: flex;
+  @media (max-width: 23rem) {
+    .footer nav {
       align-items: flex-start;
       flex-direction: column;
-      padding: 1.5rem 0;
     }
   }
 </style>
