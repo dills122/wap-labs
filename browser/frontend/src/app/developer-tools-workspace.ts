@@ -1,5 +1,8 @@
-import type { EngineRuntimeSnapshot } from '../../../contracts/engine';
-import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
+import type {
+  DiagnosticRuntimeSnapshot,
+  DiagnosticSessionState,
+  DiagnosticTransportResponse
+} from './diagnostic-projection';
 import type { TimelineEntry } from './timeline';
 
 export interface DeveloperToolsDocumentState {
@@ -9,19 +12,13 @@ export interface DeveloperToolsDocumentState {
   testingAcceptance: string[];
 }
 
-export interface DeveloperToolsSourceState {
-  baseUrl: string;
-  wml: string;
-}
-
 export interface DeveloperToolsState {
   hostStatus: string;
-  sessionState: HostSessionState;
-  transportResponse: FetchResponse | null;
-  runtimeSnapshot: EngineRuntimeSnapshot | null;
+  sessionState: DiagnosticSessionState;
+  transportResponse: DiagnosticTransportResponse | null;
+  runtimeSnapshot: DiagnosticRuntimeSnapshot | null;
   timeline: TimelineEntry[];
   document: DeveloperToolsDocumentState;
-  source: DeveloperToolsSourceState;
 }
 
 const EMPTY_VALUE = '—';
@@ -44,7 +41,7 @@ const displayValue = (value: unknown): string => {
   return String(value);
 };
 
-const transportDuration = (response: FetchResponse | null): string => {
+const transportDuration = (response: DiagnosticTransportResponse | null): string => {
   if (!response) {
     return EMPTY_VALUE;
   }
@@ -62,7 +59,11 @@ export const renderDeveloperToolsSummary = (root: ParentNode, state: DeveloperTo
   );
   setText(root, '[data-devtools-value="run-mode"]', sessionState.runMode);
   setText(root, '[data-devtools-value="navigation-status"]', sessionState.navigationStatus);
-  setText(root, '[data-devtools-value="active-card"]', displayValue(sessionState.activeCardId));
+  setText(
+    root,
+    '[data-devtools-value="active-card"]',
+    sessionState.hasActiveCard ? 'Present' : EMPTY_VALUE
+  );
   setText(root, '[data-devtools-value="event-count"]', String(timeline.length));
   setText(
     root,
@@ -88,7 +89,7 @@ export const renderDeveloperToolsSummary = (root: ParentNode, state: DeveloperTo
   setText(
     root,
     '[data-devtools-value="runtime-card"]',
-    displayValue(runtimeSnapshot?.activeCardId)
+    runtimeSnapshot?.hasActiveCard ? 'Present' : EMPTY_VALUE
   );
   setText(
     root,
@@ -116,8 +117,6 @@ export const renderDeveloperToolsState = (root: ParentNode, state: DeveloperTool
   const descriptionEl = root.querySelector<HTMLElement>('#local-example-description');
   const goalEl = root.querySelector<HTMLElement>('#local-example-goal');
   const acceptanceEl = root.querySelector<HTMLUListElement>('#local-example-testing-ac');
-  const baseUrlEl = root.querySelector<HTMLInputElement>('#base-url');
-  const wmlEl = root.querySelector<HTMLTextAreaElement>('#wml-input');
 
   if (coverageEl) coverageEl.textContent = state.document.coverage;
   if (descriptionEl) descriptionEl.textContent = state.document.description;
@@ -131,8 +130,6 @@ export const renderDeveloperToolsState = (root: ParentNode, state: DeveloperTool
       })
     );
   }
-  if (baseUrlEl && document.activeElement !== baseUrlEl) baseUrlEl.value = state.source.baseUrl;
-  if (wmlEl && document.activeElement !== wmlEl) wmlEl.value = state.source.wml;
 };
 
 const selectTab = (root: HTMLElement, nextTab: HTMLButtonElement): void => {

@@ -233,7 +233,8 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 - [x] Add deterministic URL load and runtime status model
 - [x] Implement transport fetch -> engine loadDeckContext handoff
 - [x] Add integration fixtures for load/nav/external-intent loops
-- [x] Add event timeline export parity and chronology validation checks
+- [x] Add versioned, allowlisted event timeline exports with chronology validation and secret-safe
+  diagnostic projections (`APP-PRIV-01` / `RSL-06`)
 - [x] Ship browser-style shell with hidden developer drawer
 - [x] Add global keyboard navigation when not in text-entry fields
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)

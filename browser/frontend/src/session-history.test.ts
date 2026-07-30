@@ -131,6 +131,55 @@ describe('session-history', () => {
     expect(state.entries[1]?.requestPolicy?.postContext?.payload).toBe('foo=1');
   });
 
+  it('preserves byte-exact replay credentials inside history', () => {
+    const state = createHostHistoryState();
+    const payload = 'username=alice&pin=%30%30%30%30&note=a+b';
+    pushHostHistoryEntry(state, 'http://local.test/login', 'result', 'user', {
+      requestedUrl: 'http://local.test/login',
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic YWxpY2U6c2VjcmV0',
+        Cookie: 'sid=replay-secret'
+      },
+      requestPolicy: {
+        postContext: {
+          contentType: 'application/x-www-form-urlencoded',
+          payload
+        },
+        requestIntent: {
+          method: 'post',
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          sameDeck: false,
+          postFields: [
+            { name: 'username', value: 'alice' },
+            { name: 'pin', value: '0000' }
+          ]
+        }
+      }
+    });
+
+    const replay = peekHistoryBack({
+      entries: [
+        ...state.entries,
+        {
+          url: 'http://local.test/next',
+          method: 'GET'
+        }
+      ],
+      index: 1
+    });
+    expect(replay?.headers).toEqual({
+      authorization: 'Basic YWxpY2U6c2VjcmV0',
+      cookie: 'sid=replay-secret'
+    });
+    expect(replay?.requestPolicy?.postContext?.payload).toBe(payload);
+    expect(replay?.requestPolicy?.requestIntent?.postFields).toEqual([
+      { name: 'username', value: 'alice' },
+      { name: 'pin', value: '0000' }
+    ]);
+  });
+
   it('keeps separate entries when request headers differ', () => {
     const state = createHostHistoryState();
     pushHostHistoryEntry(state, 'http://local.test/a', 'home', 'user', {

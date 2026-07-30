@@ -25,6 +25,11 @@ import {
   CanvasViewportRenderer,
   ensureCanvasViewportElements
 } from './canvas-viewport-renderer';
+import {
+  projectRuntimeSnapshot,
+  projectSessionState,
+  projectTransportResponse
+} from './diagnostic-projection';
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
@@ -133,10 +138,10 @@ export class BrowserPresenter {
 
   getDeveloperToolsState(): DeveloperToolsState {
     return {
-      hostStatus: this.statusText || WAVES_COPY.status.ready,
-      sessionState: { ...this.hostSessionState },
-      transportResponse: this.latestTransportResponse ? { ...this.latestTransportResponse } : null,
-      runtimeSnapshot: this.latestSnapshot ? { ...this.latestSnapshot } : null,
+      hostStatus: `Navigation: ${this.hostSessionState.navigationStatus}`,
+      sessionState: projectSessionState(this.hostSessionState),
+      transportResponse: projectTransportResponse(this.latestTransportResponse),
+      runtimeSnapshot: projectRuntimeSnapshot(this.latestSnapshot),
       timeline: this.timelineState.entries.map((entry) => ({
         ...entry,
         session: { ...entry.session },
@@ -150,10 +155,6 @@ export class BrowserPresenter {
           this.refs.localExampleTestingAcEl.querySelectorAll('li'),
           (item) => item.textContent ?? ''
         )
-      },
-      source: {
-        baseUrl: this.refs.baseUrlInput.value,
-        wml: this.refs.wmlInput.value
       }
     };
   }
@@ -470,7 +471,7 @@ export class BrowserPresenter {
       this.sessionStateText = this.writeTextIfChanged(
         this.refs.sessionStateEl,
         this.sessionStateText,
-        JSON.stringify(this.hostSessionState, null, 2)
+        JSON.stringify(state.sessionState, null, 2)
       );
       this.sessionStateDirty = false;
     }
@@ -486,7 +487,7 @@ export class BrowserPresenter {
       this.snapshotText = this.writeTextIfChanged(
         this.refs.snapshotEl,
         this.snapshotText,
-        this.latestSnapshot ? JSON.stringify(this.latestSnapshot, null, 2) : ''
+        state.runtimeSnapshot ? JSON.stringify(state.runtimeSnapshot, null, 2) : ''
       );
       this.snapshotDirty = false;
     }
@@ -494,7 +495,7 @@ export class BrowserPresenter {
       this.transportResponseText = this.writeTextIfChanged(
         this.refs.transportResponseEl,
         this.transportResponseText,
-        this.latestTransportResponse ? JSON.stringify(this.latestTransportResponse, null, 2) : ''
+        state.transportResponse ? JSON.stringify(state.transportResponse, null, 2) : ''
       );
       this.transportResponseDirty = false;
     }

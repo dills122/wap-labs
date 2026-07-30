@@ -223,7 +223,7 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 ### RSL-06 Redacted developer and timeline projections
 
 1. `Issue`: [#506](https://github.com/dills122/wap-labs/issues/506)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P2` security
 4. `Depends On`: none
 5. `Files`:
@@ -242,6 +242,16 @@ WBXML trigger, but current main will still replay an equivalent terminal externa
 - Internal Back still replays the byte-exact original POST.
 8. `Accept`:
 - Diagnostic artifacts are useful without disclosing replay credentials.
+9. `Resolution`:
+- Timeline entries are projected into a fixed allowlisted DTO when produced, while host history
+  continues to retain the exact request identity needed for standards-compatible Back replay.
+- Drawer, detached diagnostic, and version 2 timeline-export serialization all consume the same
+  projection. URL userinfo and credential-like query values are removed, request bodies and typed
+  post-field values become count/length metadata, secret header values and arbitrary error details
+  are omitted, and decoded/source payloads do not enter diagnostic state.
+- Focused frontend coverage exercises secret canaries, near-miss query names, raw transport/runtime
+  failures, producer-boundary projection, deterministic metadata, and byte-exact internal POST
+  history preservation.
 
 ### RSL-07 Bounded toast and host-history state
 

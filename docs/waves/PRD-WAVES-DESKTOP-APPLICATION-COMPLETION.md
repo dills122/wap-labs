@@ -736,6 +736,10 @@ WBP-10 --> WBP-11 --> safe-session integration and release matrix
 6. `Validation`: automated secret-canary suite plus review of five representative bundles.
 7. `Suggested branch`: `codex/browser-state-redaction`.
 8. `Suggested PR title`: `fix(browser): sanitize persisted and exported state`.
+9. `Implementation note`: `RSL-06` / issue `#506` supplies the versioned allowlisted projection
+   for the existing session, transport, runtime, timeline, detached-diagnostic, and timeline-export
+   surfaces. Raw/source opt-in support remains excluded until its separate consent and byte-bound
+   decision is implemented.
 
 #### APP-FAV-01 Favorites and first-party service-catalog domain
 

@@ -183,7 +183,7 @@ describe('BrowserPresenter', () => {
     refs.devDrawerEl.dispatchEvent(new Event('toggle'));
 
     expect(refs.sessionStateEl.textContent).toContain('"navigationStatus": "loaded"');
-    expect(refs.snapshotEl.textContent).toContain('"activeCardId": "home"');
+    expect(refs.snapshotEl.textContent).toContain('"hasActiveCard": true');
     expect(refs.transportResponseEl.textContent).toContain('"status": 200');
     expect(refs.activeUrlLabelEl.textContent).toBe('http://local.test/start.wml');
   });
@@ -581,5 +581,106 @@ describe('BrowserPresenter', () => {
     expect(revokeObjectUrlSpy).toHaveBeenCalledWith('blob:test');
 
     clickSpy.mockRestore();
+  });
+
+  it('uses the same secret-safe projection for drawer, detached, and export state', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(
+      refs,
+      {
+        runMode: 'network',
+        navigationStatus: 'error',
+        requestedUrl: 'https://alice:userinfo-secret@example.test/?pin=pin-0000',
+        lastError: 'internal-error-secret',
+        historyIndex: 0,
+        history: [
+          {
+            url: 'https://example.test/login',
+            method: 'POST',
+            headers: { Authorization: 'authorization-secret', Cookie: 'cookie-secret' },
+            requestPolicy: {
+              postContext: { payload: 'legacy-payload-secret' },
+              requestIntent: {
+                method: 'post',
+                enctype: 'application/x-www-form-urlencoded',
+                sendReferer: false,
+                sameDeck: false,
+                postFields: [{ name: 'pin', value: 'typed-post-secret' }]
+              }
+            }
+          }
+        ]
+      },
+      20
+    );
+    refs.devDrawerEl.open = true;
+    refs.wmlInput.value = '<wml>raw-source-secret</wml>';
+    presenter.setTransportResponse({
+      ok: false,
+      status: 502,
+      finalUrl: 'https://example.test/?password=password-hunter2',
+      contentType: 'text/vnd.wap.wml',
+      wml: '<wml>raw-wml-secret</wml>',
+      error: {
+        code: 'PROTOCOL_ERROR',
+        message: 'internal-error-secret',
+        details: { cause: 'internal-error-secret' }
+      },
+      timingMs: { encode: 1, udpRtt: 2, decode: 3 }
+    });
+    presenter.setSnapshot({
+      activeCardId: 'login',
+      focusedLinkIndex: 0,
+      focusedInputEditName: 'pin',
+      focusedInputEditValue: 'pin-0000',
+      baseUrl: 'https://alice:userinfo-secret@example.test/',
+      contentType: 'text/vnd.wap.wml',
+      lastBackNavigationHandled: false,
+      lastScriptExecutionOk: false,
+      lastScriptExecutionTrap: 'internal-error-secret',
+      lastScriptDialogRequests: [{ type: 'alert', message: 'dialog-secret' }],
+      lastScriptTimerRequests: [{ type: 'cancel', token: 'timer-token-secret' }]
+    });
+    presenter.recordTimeline('load-transport-url', 'state', {
+      requestedUrl: 'https://example.test/?token=typed-post-secret',
+      method: 'POST',
+      headers: { 'Proxy-Authorization': 'proxy-authorization-secret' }
+    });
+
+    refs.devDrawerEl.dispatchEvent(new Event('toggle'));
+    const detachedState = JSON.stringify(presenter.getDeveloperToolsState());
+    const drawerState = [
+      refs.sessionStateEl.textContent,
+      refs.transportResponseEl.textContent,
+      refs.snapshotEl.textContent,
+      refs.timelineEl.textContent
+    ].join('\n');
+
+    presenter.recordTimeline('render', 'ok');
+    presenter.exportTimeline();
+    const exportBlob = createObjectUrlSpy.mock.calls.at(-1)?.[0];
+    const exportState = exportBlob instanceof Blob ? await exportBlob.text() : '';
+
+    for (const serialized of [detachedState, drawerState, exportState]) {
+      for (const secret of [
+        'userinfo-secret',
+        'pin-0000',
+        'internal-error-secret',
+        'authorization-secret',
+        'cookie-secret',
+        'legacy-payload-secret',
+        'typed-post-secret',
+        'password-hunter2',
+        'raw-wml-secret',
+        'raw-source-secret',
+        'dialog-secret',
+        'timer-token-secret',
+        'proxy-authorization-secret'
+      ]) {
+        expect(serialized).not.toContain(secret);
+      }
+    }
+    expect(presenter.getDeveloperToolsState()).not.toHaveProperty('source');
+    expect(exportState).toContain('"redactionPolicy": "allowlist-v1"');
   });
 });
