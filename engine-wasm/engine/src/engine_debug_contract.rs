@@ -453,6 +453,23 @@ pub struct EngineDebugError {
     pub retryable: bool,
 }
 
+impl EngineDebugError {
+    /// Construct a deterministic debug-boundary failure without exposing source details.
+    pub fn new(code: EngineDebugErrorCode, message: impl Into<String>) -> Self {
+        let retryable = matches!(
+            code,
+            EngineDebugErrorCode::SessionLimitReached
+                | EngineDebugErrorCode::DebugSourceUnavailable
+                | EngineDebugErrorCode::InternalError
+        );
+        Self {
+            code,
+            message: message.into(),
+            retryable,
+        }
+    }
+}
+
 macro_rules! debug_outcome {
     ($name:ident, $success:ty, $field:ident) => {
         #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

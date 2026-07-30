@@ -4178,6 +4178,7 @@ dependencies = [
  "tokio",
  "ts-rs",
  "url",
+ "uuid",
  "wavenav_engine",
 ]
 

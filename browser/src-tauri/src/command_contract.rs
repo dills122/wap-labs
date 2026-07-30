@@ -268,6 +268,30 @@ macro_rules! with_tauri_commands {
                 response: CommandType::engine("EngineRuntimeSnapshot"),
                 facade: Some(FacadeMethod::engine("snapshot"))
             };
+            engine_debug_open_session => {
+                client: "engineDebugOpenSession",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("EngineDebugOpenSessionRequest"))),
+                response: CommandType::engine("EngineDebugOpenSessionOutcome"),
+                facade: Some(FacadeMethod::engine("openDebugSession"))
+            };
+            engine_debug_poll_events => {
+                client: "engineDebugPollEvents",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("EngineDebugPollEventsRequest"))),
+                response: CommandType::engine("EngineDebugPollEventsOutcome"),
+                facade: Some(FacadeMethod::engine("pollDebugEvents"))
+            };
+            engine_debug_get_snapshot => {
+                client: "engineDebugGetSnapshot",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("EngineDebugSnapshotRequest"))),
+                response: CommandType::engine("EngineDebugSnapshotOutcome"),
+                facade: Some(FacadeMethod::engine("getDebugSnapshot"))
+            };
+            engine_debug_close_session => {
+                client: "engineDebugCloseSession",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("EngineDebugCloseSessionRequest"))),
+                response: CommandType::engine("EngineDebugCloseSessionOutcome"),
+                facade: Some(FacadeMethod::engine("closeDebugSession"))
+            };
             engine_clear_external_navigation_intent => {
                 client: "engineClearExternalNavigationIntent",
                 parameter: None,

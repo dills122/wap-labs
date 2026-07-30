@@ -67,6 +67,8 @@ Implemented now:
   - `engine_set_viewport_cols`
   - `engine_snapshot`
   - `engine_clear_external_navigation_intent`
+- Default-disabled D0-03 engine debug session bridge with generated open/poll/snapshot/close Tauri
+  commands, one process-local session, engine-owned bounded recording, and typed sanitized outcomes
 - In-process Rust transport library under `../transport-rust/`:
   - `http://`/`https://` fetch
   - `wap://`/`waps://` gateway bridge mapping
@@ -180,6 +182,13 @@ generation gate.
 - Decoder backend: Lowband's built-in
   `lowband-wml13-wbxml/0.3.0` implementation with bounded output and parser
   depth. No external `wbxml2xml` installation or bundled sidecar is required.
+
+## Engine debug host policy
+
+The D0-03 read-only engine debug command bridge is disabled by default. Start the native Tauri host
+with `WAVES_ENGINE_DEBUG_POLICY=enabled` to allow one process-local protocol-v1 session. No other
+value enables it, and the policy does not expose a sensitive-data override, remote listener,
+capture/export flow, or Inspector UI; those consumer concerns remain deferred to D0-04.
 
 ## Native Tauri/Kannel UI pilot
 

@@ -199,6 +199,10 @@ export interface EngineHostClient {
     advanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
     advanceTimeMsFrame(request: AdvanceTimeRequest): Promise<EngineFrame>;
     snapshot(): Promise<EngineRuntimeSnapshot>;
+    openDebugSession(request: EngineDebugOpenSessionRequest): Promise<EngineDebugOpenSessionOutcome>;
+    pollDebugEvents(request: EngineDebugPollEventsRequest): Promise<EngineDebugPollEventsOutcome>;
+    getDebugSnapshot(request: EngineDebugSnapshotRequest): Promise<EngineDebugSnapshotOutcome>;
+    closeDebugSession(request: EngineDebugCloseSessionRequest): Promise<EngineDebugCloseSessionOutcome>;
     clearExternalNavigationIntent(): Promise<EngineRuntimeSnapshot>;
     clearExternalNavigationIntentFrame(): Promise<EngineFrame>;
     beginFocusedInputEdit(): Promise<EngineRuntimeSnapshot>;

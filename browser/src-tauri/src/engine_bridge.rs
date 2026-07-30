@@ -1,5 +1,6 @@
 mod engine_adapter;
 mod engine_commands;
+mod engine_debug_host;
 
 // `engine_commands` reaches these directly via `super::engine_adapter::{...}`
 // rather than through this re-export, so which names count as "used" here
@@ -45,4 +46,10 @@ pub use engine_commands::{
     command_engine_navigate_to_card_frame, command_engine_render, command_engine_render_frame,
     command_engine_set_focused_input_edit_draft, command_engine_set_focused_input_edit_draft_frame,
     command_engine_set_viewport_cols, command_engine_snapshot,
+};
+#[cfg(test)]
+pub(crate) use engine_debug_host::EngineDebugPolicy;
+pub use engine_debug_host::{
+    command_engine_debug_close_session, command_engine_debug_get_snapshot,
+    command_engine_debug_open_session, command_engine_debug_poll_events,
 };

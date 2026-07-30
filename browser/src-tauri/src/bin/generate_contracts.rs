@@ -400,7 +400,7 @@ mod tests {
     }
 
     #[test]
-    fn generates_debug_contract_without_adding_host_commands() {
+    fn generates_debug_contract_and_d0_03_host_commands() {
         let output = render_engine_contracts().expect("engine contracts should render");
 
         assert!(output.contains("export const ENGINE_DEBUG_CONTRACT_BASELINE"));
@@ -409,9 +409,19 @@ mod tests {
         assert!(output.contains("export interface EngineDebugConnector"));
         assert!(output.contains("EngineDebugOpenSessionOutcome"));
         assert!(output.contains("EngineDebugSnapshotOutcome"));
-        assert!(TAURI_COMMANDS
-            .iter()
-            .all(|descriptor| !descriptor.command.contains("debug")));
+        assert_eq!(
+            TAURI_COMMANDS
+                .iter()
+                .filter(|descriptor| descriptor.command.starts_with("engine_debug_"))
+                .map(|descriptor| descriptor.command)
+                .collect::<Vec<_>>(),
+            [
+                "engine_debug_open_session",
+                "engine_debug_poll_events",
+                "engine_debug_get_snapshot",
+                "engine_debug_close_session",
+            ]
+        );
     }
 
     #[test]

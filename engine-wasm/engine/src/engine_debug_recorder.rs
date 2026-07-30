@@ -174,17 +174,7 @@ fn parse_cursor(cursor: &str) -> Option<u64> {
 }
 
 pub(crate) fn debug_error(code: EngineDebugErrorCode, message: &str) -> EngineDebugError {
-    let retryable = matches!(
-        code,
-        EngineDebugErrorCode::SessionLimitReached
-            | EngineDebugErrorCode::DebugSourceUnavailable
-            | EngineDebugErrorCode::InternalError
-    );
-    EngineDebugError {
-        code,
-        message: message.to_string(),
-        retryable,
-    }
+    EngineDebugError::new(code, message)
 }
 
 pub(crate) fn sanitize_text(

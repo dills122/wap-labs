@@ -196,7 +196,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
 #[cfg(not(test))]
 pub fn run() {
     tauri::Builder::default()
-        .manage(AppState::default())
+        .manage(AppState::from_local_config())
         .manage(HostFetchState::default())
         .menu(build_app_menu)
         .on_menu_event(|app, event| {
