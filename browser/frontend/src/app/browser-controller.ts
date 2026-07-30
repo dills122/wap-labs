@@ -12,7 +12,11 @@ import {
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { EngineTimerRuntime } from './engine-timer-runtime';
 import { FocusedControlEditController } from './focused-control-edit';
-import { createNavigationStateMachine, type NavigationErrorKind } from './navigation-state';
+import {
+  createNavigationStateMachine,
+  shouldRenderTimerSnapshot,
+  type NavigationErrorKind
+} from './navigation-state';
 import { canHistoryBack } from '../session-history';
 import { StartupNetworkProbeController } from './startup-network-probe';
 import { KeyboardIntentRouter } from './keyboard-intent-router';
@@ -68,6 +72,7 @@ export class BrowserController {
   // engine deck load (which always clears the engine's nav stack) and set
   // true whenever a forward card change is observed while in local mode.
   private localBackAvailable = false;
+  private pendingLocalTimerFrame: { generation: number; frame: EngineFrame } | undefined;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -79,9 +84,8 @@ export class BrowserController {
       this.refs.fetchUrlInput.value,
       {
         onSessionState: (session) => this.presenter.setSessionState(session),
-        onSnapshot: (snapshot) => this.presenter.setSnapshot(snapshot),
-        onRender: (render) => {
-          this.presenter.drawRenderList(render);
+        onFrame: (frame) => {
+          this.applyFrame(frame);
           if (!this.bootDeckReadyEmitted) {
             this.bootDeckReadyEmitted = true;
             this.presenter.setBootPhase('deck-ready');
@@ -142,20 +146,40 @@ export class BrowserController {
         !this.keyboardIntentRouter.isActionInFlight() && !this.navigation.isNavigationInFlight(),
       getRunMode: () => this.runMode,
       advanceLocal: async (deltaMs) => {
+        this.pendingLocalTimerFrame = undefined;
         if (this.navigation.isNavigationInFlight()) {
           return null;
         }
         const generation = this.navigation.captureNavigationGeneration();
-        const snapshot = await this.hostClient.engineAdvanceTimeMs({ deltaMs });
-        return this.runMode === 'local' && this.navigation.isCurrentNavigation(generation)
-          ? snapshot
-          : null;
+        const frame = await this.hostClient.engineAdvanceTimeMsFrame({ deltaMs });
+        if (
+          this.runMode !== 'local' ||
+          !this.navigation.isCurrentNavigation(generation) ||
+          this.navigation.isNavigationInFlight()
+        ) {
+          return null;
+        }
+        if (shouldRenderTimerSnapshot(frame.snapshot, this.presenter.getSessionState())) {
+          this.pendingLocalTimerFrame = { generation, frame };
+        }
+        return frame.snapshot;
       },
       advanceNetwork: (deltaMs) => this.navigation.applyEngineTimerTick(deltaMs),
       getSessionState: () => this.presenter.getSessionState(),
       renderLocalSnapshot: async (snapshot) => {
+        const pending = this.pendingLocalTimerFrame;
+        this.pendingLocalTimerFrame = undefined;
+        if (
+          !pending ||
+          pending.frame.snapshot !== snapshot ||
+          this.runMode !== 'local' ||
+          !this.navigation.isCurrentNavigation(pending.generation) ||
+          this.navigation.isNavigationInFlight()
+        ) {
+          return;
+        }
         const previousActiveCardId = this.presenter.getSessionState().activeCardId;
-        this.applyFrame(await this.hostClient.engineRenderFrame(), snapshot);
+        this.applyFrame(pending.frame);
         this.syncLocalSessionFromSnapshot(snapshot);
         this.noteLocalForwardNavigation(previousActiveCardId, snapshot.activeCardId);
       },
@@ -412,8 +436,16 @@ export class BrowserController {
   };
 
   private readonly handleClearExternalIntentClick = async (): Promise<void> => {
-    const snapshot = await this.hostClient.engineClearExternalNavigationIntent();
-    this.presenter.setSnapshot(snapshot);
+    const generation = this.navigation.captureNavigationGeneration();
+    const frame = await this.hostClient.engineClearExternalNavigationIntentFrame();
+    if (
+      !this.navigation.isCurrentNavigation(generation) ||
+      this.navigation.isNavigationInFlight()
+    ) {
+      return;
+    }
+    const snapshot = frame.snapshot;
+    this.applyFrame(frame);
     this.presenter.patchSessionState({
       externalNavigationIntent: snapshot.externalNavigationIntent
     });
@@ -708,7 +740,7 @@ export class BrowserController {
       return;
     }
     if (startingRunMode === 'local' && localFrame) {
-      this.applyFrame(localFrame, snapshot);
+      this.applyFrame(localFrame);
       this.syncLocalSessionFromSnapshot(snapshot);
       this.noteLocalForwardNavigation(previousActiveCardId, snapshot.activeCardId);
     }
@@ -883,8 +915,8 @@ export class BrowserController {
     };
   }
 
-  private applyFrame(frame: EngineFrame, snapshot = frame.snapshot): void {
-    this.presenter.setSnapshot(snapshot);
+  private applyFrame(frame: EngineFrame): void {
+    this.presenter.setSnapshot(frame.snapshot);
     this.presenter.drawRenderList(frame.render);
   }
 }

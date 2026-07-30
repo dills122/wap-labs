@@ -81,18 +81,25 @@ const initialSession: HostSessionState = {
 };
 
 describe('BrowserController local timer behavior', () => {
-  it('skips redraw for no-op local timer ticks', async () => {
+  it('skips no-op redraws and publishes changed local timer frames atomically', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
 
     const engineRender = vi.fn(async () => renderStub);
+    const engineRenderFrame = vi.fn(async () => frame({ activeCardId: 'render-fallback' }));
+    const engineAdvanceTimeMs = vi.fn(async () =>
+      snapshot({ activeCardId: 'legacy-timer', focusedLinkIndex: 0 })
+    );
+    const engineAdvanceTimeMsFrame = vi.fn(async () =>
+      frame({ activeCardId: 'home', focusedLinkIndex: 0 })
+    );
     const hostClient = {
       health: vi.fn(async () => 'ok'),
       fetchDeck: vi.fn(),
       engineLoadDeck: vi.fn(),
       engineLoadDeckContext: vi.fn(),
       engineRender,
-      engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })),
+      engineRenderFrame,
       engineHandleKey: vi.fn(),
       engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'home', focusedLinkIndex: 0 })),
       engineNavigateToCard: vi.fn(),
@@ -104,12 +111,8 @@ describe('BrowserController local timer behavior', () => {
         frame({ activeCardId: 'home', focusedLinkIndex: 0 })
       ),
       engineSetViewportCols: vi.fn(),
-      engineAdvanceTimeMs: vi.fn(async () =>
-        snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })
-      ),
-      engineAdvanceTimeMsFrame: vi.fn(async () =>
-        frame({ activeCardId: 'home', focusedLinkIndex: 0 })
-      ),
+      engineAdvanceTimeMs,
+      engineAdvanceTimeMsFrame,
       engineSnapshot: vi.fn(async () => snapshot({ activeCardId: 'home', focusedLinkIndex: 0 })),
       engineClearExternalNavigationIntent: vi.fn(),
       engineClearExternalNavigationIntentFrame: vi.fn(async () =>
@@ -155,5 +158,21 @@ describe('BrowserController local timer behavior', () => {
     await controllerPrivates(controller).tickEngineTimerRuntime();
 
     expect(engineRender).not.toHaveBeenCalled();
+    expect(engineRenderFrame).not.toHaveBeenCalled();
+    expect(engineAdvanceTimeMs).not.toHaveBeenCalled();
+    expect(engineAdvanceTimeMsFrame).toHaveBeenCalledOnce();
+
+    const timerRender = {
+      draw: [{ type: 'text' as const, x: 0, y: 0, text: 'timer committed' }]
+    };
+    engineAdvanceTimeMsFrame.mockResolvedValueOnce(
+      frame({ activeCardId: 'after-timer', focusedLinkIndex: 0 }, timerRender)
+    );
+
+    await controllerPrivates(controller).tickEngineTimerRuntime();
+
+    expect(presenter.getSnapshot()?.activeCardId).toBe('after-timer');
+    expect(presenter.getRenderList()).toEqual(timerRender);
+    expect(engineRenderFrame).not.toHaveBeenCalled();
   });
 });

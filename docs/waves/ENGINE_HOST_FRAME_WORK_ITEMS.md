@@ -156,7 +156,7 @@ Archive:
 
 ### F1-03 Navigation-state integration with frame rendering
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F1-02`
 3. `Files`:
 - `browser/frontend/src/app/navigation-state.ts`
@@ -168,6 +168,16 @@ Archive:
 - navigation-state tests cover render-after-load and render-after-input ordering.
 6. `Accept`:
 - no regressions in load/fetch/back/external-intent flows.
+8. `Notes`:
+- `NavigationHooks.onFrame` is the single committed-frame publication boundary; snapshot and render
+  projections come from the same accepted `EngineFrame`.
+- Load, input, Back, timer, and clear-intent paths consume the existing atomic frame-returning host
+  APIs. Generation checks suppress cancelled and stale completions before publication.
+- Host-history Back stages its deck load and optional card restoration, then publishes only the
+  final restored frame.
+- Focused sequencing evidence is in `navigation-state.frame.test.ts` and
+  `browser-controller.timer.test.ts`; the existing navigation/controller suites retain local,
+  network, reload, same-deck, Back, cancellation, and external-intent coverage.
 
 ## Phase F2: Input Event Expansion
 

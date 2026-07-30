@@ -60,6 +60,7 @@ export interface NavigationHostClient {
 
 export interface NavigationHooks {
   onSessionState?(session: HostSessionState): void;
+  onFrame?(frame: EngineFrame): void;
   onSnapshot?(snapshot: EngineRuntimeSnapshot): void;
   onRender?(render: RenderList): void;
   onTransportResponse?(response: FetchResponse | null): void;
@@ -179,7 +180,8 @@ export const createNavigationStateMachine = (
     });
   };
 
-  const applyFrame = (frame: EngineFrame): void => {
+  const publishFrame = (frame: EngineFrame): void => {
+    hooks.onFrame?.(frame);
     hooks.onSnapshot?.(frame.snapshot);
     hooks.onRender?.(frame.render);
     syncSessionFromSnapshot(frame.snapshot);
@@ -330,8 +332,9 @@ export const createNavigationStateMachine = (
   const loadTransportUrlForGeneration = async (
     options: LoadTransportOptions,
     generation: number,
-    requestId: string
-  ): Promise<EngineRuntimeSnapshot | null> => {
+    requestId: string,
+    publishLoadedFrame = true
+  ): Promise<EngineFrame | null> => {
     const requestedUrl = options.url.trim();
     const navigationUrl = options.navigationUrl?.trim() || requestedUrl;
     if (!requestedUrl) {
@@ -470,7 +473,9 @@ export const createNavigationStateMachine = (
       focusedLinkIndex: frame.snapshot.focusedLinkIndex,
       externalNavigationIntent: frame.snapshot.externalNavigationIntent
     });
-    applyFrame(frame);
+    if (publishLoadedFrame) {
+      publishFrame(frame);
+    }
     // A committed navigation establishes a fresh engine state, so a prior
     // terminal-intent quarantine no longer applies.
     quarantinedExternalIntent = undefined;
@@ -509,7 +514,7 @@ export const createNavigationStateMachine = (
       let nextUrl = frame.snapshot.externalNavigationIntent;
       let nextRequestPolicy = frame.snapshot.externalNavigationRequestPolicy;
       for (let hop = 1; hop <= maxExternalIntentHops; hop += 1) {
-        const nextSnapshot = await loadTransportUrlForGeneration(
+        const nextFrame = await loadTransportUrlForGeneration(
           {
             url: nextUrl,
             method: 'GET',
@@ -521,11 +526,11 @@ export const createNavigationStateMachine = (
           generation,
           requestId
         );
-        if (!nextSnapshot || !nextSnapshot.externalNavigationIntent) {
+        if (!nextFrame || !nextFrame.snapshot.externalNavigationIntent) {
           break;
         }
-        nextUrl = nextSnapshot.externalNavigationIntent;
-        nextRequestPolicy = nextSnapshot.externalNavigationRequestPolicy;
+        nextUrl = nextFrame.snapshot.externalNavigationIntent;
+        nextRequestPolicy = nextFrame.snapshot.externalNavigationRequestPolicy;
         if (hop === maxExternalIntentHops) {
           const message = `External intent hop limit reached (${maxExternalIntentHops}).`;
           mergeSessionState({ navigationStatus: 'error', lastError: message });
@@ -534,7 +539,7 @@ export const createNavigationStateMachine = (
       }
     }
 
-    return frame.snapshot;
+    return frame;
   };
 
   const loadTransportUrl = async (
@@ -570,7 +575,8 @@ export const createNavigationStateMachine = (
           resolveOperation(null);
           return;
         }
-        resolveOperation(await loadTransportUrlForGeneration(options, generation, requestId));
+        const frame = await loadTransportUrlForGeneration(options, generation, requestId);
+        resolveOperation(frame?.snapshot ?? null);
       } catch (error) {
         rejectOperation(error);
       } finally {
@@ -599,7 +605,7 @@ export const createNavigationStateMachine = (
     } else {
       updateCurrentHistoryCard(hostHistory, frame.snapshot.activeCardId);
     }
-    applyFrame(frame);
+    publishFrame(frame);
     return frame.snapshot;
   };
 
@@ -609,15 +615,12 @@ export const createNavigationStateMachine = (
     }
     const generation = activeNavigationGeneration;
     const previousCardId = hostSessionState.activeCardId;
-    const snapshot = await hostClient.engineAdvanceTimeMs({ deltaMs });
+    const frame = await hostClient.engineAdvanceTimeMsFrame({ deltaMs });
     if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
       return null;
     }
+    const snapshot = frame.snapshot;
     const shouldRender = shouldRenderTimerSnapshot(snapshot, hostSessionState);
-    const renderFrame = shouldRender ? await hostClient.engineRenderFrame() : null;
-    if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
-      return null;
-    }
     const browserContextChanged = observeBrowserContext(snapshot);
     if (browserContextChanged) {
       resetHistoryToCurrentCard(snapshot);
@@ -634,9 +637,7 @@ export const createNavigationStateMachine = (
     } else {
       updateCurrentHistoryCard(hostHistory, snapshot.activeCardId);
     }
-    if (renderFrame) {
-      applyFrame(renderFrame);
-    }
+    publishFrame(frame);
     return snapshot;
   };
 
@@ -674,14 +675,14 @@ export const createNavigationStateMachine = (
         } else {
           updateCurrentHistoryCard(hostHistory, after.activeCardId);
         }
-        applyFrame(afterFrame);
+        publishFrame(afterFrame);
         return 'engine';
       }
 
       if (canHistoryBack(hostHistory)) {
         const previous = peekHistoryBack(hostHistory);
         if (previous?.url) {
-          const prevSnapshot = await loadTransportUrlForGeneration(
+          const loadedFrame = await loadTransportUrlForGeneration(
             {
               url: previous.requestedUrl ?? previous.url,
               navigationUrl: historyNavigationUrl(previous.url, previous.activeCardId),
@@ -693,27 +694,28 @@ export const createNavigationStateMachine = (
               requestPolicy: previous.requestPolicy
             },
             generation,
-            `waves-navigation-${generation}-history`
+            `waves-navigation-${generation}-history`,
+            false
           );
-          if (prevSnapshot && isCurrentNavigation(generation)) {
-            let restoredSnapshot = prevSnapshot;
-            let restoredFrame: EngineFrame | undefined;
-            if (previous.activeCardId && previous.activeCardId !== prevSnapshot.activeCardId) {
+          if (loadedFrame && isCurrentNavigation(generation)) {
+            let restoredFrame = loadedFrame;
+            if (
+              previous.activeCardId &&
+              previous.activeCardId !== loadedFrame.snapshot.activeCardId
+            ) {
               restoredFrame = await hostClient.engineNavigateToCardFrame({
                 cardId: previous.activeCardId
               });
               if (!isCurrentNavigation(generation)) {
                 return 'none';
               }
-              restoredSnapshot = restoredFrame.snapshot;
             }
             const committed = commitHistoryBack(hostHistory);
             if (!committed) {
               return 'none';
             }
-            if (restoredFrame) {
-              applyFrame(restoredFrame);
-            }
+            publishFrame(restoredFrame);
+            const restoredSnapshot = restoredFrame.snapshot;
             updateCurrentHistoryCard(hostHistory, restoredSnapshot.activeCardId);
             mergeSessionState({
               historyIndex: hostHistory.index,
