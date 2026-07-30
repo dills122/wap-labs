@@ -1,4 +1,5 @@
 pub mod application_commands;
+pub mod application_state;
 pub mod command_contract;
 pub mod contract_types;
 pub mod waves_config;
@@ -7,6 +8,10 @@ pub mod bootstrap;
 mod engine_bridge;
 mod fetch_host;
 
+use application_state::{
+    ApplicationStateLoadResult, ApplicationStateV1, AtomicApplicationStateBackend,
+    ClearApplicationStateComponentRequest, SaveApplicationStateRequest,
+};
 use contract_types::{
     AdvanceTimeRequest, EngineCommandError, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest,
     HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest,
@@ -35,7 +40,7 @@ use fetch_host::fetch_deck_cancellable as host_fetch_deck_cancellable;
 use lowband_transport_rust::{FetchCancellationToken, FetchDeckRequest, FetchDeckResponse};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, MutexGuard};
-use tauri::State;
+use tauri::{AppHandle, Manager, State};
 use tokio::sync::Semaphore;
 
 const MAX_CONCURRENT_HOST_FETCHES: usize = 2;
@@ -103,6 +108,77 @@ impl HostFetchState {
 #[tauri::command]
 fn health() -> String {
     waves_config::HEALTH_RESPONSE.to_string()
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn application_state_backend(app: &AppHandle) -> Result<AtomicApplicationStateBackend, String> {
+    let app_data_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|_| "application-state-app-data-path-unavailable".to_string())?;
+    Ok(AtomicApplicationStateBackend::new(app_data_dir))
+}
+
+#[cfg_attr(test, allow(dead_code))]
+fn available_monitor_ids(app: &AppHandle) -> Vec<String> {
+    app.available_monitors()
+        .unwrap_or_default()
+        .into_iter()
+        .enumerate()
+        .map(|(index, monitor)| {
+            monitor
+                .name()
+                .cloned()
+                .unwrap_or_else(|| format!("unnamed-monitor-{index}"))
+        })
+        .collect()
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+async fn application_state_load(app: AppHandle) -> Result<ApplicationStateLoadResult, String> {
+    let backend = application_state_backend(&app)?;
+    let monitor_ids = available_monitor_ids(&app);
+    tauri::async_runtime::spawn_blocking(move || backend.load(&monitor_ids))
+        .await
+        .map_err(|_| "application-state-load-task-failed".to_string())
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+async fn application_state_save(
+    app: AppHandle,
+    request: SaveApplicationStateRequest,
+) -> Result<ApplicationStateV1, String> {
+    let backend = application_state_backend(&app)?;
+    let monitor_ids = available_monitor_ids(&app);
+    tauri::async_runtime::spawn_blocking(move || backend.save(request.state, &monitor_ids))
+        .await
+        .map_err(|_| "application-state-save-task-failed".to_string())?
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+async fn application_state_reset(app: AppHandle) -> Result<ApplicationStateV1, String> {
+    let backend = application_state_backend(&app)?;
+    tauri::async_runtime::spawn_blocking(move || backend.reset())
+        .await
+        .map_err(|_| "application-state-reset-task-failed".to_string())?
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+async fn application_state_clear_component(
+    app: AppHandle,
+    request: ClearApplicationStateComponentRequest,
+) -> Result<ApplicationStateV1, String> {
+    let backend = application_state_backend(&app)?;
+    let monitor_ids = available_monitor_ids(&app);
+    tauri::async_runtime::spawn_blocking(move || {
+        backend.clear_component(request.component, &monitor_ids)
+    })
+    .await
+    .map_err(|_| "application-state-clear-task-failed".to_string())?
 }
 
 #[tauri::command]

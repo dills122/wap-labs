@@ -177,6 +177,30 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the application_state_clear_component command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-application-state-clear-component",
+          "markdownDescription": "Enables the application_state_clear_component command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the application_state_load command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-application-state-load",
+          "markdownDescription": "Enables the application_state_load command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the application_state_reset command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-application-state-reset",
+          "markdownDescription": "Enables the application_state_reset command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the application_state_save command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-application-state-save",
+          "markdownDescription": "Enables the application_state_save command without any pre-configured scope."
+        },
+        {
           "description": "Enables the cancel_fetch command without any pre-configured scope.",
           "type": "string",
           "const": "allow-cancel-fetch",
@@ -397,6 +421,30 @@
           "type": "string",
           "const": "allow-health",
           "markdownDescription": "Enables the health command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the application_state_clear_component command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-application-state-clear-component",
+          "markdownDescription": "Denies the application_state_clear_component command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the application_state_load command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-application-state-load",
+          "markdownDescription": "Denies the application_state_load command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the application_state_reset command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-application-state-reset",
+          "markdownDescription": "Denies the application_state_reset command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the application_state_save command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-application-state-save",
+          "markdownDescription": "Denies the application_state_save command without any pre-configured scope."
         },
         {
           "description": "Denies the cancel_fetch command without any pre-configured scope.",

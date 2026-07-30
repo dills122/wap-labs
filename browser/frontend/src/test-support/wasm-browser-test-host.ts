@@ -2,6 +2,7 @@ import init, { WmlEngine } from '../../../../engine-wasm/pkg/wavenav_engine.js';
 import type { EngineFrame, EngineRuntimeSnapshot, RenderList } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import type { EngineTraceEntry, WmlEngineWasm } from '../../../../engine-wasm/contracts/wml-engine';
+import { MemoryApplicationStateStore } from '../app/application-state-store';
 import { createDeterministicFixtureFetch } from './deterministic-fixture-fetch';
 
 export interface BrowserTestHostDiagnostics {
@@ -17,6 +18,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
   await init();
   const engine = new WmlEngine() as unknown as WmlEngineWasm;
   const fetchDeck = createDeterministicFixtureFetch();
+  const applicationState = new MemoryApplicationStateStore();
 
   const snapshot = (): EngineRuntimeSnapshot => ({
     activeCardId: readActiveCardId(engine),
@@ -49,6 +51,10 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
 
   const client: TauriHostClient = {
     health: async () => 'waves-browser-test-host:ok',
+    applicationStateLoad: () => applicationState.load(),
+    applicationStateSave: ({ state }) => applicationState.save(state),
+    applicationStateReset: () => applicationState.reset(),
+    applicationStateClearComponent: ({ component }) => applicationState.clear(component),
     fetchDeck,
     cancelFetch: async () => false,
     engineLoadDeck: async ({ wmlXml }) => {

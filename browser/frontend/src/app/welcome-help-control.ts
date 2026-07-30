@@ -1,8 +1,14 @@
+import {
+  WELCOME_STARTUP_STORAGE_KEY,
+  getApplicationStateStore,
+  type ApplicationStateStore
+} from './application-state-store';
+
 // Key of the bundled onboarding tutorial deck, `your-first-deck.wml`
 // (see engine-wasm/examples/source/your-first-deck.wml), loaded through the
 // ordinary local-example path rather than a bespoke tutorial loader.
 export const TUTORIAL_EXAMPLE_KEY = 'yourFirstDeck';
-export const WELCOME_STARTUP_STORAGE_KEY = 'waves.showWelcomeOnLaunch';
+export { WELCOME_STARTUP_STORAGE_KEY };
 
 export interface WelcomeHelpControlRefs {
   startTourBtn: HTMLButtonElement;
@@ -44,6 +50,30 @@ const saveWelcomeOnLaunch = (enabled: boolean, storage = getLocalStorage()): voi
   }
 };
 
+const clearWelcomeOnLaunchCache = (storage = getLocalStorage()): void => {
+  try {
+    storage?.removeItem(WELCOME_STARTUP_STORAGE_KEY);
+  } catch {
+    // A blocked compatibility cache does not invalidate a successful durable write.
+  }
+};
+
+const persistWelcomeOnLaunch = async (
+  store: ApplicationStateStore,
+  enabled: boolean
+): Promise<void> => {
+  const loaded = await store.load();
+  if (!loaded.writeAllowed) return;
+  await store.save({
+    ...loaded.state,
+    onboarding: {
+      ...loaded.state.onboarding,
+      showWelcomeOnLaunch: enabled
+    }
+  });
+  clearWelcomeOnLaunchCache();
+};
+
 const setRunMode = (runModeSelectEl: HTMLSelectElement, mode: 'local' | 'network'): void => {
   if (runModeSelectEl.value === mode) {
     return;
@@ -57,8 +87,13 @@ const setRunMode = (runModeSelectEl: HTMLSelectElement, mode: 'local' | 'network
 // ones a user would click directly -- so onboarding never bypasses the
 // ordinary engine load path (see WBP-04 accept criteria in
 // WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md).
-export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => void) => {
+export const bindWelcomeHelpControls = (
+  refs: WelcomeHelpControlRefs,
+  applicationStateStore = getApplicationStateStore()
+): (() => void) => {
   let welcomeVisible = showWelcomeOnLaunch();
+  let preferenceChanged = false;
+  let disposed = false;
 
   const syncWelcomePresentation = (): void => {
     refs.browserShellEl.dataset.welcomeVisible = String(welcomeVisible);
@@ -74,7 +109,13 @@ export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => vo
     syncWelcomePresentation();
   };
   const handleStartupPreference = (): void => {
+    preferenceChanged = true;
     saveWelcomeOnLaunch(refs.showWelcomeOnLaunchEl.checked);
+    void persistWelcomeOnLaunch(applicationStateStore, refs.showWelcomeOnLaunchEl.checked).catch(
+      () => {
+        // The current-session control remains usable when durable persistence is unavailable.
+      }
+    );
   };
   const handleStartTour = (): void => {
     hideWelcome();
@@ -95,6 +136,18 @@ export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => vo
   };
 
   refs.showWelcomeOnLaunchEl.checked = showWelcomeOnLaunch();
+  void applicationStateStore
+    .load()
+    .then((loaded) => {
+      if (disposed || preferenceChanged) return;
+      const enabled = loaded.state.onboarding.showWelcomeOnLaunch;
+      refs.showWelcomeOnLaunchEl.checked = enabled;
+      welcomeVisible = enabled;
+      syncWelcomePresentation();
+    })
+    .catch(() => {
+      // Startup uses the synchronous safe default when a custom adapter rejects its read.
+    });
   refs.welcomeToggleBtn.addEventListener('click', handleWelcomeToggle);
   refs.showWelcomeOnLaunchEl.addEventListener('change', handleStartupPreference);
   refs.startTourBtn.addEventListener('click', handleStartTour);
@@ -105,6 +158,7 @@ export const bindWelcomeHelpControls = (refs: WelcomeHelpControlRefs): (() => vo
   syncWelcomePresentation();
 
   return () => {
+    disposed = true;
     refs.welcomeToggleBtn.removeEventListener('click', handleWelcomeToggle);
     refs.showWelcomeOnLaunchEl.removeEventListener('change', handleStartupPreference);
     refs.startTourBtn.removeEventListener('click', handleStartTour);

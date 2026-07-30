@@ -8,6 +8,10 @@ import {
   type BrowserApplication
 } from './app/browser-application';
 import { createGuardedTauriInvoke } from './app/tauri-invoke-guard';
+import {
+  TauriApplicationStateStore,
+  configureApplicationStateStore
+} from './app/application-state-store';
 import { WAVES_COPY } from './app/waves-copy';
 
 let activeApplication: BrowserApplication | undefined;
@@ -18,6 +22,7 @@ const bootstrap = async (): Promise<void> => {
   }
   activeApplication = undefined;
   const hostClient = createTauriHostClient(createGuardedTauriInvoke(invoke));
+  configureApplicationStateStore(new TauriApplicationStateStore(hostClient));
   const application = composeBrowserApplication(hostClient);
   activeApplication = application;
   await initializeBrowserApplication(application);

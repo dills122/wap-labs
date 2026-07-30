@@ -21,6 +21,7 @@ serde_json = "1"
 tauri = { version = "2", features = [] }
 tokio = { version = "1", features = ["sync"] }
 ts-rs = { version = "12", features = ["serde-compat"] }
+url = "2"
 wavenav_engine = { path = "../../engine-wasm/engine", default-features = false, features = ["contract-codegen"] }
 
 [features]
