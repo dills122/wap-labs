@@ -28,6 +28,10 @@
 - `waves/WORK_ITEMS.md`: Waves browser integration execution board and ticket queue
 - `waves/RESILIENCE_WORK_ITEMS.md`: active malformed-input, failure-containment, resource-bound,
   and recovery work board
+- `waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md`: decision-ready desktop application
+  completion plan and implementation slices
+- `waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md`: browser product sequencing and WBP phase
+  gates
 - `waves/WORK_ITEMS_ARCHIVE.md`: archived/historical Waves integration tickets
 - `waves/MAINTENANCE_WORK_ITEMS.md`: Waves maintenance and technical-debt board
 - `waves/MAINTENANCE_WORK_ITEMS_ARCHIVE.md`: archived/historical Waves maintenance tickets

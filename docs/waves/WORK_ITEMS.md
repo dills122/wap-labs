@@ -87,11 +87,12 @@ The public network-preview plan is a separate product/release lane. Its `PRE-*`,
 compliance closure or change the dependency order in the machine-readable compliance program.
 Public exposure remains blocked on the plan's access, threat-model, and release gates.
 
-## Next In Line (Post-Merge Checkpoint Sync - 2026-07-28)
+## Next In Line (Post-Merge Checkpoint Sync - 2026-07-30)
 
-Audit base: `origin/main` `1f07030a`. The GitHub open/draft PR queue was empty at this checkpoint.
-The separately coordinated second-pass desktop visual refinement is pending and unmerged; it
-preserves `WBP-02A`, does not implement `WBP-02B`, and is not counted below as landed evidence.
+Audit base: `origin/main` `eaf8fc0e`. The GitHub open/draft PR queue was empty at this checkpoint.
+The second-pass desktop visual refinement and redesigned shell/Developer Tools workspace are now
+landed. They preserve `WBP-02A`, do not implement `WBP-02B`, and do not replace frame/runtime
+evidence.
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -118,10 +119,11 @@ Current priority order is:
    action/event/BACK, and `WML-305` native timer evidence; treat
    completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
    while `WSP-8` remains behind `WAE-6`. Preserve completed WML-301
-   context/history/card-table evidence, WML-304's merged request-intent boundary, and WMLS-501's
-   merged decoder/verifier plus verified-unit runtime routing. Advance native request
-   application and verifier/dataflow closure as separate implementation lanes. Preserve the completed `D0-01` contract
-   baseline; keep frame migration, generators, and maintenance non-preemptive
+   context/history/card-table evidence, WML-304's merged request-intent and native request
+   application boundary, and WMLS-501's completed decoder/verifier, verified-unit routing, and
+   stack-dataflow closure. Advance replayable POST history and WMLS-502 execution as separate
+   implementation lanes. Preserve the completed D0-01/D0-02 debug foundation and completed
+   F0/F1 frame migration; keep F2-F4, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
 The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
@@ -137,7 +139,7 @@ Planning assessment:
 
 Current implementation batch, ordered within each lane:
 
-1. **Request lane A1:** apply the merged `WML-304` intent through `R0-06`/`WSP-805` for GET query,
+1. **Request lane A1 (complete):** the merged `WML-304` intent is applied through `R0-06`/`WSP-805` for GET query,
    form-urlencoded POST, charset/content-type, smallest-relative referer, and no-cache transport
    behavior. This owns request serialization and the browser fetch handoff.
 2. **Request lane A2:** add replayable POST history only after A1 stabilizes the serialized request
@@ -154,10 +156,10 @@ Current implementation batch, ordered within each lane:
    `WAE-601`, keeping the aggregate work item in progress.
 6. **Desktop contract lane D1 (complete):** `WML-309` closes the engine-owned
    frame-and-affordance contract for `WBP-06`/`F0-01`, including generated host contracts and
-   native/WASM/story evidence. Preserve the additive `EngineDebug*` namespace; this is not the
-   pending visual-refinement stream.
+   native/WASM/story evidence. Preserve the additive `EngineDebug*` namespace; the separately
+   landed visual/shell work does not replace this contract evidence.
 
-A1 fixes the A2 dependency at the transport boundary: the replay input is the absolute requested
+A1 fixed the A2 dependency at the transport boundary: the replay input is the absolute requested
 URL plus the typed `FetchRequestIntent` (`method`, declared enctype, `sendreferer`, accepted
 charset list, same-deck classification, ordered resolved postfields, and referring deck
 Content-Type), together with cache policy, absolute referring URL, explicit request headers, and
@@ -177,6 +179,22 @@ Tailnet WAP smoke, sealed-firewall reboot persistence, and retained rollback. Pu
 cloud UDP rule, public firewall mode, and external probes remain incomplete. That lane neither
 blocks nor satisfies Class C evidence and is not dispatched from this board.
 
+The resilience board is also synchronized to current main: `RSL-01` through `RSL-05` are done in
+PRs `#515`, `#516`, `#521`, `#527`, and `#528`. The next containment baton is `RSL-06` diagnostic
+redaction, followed by `RSL-07` on the same presenter/history surface.
+
+The next parallel-safe desktop batch is:
+
+1. `APP-PRIV-01` / `RSL-06` as one security owner for allowlisted diagnostic and export
+   projections (`#506`).
+2. A navigation error-correctness owner for `#466` and `#467`, with separate focused commits/tests
+   on the now-stable F1-03 navigation path.
+3. `D0-03` host attach/poll/snapshot/close integration on the completed D0-02 engine recorder.
+
+Follow `RSL-06` serially with `RSL-07`; then integrate `WBP-11` phase-aware recovery and
+`APP-SHELL-01` Library/Preferences without sharing an active presenter owner. Keep `#450` ahead of
+persisted/searchable history rather than pulling it into this first batch.
+
 ### WML-203A Legacy local-example standalone-document migration
 
 1. `Status`: `done`
@@ -195,15 +213,15 @@ blocks nor satisfies Class C evidence and is not dispatched from this board.
 
 The `Authentic Core, Modern Console` direction is adopted. Current status is:
 
-| Slice     | Status | Direct evidence / next gate                                                                                                                                                                                                                                                                                                                        |
-| --------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `WBP-00`  | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`.                                                                                                                            |
-| `WBP-01`  | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced.                                                                                                                                     |
-| `WBP-02`  | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics.                                                                                                                                                                                                             |
-| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green.                                                                                                                     |
-| `WBP-03`  | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                          |
-| `WBP-04`  | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                           |
-| `WBP-05`  | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history. |
+| Slice     | Status | Direct evidence / next gate                                                                                                                                                                                                                                                                                                                                                                                |
+| --------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WBP-00`  | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`.                                                                                                                                                                                    |
+| `WBP-01`  | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced.                                                                                                                                                                                             |
+| `WBP-02`  | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics.                                                                                                                                                                                                                                                                     |
+| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green.                                                                                                                                                                             |
+| `WBP-03`  | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                                                                                  |
+| `WBP-04`  | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                                                                                   |
+| `WBP-05`  | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history.                                                         |
 | `WBP-06`  | `done` | F0-01 through F0-03 add the engine-owned versioned presentation frame, logical affordances, frame-bound typed input, generated native/WASM/Tauri projections, WML-309 evidence, and CI drift coverage while retaining legacy render/key compatibility and the separate `EngineDebug*` namespace. Canvas/CSS, physical softkey placement, hit regions, pointer/scroll input, and WBP-02B remain later work. |
 
 Phase 1 implementation is complete; the original seams remain documented in
@@ -1952,8 +1970,8 @@ Reference plan:
 - this ticket establishes interfaces only; no runtime emission implementation in this slice
 - completed with Rust-owned DTO generation into both engine and browser TypeScript surfaces,
   consumer type tests, deterministic shape guards, and non-value-bearing masked/omitted variants
-- `D0-02` still owns emission, ring-buffer/polling behavior, snapshot construction, and masking
-  implementation; `D0-03` still owns enablement, sessions, Tauri commands, and host wiring
+- `D0-02` completed emission, ring-buffer/polling behavior, snapshot construction, and masking;
+  `D0-03` still owns enablement, sessions, Tauri commands, and host wiring
 
 ### D0-02 Engine event stream and snapshot emitter
 
