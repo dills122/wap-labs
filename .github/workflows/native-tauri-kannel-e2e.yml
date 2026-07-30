@@ -8,6 +8,7 @@ on:
       - 'Makefile'
       - 'browser/frontend/package.json'
       - 'browser/frontend/scripts/native-tauri-kannel-e2e.mjs'
+      - 'browser/frontend/src/**'
       - 'scripts/native-tauri-kannel-e2e.sh'
       - 'wml-server/**'
   schedule:

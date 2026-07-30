@@ -91,6 +91,26 @@ export const LANES = Object.freeze([
     ]
   },
   {
+    id: 'local-compose-security',
+    label: 'local Compose security contract',
+    profiles: ['change', 'full', 'extended'],
+    paths: [
+      'docker-compose.yml',
+      'docker/kannel/kannel.conf',
+      'scripts/tests/local-compose-security.test.mjs'
+    ],
+    prerequisites: [
+      prerequisite('docker', 'install Docker with Compose v2'),
+      prerequisite('node', 'install the repository Node version')
+    ],
+    commands: [
+      command('Kannel loopback publication check', 'node', [
+        '--test',
+        'scripts/tests/local-compose-security.test.mjs'
+      ])
+    ]
+  },
+  {
     id: 'workspace-quality',
     label: 'workspace format, lint, type, link, and drift checks',
     profiles: ['change', 'full', 'extended'],

@@ -60,6 +60,17 @@ test('change selects Go origin checks for WML server changes', () => {
   );
 });
 
+test('change selects the local Compose security contract for local gateway configuration', () => {
+  for (const path of ['docker-compose.yml', 'docker/kannel/kannel.conf']) {
+    const lane = byId(buildPlan('change', [path]), 'local-compose-security');
+    assert.equal(lane.selected, true);
+    assert.deepEqual(
+      lane.commands.map((command) => command.label),
+      ['Kannel loopback publication check']
+    );
+  }
+});
+
 test('change selects backend-disabled OpenTofu checks for network preview infrastructure', () => {
   const lane = byId(
     buildPlan('change', ['infra/network-preview/environments/preview/backend.tf']),

@@ -69,6 +69,18 @@ const waitForText = async (selector, expected) => {
   return element;
 };
 
+const readStatusText = async (element) =>
+  driver.executeScript(
+    'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
+    element
+  );
+
+const waitForStatusText = async (expected) => {
+  const element = await driver.wait(until.elementLocated(By.css('#status')), timeoutMs);
+  await driver.wait(async () => (await readStatusText(element)).includes(expected), timeoutMs);
+  return element;
+};
+
 const replaceInput = async (selector, value) => {
   const input = await driver.findElement(By.css(selector));
   await input.click();
@@ -161,6 +173,17 @@ const run = async () => {
   const mode = await driver.findElement(By.css('#run-mode')).getAttribute('value');
   assert.equal(mode, 'network');
   recordAssertion('native startup', 'production frontend reached engine-ready in Network mode');
+
+  const welcomePanel = await driver.findElement(By.css('#welcome-help-panel'));
+  if (await welcomePanel.isDisplayed()) {
+    await driver.findElement(By.css('#btn-connect-network')).click();
+    await driver.wait(until.elementIsNotVisible(welcomePanel), timeoutMs);
+  }
+  assert.equal(await welcomePanel.isDisplayed(), false);
+  recordAssertion(
+    'network welcome entry',
+    'the ordinary Connect to a WAP Server entry point exposed the network viewport'
+  );
   await capture('01-startup');
 
   await driver.findElement(By.css('#btn-fetch-url')).click();
@@ -257,9 +280,14 @@ const run = async () => {
 
   await replaceInput('#fetch-url', 'not a url');
   await driver.findElement(By.css('#btn-fetch-url')).click();
-  const toast = await waitForText('#toast', 'Fetch failed:');
-  assert.match(await toast.getText(), /INVALID_REQUEST|invalid|URL/i);
-  recordAssertion('deterministic failure', 'invalid URL surfaced a visible Fetch failed message');
+  const status = await waitForStatusText('Fetch failed:');
+  assert.equal(await status.isDisplayed(), true);
+  assert.equal(await status.getAttribute('tone'), 'error');
+  assert.match(await readStatusText(status), /INVALID_REQUEST|invalid|URL/i);
+  recordAssertion(
+    'deterministic failure',
+    'invalid URL surfaced a visible Fetch failed status message'
+  );
   await capture('08-invalid-url-failure');
 
   await replaceInput('#fetch-url', 'wap://localhost/');

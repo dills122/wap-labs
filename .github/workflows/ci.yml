@@ -191,6 +191,9 @@ jobs:
       - name: Canonical verification orchestration tests
         run: pnpm run verify:test
 
+      - name: Local Compose security contract
+        run: node --test scripts/tests/local-compose-security.test.mjs
+
   compliance:
     name: WAP Compliance and Status Drift
     needs: [changes]

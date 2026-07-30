@@ -129,6 +129,13 @@ make smoke-transport-wap
 # GATEWAY_HTTP_BASE=http://localhost:13002 make smoke-transport-wap
 ```
 
+The root Compose stack is for local development only. Its Kannel admin and HTTP bridge ports
+(`13000` and `13002`) and WML origin ports (`3000` and `3001`) bind explicitly to `127.0.0.1`.
+The checked-in `changeme` Kannel credentials are known placeholders, not secrets; do not expose
+this configuration beyond loopback. UDP `9200/9201` remain published for local WAP microbrowser
+VMs, so use the stack only on a trusted host/network or add an appropriate host firewall. Run
+`make check-local-compose-security` to validate the rendered Compose publication contract.
+
 `make smoke-transport-wap` is the local Kannel/browser transport smoke entrypoint for the active native/browser validation lane; check `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` for current posture and evidence.
 
 Marketing site local dev:
