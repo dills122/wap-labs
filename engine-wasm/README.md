@@ -82,7 +82,9 @@ cargo test
 - Use the handwritten method facade in `engine-wasm/contracts/wml-engine.ts`; its serialized DTOs
   are generated from engine-owned Rust serde metadata as documented in
   `engine-wasm/contracts/README.md`
-- See host loop sample in `engine-wasm/host-sample/renderer.ts`
+- See the canonical presentation-frame canvas renderer in `engine-wasm/host-sample/renderer.ts`.
+  The sample viewport consumes `renderFrame()` rows and segments directly; it does not use the
+  legacy `RenderList` compatibility path.
 
 ### 8) Quick local harness (no Electron)
 
@@ -164,8 +166,8 @@ Partially supported (phase W0 baseline and active follow-ons):
 
 - `loadDeck(xml: string)`
 - `loadDeckContext(wmlXml: string, baseUrl: string, contentType: string, rawBytesBase64?: string, referringUrl?: string)`
-- `render(): RenderList`
-- `renderFrame(): EnginePresentationFrame`
+- `renderFrame(): EnginePresentationFrame` (canonical host presentation path)
+- `render(): RenderList` (legacy compatibility path during the remaining F1/F4 cutover)
 - `handleKey(key: 'up' | 'down' | 'enter')`
 - `handleInput(event: EngineInputEvent)`
 - `advanceTimeMs(deltaMs: number)` (deterministic timer simulation)
@@ -196,7 +198,8 @@ Behavior must stay aligned with the WASM API for:
 
 - deck loading and metadata handling
 - navigation and focus transitions
-- render output (`RenderList` and `EnginePresentationFrame`) ordering and shape
+- canonical `EnginePresentationFrame` ordering and shape, with equivalent legacy `RenderList`
+  compatibility output during the remaining cutover
 - typed key/action input behavior and trace semantics
 - script execution/invocation outcomes
 - trace entry semantics

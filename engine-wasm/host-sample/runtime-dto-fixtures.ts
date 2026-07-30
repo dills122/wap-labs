@@ -1,15 +1,48 @@
 import type {
-  RenderList,
+  EnginePresentationFrame,
   ScriptExecutionOutcome,
   ScriptInvocationOutcome
 } from '../contracts/wml-engine';
 
-export const representativeRenderFixture = {
-  draw: [
-    { type: 'text', x: 0, y: 0, text: 'Status' },
-    { type: 'link', x: 0, y: 1, text: 'Next', focused: true, href: '#next' }
-  ]
-} satisfies RenderList;
+export const representativeFrameFixture = {
+  contractVersion: 1,
+  frameId: 'fixture-frame',
+  profileId: 'class-c-reference',
+  viewport: { cols: 20 },
+  deck: {
+    baseUrl: 'http://local.test/deck.wml',
+    contentType: 'text/vnd.wap.wml'
+  },
+  card: { id: 'home' },
+  rows: [
+    { index: 0, segments: [{ type: 'text', x: 0, text: 'Status' }] },
+    {
+      index: 1,
+      segments: [
+        {
+          type: 'focusable',
+          x: 0,
+          text: 'Next',
+          focusId: 'focus:0',
+          targetKind: 'link',
+          focused: true
+        }
+      ]
+    }
+  ],
+  focus: { index: 0, focusId: 'focus:0', targetKind: 'link' },
+  selection: { type: 'none' },
+  affordances: [
+    {
+      actionId: 'focus:0',
+      label: 'Next',
+      enabled: true,
+      source: 'focused-link',
+      control: 'primary'
+    }
+  ],
+  backAvailable: false
+} satisfies EnginePresentationFrame;
 
 export const representativeScriptErrorFixture = {
   ok: false,
