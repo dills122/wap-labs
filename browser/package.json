@@ -14,7 +14,7 @@
     "dev": "pnpm --dir frontend dev",
     "build": "pnpm --dir frontend build",
     "contracts:codegen": "mkdir -p frontend/dist && (test -f frontend/dist/index.html || echo '<!doctype html><title>contracts-codegen-placeholder</title>' > frontend/dist/index.html) && cargo run --manifest-path src-tauri/Cargo.toml --bin generate_contracts && node ./scripts/generate-contract-wrappers.mjs",
-    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/engine-host.ts contracts/generated/transport-host.ts contracts/generated/tauri-command-contract.json contracts/generated/tauri-host-client.ts contracts/engine.ts contracts/transport.ts src-tauri/capabilities/default.json src-tauri/permissions/waves-host.toml",
+    "contracts:check": "pnpm run contracts:codegen && git diff --exit-code -- contracts/generated/application-commands.ts contracts/generated/engine-host.ts contracts/generated/transport-host.ts contracts/generated/tauri-command-contract.json contracts/generated/tauri-host-client.ts contracts/engine.ts contracts/transport.ts src-tauri/capabilities/default.json src-tauri/permissions/waves-host.toml",
     "tauri:schemas": "mkdir -p frontend/dist && (test -f frontend/dist/index.html || echo '<!doctype html><title>tauri-schema-placeholder</title>' > frontend/dist/index.html) && cargo check --manifest-path src-tauri/Cargo.toml --locked",
     "tauri:schemas:check": "pnpm run tauri:schemas && git diff --exit-code -- src-tauri/gen/schemas",
     "tauri:icons": "node ./scripts/manage-tauri-icons.mjs generate",

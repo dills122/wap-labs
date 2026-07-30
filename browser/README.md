@@ -36,8 +36,10 @@ Implemented now:
   preserves network mode when the gateway cannot be verified
 - App identity baseline (`Waves Browser` title/product metadata and bundled icon set)
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
-- Help menu placeholder for updates (`Check for Updates (Coming Soon)`)
-- Update hook baseline: menu event emits `waves://updater/check-requested` for future updater wiring
+- Rust-owned application command registry with generated TypeScript metadata, enabled-state
+  projection, native menu routing, platform shortcuts, and registry-derived shortcut help
+- Truthful disabled native entries for Library, Favorites import/export, Preferences, add favorite,
+  and the unimplemented update placeholder until their owning application surfaces land
 - Shared constants baseline:
   - frontend runtime + copy: `frontend/src/app/waves-config.ts`, `frontend/src/app/waves-copy.ts`
   - tauri app/menu/event constants: `src-tauri/src/waves_config.rs`
@@ -49,7 +51,8 @@ Implemented now:
 - Generation-scoped navigation coordination prevents overlapping startup, timer, and user loads
   from committing stale engine, history, status, or persistence state
 - Debug-only raw WML paste path (`Load Raw WML (Debug)` under debug section)
-- Collapsed developer tools drawer (toggle with `Ctrl+Shift+D`) for session/transport/snapshot/timeline panels
+- Collapsed developer tools drawer routed through the shared Inspector command for
+  session/transport/snapshot/timeline panels
 - Native engine harness commands in `src-tauri/src/lib.rs`:
   - `engine_load_deck`
   - `engine_load_deck_context`
@@ -93,11 +96,22 @@ The desktop host will be a WAP-only browser shell:
 - Rust (`ts-rs`) + AST-generated host transport contract: `browser/contracts/generated/transport-host.ts`
 - AST-generated typed Tauri client: `browser/contracts/generated/tauri-host-client.ts`
 - Rust-owned Tauri command descriptor: `browser/src-tauri/src/command_contract.rs`
+- Rust-owned application command registry:
+  `browser/src-tauri/src/application_commands.rs` ->
+  `browser/contracts/generated/application-commands.ts`
 
-`command_contract.rs` is the only command inventory. It expands into Rust invoke registration,
+`command_contract.rs` is the only Tauri invoke command inventory. It expands into Rust invoke registration,
 feeds Tauri's restricted app manifest, and generates the TypeScript client/facade metadata plus the
 aggregate permission and capability configuration. Command functions remain explicit adapters in
 `src-tauri/src/lib.rs`; runtime and transport behavior is not generated.
+
+`application_commands.rs` separately owns browser application command IDs, labels, menu groups,
+default enablement, and macOS/Linux shortcut mappings. The frontend command registry and visible
+shortcut reference consume its generated TypeScript projection. Native menu events, shortcuts,
+and existing visible controls converge on the same observable dispatcher; unavailable application
+surfaces remain registered but disabled. Shortcut execution stays in the focus-aware frontend
+bridge instead of native OS accelerators so focused host and WML editing events pass through
+unchanged.
 
 Regenerate every committed host contract artifact from Rust:
 

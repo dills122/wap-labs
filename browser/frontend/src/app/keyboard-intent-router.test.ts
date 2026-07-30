@@ -46,7 +46,7 @@ const createDeps = (
 };
 
 describe('KeyboardIntentRouter', () => {
-  it('toggles developer tools on Ctrl+Shift+D without enqueueing an action', () => {
+  it('leaves application shortcuts to the shared command registry', () => {
     const deps = createDeps();
     const router = new KeyboardIntentRouter(deps);
 
@@ -54,8 +54,8 @@ describe('KeyboardIntentRouter', () => {
       new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, shiftKey: true })
     );
 
-    expect(deps.toggleDeveloperTools).toHaveBeenCalledTimes(1);
-    expect(deps.setStatus).toHaveBeenCalledTimes(1);
+    expect(deps.toggleDeveloperTools).not.toHaveBeenCalled();
+    expect(deps.setStatus).not.toHaveBeenCalled();
     expect(router.isActionInFlight()).toBe(false);
   });
 

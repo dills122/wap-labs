@@ -1,4 +1,20 @@
 import { WAVES_COPY } from '../waves-copy';
+import {
+  applicationShortcutReference,
+  detectApplicationCommandPlatform
+} from '../application-command-registry';
+
+const applicationShortcutReferenceTemplate = (): string =>
+  applicationShortcutReference(detectApplicationCommandPlatform())
+    .map(
+      ({ label, shortcut, enabled }) => `
+        <li aria-disabled="${String(!enabled)}">
+          <span>${label}</span>
+          <kbd>${shortcut}</kbd>
+          ${enabled ? '' : `<span>(${WAVES_COPY.shell.commandUnavailable})</span>`}
+        </li>`
+    )
+    .join('');
 
 export const welcomeHelpTemplate = () => `
   <section id="welcome-help-panel" class="welcome-empty-state" aria-labelledby="welcome-help-toggle">
@@ -22,6 +38,8 @@ export const welcomeHelpTemplate = () => `
       </label>
       <h2>${WAVES_COPY.shell.controlsReferenceTitle}</h2>
       <p>${WAVES_COPY.shell.controlsReferenceBody}</p>
+      <h2>${WAVES_COPY.shell.applicationShortcutsTitle}</h2>
+      <ul data-application-shortcut-reference>${applicationShortcutReferenceTemplate()}</ul>
       <h2>${WAVES_COPY.shell.troubleshootingTitle}</h2>
       <p>${WAVES_COPY.shell.troubleshootingBody}</p>
     </div>

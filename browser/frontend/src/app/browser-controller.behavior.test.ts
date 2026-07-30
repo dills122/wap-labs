@@ -221,16 +221,10 @@ describe('BrowserController behavior coverage', () => {
     expect(hostClient.engineSetViewportCols).toHaveBeenCalledWith({ cols: 20 });
   });
 
-  it('opens and closes the visible Developer Tools rail from the keyboard shortcut', () => {
+  it('leaves application shortcuts to the shared command registry', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
     const controller = new BrowserController(createHostClient() as never, presenter, refs);
-
-    controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
-      new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, shiftKey: true })
-    );
-    expect(refs.utilityRailPanelEl?.open).toBe(true);
-    expect(refs.devDrawerEl.open).toBe(true);
 
     controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, shiftKey: true })

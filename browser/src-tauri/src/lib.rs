@@ -1,3 +1,4 @@
+pub mod application_commands;
 pub mod command_contract;
 pub mod contract_types;
 pub mod waves_config;

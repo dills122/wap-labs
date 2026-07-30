@@ -1,4 +1,5 @@
 import type { HostSessionState } from '../../../contracts/transport';
+import type { EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
 import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
@@ -8,6 +9,7 @@ import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { registerBrowserComponents } from '../components';
 import { bindDeveloperToolsHost } from './developer-tools-bridge';
+import { ApplicationCommandBridge } from './application-command-bridge';
 
 const SAMPLE_WML = `<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
@@ -24,6 +26,7 @@ const SAMPLE_WML = `<?xml version="1.0"?>
 </wml>`;
 
 export interface BrowserApplication {
+  commandBridge: ApplicationCommandBridge;
   controller: BrowserController;
   presenter: BrowserPresenter;
   refs: BrowserShellRefs;
@@ -33,6 +36,11 @@ export interface BrowserApplicationOptions {
   startUrl?: string;
   runMode?: 'local' | 'network';
 }
+
+export const isWmlCommandEditingContext = (
+  snapshot: Pick<EngineRuntimeSnapshot, 'focusedInputEditName' | 'focusedSelectEditName'> | null
+): boolean =>
+  snapshot?.focusedInputEditName !== undefined || snapshot?.focusedSelectEditName !== undefined;
 
 export const composeBrowserApplication = (
   hostClient: TauriHostClient,
@@ -67,12 +75,27 @@ export const composeBrowserApplication = (
     );
   }
   const controller = new BrowserController(hostClient, presenter, refs);
+  const commandBridge = new ApplicationCommandBridge({
+    isWmlEditing: () => {
+      return isWmlCommandEditingContext(presenter.getSnapshot());
+    }
+  });
 
-  return { controller, presenter, refs };
+  return { commandBridge, controller, presenter, refs };
 };
 
 export const initializeBrowserApplication = async (
   application: BrowserApplication
 ): Promise<void> => {
-  await application.controller.init(SAMPLE_WML);
+  try {
+    await Promise.all([application.controller.init(SAMPLE_WML), application.commandBridge.bind()]);
+  } catch (error) {
+    application.commandBridge.dispose();
+    throw error;
+  }
+};
+
+export const disposeBrowserApplication = (application: BrowserApplication): void => {
+  application.commandBridge.dispose();
+  application.controller.dispose();
 };
