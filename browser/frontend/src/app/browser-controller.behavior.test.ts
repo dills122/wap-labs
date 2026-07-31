@@ -223,6 +223,60 @@ describe('BrowserController behavior coverage', () => {
     expect(hostClient.engineSetViewportCols).toHaveBeenCalledWith({ cols: 20 });
   });
 
+  it('reports an unrelated action failure without corrupting committed navigation state', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const committedSession = presenter.getSessionState();
+    refs.viewportColsInput.value = '0';
+
+    document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+    await flushAsyncWork();
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+    expect(presenter.getSessionState()).toEqual(committedSession);
+    expect(presenter.getSessionState().navigationStatus).toBe('loaded');
+    expect(presenter.getSessionState().lastError).toBeUndefined();
+    expect(refs.statusMessages.at(-1)).toBe(
+      WAVES_COPY.status.error('viewport cols must be an integer from 1 through 4294967295')
+    );
+
+    controller.dispose();
+  });
+
+  it('reports a current engine navigation failure without changing the committed frame', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    const committedSession = presenter.getSessionState();
+    const committedSnapshot = presenter.getSnapshot();
+    const committedViewport = refs.viewportEl.innerHTML;
+    vi.mocked(hostClient.engineHandleKeyFrame).mockRejectedValueOnce(
+      new Error('Card id not found')
+    );
+
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    await flushAsyncWork();
+
+    expect(presenter.getSessionState()).toEqual({
+      ...committedSession,
+      navigationStatus: 'error',
+      lastError: 'Card id not found'
+    });
+    expect(presenter.getSnapshot()).toEqual(committedSnapshot);
+    expect(refs.viewportEl.innerHTML).toBe(committedViewport);
+    expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.error('Card id not found'));
+
+    controller.dispose();
+  });
+
   it('leaves application shortcuts to the shared command registry', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
@@ -675,6 +729,40 @@ describe('BrowserController behavior coverage', () => {
     expect(applyTimerSnapshot).not.toHaveBeenCalled();
   });
 
+  it('discards an engine key failure after its starting run mode changes', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    await flushAsyncWork();
+
+    let rejectKey: ((reason: Error) => void) | undefined;
+    vi.mocked(hostClient.engineHandleKeyFrame).mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectKey = reject;
+        })
+    );
+    const pendingKey = controllerPrivates(controller).applyEngineKey('enter');
+    await Promise.resolve();
+    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
+
+    await controllerPrivates(controller).setRunMode('local', { loadLocalOnEnter: false });
+    const committedSession = presenter.getSessionState();
+    rejectKey?.(new Error('stale navigation failure'));
+    await expect(pendingKey).resolves.toBeUndefined();
+
+    expect(presenter.getSessionState()).toEqual(committedSession);
+    expect(presenter.getSessionState().navigationStatus).toBe('loaded');
+    expect(presenter.getSessionState().lastError).toBeUndefined();
+
+    controller.dispose();
+  });
+
   it('clears the frozen skeleton placeholder when the very first deck load fails', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
@@ -823,6 +911,31 @@ describe('BrowserController behavior coverage', () => {
     );
     expect(refs.toastEl.textContent).toBe(expectedMessage);
     expect(refs.statusMessages.at(-1)).toBe(expectedMessage);
+  });
+
+  it('surfaces a WBXML decode failure as a deck parse error', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const targetUrl = 'http://example.test/deck.wmlc';
+    vi.mocked(hostClient.fetchDeck).mockResolvedValue(
+      wbxmlDecodeFailureResponse(targetUrl) as never
+    );
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+
+    refs.fetchUrlInput.value = targetUrl;
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await flushAsyncWork();
+
+    const expectedMessage = WAVES_COPY.status.deckParseFailed('WML public ID mismatch');
+    expect(refs.toastEl.textContent).toBe(expectedMessage);
+    expect(refs.statusMessages.at(-1)).toBe(expectedMessage);
+    expect(presenter.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      lastError: 'WML public ID mismatch'
+    });
   });
 
   it('shows a delayed in-progress hint for a slow network navigation but not for the enabling mode-switch load', async () => {

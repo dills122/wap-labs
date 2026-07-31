@@ -35,8 +35,15 @@ export type BackNavigationMode = 'engine' | 'host' | 'none';
 // failed" for every case (see U2 in USABILITY_RESILIENCE_BACKLOG.md):
 // 'network' covers transport-layer failures (timeout, non-200, protocol
 // error, TRANSPORT_UNAVAILABLE, external-intent hop limit); 'parse' covers a
-// transport response that succeeded but carried no usable WML payload.
+// transport response that carried no usable WML payload, including unsupported
+// content types and WBXML decode failures.
 export type NavigationErrorKind = 'network' | 'parse';
+
+const navigationErrorKindForFetchFailure = (response: FetchResponse): NavigationErrorKind =>
+  response.error?.code === 'UNSUPPORTED_CONTENT_TYPE' ||
+  response.error?.code === 'WBXML_DECODE_FAILED'
+    ? 'parse'
+    : 'network';
 
 export interface NavigationHostClient {
   fetchDeck(request: FetchRequest): Promise<FetchResponse>;
@@ -409,7 +416,7 @@ export const createNavigationStateMachine = (
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(errorMessage, 'network');
+      hooks.onNavigationError?.(errorMessage, navigationErrorKindForFetchFailure(transport));
       return null;
     }
 
