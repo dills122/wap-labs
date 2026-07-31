@@ -1,4 +1,5 @@
 import { WAVES_COPY } from '../waves-copy';
+import { engineDebugInspectorTemplate } from '../../components/engine-debug-inspector';
 
 export type DeveloperToolsSurface = 'docked' | 'window';
 
@@ -61,6 +62,7 @@ export const developerDrawerTemplate = (surface: DeveloperToolsSurface = 'docked
           <button id="devtools-tab-overview" class="developer-tools-tab" type="button" role="tab" aria-selected="true" aria-controls="devtools-panel-overview" tabindex="0">${WAVES_COPY.shell.overview}</button>
           <button id="devtools-tab-transport" class="developer-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="devtools-panel-transport" tabindex="-1">${WAVES_COPY.shell.transport}</button>
           <button id="devtools-tab-runtime" class="developer-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="devtools-panel-runtime" tabindex="-1">${WAVES_COPY.shell.runtime}</button>
+          <button id="devtools-tab-inspector" class="developer-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="devtools-panel-inspector" tabindex="-1">${WAVES_COPY.inspector.tab}</button>
           <button id="devtools-tab-timeline" class="developer-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="devtools-panel-timeline" tabindex="-1">${WAVES_COPY.shell.timeline}</button>
           <button id="devtools-tab-source" class="developer-tools-tab" type="button" role="tab" aria-selected="false" aria-controls="devtools-panel-source" tabindex="-1">${WAVES_COPY.shell.source}</button>
         </div>
@@ -121,6 +123,10 @@ export const developerDrawerTemplate = (surface: DeveloperToolsSurface = 'docked
             <div class="developer-tools-inline-actions">
               ${actionButton('btn-clear-intent', 'clear-intent', WAVES_COPY.shell.clearExternalIntent)}
             </div>
+          </section>
+
+          <section id="devtools-panel-inspector" class="developer-tools-panel" role="tabpanel" aria-labelledby="devtools-tab-inspector" tabindex="0" hidden>
+            ${engineDebugInspectorTemplate()}
           </section>
 
           <section id="devtools-panel-timeline" class="developer-tools-panel" role="tabpanel" aria-labelledby="devtools-tab-timeline" tabindex="0" hidden>

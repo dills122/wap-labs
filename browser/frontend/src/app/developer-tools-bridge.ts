@@ -3,6 +3,13 @@ import {
   bindDeveloperToolsWorkspace,
   renderDeveloperToolsState
 } from './developer-tools-workspace';
+import {
+  bindEngineDebugInspector,
+  type EngineDebugInspectorBinding
+} from '../components/engine-debug-inspector';
+import type { EngineDebugInspectorAction } from './engine-debug-session-controller';
+import type { EngineDebugInspectorViewModel } from './engine-debug-view-model';
+import { WAVES_COPY } from './waves-copy';
 
 const DEVTOOLS_WINDOW_LABEL = 'developer-tools';
 const DEVTOOLS_CHANNEL = 'waves-developer-tools';
@@ -10,6 +17,8 @@ const DEVTOOLS_READY_EVENT = 'waves://developer-tools/ready';
 const DEVTOOLS_CLOSED_EVENT = 'waves://developer-tools/closed';
 const DEVTOOLS_STATE_EVENT = 'waves://developer-tools/state';
 const DEVTOOLS_ACTION_EVENT = 'waves://developer-tools/action';
+const DEVTOOLS_INSPECTOR_STATE_EVENT = 'waves://developer-tools/inspector-state';
+const DEVTOOLS_INSPECTOR_ACTION_EVENT = 'waves://developer-tools/inspector-action';
 
 type DeveloperToolsActionId =
   | 'health'
@@ -27,14 +36,17 @@ interface DeveloperToolsAction {
 }
 
 interface ChannelMessage {
-  type: 'ready' | 'closed' | 'state' | 'action';
+  type: 'ready' | 'closed' | 'state' | 'action' | 'inspector-state' | 'inspector-action';
   state?: DeveloperToolsState;
   action?: DeveloperToolsAction;
+  inspectorState?: EngineDebugInspectorViewModel;
+  inspectorAction?: EngineDebugInspectorAction;
 }
 
 export interface DeveloperToolsHostBridge {
   isConnected(): boolean;
   publish(state: DeveloperToolsState): void;
+  publishInspector(state: EngineDebugInspectorViewModel): void;
   dispose(): void;
 }
 
@@ -42,6 +54,7 @@ interface BindDeveloperToolsHostOptions {
   root: HTMLElement;
   getState: () => DeveloperToolsState;
   onError: (message: string) => void;
+  onInspectorAction?: (action: EngineDebugInspectorAction) => void;
 }
 
 const isTauriRuntime = (): boolean => Reflect.has(globalThis, '__TAURI_INTERNALS__');
@@ -57,6 +70,24 @@ const isDeveloperToolsAction = (value: unknown): value is DeveloperToolsAction =
     'clear-timeline',
     'load-source'
   ].includes(String(value.action));
+};
+
+const isEngineDebugInspectorAction = (value: unknown): value is EngineDebugInspectorAction => {
+  if (!value || typeof value !== 'object' || !('type' in value)) return false;
+  const action = value as Record<string, unknown>;
+  if (['start', 'stop', 'snapshot', 'export'].includes(String(action.type))) return true;
+  if (action.type === 'filter') {
+    return (
+      ['all', 'deck', 'navigation', 'input', 'action', 'script', 'timer'].includes(
+        String(action.group)
+      ) && typeof action.query === 'string'
+    );
+  }
+  return (
+    action.type === 'visibility' &&
+    ['docked', 'window'].includes(String(action.surface)) &&
+    typeof action.visible === 'boolean'
+  );
 };
 
 const dispatchDeveloperToolsAction = (action: DeveloperToolsAction): void => {
@@ -84,7 +115,8 @@ const dispatchDeveloperToolsAction = (action: DeveloperToolsAction): void => {
 export const bindDeveloperToolsHost = ({
   root,
   getState,
-  onError
+  onError,
+  onInspectorAction
 }: BindDeveloperToolsHostOptions): DeveloperToolsHostBridge => {
   let connected = false;
   let disposed = false;
@@ -92,6 +124,7 @@ export const bindDeveloperToolsHost = ({
   const openButton = root.querySelector<HTMLButtonElement>('#btn-open-devtools-window');
   const channel =
     typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel(DEVTOOLS_CHANNEL);
+  let inspectorState: EngineDebugInspectorViewModel | undefined;
 
   const publish = (state: DeveloperToolsState): void => {
     if (!connected || disposed) return;
@@ -104,16 +137,44 @@ export const bindDeveloperToolsHost = ({
     channel?.postMessage({ type: 'state', state } satisfies ChannelMessage);
   };
 
+  const publishInspector = (state: EngineDebugInspectorViewModel): void => {
+    inspectorState = state;
+    if (!connected || disposed) return;
+    if (isTauriRuntime()) {
+      void import('@tauri-apps/api/event')
+        .then(({ emitTo }) => emitTo(DEVTOOLS_WINDOW_LABEL, DEVTOOLS_INSPECTOR_STATE_EVENT, state))
+        .catch(() => onError(WAVES_COPY.status.developerToolsInspectorStateFailed));
+      return;
+    }
+    channel?.postMessage({
+      type: 'inspector-state',
+      inspectorState: state
+    } satisfies ChannelMessage);
+  };
+
   const markReady = (): void => {
     connected = true;
     publish(getState());
+    if (inspectorState) publishInspector(inspectorState);
+  };
+
+  const markClosed = (): void => {
+    connected = false;
+    onInspectorAction?.({ type: 'visibility', surface: 'window', visible: false });
   };
 
   const handleChannelMessage = (event: MessageEvent<ChannelMessage>): void => {
     if (event.data.type === 'ready') markReady();
-    if (event.data.type === 'closed') connected = false;
+    if (event.data.type === 'closed') markClosed();
     if (event.data.type === 'action' && event.data.action) {
       dispatchDeveloperToolsAction(event.data.action);
+    }
+    if (
+      event.data.type === 'inspector-action' &&
+      event.data.inspectorAction &&
+      isEngineDebugInspectorAction(event.data.inspectorAction)
+    ) {
+      onInspectorAction?.(event.data.inspectorAction);
     }
   };
   channel?.addEventListener('message', handleChannelMessage);
@@ -122,19 +183,26 @@ export const bindDeveloperToolsHost = ({
     ? import('@tauri-apps/api/event')
         .then(async ({ listen }) => {
           const stopReady = await listen(DEVTOOLS_READY_EVENT, markReady);
-          const stopClosed = await listen(DEVTOOLS_CLOSED_EVENT, () => {
-            connected = false;
-          });
+          const stopClosed = await listen(DEVTOOLS_CLOSED_EVENT, markClosed);
           const stopAction = await listen<DeveloperToolsAction>(DEVTOOLS_ACTION_EVENT, (event) => {
             if (isDeveloperToolsAction(event.payload)) dispatchDeveloperToolsAction(event.payload);
           });
+          const stopInspectorAction = await listen<EngineDebugInspectorAction>(
+            DEVTOOLS_INSPECTOR_ACTION_EVENT,
+            (event) => {
+              if (isEngineDebugInspectorAction(event.payload)) {
+                onInspectorAction?.(event.payload);
+              }
+            }
+          );
           if (disposed) {
             stopReady();
             stopClosed();
             stopAction();
+            stopInspectorAction();
             return;
           }
-          unlisteners.push(stopReady, stopClosed, stopAction);
+          unlisteners.push(stopReady, stopClosed, stopAction, stopInspectorAction);
         })
         .catch((error: unknown) => {
           onError(String(error));
@@ -168,9 +236,7 @@ export const bindDeveloperToolsHost = ({
           resizable: true
         });
         child.once('tauri://error', (event) => onError(String(event.payload)));
-        child.once('tauri://destroyed', () => {
-          connected = false;
-        });
+        child.once('tauri://destroyed', markClosed);
         return;
       }
 
@@ -197,6 +263,7 @@ export const bindDeveloperToolsHost = ({
   return {
     isConnected: () => connected,
     publish,
+    publishInspector,
     dispose: () => {
       disposed = true;
       openButton?.removeEventListener('click', handleOpenClick);
@@ -239,6 +306,22 @@ export const bindDeveloperToolsWindow = async (root: HTMLElement): Promise<() =>
     channel?.postMessage({ type: 'action', action } satisfies ChannelMessage);
   };
 
+  const sendInspectorAction = async (action: EngineDebugInspectorAction): Promise<void> => {
+    if (isTauriRuntime()) {
+      const { emitTo } = await import('@tauri-apps/api/event');
+      await emitTo('main', DEVTOOLS_INSPECTOR_ACTION_EVENT, action);
+      return;
+    }
+    channel?.postMessage({
+      type: 'inspector-action',
+      inspectorAction: action
+    } satisfies ChannelMessage);
+  };
+  const inspectorBinding: EngineDebugInspectorBinding = bindEngineDebugInspector(root, {
+    dispatch: (action) => void sendInspectorAction(action)
+  });
+  cleanups.push(() => inspectorBinding.dispose());
+
   for (const button of root.querySelectorAll<HTMLButtonElement>('[data-devtools-action]')) {
     const handleClick = (): void => {
       const action = actionFromButton(button, root);
@@ -253,12 +336,19 @@ export const bindDeveloperToolsWindow = async (root: HTMLElement): Promise<() =>
     const stopState = await listen<DeveloperToolsState>(DEVTOOLS_STATE_EVENT, (event) => {
       renderDeveloperToolsState(root, event.payload);
     });
-    cleanups.push(stopState);
+    const stopInspectorState = await listen<EngineDebugInspectorViewModel>(
+      DEVTOOLS_INSPECTOR_STATE_EVENT,
+      (event) => inspectorBinding.render(event.payload)
+    );
+    cleanups.push(stopState, stopInspectorState);
     await emitTo('main', DEVTOOLS_READY_EVENT);
   } else {
     const handleState = (event: MessageEvent<ChannelMessage>): void => {
       if (event.data.type === 'state' && event.data.state) {
         renderDeveloperToolsState(root, event.data.state);
+      }
+      if (event.data.type === 'inspector-state' && event.data.inspectorState) {
+        inspectorBinding.render(event.data.inspectorState);
       }
     };
     channel?.addEventListener('message', handleState);
@@ -267,6 +357,7 @@ export const bindDeveloperToolsWindow = async (root: HTMLElement): Promise<() =>
   }
 
   const handleBeforeUnload = (): void => {
+    void sendInspectorAction({ type: 'visibility', surface: 'window', visible: false });
     if (isTauriRuntime()) {
       void import('@tauri-apps/api/event').then(({ emitTo }) =>
         emitTo('main', DEVTOOLS_CLOSED_EVENT)

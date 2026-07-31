@@ -607,7 +607,7 @@ themselves claim WBP-07 through WBP-14 complete.
 
 The redesigned shell/Developer Tools workspace, pre-release marketing refresh, versioned
 application-state foundation, Favorites domain, native command registry, safe diagnostic
-projection, and D0-02/D0-03 debug source/host bridge are merged. The next parallel-safe browser
-batch is `RSL-07` bounded presenter/history state, F2-01 deterministic click input, and D0-04
-read-only Inspector consumption with explicit non-overlapping ownership. Issue `#450`, `WBP-11`,
-and `APP-SHELL-01` follow on shared history, presenter, and shell surfaces.
+projection, and D0-02/D0-03 debug source/host bridge are merged. The D0-04 branch adds read-only
+Inspector consumption with bounded safe capture without taking the parallel RSL-07 presenter or
+F2-01 engine-input surfaces. Issue `#450`, `WBP-11`, and `APP-SHELL-01` follow on shared history,
+presenter, and shell surfaces.

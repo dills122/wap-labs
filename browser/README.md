@@ -69,6 +69,8 @@ Implemented now:
   - `engine_clear_external_navigation_intent`
 - Default-disabled D0-03 engine debug session bridge with generated open/poll/snapshot/close Tauri
   commands, one process-local session, engine-owned bounded recording, and typed sanitized outcomes
+- Optional D0-04 Engine Inspector with visibility-aware polling, bounded filters/retention/snapshot
+  presentation, cursor-gap accounting, and a versioned 256 KiB allowlisted capture artifact
 - In-process Rust transport library under `../transport-rust/`:
   - `http://`/`https://` fetch
   - `wap://`/`waps://` gateway bridge mapping
@@ -187,8 +189,13 @@ generation gate.
 
 The D0-03 read-only engine debug command bridge is disabled by default. Start the native Tauri host
 with `WAVES_ENGINE_DEBUG_POLICY=enabled` to allow one process-local protocol-v1 session. No other
-value enables it, and the policy does not expose a sensitive-data override, remote listener,
-capture/export flow, or Inspector UI; those consumer concerns remain deferred to D0-04.
+value enables it, and the policy does not expose a sensitive-data override or remote listener.
+
+The D0-04 Inspector is available in the existing docked and detached Developer Tools workspace.
+It opens and closes the generated D0-03 session, pauses polling while hidden, retains and renders
+bounded projections, and exports only the versioned allowlist documented in
+[`ENGINE_DEBUG_INSPECTOR.md`](ENGINE_DEBUG_INSPECTOR.md). It does not add mutable debugger
+commands, raw source/secret access, replay, or multi-session behavior.
 
 ## Native Tauri/Kannel UI pilot
 
@@ -243,7 +250,7 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 - [x] Implement transport fetch -> engine loadDeckContext handoff
 - [x] Add integration fixtures for load/nav/external-intent loops
 - [x] Add versioned, allowlisted event timeline exports with chronology validation and secret-safe
-  diagnostic projections (`APP-PRIV-01` / `RSL-06`)
+      diagnostic projections (`APP-PRIV-01` / `RSL-06`)
 - [x] Ship browser-style shell with hidden developer drawer
 - [x] Add global keyboard navigation when not in text-entry fields
 - [x] Add hybrid back behavior (engine card-history + host URL fallback)

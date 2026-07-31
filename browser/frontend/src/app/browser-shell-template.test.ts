@@ -66,7 +66,7 @@ describe('mountBrowserShell', () => {
     expect(utilityRail?.querySelector('#dev-drawer')).not.toBeNull();
     expect(devDrawerSection?.querySelector('#dev-drawer')).not.toBeNull();
     expect(devDrawerSection?.querySelector('[role="tablist"]')).not.toBeNull();
-    expect(devDrawerSection?.querySelectorAll('[role="tabpanel"]')).toHaveLength(5);
+    expect(devDrawerSection?.querySelectorAll('[role="tabpanel"]')).toHaveLength(6);
     expect(devDrawerSection?.querySelector('#btn-open-devtools-window')).not.toBeNull();
     expect(statusBar?.querySelector('#status')).not.toBeNull();
     expect(statusBar?.querySelector('#viewport-cols')).not.toBeNull();

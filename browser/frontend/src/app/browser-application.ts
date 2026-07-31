@@ -10,6 +10,15 @@ import { WAVES_COPY } from './waves-copy';
 import { registerBrowserComponents } from '../components';
 import { bindDeveloperToolsHost } from './developer-tools-bridge';
 import { ApplicationCommandBridge } from './application-command-bridge';
+import { createEngineDebugSessionClient } from './engine-debug-client';
+import {
+  createEngineDebugSessionController,
+  type EngineDebugSessionController
+} from './engine-debug-session-controller';
+import {
+  bindEngineDebugInspector,
+  type EngineDebugInspectorBinding
+} from '../components/engine-debug-inspector';
 
 const SAMPLE_WML = `<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
@@ -28,6 +37,11 @@ const SAMPLE_WML = `<?xml version="1.0"?>
 export interface BrowserApplication {
   commandBridge: ApplicationCommandBridge;
   controller: BrowserController;
+  debugInspector?: {
+    binding: EngineDebugInspectorBinding;
+    controller: EngineDebugSessionController;
+    unsubscribe: () => void;
+  };
   presenter: BrowserPresenter;
   refs: BrowserShellRefs;
 }
@@ -64,15 +78,31 @@ export const composeBrowserApplication = (
     requestedUrl: refs.fetchUrlInput.value
   };
   const presenter = new BrowserPresenter(refs, initialSession, WAVES_CONFIG.maxTimelineEvents);
+  let debugInspector: BrowserApplication['debugInspector'];
   if (refs.developerToolsRootEl) {
-    presenter.attachDeveloperToolsBridge(
-      bindDeveloperToolsHost({
-        root: refs.developerToolsRootEl,
-        getState: () => presenter.getDeveloperToolsState(),
-        onError: (message) =>
-          presenter.showToast(WAVES_COPY.status.developerToolsWindowFailed(message), 'error')
-      })
-    );
+    const debugInspectorController = createEngineDebugSessionController({
+      client: createEngineDebugSessionClient(hostClient)
+    });
+    const developerToolsBridge = bindDeveloperToolsHost({
+      root: refs.developerToolsRootEl,
+      getState: () => presenter.getDeveloperToolsState(),
+      onError: (message) =>
+        presenter.showToast(WAVES_COPY.status.developerToolsWindowFailed(message), 'error'),
+      onInspectorAction: (action) => debugInspectorController.dispatch(action)
+    });
+    presenter.attachDeveloperToolsBridge(developerToolsBridge);
+    const binding = bindEngineDebugInspector(refs.developerToolsRootEl, {
+      dispatch: (action) => debugInspectorController.dispatch(action)
+    });
+    const unsubscribe = debugInspectorController.subscribe((viewModel) => {
+      binding.render(viewModel);
+      developerToolsBridge.publishInspector(viewModel);
+    });
+    debugInspector = {
+      binding,
+      controller: debugInspectorController,
+      unsubscribe
+    };
   }
   const controller = new BrowserController(hostClient, presenter, refs);
   const commandBridge = new ApplicationCommandBridge({
@@ -81,7 +111,7 @@ export const composeBrowserApplication = (
     }
   });
 
-  return { commandBridge, controller, presenter, refs };
+  return { commandBridge, controller, debugInspector, presenter, refs };
 };
 
 export const initializeBrowserApplication = async (
@@ -97,5 +127,8 @@ export const initializeBrowserApplication = async (
 
 export const disposeBrowserApplication = (application: BrowserApplication): void => {
   application.commandBridge.dispose();
+  application.debugInspector?.binding.dispose();
+  application.debugInspector?.unsubscribe();
+  void application.debugInspector?.controller.dispose();
   application.controller.dispose();
 };

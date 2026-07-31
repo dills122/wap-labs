@@ -267,10 +267,11 @@ and lanes may run concurrently subject to the noted file ownership.
 |        6 | Script B2 — bounded `WMLS-502` operator/conversion execution                       | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B.                                                                                                                   | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence. | Expands the safe script behavior available to representative WAP decks.                        |
 
 Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-07, APP-STATE-01,
-APP-FAV-01, APP-CMD-01, and D0-01 through D0-03 are complete. F2-01 and D0-04 remain independent
-parallel slices; WBP-11 and APP-SHELL-01 follow on shared presenter/shell surfaces. RSL-07 bounds
-retained history but leaves issue `#450`'s cross-deck same-card identity correction to its separate
-follow-up.
+APP-FAV-01, APP-CMD-01, and D0-01 through D0-04 are complete. D0-04 implements read-only Inspector
+consumption in its exclusive consumer/component surfaces while F2-01 remains independent on
+engine-input ownership. WBP-11 and APP-SHELL-01 follow on shared presenter/shell surfaces. RSL-07
+bounds retained history but leaves issue `#450`'s cross-deck same-card identity correction to its
+separate follow-up.
 
 Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
 connection-oriented WSP/WTP to manufacture completion. `REN-4` and full

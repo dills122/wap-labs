@@ -1,6 +1,6 @@
 # Engine Debug Connector Plan
 
-Status: D0-01 through D0-03 done; consumer implementation deferred to D0-04
+Status: D0-01 through D0-04 done; later external and mutable capabilities remain deferred
 Owner lane: `engine-wasm` + `browser`
 
 Related reference:
@@ -16,7 +16,7 @@ core engine behavior.
 This is a diagnostics surface, not a transport/runtime control plane. D0-01 defines contracts and
 ownership, and D0-02 implements the bounded engine-owned recorder and sanitized snapshot source.
 Host sessions, Tauri commands, and activation policy are implemented by D0-03. Consumer polling
-cadence and UI remain D0-04 work.
+cadence, UI, and bounded capture are implemented by D0-04.
 
 ## D0-01 Decisions
 
@@ -254,9 +254,26 @@ consumer work.
   errors, snapshots, idempotent close, and close/reopen identity rotation. Generated frontend tests
   cover the four-command mapping and guarded outcome validation.
 
-### D0-04 and later
+### D0-04 (implemented)
 
-- browser debug panel, polling schedule, filtering, and JSON export
+- The existing docked/detached Developer Tools workspace includes an optional read-only Inspector.
+  It opens one generated D0-03 session, takes bounded snapshots, and polls cursor-ordered batches
+  only while an Inspector surface is visible.
+- Frontend memory retains at most 512 projected events and renders at most 200 matching rows.
+  Producer cursor gaps and frontend drop-oldest counts remain separate. Filters use one fixed event
+  family and an 80-character query.
+- Stop, session error, and application disposal cancel polling and close the process-local session;
+  a later start requests a fresh identity. Typed failures remain isolated from ordinary browsing.
+- `waves-engine-debug-capture-v1.json` has a 256 KiB UTF-8 ceiling and an explicit versioned
+  allowlist. It omits session ids, wall-clock time, credentials, request bodies, raw WML/source,
+  arbitrary errors, and masked originals. Full lifecycle, capacity, schema, and security details
+  are recorded in `browser/ENGINE_DEBUG_INSPECTOR.md`.
+- Frontend tests cover disabled policy, open/poll/snapshot/close, the one-session limit, cursor gaps,
+  sanitized errors, close/reopen, hidden polling pause, unmount cleanup, repeated capacity pressure,
+  secret canaries, and keyboard/accessibility semantics.
+
+### Later capabilities
+
 - external local tool bridge
 - optional multi-session capability
 - any remote transport, if separately designed and security-reviewed
