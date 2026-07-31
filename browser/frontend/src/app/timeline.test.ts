@@ -52,6 +52,70 @@ describe('app/timeline', () => {
     expect(state.nextSeq).toBe(4);
   });
 
+  it('stores only the allowlisted projection at the producer boundary', () => {
+    const next = appendTimelineEntry(
+      createTimelineState(),
+      200,
+      'load-transport-url',
+      'state',
+      {
+        runMode: 'network',
+        navigationStatus: 'loading',
+        requestedUrl: 'https://alice:userinfo-secret@example.test/?pin=pin-0000',
+        lastError: 'internal-error-secret',
+        historyIndex: 0,
+        history: [
+          {
+            url: 'https://example.test/',
+            method: 'POST',
+            headers: { Authorization: 'authorization-secret' },
+            requestPolicy: { postContext: { payload: 'legacy-payload-secret' } }
+          }
+        ]
+      },
+      {
+        requestedUrl: 'https://example.test/?password=password-hunter2',
+        method: 'POST',
+        headers: { Cookie: 'cookie-secret' },
+        requestPolicy: {
+          requestIntent: {
+            method: 'post',
+            enctype: 'application/x-www-form-urlencoded',
+            sendReferer: false,
+            sameDeck: false,
+            postFields: [{ name: 'pin', value: 'typed-post-secret' }]
+          }
+        }
+      }
+    );
+
+    const serialized = JSON.stringify(next.entries);
+    for (const secret of [
+      'userinfo-secret',
+      'pin-0000',
+      'internal-error-secret',
+      'authorization-secret',
+      'legacy-payload-secret',
+      'password-hunter2',
+      'cookie-secret',
+      'typed-post-secret'
+    ]) {
+      expect(serialized).not.toContain(secret);
+    }
+    expect(next.entries[0]?.session).toMatchObject({
+      navigationStatus: 'loading',
+      hasError: true,
+      historyLength: 1
+    });
+    expect(next.entries[0]?.details).toMatchObject({
+      method: 'POST',
+      headers: { count: 1 },
+      requestPolicy: {
+        post: { postFieldCount: 1, postFieldValueLength: 'typed-post-secret'.length }
+      }
+    });
+  });
+
   it('builds and validates timeline export payload', () => {
     const state = appendTimelineEntry(
       appendTimelineEntry(createTimelineState(), 200, 'bootstrap', 'state', {
@@ -71,7 +135,8 @@ describe('app/timeline', () => {
       requestedUrl: 'http://local.test'
     });
     expect(payload.timelineLength).toBe(2);
-    expect(payload.schemaVersion).toBe(1);
+    expect(payload.schemaVersion).toBe(2);
+    expect(payload.redactionPolicy).toBe('allowlist-v1');
     expect(() =>
       validateTimelineExport(payload as unknown as Record<string, unknown>)
     ).not.toThrow();

@@ -28,12 +28,18 @@ class TestBroadcastChannel extends EventTarget {
 
 const state: DeveloperToolsState = {
   hostStatus: 'Ready.',
-  sessionState: { runMode: 'local', navigationStatus: 'idle', requestedUrl: '' },
+  sessionState: {
+    runMode: 'local',
+    navigationStatus: 'idle',
+    requestedUrl: '',
+    hasActiveCard: false,
+    hasError: false,
+    historyLength: 0
+  },
   transportResponse: null,
   runtimeSnapshot: null,
   timeline: [],
-  document: { coverage: '', description: '', goal: '', testingAcceptance: [] },
-  source: { baseUrl: 'http://local.test/', wml: '<wml />' }
+  document: { coverage: '', description: '', goal: '', testingAcceptance: [] }
 };
 
 describe('Developer Tools browser bridge', () => {

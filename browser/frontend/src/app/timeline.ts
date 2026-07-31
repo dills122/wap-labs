@@ -1,4 +1,10 @@
 import type { HostSessionState } from '../../../contracts/transport';
+import {
+  DIAGNOSTIC_REDACTION_POLICY,
+  projectSessionState,
+  projectTimelineDetails,
+  type DiagnosticSessionState
+} from './diagnostic-projection';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 
@@ -6,7 +12,7 @@ export interface TimelineEntry {
   seq: number;
   action: string;
   phase: 'start' | 'ok' | 'error' | 'state';
-  session: HostSessionState;
+  session: DiagnosticSessionState;
   details?: Record<string, unknown>;
 }
 
@@ -17,13 +23,14 @@ export interface TimelineState {
 
 export interface TimelineExportPayload {
   schemaVersion: number;
+  redactionPolicy: typeof DIAGNOSTIC_REDACTION_POLICY;
   timelineLength: number;
-  latestSessionState: HostSessionState;
+  latestSessionState: DiagnosticSessionState;
   timeline: Array<{
     seq: number;
     action: string;
     phase: TimelineEntry['phase'];
-    session: HostSessionState;
+    session: DiagnosticSessionState;
     details?: Record<string, unknown>;
   }>;
 }
@@ -41,12 +48,13 @@ export const appendTimelineEntry = (
   session: HostSessionState,
   details?: Record<string, unknown>
 ): TimelineState => {
+  const projectedDetails = projectTimelineDetails(action, details);
   const entry: TimelineEntry = {
     seq: state.nextSeq,
     action,
     phase,
-    session,
-    ...(details ? { details } : {})
+    session: projectSessionState(session),
+    ...(projectedDetails ? { details: projectedDetails } : {})
   };
   const entries = [...state.entries, entry];
   const trimmed =
@@ -64,8 +72,9 @@ export const buildTimelineExport = (
   latestSessionState: HostSessionState
 ): TimelineExportPayload => ({
   schemaVersion: WAVES_CONFIG.timelineSchemaVersion,
+  redactionPolicy: DIAGNOSTIC_REDACTION_POLICY,
   timelineLength: entries.length,
-  latestSessionState,
+  latestSessionState: projectSessionState(latestSessionState),
   timeline: entries.map((entry) => ({
     seq: entry.seq,
     action: entry.action,

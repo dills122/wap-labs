@@ -13,7 +13,9 @@ const state: DeveloperToolsState = {
     navigationStatus: 'loaded',
     requestedUrl: 'http://local.test/examples/basic.wml',
     finalUrl: 'http://local.test/examples/basic.wml',
-    activeCardId: 'home'
+    hasActiveCard: true,
+    hasError: false,
+    historyLength: 0
   },
   transportResponse: {
     ok: true,
@@ -23,14 +25,16 @@ const state: DeveloperToolsState = {
     timingMs: { encode: 1, udpRtt: 4, decode: 2 }
   },
   runtimeSnapshot: {
-    activeCardId: 'home',
+    hasActiveCard: true,
     focusedLinkIndex: 0,
     nextTimerWakeupMs: 250,
     baseUrl: 'http://local.test/examples/basic.wml',
     contentType: 'text/vnd.wap.wml',
+    editingInput: false,
+    editingSelect: false,
     lastBackNavigationHandled: false,
-    lastScriptDialogRequests: [],
-    lastScriptTimerRequests: []
+    scriptDialogRequestCount: 0,
+    scriptTimerRequestCount: 0
   },
   timeline: [
     {
@@ -40,7 +44,10 @@ const state: DeveloperToolsState = {
       session: {
         runMode: 'local',
         navigationStatus: 'loaded',
-        requestedUrl: 'http://local.test/examples/basic.wml'
+        requestedUrl: 'http://local.test/examples/basic.wml',
+        hasActiveCard: false,
+        hasError: false,
+        historyLength: 0
       }
     }
   ],
@@ -49,10 +56,6 @@ const state: DeveloperToolsState = {
     description: 'Description: Basic navigation',
     goal: 'Goal: Exercise card navigation',
     testingAcceptance: ['Select advances to the next card.']
-  },
-  source: {
-    baseUrl: 'http://local.test/examples/basic.wml',
-    wml: '<wml><card id="home" /></wml>'
   }
 };
 
@@ -93,7 +96,7 @@ describe('Developer Tools workspace', () => {
     dispose();
   });
 
-  it('renders structured summaries while retaining exact raw diagnostics', () => {
+  it('renders structured summaries from allowlisted diagnostics', () => {
     renderDeveloperToolsState(root, state);
 
     expect(root.querySelector('#developer-tools-host-status')?.textContent).toBe('Health: ok');
@@ -108,7 +111,7 @@ describe('Developer Tools workspace', () => {
       '"navigationStatus": "loaded"'
     );
     expect(root.querySelector('#transport-response')?.textContent).toContain('"status": 200');
-    expect(root.querySelector('#snapshot')?.textContent).toContain('"activeCardId": "home"');
+    expect(root.querySelector('#snapshot')?.textContent).toContain('"hasActiveCard": true');
     expect(root.querySelector('#timeline')?.textContent).toContain('"load-local-example"');
     expect(root.querySelector('#local-example-testing-ac li')?.textContent).toContain(
       'Select advances'

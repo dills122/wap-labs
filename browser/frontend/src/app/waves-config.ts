@@ -12,7 +12,7 @@ export const WAVES_CONFIG = {
   defaultDebugBaseUrl: 'http://local.test/start.wml',
   defaultViewportCols: 20,
   maxTimelineEvents: 200,
-  timelineSchemaVersion: 1,
+  timelineSchemaVersion: 2,
   timelineExportFilename: 'waves-event-timeline.json',
   timelineExportJsonIndent: 2,
   maxExternalIntentHops: 3,
