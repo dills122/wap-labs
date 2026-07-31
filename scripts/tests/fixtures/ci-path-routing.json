@@ -1,0 +1,142 @@
+[
+  {
+    "path": ".github/workflows/ci.yml",
+    "ciFilters": ["ci"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": ".github/workflows/transport-wap-smoke.yml",
+    "ciFilters": ["ci"],
+    "transportSmoke": true,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": ".github/workflows/native-tauri-kannel-e2e.yml",
+    "ciFilters": ["ci"],
+    "transportSmoke": false,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": ".github/workflows/security.yml",
+    "ciFilters": ["ci"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": true
+  },
+  {
+    "path": ".nvmrc",
+    "ciFilters": ["ci"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": "pnpm-lock.yaml",
+    "ciFilters": ["ci", "compliance", "docs_portal"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "pnpm-workspace.yaml",
+    "ciFilters": ["ci", "docs_portal"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "engine-wasm/engine/src/lib.rs",
+    "ciFilters": ["rust_engine", "host_sample", "browser_shell"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "engine-wasm/contracts/wml-engine.ts",
+    "ciFilters": ["rust_engine", "host_sample", "browser_shell"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "transport-rust/src/lib.rs",
+    "ciFilters": ["rust_transport", "browser_shell"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "browser/contracts/transport.ts",
+    "ciFilters": ["rust_transport", "host_sample", "browser_shell"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "browser/frontend/src/app.ts",
+    "ciFilters": ["host_sample", "browser_shell", "browser_frontend"],
+    "transportSmoke": false,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "wml-server/cmd/wml-server/main.go",
+    "ciFilters": ["wml_server"],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": true
+  },
+  {
+    "path": "docker/kannel/Dockerfile",
+    "ciFilters": [],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": true
+  },
+  {
+    "path": "docker-compose.yml",
+    "ciFilters": [],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
+    "path": "deploy/network-preview/compose.yaml",
+    "ciFilters": [],
+    "transportSmoke": true,
+    "nativeE2e": false,
+    "securityImages": true
+  },
+  {
+    "path": "docs/waves/MAINTENANCE_WORK_ITEMS.md",
+    "ciFilters": ["compliance", "docs_portal"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": "docs/ci/CI_SETUP.md",
+    "ciFilters": ["docs_portal"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": "marketing-site/src/pages/index.astro",
+    "ciFilters": ["marketing_site"],
+    "transportSmoke": false,
+    "nativeE2e": false,
+    "securityImages": false
+  },
+  {
+    "path": "Makefile",
+    "ciFilters": [],
+    "transportSmoke": true,
+    "nativeE2e": true,
+    "securityImages": false
+  }
+]

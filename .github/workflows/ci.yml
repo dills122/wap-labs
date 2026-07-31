@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   NODE_VERSION: '22'
   GO_VERSION: '1.25'
@@ -57,9 +61,11 @@ jobs:
           filters: |
             ci:
               - ".github/workflows/**"
+              - ".nvmrc"
               - "VERSION"
               - "package.json"
               - "pnpm-lock.yaml"
+              - "pnpm-workspace.yaml"
               - "scripts/check-release-version.mjs"
               - "scripts/release-version-lib.mjs"
               - "scripts/set-release-version.mjs"
@@ -86,6 +92,7 @@ jobs:
               - "browser/contracts/transport.ts"
             host_sample:
               - "engine-wasm/host-sample/**"
+              - "engine-wasm/contracts/**"
               - "engine-wasm/engine/**"
               - "engine-wasm/examples/**"
               - "engine-wasm/pkg/**"
@@ -103,6 +110,7 @@ jobs:
               - "pnpm-workspace.yaml"
             browser_shell:
               - "browser/**"
+              - "engine-wasm/contracts/**"
               - "engine-wasm/engine/**"
               - "transport-rust/**"
               - "browser/contracts/**"
@@ -134,6 +142,18 @@ jobs:
       - name: Install root Node deps
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      - name: Git whitespace check
+        run: git diff --check
+
+      - name: Release version consistency check
+        run: pnpm run version:check
+
+      - name: Active documentation links and anchors
+        run: pnpm run docs:check
+
+      - name: Canonical verification orchestration tests
+        run: pnpm run verify:test
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4 # stable
 
@@ -164,12 +184,6 @@ jobs:
       - name: Generate host-sample example manifest
         run: pnpm --dir engine-wasm/host-sample run examples:generate
 
-      - name: Git whitespace check
-        run: git diff --check
-
-      - name: Release version consistency check
-        run: pnpm run version:check
-
       - name: Docling provenance strict check
         run: pnpm run docling:check
 
@@ -187,9 +201,6 @@ jobs:
 
       - name: Networking profile gate check
         run: node scripts/check-networking-profile-gates.mjs
-
-      - name: Canonical verification orchestration tests
-        run: pnpm run verify:test
 
       - name: Local Compose security contract
         run: node --test scripts/tests/local-compose-security.test.mjs

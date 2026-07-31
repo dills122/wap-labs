@@ -14,6 +14,8 @@ on:
       - 'engine-wasm/contracts/**'
       - 'engine-wasm/engine/**'
       - 'gateway-kannel/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - 'scripts/lib/run-and-tee.sh'
       - 'scripts/tests/transport-wap-smoke-status.sh'
       - 'scripts/transport-wap-smoke.sh'
@@ -24,9 +26,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: transport-wap-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   NODE_VERSION: '22.22.1'
   RUST_SHARED_KEY: wavenav-rust
+  KANNEL_IMAGE: wap-labs/kannel:ci-development
+  WML_SERVER_IMAGE: wap-labs/wml-server:ci-development
+  WAP_GATEWAY_IMAGE: wap-labs/wap-gateway:production-ci
+  WML_ORIGIN_IMAGE: wap-labs/wml-origin:production-ci
   TRANSPORT_WAP_SMOKE_ARTIFACT_DIR: ${{ github.workspace }}/test-results/transport-wap-smoke
   WML_DTD_VERSION: '1.3'
 
@@ -41,8 +51,44 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build cached Kannel development image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: docker/kannel
+          target: development
+          load: true
+          tags: ${{ env.KANNEL_IMAGE }}
+          cache-from: type=gha,scope=kannel-development
+          cache-to: type=gha,mode=max,scope=kannel-development
+
+      - name: Build cached WML origin image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: wml-server
+          load: true
+          tags: |
+            ${{ env.WML_SERVER_IMAGE }}
+            ${{ env.WML_ORIGIN_IMAGE }}
+          cache-from: type=gha,scope=wml-server-development
+          cache-to: type=gha,mode=max,scope=wml-server-development
+
+      - name: Build cached Kannel production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: docker/kannel
+          target: production
+          load: true
+          tags: ${{ env.WAP_GATEWAY_IMAGE }}
+          cache-from: |
+            type=gha,scope=kannel-development
+            type=gha,scope=kannel-production
+          cache-to: type=gha,mode=max,scope=kannel-production
+
       - name: Start Kannel + WML stack
-        run: docker compose up -d --build kannel wml-server
+        run: docker compose up -d --no-build kannel wml-server
 
       - name: Install Linux Tauri build dependencies
         run: |
@@ -87,17 +133,13 @@ jobs:
       - name: Stop development stack before production validation
         run: docker compose down
 
-      - name: Build and start sealed production topology
+      - name: Start sealed production topology
         env:
           WAVES_SECRETS_DIR: ${{ runner.temp }}/waves-production-secrets
-          WML_ORIGIN_IMAGE: wap-labs/wml-origin:production-ci
-          WAP_GATEWAY_IMAGE: wap-labs/wap-gateway:production-ci
         run: |
           install -d -m 0700 "${WAVES_SECRETS_DIR}"
           printf '%064d\n' 0 >"${WAVES_SECRETS_DIR}/kannel-admin-password"
           printf '%064d\n' 1 >"${WAVES_SECRETS_DIR}/kannel-status-password"
-          docker build --tag "${WML_ORIGIN_IMAGE}" wml-server
-          docker build --target production --tag "${WAP_GATEWAY_IMAGE}" docker/kannel
           docker compose -f deploy/network-preview/compose.yaml up --detach --wait
 
       - name: Verify production WAP path and port publication
@@ -115,13 +157,22 @@ jobs:
           WAP_SMOKE_DENIED_URL: wap://127.0.0.1:9200/
         run: |
           test "$(docker compose -f deploy/network-preview/compose.yaml port --protocol udp wap-gateway 9200 | wc -l)" -eq 1
-          ! docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13000
-          ! docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13002
+          if docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13000; then
+            echo "production topology unexpectedly published the Kannel admin port" >&2
+            exit 1
+          fi
+          if docker compose -f deploy/network-preview/compose.yaml port wap-gateway 13002; then
+            echo "production topology unexpectedly published the Kannel box port" >&2
+            exit 1
+          fi
           cd transport-rust
           cargo test --test kannel_smoke -- --ignored --test-threads=1
           cd ..
           docker compose -f deploy/network-preview/compose.yaml logs --no-color >"${RUNNER_TEMP}/waves-production.log"
-          ! grep -Eq '[0-9a-f]{64}' "${RUNNER_TEMP}/waves-production.log"
+          if grep -Eq '[0-9a-f]{64}' "${RUNNER_TEMP}/waves-production.log"; then
+            echo "production logs contained a secret-shaped value" >&2
+            exit 1
+          fi
 
       - name: Dump service logs on failure
         if: failure()

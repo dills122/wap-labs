@@ -6,10 +6,19 @@ on:
     paths:
       - '.github/workflows/native-tauri-kannel-e2e.yml'
       - 'Makefile'
+      - 'browser/contracts/**'
       - 'browser/frontend/package.json'
       - 'browser/frontend/scripts/native-tauri-kannel-e2e.mjs'
       - 'browser/frontend/src/**'
+      - 'browser/src-tauri/**'
+      - 'docker-compose.yml'
+      - 'docker/kannel/**'
+      - 'engine-wasm/contracts/**'
+      - 'engine-wasm/engine/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - 'scripts/native-tauri-kannel-e2e.sh'
+      - 'transport-rust/**'
       - 'wml-server/**'
   schedule:
     - cron: '17 5 * * 1'
@@ -18,9 +27,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: native-tauri-kannel-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   NODE_VERSION: '22.22.1'
   RUST_BROWSER_KEY: wavenav-browser-native-e2e
+  TAURI_CLI_VERSION: '2.10.0'
+  TAURI_DRIVER_VERSION: '2.0.6'
+  KANNEL_IMAGE: wap-labs/kannel:ci-development
+  WML_SERVER_IMAGE: wap-labs/wml-server:ci-development
   NATIVE_E2E_ARTIFACT_DIR: ${{ github.workspace }}/browser/frontend/test-results/native-tauri-kannel
 
 jobs:
@@ -33,6 +50,28 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build cached Kannel development image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: docker/kannel
+          target: development
+          load: true
+          tags: ${{ env.KANNEL_IMAGE }}
+          cache-from: type=gha,scope=kannel-development
+          cache-to: type=gha,mode=max,scope=kannel-development
+
+      - name: Build cached WML origin image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: wml-server
+          load: true
+          tags: ${{ env.WML_SERVER_IMAGE }}
+          cache-from: type=gha,scope=wml-server-development
+          cache-to: type=gha,mode=max,scope=wml-server-development
 
       - name: Install Linux Tauri WebDriver dependencies
         run: |
@@ -70,12 +109,29 @@ jobs:
             engine-wasm/engine -> target
             transport-rust -> target
 
-      - name: Install pinned Tauri CLI and WebDriver bridge
+      - name: Cache pinned Tauri tools
+        id: cache-tauri-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.cargo/bin/cargo-tauri
+            ~/.cargo/bin/tauri-driver
+          key: ${{ runner.os }}-${{ runner.arch }}-tauri-tools-${{ env.TAURI_CLI_VERSION }}-${{ env.TAURI_DRIVER_VERSION }}
+
+      - name: Install pinned Tauri CLI and WebDriver bridge on cache miss
+        if: steps.cache-tauri-tools.outputs.cache-hit != 'true'
         run: |
-          cargo install tauri-cli --version 2.10.0 --locked
-          cargo install tauri-driver --version 2.0.6 --locked
+          cargo install tauri-cli --version "${TAURI_CLI_VERSION}" --locked
+          cargo install tauri-driver --version "${TAURI_DRIVER_VERSION}" --locked
+
+      - name: Verify pinned Tauri tools
+        run: |
+          cargo tauri --version | grep -F "${TAURI_CLI_VERSION}"
+          tauri-driver --version | grep -F "${TAURI_DRIVER_VERSION}"
 
       - name: Run native Tauri/Kannel UI pilot
+        env:
+          NATIVE_E2E_PREBUILT_IMAGES: '1'
         run: xvfb-run -a make smoke-native-tauri-kannel-ui
 
       - name: Upload native E2E diagnostics

@@ -11,7 +11,45 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  SYFT_VERSION: '1.44.0'
+  GRYPE_VERSION: '0.112.0'
+
 jobs:
+  changes:
+    name: Classify Security Paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      full_security: ${{ steps.scope.outputs.full_security }}
+      network_preview_images: ${{ steps.filter.outputs.network_preview_images }}
+    steps:
+      - name: Determine security scope
+        id: scope
+        env:
+          FULL_SECURITY: ${{ github.event_name != 'pull_request' }}
+        run: echo "full_security=${FULL_SECURITY}" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Detect image-affecting changes
+        id: filter
+        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4
+        with:
+          filters: |
+            network_preview_images:
+              - ".github/workflows/security.yml"
+              - "deploy/network-preview/**"
+              - "docker/kannel/**"
+              - "wml-server/**"
+
   dependency-review:
     name: Dependency Review
     if: ${{ github.event_name == 'pull_request' }}
@@ -113,6 +151,8 @@ jobs:
 
   network-preview-images:
     name: Network Preview Image Audit
+    needs: [changes]
+    if: ${{ needs.changes.outputs.full_security == 'true' || needs.changes.outputs.network_preview_images == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -127,15 +167,49 @@ jobs:
           go-version: '1.25'
           cache: false
 
-      - name: Install pinned Syft and Grype
-        run: |
-          go install github.com/anchore/syft/cmd/syft@v1.44.0
-          go install github.com/anchore/grype/cmd/grype@v0.112.0
+      - name: Cache pinned image audit tools
+        id: cache-image-audit-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/go/bin/syft
+            ~/go/bin/grype
+          key: ${{ runner.os }}-${{ runner.arch }}-image-audit-tools-${{ env.SYFT_VERSION }}-${{ env.GRYPE_VERSION }}
 
-      - name: Build production images
+      - name: Install pinned Syft and Grype on cache miss
+        if: steps.cache-image-audit-tools.outputs.cache-hit != 'true'
         run: |
-          docker build --tag wap-labs/wml-origin:security wml-server
-          docker build --target production --tag wap-labs/wap-gateway:security docker/kannel
+          go install "github.com/anchore/syft/cmd/syft@v${SYFT_VERSION}"
+          go install "github.com/anchore/grype/cmd/grype@v${GRYPE_VERSION}"
+
+      - name: Verify pinned image audit tools
+        run: |
+          syft version | grep -F "${SYFT_VERSION}"
+          grype version | grep -F "${GRYPE_VERSION}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Build cached WML origin production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: wml-server
+          load: true
+          tags: wap-labs/wml-origin:security
+          cache-from: type=gha,scope=wml-server-development
+          cache-to: type=gha,mode=max,scope=wml-server-development
+
+      - name: Build cached Kannel production image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: docker/kannel
+          target: production
+          load: true
+          tags: wap-labs/wap-gateway:security
+          cache-from: |
+            type=gha,scope=kannel-development
+            type=gha,scope=kannel-production
+          cache-to: type=gha,mode=max,scope=kannel-production
 
       - name: Scan high and critical vulnerabilities
         run: |

@@ -354,6 +354,46 @@ Completed maintenance tickets are archived in:
 - A bounded WBXML regression covers 50 timer ticks, state/history preservation, notification
   deduplication, explicit retry, distinct-intent admission, and successful recovery.
 
+### M1-27 CI maintenance audit and deterministic documentation checks (2026-07-30)
+
+1. `Status`: `done`
+2. `Priority`: `P1`
+3. `Depends On`: `M0-09`
+4. `Files`:
+- `.github/workflows/ci.yml`
+- `.github/workflows/security.yml`
+- `.github/workflows/transport-wap-smoke.yml`
+- `.github/workflows/native-tauri-kannel-e2e.yml`
+- `scripts/check-active-doc-links.mjs`
+- `scripts/tests/ci-path-routing.test.mjs`
+- `docs/ci/CI_MAINTENANCE.md`
+5. `Finding`:
+- Recent Actions evidence put the native Kannel pilot at a 15m44s median, transport smoke at
+  10m13s, and Security at 11m33s. Rebuilding patched Kannel from source, reinstalling pinned tools,
+  and running the optional image scan on unrelated PRs dominated those paths.
+- Active Markdown had schema/drift coverage but no deterministic repository-file and anchor check;
+  applying Prettier globally would introduce 2,292 unrelated file rewrites.
+6. `Build`:
+- Add content-addressed BuildKit caches, exact pinned-tool caches with version verification,
+  PR-only supersession cancellation, optional image-audit selection, and contract-routing fixtures.
+- Add an offline active-document file/anchor checker that excludes archives and dated historical
+  snapshots by policy.
+7. `Tests`:
+- `pnpm docs:check`
+- `pnpm verify:test`
+- `actionlint -ignore 'constant expression "false"' .github/workflows/*.yml`
+- `sh -n scripts/native-tauri-kannel-e2e.sh`
+- `shellcheck scripts/native-tauri-kannel-e2e.sh`
+8. `Accept`:
+- Authentic Kannel/WBXML, native UI, diagnostic artifact, and teardown coverage remains intact.
+- Required contexts still report; optional image scans remain mandatory for affected PRs and every
+  push to `main`.
+- Cache invalidation is explicit and no secret, runtime state, or test result is cached.
+9. `Resolution`:
+- The focused maintenance batch and measured baseline are documented in
+  `docs/ci/CI_MAINTENANCE.md`; warm-run timing remains a post-PR evidence update rather than an
+  assumed result.
+
 ### M1-03 Engine API generator design and bootstrap (non-priority)
 
 1. `Status`: `todo`

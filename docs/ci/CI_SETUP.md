@@ -18,6 +18,7 @@ This document describes all active GitHub Actions automation for this repository
 - Canonical local verification contract: `docs/ci/LOCAL_VERIFICATION.md`
 - Dependency updates: `.github/dependabot.yml`
 - Branch protection check policy: `docs/ci/REQUIRED_CHECKS.md`
+- Active automation inventory, timing baseline, and cache policy: `docs/ci/CI_MAINTENANCE.md`
 
 ## Workflows
 
@@ -45,10 +46,13 @@ Core behavior:
 - Runs the complete compliance wrapper, including active requirement/status drift, when
   compliance inputs or CI surfaces change and on full-matrix events.
 - Reports the stable aggregate check `CI Required Gate`.
+- Cancels superseded pull-request runs while preserving push-to-main and manual coverage.
 - Keeps PR validation read-only, does not persist checkout credentials for later build steps, and
   does not expose a write token or repository secrets to checked-out PR code.
 - Sets explicit job timeouts so a hung build or dependency cannot consume the default six-hour
   GitHub-hosted runner window.
+- Runs deterministic active-document file and anchor checks before Rust/WASM setup, and routes
+  engine contract changes through the host-sample and browser-shell consumers.
 
 Jobs:
 
@@ -235,6 +239,10 @@ Triggers:
 
 Jobs:
 
+- `Classify Security Paths`
+  - selects the optional image audit for WML-origin, Kannel, production-topology, or workflow
+    changes on pull requests
+  - forces the image audit on every push to `main`, weekly schedule, and manual run
 - `Dependency Review`
   - PR-only
   - read-only; it does not post PR comments
@@ -248,12 +256,18 @@ Jobs:
   - runs `pnpm audit --audit-level high`
 - `Go Vulnerability Audit`
   - runs pinned `govulncheck` against the WML origin and selected Go standard library
+- `Network Preview Image Audit`
+  - scans affected PRs plus every `main`, scheduled, and manual run
+  - restores exact-version Syft/Grype binaries and content-addressed BuildKit production layers
+  - still emits run-scoped CycloneDX SBOM artifacts and fails on high vulnerabilities
 
 Caching:
 
 - Rust build artifact cache for audit crates
 - pnpm cache for workspace audit
 - Go build and module cache for the WML origin audit
+- exact OS/architecture/version caches for Syft and Grype, verified after restore
+- target-separated BuildKit GHA caches for the production WML and Kannel images
 
 ### 4) Release Prepare (`.github/workflows/release-prepare.yml`)
 
@@ -365,7 +379,9 @@ Triggers:
 
 Behavior:
 
-- starts Docker services (`kannel`, `wml-server`)
+- builds development and sealed-production images through full-SHA-pinned BuildKit actions,
+  restores target-specific GHA layer caches, and starts only the explicitly loaded tags
+- starts Docker services (`kannel`, `wml-server`) without rebuilding the loaded images
 - serves WML 1.3 through an explicit test-only DTD setting; the server default remains WML 1.1
 - fetches the example directory plus the Pocket Portal, Local Preferences, and Interop Wire Check
   routes through Kannel; verifies `application/vnd.wap.wmlc`, the raw `03 0a` WBXML
@@ -385,7 +401,7 @@ Behavior:
 This is a relevant-PR signal, but it is not a globally required context because workflow-level
 path filters mean the check correctly does not exist on unrelated pull requests.
 
-### 8) Native Tauri Kannel E2E (`.github/workflows/native-tauri-kannel-e2e.yml`)
+### 9) Native Tauri Kannel E2E (`.github/workflows/native-tauri-kannel-e2e.yml`)
 
 Purpose:
 
@@ -394,16 +410,19 @@ Purpose:
 
 Triggers:
 
-- `pull_request` only when the pilot workflow, runner, Selenium client, package declaration, or
-  Make target itself changes; this bootstraps executable validation without claiming general
-  browser/transport PR coverage
+- `pull_request` when the engine, shared contracts, transport, Tauri host, native UI pilot,
+  Kannel/WML services, Compose topology, or workspace lockfiles traversed by the pilot change
 - weekly schedule (`17 5 * * 1`)
 - `workflow_dispatch`
 
 Behavior:
 
 - installs the Linux WebKit WebDriver and Xvfb dependencies documented by Tauri
-- installs pinned `tauri-cli` 2.10.0 and `tauri-driver` 2.0.6
+- restores pinned `tauri-cli` 2.10.0 and `tauri-driver` 2.0.6 binaries from an exact
+  OS/architecture/version cache independent of product Rust lockfiles, installs on an exact-key
+  miss, and verifies both reported versions
+- restores content-addressed Kannel/WML BuildKit layers and starts only the explicitly loaded
+  development image tags
 - builds the production frontend and an unbundled debug Tauri application
 - starts Kannel and the WML server, then opts into local/private access only with the existing
   `WAVES_FETCH_DESTINATION_POLICY=allow-private` host boundary
@@ -548,4 +567,7 @@ When changing CI:
 3. Update `docs/ci/RELEASE_BRANCH_RULESET.md` when release branch governance changes.
 4. Update `docs/releases/VERSIONING.md` when versioning semantics or release cadence changes.
 5. Update this document when behavior/triggers/caches change.
-6. Validate with at least one PR run after merge.
+6. Run `pnpm docs:check`, `pnpm verify:test`, `actionlint`, `sh -n`, and `shellcheck` for the
+   workflow/scripts touched.
+7. Validate with at least one PR run after merge and update `docs/ci/CI_MAINTENANCE.md` when the
+   critical-path evidence changes materially.

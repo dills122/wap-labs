@@ -1,5 +1,6 @@
 services:
   wml-server:
+    image: "${WML_SERVER_IMAGE:-wap-labs/wml-server:development}"
     build:
       context: ./wml-server
       dockerfile: Dockerfile
@@ -19,6 +20,7 @@ services:
       - "127.0.0.1:3001:3001"
 
   kannel:
+    image: "${KANNEL_IMAGE:-wap-labs/kannel:development}"
     build:
       context: ./docker/kannel
       dockerfile: Dockerfile
