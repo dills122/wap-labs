@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { bindDeveloperToolsHost } from './developer-tools-bridge';
 import type { DeveloperToolsState } from './developer-tools-workspace';
 import { developerDrawerTemplate } from './shell/developer-drawer-template';
+import { EngineDebugStore } from './engine-debug-store';
+import { buildEngineDebugInspectorViewModel } from './engine-debug-view-model';
 
 class TestBroadcastChannel extends EventTarget {
   static channels: TestBroadcastChannel[] = [];
@@ -87,6 +89,51 @@ describe('Developer Tools browser bridge', () => {
     detached.postMessage({ type: 'action', action: { action: 'health' } });
 
     expect(healthClick).toHaveBeenCalledOnce();
+    bridge.dispose();
+    detached.close();
+  });
+
+  it('publishes projected Inspector state and relays validated read-only actions', () => {
+    const root = document.querySelector<HTMLElement>('#developer-tools-workspace');
+    if (!root) throw new Error('missing workspace in test fixture');
+    const onInspectorAction = vi.fn();
+    const bridge = bindDeveloperToolsHost({
+      root,
+      getState: () => state,
+      onError: vi.fn(),
+      onInspectorAction
+    });
+    const detached = new TestBroadcastChannel('waves-developer-tools');
+    const received: unknown[] = [];
+    detached.addEventListener('message', (event) => received.push((event as MessageEvent).data));
+    const inspectorState = buildEngineDebugInspectorViewModel(new EngineDebugStore().getState());
+
+    detached.postMessage({ type: 'ready' });
+    bridge.publishInspector(inspectorState);
+    detached.postMessage({
+      type: 'inspector-action',
+      inspectorAction: { type: 'filter', group: 'script', query: 'invoke' }
+    });
+    detached.postMessage({
+      type: 'inspector-action',
+      inspectorAction: { type: 'visibility', surface: 'remote', visible: true }
+    });
+    detached.postMessage({ type: 'closed' });
+
+    expect(received).toContainEqual({
+      type: 'inspector-state',
+      inspectorState
+    });
+    expect(onInspectorAction).toHaveBeenNthCalledWith(1, {
+      type: 'filter',
+      group: 'script',
+      query: 'invoke'
+    });
+    expect(onInspectorAction).toHaveBeenNthCalledWith(2, {
+      type: 'visibility',
+      surface: 'window',
+      visible: false
+    });
     bridge.dispose();
     detached.close();
   });

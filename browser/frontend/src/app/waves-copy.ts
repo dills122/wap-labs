@@ -109,6 +109,38 @@ const locale = {
     nextCard: 'You are on the next card.',
     home: 'Go home'
   },
+  inspector: {
+    tab: 'Inspector',
+    title: 'Engine Inspector',
+    description: 'Bounded, local, read-only engine events and snapshots.',
+    start: 'Start Inspector',
+    stop: 'Stop',
+    hostPolicy: 'Host policy',
+    disabledByDefault: 'Disabled by default',
+    session: 'Session',
+    off: 'Off',
+    defaultDisabledDetail:
+      'Read-only and disabled by default. Starting requires the local host policy at launch.',
+    captureControls: 'Inspector capture controls',
+    eventGroup: 'Event group',
+    filter: 'Filter retained events',
+    filterPlaceholder: 'Sequence, kind, card, or value',
+    refreshSnapshot: 'Refresh Snapshot',
+    exportCapture: 'Export Capture',
+    inspectorOff: 'Inspector off.',
+    accounting: 'Inspector capacity and gap accounting',
+    matching: 'matching',
+    producerGaps: 'producer gaps',
+    frontendDrops: 'frontend drops',
+    eventStream: 'Event stream',
+    eventDescription:
+      'Ordered only by the engine sequence cursor; newest bounded rows remain visible.',
+    noEvents: 'No retained events.',
+    noMatchingEvents: 'No retained events match the current filter.',
+    engineDebugEvents: 'Engine debug events',
+    boundedSnapshot: 'Bounded snapshot',
+    noSnapshot: 'No snapshot captured'
+  },
   statusPrefix: {
     error: 'Error:',
     fetchFailed: 'Fetch failed:',
@@ -157,6 +189,7 @@ const locale = {
     developerToolsHidden: 'Developer tools hidden.',
     developerToolsWindowFailed: (message: string) =>
       `Developer tools window could not open. ${message}`,
+    developerToolsInspectorStateFailed: 'Inspector state could not be sent to the detached window.',
     keyboard: (key: string) => `Keyboard: ${key}`,
     keyboardBackEngine: 'Keyboard: back (engine history)',
     keyboardBackBrowser: 'Keyboard: back (browser history)',

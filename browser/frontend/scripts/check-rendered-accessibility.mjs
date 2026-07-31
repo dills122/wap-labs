@@ -89,7 +89,7 @@ const assertDeveloperToolsPanelContainment = async (
       })
     : null;
   const evidence = [];
-  for (const tabId of ['overview', 'transport', 'runtime', 'timeline', 'source']) {
+  for (const tabId of ['overview', 'transport', 'runtime', 'inspector', 'timeline', 'source']) {
     await activateDeveloperToolsTab(page, tabId);
     const metrics = await page.locator(`#devtools-panel-${tabId}`).evaluate((panel) => {
       const panelRect = panel.getBoundingClientRect();

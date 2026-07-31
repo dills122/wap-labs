@@ -2062,7 +2062,7 @@ Reference plan:
 
 ### D0-04 Browser debug panel and capture workflow
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `D0-03`
 3. `Owner`: `browser`
 4. `Files`:
@@ -2092,7 +2092,17 @@ Reference plan:
 
 9. `Notes`:
 
-- if UI scope threatens active lane capacity, ship as follow-up after `D0-03`
+- implemented as a read-only Inspector in the existing docked/detached Developer Tools workspace;
+  no presenter, host-history, engine input/layout, generated-contract, or runtime-control surface
+  changed
+- frontend retention is capped at 512 projected events, rendered results at 200 rows, snapshot
+  collections at 128 variables/32 timers, filter queries at 80 characters, and exports at 256 KiB
+- export reconstructs a versioned allowlist and excludes session ids, credentials, request bodies,
+  raw WML/source, arbitrary errors, and masked original values
+- lifecycle tests cover disabled policy, open/poll/snapshot/close, session limit, cursor gaps,
+  errors, close/reopen, hidden polling pause, unmount cleanup, capacity pressure, secret canaries,
+  keyboard interaction, and accessibility; operational details are in
+  `browser/ENGINE_DEBUG_INSPECTOR.md`
 
 ## Phase U: User Onboarding + Help Experience (Planning-Ready)
 

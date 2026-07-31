@@ -69,8 +69,8 @@ The foundations required for application-quality work now exist:
    hybrid history, stable navigation coordination, and a collapsed diagnostic drawer.
 4. A private first-party WAP preview deployment and deterministic origin exist, although public
    publication remains gated.
-5. The debug connector contract is generated and bounded, although its recorder, host lifecycle,
-   and UI remain unimplemented.
+5. The generated bounded debug connector, engine recorder, host lifecycle, and read-only Inspector
+   capture workflow are implemented; external tools and mutable debugger capabilities remain later.
 
 These foundations make it possible to add application features without inventing parallel WML or
 transport behavior in the frontend.
@@ -83,7 +83,7 @@ transport behavior in the frontend.
 | Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface       |
 | Runtime path     | Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication | F2 pointer/scroll/softkey cutover and final legacy-path removal                                              |
 | History          | In-memory engine card history plus request-shaped host deck history                                                                                                          | Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (`#450`) |
-| Diagnostics      | Safe allowlisted timeline/export projection plus bounded, masked D0-02 engine events/snapshots and default-disabled D0-03 host sessions                                      | D0-04 Inspector consumption, filters, capture UX, and controlled replay                                      |
+| Diagnostics      | Safe timeline projection plus bounded, masked D0-02 events/snapshots, D0-03 host sessions, and the D0-04 read-only Inspector/capture workflow                                | External tooling and any separately designed controlled replay                                               |
 | Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                    |
 | Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                            |
 | Public services  | Private exact-host deployment, deterministic first-party origin, safe Favorites/service-catalog domain, and publication-state model                                          | Public authorization, guided entry, external verification, and desktop release gates remain open             |
@@ -630,7 +630,8 @@ Before feature UI begins:
 3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
    window restore, and local/GET-safe recovery remain.
 4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.
-5. Safe timeline/export projection is complete in PR `#532`; add the D0-04 Inspector consumer.
+5. Safe timeline/export projection is complete in PR `#532`; the D0-04 Inspector consumer adds a
+   separately versioned bounded engine capture.
 6. Shared native commands and platform shortcuts are complete in PR `#523`.
 7. Complete public-lab desktop profile/resource separation and guided safety messaging only after
    its publication dependencies authorize them.
@@ -638,7 +639,8 @@ Before feature UI begins:
 
 ### 8.3 Phase B: next application-quality increment
 
-- complete `D0-04` on the landed D0-02/D0-03 source and host bridge for the WAP Inspector;
+- preserve the completed D0-02 through D0-04 read-only Inspector path while deferring external and
+  mutable debugger capabilities;
 - add visible searchable history with explicit retention after `#450`;
 - complete Favorites import/export UX;
 - add broader Developer/Diagnostic preferences and redaction controls;
