@@ -6,6 +6,7 @@ import type {
 import {
   ENGINE_VIEWPORT_RANGE,
   type EngineFrame,
+  type EngineInputEvent,
   type EngineKey,
   type EngineRuntimeSnapshot
 } from '../../../contracts/engine';
@@ -32,6 +33,7 @@ import {
 } from './local-examples';
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
+import { canvasPointerToEngineCoordinates } from './canvas-viewport-renderer';
 
 export type RunMode = 'local' | 'network';
 
@@ -50,6 +52,7 @@ export class BrowserController {
   private readonly presenter: BrowserPresenter;
 
   private readonly refs: BrowserShellRefs;
+  private readonly viewportCanvas: HTMLCanvasElement;
 
   private readonly navigation: ReturnType<typeof createNavigationStateMachine>;
   private readonly startupProbe: StartupNetworkProbeController;
@@ -80,11 +83,18 @@ export class BrowserController {
   // true whenever a forward card change is observed while in local mode.
   private localBackAvailable = false;
   private pendingLocalTimerFrame: { generation: number; frame: EngineFrame } | undefined;
+  private committedFrame: EngineFrame | undefined;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
     this.presenter = presenter;
     this.refs = refs;
+    const viewportCanvas =
+      refs.viewportCanvasEl ?? refs.viewportEl.querySelector<HTMLCanvasElement>('.viewport-canvas');
+    if (!viewportCanvas) {
+      throw new Error('Viewport canvas is unavailable');
+    }
+    this.viewportCanvas = viewportCanvas;
     this.lastNetworkUrl = refs.fetchUrlInput.value.trim() || defaultStartUrl();
     this.navigation = createNavigationStateMachine(
       this.hostClient,
@@ -290,6 +300,7 @@ export class BrowserController {
     this.populateLocalExampleOptions();
     this.renderActiveLocalExampleNotes();
     this.shellEventBindings.bind();
+    this.viewportCanvas.addEventListener('click', this.handleViewportClick);
     this.timerRuntime.start();
     this.presenter.setBootPhase('engine-ready');
     const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
@@ -301,6 +312,7 @@ export class BrowserController {
     void this.navigation.cancelPendingNavigation();
     this.timerRuntime.stop();
     this.shellEventBindings.unbind();
+    this.viewportCanvas.removeEventListener('click', this.handleViewportClick);
     this.presenter.dispose();
   }
 
@@ -475,6 +487,13 @@ export class BrowserController {
   private readonly handleKeyButtonPress = async (key: EngineKey): Promise<void> => {
     this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
     await this.applyEngineKey(key);
+  };
+
+  private readonly handleViewportClick = (event: MouseEvent): void => {
+    if (event.button !== 0) {
+      return;
+    }
+    void this.withAction('viewport-click', async () => this.applyEngineClick(event))();
   };
 
   // ---------------------------------------------------------------------
@@ -734,6 +753,41 @@ export class BrowserController {
     };
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
+    await this.applyEngineMutation(
+      () => this.hostClient.engineHandleKeyFrame({ key }),
+      () => this.navigation.applyEngineKey(key)
+    );
+  }
+
+  private async applyEngineClick(event: MouseEvent): Promise<void> {
+    const committedFrame = this.committedFrame;
+    if (!committedFrame) {
+      return;
+    }
+    const coordinates = canvasPointerToEngineCoordinates(
+      this.viewportCanvas,
+      this.refs.viewportEl,
+      event.clientX,
+      event.clientY
+    );
+    if (!coordinates) {
+      return;
+    }
+    const input: EngineInputEvent = {
+      type: 'click',
+      frameId: committedFrame.presentation.frameId,
+      ...coordinates
+    };
+    await this.applyEngineMutation(
+      () => this.hostClient.engineHandleInputFrame({ event: input }),
+      () => this.navigation.applyEngineInput(input)
+    );
+  }
+
+  private async applyEngineMutation(
+    mutateLocal: () => Promise<EngineFrame>,
+    mutateNetwork: () => Promise<EngineRuntimeSnapshot | null>
+  ): Promise<void> {
     if (this.navigation.isNavigationInFlight()) {
       return;
     }
@@ -743,9 +797,8 @@ export class BrowserController {
     let localFrame: EngineFrame | null;
     let snapshot: EngineRuntimeSnapshot | null;
     try {
-      localFrame =
-        startingRunMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
-      snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
+      localFrame = startingRunMode === 'local' ? await mutateLocal() : null;
+      snapshot = localFrame ? localFrame.snapshot : await mutateNetwork();
     } catch (error) {
       if (
         this.runMode !== startingRunMode ||
@@ -941,6 +994,7 @@ export class BrowserController {
   }
 
   private applyFrame(frame: EngineFrame): void {
+    this.committedFrame = frame;
     this.presenter.setSnapshot(frame.snapshot);
     this.presenter.drawRenderList(frame.render);
   }

@@ -1,4 +1,4 @@
-import { bootWmlEngine } from './renderer';
+import { bootWmlEngine, canvasClickInput } from './renderer';
 import { EXAMPLES } from '../examples/generated/examples';
 import type { EngineSnapshot } from './renderer';
 import { mapKeyboardKey } from './utils/keyboard';
@@ -25,6 +25,7 @@ declare global {
     __WAVENAV_STORY_EVIDENCE__?: {
       collect(): StoryEvidence;
       activateAction(actionId: string): void;
+      click(x: number, y: number): void;
     };
   }
 }
@@ -214,6 +215,13 @@ async function main() {
       const snapshot = updateRuntimeState();
       status.textContent = `Activated ${actionId}. Active card: ${snapshot.activeCardId}`;
       appendEvent(`ACTIVATE_ACTION (${actionId})`, snapshot);
+    },
+    click: (x, y) => {
+      const frame = host.renderFrame();
+      host.handleInput({ type: 'click', frameId: frame.frameId, x, y });
+      const snapshot = updateRuntimeState();
+      status.textContent = `Clicked (${x}, ${y}). Active card: ${snapshot.activeCardId}`;
+      appendEvent(`CLICK (${x},${y})`, snapshot);
     }
   };
 
@@ -309,6 +317,22 @@ async function main() {
   pressUpButton.addEventListener('click', () => pressKey('up'));
   pressDownButton.addEventListener('click', () => pressKey('down'));
   pressEnterButton.addEventListener('click', () => pressKey('enter'));
+  canvas.addEventListener('click', (event) => {
+    try {
+      const input = canvasClickInput(canvas, host.renderFrame(), event.clientX, event.clientY);
+      if (!input) {
+        return;
+      }
+      host.handleInput(input);
+      const snapshot = updateRuntimeState();
+      status.textContent = `Pointer activation applied. Active card: ${snapshot.activeCardId}`;
+      appendEvent(`POINTER CLICK (${input.x},${input.y})`, snapshot);
+    } catch (error) {
+      const snapshot = updateRuntimeState();
+      status.textContent = `Pointer error: ${String(error)}`;
+      appendEvent(`POINTER_ERROR ${String(error)}`, snapshot);
+    }
+  });
   const tickTime = (deltaMs: number, source: 'manual' | 'auto' = 'manual') => {
     try {
       const beforeCardId = host.snapshot().activeCardId;

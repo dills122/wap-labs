@@ -63,6 +63,14 @@ export interface StoryExpectation {
       control: string;
       enabled: true;
     }>;
+    hitRegions?: Array<{
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      actionId: string;
+      targetKind: string;
+    }>;
   };
 }
 
@@ -71,6 +79,7 @@ export type StoryAction =
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
   | { type: 'activate-action'; actionId: string }
+  | { type: 'click'; x: number; y: number }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
@@ -1286,6 +1295,86 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>External intent demo</p>\n    <p>Enter on first link emits host intent only.</p>\n    <p>\n      <a href=\"next.wml?from=home\">Relative external link</a>\n      <br/>\n      <a href=\"https://example.org/absolute\">Absolute external link</a>\n      <br/>\n      <a href=\"#details\">Internal fragment link</a>\n    </p>\n  </card>\n  <card id=\"details\">\n    <p>Fragment navigation still changes active card. <a href=\"#home\">Back home</a></p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "f201DeterministicClickInput",
+    "label": "Deterministic Click Input",
+    "description": "Exercises frame-bound pointer activation through engine-owned logical hit regions.",
+    "goal": "Verify that a host-provided logical click coordinate activates the same link action as keyboard Enter without host-side WML lookup.",
+    "workItems": [
+      "F2-01"
+    ],
+    "specItems": [
+      "WBP-08"
+    ],
+    "testingAc": [
+      "The initial frame exposes one link hit region in engine column/row coordinates.",
+      "Clicking inside that region navigates to the second card.",
+      "The host sends only frame identity and logical coordinates to the engine."
+    ],
+    "flows": [
+      {
+        "id": "frame-bound-click-activates-link",
+        "title": "Engine-owned hit region resolves pointer activation",
+        "target": "host-sample",
+        "workItems": [
+          "F2-01"
+        ],
+        "specItems": [
+          "WBP-08"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "frame": {
+            "contractVersion": 2,
+            "profileId": "class-c-reference",
+            "cardId": "home",
+            "hitRegions": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 4,
+                "height": 1,
+                "actionId": "focus:0",
+                "targetKind": "link"
+              }
+            ],
+            "affordances": [
+              {
+                "actionId": "focus:0",
+                "label": "Open",
+                "source": "focused-link",
+                "control": "primary",
+                "enabled": true
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "click",
+              "x": 0,
+              "y": 0
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#next\">Open</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Pointer activation reached the next card.</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "fieldOpenwave2011Navigation",
@@ -5402,7 +5491,7 @@ export const EXAMPLES: HostExample[] = [
             "focusedLinkIndex": 0
           },
           "frame": {
-            "contractVersion": 1,
+            "contractVersion": 2,
             "profileId": "class-c-reference",
             "cardId": "home",
             "affordances": [
@@ -5446,7 +5535,7 @@ export const EXAMPLES: HostExample[] = [
                 "ACTION_FRAGMENT"
               ],
               "frame": {
-                "contractVersion": 1,
+                "contractVersion": 2,
                 "profileId": "class-c-reference",
                 "cardId": "second",
                 "affordances": [

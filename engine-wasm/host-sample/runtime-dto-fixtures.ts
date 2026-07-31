@@ -5,7 +5,7 @@ import type {
 } from '../contracts/wml-engine';
 
 export const representativeFrameFixture = {
-  contractVersion: 1,
+  contractVersion: 2,
   frameId: 'fixture-frame',
   profileId: 'class-c-reference',
   viewport: { cols: 20 },
@@ -28,6 +28,16 @@ export const representativeFrameFixture = {
           focused: true
         }
       ]
+    }
+  ],
+  hitRegions: [
+    {
+      x: 0,
+      y: 1,
+      width: 4,
+      height: 1,
+      actionId: 'focus:0',
+      targetKind: 'link'
     }
   ],
   focus: { index: 0, focusId: 'focus:0', targetKind: 'link' },

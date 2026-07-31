@@ -103,6 +103,24 @@ async function applyAction(page, action, target) {
     }, action.actionId);
     return;
   }
+  if (action.type === 'click') {
+    const x = Number(action.x);
+    const y = Number(action.y);
+    if (!Number.isInteger(x) || x < 0 || !Number.isInteger(y) || y < 0) {
+      throw new Error('click requires non-negative integer x and y coordinates');
+    }
+    await page.evaluate(
+      ({ clickX, clickY }) => {
+        const bridge = window.__WAVENAV_STORY_EVIDENCE__;
+        if (!bridge?.click) {
+          throw new Error('story evidence click bridge is unavailable');
+        }
+        bridge.click(clickX, clickY);
+      },
+      { clickX: x, clickY: y }
+    );
+    return;
+  }
   if (action.type === 'key') {
     const selector =
       target === 'waves-browser'

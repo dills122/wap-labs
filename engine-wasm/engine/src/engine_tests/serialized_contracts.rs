@@ -22,7 +22,7 @@ fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
     assert_eq!(
         serde_json::to_value(&frame).expect("frame should serialize"),
         json!({
-            "contractVersion": 1,
+            "contractVersion": 2,
             "frameId": frame.frame_id,
             "profileId": "class-c-reference",
             "viewport": { "cols": 20 },
@@ -36,6 +36,7 @@ fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
                 "index": 0,
                 "segments": [{ "type": "text", "x": 0, "text": "Home" }]
             }],
+            "hitRegions": [],
             "focus": null,
             "selection": { "type": "none" },
             "affordances": [{
@@ -67,6 +68,20 @@ fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
             "type": "activate-action",
             "frameId": "0123456789abcdef",
             "actionId": "do:open"
+        })
+    );
+    assert_eq!(
+        serde_json::to_value(EngineInputEvent::Click {
+            frame_id: "0123456789abcdef".to_string(),
+            x: 7,
+            y: 3
+        })
+        .expect("click input should serialize"),
+        json!({
+            "type": "click",
+            "frameId": "0123456789abcdef",
+            "x": 7,
+            "y": 3
         })
     );
 }

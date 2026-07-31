@@ -83,6 +83,39 @@ export interface EngineHost {
   getEngine(): WmlEngine;
 }
 
+export const canvasClickInput = (
+  canvas: HTMLCanvasElement,
+  frame: EnginePresentationFrame,
+  clientX: number,
+  clientY: number
+): Extract<EngineInputEvent, { type: 'click' }> | null => {
+  const bounds = canvas.getBoundingClientRect();
+  if (
+    !Number.isFinite(clientX) ||
+    !Number.isFinite(clientY) ||
+    bounds.width <= 0 ||
+    bounds.height <= 0
+  ) {
+    return null;
+  }
+  const localX = clientX - bounds.left;
+  const localY = clientY - bounds.top;
+  if (localX < 0 || localY < 0 || localX >= bounds.width || localY >= bounds.height) {
+    return null;
+  }
+  // The sample canvas paints in backing-store pixels. CSS may scale that
+  // surface, so normalize pointer pixels before translating to the engine's
+  // fixed logical column/row grid.
+  const drawX = (localX * canvas.width) / bounds.width;
+  const drawY = (localY * canvas.height) / bounds.height;
+  return {
+    type: 'click',
+    frameId: frame.frameId,
+    x: Math.floor(drawX / charWidth),
+    y: Math.floor(drawY / lineHeight)
+  };
+};
+
 export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Promise<EngineHost> {
   await init();
 

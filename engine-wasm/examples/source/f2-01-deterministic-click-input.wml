@@ -1,0 +1,22 @@
+<!--
+label: Deterministic Click Input
+work-items: F2-01
+spec-items: WBP-08
+description: Exercises frame-bound pointer activation through engine-owned logical hit regions.
+goal: Verify that a host-provided logical click coordinate activates the same link action as keyboard Enter without host-side WML lookup.
+testing-ac:
+- The initial frame exposes one link hit region in engine column/row coordinates.
+- Clicking inside that region navigates to the second card.
+- The host sends only frame identity and logical coordinates to the engine.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <p><a href="#next">Open</a></p>
+  </card>
+  <card id="next">
+    <p>Pointer activation reached the next card.</p>
+  </card>
+</wml>

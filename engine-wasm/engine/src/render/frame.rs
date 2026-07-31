@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use super::render_list::RenderList;
 
-pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 1;
+pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 2;
 pub const ENGINE_FRAME_PROFILE_ID: &str = "class-c-reference";
 pub const ENGINE_VIEWPORT_MIN_COLS: u32 = 1;
 pub const ENGINE_VIEWPORT_MAX_COLS: u32 = u32::MAX;
@@ -273,6 +273,7 @@ pub struct EnginePresentationFrame {
     pub deck: EngineDeckDisplayMetadata,
     pub card: EngineCardDisplayMetadata,
     pub rows: Vec<EngineFrameRow>,
+    pub hit_regions: Vec<EngineHitRegion>,
     #[cfg_attr(feature = "contract-codegen", ts(optional))]
     pub focus: Option<EngineFocusState>,
     pub selection: EngineSelectionState,
@@ -351,6 +352,27 @@ pub enum EngineFocusTargetKind {
     Link,
     Input,
     Select,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "contract-codegen", derive(ts_rs::TS))]
+#[serde(rename_all = "camelCase")]
+pub struct EngineHitRegion {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+    pub action_id: String,
+    pub target_kind: EngineFocusTargetKind,
+}
+
+impl EngineHitRegion {
+    pub(crate) fn contains(&self, x: u32, y: u32) -> bool {
+        x >= self.x
+            && x < self.x.saturating_add(self.width)
+            && y >= self.y
+            && y < self.y.saturating_add(self.height)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -449,5 +471,11 @@ pub enum EngineInputEvent {
         frame_id: String,
         #[serde(rename = "actionId")]
         action_id: String,
+    },
+    Click {
+        #[serde(rename = "frameId")]
+        frame_id: String,
+        x: u32,
+        y: u32,
     },
 }

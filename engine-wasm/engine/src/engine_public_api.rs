@@ -453,6 +453,24 @@ impl WmlEngine {
             }),
             None => None,
         };
+        let hit_regions = layout
+            .segments
+            .iter()
+            .filter_map(|segment| {
+                segment.focus_index.map(|index| {
+                    let width = u32::try_from(segment.text.chars().count())
+                        .map_err(|_| "Frame hit-region width exceeds contract range".to_string())?;
+                    Ok(EngineHitRegion {
+                        x: segment.x,
+                        y: segment.y,
+                        width,
+                        height: 1,
+                        action_id: format!("focus:{index}"),
+                        target_kind: layout.focus_targets[index].frame_kind(),
+                    })
+                })
+            })
+            .collect::<Result<Vec<_>, String>>()?;
         let selection = focus_index
             .and_then(|index| layout.focus_targets.get(index))
             .map_or(EngineSelectionState::None, |target| match target {
@@ -582,6 +600,7 @@ impl WmlEngine {
                 language: deck.card_language(self.active_card_idx).map(str::to_string),
             },
             rows,
+            hit_regions,
             focus,
             selection,
             back_available: has_prev_do || !self.nav_stack.is_empty(),
@@ -624,13 +643,7 @@ impl WmlEngine {
                 frame_id,
                 action_id,
             } => {
-                let frame = self
-                    .render_output_bounded()
-                    .map_err(|error| error.to_string())?
-                    .presentation;
-                if frame.frame_id != frame_id {
-                    return Err("Engine input references a stale frame".to_string());
-                }
+                let frame = self.input_frame(&frame_id)?;
                 if !frame
                     .affordances
                     .iter()
@@ -638,33 +651,79 @@ impl WmlEngine {
                 {
                     return Err("Engine input references an unavailable action".to_string());
                 }
-                if action_id.starts_with("focus:") {
-                    return self.handle_key_internal("enter");
-                }
-                if action_id == "history:back" {
-                    let handled = self.activate_back_internal();
-                    self.last_back_navigation_handled = handled;
+                self.activate_frame_action(&action_id)
+            }
+            EngineInputEvent::Click { frame_id, x, y } => {
+                let frame = self.input_frame(&frame_id)?;
+                let Some(action_id) = frame
+                    .hit_regions
+                    .iter()
+                    .find(|region| region.contains(x, y))
+                    .map(|region| region.action_id.clone())
+                else {
                     return Ok(());
-                }
-                let name = action_id
-                    .strip_prefix("do:")
-                    .ok_or_else(|| "Engine input references an unknown action".to_string())?;
-                let action = self
-                    .deck
-                    .as_ref()
-                    .and_then(|deck| deck.active_do_action_by_name(self.active_card_idx, name))
-                    .cloned()
-                    .ok_or_else(|| "Engine input references an unavailable action".to_string())?;
-                if name == "accept" {
-                    self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
-                        action_type: "accept".to_string(),
-                        name: Some(name.to_string()),
-                    });
-                }
-                self.push_trace("ACTION_AFFORDANCE", format!("action_id={action_id}"));
-                self.execute_card_task_action(&action)
+                };
+                self.focus_action_for_click(&action_id)?;
+                self.activate_frame_action(&action_id)
             }
         }
+    }
+
+    fn input_frame(&self, frame_id: &str) -> Result<EnginePresentationFrame, String> {
+        let frame = self
+            .render_output_bounded()
+            .map_err(|error| error.to_string())?
+            .presentation;
+        if frame.frame_id != frame_id {
+            return Err("Engine input references a stale frame".to_string());
+        }
+        Ok(frame)
+    }
+
+    fn focus_action_for_click(&mut self, action_id: &str) -> Result<(), String> {
+        let index = action_id
+            .strip_prefix("focus:")
+            .and_then(|index| index.parse::<usize>().ok())
+            .ok_or_else(|| "Engine click references an unavailable hit target".to_string())?;
+        if index == self.focused_link_idx {
+            return Ok(());
+        }
+        if self.active_input_edit.is_some() {
+            self.commit_focused_input_edit_internal()?;
+        }
+        if self.active_select_edit.is_some() {
+            self.commit_focused_select_edit_internal()?;
+        }
+        self.set_focused_link_idx_with_debug(index);
+        Ok(())
+    }
+
+    fn activate_frame_action(&mut self, action_id: &str) -> Result<(), String> {
+        if action_id.starts_with("focus:") {
+            return self.handle_key_internal("enter");
+        }
+        if action_id == "history:back" {
+            let handled = self.activate_back_internal();
+            self.last_back_navigation_handled = handled;
+            return Ok(());
+        }
+        let name = action_id
+            .strip_prefix("do:")
+            .ok_or_else(|| "Engine input references an unknown action".to_string())?;
+        let action = self
+            .deck
+            .as_ref()
+            .and_then(|deck| deck.active_do_action_by_name(self.active_card_idx, name))
+            .cloned()
+            .ok_or_else(|| "Engine input references an unavailable action".to_string())?;
+        if name == "accept" {
+            self.debug_emit_lazy(|| EngineDebugEventPayload::ActionAccept {
+                action_type: "accept".to_string(),
+                name: Some(name.to_string()),
+            });
+        }
+        self.push_trace("ACTION_AFFORDANCE", format!("action_id={action_id}"));
+        self.execute_card_task_action(&action)
     }
 
     /// Navigate directly to a card id and push history.

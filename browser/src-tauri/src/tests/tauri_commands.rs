@@ -75,7 +75,7 @@ fn tauri_frame_command_wrappers_return_snapshot_and_render_together() {
     )
     .expect("frame load should succeed");
     assert_eq!(loaded.snapshot.active_card_id.as_deref(), Some("home"));
-    assert_eq!(loaded.presentation.contract_version, 1);
+    assert_eq!(loaded.presentation.contract_version, 2);
     assert_eq!(loaded.presentation.card.id, "home");
     assert_eq!(loaded.presentation.frame_id.len(), 16);
     assert_eq!(

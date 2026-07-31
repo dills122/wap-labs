@@ -249,7 +249,7 @@ Archive:
 
 ### F2-01 Add click event path with deterministic hit resolution
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F0-02`
 3. `Files`:
 
@@ -271,6 +271,16 @@ Archive:
 6. `Accept`:
 
 - click activation behavior matches keyboard activation targets.
+
+8. `Notes`:
+
+- Frame contract version 2 adds ordered half-open logical hit regions and frame-bound
+  `EngineInputEvent::Click { frameId, x, y }`. The engine resolves the advertised `focus:*`
+  action and retains stale-frame rejection before mutation.
+- Canvas and host-sample adapters convert scaled pointer pixels into the engine column/row grid
+  without link, control, or WML lookup. Wrapped links, input/select controls, empty space,
+  boundaries, frame mismatch, native/WASM parity, and keyboard-equivalent outcomes are covered by
+  focused tests and the `F2-01` executable story.
 
 ### F2-02 Add scroll event path and viewport offset semantics
 

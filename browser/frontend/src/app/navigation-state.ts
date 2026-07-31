@@ -9,6 +9,7 @@ import type {
   AdvanceTimeRequest,
   DeckNavigationKind,
   EngineFrame,
+  EngineInputEvent,
   EngineRuntimeSnapshot,
   HandleKeyRequest,
   LoadDeckContextRequest,
@@ -54,6 +55,7 @@ export interface NavigationHostClient {
   engineRenderFrame(): Promise<EngineFrame>;
   engineHandleKey(request: HandleKeyRequest): Promise<EngineRuntimeSnapshot>;
   engineHandleKeyFrame(request: HandleKeyRequest): Promise<EngineFrame>;
+  engineHandleInputFrame(request: { event: EngineInputEvent }): Promise<EngineFrame>;
   engineSnapshot(): Promise<EngineRuntimeSnapshot>;
   engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
   engineNavigateBackFrame(): Promise<EngineFrame>;
@@ -98,6 +100,7 @@ export interface LoadTransportOptions {
 export interface NavigationStateMachine {
   loadTransportUrl(options: LoadTransportOptions): Promise<EngineRuntimeSnapshot | null>;
   applyEngineKey(key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot | null>;
+  applyEngineInput(event: EngineInputEvent): Promise<EngineRuntimeSnapshot | null>;
   applyEngineTimerTick(deltaMs: number): Promise<EngineRuntimeSnapshot | null>;
   navigateBackWithFallback(): Promise<BackNavigationMode>;
   beginNavigationOperation(): number;
@@ -593,15 +596,15 @@ export const createNavigationStateMachine = (
     return operationPromise;
   };
 
-  const applyEngineKey = async (
-    key: HandleKeyRequest['key']
+  const applyEngineFrameMutation = async (
+    mutate: () => Promise<EngineFrame>
   ): Promise<EngineRuntimeSnapshot | null> => {
     if (isNavigationInFlight()) {
       return null;
     }
     const generation = activeNavigationGeneration;
     const previousCardId = hostSessionState.activeCardId;
-    const frame = await hostClient.engineHandleKeyFrame({ key });
+    const frame = await mutate();
     if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
       return null;
     }
@@ -615,6 +618,12 @@ export const createNavigationStateMachine = (
     publishFrame(frame);
     return frame.snapshot;
   };
+
+  const applyEngineKey = (key: HandleKeyRequest['key']): Promise<EngineRuntimeSnapshot | null> =>
+    applyEngineFrameMutation(() => hostClient.engineHandleKeyFrame({ key }));
+
+  const applyEngineInput = (event: EngineInputEvent): Promise<EngineRuntimeSnapshot | null> =>
+    applyEngineFrameMutation(() => hostClient.engineHandleInputFrame({ event }));
 
   const applyEngineTimerTick = async (deltaMs: number): Promise<EngineRuntimeSnapshot | null> => {
     if (isNavigationInFlight()) {
@@ -762,6 +771,7 @@ export const createNavigationStateMachine = (
   return {
     loadTransportUrl,
     applyEngineKey,
+    applyEngineInput,
     applyEngineTimerTick,
     navigateBackWithFallback,
     beginNavigationOperation,

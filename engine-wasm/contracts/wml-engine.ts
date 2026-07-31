@@ -72,6 +72,7 @@ export type {
   EngineFocusTargetKind,
   EngineFrameRow,
   EngineFrameSegment,
+  EngineHitRegion,
   EngineInputEvent,
   EngineInputKey,
   EnginePresentationFrame,
@@ -144,12 +145,7 @@ export interface WmlDeckInput {
 }
 
 export type ScriptCallSite =
-  | 'softkey-do'
-  | 'intrinsic-onevent'
-  | 'ontimer'
-  | 'onenterforward'
-  | 'onenterbackward'
-  | 'onpick';
+  'softkey-do' | 'intrinsic-onevent' | 'ontimer' | 'onenterforward' | 'onenterbackward' | 'onpick';
 
 // Script invocation metadata passed from runtime-owned action/event plumbing.
 // This shape is runtime-centric and does not encode host-specific policy semantics.
@@ -196,8 +192,8 @@ export interface WmlEngineCommon {
   // available until the F1/F4 host cutover is complete.
   renderFrame(): EnginePresentationFrame;
   handleKey(key: EngineKey): void;
-  // Typed key and stable action dispatch. Pointer/wheel/editor events remain
-  // outside F0 and are added only with their owning input-expansion slices.
+  // Typed key, frame-bound logical click, and stable action dispatch. Wheel
+  // and editor events remain outside F2-01.
   handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.

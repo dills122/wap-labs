@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   canvasFrameFromRenderList,
+  mapCanvasPointerToEngineCoordinates,
   CanvasViewportRenderer,
   ensureCanvasViewportElements,
   type CanvasViewportContext,
@@ -102,15 +103,31 @@ describe('CanvasViewportRenderer', () => {
     expect(elements.canvas.style.height).toBe('60px');
     expect(elements.accessibleText.textContent).toBe('Go NextLast');
     expect(operations.filter(({ kind }) => kind === 'fill-text')).toEqual([
-      { kind: 'fill-text', args: ['Go', 3, 0], fillStyle: '#eeeecc' },
-      { kind: 'fill-text', args: [' ', 15, 0], fillStyle: '#111111' },
-      { kind: 'fill-text', args: ['Next', 21, 0], fillStyle: '#0000aa' },
-      { kind: 'fill-text', args: ['Last', 3, 18], fillStyle: '#111111' }
+      { kind: 'fill-text', args: ['Go', 3, 18], fillStyle: '#eeeecc' },
+      { kind: 'fill-text', args: [' ', 15, 18], fillStyle: '#111111' },
+      { kind: 'fill-text', args: ['Next', 21, 18], fillStyle: '#0000aa' },
+      { kind: 'fill-text', args: ['Last', 3, 36], fillStyle: '#111111' }
     ]);
     expect(operations.filter(({ kind }) => kind === 'fill-rect')).toEqual([
-      { kind: 'fill-rect', args: [3, 0, 12, 18], fillStyle: '#223322' },
-      { kind: 'fill-rect', args: [21, 15, 24, 1], fillStyle: '#0000aa' }
+      { kind: 'fill-rect', args: [3, 18, 12, 18], fillStyle: '#223322' },
+      { kind: 'fill-rect', args: [21, 33, 24, 1], fillStyle: '#0000aa' }
     ]);
+  });
+
+  it('converts CSS-scaled device pixels into deterministic engine columns and rows', () => {
+    const geometry = {
+      bounds: { left: 10, top: 20, width: 160, height: 100 },
+      backingWidth: 640,
+      backingHeight: 400,
+      pixelRatio: 2,
+      columnWidth: 8,
+      lineHeight: 16,
+      inlinePadding: 4
+    };
+
+    expect(mapCanvasPointerToEngineCoordinates(30, 29, geometry)).toEqual({ x: 4, y: 1 });
+    expect(mapCanvasPointerToEngineCoordinates(11, 29, geometry)).toEqual(null);
+    expect(mapCanvasPointerToEngineCoordinates(170, 29, geometry)).toEqual(null);
   });
 
   it('redraws on resize and disconnects its observer', () => {
