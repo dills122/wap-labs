@@ -303,6 +303,30 @@
           "markdownDescription": "Enables the engine_commit_focused_select_edit_frame command without any pre-configured scope."
         },
         {
+          "description": "Enables the engine_debug_close_session command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-debug-close-session",
+          "markdownDescription": "Enables the engine_debug_close_session command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_debug_get_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-debug-get-snapshot",
+          "markdownDescription": "Enables the engine_debug_get_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_debug_open_session command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-debug-open-session",
+          "markdownDescription": "Enables the engine_debug_open_session command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the engine_debug_poll_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-debug-poll-events",
+          "markdownDescription": "Enables the engine_debug_poll_events command without any pre-configured scope."
+        },
+        {
           "description": "Enables the engine_handle_input_frame command without any pre-configured scope.",
           "type": "string",
           "const": "allow-engine-handle-input-frame",
@@ -547,6 +571,30 @@
           "type": "string",
           "const": "deny-engine-commit-focused-select-edit-frame",
           "markdownDescription": "Denies the engine_commit_focused_select_edit_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_debug_close_session command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-debug-close-session",
+          "markdownDescription": "Denies the engine_debug_close_session command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_debug_get_snapshot command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-debug-get-snapshot",
+          "markdownDescription": "Denies the engine_debug_get_snapshot command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_debug_open_session command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-debug-open-session",
+          "markdownDescription": "Denies the engine_debug_open_session command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_debug_poll_events command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-debug-poll-events",
+          "markdownDescription": "Denies the engine_debug_poll_events command without any pre-configured scope."
         },
         {
           "description": "Denies the engine_handle_input_frame command without any pre-configured scope.",

@@ -1,6 +1,9 @@
 pub(super) use super::health;
 pub(super) use crate::contract_types::{
-    AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineInputEvent, EngineKey,
+    AdvanceTimeRequest, DeckNavigationKind, DrawCmd, EngineDebugCloseSessionOutcome,
+    EngineDebugCloseSessionRequest, EngineDebugErrorCode, EngineDebugOpenSessionOutcome,
+    EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome, EngineDebugPollEventsRequest,
+    EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineInputEvent, EngineKey,
     HandleInputRequest, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
     MoveFocusedSelectEditRequest, NavigateToCardRequest, ScriptDialogRequestSnapshot,
     ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
@@ -227,6 +230,7 @@ fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
     );
 }
 
+mod engine_debug_sessions;
 mod engine_flow;
 mod engine_wrappers;
 mod fetch_commands;

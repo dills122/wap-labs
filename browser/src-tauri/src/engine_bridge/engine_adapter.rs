@@ -1,3 +1,4 @@
+use super::engine_debug_host::{EngineDebugHostState, EngineDebugPolicy};
 use crate::contract_types::{
     AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
     LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
@@ -14,13 +15,32 @@ std::thread_local! {
 
 pub struct AppState {
     pub(crate) engine: Mutex<WmlEngine>,
+    pub(crate) debug_host: Mutex<EngineDebugHostState>,
+    pub(crate) debug_policy: EngineDebugPolicy,
 }
 
 impl Default for AppState {
     fn default() -> Self {
+        Self::new(EngineDebugPolicy::default())
+    }
+}
+
+impl AppState {
+    fn new(debug_policy: EngineDebugPolicy) -> Self {
         Self {
             engine: Mutex::new(WmlEngine::new()),
+            debug_host: Mutex::new(EngineDebugHostState::default()),
+            debug_policy,
         }
+    }
+
+    pub fn from_local_config() -> Self {
+        Self::new(EngineDebugPolicy::from_local_config())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn with_debug_policy_enabled(enabled: bool) -> Self {
+        Self::new(EngineDebugPolicy::from_enabled(enabled))
     }
 }
 

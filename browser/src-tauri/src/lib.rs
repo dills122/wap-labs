@@ -14,7 +14,10 @@ use application_state::{
     ClearApplicationStateComponentRequest, SaveApplicationStateRequest,
 };
 use contract_types::{
-    AdvanceTimeRequest, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
+    AdvanceTimeRequest, EngineDebugCloseSessionOutcome, EngineDebugCloseSessionRequest,
+    EngineDebugOpenSessionOutcome, EngineDebugOpenSessionRequest, EngineDebugPollEventsOutcome,
+    EngineDebugPollEventsRequest, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
+    EngineFrame, EngineRuntimeSnapshot, HandleInputRequest, HandleKeyRequest,
     LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
     RenderList, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
@@ -28,6 +31,8 @@ use engine_bridge::{
     command_engine_clear_external_navigation_intent_frame,
     command_engine_commit_focused_input_edit, command_engine_commit_focused_input_edit_frame,
     command_engine_commit_focused_select_edit, command_engine_commit_focused_select_edit_frame,
+    command_engine_debug_close_session, command_engine_debug_get_snapshot,
+    command_engine_debug_open_session, command_engine_debug_poll_events,
     command_engine_handle_input_frame, command_engine_handle_key, command_engine_handle_key_frame,
     command_engine_load_deck, command_engine_load_deck_context,
     command_engine_load_deck_context_frame, command_engine_move_focused_select_edit,
@@ -345,6 +350,42 @@ fn engine_advance_time_ms_frame(
 #[cfg_attr(test, allow(dead_code))]
 fn engine_snapshot(state: State<AppState>) -> Result<EngineRuntimeSnapshot, HostCommandError> {
     command_engine_snapshot(state.inner())
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_debug_open_session(
+    state: State<AppState>,
+    request: EngineDebugOpenSessionRequest,
+) -> EngineDebugOpenSessionOutcome {
+    command_engine_debug_open_session(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_debug_poll_events(
+    state: State<AppState>,
+    request: EngineDebugPollEventsRequest,
+) -> EngineDebugPollEventsOutcome {
+    command_engine_debug_poll_events(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_debug_get_snapshot(
+    state: State<AppState>,
+    request: EngineDebugSnapshotRequest,
+) -> EngineDebugSnapshotOutcome {
+    command_engine_debug_get_snapshot(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_debug_close_session(
+    state: State<AppState>,
+    request: EngineDebugCloseSessionRequest,
+) -> EngineDebugCloseSessionOutcome {
+    command_engine_debug_close_session(state.inner(), request)
 }
 
 #[tauri::command]

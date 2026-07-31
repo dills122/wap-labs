@@ -375,6 +375,82 @@
       }
     },
     {
+      "clientMethod": "engineDebugOpenSession",
+      "command": "engine_debug_open_session",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "openDebugSession"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "EngineDebugOpenSessionRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineDebugOpenSessionOutcome",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineDebugPollEvents",
+      "command": "engine_debug_poll_events",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "pollDebugEvents"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "EngineDebugPollEventsRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineDebugPollEventsOutcome",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineDebugGetSnapshot",
+      "command": "engine_debug_get_snapshot",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "getDebugSnapshot"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "EngineDebugSnapshotRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineDebugSnapshotOutcome",
+        "source": "engine"
+      }
+    },
+    {
+      "clientMethod": "engineDebugCloseSession",
+      "command": "engine_debug_close_session",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "closeDebugSession"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "EngineDebugCloseSessionRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineDebugCloseSessionOutcome",
+        "source": "engine"
+      }
+    },
+    {
       "clientMethod": "engineClearExternalNavigationIntent",
       "command": "engine_clear_external_navigation_intent",
       "facadeMethod": {

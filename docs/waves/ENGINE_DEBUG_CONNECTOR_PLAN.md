@@ -1,6 +1,6 @@
 # Engine Debug Connector Plan
 
-Status: D0-01 and D0-02 done; host and consumer implementation deferred to D0-03 and D0-04
+Status: D0-01 through D0-03 done; consumer implementation deferred to D0-04
 Owner lane: `engine-wasm` + `browser`
 
 Related reference:
@@ -234,13 +234,24 @@ and consumer work.
 - Recorder activation/deactivation hooks remain separate from D0-03 host policy and sessions.
 - Native and WASM tests cover event/snapshot parity, ordering, overflow, and secret canaries.
 
-### D0-03
+### D0-03 (implemented)
 
-- local configuration/profile enablement
-- host session ids and one-session enforcement
-- Tauri commands and permission/capability changes
-- request validation and typed failure mapping
-- engine recorder activation wiring
+- The local `WAVES_ENGINE_DEBUG_POLICY=enabled` host policy is the only enablement path. Missing,
+  empty, differently cased, or otherwise unknown values remain disabled; no request can override
+  policy or masking.
+- Four generated Tauri commands expose open, bounded poll, bounded snapshot, and idempotent close
+  through the existing `EngineDebug*` outcome unions and restricted main-window capability.
+- Opaque UUID session ids are process-local and non-persistent. The broker retains at most one id,
+  enforces the protocol-v1 single-session limit, and rejects poll/snapshot access from any other id.
+- Opening a session starts a fresh engine-owned recorder and returns its initial cursor. Closing the
+  active session disables and releases the recorder; closing an unknown or already-closed id returns
+  `{ closed: false }` without affecting a newer session.
+- Poll bounds, decimal cursor validation, retained-window gap accounting, producer-side masking,
+  and bounded snapshots remain engine-owned. Host lock/source failures map to deterministic,
+  non-sensitive typed errors.
+- Native host lifecycle tests cover disabled policy, protocol/session limits, cursor gaps, sanitized
+  errors, snapshots, idempotent close, and close/reopen identity rotation. Generated frontend tests
+  cover the four-command mapping and guarded outcome validation.
 
 ### D0-04 and later
 

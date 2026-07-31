@@ -22,5 +22,7 @@ pub const FETCH_TRANSPORT_PROFILE_WAP_NET_CORE: &str = "wap-net-core";
 pub const FETCH_TRANSPORT_FALLBACK_ENV: &str = "WAVES_FETCH_TRANSPORT_FALLBACK";
 pub const FETCH_TRANSPORT_FALLBACK_DISABLED: &str = "disabled";
 pub const FETCH_TRANSPORT_FALLBACK_GATEWAY_BRIDGED: &str = "gateway-bridged";
+pub const ENGINE_DEBUG_POLICY_ENV: &str = "WAVES_ENGINE_DEBUG_POLICY";
+pub const ENGINE_DEBUG_POLICY_ENABLED: &str = "enabled";
 pub const HEALTH_RESPONSE: &str = "wavenav-host-tauri-native-engine";
 pub const RUN_ERROR_CONTEXT: &str = "error while running Waves Tauri host";

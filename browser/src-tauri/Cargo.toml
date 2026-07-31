@@ -22,6 +22,7 @@ tauri = { version = "2", features = [] }
 tokio = { version = "1", features = ["sync"] }
 ts-rs = { version = "12", features = ["serde-compat"] }
 url = "2"
+uuid = { version = "1", features = ["v4"] }
 wavenav_engine = { path = "../../engine-wasm/engine", default-features = false, features = ["contract-codegen"] }
 
 [dev-dependencies]

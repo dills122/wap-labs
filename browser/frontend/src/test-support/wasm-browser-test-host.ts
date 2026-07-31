@@ -112,6 +112,34 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
       return frame();
     },
     engineSnapshot: async () => snapshot(),
+    engineDebugOpenSession: async () => ({
+      status: 'failure',
+      error: {
+        code: 'DEBUG_DISABLED',
+        message: 'engine debug connector is disabled by host policy',
+        retryable: false
+      }
+    }),
+    engineDebugPollEvents: async () => ({
+      status: 'failure',
+      error: {
+        code: 'SESSION_NOT_FOUND',
+        message: 'engine debug session was not found',
+        retryable: false
+      }
+    }),
+    engineDebugGetSnapshot: async () => ({
+      status: 'failure',
+      error: {
+        code: 'SESSION_NOT_FOUND',
+        message: 'engine debug session was not found',
+        retryable: false
+      }
+    }),
+    engineDebugCloseSession: async () => ({
+      status: 'success',
+      result: { closed: false }
+    }),
     engineClearExternalNavigationIntent: async () => {
       engine.clearExternalNavigationIntent();
       return snapshot();
