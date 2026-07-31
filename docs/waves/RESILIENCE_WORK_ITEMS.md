@@ -3,7 +3,7 @@
 Purpose: track the additive browser, Tauri-host, and engine resilience work found by the
 2026-07-29 current-main failure-containment audit.
 
-Audit base: `origin/main` `eaf8fc0e` (planning sync 2026-07-30).
+Audit base: `origin/main` `6cf1682a` (planning sync 2026-07-30).
 
 Status keys:
 
@@ -36,9 +36,9 @@ error, preserve usable state where appropriate, and leave an explicit recovery p
 
 The P1 containment gate is closed: `RSL-01` quarantines terminal external-intent failures,
 `RSL-02` bounds and cancels navigation work, `RSL-03` makes mutating frame commands transactional,
-and `RSL-04` bounds single-pass render output. `RSL-05` also closes malformed IPC admission and
-typed host failures. The active resilience baton is `RSL-06`, followed serially by `RSL-07` on the
-shared presenter/history surface.
+and `RSL-04` bounds single-pass render output. `RSL-05` closes malformed IPC admission and typed
+host failures, and `RSL-06` closes diagnostic/export redaction. The active resilience baton is
+`RSL-07` on the shared presenter/history surface.
 
 ## Lane A: Navigation Containment
 
@@ -303,7 +303,9 @@ shared presenter/history surface.
 8. `Accept`:
 
 - Diagnostic artifacts are useful without disclosing replay credentials.
+
 9. `Resolution`:
+
 - Timeline entries are projected into a fixed allowlisted DTO when produced, while host history
   continues to retain the exact request identity needed for standards-compatible Back replay.
 - Drawer, detached diagnostic, and version 2 timeline-export serialization all consume the same
@@ -356,10 +358,10 @@ Completed containment and IPC batches:
 
 Recommended next resilience sequence:
 
-1. `RSL-06` diagnostic and export redaction.
-2. `RSL-07` bounded toast/history state after `RSL-06` because both touch presenter/history
-   projections.
+1. `RSL-07` bounded toast/history state on the completed RSL-06 projection boundary.
+2. Issue `#450` history identity/cross-deck correctness before persisted or searchable history.
 
 Likely conflicts:
 
-- `RSL-06` / `RSL-07` / merged shell presentation: `browser-presenter.ts`
+- `RSL-07` / WBP-11 / merged shell presentation: `browser-presenter.ts`
+- `RSL-07` / issue `#450`: host-history state and retention behavior

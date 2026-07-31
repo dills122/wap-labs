@@ -74,33 +74,33 @@ internal implementation or evidence work: the 97-member private evidence set,
 106-entry redistribution inventory, and request package are ready, while
 maintainer approval to send and written permission remain open.
 
-## Current Snapshot (as of 2026-07-30, `origin/main` `eaf8fc0e`)
+## Current Snapshot (as of 2026-07-30, `origin/main` `6cf1682a`)
 
 This snapshot replaces the original kickoff view and reflects the current post-transport-burn-down state.
 
-| Ticket            | Lane                         | Current status | Immediate dependency action                                                                                            |
-| ----------------- | ---------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `A5-01`           | engine/runtime               | `done`         | request-shaped history fidelity and deterministic restore semantics are covered                                        |
-| `A5-04`           | engine + browser             | `done`         | viewport-editable text input baseline is closed                                                                        |
-| `A5-05`           | engine + browser             | `done`         | select/option interaction baseline is closed                                                                           |
-| `A5-06`           | engine + browser + transport | `done`         | form-state submit hardening is closed for the active MVP lane                                                          |
-| `A5-07`           | browser                      | `done`         | blocking startup/navigation/browser hot-path remediation landed in `#109/#110`                                         |
-| `R0-02`           | engine + browser + transport | `done`         | closed with deterministic host/runtime request-fidelity coverage                                                       |
-| `R0-03`           | engine + browser             | `done`         | closed with history/context fidelity integration evidence                                                              |
-| `W0-05`           | wavescript/runtime           | `done`         | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
-| `W0-06`           | engine/wavescript            | `done`         | strict structural closure continues in `W1-02`                                                                         |
-| `W1-06`           | wavescript/runtime           | `in-progress`  | finalize remaining fatal/non-fatal fixture classes and close checklist split                                           |
-| `D0-01` / `D0-02` | engine + browser + docs      | `done`         | additive debug DTOs plus bounded, masked engine events/snapshots are settled; host lifecycle remains D0-03             |
-| `T0-18`           | transport                    | `done`         | retransmission/duplicate/NACK hold-off baseline is closed                                                              |
-| `T0-19`           | transport                    | `done`         | WDP ingress and UDP mapping baseline is closed                                                                         |
-| `T0-20`           | transport                    | `done`         | WSP registry/header/session baseline is closed                                                                         |
-| `T0-21`           | transport/security           | `done`         | explicit WTLS boundary and minimal reliability lane are now closed                                                     |
-| `T0-22`           | transport                    | `done`         | replay promotion gate is closed and seed-backed                                                                        |
-| `T0-24`           | transport/docs               | `done`         | seed corpus is formalized and promotion-gated                                                                          |
-| `T0-25`           | docs/spec-processing         | `done`         | external vector adoption sweep is closed                                                                               |
-| `T0-26`           | transport/browser/docs       | `done`         | local Kannel readiness gate is explicit and runnable                                                                   |
-| `M1-08`           | maintenance                  | `done`         | boundary-module decomposition is complete; new hotspots require additive tickets                                       |
-| `M1-16`           | maintenance/security         | `done`         | payload-size guardrails are closed for the current transport/engine/browser boundary                                   |
+| Ticket          | Lane                         | Current status | Immediate dependency action                                                                                            |
+| --------------- | ---------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `A5-01`         | engine/runtime               | `done`         | request-shaped history fidelity and deterministic restore semantics are covered                                        |
+| `A5-04`         | engine + browser             | `done`         | viewport-editable text input baseline is closed                                                                        |
+| `A5-05`         | engine + browser             | `done`         | select/option interaction baseline is closed                                                                           |
+| `A5-06`         | engine + browser + transport | `done`         | form-state submit hardening is closed for the active MVP lane                                                          |
+| `A5-07`         | browser                      | `done`         | blocking startup/navigation/browser hot-path remediation landed in `#109/#110`                                         |
+| `R0-02`         | engine + browser + transport | `done`         | closed with deterministic host/runtime request-fidelity coverage                                                       |
+| `R0-03`         | engine + browser             | `done`         | closed with history/context fidelity integration evidence                                                              |
+| `W0-05`         | wavescript/runtime           | `done`         | timer→script→dialog host capability ordering is executable and deterministic; strict Dialogs/WMLS-5 remains downstream |
+| `W0-06`         | engine/wavescript            | `done`         | strict structural closure continues in `W1-02`                                                                         |
+| `W1-06`         | wavescript/runtime           | `in-progress`  | finalize remaining fatal/non-fatal fixture classes and close checklist split                                           |
+| `D0-01`–`D0-03` | engine + browser + docs      | `done`         | additive debug DTOs, bounded masked engine events/snapshots, and the default-disabled host session bridge are settled  |
+| `T0-18`         | transport                    | `done`         | retransmission/duplicate/NACK hold-off baseline is closed                                                              |
+| `T0-19`         | transport                    | `done`         | WDP ingress and UDP mapping baseline is closed                                                                         |
+| `T0-20`         | transport                    | `done`         | WSP registry/header/session baseline is closed                                                                         |
+| `T0-21`         | transport/security           | `done`         | explicit WTLS boundary and minimal reliability lane are now closed                                                     |
+| `T0-22`         | transport                    | `done`         | replay promotion gate is closed and seed-backed                                                                        |
+| `T0-24`         | transport/docs               | `done`         | seed corpus is formalized and promotion-gated                                                                          |
+| `T0-25`         | docs/spec-processing         | `done`         | external vector adoption sweep is closed                                                                               |
+| `T0-26`         | transport/browser/docs       | `done`         | local Kannel readiness gate is explicit and runnable                                                                   |
+| `M1-08`         | maintenance                  | `done`         | boundary-module decomposition is complete; new hotspots require additive tickets                                       |
+| `M1-16`         | maintenance/security         | `done`         | payload-size guardrails are closed for the current transport/engine/browser boundary                                   |
 
 Landed since the prior planning sync, without reopening completed tickets:
 
@@ -266,11 +266,11 @@ and lanes may run concurrently subject to the noted file ownership.
 |        5 | Request A2 — replayable POST history                                               | Starts after A1 fixes the serialized request shape; shares navigation/history structures with C1, so land after C1 or coordinate one owner.                                                                    | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary.                          | Makes form navigation/back behavior predictable in public-lab scenarios.                       |
 |        6 | Script B2 — bounded `WMLS-502` operator/conversion execution                       | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B.                                                                                                                   | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence. | Expands the safe script behavior available to representative WAP decks.                        |
 
-Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-05, APP-STATE-01,
-APP-FAV-01, APP-CMD-01, and D0-02 are complete. The next desktop sequence is APP-PRIV-01/RSL-06,
-then RSL-07 on the same presenter/history surface; WBP-11 and APP-SHELL-01 follow as separate
-browser-integration slices. D0-03 is independently ready but must coordinate generated host
-contracts with any concurrent browser IPC work.
+Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-06, APP-STATE-01,
+APP-FAV-01, APP-CMD-01, and D0-01 through D0-03 are complete. The next parallel-safe desktop batch
+is RSL-07 bounded presenter/history state, F2-01 deterministic click input, and D0-04 read-only
+Inspector consumption with explicit file ownership. Issue `#450`, WBP-11, and APP-SHELL-01 follow
+on their shared history/presenter/shell surfaces.
 
 Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
 connection-oriented WSP/WTP to manufacture completion. `REN-4` and full

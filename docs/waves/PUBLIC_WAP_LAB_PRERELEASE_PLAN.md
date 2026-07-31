@@ -4,7 +4,7 @@ Planning status: Sprint 1 private-deployment checkpoint; LAB-101, the restricted
 host path, and the hardened GW-101 deployment are live behind sealed Tailnet-only ingress, while
 public exposure remains blocked on Sprint 0 decisions and publication-specific evidence
 
-Research checkpoint: 2026-07-30; audited at `eaf8fc0e`
+Research checkpoint: 2026-07-30; audited at `6cf1682a`
 
 Historical service-pattern research, first-party fixture expansion, and the separately gated
 archive/museum lane are planned in `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`. That

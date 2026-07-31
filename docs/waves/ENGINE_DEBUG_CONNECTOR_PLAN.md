@@ -15,7 +15,8 @@ core engine behavior.
 
 This is a diagnostics surface, not a transport/runtime control plane. D0-01 defines contracts and
 ownership, and D0-02 implements the bounded engine-owned recorder and sanitized snapshot source.
-Host sessions, Tauri commands, polling policy, and UI remain D0-03/D0-04 work.
+Host sessions, Tauri commands, and activation policy are implemented by D0-03. Consumer polling
+cadence and UI remain D0-04 work.
 
 ## D0-01 Decisions
 
@@ -217,9 +218,9 @@ must not include raw internal errors, WML values, URLs, credentials, or panic pa
 5. `D0-03` implements host policy, open/poll/snapshot/close commands, and engine activation glue.
 6. `D0-04` implements an optional first-party consumer and capture/export workflow.
 
-This sequence removed the contract-file collision that blocked WBP-06/F0. D0-02 is now complete
-without changing the frame/input namespace; D0-03 and D0-04 remain independently sequenced host
-and consumer work.
+This sequence removed the contract-file collision that blocked WBP-06/F0. D0-02 and D0-03 are
+complete without changing the frame/input namespace; D0-04 remains the independently sequenced
+consumer work.
 
 ## Delivery Status and Deferred Work
 

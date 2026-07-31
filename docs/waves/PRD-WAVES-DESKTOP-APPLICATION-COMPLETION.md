@@ -2,16 +2,17 @@
 
 Status: decision-ready discovery and implementation plan
 Last updated: 2026-07-30
-Implementation checkpoint: `origin/main` `eaf8fc0e`
+Implementation checkpoint: `origin/main` `6cf1682a`
 Owner lane: `browser`, with explicit dependencies on `engine-wasm`, `transport-rust`, and the
 public WAP lab program
 
 ## 1. Summary
 
 Waves has a credible WAP/WML runtime, bounded transport/frame path, native shell and commands,
-versioned application-state foundation, local examples, Favorites domain, and bounded engine debug
-recorder. It does not yet provide the integrated organization, safe diagnostic projection,
-phase-aware recovery, or WAP-specific inspection expected from a complete desktop application.
+versioned application-state foundation, local examples, Favorites domain, safe diagnostic
+projection, and bounded engine/host debug-session foundation. It does not yet provide the
+integrated organization, phase-aware recovery, or WAP-specific Inspector expected from a complete
+desktop application.
 
 This plan turns Waves into a focused, single-session desktop WAP workbench. It prioritizes fast
 entry into useful WAP content, safe favorites and application state, truthful recovery, native
@@ -76,30 +77,29 @@ transport behavior in the frontend.
 
 ### 3.3 Current-state inventory
 
-| Capability       | Implemented at the 2026-07-30 checkpoint                                                                                                                                     | Gap                                                                                                               |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Desktop identity | Tauri identity and native menus plus one shared application-command registry and versioned native application-state store                                                    | Production packaging/updater, integrated window restore, and user-facing import/export workflows                  |
-| Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface            |
-| Runtime path     | Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication | F2 pointer/scroll/softkey cutover and final legacy-path removal                                                   |
-| History          | In-memory engine card history plus request-shaped host deck history                                                                                                          | Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (`#450`)      |
-| Diagnostics      | Existing host timeline/export plus bounded, masked engine-owned D0-02 event recorder and snapshots                                                                           | Safe export projection (`#506`), D0-03 host sessions, D0-04 Inspector consumption, filters, and controlled replay |
-| Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                         |
-| Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                                 |
-| Public services  | Private exact-host deployment, deterministic first-party origin, safe Favorites/service-catalog domain, and publication-state model                                          | Public authorization, guided entry, external verification, and desktop release gates remain open                  |
+| Capability       | Implemented at the 2026-07-30 checkpoint                                                                                                                                     | Gap                                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Desktop identity | Tauri identity and native menus plus one shared application-command registry and versioned native application-state store                                                    | Production packaging/updater, integrated window restore, and user-facing import/export workflows             |
+| Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface       |
+| Runtime path     | Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication | F2 pointer/scroll/softkey cutover and final legacy-path removal                                              |
+| History          | In-memory engine card history plus request-shaped host deck history                                                                                                          | Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (`#450`) |
+| Diagnostics      | Safe allowlisted timeline/export projection plus bounded, masked D0-02 engine events/snapshots and default-disabled D0-03 host sessions                                      | D0-04 Inspector consumption, filters, capture UX, and controlled replay                                      |
+| Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                    |
+| Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                            |
+| Public services  | Private exact-host deployment, deterministic first-party origin, safe Favorites/service-catalog domain, and publication-state model                                          | Public authorization, guided entry, external verification, and desktop release gates remain open             |
 
 ### 3.4 Current overlap and blockers
 
-At the synchronized `eaf8fc0e` baseline:
+At the synchronized `6cf1682a` baseline:
 
-- PRs `#502` and `#517` through `#528` are merged. The redesigned shell, canonical Canvas/frame
+- PRs `#502` and `#517` through `#533` are merged. The redesigned shell, canonical Canvas/frame
   path, cancellation, bounded render/IPC surfaces, Favorites domain, application state, native
-  command registry, and engine debug recorder are the current integration baseline. The
+  command registry, safe diagnostic projection, truthful navigation errors, D0-03 debug host
+  bridge, and selective CI/docs maintenance gates are the current integration baseline. The
   open/draft PR queue is empty at this checkpoint.
 - Issue `#450` blocks persistent/searchable history because same-card entries can be lost across a
   deck boundary.
-- Issues `#466` and `#467` affect trustworthy application error state and failure classification.
-- Issue `#506` blocks safe diagnostic sharing, while `#504` follows it on the same
-  presenter/history surface.
+- Issue `#504` remains the active resilience baton for bounded presenter/history state.
 
 Independent streams retain their own responsibilities:
 
@@ -629,7 +629,7 @@ Before feature UI begins:
 3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
    window restore, and local/GET-safe recovery remain.
 4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.
-5. Sanitize the existing timeline export and provide a minimal support bundle.
+5. Safe timeline/export projection is complete in PR `#532`; add the D0-04 Inspector consumer.
 6. Shared native commands and platform shortcuts are complete in PR `#523`.
 7. Complete public-lab desktop profile/resource separation and guided safety messaging only after
    its publication dependencies authorize them.
@@ -637,7 +637,7 @@ Before feature UI begins:
 
 ### 8.3 Phase B: next application-quality increment
 
-- complete `D0-03` and `D0-04` on the landed D0-02 recorder for the WAP Inspector;
+- complete `D0-04` on the landed D0-02/D0-03 source and host bridge for the WAP Inspector;
 - add visible searchable history with explicit retention after `#450`;
 - complete Favorites import/export UX;
 - add broader Developer/Diagnostic preferences and redaction controls;
@@ -673,10 +673,10 @@ Before feature UI begins:
 
 ### 8.6 First parallel-safe implementation batch
 
-Checkpoint at `eaf8fc0e`: `APP-STATE-01` (`#522`), `APP-FAV-01` (`#517`), `APP-CMD-01`
-(`#523`), and D0-02 (`#524`) are implemented. `APP-PRIV-01` is the remaining Wave A security
-boundary; `APP-SHELL-01` remains sequenced after it because both integrate shared browser state and
-presentation. The table is retained as the ownership map for completed and remaining slices.
+Checkpoint at `6cf1682a`: `APP-STATE-01` (`#522`), `APP-FAV-01` (`#517`), `APP-CMD-01`
+(`#523`), APP-PRIV-01/RSL-06 (`#532`), and D0-01 through D0-03 (`#524`, `#531`) are implemented.
+`APP-SHELL-01` is unblocked but remains sequenced around D0-04 because both integrate the shared
+shell. The table is retained as the ownership map for completed and remaining slices.
 
 | Slice                                              | Initial owner               | Sequence | Main output                                                                        | High-conflict surfaces                                            |
 | -------------------------------------------------- | --------------------------- | -------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
