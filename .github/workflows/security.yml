@@ -184,8 +184,10 @@ jobs:
 
       - name: Verify pinned image audit tools
         run: |
-          go version -m "$(command -v syft)" | grep -F "github.com/anchore/syft v${SYFT_VERSION}"
-          go version -m "$(command -v grype)" | grep -F "github.com/anchore/grype v${GRYPE_VERSION}"
+          go version -m "$(command -v syft)" |
+            awk -v expected="v${SYFT_VERSION}" '$1 == "mod" && $2 == "github.com/anchore/syft" && $3 == expected { found=1 } END { exit(found ? 0 : 1) }'
+          go version -m "$(command -v grype)" |
+            awk -v expected="v${GRYPE_VERSION}" '$1 == "mod" && $2 == "github.com/anchore/grype" && $3 == expected { found=1 } END { exit(found ? 0 : 1) }'
           syft version >/dev/null
           grype version >/dev/null
 
