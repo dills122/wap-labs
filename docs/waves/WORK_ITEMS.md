@@ -89,7 +89,7 @@ Public exposure remains blocked on the plan's access, threat-model, and release 
 
 ## Next In Line (Post-Merge Checkpoint Sync - 2026-07-30)
 
-Audit base: `origin/main` `eaf8fc0e`. The GitHub open/draft PR queue was empty at this checkpoint.
+Audit base: `origin/main` `6cf1682a`. The GitHub open/draft PR queue was empty at this checkpoint.
 The second-pass desktop visual refinement and redesigned shell/Developer Tools workspace are now
 landed. They preserve `WBP-02A`, do not implement `WBP-02B`, and do not replace frame/runtime
 evidence.
@@ -122,7 +122,7 @@ Current priority order is:
    context/history/card-table evidence, WML-304's merged request-intent and native request
    application boundary, and WMLS-501's completed decoder/verifier, verified-unit routing, and
    stack-dataflow closure. Advance replayable POST history and WMLS-502 execution as separate
-   implementation lanes. Preserve the completed D0-01/D0-02 debug foundation and completed
+   implementation lanes. Preserve the completed D0-01 through D0-03 debug foundation and completed
    F0/F1 frame migration; keep F2-F4, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -179,21 +179,22 @@ Tailnet WAP smoke, sealed-firewall reboot persistence, and retained rollback. Pu
 cloud UDP rule, public firewall mode, and external probes remain incomplete. That lane neither
 blocks nor satisfies Class C evidence and is not dispatched from this board.
 
-The resilience board is also synchronized to current main: `RSL-01` through `RSL-05` are done in
-PRs `#515`, `#516`, `#521`, `#527`, and `#528`. The next containment baton is `RSL-06` diagnostic
-redaction, followed by `RSL-07` on the same presenter/history surface.
+The resilience board is also synchronized to current main: `RSL-01` through `RSL-06` are done in
+PRs `#515`, `#516`, `#521`, `#527`, `#528`, and `#532`. Navigation error classification is closed
+by PR `#530`, and D0-03 host debug sessions are closed by PR `#531`. The next containment baton is
+`RSL-07` on the presenter/history surface.
 
 The next parallel-safe desktop batch is:
 
-1. `APP-PRIV-01` / `RSL-06` as one security owner for allowlisted diagnostic and export
-   projections (`#506`).
-2. A navigation error-correctness owner for `#466` and `#467`, with separate focused commits/tests
-   on the now-stable F1-03 navigation path.
-3. `D0-03` host attach/poll/snapshot/close integration on the completed D0-02 engine recorder.
+1. `RSL-07` as the sole owner of `browser-presenter.ts`, `session-history.ts`, and `timeline.ts`
+   while bounding toast and host-history state (`#504`).
+2. `F2-01` deterministic click/hit-region input through the engine-owned frame contract.
+3. `D0-04` read-only Inspector polling and safe capture in new debug-consumer modules/components;
+   it must not edit the RSL-07 presenter/history files in this batch.
 
-Follow `RSL-06` serially with `RSL-07`; then integrate `WBP-11` phase-aware recovery and
-`APP-SHELL-01` Library/Preferences without sharing an active presenter owner. Keep `#450` ahead of
-persisted/searchable history rather than pulling it into this first batch.
+After this batch, fix `#450` on the stabilized bounded-history foundation, continue F2-02/F2-03
+after F2-01, and sequence `WBP-11` plus `APP-SHELL-01` around the shared presenter/shell surfaces.
+Keep `#450` ahead of persisted/searchable history.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -1971,7 +1972,7 @@ Reference plan:
 - completed with Rust-owned DTO generation into both engine and browser TypeScript surfaces,
   consumer type tests, deterministic shape guards, and non-value-bearing masked/omitted variants
 - `D0-02` completed emission, ring-buffer/polling behavior, snapshot construction, and masking;
-  `D0-03` still owns enablement, sessions, Tauri commands, and host wiring
+  `D0-03` completed enablement, sessions, Tauri commands, and host wiring
 
 ### D0-02 Engine event stream and snapshot emitter
 
@@ -2021,12 +2022,12 @@ Reference plan:
   (410 tests), warning-denied all-target/all-feature Clippy, and `wasm-pack test --node` (37 tests)
   pass; `make coverage-rust-engine` reports 94.88% line and 93.04% function coverage, while
   Rust-owned contract regeneration produces no DTO drift
-- no executable story was added because D0-03 host attach/poll IPC and D0-04 consumer UI remain
-  explicitly out of scope; D0-02 exposes only the engine-owned source hooks
+- no executable story was added because D0-04 consumer UI remains explicitly out of scope; D0-02
+  exposes only the engine-owned source hooks
 
 ### D0-03 Host bridge integration for attach/poll/close
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `D0-01`, `D0-02`
 3. `Owner`: `browser`, `engine-wasm`
 4. `Files`:
@@ -2058,6 +2059,9 @@ Reference plan:
 9. `Notes`:
 
 - scope excludes UI panel; this is command/API integration only
+- completed by PR `#531` with a default-disabled local policy, one opaque process-local session,
+  bounded open/poll/snapshot/close commands, deterministic typed failures, idempotent close, and
+  native lifecycle/contract tests
 
 ### D0-04 Browser debug panel and capture workflow
 

@@ -1,7 +1,7 @@
 # Waves Browser Product Implementation Plan
 
 Status: planning-ready
-Last updated: 2026-07-30 (`origin/main` `eaf8fc0e`)
+Last updated: 2026-07-30 (`origin/main` `6cf1682a`)
 Design source: [Waves Desktop Product and Interaction Design](WAVES_DESKTOP_PRODUCT_DESIGN.md)
 
 ## Purpose
@@ -606,7 +606,8 @@ direct regression coverage. Those fixes preserve completed Phase 1 tickets and d
 themselves claim WBP-07 through WBP-14 complete.
 
 The redesigned shell/Developer Tools workspace, pre-release marketing refresh, versioned
-application-state foundation, Favorites domain, native command registry, and D0-02 engine recorder
-are merged. The next browser integration sequence is safe diagnostic projection (`APP-PRIV-01` /
-`RSL-06`), phase-aware recovery (`WBP-11`), and the integrated Library/Preferences shell
-(`APP-SHELL-01`), while `RSL-07` follows `RSL-06` on the shared presenter/history surface.
+application-state foundation, Favorites domain, native command registry, safe diagnostic
+projection, and D0-02/D0-03 debug source/host bridge are merged. The next parallel-safe browser
+batch is `RSL-07` bounded presenter/history state, F2-01 deterministic click input, and D0-04
+read-only Inspector consumption with explicit non-overlapping ownership. Issue `#450`, `WBP-11`,
+and `APP-SHELL-01` follow on shared history, presenter, and shell surfaces.
