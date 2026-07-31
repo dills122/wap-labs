@@ -39,8 +39,34 @@ echo "Starting Kannel bearerbox..."
 bearerbox /etc/kannel/kannel.conf &
 bearerbox_pid=$!
 
-# Give bearerbox a moment to initialize before starting wapbox.
-sleep 2
+startup_attempt=0
+while [ "$startup_attempt" -lt 30 ]; do
+  if curl -sS --output /dev/null --connect-timeout 1 --max-time 2 \
+    --get --data-urlencode 'password=changeme' \
+    'http://127.0.0.1:13000/status' \
+    >/dev/null 2>&1; then
+    break
+  fi
+  if ! kill -0 "$bearerbox_pid" 2>/dev/null; then
+    if wait "$bearerbox_pid"; then
+      bearerbox_status=0
+    else
+      bearerbox_status=$?
+    fi
+    echo "Kannel bearerbox exited during startup with status $bearerbox_status." >&2
+    if [ "$bearerbox_status" -eq 0 ]; then
+      exit 1
+    fi
+    exit "$bearerbox_status"
+  fi
+  startup_attempt=$((startup_attempt + 1))
+  sleep 1
+done
+if [ "$startup_attempt" -ge 30 ]; then
+  echo "Kannel bearerbox did not become ready before wapbox startup." >&2
+  stop_children
+  exit 1
+fi
 
 echo "Starting Kannel wapbox..."
 wapbox /etc/kannel/kannel.conf &

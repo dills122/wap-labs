@@ -97,8 +97,10 @@ for engine, transport, browser, gateway, infrastructure, documentation, and shar
 | P1       | Active Markdown file/anchor link check                                | Covers 2,300 active docs deterministically without live network access         | Low; archive/date snapshots explicitly excluded                   | Earlier documentation failures                                 |
 
 Cold-cache runs still compile Kannel and install tools; after timings must be recorded from warm PR
-or `main` runs before tightening timeouts. The smoke's readiness probes, WAP/WBXML assertions,
-fixtures, native UI path, failure artifacts, and teardown are unchanged.
+or `main` runs before tightening timeouts. The development Kannel supervisor now gates `wapbox`
+startup on the same bounded authenticated bearerbox status pattern used by production instead of a
+fixed two-second sleep. The smoke's external readiness probes, WAP/WBXML assertions, fixtures,
+native UI path, failure artifacts, and teardown remain unchanged.
 
 Local warm-cache validation on the audit worktree built both development images in 0.91 seconds,
 started the explicitly loaded Compose images with `--no-build` in 0.24 seconds, and completed all
