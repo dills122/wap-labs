@@ -942,6 +942,7 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
       "deck",
       "card",
       "rows",
+      "hitRegions",
       "selection",
       "affordances",
       "backAvailable"
@@ -973,6 +974,13 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
         "item": {
           "kind": "ref",
           "name": "EngineFrameRow"
+        }
+      },
+      "hitRegions": {
+        "kind": "array",
+        "item": {
+          "kind": "ref",
+          "name": "EngineHitRegion"
         }
       },
       "focus": {
@@ -1484,6 +1492,38 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
           "kind": "ref",
           "name": "EngineFrameSegment"
         }
+      }
+    }
+  },
+  "EngineHitRegion": {
+    "kind": "object",
+    "required": [
+      "x",
+      "y",
+      "width",
+      "height",
+      "actionId",
+      "targetKind"
+    ],
+    "properties": {
+      "x": {
+        "kind": "number"
+      },
+      "y": {
+        "kind": "number"
+      },
+      "width": {
+        "kind": "number"
+      },
+      "height": {
+        "kind": "number"
+      },
+      "actionId": {
+        "kind": "string"
+      },
+      "targetKind": {
+        "kind": "ref",
+        "name": "EngineFocusTargetKind"
       }
     }
   },

@@ -24,20 +24,24 @@ serialization. Optional Rust values use the existing `serde_wasm_bindgen` bounda
 numbers stay JavaScript `number` values because the boundary uses the default safe-integer
 serializer rather than BigInt mode.
 
-`EnginePresentationFrame` is the authoritative engine-to-host display contract. Version 1 carries
+`EnginePresentationFrame` is the authoritative engine-to-host display contract. Version 2 carries
 a content-derived `frameId`, profile and viewport identity, deck/card display metadata, ordered
-rows and segments, focus and non-secret selection state, ordered actionable affordances, and Back
-availability. `EngineInputEvent` currently accepts key input and frame-bound action activation.
-Hosts must return the current `frameId` and an advertised `actionId`; stale or unavailable actions
-are rejected before runtime mutation. `primary`, `task`, and `back` are logical control
-associations, not vendor-specific physical key claims.
+rows and segments, engine-owned focus hit regions, focus and non-secret selection state, ordered
+actionable affordances, and Back availability. Hit rectangles use unsigned logical
+column/row coordinates with half-open bounds: left/top are included and right/bottom are excluded.
+Wrapped focusables expose one ordered rectangle per visible row chunk with the same action ID.
+`EngineInputEvent` accepts key input, frame-bound logical clicks, and frame-bound action
+activation. Hosts return the current `frameId` and click coordinates or an advertised `actionId`;
+stale input and unavailable actions are rejected before runtime mutation, while empty-space clicks
+are deterministic no-ops. `primary`, `task`, and `back` are logical control associations, not
+vendor-specific physical key claims.
 
 The legacy `render()`/`RenderList` and `handleKey()` methods remain additive compatibility paths.
 `renderFrame()` and `handleInput()` use the same runtime/layout/action implementation, and the
 native/WASM parity suites pin their output, trace, serialization, and stale-frame behavior.
-`EngineDebug*` remains a separate diagnostics namespace and is not a render or input API. Pointer
-hit regions, scroll semantics, editor event expansion, renderer cutover, and physical softkey
-placement remain later frame-migration work.
+`EngineDebug*` remains a separate diagnostics namespace and is not a render or input API. Scroll
+semantics, editor event expansion, renderer cutover, and physical softkey placement remain later
+frame-migration work.
 
 `ENGINE_RENDER_LIMITS` is generated from the Rust-owned render contract: 4,096 layout rows,
 segments, and legacy draw commands, plus 2 MiB for the combined legacy/presentation JSON

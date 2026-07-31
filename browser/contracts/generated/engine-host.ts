@@ -73,6 +73,8 @@ export type EngineFocusTargetKind = "link" | "input" | "select";
 
 export type EngineFrameSegment = { "type": "text", x: number, text: string, } | { "type": "focusable", x: number, text: string, focusId: string, targetKind: EngineFocusTargetKind, focused: boolean, };
 
+export type EngineHitRegion = { x: number, y: number, width: number, height: number, actionId: string, targetKind: EngineFocusTargetKind, };
+
 export type EngineFocusState = { index: number, focusId: string, targetKind: EngineFocusTargetKind, };
 
 export type EngineSelectionState = { "type": "none" } | { "type": "input", controlId: string, name: string, editing: boolean, } | { "type": "select", controlId: string, editing: boolean, value?: string, };
@@ -83,11 +85,11 @@ export type EngineControlAssociation = "primary" | "task" | "back";
 
 export type EngineAffordance = { actionId: string, label: string, enabled: boolean, source: EngineAffordanceSource, control: EngineControlAssociation, doName?: string, doType?: string, };
 
-export type EnginePresentationFrame = { contractVersion: number, frameId: string, profileId: string, viewport: EngineViewport, deck: EngineDeckDisplayMetadata, card: EngineCardDisplayMetadata, rows: Array<EngineFrameRow>, focus?: EngineFocusState, selection: EngineSelectionState, affordances: Array<EngineAffordance>, backAvailable: boolean, };
+export type EnginePresentationFrame = { contractVersion: number, frameId: string, profileId: string, viewport: EngineViewport, deck: EngineDeckDisplayMetadata, card: EngineCardDisplayMetadata, rows: Array<EngineFrameRow>, hitRegions: Array<EngineHitRegion>, focus?: EngineFocusState, selection: EngineSelectionState, affordances: Array<EngineAffordance>, backAvailable: boolean, };
 
 export type EngineInputKey = "up" | "down" | "enter";
 
-export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, };
+export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, } | { "type": "click", frameId: string, x: number, y: number, };
 
 export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, presentation: EnginePresentationFrame, };
 

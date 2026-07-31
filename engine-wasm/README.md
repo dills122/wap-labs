@@ -84,7 +84,8 @@ cargo test
   `engine-wasm/contracts/README.md`
 - See the canonical presentation-frame canvas renderer in `engine-wasm/host-sample/renderer.ts`.
   The sample viewport consumes `renderFrame()` rows and segments directly; it does not use the
-  legacy `RenderList` compatibility path.
+  legacy `RenderList` compatibility path. Pointer activation sends only the current `frameId` and
+  logical column/row coordinates back through `handleInput()`; target lookup stays in the engine.
 
 ### 8) Quick local harness (no Electron)
 
@@ -200,7 +201,7 @@ Behavior must stay aligned with the WASM API for:
 - navigation and focus transitions
 - canonical `EnginePresentationFrame` ordering and shape, with equivalent legacy `RenderList`
   compatibility output during the remaining cutover
-- typed key/action input behavior and trace semantics
+- typed key/action/click input behavior and trace semantics
 - script execution/invocation outcomes
 - trace entry semantics
 

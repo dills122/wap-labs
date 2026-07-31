@@ -41,15 +41,16 @@ use wavenav_host_lib::contract_types::{
     EngineDebugRedactionReason, EngineDebugSession, EngineDebugSnapshot,
     EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest, EngineDebugTimerSnapshot,
     EngineDebugTimestampKind, EngineDebugValue, EngineDeckDisplayMetadata, EngineFocusState,
-    EngineFocusTargetKind, EngineFrame, EngineFrameRow, EngineFrameSegment, EngineInputEvent,
-    EngineInputKey, EngineKey, EnginePresentationFrame, EngineRenderError, EngineRenderResource,
-    EngineRuntimeSnapshot, EngineSelectionState, EngineViewport, EngineViewportError,
-    ExternalNavigationCacheControlPolicySnapshot, ExternalNavigationMethodSnapshot,
-    ExternalNavigationPostContextSnapshot, ExternalNavigationPostFieldSnapshot,
-    ExternalNavigationRequestIntentSnapshot, ExternalNavigationRequestPolicySnapshot,
-    HandleInputRequest, HandleKeyRequest, LoadDeckContextRequest, LoadDeckRequest,
-    MoveFocusedSelectEditRequest, NavigateToCardRequest, RenderList, ScriptDialogRequestSnapshot,
-    ScriptTimerRequestSnapshot, SetFocusedInputEditDraftRequest, SetViewportColsRequest,
+    EngineFocusTargetKind, EngineFrame, EngineFrameRow, EngineFrameSegment, EngineHitRegion,
+    EngineInputEvent, EngineInputKey, EngineKey, EnginePresentationFrame, EngineRenderError,
+    EngineRenderResource, EngineRuntimeSnapshot, EngineSelectionState, EngineViewport,
+    EngineViewportError, ExternalNavigationCacheControlPolicySnapshot,
+    ExternalNavigationMethodSnapshot, ExternalNavigationPostContextSnapshot,
+    ExternalNavigationPostFieldSnapshot, ExternalNavigationRequestIntentSnapshot,
+    ExternalNavigationRequestPolicySnapshot, HandleInputRequest, HandleKeyRequest,
+    LoadDeckContextRequest, LoadDeckRequest, MoveFocusedSelectEditRequest, NavigateToCardRequest,
+    RenderList, ScriptDialogRequestSnapshot, ScriptTimerRequestSnapshot,
+    SetFocusedInputEditDraftRequest, SetViewportColsRequest,
 };
 use wavenav_host_lib::host_contract::{
     HostCommandError, HostCommandErrorCode, HostIngressLimits, HOST_INGRESS_LIMITS,
@@ -192,6 +193,7 @@ fn render_engine_contracts() -> Result<String, Box<dyn std::error::Error>> {
     push_decl::<EngineFrameRow>(&mut output);
     push_decl::<EngineFocusTargetKind>(&mut output);
     push_decl::<EngineFrameSegment>(&mut output);
+    push_decl::<EngineHitRegion>(&mut output);
     push_decl::<EngineFocusState>(&mut output);
     push_decl::<EngineSelectionState>(&mut output);
     push_decl::<EngineAffordanceSource>(&mut output);

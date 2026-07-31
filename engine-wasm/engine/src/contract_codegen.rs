@@ -17,7 +17,7 @@ use crate::{
     EngineDebugSnapshot, EngineDebugSnapshotOutcome, EngineDebugSnapshotRequest,
     EngineDebugTimerSnapshot, EngineDebugTimestampKind, EngineDebugValue,
     EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
-    EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
+    EngineFrameSegment, EngineHitRegion, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
     EngineRenderError, EngineRenderResource, EngineSelectionState, EngineTraceEntry,
     EngineViewport, EngineViewportError, RenderList, ScriptCallArgLiteral,
     ScriptDialogRequestLiteral, ScriptErrorCategoryLiteral, ScriptErrorClassLiteral,
@@ -108,6 +108,7 @@ pub fn render_runtime_contract() -> String {
     push_decl::<EngineFrameRow>(&mut output);
     push_decl::<EngineFocusTargetKind>(&mut output);
     push_decl::<EngineFrameSegment>(&mut output);
+    push_decl::<EngineHitRegion>(&mut output);
     push_decl::<EngineFocusState>(&mut output);
     push_decl::<EngineSelectionState>(&mut output);
     push_decl::<EngineAffordanceSource>(&mut output);

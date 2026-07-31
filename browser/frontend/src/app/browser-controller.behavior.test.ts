@@ -146,6 +146,7 @@ const createHostClient = () => {
     engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'render-home' })),
     engineHandleKey: vi.fn(async () => snapshot({ activeCardId: 'key-home' })),
     engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'key-home' })),
+    engineHandleInputFrame: vi.fn(async () => frame({ activeCardId: 'click-home' })),
     engineNavigateToCard: vi.fn(async () => snapshot({ activeCardId: 'card-home' })),
     engineNavigateToCardFrame: vi.fn(async () => frame({ activeCardId: 'card-home' })),
     engineNavigateBack: vi.fn(async () => snapshot({ activeCardId: 'back-home' })),
@@ -182,6 +183,7 @@ const createHostClient = () => {
 };
 
 afterEach(() => {
+  vi.unstubAllGlobals();
   document.body.innerHTML = '';
 });
 
@@ -404,6 +406,53 @@ describe('BrowserController behavior coverage', () => {
     // returned; it must not fall back to a redundant engineRenderFrame call.
     expect(hostClient.engineRenderFrame).not.toHaveBeenCalled();
     expect(presenter.getSessionState()).toMatchObject({ activeCardId: 'key-home' });
+  });
+
+  it('routes a Canvas click as frame-bound logical coordinates without host target lookup', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const canvas = refs.viewportEl.querySelector<HTMLCanvasElement>('.viewport-canvas');
+    expect(canvas).not.toBeNull();
+    if (!canvas) {
+      return;
+    }
+    vi.stubGlobal('CanvasRenderingContext2D', class {});
+    vi.spyOn(canvas, 'getContext').mockReturnValue({
+      font: '',
+      measureText: () => ({ width: 8 })
+    } as unknown as CanvasRenderingContext2D);
+    vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 300,
+      height: 150,
+      right: 300,
+      bottom: 150,
+      x: 0,
+      y: 0,
+      toJSON: () => ({})
+    });
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+
+    canvas.dispatchEvent(
+      new MouseEvent('click', { bubbles: true, button: 0, clientX: 11, clientY: 1 })
+    );
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: {
+        type: 'click',
+        frameId: 'test-frame',
+        x: 1,
+        y: 0
+      }
+    });
+    expect(presenter.getSessionState()).toMatchObject({ activeCardId: 'click-home' });
+    controller.dispose();
   });
 
   it('uses the local back flow when back is triggered in local mode', async () => {

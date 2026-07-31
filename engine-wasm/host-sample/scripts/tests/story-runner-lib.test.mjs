@@ -141,7 +141,7 @@ test('asserts Waves host session, status, and semantic render evidence', () => {
 
 test('asserts the canonical frame contract and ordered affordances', () => {
   const frame = {
-    contractVersion: 1,
+    contractVersion: 2,
     frameId: 'cafef00d',
     profileId: 'class-c-reference',
     card: { id: 'home' },
@@ -160,7 +160,7 @@ test('asserts the canonical frame contract and ordered affordances', () => {
   const expectation = {
     state: { activeCardId: 'home' },
     frame: {
-      contractVersion: 1,
+      contractVersion: 2,
       profileId: 'class-c-reference',
       cardId: 'home',
       affordances: [

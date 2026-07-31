@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "example": "f201DeterministicClickInput",
+  "flows": [
+    {
+      "id": "frame-bound-click-activates-link",
+      "title": "Engine-owned hit region resolves pointer activation",
+      "workItems": ["F2-01"],
+      "specItems": ["WBP-08"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+        "frame": {
+          "contractVersion": 2,
+          "profileId": "class-c-reference",
+          "cardId": "home",
+          "hitRegions": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 4,
+              "height": 1,
+              "actionId": "focus:0",
+              "targetKind": "link"
+            }
+          ],
+          "affordances": [
+            {
+              "actionId": "focus:0",
+              "label": "Open",
+              "source": "focused-link",
+              "control": "primary",
+              "enabled": true
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "click", "x": 0, "y": 0 },
+          "expect": {
+            "state": { "activeCardId": "next", "focusedLinkIndex": 0 },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -911,6 +911,60 @@ fn wasm_wml_309_frame_and_action_input_match_native_contract() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_f2_01_click_resolution_matches_native_for_the_same_frame_and_coordinate() {
+    const DECK: &str = r##"<wml>
+      <card id="home"><p><a href="#first">first</a><a href="#second">second</a></p></card>
+      <card id="first"><p>First</p></card>
+      <card id="second"><p>Second</p></card>
+    </wml>"##;
+
+    let mut native = WmlEngine::new();
+    native.load_deck(DECK).expect("native deck should load");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_wasm(DECK).expect("WASM deck should load");
+
+    let native_frame = native.render_frame().expect("native frame should render");
+    let wasm_frame = wasm
+        .render_frame_wasm()
+        .expect("WASM frame should serialize");
+    let hit_regions =
+        Array::from(&Reflect::get(&wasm_frame, &JsValue::from_str("hitRegions")).expect("regions"));
+    assert_eq!(hit_regions.length(), 2);
+    assert_eq!(
+        Reflect::get(&hit_regions.get(1), &JsValue::from_str("actionId"))
+            .expect("actionId")
+            .as_string()
+            .as_deref(),
+        Some("focus:1")
+    );
+
+    native
+        .handle_input(EngineInputEvent::Click {
+            frame_id: native_frame.frame_id.clone(),
+            x: 1,
+            y: 1,
+        })
+        .expect("native click should dispatch");
+    let input = serde_wasm_bindgen::to_value(&EngineInputEvent::Click {
+        frame_id: native_frame.frame_id,
+        x: 1,
+        y: 1,
+    })
+    .expect("click input should serialize");
+    wasm.handle_input_wasm(input)
+        .expect("WASM click should dispatch");
+
+    assert_eq!(
+        wasm.active_card_id_wasm()
+            .expect("WASM active card should be readable"),
+        native
+            .active_card_id()
+            .expect("native active card should be readable")
+    );
+    assert_eq!(wasm.focused_link_index_wasm(), native.focused_link_index());
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_303_back_override_reports_handled_without_snapshot_change() {
     let mut engine = WmlEngine::wasm_new();
     engine

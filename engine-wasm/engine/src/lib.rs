@@ -82,7 +82,7 @@ pub use render::frame::{
 pub use render::frame::{
     EngineAffordance, EngineAffordanceSource, EngineCardDisplayMetadata, EngineControlAssociation,
     EngineDeckDisplayMetadata, EngineFocusState, EngineFocusTargetKind, EngineFrameRow,
-    EngineFrameSegment, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
+    EngineFrameSegment, EngineHitRegion, EngineInputEvent, EngineInputKey, EnginePresentationFrame,
     EngineRenderError, EngineRenderOutput, EngineRenderResource, EngineSelectionState,
     EngineViewport, EngineViewportError, ENGINE_FRAME_CONTRACT_VERSION, ENGINE_FRAME_PROFILE_ID,
     ENGINE_MAX_DRAW_COMMANDS, ENGINE_MAX_LAYOUT_ROWS, ENGINE_MAX_LAYOUT_SEGMENTS,

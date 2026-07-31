@@ -44,7 +44,7 @@ fn wml_309_frame_exposes_ordered_unique_active_do_affordances_with_labels() {
     let engine = frame_engine();
     let frame = engine.render_frame().expect("frame should render");
 
-    assert_eq!(frame.contract_version, 1);
+    assert_eq!(frame.contract_version, 2);
     assert_eq!(frame.profile_id, "class-c-reference");
     assert_eq!(frame.viewport.cols, 20);
     assert_eq!(frame.card.id, "home");

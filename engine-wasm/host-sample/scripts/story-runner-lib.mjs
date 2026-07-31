@@ -105,7 +105,11 @@ export function assertStoryExpectation(evidence, expectation, label) {
       expectation.frame.contractVersion,
       `${label}: frame.contractVersion`
     );
-    assert.equal(evidence.frame.profileId, expectation.frame.profileId, `${label}: frame.profileId`);
+    assert.equal(
+      evidence.frame.profileId,
+      expectation.frame.profileId,
+      `${label}: frame.profileId`
+    );
     assert.equal(evidence.frame.card.id, expectation.frame.cardId, `${label}: frame.card.id`);
     const actualAffordances = evidence.frame.affordances.map(
       ({ actionId, label: actionLabel, source, control, enabled }) => ({
@@ -121,6 +125,23 @@ export function assertStoryExpectation(evidence, expectation, label) {
       expectation.frame.affordances,
       `${label}: frame.affordances`
     );
+    if (expectation.frame.hitRegions) {
+      const actualHitRegions = evidence.frame.hitRegions.map(
+        ({ x, y, width, height, actionId, targetKind }) => ({
+          x,
+          y,
+          width,
+          height,
+          actionId,
+          targetKind
+        })
+      );
+      assert.deepEqual(
+        actualHitRegions,
+        expectation.frame.hitRegions,
+        `${label}: frame.hitRegions`
+      );
+    }
   }
 }
 

@@ -12,7 +12,7 @@ export const renderStub: RenderList = {
 };
 
 export const presentationStub: EnginePresentationFrame = {
-  contractVersion: 1,
+  contractVersion: 2,
   frameId: 'test-frame',
   profileId: 'class-c-reference',
   viewport: { cols: 20 },
@@ -22,6 +22,7 @@ export const presentationStub: EnginePresentationFrame = {
   },
   card: { id: 'home' },
   rows: [{ index: 0, segments: [{ type: 'text', x: 0, text: 'ok' }] }],
+  hitRegions: [],
   selection: { type: 'none' },
   affordances: [],
   backAvailable: false
@@ -104,6 +105,13 @@ export const createHostClientMock = (
       overrides.engineHandleKeyFrame ??
       (async (request) => ({
         snapshot: await host.engineHandleKey(request),
+        render: await renderForFrame(),
+        presentation: presentationStub
+      })),
+    engineHandleInputFrame:
+      overrides.engineHandleInputFrame ??
+      (async () => ({
+        snapshot: await host.engineSnapshot(),
         render: await renderForFrame(),
         presentation: presentationStub
       })),

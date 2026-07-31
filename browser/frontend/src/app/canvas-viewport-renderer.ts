@@ -60,6 +60,21 @@ export interface CanvasViewportRendererOptions {
   observeResize?: (redraw: () => void) => ResizeSubscription;
 }
 
+export interface CanvasPointerGeometry {
+  bounds: Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+  backingWidth: number;
+  backingHeight: number;
+  pixelRatio: number;
+  columnWidth: number;
+  lineHeight: number;
+  inlinePadding: number;
+}
+
+export interface EngineClickCoordinates {
+  x: number;
+  y: number;
+}
+
 const CANVAS_CLASS = 'viewport-canvas';
 const ACCESSIBLE_TEXT_CLASS = 'viewport-accessible-text';
 
@@ -141,7 +156,8 @@ export class CanvasViewportRenderer {
     }
 
     const style = this.getStyle();
-    const contentHeight = rows.length * style.lineHeight;
+    const contentHeight =
+      (rows.reduce((maxIndex, row) => Math.max(maxIndex, row.index), -1) + 1) * style.lineHeight;
     // Release the previous measured height before reading the viewport. This
     // lets a handset-scale decrease shrink the surface instead of allowing
     // the old inline canvas height to keep its parent artificially tall.
@@ -167,9 +183,9 @@ export class CanvasViewportRenderer {
     context.font = style.font;
     context.textBaseline = 'top';
 
-    rows.forEach((row, rowIndex) => {
+    rows.forEach((row) => {
       let cursorX = style.inlinePadding;
-      const rowY = rowIndex * style.lineHeight;
+      const rowY = row.index * style.lineHeight;
       for (const segment of row.segments) {
         const textWidth = context.measureText(segment.text).width;
         if (segment.type === 'focusable' && segment.focused) {
@@ -197,6 +213,77 @@ export class CanvasViewportRenderer {
     this.resizeSubscription?.disconnect();
   }
 }
+
+export const mapCanvasPointerToEngineCoordinates = (
+  clientX: number,
+  clientY: number,
+  geometry: CanvasPointerGeometry
+): EngineClickCoordinates | null => {
+  const {
+    bounds,
+    backingWidth,
+    backingHeight,
+    pixelRatio,
+    columnWidth,
+    lineHeight,
+    inlinePadding
+  } = geometry;
+  if (
+    !Number.isFinite(clientX) ||
+    !Number.isFinite(clientY) ||
+    bounds.width <= 0 ||
+    bounds.height <= 0 ||
+    backingWidth <= 0 ||
+    backingHeight <= 0 ||
+    pixelRatio <= 0 ||
+    columnWidth <= 0 ||
+    lineHeight <= 0
+  ) {
+    return null;
+  }
+
+  const localX = clientX - bounds.left;
+  const localY = clientY - bounds.top;
+  if (localX < 0 || localY < 0 || localX >= bounds.width || localY >= bounds.height) {
+    return null;
+  }
+
+  // Pointer coordinates arrive in post-CSS-transform pixels. Convert through
+  // the backing store and then remove the Canvas device-pixel transform so
+  // the engine receives its host-neutral column/row grid.
+  const drawX = (localX * backingWidth) / bounds.width / pixelRatio;
+  const drawY = (localY * backingHeight) / bounds.height / pixelRatio;
+  if (drawX < inlinePadding) {
+    return null;
+  }
+  return {
+    x: Math.floor((drawX - inlinePadding) / columnWidth),
+    y: Math.floor(drawY / lineHeight)
+  };
+};
+
+export const canvasPointerToEngineCoordinates = (
+  canvas: HTMLCanvasElement,
+  viewport: HTMLElement,
+  clientX: number,
+  clientY: number
+): EngineClickCoordinates | null => {
+  const context = getCanvasContext(canvas);
+  if (!context) {
+    return null;
+  }
+  const style = readViewportStyle(viewport);
+  context.font = style.font;
+  return mapCanvasPointerToEngineCoordinates(clientX, clientY, {
+    bounds: canvas.getBoundingClientRect(),
+    backingWidth: canvas.width,
+    backingHeight: canvas.height,
+    pixelRatio: positiveDimension(window.devicePixelRatio, 1),
+    columnWidth: positiveDimension(context.measureText('M').width, style.fontSize * 0.6),
+    lineHeight: style.lineHeight,
+    inlinePadding: style.inlinePadding
+  });
+};
 
 const getCanvasContext = (canvas: HTMLCanvasElement): CanvasViewportContext | null => {
   // jsdom deliberately has no Canvas implementation. Avoid calling its

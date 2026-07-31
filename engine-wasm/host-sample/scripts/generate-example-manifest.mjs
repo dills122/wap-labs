@@ -41,6 +41,7 @@ const ACTION_TYPES = new Set([
   'keyboard',
   'type-text',
   'activate-action',
+  'click',
   'back',
   'tick',
   'clear-intent'
@@ -275,26 +276,23 @@ function parseExpectedState(value, filename, location) {
         );
         validateKeys(
           requestIntent,
-          new Set([
-            'method',
-            'enctype',
-            'sendReferer',
-            'acceptCharset',
-            'sameDeck',
-            'postFields'
-          ]),
+          new Set(['method', 'enctype', 'sendReferer', 'acceptCharset', 'sameDeck', 'postFields']),
           filename,
           `${location}.${key}.requestIntent`
         );
         if (!['get', 'post'].includes(requestIntent.method)) {
-          throw new Error(`${filename}: ${location}.${key}.requestIntent.method must be get or post`);
+          throw new Error(
+            `${filename}: ${location}.${key}.requestIntent.method must be get or post`
+          );
         }
         if (typeof requestIntent.enctype !== 'string') {
           throw new Error(`${filename}: ${location}.${key}.requestIntent.enctype must be a string`);
         }
         for (const field of ['sendReferer', 'sameDeck']) {
           if (typeof requestIntent[field] !== 'boolean') {
-            throw new Error(`${filename}: ${location}.${key}.requestIntent.${field} must be boolean`);
+            throw new Error(
+              `${filename}: ${location}.${key}.requestIntent.${field} must be boolean`
+            );
           }
         }
         if (
@@ -372,7 +370,7 @@ function parseFrameExpectation(value, filename, location) {
   const frame = requireRecord(value, filename, location);
   validateKeys(
     frame,
-    new Set(['contractVersion', 'profileId', 'cardId', 'affordances']),
+    new Set(['contractVersion', 'profileId', 'cardId', 'hitRegions', 'affordances']),
     filename,
     location
   );
@@ -398,11 +396,7 @@ function parseFrameExpectation(value, filename, location) {
         filename,
         `${location}.affordances[${index}].actionId`
       ),
-      label: requireString(
-        affordance.label,
-        filename,
-        `${location}.affordances[${index}].label`
-      ),
+      label: requireString(affordance.label, filename, `${location}.affordances[${index}].label`),
       source: requireString(
         affordance.source,
         filename,
@@ -419,7 +413,50 @@ function parseFrameExpectation(value, filename, location) {
   if (frame.affordances.some((affordance) => affordance.enabled !== true)) {
     throw new Error(`${filename}: ${location}.affordances[].enabled must be true`);
   }
-  return { contractVersion: frame.contractVersion, profileId, cardId, affordances };
+  if (frame.hitRegions !== undefined && !Array.isArray(frame.hitRegions)) {
+    throw new Error(`${filename}: ${location}.hitRegions must be an array`);
+  }
+  const hitRegions =
+    frame.hitRegions === undefined
+      ? undefined
+      : frame.hitRegions.map((value, index) => {
+          const region = requireRecord(value, filename, `${location}.hitRegions[${index}]`);
+          validateKeys(
+            region,
+            new Set(['x', 'y', 'width', 'height', 'actionId', 'targetKind']),
+            filename,
+            `${location}.hitRegions[${index}]`
+          );
+          for (const key of ['x', 'y', 'width', 'height']) {
+            if (!Number.isInteger(region[key]) || region[key] < 0) {
+              throw new Error(
+                `${filename}: ${location}.hitRegions[${index}].${key} must be a non-negative integer`
+              );
+            }
+          }
+          if (region.width < 1 || region.height < 1) {
+            throw new Error(
+              `${filename}: ${location}.hitRegions[${index}] width and height must be positive`
+            );
+          }
+          return {
+            x: region.x,
+            y: region.y,
+            width: region.width,
+            height: region.height,
+            actionId: requireString(
+              region.actionId,
+              filename,
+              `${location}.hitRegions[${index}].actionId`
+            ),
+            targetKind: requireString(
+              region.targetKind,
+              filename,
+              `${location}.hitRegions[${index}].targetKind`
+            )
+          };
+        });
+  return { contractVersion: frame.contractVersion, profileId, cardId, hitRegions, affordances };
 }
 
 function parseExpectation(value, filename, location) {
@@ -465,7 +502,12 @@ function parseExpectation(value, filename, location) {
 
 function parseAction(value, filename, location) {
   const action = requireRecord(value, filename, location);
-  validateKeys(action, new Set(['type', 'key', 'ms', 'text', 'actionId']), filename, location);
+  validateKeys(
+    action,
+    new Set(['type', 'key', 'ms', 'text', 'actionId', 'x', 'y']),
+    filename,
+    location
+  );
   if (!ACTION_TYPES.has(action.type)) {
     throw new Error(`${filename}: ${location}.type has unknown action "${String(action.type)}"`);
   }
@@ -508,7 +550,25 @@ function parseAction(value, filename, location) {
     return { type: action.type, actionId };
   }
 
-  if (action.key !== undefined || action.text !== undefined || action.actionId !== undefined) {
+  if (action.type === 'click') {
+    if (
+      !Number.isInteger(action.x) ||
+      action.x < 0 ||
+      !Number.isInteger(action.y) ||
+      action.y < 0
+    ) {
+      throw new Error(`${filename}: ${location} click requires non-negative integer x and y`);
+    }
+    return { type: action.type, x: action.x, y: action.y };
+  }
+
+  if (
+    action.key !== undefined ||
+    action.text !== undefined ||
+    action.actionId !== undefined ||
+    action.x !== undefined ||
+    action.y !== undefined
+  ) {
     throw new Error(`${filename}: ${location} only key/keyboard/type-text actions accept input`);
   }
   if (action.type === 'tick') {
@@ -745,6 +805,14 @@ export interface StoryExpectation {
       control: string;
       enabled: true;
     }>;
+    hitRegions?: Array<{
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      actionId: string;
+      targetKind: string;
+    }>;
   };
 }
 
@@ -753,6 +821,7 @@ export type StoryAction =
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
   | { type: 'activate-action'; actionId: string }
+  | { type: 'click'; x: number; y: number }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
