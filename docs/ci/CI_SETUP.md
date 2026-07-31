@@ -420,7 +420,8 @@ Behavior:
 - installs the Linux WebKit WebDriver and Xvfb dependencies documented by Tauri
 - restores pinned `tauri-cli` 2.10.0 and `tauri-driver` 2.0.6 binaries from an exact
   OS/architecture/version cache independent of product Rust lockfiles, installs on an exact-key
-  miss, and verifies both reported versions
+  miss, verifies both crate versions from the dedicated Cargo install metadata, checks executable
+  resolution, and validates the Tauri CLI version through its supported command interface
 - restores content-addressed Kannel/WML BuildKit layers and starts only the explicitly loaded
   development image tags
 - builds the production frontend and an unbundled debug Tauri application

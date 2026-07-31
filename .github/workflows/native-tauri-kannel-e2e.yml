@@ -113,21 +113,24 @@ jobs:
         id: cache-tauri-tools
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: |
-            ~/.cargo/bin/cargo-tauri
-            ~/.cargo/bin/tauri-driver
-          key: ${{ runner.os }}-${{ runner.arch }}-tauri-tools-${{ env.TAURI_CLI_VERSION }}-${{ env.TAURI_DRIVER_VERSION }}
+          path: ~/.cache/wap-labs/tauri-tools
+          key: ${{ runner.os }}-${{ runner.arch }}-tauri-tools-root-v1-${{ env.TAURI_CLI_VERSION }}-${{ env.TAURI_DRIVER_VERSION }}
 
       - name: Install pinned Tauri CLI and WebDriver bridge on cache miss
         if: steps.cache-tauri-tools.outputs.cache-hit != 'true'
         run: |
-          cargo install tauri-cli --version "${TAURI_CLI_VERSION}" --locked
-          cargo install tauri-driver --version "${TAURI_DRIVER_VERSION}" --locked
+          cargo install --root "${HOME}/.cache/wap-labs/tauri-tools" tauri-cli --version "${TAURI_CLI_VERSION}" --locked
+          cargo install --root "${HOME}/.cache/wap-labs/tauri-tools" tauri-driver --version "${TAURI_DRIVER_VERSION}" --locked
+
+      - name: Add pinned Tauri tools to PATH
+        run: echo "${HOME}/.cache/wap-labs/tauri-tools/bin" >>"${GITHUB_PATH}"
 
       - name: Verify pinned Tauri tools
         run: |
+          cargo install --list --root "${HOME}/.cache/wap-labs/tauri-tools" | grep -F "tauri-cli v${TAURI_CLI_VERSION}:"
+          cargo install --list --root "${HOME}/.cache/wap-labs/tauri-tools" | grep -F "tauri-driver v${TAURI_DRIVER_VERSION}:"
           cargo tauri --version | grep -F "${TAURI_CLI_VERSION}"
-          tauri-driver --version | grep -F "${TAURI_DRIVER_VERSION}"
+          test -x "$(command -v tauri-driver)"
 
       - name: Run native Tauri/Kannel UI pilot
         env:

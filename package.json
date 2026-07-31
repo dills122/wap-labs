@@ -37,7 +37,7 @@
     "verify:change": "node scripts/verify.mjs change",
     "verify:full": "node scripts/verify.mjs full",
     "verify:extended": "node scripts/verify.mjs extended",
-    "verify:test": "node --test scripts/tests/verify.test.mjs scripts/tests/ci-path-routing.test.mjs scripts/tests/native-tauri-kannel-e2e-script.test.mjs",
+    "verify:test": "node --test scripts/tests/verify.test.mjs scripts/tests/ci-path-routing.test.mjs scripts/tests/ci-tool-cache-provenance.test.mjs scripts/tests/native-tauri-kannel-e2e-script.test.mjs",
     "version:check": "node scripts/check-release-version.mjs",
     "version:set": "node scripts/set-release-version.mjs",
     "test:node": "pnpm -r --if-present run test",

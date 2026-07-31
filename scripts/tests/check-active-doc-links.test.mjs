@@ -28,8 +28,15 @@ test('active documentation scope excludes archives and dated snapshots', () => {
 });
 
 test('GitHub heading anchors include deterministic duplicate suffixes and explicit ids', () => {
-  const anchors = markdownAnchors('# Cache keys\n## Cache keys\n<a id="manual-anchor"></a>');
-  assert.deepEqual([...anchors], ['cache-keys', 'cache-keys-1', 'manual-anchor']);
+  const anchors = markdownAnchors(
+    [
+      '# Cache keys',
+      '## Cache keys',
+      '## <strong>Nested <em>markup</em></strong>',
+      '<a id="manual-anchor"></a>'
+    ].join('\n')
+  );
+  assert.deepEqual([...anchors], ['cache-keys', 'cache-keys-1', 'nested-markup', 'manual-anchor']);
 });
 
 test('active documentation links validate files, anchors, and reference targets', () => {

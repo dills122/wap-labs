@@ -53,8 +53,14 @@ function walkMarkdownFiles(root, relativePath) {
 }
 
 function githubSlug(value) {
-  return value
-    .replace(/<[^>]*>/g, '')
+  let withoutTags = value;
+  let previous;
+  do {
+    previous = withoutTags;
+    withoutTags = withoutTags.replace(/<[^>]*>/g, '');
+  } while (withoutTags !== previous);
+
+  return withoutTags
     .replace(/!?(?:\[([^\]]*)\])\([^)]*\)/g, '$1')
     .replace(/[`*_~]/g, '')
     .replace(/&[a-zA-Z0-9#]+;/g, '')

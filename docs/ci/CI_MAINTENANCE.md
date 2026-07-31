@@ -73,9 +73,11 @@ for engine, transport, browser, gateway, infrastructure, documentation, and shar
 - Rust: `Swatinem/rust-cache` is scoped by named workspace and target directory. Product lockfile
   changes invalidate build artifacts. The two pinned native Tauri executables have a separate
   exact OS, architecture, CLI-version, and driver-version key so product lockfile churn cannot
-  force a five-minute reinstall.
+  force a five-minute reinstall. A dedicated Cargo install root keeps exact crate-version
+  provenance beside those cached executables.
 - Go: module/build caches remain managed by `actions/setup-go` for product jobs. Syft and Grype are
-  cached only as exact pinned executables and are version-checked after restore.
+  cached only as exact pinned executables and are checked against their embedded Go module versions
+  after restore before each command is smoke-tested.
 - Docker: BuildKit GHA scopes are separated for Kannel development, Kannel production, and the WML
   origin. Dockerfile context, copied source, target, and pinned base digest provide content
   invalidation; development and production tags are loaded explicitly before Compose uses
