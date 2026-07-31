@@ -37,6 +37,13 @@ export type RunMode = 'local' | 'network';
 
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 
+class NavigationActionFailure extends Error {
+  constructor(error: unknown) {
+    super(error instanceof Error ? error.message : String(error));
+    this.name = 'NavigationActionFailure';
+  }
+}
+
 export class BrowserController {
   private readonly hostClient: TauriHostClient;
 
@@ -715,6 +722,12 @@ export class BrowserController {
         this.presenter.recordTimeline(actionName, 'ok');
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
+        if (error instanceof NavigationActionFailure) {
+          this.presenter.patchSessionState({
+            navigationStatus: 'error',
+            lastError: message
+          });
+        }
         this.presenter.setStatus(WAVES_COPY.status.error(message));
         this.presenter.recordTimeline(actionName, 'error', { message });
       }
@@ -727,9 +740,22 @@ export class BrowserController {
     const startingRunMode = this.runMode;
     const startingGeneration = this.navigation.captureNavigationGeneration();
     const previousActiveCardId = this.presenter.getSessionState().activeCardId;
-    const localFrame =
-      startingRunMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
-    const snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
+    let localFrame: EngineFrame | null;
+    let snapshot: EngineRuntimeSnapshot | null;
+    try {
+      localFrame =
+        startingRunMode === 'local' ? await this.hostClient.engineHandleKeyFrame({ key }) : null;
+      snapshot = localFrame ? localFrame.snapshot : await this.navigation.applyEngineKey(key);
+    } catch (error) {
+      if (
+        this.runMode !== startingRunMode ||
+        !this.navigation.isCurrentNavigation(startingGeneration) ||
+        this.navigation.isNavigationInFlight()
+      ) {
+        return;
+      }
+      throw new NavigationActionFailure(error);
+    }
     if (
       !snapshot ||
       this.runMode !== startingRunMode ||
