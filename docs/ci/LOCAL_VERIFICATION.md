@@ -3,6 +3,10 @@
 The canonical local verification family is exposed through root `pnpm` scripts and matching Make
 targets:
 
+For documentation-only iteration, `pnpm docs:check` validates active Markdown file targets and
+GitHub-style anchors without contacting the network. The change/full verification profiles invoke
+the same check through the always-on workspace-quality lane.
+
 | Profile  | Command                               | Contract                                                                                                                                                                                                                                                                       |
 | -------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Fast     | `pnpm verify:fast`                    | Runs the verification-orchestrator tests, whitespace check, and managed-version check.                                                                                                                                                                                         |

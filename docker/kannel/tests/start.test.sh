@@ -32,6 +32,8 @@ trap cleanup EXIT HUP INT TERM
 mkdir -p "$FAKE_BIN"
 cp "$ROOT_DIR/docker/kannel/tests/fake-kannel-child.sh" "$FAKE_BIN/bearerbox"
 cp "$ROOT_DIR/docker/kannel/tests/fake-kannel-child.sh" "$FAKE_BIN/wapbox"
+cp "$ROOT_DIR/docker/kannel/tests/fake-curl.sh" "$FAKE_BIN/curl"
+chmod +x "$FAKE_BIN/curl"
 
 wait_for_file() {
   awaited_file="$1"
@@ -95,6 +97,7 @@ run_child_exit_test() {
   supervisor_pid=$!
 
   wait_for_file "$state_dir/bearerbox.pid" "bearerbox startup"
+  wait_for_file "$state_dir/readiness-probe.txt" "bearerbox readiness probe"
   wait_for_file "$state_dir/wapbox.pid" "wapbox startup"
   wait_for_exit "$supervisor_pid" "supervisor after $failed_child exit"
 
@@ -132,11 +135,16 @@ run_signal_cleanup_test() {
     KANNEL_TEST_STATE_DIR="$state_dir" \
     FAKE_BEARERBOX_MODE=run \
     FAKE_WAPBOX_MODE=run \
+    FAKE_CURL_FAILURES=2 \
     sh "$START_SCRIPT" >"$log_file" 2>&1 &
   supervisor_pid=$!
 
   wait_for_file "$state_dir/bearerbox.pid" "signal test bearerbox startup"
+  wait_for_file "$state_dir/readiness-probe.txt" "signal test bearerbox readiness probe"
   wait_for_file "$state_dir/wapbox.pid" "signal test wapbox startup"
+  readiness_attempts=$(sed -n '1p' "$state_dir/readiness-probe.txt")
+  [ "$readiness_attempts" -eq 3 ] || \
+    fail "readiness gate expected 3 attempts, got $readiness_attempts"
   kill -TERM "$supervisor_pid"
   wait_for_exit "$supervisor_pid" "supervisor after TERM"
 

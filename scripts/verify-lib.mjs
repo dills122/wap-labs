@@ -132,6 +132,7 @@ export const LANES = Object.freeze([
       command('workspace format', 'pnpm', ['run', 'format:check:node']),
       command('workspace lint', 'pnpm', ['run', 'lint:node']),
       command('workspace typecheck', 'pnpm', ['run', 'typecheck:node']),
+      command('active documentation links and anchors', 'pnpm', ['run', 'docs:check']),
       command('active ticket file references', 'node', [
         'scripts/check-ticket-file-references.mjs'
       ]),

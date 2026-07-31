@@ -41,6 +41,10 @@ to conclude `success`.
 The security checks come from `.github/workflows/security.yml`. The CodeQL checks come from the
 repository-controlled advanced setup in `.github/workflows/codeql.yml`.
 
+`Network Preview Image Audit` is intentionally not a required context. It runs for image-affecting
+pull requests and for every push to `main`, weekly schedule, and manual Security run; unrelated PRs
+skip it at job level while the four required dependency/security contexts continue to report.
+
 `Extended Quality Required Gate` is the stable aggregate from
 `.github/workflows/extended-quality.yml`. For pull requests and pushes to `main`, it selects:
 

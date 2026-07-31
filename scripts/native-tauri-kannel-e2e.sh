@@ -5,6 +5,15 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
 WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
 WML_METRICS_URL="${WML_METRICS_URL:-http://localhost:3001/metrics}"
+NATIVE_E2E_PREBUILT_IMAGES="${NATIVE_E2E_PREBUILT_IMAGES:-0}"
+
+case "${NATIVE_E2E_PREBUILT_IMAGES}" in
+  0 | 1) ;;
+  *)
+    echo "NATIVE_E2E_PREBUILT_IMAGES must be 0 or 1" >&2
+    exit 2
+    ;;
+esac
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo "native Tauri WebDriver smoke requires Linux (tauri-driver does not support macOS)" >&2
@@ -69,7 +78,11 @@ cd "${ROOT_DIR}"
 
 echo "==> Starting isolated Kannel + WML services"
 export WML_DTD_VERSION=1.3
-docker compose up -d --build kannel wml-server
+if [ "${NATIVE_E2E_PREBUILT_IMAGES}" = 1 ]; then
+  docker compose up -d --no-build kannel wml-server
+else
+  docker compose up -d --build kannel wml-server
+fi
 wait_for_http "${KANNEL_ADMIN_URL}"
 curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" | grep -q 'Status: running'
 wait_for_http "${WML_HEALTH_URL}"
@@ -89,7 +102,7 @@ export WML_METRICS_URL
 export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 
 {
-  echo "tauri-driver: $(cargo install --list | sed -n '/^tauri-driver /{p;q;}')"
+  echo "tauri-driver: $(tauri-driver --version 2>&1 | head -n 1)"
   echo "WebKitWebDriver: $(WebKitWebDriver --version 2>&1 | head -n 1)"
   echo "rustc: $(rustc --version)"
   echo "node: $(node --version)"
