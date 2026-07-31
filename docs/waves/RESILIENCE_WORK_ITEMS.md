@@ -37,8 +37,8 @@ error, preserve usable state where appropriate, and leave an explicit recovery p
 The P1 containment gate is closed: `RSL-01` quarantines terminal external-intent failures,
 `RSL-02` bounds and cancels navigation work, `RSL-03` makes mutating frame commands transactional,
 and `RSL-04` bounds single-pass render output. `RSL-05` closes malformed IPC admission and typed
-host failures, and `RSL-06` closes diagnostic/export redaction. The active resilience baton is
-`RSL-07` on the shared presenter/history surface.
+host failures, `RSL-06` closes diagnostic/export redaction, and `RSL-07` closes bounded
+presenter/history state.
 
 ## Lane A: Navigation Containment
 
@@ -319,7 +319,7 @@ host failures, and `RSL-06` closes diagnostic/export redaction. The active resil
 ### RSL-07 Bounded toast and host-history state
 
 1. `Issue`: [#504](https://github.com/dills122/wap-labs/issues/504)
-2. `Status`: `todo`
+2. `Status`: `done`
 3. `Priority`: `P2`
 4. `Depends On`: `RSL-06`
 5. `Files`:
@@ -346,6 +346,22 @@ host failures, and `RSL-06` closes diagnostic/export redaction. The active resil
 
 - UI and host-session collections remain bounded and preserve an obvious recovery signal.
 
+9. `Resolution`:
+
+- Toast state retains at most four notifications (one visible plus three queued), coalesces
+  identical message/tone pairs, and lets a successful recovery status or toast immediately remove
+  stale failures. Repeated identical failures write the accessible live region once.
+- Host history retains 32 entries: the current entry plus 31 deterministic WML Back steps. Forward
+  history is truncated before a push, then overflow evicts the oldest entry and re-bases the index
+  to the retained window. Retained POST request identities are independently cloned and remain
+  byte-exact for replay.
+- Timeline production and exported diagnostic state retain at most 200 already-redacted entries,
+  even if a caller requests a larger window. A 10,000-navigation simulation covers history,
+  timeline, toast, and export bounds.
+- Issue `#450` remains a separate follow-up: this eviction policy preserves every entry it receives
+  (including duplicates) but does not repair same-card history identity lost across deck
+  replacement. Persistent/searchable history must continue to wait for that identity fix.
+
 ## Dispatch Order and Conflict Map
 
 Completed containment and IPC batches:
@@ -356,12 +372,14 @@ Completed containment and IPC batches:
 4. `RSL-04` bounded single-pass render output
 5. `RSL-05` bounded ingress and typed host errors
 
-Recommended next resilience sequence:
+Completed diagnostic/UI-state sequence:
 
-1. `RSL-07` bounded toast/history state on the completed RSL-06 projection boundary.
-2. Issue `#450` history identity/cross-deck correctness before persisted or searchable history.
+1. `RSL-06` diagnostic and export redaction.
+2. `RSL-07` bounded toast/history state on the completed RSL-06 projection boundary.
+
+Issue `#450` history identity/cross-deck correctness remains required before persisted or searchable
+history.
 
 Likely conflicts:
 
-- `RSL-07` / WBP-11 / merged shell presentation: `browser-presenter.ts`
-- `RSL-07` / issue `#450`: host-history state and retention behavior
+- issue `#450` / WBP-11 / merged shell presentation: host-history and presenter surfaces

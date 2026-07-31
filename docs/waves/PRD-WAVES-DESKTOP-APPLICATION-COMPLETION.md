@@ -99,7 +99,8 @@ At the synchronized `6cf1682a` baseline:
   open/draft PR queue is empty at this checkpoint.
 - Issue `#450` blocks persistent/searchable history because same-card entries can be lost across a
   deck boundary.
-- Issue `#504` remains the active resilience baton for bounded presenter/history state.
+- Issue `#504` is resolved by bounded presenter/history state. The 32-entry host window does not
+  fix `#450`; persistent/searchable history remains blocked on that separate identity correction.
 
 Independent streams retain their own responsibilities:
 

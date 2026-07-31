@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HostSessionState } from '../../../contracts/transport';
 import { ENGINE_RENDER_LIMITS, type RenderList } from '../../../contracts/engine';
 import type { BrowserShellRefs } from './browser-shell-template';
-import { BrowserPresenter } from './browser-presenter';
+import { BrowserPresenter, TOAST_NOTIFICATION_CAPACITY } from './browser-presenter';
 import { WAVES_COPY } from './waves-copy';
 
 const createRefs = (): BrowserShellRefs => {
@@ -286,15 +286,102 @@ describe('BrowserPresenter', () => {
       expect(refs.liveAnnouncerEl.textContent).toBe('first message');
 
       // Fired before the first toast's TTL elapses -- must not clobber it.
-      presenter.showToast('second message', 'ok', 1000);
+      presenter.showToast('second message', 'error', 1000);
       expect(refs.toastEl.textContent).toBe('first message');
 
       vi.advanceTimersByTime(1000);
       expect(refs.toastEl.textContent).toBe('second message');
-      expect(refs.toastEl.className).toBe('toast toast-ok');
+      expect(refs.toastEl.className).toBe('toast toast-error');
       expect(refs.liveAnnouncerEl.textContent).toBe('second message');
 
       vi.advanceTimersByTime(1000);
+      expect(refs.toastEl.className).toBe('toast toast-hidden');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('coalesces 97 identical failures into one accessible bounded notification', async () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const records: MutationRecord[] = [];
+      const observer = new MutationObserver((mutations) => records.push(...mutations));
+      observer.observe(refs.liveAnnouncerEl, { childList: true });
+
+      for (let failure = 0; failure < 97; failure += 1) {
+        presenter.showToast('gateway timed out', 'error', 1000);
+      }
+      await Promise.resolve();
+
+      const toastState = presenter as unknown as {
+        activeToast?: unknown;
+        toastQueue: unknown[];
+      };
+      expect(
+        Number(toastState.activeToast !== undefined) + toastState.toastQueue.length
+      ).toBeLessThanOrEqual(TOAST_NOTIFICATION_CAPACITY);
+      expect(toastState.toastQueue).toHaveLength(0);
+      expect(records).toHaveLength(1);
+      expect(refs.liveAnnouncerEl.textContent).toBe('gateway timed out');
+
+      vi.advanceTimersByTime(1000);
+      expect(refs.toastEl.className).toBe('toast toast-hidden');
+      observer.disconnect();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps a 10,000-notification burst within total toast capacity', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+      for (let failure = 0; failure < 10_000; failure += 1) {
+        presenter.showToast(`failure-${failure}`, 'error', 1000, false);
+      }
+
+      const toastState = presenter as unknown as {
+        activeToast?: { message: string };
+        toastQueue: Array<{ message: string }>;
+      };
+      expect(toastState.activeToast?.message).toBe('failure-0');
+      expect(toastState.toastQueue.map(({ message }) => message)).toEqual([
+        'failure-9997',
+        'failure-9998',
+        'failure-9999'
+      ]);
+      expect(1 + toastState.toastQueue.length).toBe(TOAST_NOTIFICATION_CAPACITY);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('makes successful recovery visible immediately and discards stale failures', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const success = WAVES_COPY.status.fetchedAndLoadedDeck('http://local.test/recovered.wml');
+
+      presenter.showToast('first failure', 'error', 1000);
+      presenter.showToast('second failure', 'error', 1000);
+      presenter.showToast('third failure', 'error', 1000);
+      presenter.setStatus(success);
+
+      const toastState = presenter as unknown as {
+        activeToast?: unknown;
+        toastQueue: unknown[];
+      };
+      expect(refs.toastEl.className).toBe('toast toast-hidden');
+      expect(toastState.activeToast).toBeUndefined();
+      expect(toastState.toastQueue).toEqual([]);
+      expect(refs.liveAnnouncerEl.textContent).toBe(success);
+
+      vi.advanceTimersByTime(10_000);
       expect(refs.toastEl.className).toBe('toast toast-hidden');
     } finally {
       vi.useRealTimers();

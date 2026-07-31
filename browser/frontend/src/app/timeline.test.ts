@@ -4,6 +4,7 @@ import {
   buildTimelineExport,
   clearTimelineState,
   createTimelineState,
+  TIMELINE_ENTRY_CAPACITY,
   validateTimelineExport
 } from './timeline';
 
@@ -50,6 +51,37 @@ describe('app/timeline', () => {
     expect(state.entries).toHaveLength(2);
     expect(state.entries.map((entry) => entry.action)).toEqual(['b', 'c']);
     expect(state.nextSeq).toBe(4);
+  });
+
+  it('hard-caps a 10,000-event timeline and its export', () => {
+    let state = createTimelineState();
+    for (let navigation = 0; navigation < 10_000; navigation += 1) {
+      state = appendTimelineEntry(
+        state,
+        10_000,
+        `navigation-${navigation}`,
+        navigation % 2 === 0 ? 'state' : 'ok',
+        {
+          runMode: 'network',
+          navigationStatus: 'loaded',
+          requestedUrl: `http://local.test/${navigation}`
+        }
+      );
+    }
+
+    expect(state.entries).toHaveLength(TIMELINE_ENTRY_CAPACITY);
+    expect(state.entries[0]?.seq).toBe(10_000 - TIMELINE_ENTRY_CAPACITY + 1);
+    expect(state.entries.at(-1)?.seq).toBe(10_000);
+    expect(state.nextSeq).toBe(10_001);
+
+    const payload = buildTimelineExport(state.entries, {
+      runMode: 'network',
+      navigationStatus: 'loaded',
+      requestedUrl: 'http://local.test/9999'
+    });
+    expect(payload.timelineLength).toBe(TIMELINE_ENTRY_CAPACITY);
+    expect(payload.timeline).toHaveLength(TIMELINE_ENTRY_CAPACITY);
+    expect(JSON.stringify(payload).length).toBeLessThan(100_000);
   });
 
   it('stores only the allowlisted projection at the producer boundary', () => {

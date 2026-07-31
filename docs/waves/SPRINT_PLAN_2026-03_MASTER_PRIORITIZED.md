@@ -266,11 +266,11 @@ and lanes may run concurrently subject to the noted file ownership.
 |        5 | Request A2 — replayable POST history                                               | Starts after A1 fixes the serialized request shape; shares navigation/history structures with C1, so land after C1 or coordinate one owner.                                                                    | Directly targets `WML-CL-HISTORY-POST-REPLAY` and the remaining partial WML-C-07/WML-C-38 boundary.                          | Makes form navigation/back behavior predictable in public-lab scenarios.                       |
 |        6 | Script B2 — bounded `WMLS-502` operator/conversion execution                       | Starts after B1 establishes stack dataflow; same files as B1, so it is sequential in lane B.                                                                                                                   | Begins converting the 32 partial / 9 missing WMLScript parents and 107 unassessed language clauses into executable evidence. | Expands the safe script behavior available to representative WAP decks.                        |
 
-Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-06, APP-STATE-01,
-APP-FAV-01, APP-CMD-01, and D0-01 through D0-03 are complete. The next parallel-safe desktop batch
-is RSL-07 bounded presenter/history state, F2-01 deterministic click input, and D0-04 read-only
-Inspector consumption with explicit file ownership. Issue `#450`, WBP-11, and APP-SHELL-01 follow
-on their shared history/presenter/shell surfaces.
+Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-07, APP-STATE-01,
+APP-FAV-01, APP-CMD-01, and D0-01 through D0-03 are complete. F2-01 and D0-04 remain independent
+parallel slices; WBP-11 and APP-SHELL-01 follow on shared presenter/shell surfaces. RSL-07 bounds
+retained history but leaves issue `#450`'s cross-deck same-card identity correction to its separate
+follow-up.
 
 Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
 connection-oriented WSP/WTP to manufacture completion. `REN-4` and full
