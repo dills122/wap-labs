@@ -3,8 +3,10 @@ import {
   canHistoryBack,
   commitHistoryBack,
   createHostHistoryState,
+  HOST_HISTORY_ENTRY_CAPACITY,
   peekHistoryBack,
   pushHostHistoryEntry,
+  RETAINED_WML_BACK_DEPTH,
   resetHostHistoryState,
   updateCurrentHistoryCard
 } from './session-history';
@@ -250,6 +252,85 @@ describe('session-history', () => {
       'http://local.test/a',
       'http://local.test/b',
       'http://local.test/d'
+    ]);
+  });
+
+  it('evicts the oldest entry and retains a deterministic WML Back window', () => {
+    const state = createHostHistoryState();
+    for (let navigation = 0; navigation < 10_000; navigation += 1) {
+      pushHostHistoryEntry(state, `http://local.test/${navigation}`, `card-${navigation}`, 'user');
+    }
+
+    expect(state.entries).toHaveLength(HOST_HISTORY_ENTRY_CAPACITY);
+    expect(state.index).toBe(HOST_HISTORY_ENTRY_CAPACITY - 1);
+    expect(state.entries[0]?.url).toBe('http://local.test/9968');
+    expect(state.entries.at(-1)?.url).toBe('http://local.test/9999');
+
+    const traversed: string[] = [];
+    while (canHistoryBack(state)) {
+      const entry = commitHistoryBack(state);
+      if (entry) {
+        traversed.push(entry.url);
+      }
+    }
+    expect(traversed).toHaveLength(RETAINED_WML_BACK_DEPTH);
+    expect(traversed.at(-1)).toBe('http://local.test/9968');
+    expect(state.index).toBe(0);
+  });
+
+  it('truncates forward entries before applying oldest-entry eviction', () => {
+    const state = createHostHistoryState();
+    for (let navigation = 0; navigation < HOST_HISTORY_ENTRY_CAPACITY; navigation += 1) {
+      pushHostHistoryEntry(state, `http://local.test/${navigation}`);
+    }
+    commitHistoryBack(state);
+    commitHistoryBack(state);
+
+    pushHostHistoryEntry(state, 'http://local.test/replacement');
+
+    expect(state.entries).toHaveLength(HOST_HISTORY_ENTRY_CAPACITY - 1);
+    expect(state.index).toBe(HOST_HISTORY_ENTRY_CAPACITY - 2);
+    expect(state.entries[0]?.url).toBe('http://local.test/0');
+    expect(state.entries.at(-2)?.url).toBe('http://local.test/29');
+    expect(state.entries.at(-1)?.url).toBe('http://local.test/replacement');
+
+    pushHostHistoryEntry(state, 'http://local.test/newest');
+    pushHostHistoryEntry(state, 'http://local.test/evicts-oldest');
+    expect(state.entries).toHaveLength(HOST_HISTORY_ENTRY_CAPACITY);
+    expect(state.entries[0]?.url).toBe('http://local.test/1');
+    expect(state.entries.at(-1)?.url).toBe('http://local.test/evicts-oldest');
+    expect(state.index).toBe(HOST_HISTORY_ENTRY_CAPACITY - 1);
+  });
+
+  it('clones retained POST replay identity independently from caller mutation', () => {
+    const state = createHostHistoryState();
+    const requestIdentity = {
+      method: 'POST',
+      headers: { Authorization: 'Basic byte-exact' },
+      requestPolicy: {
+        postContext: {
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'pin=%30%30%30%30'
+        },
+        requestIntent: {
+          method: 'post' as const,
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          sameDeck: false,
+          postFields: [{ name: 'pin', value: '0000' }]
+        }
+      }
+    };
+
+    pushHostHistoryEntry(state, 'http://local.test/login', 'result', 'user', requestIdentity);
+    requestIdentity.headers.Authorization = 'changed';
+    requestIdentity.requestPolicy.postContext.payload = 'changed';
+    requestIdentity.requestPolicy.requestIntent.postFields[0].value = 'changed';
+
+    expect(state.entries[0]?.headers).toEqual({ authorization: 'Basic byte-exact' });
+    expect(state.entries[0]?.requestPolicy?.postContext?.payload).toBe('pin=%30%30%30%30');
+    expect(state.entries[0]?.requestPolicy?.requestIntent?.postFields).toEqual([
+      { name: 'pin', value: '0000' }
     ]);
   });
 

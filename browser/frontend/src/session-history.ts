@@ -10,6 +10,12 @@ export interface HostHistoryState {
   index: number;
 }
 
+// A 32-entry host window preserves the current deck plus 31 deterministic WML
+// Back steps. That is useful constrained-device history without allowing exact
+// POST replay credentials to accumulate for the lifetime of the application.
+export const HOST_HISTORY_ENTRY_CAPACITY = 32;
+export const RETAINED_WML_BACK_DEPTH = HOST_HISTORY_ENTRY_CAPACITY - 1;
+
 export const createHostHistoryState = (): HostHistoryState => ({
   entries: [],
   index: -1
@@ -39,6 +45,10 @@ export const pushHostHistoryEntry = (
     activeCardId,
     source
   });
+  const overflow = state.entries.length - HOST_HISTORY_ENTRY_CAPACITY;
+  if (overflow > 0) {
+    state.entries.splice(0, overflow);
+  }
   state.index = state.entries.length - 1;
 };
 
@@ -110,6 +120,12 @@ const cloneRequestPolicy = (policy?: FetchRequestPolicy): FetchRequestPolicy | u
   }
   return {
     ...policy,
-    postContext: policy.postContext ? { ...policy.postContext } : undefined
+    postContext: policy.postContext ? { ...policy.postContext } : undefined,
+    requestIntent: policy.requestIntent
+      ? {
+          ...policy.requestIntent,
+          postFields: policy.requestIntent.postFields.map((field) => ({ ...field }))
+        }
+      : undefined
   };
 };

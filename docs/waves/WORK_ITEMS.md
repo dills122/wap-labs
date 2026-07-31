@@ -179,22 +179,19 @@ Tailnet WAP smoke, sealed-firewall reboot persistence, and retained rollback. Pu
 cloud UDP rule, public firewall mode, and external probes remain incomplete. That lane neither
 blocks nor satisfies Class C evidence and is not dispatched from this board.
 
-The resilience board is also synchronized to current main: `RSL-01` through `RSL-06` are done in
-PRs `#515`, `#516`, `#521`, `#527`, `#528`, and `#532`. Navigation error classification is closed
-by PR `#530`, and D0-03 host debug sessions are closed by PR `#531`. The next containment baton is
-`RSL-07` on the presenter/history surface.
+The resilience board is also synchronized to current main: `RSL-01` through `RSL-07` are done.
+The final pair adds allowlisted diagnostic redaction followed by bounded toast, timeline, and
+host-history state on the shared presenter/history surface.
 
-The next parallel-safe desktop batch is:
+The remaining parallel-safe desktop slices are:
 
-1. `RSL-07` as the sole owner of `browser-presenter.ts`, `session-history.ts`, and `timeline.ts`
-   while bounding toast and host-history state (`#504`).
-2. `F2-01` deterministic click/hit-region input through the engine-owned frame contract.
-3. `D0-04` read-only Inspector polling and safe capture in new debug-consumer modules/components;
-   it must not edit the RSL-07 presenter/history files in this batch.
+1. `F2-01` deterministic click/hit-region input through the engine-owned frame contract.
+2. `D0-04` read-only Inspector polling and safe capture in new debug-consumer modules/components.
 
-After this batch, fix `#450` on the stabilized bounded-history foundation, continue F2-02/F2-03
-after F2-01, and sequence `WBP-11` plus `APP-SHELL-01` around the shared presenter/shell surfaces.
-Keep `#450` ahead of persisted/searchable history.
+After those slices, fix `#450` on the stabilized bounded-history foundation, continue F2-02/F2-03
+after F2-01, and integrate `WBP-11` phase-aware recovery plus `APP-SHELL-01` Library/Preferences
+without sharing an active presenter owner. Keep `#450` ahead of persisted/searchable history;
+RSL-07's deterministic eviction does not repair its cross-deck same-card identity loss.
 
 ### WML-203A Legacy local-example standalone-document migration
 

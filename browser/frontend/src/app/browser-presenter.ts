@@ -35,6 +35,19 @@ import {
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
 const REPEAT_NAV_HINT_CLASS = 'viewport-navigation-hint';
+// One visible toast plus three pending notifications bounds the existing
+// six-second TTL backlog at 24 seconds. Identical notifications share a slot,
+// and recovery signals bypass the backlog entirely.
+export const TOAST_NOTIFICATION_CAPACITY = 4;
+const MAX_QUEUED_TOASTS = TOAST_NOTIFICATION_CAPACITY - 1;
+
+interface ToastNotification {
+  message: string;
+  tone: 'error' | 'ok';
+  ttlMs: number;
+  announce: boolean;
+}
+
 const SKELETON_LINE_CLASSES = [
   'skeleton-line',
   'skeleton-line skeleton-line-wide',
@@ -56,12 +69,8 @@ export class BrowserPresenter {
 
   private toastTimer: ReturnType<typeof setTimeout> | undefined;
   private toastShowing = false;
-  private toastQueue: Array<{
-    message: string;
-    tone: 'error' | 'ok';
-    ttlMs: number;
-    announce: boolean;
-  }> = [];
+  private activeToast: ToastNotification | undefined;
+  private toastQueue: ToastNotification[] = [];
   private hasRenderedContent = false;
   private announcedDialogRequests: readonly ScriptDialogRequestSnapshot[] = [];
   private announcedScriptFailure: {
@@ -208,6 +217,9 @@ export class BrowserPresenter {
   setStatus(message: string): void {
     this.statusText = message;
     const tone = inferStatusTone(message);
+    if (statusSignalsSuccessfulRecovery(message, tone)) {
+      this.supersedeFailureToasts();
+    }
     this.refs.statusEl.setStatus(message, tone);
     this.announce(message);
     uiEvents.emit('status', { message, tone });
@@ -332,44 +344,86 @@ export class BrowserPresenter {
     ttlMs: number = WAVES_CONFIG.toastTtlMs,
     announce = true
   ): void {
-    if (this.toastShowing) {
-      this.toastQueue.push({ message, tone, ttlMs, announce });
+    const notification = { message, tone, ttlMs, announce };
+    if (tone === 'ok') {
+      this.supersedeFailureToasts(notification);
       return;
     }
-    this.presentToast(message, tone, ttlMs, announce);
+    if (this.isDuplicateToast(notification)) {
+      return;
+    }
+    if (this.toastShowing) {
+      if (this.toastQueue.length >= MAX_QUEUED_TOASTS) {
+        this.toastQueue.shift();
+      }
+      this.toastQueue.push(notification);
+      return;
+    }
+    this.presentToast(notification);
   }
 
-  private presentToast(
-    message: string,
-    tone: 'error' | 'ok',
-    ttlMs: number,
-    announce: boolean
-  ): void {
+  private presentToast(notification: ToastNotification): void {
     this.toastShowing = true;
-    this.refs.toastEl.textContent = message;
-    this.refs.toastEl.className = `toast toast-${tone}`;
-    if (announce) {
-      this.announce(message);
+    this.activeToast = notification;
+    this.refs.toastEl.textContent = notification.message;
+    this.refs.toastEl.className = `toast toast-${notification.tone}`;
+    if (notification.announce) {
+      this.announce(notification.message);
     }
     if (this.toastTimer) {
       clearTimeout(this.toastTimer);
     }
     this.toastTimer = setTimeout(() => {
       this.dismissToastAndShowNext();
-    }, ttlMs);
+    }, notification.ttlMs);
   }
 
   private dismissToastAndShowNext(): void {
     this.refs.toastEl.className = 'toast toast-hidden';
     this.toastShowing = false;
+    this.activeToast = undefined;
     this.toastTimer = undefined;
     const next = this.toastQueue.shift();
     if (next) {
-      this.presentToast(next.message, next.tone, next.ttlMs, next.announce);
+      this.presentToast(next);
+    }
+  }
+
+  private isDuplicateToast(notification: ToastNotification): boolean {
+    return [this.activeToast, ...this.toastQueue].some(
+      (candidate) =>
+        candidate?.message === notification.message && candidate.tone === notification.tone
+    );
+  }
+
+  private supersedeFailureToasts(success?: ToastNotification): void {
+    this.toastQueue = this.toastQueue.filter((notification) => notification.tone !== 'error');
+    if (this.activeToast?.tone === 'error') {
+      if (this.toastTimer) {
+        clearTimeout(this.toastTimer);
+        this.toastTimer = undefined;
+      }
+      this.refs.toastEl.className = 'toast toast-hidden';
+      this.toastShowing = false;
+      this.activeToast = undefined;
+    }
+    if (success) {
+      this.toastQueue = [];
+      this.presentToast(success);
+      return;
+    }
+    if (!this.toastShowing) {
+      const next = this.toastQueue.shift();
+      if (next) {
+        this.presentToast(next);
+      }
     }
   }
 
   private announce(message: string): void {
+    if (this.refs.liveAnnouncerEl.textContent === message) {
+      return;
+    }
     this.refs.liveAnnouncerEl.textContent = message;
   }
 
@@ -626,6 +680,15 @@ const dialogRequestListsEqual = (
 
 const describeScriptErrorCategory = (category: string | undefined): string =>
   (category && SCRIPT_ERROR_CATEGORY_LABELS[category]) || 'script error';
+
+const statusSignalsSuccessfulRecovery = (
+  message: string,
+  tone: ReturnType<typeof inferStatusTone>
+): boolean =>
+  tone === 'ok' ||
+  message === WAVES_COPY.status.bootDeckReady ||
+  message === WAVES_COPY.status.rawWmlLoaded ||
+  message.startsWith(WAVES_COPY.status.loadedLocalDeck(''));
 
 // Mirrors the engine's deterministic dialog resolution
 // (engine-wasm/engine/src/wavescript/stdlib/dialogs.rs): confirm() always

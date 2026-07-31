@@ -35,6 +35,11 @@ export interface TimelineExportPayload {
   }>;
 }
 
+// Diagnostic chronology is intentionally a rolling window. Two hundred
+// projected events retain enough context for a navigation failure while
+// keeping the drawer, detached tools state, and JSON export predictably small.
+export const TIMELINE_ENTRY_CAPACITY = WAVES_CONFIG.maxTimelineEvents;
+
 export const createTimelineState = (): TimelineState => ({
   entries: [],
   nextSeq: 1
@@ -48,6 +53,10 @@ export const appendTimelineEntry = (
   session: HostSessionState,
   details?: Record<string, unknown>
 ): TimelineState => {
+  const requestedEntries = Number.isFinite(maxEntries)
+    ? Math.trunc(maxEntries)
+    : TIMELINE_ENTRY_CAPACITY;
+  const retainedEntries = Math.max(1, Math.min(requestedEntries, TIMELINE_ENTRY_CAPACITY));
   const projectedDetails = projectTimelineDetails(action, details);
   const entry: TimelineEntry = {
     seq: state.nextSeq,
@@ -58,7 +67,7 @@ export const appendTimelineEntry = (
   };
   const entries = [...state.entries, entry];
   const trimmed =
-    entries.length > maxEntries ? entries.slice(entries.length - maxEntries) : entries;
+    entries.length > retainedEntries ? entries.slice(entries.length - retainedEntries) : entries;
   return {
     entries: trimmed,
     nextSeq: state.nextSeq + 1
