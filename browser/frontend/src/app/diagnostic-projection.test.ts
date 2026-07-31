@@ -4,6 +4,7 @@ import type { FetchResponse, HostSessionState } from '../../../contracts/transpo
 import {
   DIAGNOSTIC_PROJECTION_LIMITS,
   projectDiagnosticUrl,
+  projectHostStatus,
   projectRuntimeSnapshot,
   projectSessionState,
   projectTimelineDetails,
@@ -35,6 +36,16 @@ const expectSecretsAbsent = (value: unknown): string => {
 };
 
 describe('diagnostic projection', () => {
+  it('preserves allowlisted command feedback without exposing variable status contents', () => {
+    expect(projectHostStatus('Health: internal-error-secret', 'loaded')).toBe('Health: completed.');
+    expect(projectHostStatus('Rendered current card.', 'loaded')).toBe('Rendered current card.');
+    expect(projectHostStatus('Rendered current card', 'loaded')).toBe('Navigation: loaded');
+    expect(projectHostStatus('Healthcheck: internal-error-secret', 'error')).toBe(
+      'Navigation: error'
+    );
+    expect(projectHostStatus('Error: internal-error-secret', 'error')).toBe('Navigation: error');
+  });
+
   it('removes URL userinfo and sensitive query values without redacting near-miss names', () => {
     const projected = projectDiagnosticUrl(
       'https://alice:userinfo-secret@example.test/login?pin=pin-0000&password=password-hunter2&user[token]=typed-post-secret&pinboard=pinboard-safe&tokenizer=tokenizer-safe&passwordHint=hint-safe&author=author-safe&monkey=monkey-safe'

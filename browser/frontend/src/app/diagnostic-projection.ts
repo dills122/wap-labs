@@ -39,6 +39,26 @@ const NAVIGATION_SOURCES = new Set<HostNavigationSource>([
   'engine-back',
   'keyboard'
 ]);
+const SAFE_HOST_STATUS_MESSAGES = new Set([
+  'Rendered current card.',
+  'Snapshot refreshed.',
+  'Cleared external navigation intent.',
+  'Exported timeline JSON.',
+  'Cleared event timeline.'
+]);
+
+export const projectHostStatus = (
+  message: string,
+  navigationStatus: HostSessionState['navigationStatus']
+): string => {
+  if (message.startsWith('Health:')) {
+    return 'Health: completed.';
+  }
+  if (SAFE_HOST_STATUS_MESSAGES.has(message)) {
+    return message;
+  }
+  return `Navigation: ${NAVIGATION_STATUSES.has(navigationStatus) ? navigationStatus : 'error'}`;
+};
 
 export interface DiagnosticHeaderMetadata {
   count: number;

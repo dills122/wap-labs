@@ -26,6 +26,7 @@ import {
   ensureCanvasViewportElements
 } from './canvas-viewport-renderer';
 import {
+  projectHostStatus,
   projectRuntimeSnapshot,
   projectSessionState,
   projectTransportResponse
@@ -138,7 +139,7 @@ export class BrowserPresenter {
 
   getDeveloperToolsState(): DeveloperToolsState {
     return {
-      hostStatus: `Navigation: ${this.hostSessionState.navigationStatus}`,
+      hostStatus: projectHostStatus(this.statusText, this.hostSessionState.navigationStatus),
       sessionState: projectSessionState(this.hostSessionState),
       transportResponse: projectTransportResponse(this.latestTransportResponse),
       runtimeSnapshot: projectRuntimeSnapshot(this.latestSnapshot),
