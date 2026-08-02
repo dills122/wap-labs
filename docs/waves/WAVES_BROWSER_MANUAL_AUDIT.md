@@ -2,7 +2,7 @@
 
 Status: active pre-alpha test guide
 
-Audit baseline: `origin/main` at `74432d27` on 2026-08-02
+Audit baseline: `origin/main` at `dfe2c4c9` on 2026-08-02
 
 Purpose: make exploratory browser testing reproducible and turn each genuine oddity into a small,
 well-owned work item. This guide audits active product behavior only; archived plans and historical
@@ -13,19 +13,19 @@ snapshots are not normative.
 Always record the exact commit and any stacked pull requests. The 2026-08-02 baseline and pending
 desktop work differ materially:
 
-| Surface                                                                        | Current `main`                                           | Pending change                                                  |
-| ------------------------------------------------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------------- |
-| Native shell, address bar, Local/Network modes, Welcome/Help, handset viewport | available                                                | retained                                                        |
-| Engine-owned frame, Canvas renderer, click regions                             | available                                                | retained                                                        |
-| Back/Reload/Go and request-shaped history                                      | available, including typed POST replay                   | native replay evidence remains                                  |
-| Long-deck movement                                                             | deterministic viewport scrolling available               | native scrolling evidence remains                               |
-| Keyboard, buttons, pointer, and softkey routing                                | split legacy/F2 paths                                    | `#543` unifies engine input routing                             |
-| Loading and recovery                                                           | basic loading/error state                                | `#544` adds phase-aware presentation and recovery actions       |
-| Library, Favorites, Preferences                                                | state/model foundation exists; menu entries are disabled | `#545` enables integrated surfaces and safe import/export/reset |
-| Inspector, bounded timeline, safe capture export                               | available                                                | retained                                                        |
-| Crash marker and safe-session recovery offer                                   | not implemented (`WBP-12`)                               | no pending PR                                                   |
-| `.waves-session.json` import/replay and 1,000-step memory gate                 | not implemented (`WBP-13`)                               | no pending PR                                                   |
-| Signed/notarized packaged build and packaged VoiceOver result                  | not available                                            | no pending PR                                                   |
+| Surface                                                                        | Current `main`                                             | Pending change                                            |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------- |
+| Native shell, address bar, Local/Network modes, Welcome/Help, handset viewport | available                                                  | retained                                                  |
+| Engine-owned frame, Canvas renderer, click regions                             | available                                                  | retained                                                  |
+| Back/Reload/Go and request-shaped history                                      | available, including typed POST replay                     | native replay evidence remains                            |
+| Long-deck movement                                                             | deterministic viewport scrolling available                 | native scrolling evidence remains                         |
+| Keyboard, buttons, pointer, and softkey routing                                | unified engine input routing available                     | native input-equivalence evidence remains                 |
+| Loading and recovery                                                           | basic loading/error state                                  | `#544` adds phase-aware presentation and recovery actions |
+| Library, Favorites, Preferences                                                | integrated surfaces and safe import/export/reset available | manual desktop-path evidence remains                      |
+| Inspector, bounded timeline, safe capture export                               | available                                                  | retained                                                  |
+| Crash marker and safe-session recovery offer                                   | not implemented (`WBP-12`)                                 | no pending PR                                             |
+| `.waves-session.json` import/replay and 1,000-step memory gate                 | not implemented (`WBP-13`)                                 | no pending PR                                             |
+| Signed/notarized packaged build and packaged VoiceOver result                  | not available                                              | no pending PR                                             |
 
 An observation against a stacked or locally modified build must not be filed as a `main` regression.
 
@@ -105,8 +105,8 @@ Use the same local stack as `make smoke-native-tauri-kannel-ui` when practical.
 - Test same-card duplicates, repeated fragments, cross-deck Back, failed Back loads, Reload, and
   Back at the beginning of history.
 - On current `main`, test wheel/trackpad, keyboard traversal, wrapped links, top/bottom clamping,
-  stale frame clicks, empty-space clicks, and input/select controls at scrolled positions. With
-  `#543` present, repeat activation through keyboard, buttons, and pointer to verify unified routing.
+  stale frame clicks, empty-space clicks, and input/select controls at scrolled positions. Repeat
+  activation through keyboard, buttons, and pointer to verify unified routing.
 
 ### 5. Loading, cancellation, and recovery
 
@@ -123,7 +123,7 @@ This section is partial until `#544` merges and the controlled fault routes exis
 
 ### 6. Library and Preferences
 
-This section applies only when `#545` is present.
+This section applies to current `main`.
 
 - Open Library from menu and shortcut. Load a bundled example and add/open/remove a Favorite.
 - Import valid, duplicate, malformed, sensitive, and over-limit favorite sets. Unsafe entries must

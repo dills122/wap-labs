@@ -13,7 +13,7 @@ body:
     attributes:
       label: Build commit
       description: Exact Git commit plus any stacked pull requests or local changes.
-      placeholder: 74432d27; PRs #543 and #545
+      placeholder: dfe2c4c9; optional PR #544
     validations:
       required: true
   - type: dropdown
