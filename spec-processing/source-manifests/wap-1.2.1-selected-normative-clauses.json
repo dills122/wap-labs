@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 317
+    "assessedClauseCount": 318
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "a85a09d985204f733cbb9834ef1826475446919896985bf0e72546625a47f3ac",
+      "parentLedgerSha256": "44f1fd7430b9b26af230b816a0d830b0a6ef0dea6b9de29777714a4f6b795957",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -133,7 +133,7 @@
             "staticConformanceSection": "15.1.2",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -805,7 +805,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -1603,7 +1603,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial"
+              "WML-C-07": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1655,7 +1655,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial"
+              "WML-C-07": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1707,7 +1707,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial"
+              "WML-C-07": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1759,7 +1759,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial"
+              "WML-C-07": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1811,7 +1811,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial"
+              "WML-C-07": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1866,8 +1866,8 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial",
-              "WML-C-38": "partial"
+              "WML-C-07": "implemented",
+              "WML-C-38": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -1896,8 +1896,13 @@
           "fixturePlan": {
             "id": "WML-FX-HISTORY-POST-REPLAY",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry."
+            "status": "implemented",
+            "assertion": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
+            "evidence": {
+              "path": "browser/frontend/src/app/navigation-state.history.test.ts",
+              "testPath": "browser/frontend/src/app/navigation-state.history.test.ts",
+              "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1917,10 +1922,10 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial",
-              "WML-C-38": "partial"
+              "WML-C-07": "implemented",
+              "WML-C-38": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -3319,7 +3324,7 @@
               "WML-C-12": "implemented",
               "WML-C-18": "implemented",
               "WML-C-29": "partial",
-              "WML-C-38": "partial",
+              "WML-C-38": "implemented",
               "WML-C-42": "implemented",
               "WML-C-52": "missing"
             },
@@ -4546,7 +4551,7 @@
               "RQ-WAE-016"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-07": "partial",
+              "WML-C-07": "implemented",
               "WML-C-18": "implemented",
               "WML-C-29": "partial"
             },
@@ -4720,7 +4725,7 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-18": "implemented",
-              "WML-C-38": "partial"
+              "WML-C-38": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -4774,7 +4779,7 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-18": "implemented",
-              "WML-C-38": "partial"
+              "WML-C-38": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -4831,7 +4836,7 @@
             "parentImplementationSnapshot": {
               "WML-C-09": "implemented",
               "WML-C-18": "implemented",
-              "WML-C-38": "partial"
+              "WML-C-38": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -5111,7 +5116,7 @@
               "WML-C-16": "implemented",
               "WML-C-18": "implemented",
               "WML-C-29": "partial",
-              "WML-C-38": "partial"
+              "WML-C-38": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."

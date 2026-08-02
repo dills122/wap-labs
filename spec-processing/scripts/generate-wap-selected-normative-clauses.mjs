@@ -596,6 +596,7 @@ const implementedWml304TransportClauseIds = new Set([
 ]);
 const implementedWml304ClauseIds = new Set([
   'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+  'WML-CL-HISTORY-POST-REPLAY',
   ...implementedWml304TransportClauseIds
 ]);
 const implementedWsp801ClauseIds = new Set([
@@ -835,6 +836,14 @@ const wml309FixtureEvidence = {
 };
 
 function wml304FixtureEvidence(clauseId) {
+  if (clauseId === 'WML-CL-HISTORY-POST-REPLAY') {
+    return {
+      path: 'browser/frontend/src/app/navigation-state.history.test.ts',
+      testPath: 'browser/frontend/src/app/navigation-state.history.test.ts',
+      command:
+        'pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts'
+    };
+  }
   if (implementedWml304TransportClauseIds.has(clauseId)) {
     return {
       path: 'transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json',

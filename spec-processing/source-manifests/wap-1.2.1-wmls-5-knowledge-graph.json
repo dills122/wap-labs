@@ -25,10 +25,10 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "23db3298aaa1dbe06f56e83a053fcc85558176024e2c30ee9f01680d2a8a2ef0"
+        "sha256": "e21fe3df307bc0028777ee4d9aa7e9e04e0559113bc8b12fdb92514ac39f2dc0"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "9e7a2a3b95ac5b864a613053136010dcc87fee448f01bbd8d478345ddb891e19"
+        "sha256": "f0d0fc59fcb728fc58cc1f77ff8a58e41e49932fa9de643aa87aa8952a38fb98"
       },
       "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json": {
         "sha256": "c7974dc4adf53825edd1ddaa263021757e1898f78b924f1a6527670d94ab6881"

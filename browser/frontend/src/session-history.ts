@@ -118,14 +118,21 @@ const cloneRequestPolicy = (policy?: FetchRequestPolicy): FetchRequestPolicy | u
   if (!policy) {
     return undefined;
   }
+  const requestIntent = policy.requestIntent
+    ? {
+        ...policy.requestIntent,
+        postFields: policy.requestIntent.postFields.map((field) => ({ ...field }))
+      }
+    : undefined;
   return {
     ...policy,
-    postContext: policy.postContext ? { ...policy.postContext } : undefined,
-    requestIntent: policy.requestIntent
-      ? {
-          ...policy.requestIntent,
-          postFields: policy.requestIntent.postFields.map((field) => ({ ...field }))
-        }
-      : undefined
+    // Typed request intent is the replay credential. Retain postContext only
+    // for legacy history entries that do not yet carry semantic postfields.
+    postContext: requestIntent
+      ? undefined
+      : policy.postContext
+        ? { ...policy.postContext }
+        : undefined,
+    requestIntent
   };
 };

@@ -133,7 +133,7 @@ describe('session-history', () => {
     expect(state.entries[1]?.requestPolicy?.postContext?.payload).toBe('foo=1');
   });
 
-  it('preserves byte-exact replay credentials inside history', () => {
+  it('preserves semantic replay credentials without retaining a derived POST payload', () => {
     const state = createHostHistoryState();
     const payload = 'username=alice&pin=%30%30%30%30&note=a+b';
     pushHostHistoryEntry(state, 'http://local.test/login', 'result', 'user', {
@@ -175,7 +175,7 @@ describe('session-history', () => {
       authorization: 'Basic YWxpY2U6c2VjcmV0',
       cookie: 'sid=replay-secret'
     });
-    expect(replay?.requestPolicy?.postContext?.payload).toBe(payload);
+    expect(replay?.requestPolicy?.postContext).toBeUndefined();
     expect(replay?.requestPolicy?.requestIntent?.postFields).toEqual([
       { name: 'username', value: 'alice' },
       { name: 'pin', value: '0000' }
@@ -328,7 +328,7 @@ describe('session-history', () => {
     requestIdentity.requestPolicy.requestIntent.postFields[0].value = 'changed';
 
     expect(state.entries[0]?.headers).toEqual({ authorization: 'Basic byte-exact' });
-    expect(state.entries[0]?.requestPolicy?.postContext?.payload).toBe('pin=%30%30%30%30');
+    expect(state.entries[0]?.requestPolicy?.postContext).toBeUndefined();
     expect(state.entries[0]?.requestPolicy?.requestIntent?.postFields).toEqual([
       { name: 'pin', value: '0000' }
     ]);

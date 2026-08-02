@@ -79,13 +79,28 @@ test('active rollup guard derives prose assertions from canonical manifests', (c
 });
 
 test('active rollup guard rejects a stale parent-status table', (context) => {
-  const { fixtureRoot } = createFixture();
+  const { clauses, fixtureRoot } = createFixture();
   context.after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
 
   const planningPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_PLANNING_BASELINE.md');
   const planning = readFileSync(planningPath, 'utf8');
-  const currentFragment = '| **Total** | **198** | **762** | **41** | **78** | **79** |';
-  const staleFragment = '| **Total** | **198** | **762** | **41** | **77** | **80** |';
+  const parentStatuses = clauses.families
+    .flatMap((family) => family.parents)
+    .reduce(
+      (counts, parent) => {
+        counts[parent.implementationStatus] += 1;
+        return counts;
+      },
+      { implemented: 0, partial: 0, missing: 0 }
+    );
+  const currentFragment =
+    `| **${clauses.summary.selectedParentCount}** | **${clauses.summary.clauseCount}** | ` +
+    `**${parentStatuses.implemented}** | **${parentStatuses.partial}** | ` +
+    `**${parentStatuses.missing}** |`;
+  const staleFragment = currentFragment.replace(
+    `**${parentStatuses.partial}** | **${parentStatuses.missing}**`,
+    `**${parentStatuses.partial - 1}** | **${parentStatuses.missing + 1}**`
+  );
   assert.ok(planning.includes(currentFragment));
   writeFileSync(planningPath, planning.replace(currentFragment, staleFragment));
 

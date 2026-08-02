@@ -105,6 +105,13 @@ const wmlImplementedClauseCount = (wmlFamily?.clauses ?? []).filter(
 const wmlUnassessedClauseCount = (wmlFamily?.clauses ?? []).filter(
   (clause) => clause.mapping?.clauseImplementationStatus === 'not-assessed'
 ).length;
+const wmlSelectedStatusCounts = (wmlFamily?.parents ?? []).reduce(
+  (counts, parent) => {
+    counts[parent.implementationStatus] = (counts[parent.implementationStatus] ?? 0) + 1;
+    return counts;
+  },
+  { implemented: 0, partial: 0, missing: 0 }
+);
 const graphMappedClauseCount = wmlGraph.nodes.filter((node) => node.type === 'clause').length;
 const wml201Clauses = wmlGraph.nodes.filter(
   (node) => node.type === 'clause' && node.properties.workItems?.includes('WML-201')
@@ -213,7 +220,7 @@ const activeRollupFragments = new Map([
     'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
     [
       `selected implementation audit is ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, and ${parentStatusCounts.missing} missing`,
-      `selected 39-row client subset is 17 implemented, 16 partial, and 6 missing`,
+      `selected 39-row client subset is ${wmlSelectedStatusCounts.implemented} implemented, ${wmlSelectedStatusCounts.partial} partial, and ${wmlSelectedStatusCounts.missing} missing`,
       `selected connectionless transport path resolves to 19 rows`,
       `selected transport audit is 19 implemented, 0 partial, and 0 missing`
     ]

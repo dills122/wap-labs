@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { FetchRequest } from '../../../contracts/transport';
 import { createNavigationStateMachine } from './navigation-state';
 import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-state.test-helpers';
 
@@ -171,6 +172,82 @@ describe('navigation-state history behavior', () => {
     expect(fetchCalls.at(-1)).toBe('http://example.test/a.wml');
     expect(machine.getHistoryState().index).toBe(0);
     expect(renderCount).toBe(3);
+  });
+
+  it('replays typed POST values when history back must refetch the prior deck', async () => {
+    const fetchRequests: FetchRequest[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchRequests.push(request);
+          return fetchOk({ finalUrl: request.url });
+        },
+        engineNavigateBackFrame: async () => frame({ lastBackNavigationHandled: false })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/results.wml',
+      method: 'POST',
+      headers: { Accept: 'text/vnd.wap.wml' },
+      source: 'external-intent',
+      followExternalIntent: false,
+      requestPolicy: {
+        cacheControl: 'no-cache',
+        refererUrl: 'http://example.test/form.wml',
+        postContext: {
+          contentType: 'application/x-www-form-urlencoded',
+          payload: 'legacy=must-not-be-replayed'
+        },
+        requestIntent: {
+          method: 'post',
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          acceptCharset: 'utf-8',
+          sameDeck: false,
+          postFields: [
+            { name: 'account', value: 'alice' },
+            { name: 'pin', value: '0000' }
+          ],
+          sourceContentType: 'text/vnd.wap.wml; charset=utf-8'
+        },
+        uaCapabilityProfile: 'wap-baseline'
+      }
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/next.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    await expect(machine.navigateBackWithFallback()).resolves.toBe('host');
+
+    const replay = fetchRequests.at(-1);
+    expect(replay).toMatchObject({
+      url: 'http://example.test/results.wml',
+      method: 'POST',
+      headers: { accept: 'text/vnd.wap.wml' },
+      requestPolicy: {
+        cacheControl: 'no-cache',
+        refererUrl: 'http://example.test/form.wml',
+        requestIntent: {
+          method: 'post',
+          enctype: 'application/x-www-form-urlencoded',
+          sendReferer: true,
+          acceptCharset: 'utf-8',
+          sameDeck: false,
+          postFields: [
+            { name: 'account', value: 'alice' },
+            { name: 'pin', value: '0000' }
+          ],
+          sourceContentType: 'text/vnd.wap.wml; charset=utf-8'
+        },
+        uaCapabilityProfile: 'wap-baseline'
+      }
+    });
+    expect(replay?.requestPolicy?.postContext).toBeUndefined();
+    expect(machine.getHistoryState().index).toBe(0);
   });
 
   it('does not emit duplicate session updates when back navigation is a no-op', async () => {

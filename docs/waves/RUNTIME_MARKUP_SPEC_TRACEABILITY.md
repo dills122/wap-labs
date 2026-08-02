@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 13/15 complete)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 14/15 complete)
 
 ## Purpose
 
@@ -80,7 +80,7 @@ Legend:
 - AC:
   - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_202_residual.rs` proves newcontext defaults, go-only variable/history/private-state reset, direct-navigation exclusion, and rollback-safe state; `pnpm test:story WML-202` proves empty history after the stable newcontext flow.
   - Evidence: [x] WML-301 closes card-id selection, missing-fragment first-card fallback, forward/backward/reload entry order, context preservation/reset, duplicate explicit history pushes, context-initialization-before-history order, and source-required card/table line boundaries in `engine-wasm/engine/src/engine_tests/wml_301_context_history.rs`, `engine-wasm/engine/src/engine_wasm_bindings_tests.rs`, browser history tests, `engine-wasm/examples/source/wml-301-context-history.flow.json`, and `engine-wasm/examples/source/wml-301-card-table-boundaries.flow.json`; run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301`, `wasm-pack test --node engine-wasm/engine`, `pnpm --dir browser/frontend test`, and `pnpm test:story WML-301`.
-  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` remains owned by WML-302; WML-304 defines the typed request identity and R0-06/WSP-805 serializes it through the desktop fetch handoff, while replayable POST history remains the dependent A2 baton.
+  - Evidence: [x] WML-302 resolves WML-authored target data before same-deck history insertion or external navigation handoff. `HISTORY-RESOLVES-VARIABLES` remains owned by WML-302; WML-304 defines the typed request identity, R0-06/WSP-805 serializes it through the desktop fetch handoff, and Request A2 replays the retained typed POST values when Back must refetch a prior deck.
   - [x] A monotonic engine context epoch makes newcontext and independent-navigation replacement observable so the host discards the old history without moving runtime semantics out of Rust.
 
 ### RQ-RMK-004 Event and timer lifecycle
@@ -151,7 +151,8 @@ Legend:
   - [x] Navigation/request metadata includes method, ordered postfields, enctype, accept-charset, referer opt-in, no-cache, and same-deck classification.
   - [x] Same-deck postfield suppression is documented and fixture-scoped.
   - [x] Native transport serialization, charset/body construction, smallest-relative referer emission, and no-cache application have direct byte-exact fixture, browser adapter, Tauri HTTP handoff, and native WSP header evidence.
-  - [ ] Multipart part Content-Type construction and replayable POST history remain separate gaps; A2 owns replay after the serialized identity is stable.
+  - [x] Request A2 retains and replays semantic POST input without treating legacy `postContext` bytes as the authoritative identity.
+  - [ ] Multipart part Content-Type construction remains the final WML-304 gap.
 
 ### RQ-RMK-009 WML2 reference-behavior compatibility guardrails
 
