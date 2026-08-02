@@ -87,12 +87,14 @@ Implemented now:
   - retry/timeout and error taxonomy mapping
   - WBXML decode through Lowband's pinned built-in WML 1.3 decoder
   - startup preflight for decoder availability
+- Versioned host-managed application state with atomic replacement, safe projection, debounced
+  window restore, a clean-exit/crash marker, automatic local recovery, and confirmed network GET
+  recovery
 
 Not implemented yet:
 
 - Remaining F3/F4 internal split and legacy-path removal; deterministic engine-owned scrolling and
   primary keyboard/control-button routing through the unified typed input path are complete
-- Safe session persistence and crash recovery (`WBP-12`)
 - Production packaging/signing/notarization
 
 ## Direction
@@ -239,8 +241,9 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
    [`WBP-14` desktop-path evidence audit](../docs/waves/WBP_14_DESKTOP_PATH_EVIDENCE.md) to add
    native timeout, cancellation, invalid-deck, and script-trap cases without treating component
    tests as desktop-path evidence.
-5. Complete `WBP-12` crash recovery and `WBP-13` sanitized replay before claiming WBP-14 closure;
-   packaged screen-reader, latency, and memory evidence remain explicit release gaps.
+5. Preserve the implemented `WBP-12` safe-session policy and record its remaining packaged
+   launch-after-crash relaunch evidence; complete `WBP-13` sanitized replay before claiming WBP-14
+   closure. Packaged screen-reader, latency, and memory evidence remain explicit release gaps.
 6. Keep the remaining `M1-09` (`F2-F4` frame migration) dependency-gated and `M1-03` as a
    non-priority generator follow-up.
 7. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;

@@ -38,13 +38,31 @@ when their monitor is no longer available, without clearing other components.
 
 The frontend mounts the shell before waiting for application state. Welcome/Help initially uses
 its synchronous safe default or the isolated legacy cache, then hydrates from
-`ApplicationStateStore` in the background. `waves.showWelcomeOnLaunch` is copied into v1 and
-removed only after the native save succeeds. A blocked or failed read never rejects application
-startup.
+`ApplicationStateStore` in the background. Window bounds are restored only after that asynchronous
+load, and move/resize updates are debounced before they use the same atomic state store.
+`waves.showWelcomeOnLaunch` is copied into v1 and removed only after the native save succeeds. A
+blocked or failed read never rejects application startup.
 
-`ApplicationStateStore` provides `load`, `save`, `reset`, and component-specific `clear`
-operations. Native builds use `TauriApplicationStateStore`; deterministic browser tests and stories
-use `MemoryApplicationStateStore`.
+The last committed product-owned local example is restored automatically after a marked crash. A
+sanitized network GET is presented as a non-modal recovery offer and is never fetched until the
+user confirms it. An ordinary launch uses the same policy only when both `safeSessionRestore` and
+the `safe-session` start behavior are enabled. POST/request-intent context, sensitive headers,
+credential-bearing or sensitive-query URLs, raw debug loads, and oversized targets are never
+recovery candidates. A local example removed from the current product fails closed during restore.
+An unsafe committed request removes the previous safe session instead of falling back to it.
+
+Every successfully persisted safe commit sets `recoveryPending`. The native Tauri event-loop exit
+path clears only that marker with another atomic replacement; a crash cannot reach that path, so
+the next launch can distinguish an unclean exit. Dismissing recovery preserves the current rendered
+deck and makes that current safe deck the next bounded candidate. Corrupt, unreadable, absent,
+future-version, and removed-monitor state remain non-blocking; future state is not overwritten
+without an explicit reset.
+
+`ApplicationStateStore` provides `load`, serialized read-modify-write `update`, `save`, `reset`, and
+component-specific `clear` operations. Serialized updates prevent settings, Favorites, recovery,
+onboarding, and window writers from replacing one another with stale component snapshots. Native
+builds use `TauriApplicationStateStore`; deterministic browser tests and stories use
+`MemoryApplicationStateStore`.
 
 ## Verification
 

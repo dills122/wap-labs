@@ -4,6 +4,9 @@ import {
   APPLICATION_STATE_SCHEMA_VERSION,
   APPLICATION_STATE_SENSITIVE_QUERY_KEYS,
   DEFAULT_APPLICATION_STATE_V1,
+  MAX_SAFE_SESSION_EXAMPLE_ID_BYTES,
+  MAX_SAFE_SESSION_FRAGMENT_BYTES,
+  MAX_SAFE_SESSION_URL_BYTES,
   type ApplicationStateComponent,
   type ApplicationStateLoadResult,
   type ApplicationStateV1
@@ -15,6 +18,7 @@ export const WELCOME_STARTUP_STORAGE_KEY = 'waves.showWelcomeOnLaunch';
 export interface ApplicationStateStore {
   load(): Promise<ApplicationStateLoadResult>;
   save(state: ApplicationStateV1): Promise<ApplicationStateV1>;
+  update(project: (state: ApplicationStateV1) => ApplicationStateV1): Promise<ApplicationStateV1>;
   reset(): Promise<ApplicationStateV1>;
   clear(component: ApplicationStateComponent): Promise<ApplicationStateV1>;
 }
@@ -28,6 +32,7 @@ const safeStateKeys = new Set<string>(APPLICATION_STATE_SAFE_KEYS);
 const allowedNetworkSchemes = new Set<string>(APPLICATION_STATE_ALLOWED_NETWORK_SCHEMES);
 const sensitiveQueryKeys = new Set<string>(APPLICATION_STATE_SENSITIVE_QUERY_KEYS);
 const localExampleIdPattern = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+const utf8ByteLength = (value: string): number => new TextEncoder().encode(value).byteLength;
 
 const sanitizeNetworkUrl = (value: string, rejectSensitive: boolean): string | undefined => {
   let url: URL;
@@ -51,8 +56,12 @@ const sanitizeNetworkUrl = (value: string, rejectSensitive: boolean): string | u
 };
 
 const localExampleIsSafe = (exampleId: string, fragment?: string): boolean =>
+  utf8ByteLength(exampleId) <= MAX_SAFE_SESSION_EXAMPLE_ID_BYTES &&
   localExampleIdPattern.test(exampleId) &&
-  (fragment === undefined || (fragment.startsWith('#') && !/[\u0000-\u001f\u007f]/.test(fragment)));
+  (fragment === undefined ||
+    (utf8ByteLength(fragment) <= MAX_SAFE_SESSION_FRAGMENT_BYTES &&
+      fragment.startsWith('#') &&
+      !/[\u0000-\u001f\u007f]/.test(fragment)));
 
 const sanitizeStateValues = (state: ApplicationStateV1): ApplicationStateV1 => {
   state.favorites.entries = state.favorites.entries.filter((favorite) => {
@@ -70,7 +79,8 @@ const sanitizeStateValues = (state: ApplicationStateV1): ApplicationStateV1 => {
     session === undefined ||
     (session.kind === 'local-example'
       ? localExampleIsSafe(session.exampleId, session.fragment)
-      : sanitizeNetworkUrl(session.url, true) !== undefined);
+      : utf8ByteLength(session.url) <= MAX_SAFE_SESSION_URL_BYTES &&
+        sanitizeNetworkUrl(session.url, true) !== undefined);
   if (!sessionIsSafe || session === undefined) {
     state.safeSession = { recoveryPending: false };
   }
@@ -147,12 +157,23 @@ export class TauriApplicationStateStore implements ApplicationStateStore {
       const saved = await this.client.applicationStateSave({
         state: projectApplicationStateV1(state)
       });
-      this.loaded = Promise.resolve({
-        state: saved,
-        status: 'loaded',
-        writeAllowed: true,
-        removedMonitorWindowState: false
+      this.setLoadedState(saved);
+      return saved;
+    });
+  }
+
+  async update(
+    project: (state: ApplicationStateV1) => ApplicationStateV1
+  ): Promise<ApplicationStateV1> {
+    return this.enqueue(async () => {
+      const loaded = await (this.loaded ??= this.loadAndMigrate());
+      if (!loaded.writeAllowed) {
+        throw new Error('application-state-write-blocked');
+      }
+      const saved = await this.client.applicationStateSave({
+        state: projectApplicationStateV1(project(cloneState(loaded.state)))
       });
+      this.setLoadedState(saved);
       return saved;
     });
   }
@@ -160,12 +181,7 @@ export class TauriApplicationStateStore implements ApplicationStateStore {
   async reset(): Promise<ApplicationStateV1> {
     return this.enqueue(async () => {
       const state = await this.client.applicationStateReset();
-      this.loaded = Promise.resolve({
-        state,
-        status: 'loaded',
-        writeAllowed: true,
-        removedMonitorWindowState: false
-      });
+      this.setLoadedState(state);
       return state;
     });
   }
@@ -173,12 +189,7 @@ export class TauriApplicationStateStore implements ApplicationStateStore {
   async clear(component: ApplicationStateComponent): Promise<ApplicationStateV1> {
     return this.enqueue(async () => {
       const state = await this.client.applicationStateClearComponent({ component });
-      this.loaded = Promise.resolve({
-        state,
-        status: 'loaded',
-        writeAllowed: true,
-        removedMonitorWindowState: false
-      });
+      this.setLoadedState(state);
       return state;
     });
   }
@@ -220,15 +231,26 @@ export class TauriApplicationStateStore implements ApplicationStateStore {
     );
     return result;
   }
+
+  private setLoadedState(state: ApplicationStateV1): void {
+    this.loaded = Promise.resolve({
+      state,
+      status: 'loaded',
+      writeAllowed: true,
+      removedMonitorWindowState: false
+    });
+  }
 }
 
 export interface MemoryApplicationStateStoreOptions {
   initialState?: ApplicationStateV1;
   failReads?: boolean;
+  failWrites?: boolean;
 }
 
 export class MemoryApplicationStateStore implements ApplicationStateStore {
   private state: ApplicationStateV1 | undefined;
+  private writes: Promise<void> = Promise.resolve();
 
   constructor(private readonly options: MemoryApplicationStateStoreOptions = {}) {
     this.state = options.initialState ? cloneState(options.initialState) : undefined;
@@ -247,50 +269,78 @@ export class MemoryApplicationStateStore implements ApplicationStateStore {
   }
 
   async save(state: ApplicationStateV1): Promise<ApplicationStateV1> {
-    if (this.options.failReads) {
-      throw new Error('application-state-read-before-write-failed');
-    }
-    this.state = cloneState(state);
-    return cloneState(this.state);
+    return this.enqueue(async () => {
+      if (this.options.failReads || this.options.failWrites) {
+        throw new Error('application-state-read-before-write-failed');
+      }
+      this.state = cloneState(state);
+      return cloneState(this.state);
+    });
+  }
+
+  async update(
+    project: (state: ApplicationStateV1) => ApplicationStateV1
+  ): Promise<ApplicationStateV1> {
+    return this.enqueue(async () => {
+      if (this.options.failReads || this.options.failWrites) {
+        throw new Error('application-state-read-before-write-failed');
+      }
+      const current = this.state ? cloneState(this.state) : defaultApplicationStateV1();
+      this.state = cloneState(project(current));
+      return cloneState(this.state);
+    });
   }
 
   async reset(): Promise<ApplicationStateV1> {
-    this.state = defaultApplicationStateV1();
-    return cloneState(this.state);
+    return this.enqueue(async () => {
+      this.state = defaultApplicationStateV1();
+      return cloneState(this.state);
+    });
   }
 
   async clear(component: ApplicationStateComponent): Promise<ApplicationStateV1> {
-    if (this.options.failReads) {
-      throw new Error('application-state-read-before-clear-failed');
-    }
-    const current = this.state ? cloneState(this.state) : defaultApplicationStateV1();
-    const defaults = defaultApplicationStateV1();
-    switch (component) {
-      case 'settings':
-        current.settings = defaults.settings;
-        break;
-      case 'onboarding':
-        current.onboarding = defaults.onboarding;
-        break;
-      case 'favorites':
-        current.favorites = defaults.favorites;
-        break;
-      case 'window-state':
-        current.windowState = defaults.windowState;
-        break;
-      case 'safe-session':
-        current.safeSession = defaults.safeSession;
-        break;
-      case 'diagnostic-preferences':
-        current.diagnosticPreferences = defaults.diagnosticPreferences;
-        break;
-    }
-    this.state = cloneState(current);
-    return cloneState(this.state);
+    return this.enqueue(async () => {
+      if (this.options.failReads) {
+        throw new Error('application-state-read-before-clear-failed');
+      }
+      const current = this.state ? cloneState(this.state) : defaultApplicationStateV1();
+      const defaults = defaultApplicationStateV1();
+      switch (component) {
+        case 'settings':
+          current.settings = defaults.settings;
+          break;
+        case 'onboarding':
+          current.onboarding = defaults.onboarding;
+          break;
+        case 'favorites':
+          current.favorites = defaults.favorites;
+          break;
+        case 'window-state':
+          current.windowState = defaults.windowState;
+          break;
+        case 'safe-session':
+          current.safeSession = defaults.safeSession;
+          break;
+        case 'diagnostic-preferences':
+          current.diagnosticPreferences = defaults.diagnosticPreferences;
+          break;
+      }
+      this.state = cloneState(current);
+      return cloneState(this.state);
+    });
   }
 
   snapshot(): ApplicationStateV1 | undefined {
     return this.state ? cloneState(this.state) : undefined;
+  }
+
+  private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+    const result = this.writes.then(operation, operation);
+    this.writes = result.then(
+      () => undefined,
+      () => undefined
+    );
+    return result;
   }
 }
 

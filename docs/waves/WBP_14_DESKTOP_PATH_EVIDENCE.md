@@ -4,7 +4,7 @@ Status: `in-progress` — inventory and drift gate established; release gate not
 
 Audit date: 2026-08-02
 
-Audit base: `origin/main` at `d233426d`
+Audit base: `origin/main` at `6e30f89f`
 
 Machine-readable inventory: [`wbp-14-desktop-evidence.json`](wbp-14-desktop-evidence.json)
 
@@ -16,7 +16,7 @@ stack. It proves startup, successful WML rendering/navigation, a bounded repeat 
 invalid-address failure, and a subsequent successful recovery.
 
 That is not yet the complete WBP-14 release gate. Of 19 required evidence scenarios, 3 are complete,
-7 are partial, 5 are missing, and 4 are blocked by unfinished product slices. In particular, unit or
+8 are partial, 5 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
 story evidence for timeout, cancellation, invalid-deck atomicity, and script traps must not be
 presented as proof that the native desktop path handles those cases.
 
@@ -42,7 +42,7 @@ as a silent substitute for the other.
 | Timeout and cancellation                  | missing         | Lower-level behavior is tested                                                                  | Add controlled native cases, cancellation acknowledgement timing, and retained-frame assertions          |
 | Invalid deck                              | missing         | `WML-205` engine failure/atomicity story is green                                               | Serve malformed/invalid WML through Kannel and verify categorized native recovery without frame mutation |
 | Script trap                               | missing         | `WMLS-501` decoder/verifier evidence exists                                                     | Add a native visible trap/recovery case; do not infer unfinished `WMLS-502` execution coverage           |
-| Crash recovery and safe session           | blocked         | Product policy is documented                                                                    | Implement `WBP-12` crash marker and safe-session offer, then run a packaged relaunch case                |
+| Crash recovery and safe session           | partial         | Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity    | Run and record the packaged launch-after-crash relaunch case                                               |
 | Diagnostics and bounded replay            | blocked         | Bounded sanitized Inspector projection exists                                                   | Implement `WBP-13` `.waves-session.json` import/replay and the 1,000-step memory gate                    |
 | Zoom/reflow                               | complete        | Production-built Chromium is green at both windows and effective 200 percent zoom               | Retain as fixture evidence; packaged platform checks remain separate                                     |
 | Screen reader                             | blocked         | Manual VoiceOver procedure is documented                                                        | Enable packaging and record the packaged macOS smoke result                                              |
@@ -54,8 +54,10 @@ PRs `#541` through `#545` are included in the refreshed audit base. Their typed 
 deterministic scrolling, unified input, phase-aware recovery, and application-shell behavior
 strengthen fixture and manual-test coverage, but native desktop-path evidence is still required.
 In particular, merged PR `#544` supplies WBP-11 presentation/recovery behavior and timing targets;
-it does not supply the native timing and categorized-failure artifacts needed to change the
-inventory's 3 complete, 7 partial, 5 missing, and 4 blocked scenario counts.
+it does not supply the native timing and categorized-failure artifacts needed for closure. PR
+`#549` adds WBP-12 fixture evidence, moving crash recovery from blocked to partial; its packaged
+launch-after-crash observation remains open. The inventory therefore records 3 complete, 8
+partial, 5 missing, and 3 blocked scenarios.
 
 ## Compliance mapping posture
 
@@ -103,8 +105,8 @@ The native workflow uploads screenshots, page source, environment, service logs,
 2. Extend the controlled Kannel origin and native UI driver with timeout, actual cancellation,
    invalid-deck, and script-trap cases. Each case must assert retained committed frame, categorized
    status, correlation metadata, and successful recovery.
-3. Complete `WBP-12`, then record launch-after-crash and safe-session policy behavior in a packaged
-   build.
+3. Record the implemented `WBP-12` launch-after-crash and safe-session policy behavior in a
+   packaged build; fixture evidence does not substitute for that relaunch observation.
 4. Complete `WBP-13`, then record sanitized replay determinism and bounded 1,000-step memory
    behavior.
 5. Add repeatable startup/interaction budgets and record the packaged VoiceOver smoke.

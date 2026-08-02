@@ -11,6 +11,7 @@ import { statusBarTemplate } from './shell/status-bar-template';
 import { utilityRailTemplate } from './shell/utility-rail-template';
 import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
 import { applicationSurfacesTemplate } from './shell/application-surfaces-template';
+import { sessionRecoveryTemplate } from './shell/session-recovery-template';
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
@@ -24,6 +25,8 @@ const browserShellTemplate = () => `
     </main>
 
     ${applicationSurfacesTemplate()}
+
+    ${sessionRecoveryTemplate()}
 
     ${navigationPhaseBarTemplate()}
 

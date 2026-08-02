@@ -374,10 +374,10 @@ export class LibraryPreferencesController {
 
   private async persistFavorites(): Promise<void> {
     if (!this.state) throw new Error('Application state has not loaded.');
-    this.state = await this.store.save({
-      ...this.state,
+    this.state = await this.store.update((current) => ({
+      ...current,
       favorites: { entries: this.favorites.map(toPersistedFavorite) }
-    });
+    }));
   }
 
   private requestImport(): void {
@@ -462,7 +462,8 @@ export class LibraryPreferencesController {
 
   private readonly savePreferences = async (): Promise<void> => {
     if (!this.state || !this.writeAllowed) throw new Error('Application state is read-only.');
-    this.state = await this.store.save({ ...this.state, settings: this.readPreferences() });
+    const settings = this.readPreferences();
+    this.state = await this.store.update((current) => ({ ...current, settings }));
     this.renderPreferences();
     this.applyPresentationPreferences();
     this.options.notify('Preferences saved.');

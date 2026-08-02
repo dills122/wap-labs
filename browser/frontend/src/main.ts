@@ -13,6 +13,7 @@ import {
   configureApplicationStateStore
 } from './app/application-state-store';
 import { WAVES_COPY } from './app/waves-copy';
+import { TauriWindowStateAdapter } from './app/window-state-controller';
 
 let activeApplication: BrowserApplication | undefined;
 
@@ -23,7 +24,9 @@ const bootstrap = async (): Promise<void> => {
   activeApplication = undefined;
   const hostClient = createTauriHostClient(createGuardedTauriInvoke(invoke));
   configureApplicationStateStore(new TauriApplicationStateStore(hostClient));
-  const application = composeBrowserApplication(hostClient);
+  const application = composeBrowserApplication(hostClient, {
+    windowStateAdapter: new TauriWindowStateAdapter()
+  });
   activeApplication = application;
   await initializeBrowserApplication(application);
 };

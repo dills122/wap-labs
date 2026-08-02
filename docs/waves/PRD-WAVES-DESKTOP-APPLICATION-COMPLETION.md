@@ -79,12 +79,12 @@ transport behavior in the frontend.
 
 | Capability       | Implemented at the 2026-08-02 checkpoint                                                                                                                                     | Gap                                                                                                          |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Desktop identity | Tauri identity and native menus plus one shared application-command registry and versioned native application-state store                                                    | Production packaging/updater, integrated window restore, and user-facing import/export workflows             |
+| Desktop identity | Tauri identity and native menus plus one shared application-command registry, versioned native application-state store, asynchronous window restore, and crash marker             | Production packaging/updater and user-facing import/export workflows                                          |
 | Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface       |
 | Runtime path     | Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication | F2 pointer/scroll/softkey cutover and final legacy-path removal                                              |
 | History          | In-memory engine card history plus request-shaped host deck history                                                                                                          | Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (`#450`) |
 | Diagnostics      | Safe timeline projection plus bounded, masked D0-02 events/snapshots, D0-03 host sessions, and the D0-04 read-only Inspector/capture workflow                                | External tooling and any separately designed controlled replay                                               |
-| Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                    |
+| Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, memory test adapter, integrated Preferences, window restore, and safe-session recovery      | Broader diagnostic/accessibility controls                                                                     |
 | Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                            |
 | Public services  | Live exact-host public deployment, deterministic first-party origin, bounded positive probes, safe Favorites/service-catalog domain, and publication-state model             | Publication-governance reconciliation, guided entry, negative/operations evidence, and desktop release gates remain open |
 
@@ -626,10 +626,12 @@ Before feature UI begins:
 
 1. F1 primary frame rendering and deterministic navigation publication are complete in PRs
    `#519`, `#520`, and `#526`.
-2. Cancellable/admission-controlled navigation and `WBP-11` phase-aware recovery presentation are
-   complete; `WBP-12` safe-session/crash recovery remains.
+2. Cancellable/admission-controlled navigation, `WBP-11` phase-aware recovery presentation, and
+   `WBP-12` safe-session/crash recovery are complete; the packaged relaunch observation remains in
+   the WBP-14 release matrix.
 3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
-   window restore, and local/GET-safe recovery remain.
+   window restore, and local/GET-safe recovery are integrated. User-facing import/export and the
+   packaged crash-relaunch observation remain.
 4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.
 5. Safe timeline/export projection is complete in PR `#532`; the D0-04 Inspector consumer and its
    separately versioned bounded engine capture are complete in PR `#536`.
@@ -700,7 +702,7 @@ APP-CMD-01 --------------------+
 
 D0-02 --> D0-03 --> D0-04 (Phase B Inspector)
 #450  --> persisted/searchable history (Phase B)
-WBP-10 --> WBP-11 --> safe-session integration and release matrix
+WBP-10 --> WBP-11 --> WBP-12 safe-session implementation --> packaged release matrix
 ```
 
 ### 8.7 Ticket-ready first-batch slices

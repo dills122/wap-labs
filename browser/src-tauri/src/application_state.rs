@@ -11,6 +11,9 @@ use url::Url;
 pub const APPLICATION_STATE_SCHEMA_VERSION: u32 = 1;
 pub const APPLICATION_STATE_FILE_NAME: &str = "application-state-v1.json";
 pub const MAX_APPLICATION_STATE_BYTES: u64 = 1_048_576;
+pub const MAX_SAFE_SESSION_URL_BYTES: usize = 4 * 1024;
+pub const MAX_SAFE_SESSION_EXAMPLE_ID_BYTES: usize = 256;
+pub const MAX_SAFE_SESSION_FRAGMENT_BYTES: usize = 256;
 pub const APPLICATION_STATE_ALLOWED_NETWORK_SCHEMES: &[&str] = &["http", "https", "wap", "waps"];
 pub const APPLICATION_STATE_SENSITIVE_QUERY_KEYS: &[&str] = &[
     "access_token",
@@ -458,6 +461,27 @@ impl AtomicApplicationStateBackend {
         Ok(state)
     }
 
+    /// Marks an ordinary host shutdown without replacing unreadable, corrupt, or future state.
+    /// A process crash cannot reach this boundary, leaving `recovery_pending` set for next launch.
+    pub fn mark_clean_exit(&self) -> Result<(), String> {
+        let mut state = match self.read_state() {
+            Ok(ReadState::Loaded(state)) => state,
+            Ok(ReadState::Absent | ReadState::Corrupt | ReadState::Future(_)) => return Ok(()),
+            Err(error) => {
+                return Err(format!(
+                    "application-state-read-before-clean-exit-failed: {}",
+                    error.kind()
+                ))
+            }
+        };
+        if !state.safe_session.recovery_pending {
+            return Ok(());
+        }
+        state.safe_session.recovery_pending = false;
+        self.atomic_write(&state)
+            .map_err(|error| format!("application-state-clean-exit-failed: {}", error.kind()))
+    }
+
     fn read_state(&self) -> io::Result<ReadState> {
         let metadata = match fs::metadata(&self.path) {
             Ok(metadata) => metadata,
@@ -496,6 +520,14 @@ impl AtomicApplicationStateBackend {
     }
 
     fn atomic_write(&self, state: &ApplicationStateV1) -> io::Result<()> {
+        self.atomic_write_before_replace(state, || Ok(()))
+    }
+
+    fn atomic_write_before_replace(
+        &self,
+        state: &ApplicationStateV1,
+        before_replace: impl FnOnce() -> io::Result<()>,
+    ) -> io::Result<()> {
         let bytes = serde_json::to_vec_pretty(state).map_err(io::Error::other)?;
         if bytes.len() as u64 > MAX_APPLICATION_STATE_BYTES {
             return Err(io::Error::new(
@@ -521,6 +553,7 @@ impl AtomicApplicationStateBackend {
             temporary.write_all(b"\n")?;
             temporary.sync_all()?;
             drop(temporary);
+            before_replace()?;
             fs::rename(&temporary_path, &self.path)?;
             sync_directory(parent)
         })();
@@ -595,11 +628,13 @@ fn safe_session_is_valid(session: &SafeSessionV1) -> bool {
             fragment,
         } => {
             let example_valid = !example_id.is_empty()
+                && example_id.len() <= MAX_SAFE_SESSION_EXAMPLE_ID_BYTES
                 && example_id.chars().all(|character| {
                     character.is_ascii_alphanumeric() || ".-_".contains(character)
                 });
             let fragment_valid = fragment.as_ref().is_none_or(|value| {
-                value.starts_with('#')
+                value.len() <= MAX_SAFE_SESSION_FRAGMENT_BYTES
+                    && value.starts_with('#')
                     && !value.chars().any(|character| character.is_ascii_control())
             });
             example_valid && fragment_valid
@@ -609,6 +644,9 @@ fn safe_session_is_valid(session: &SafeSessionV1) -> bool {
 }
 
 fn safe_network_get_url(value: &str) -> bool {
+    if value.len() > MAX_SAFE_SESSION_URL_BYTES {
+        return false;
+    }
     let Ok(url) = Url::parse(value) else {
         return false;
     };
@@ -834,6 +872,34 @@ mod tests {
     }
 
     #[test]
+    fn failed_replace_preserves_the_last_committed_state_atomically() {
+        let directory = TestDirectory::new("failed-replace");
+        let backend = AtomicApplicationStateBackend::new(&directory.0);
+        let expected = backend
+            .save(state_with_changes(), &monitors())
+            .expect("initial state should save");
+        let mut replacement = expected.clone();
+        replacement.settings.display_scale_percent = 150;
+
+        let error = backend
+            .atomic_write_before_replace(&replacement, || {
+                Err(io::Error::other("injected-before-replace-failure"))
+            })
+            .expect_err("injected failure should abort replacement");
+
+        assert_eq!(error.kind(), io::ErrorKind::Other);
+        assert_eq!(backend.load(&monitors()).state, expected);
+        assert_eq!(
+            fs::read_dir(&directory.0)
+                .expect("state directory should remain readable")
+                .filter_map(Result::ok)
+                .filter(|entry| entry.file_name().to_string_lossy().ends_with(".tmp"))
+                .count(),
+            0
+        );
+    }
+
+    #[test]
     fn removed_monitor_clears_only_window_state() {
         let directory = TestDirectory::new("monitor");
         let backend = AtomicApplicationStateBackend::new(&directory.0);
@@ -886,6 +952,61 @@ mod tests {
             let saved = backend.save(state, &monitors()).expect("state should save");
             assert_eq!(saved.safe_session, SafeSessionStateV1::default());
         }
+    }
+
+    #[test]
+    fn safe_session_bounds_remove_oversized_recovery_material() {
+        let directory = TestDirectory::new("safe-session-bounds");
+        let backend = AtomicApplicationStateBackend::new(&directory.0);
+        for session in [
+            SafeSessionV1::NetworkGet {
+                url: format!(
+                    "https://example.test/{}",
+                    "a".repeat(MAX_SAFE_SESSION_URL_BYTES)
+                ),
+            },
+            SafeSessionV1::LocalExample {
+                example_id: "a".repeat(MAX_SAFE_SESSION_EXAMPLE_ID_BYTES + 1),
+                fragment: None,
+            },
+            SafeSessionV1::LocalExample {
+                example_id: "basic".to_string(),
+                fragment: Some(format!("#{}", "a".repeat(MAX_SAFE_SESSION_FRAGMENT_BYTES))),
+            },
+        ] {
+            let state = ApplicationStateV1 {
+                safe_session: SafeSessionStateV1 {
+                    recovery_pending: true,
+                    session: Some(session),
+                },
+                ..ApplicationStateV1::default()
+            };
+            let saved = backend.save(state, &monitors()).expect("state should save");
+            assert_eq!(saved.safe_session, SafeSessionStateV1::default());
+        }
+    }
+
+    #[test]
+    fn clean_exit_clears_only_the_crash_marker_and_survives_restart() {
+        let directory = TestDirectory::new("clean-exit");
+        let backend = AtomicApplicationStateBackend::new(&directory.0);
+        let expected = backend
+            .save(state_with_changes(), &monitors())
+            .expect("running state should save");
+        assert!(expected.safe_session.recovery_pending);
+
+        backend
+            .mark_clean_exit()
+            .expect("ordinary shutdown should clear the marker");
+        let restarted = backend.load(&monitors()).state;
+
+        assert!(!restarted.safe_session.recovery_pending);
+        assert_eq!(
+            restarted.safe_session.session,
+            expected.safe_session.session
+        );
+        assert_eq!(restarted.settings, expected.settings);
+        assert_eq!(restarted.favorites, expected.favorites);
     }
 
     #[test]

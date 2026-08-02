@@ -22,7 +22,8 @@ use wavenav_host_lib::application_state::{
     SafeSessionStateV1, SafeSessionV1, SaveApplicationStateRequest, StartBehaviorPreference,
     WindowBoundsV1, WindowStateV1, APPLICATION_STATE_ALLOWED_NETWORK_SCHEMES,
     APPLICATION_STATE_SAFE_KEYS, APPLICATION_STATE_SCHEMA_VERSION,
-    APPLICATION_STATE_SENSITIVE_QUERY_KEYS,
+    APPLICATION_STATE_SENSITIVE_QUERY_KEYS, MAX_SAFE_SESSION_EXAMPLE_ID_BYTES,
+    MAX_SAFE_SESSION_FRAGMENT_BYTES, MAX_SAFE_SESSION_URL_BYTES,
 };
 use wavenav_host_lib::command_contract::{
     render_default_capability, render_host_permission, TauriCommandDescriptor,
@@ -322,6 +323,15 @@ fn render_application_state_contracts() -> Result<String, Box<dyn std::error::Er
         serde_json::to_string(APPLICATION_STATE_SENSITIVE_QUERY_KEYS)?
     ));
     output.push_str(&format!(
+        "export const MAX_SAFE_SESSION_URL_BYTES = {MAX_SAFE_SESSION_URL_BYTES} as const;\n"
+    ));
+    output.push_str(&format!(
+        "export const MAX_SAFE_SESSION_EXAMPLE_ID_BYTES = {MAX_SAFE_SESSION_EXAMPLE_ID_BYTES} as const;\n"
+    ));
+    output.push_str(&format!(
+        "export const MAX_SAFE_SESSION_FRAGMENT_BYTES = {MAX_SAFE_SESSION_FRAGMENT_BYTES} as const;\n"
+    ));
+    output.push_str(&format!(
         "export const DEFAULT_APPLICATION_STATE_V1 = {} as const;\n\n",
         serde_json::to_string(&ApplicationStateV1::default())?
     ));
@@ -434,6 +444,7 @@ mod tests {
         assert!(output.contains("APPLICATION_STATE_SCHEMA_VERSION = 1"));
         assert!(output.contains("export type ApplicationStateV1"));
         assert!(output.contains("export type SafeSessionStateV1"));
+        assert!(output.contains("MAX_SAFE_SESSION_URL_BYTES = 4096"));
         assert!(output.contains("showWelcomeOnLaunch"));
         assert!(!output.contains("Authorization"));
         assert!(!output.contains("postContext"));

@@ -1252,3 +1252,36 @@ it('retries a categorized failure and keeps the committed frame visible', async 
   expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
   expect(presenter.getSessionState().navigationStatus).toBe('loaded');
 });
+
+it('projects committed local decks and raw debug loads into distinct persistence outcomes', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const hostClient = createHostClient();
+  const onSafeSessionCommitted = vi.fn();
+  const onUnsafeSessionCommitted = vi.fn();
+  const controller = new BrowserController(hostClient as never, presenter, refs, {
+    onSafeSessionCommitted,
+    onUnsafeSessionCommitted
+  });
+
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+
+  expect(onSafeSessionCommitted).toHaveBeenCalledWith({
+    kind: 'local-example',
+    exampleId: defaultLocalDeckExample().key,
+    fragment: '#default-home'
+  });
+
+  document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+  await flushAsyncWork();
+
+  expect(onUnsafeSessionCommitted).toHaveBeenCalledOnce();
+
+  const safeCommitCount = onSafeSessionCommitted.mock.calls.length;
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true }));
+  await flushAsyncWork();
+
+  expect(onSafeSessionCommitted).toHaveBeenCalledTimes(safeCommitCount);
+  expect(onUnsafeSessionCommitted).toHaveBeenCalledTimes(2);
+});

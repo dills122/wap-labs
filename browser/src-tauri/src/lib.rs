@@ -127,6 +127,11 @@ fn application_state_backend(app: &AppHandle) -> Result<AtomicApplicationStateBa
 }
 
 #[cfg_attr(test, allow(dead_code))]
+pub(crate) fn mark_application_state_clean_exit(app: &AppHandle) -> Result<(), String> {
+    application_state_backend(app)?.mark_clean_exit()
+}
+
+#[cfg_attr(test, allow(dead_code))]
 fn available_monitor_ids(app: &AppHandle) -> Vec<String> {
     app.available_monitors()
         .unwrap_or_default()

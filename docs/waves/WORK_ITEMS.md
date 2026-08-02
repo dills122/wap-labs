@@ -90,11 +90,11 @@ evidence even though the bounded endpoint is now reachable.
 
 ## Next In Line (Desktop Evidence Checkpoint - 2026-08-02)
 
-Audit base: `origin/main` `d233426d`. PRs `#541`, `#542`, `#543`, `#544`, and `#545` have merged
+Audit base: `origin/main` `6e30f89f`. PRs `#541`, `#542`, `#543`, `#544`, and `#545` have merged
 typed POST history, F2-02 scrolling, F2-03 unified input, WBP-11 phase recovery, and APP-SHELL-01
 Library/Preferences. WBP-11's merge does not by itself add native release evidence. The WBP-14
 inventory in [`WBP_14_DESKTOP_PATH_EVIDENCE.md`](WBP_14_DESKTOP_PATH_EVIDENCE.md) records 3
-complete, 7 partial, 5 missing, and 4 blocked evidence scenarios and prevents release closure from
+complete, 8 partial, 5 missing, and 3 blocked evidence scenarios and prevents release closure from
 being inferred from lower-level tests.
 
 The selected-profile source and planning lanes are complete. The active queue
@@ -190,10 +190,11 @@ host-history state on the shared presenter/history surface.
 
 Issue `#450`, typed POST replay, F2-02/F2-03, WBP-11 phase recovery, and APP-SHELL-01 are merged on
 the stabilized browser foundation. Keep WBP-10's remaining transport-metadata delta separate from
-the completed WBP-11 presentation, then close WBP-14 in evidence order: native timeout,
-cancellation, invalid-deck, and script-trap coverage; WBP-12 crash recovery; WBP-13 replay/memory;
-and packaged screen-reader and latency evidence. `WMLS-502` remains a separate script lane and must
-not be inferred complete from WBP-14 evidence.
+the completed WBP-11 presentation. WBP-12 now has deterministic implementation evidence, while its
+packaged crash-relaunch observation remains open. Close WBP-14 in evidence order: native timeout,
+cancellation, invalid-deck, and script-trap coverage; packaged WBP-12 crash-relaunch evidence;
+WBP-13 replay/memory; and packaged screen-reader and latency evidence. `WMLS-502` remains a separate
+script lane and must not be inferred complete from WBP-14 evidence.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -223,7 +224,8 @@ The `Authentic Core, Modern Console` direction is adopted. Current status is:
 | `WBP-04`  | `done`        | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                                                                                   |
 | `WBP-05`  | `done`        | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history.                                                         |
 | `WBP-06`  | `done`        | F0-01 through F0-03 add the engine-owned versioned presentation frame, logical affordances, frame-bound typed input, generated native/WASM/Tauri projections, WML-309 evidence, and CI drift coverage while retaining legacy render/key compatibility and the separate `EngineDebug*` namespace. Canvas/CSS, physical softkey placement, hit regions, pointer/scroll input, and WBP-02B remain later work. |
-| `WBP-14`  | `in-progress` | The machine-checked desktop-path audit distinguishes fixture, native-gateway, and packaged-manual evidence. The native success/recovery pilot is real, but timeout, cancellation, invalid deck, script trap, WBP-12 crash recovery, WBP-13 replay/memory, latency, and packaged screen-reader closure remain explicit.                                                                                     |
+| `WBP-12`  | `done`        | The existing atomic v1 state boundary now persists only bounded committed local/GET sessions, debounced window state, settings, and Favorites; native clean exit clears the crash marker, local recovery is automatic, network GET recovery requires confirmation, and unsafe POST/credential state is removed. Deterministic frontend/Rust evidence is green; the packaged relaunch observation remains explicitly in WBP-14. |
+| `WBP-14`  | `in-progress` | The machine-checked desktop-path audit distinguishes fixture, native-gateway, and packaged-manual evidence. The native success/recovery pilot and WBP-12 fixture policy are real, but timeout, cancellation, invalid deck, script trap, packaged crash relaunch, WBP-13 replay/memory, latency, and packaged screen-reader closure remain explicit.                                                                  |
 
 Phase 1 implementation is complete; the original seams remain documented in
 `WAVES_BROWSER_BASELINE.md` for maintenance history. WBP-06/F0 is now complete after the declared
