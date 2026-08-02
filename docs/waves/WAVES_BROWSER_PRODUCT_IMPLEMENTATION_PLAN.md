@@ -375,8 +375,9 @@ Accept:
 
 ### WBP-10 Cancellable fetch lifecycle
 
-- `Status`: in progress; cancellation/admission is complete in PR `#521`, while phase metadata and
-  the WBP-11 presentation handoff remain
+- `Status`: in progress; cancellation/admission is complete in PR `#521` and the WBP-11 browser
+  presentation handoff is complete in PR `#544`, while exported transport attempt/phase metadata
+  remains
 - `Lane`: C
 - `Depends On`: owning transport/WSP slice
 - `Likely Files`:
@@ -543,8 +544,9 @@ source-recovery candidates until comparable primary evidence exists.
    (`WBP-02` through `WBP-05`) with one shell-integration owner.
 4. Land the engine frame and affordance contract (`WBP-06`) through its existing F0 gate.
 5. Run Canvas/input/accessibility integration (`WBP-07` through `WBP-09`).
-6. Land transport cancellation and phase metadata (`WBP-10`).
-7. Integrate loading, recovery, and persistence (`WBP-11`, `WBP-12`).
+6. Preserve merged transport cancellation and WBP-11 recovery presentation; finish WBP-10's
+   remaining exported transport metadata.
+7. Complete WBP-12 persistence and crash recovery on the merged WBP-11 presentation seam.
 8. Land diagnostics/replay after both contract surfaces stabilize (`WBP-13`).
 9. Close MVP with complete-path evidence (`WBP-14`).
 10. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`);
@@ -623,6 +625,7 @@ themselves claim WBP-07 through WBP-14 complete.
 
 The redesigned shell/Developer Tools workspace, pre-release marketing refresh, versioned
 application-state foundation, Favorites domain, native command registry, safe diagnostic
-projection, D0-02/D0-03 debug source/host bridge, D0-04 read-only Inspector, and F2-01 deterministic
-click input are merged. Issue `#450` is the next shared-history correction; F2-02/F2-03, `WBP-11`,
-and `APP-SHELL-01` follow on engine-input, presenter, and shell surfaces.
+projection, D0-02/D0-03 debug source/host bridge, D0-04 read-only Inspector, F2-01 through F2-03
+input/scrolling, issue `#450` shared-history correction, WBP-11 phase recovery, and APP-SHELL-01 are
+merged. WBP-10's remaining exported transport metadata, WBP-12/WBP-13 product slices, and WBP-14
+native and packaged evidence remain explicit follow-ups.

@@ -4,8 +4,8 @@
   "auditedAt": "2026-08-02",
   "auditBase": {
     "ref": "origin/main",
-    "commit": "dfe2c4c9",
-    "pendingPullRequests": [544]
+    "commit": "d233426d",
+    "pendingPullRequests": []
   },
   "releaseComplete": false,
   "evidenceClasses": {
@@ -75,7 +75,7 @@
       "workItems": ["WBP-11", "WBP-14"],
       "requirements": [],
       "evidence": ["browser/frontend/src/app/navigation-state.concurrency.test.ts"],
-      "blocker": "Phase-aware recovery is in PR #544; the 100/200 millisecond presentation budgets need native evidence."
+      "blocker": "Phase-aware recovery is merged in PR #544; the 100/200 millisecond presentation budgets still need native evidence."
     },
     {
       "id": "timeout",

@@ -90,12 +90,12 @@ evidence even though the bounded endpoint is now reachable.
 
 ## Next In Line (Desktop Evidence Checkpoint - 2026-08-02)
 
-Audit base: `origin/main` `dfe2c4c9`. PRs `#541`, `#542`, `#543`, and `#545` have merged typed POST
-history, F2-02 scrolling, F2-03 unified input, and APP-SHELL-01 Library/Preferences. PR `#544`
-still carries WBP-11 phase recovery and is not counted as merged behavior. The WBP-14 inventory in
-[`WBP_14_DESKTOP_PATH_EVIDENCE.md`](WBP_14_DESKTOP_PATH_EVIDENCE.md) records 3 complete, 7 partial,
-5 missing, and 4 blocked evidence scenarios and prevents release closure from being inferred from
-lower-level tests.
+Audit base: `origin/main` `d233426d`. PRs `#541`, `#542`, `#543`, `#544`, and `#545` have merged
+typed POST history, F2-02 scrolling, F2-03 unified input, WBP-11 phase recovery, and APP-SHELL-01
+Library/Preferences. WBP-11's merge does not by itself add native release evidence. The WBP-14
+inventory in [`WBP_14_DESKTOP_PATH_EVIDENCE.md`](WBP_14_DESKTOP_PATH_EVIDENCE.md) records 3
+complete, 7 partial, 5 missing, and 4 blocked evidence scenarios and prevents release closure from
+being inferred from lower-level tests.
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -125,9 +125,10 @@ Current priority order is:
    context/history/card-table evidence, WML-304's merged request-intent and native request
    application boundary, Request A2's completed typed POST-history replay, and WMLS-501's
    completed decoder/verifier, verified-unit routing, and stack-dataflow closure. Advance
-   WMLS-502 execution as the remaining implementation lane. Preserve the completed D0-01 through D0-04 debug path and completed
-   F0/F1/F2-01 frame migration; keep F2-02 through F4, generators, and maintenance non-preemptive
-   unless separately authorized or needed to unblock a strict obligation.
+   WMLS-502 execution as the remaining implementation lane. Preserve the completed D0-01 through
+   D0-04 debug path and completed F0/F1/F2-01 through F2-03 frame migration; keep F3 through F4,
+   generators, and maintenance non-preemptive unless separately authorized or needed to unblock a
+   strict obligation.
 
 The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
 strict native/WASM validation fixtures, and paired executable stories now
@@ -187,11 +188,12 @@ The resilience board is also synchronized to current main: `RSL-01` through `RSL
 The final pair adds allowlisted diagnostic redaction followed by bounded toast, timeline, and
 host-history state on the shared presenter/history surface.
 
-Issue `#450`, typed POST replay, F2-02/F2-03, and APP-SHELL-01 are merged on the stabilized browser
-foundation. Land WBP-11 phase recovery in `#544`, then close WBP-14 in evidence order: native
-timeout/cancellation/invalid-deck/script-trap coverage; WBP-12 crash recovery; WBP-13 replay/memory;
-packaged screen-reader and latency evidence. `WMLS-502` remains a separate script lane and must not
-be inferred complete from WBP-14 evidence.
+Issue `#450`, typed POST replay, F2-02/F2-03, WBP-11 phase recovery, and APP-SHELL-01 are merged on
+the stabilized browser foundation. Keep WBP-10's remaining transport-metadata delta separate from
+the completed WBP-11 presentation, then close WBP-14 in evidence order: native timeout,
+cancellation, invalid-deck, and script-trap coverage; WBP-12 crash recovery; WBP-13 replay/memory;
+and packaged screen-reader and latency evidence. `WMLS-502` remains a separate script lane and must
+not be inferred complete from WBP-14 evidence.
 
 ### WML-203A Legacy local-example standalone-document migration
 

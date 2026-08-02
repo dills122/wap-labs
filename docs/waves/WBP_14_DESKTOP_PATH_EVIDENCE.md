@@ -4,7 +4,7 @@ Status: `in-progress` — inventory and drift gate established; release gate not
 
 Audit date: 2026-08-02
 
-Audit base: `origin/main` at `dfe2c4c9`
+Audit base: `origin/main` at `d233426d`
 
 Machine-readable inventory: [`wbp-14-desktop-evidence.json`](wbp-14-desktop-evidence.json)
 
@@ -37,7 +37,7 @@ as a silent substitute for the other.
 | ----------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | Startup and successful gateway navigation | complete        | Native production frontend reaches engine-ready and renders/navigates controlled WML 1.3 decks  | Add a startup budget before calling startup performance complete                                         |
 | Softkeys, keyboard, pointer, scrolling    | partial         | Unified input routing, engine frame/affordance, and deterministic scrolling fixture paths exist | Add native pointer/keyboard equivalence and text-entry/modifier coverage                                 |
-| Loading phases and ordinary recovery      | partial         | Stale-result/concurrency tests and basic native failure/recovery exist                          | Merge `#544`; measure 100/200 ms presentation budgets and exercise categorized failures natively         |
+| Loading phases and ordinary recovery      | partial         | WBP-11 phases, stale-result tests, and basic native failure/recovery exist                       | Measure 100/200 ms budgets and exercise categorized failures natively                                   |
 | History                                   | partial         | Typed replayable POST history and request-shaped engine/browser evidence exist                  | Add native GET, POST, and Back replay cases                                                              |
 | Timeout and cancellation                  | missing         | Lower-level behavior is tested                                                                  | Add controlled native cases, cancellation acknowledgement timing, and retained-frame assertions          |
 | Invalid deck                              | missing         | `WML-205` engine failure/atomicity story is green                                               | Serve malformed/invalid WML through Kannel and verify categorized native recovery without frame mutation |
@@ -48,16 +48,14 @@ as a silent substitute for the other.
 | Screen reader                             | blocked         | Manual VoiceOver procedure is documented                                                        | Enable packaging and record the packaged macOS smoke result                                              |
 | Interaction latency and memory            | missing/blocked | No release-budget artifact yet                                                                  | Add repeatable native timings and memory observations after the WBP-13 replay path exists                |
 
-## Pending implementation contribution
+## Merged implementation contribution
 
-PRs `#541`, `#542`, `#543`, and `#545` are included in the refreshed audit base. Their typed
-POST-history, deterministic scrolling, unified input, and application-shell behavior strengthen
-fixture and manual-test coverage, but native desktop-path evidence is still required. This
-remaining pull request is not counted as merged behavior:
-
-| PR     | Slice                            | WBP-14 contribution                                               |
-| ------ | -------------------------------- | ----------------------------------------------------------------- |
-| `#544` | phase-aware loading and recovery | supplies WBP-11 presentation/recovery behavior and timing targets |
+PRs `#541` through `#545` are included in the refreshed audit base. Their typed POST-history,
+deterministic scrolling, unified input, phase-aware recovery, and application-shell behavior
+strengthen fixture and manual-test coverage, but native desktop-path evidence is still required.
+In particular, merged PR `#544` supplies WBP-11 presentation/recovery behavior and timing targets;
+it does not supply the native timing and categorized-failure artifacts needed to change the
+inventory's 3 complete, 7 partial, 5 missing, and 4 blocked scenario counts.
 
 ## Compliance mapping posture
 
@@ -100,8 +98,8 @@ The native workflow uploads screenshots, page source, environment, service logs,
 
 ## Closure order
 
-1. Merge the pending phase-recovery slice; rerun stories, parity, rendered
-   accessibility, and native success evidence for the combined browser.
+1. Preserve the merged phase-recovery slice and rerun stories, parity, rendered accessibility,
+   and native success evidence for the combined browser before crediting new release evidence.
 2. Extend the controlled Kannel origin and native UI driver with timeout, actual cancellation,
    invalid-deck, and script-trap cases. Each case must assert retained committed frame, categorized
    status, correlation metadata, and successful recovery.
