@@ -124,11 +124,11 @@ Current priority order is:
    while `WSP-8` remains behind `WAE-6`. Preserve completed WML-301
    context/history/card-table evidence, WML-304's merged request-intent and native request
    application boundary, Request A2's completed typed POST-history replay, and WMLS-501's
-   completed decoder/verifier, verified-unit routing, and stack-dataflow closure. Advance
-   WMLS-502 execution as the remaining implementation lane. Preserve the completed D0-01 through
-   D0-04 debug path and completed F0/F1/F2-01 through F2-03 frame migration; keep F3 through F4,
-   generators, and maintenance non-preemptive unless separately authorized or needed to unblock a
-   strict obligation.
+   completed decoder/verifier, verified-unit routing, and stack-dataflow closure plus the completed
+   bounded WMLS-502 language executor. Preserve the completed D0-01 through D0-04 debug path and
+   completed F0/F1/F2-01 through F2-03 frame migration; keep F3 through F4, generators, and
+   maintenance non-preemptive unless separately authorized or needed to unblock a strict
+   obligation.
 
 The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
 strict native/WASM validation fixtures, and paired executable stories now
@@ -152,9 +152,9 @@ Current implementation batch, ordered within each lane:
 3. **Script lane B1 (complete):** the additive `WMLS-501` library-index and stack-dataflow
    verification tranche is closed without reopening or replacing the merged decoder/runtime
    history.
-4. **Script lane B2 (ready):** begin bounded `WMLS-502` operator/conversion execution on the B1
-   verifier foundation. B1 and B2 share `engine-wasm/engine/src/wavescript/*` and remain
-   sequential.
+4. **Script lane B2 (complete):** bounded `WMLS-502` operator/conversion execution reuses the B1
+   verifier foundation and leaves URL/access, standard-library execution, and the remaining error
+   matrix in their dedicated follow-on slices.
 5. **Runtime lane C1 direct tranche (complete):** the additive `WML-301` card-table boundary has
    direct parser/native/WASM/story fixtures. The graph separates 13 direct clauses from seven
    aggregate card/WAE context clauses; the three broad WAE delegates remain not-assessed under
@@ -193,8 +193,9 @@ the stabilized browser foundation. Keep WBP-10's remaining transport-metadata de
 the completed WBP-11 presentation. WBP-12 now has deterministic implementation evidence, while its
 packaged crash-relaunch observation remains open. Close WBP-14 in evidence order: native timeout,
 cancellation, invalid-deck, and script-trap coverage; packaged WBP-12 crash-relaunch evidence;
-WBP-13 replay/memory; and packaged screen-reader and latency evidence. `WMLS-502` remains a separate
-script lane and must not be inferred complete from WBP-14 evidence.
+WBP-13 replay/memory; and packaged screen-reader and latency evidence. The bounded WMLS-502
+executor is evidenced by its own engine/fixture/parity/story path; broader parent/remaining-clause
+closure must not be inferred from that tranche or from WBP-14 evidence.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -2564,21 +2565,30 @@ Completed `W0-01` through `W0-04` are archived in:
 
 ### W1-04 Function/local/return and conversion semantics parity closure
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `W0-03`
 3. `Files`:
 
-- `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/wap_runtime.rs`
 - `engine-wasm/engine/src/wavescript/value.rs`
-- `engine-wasm/engine/src/wavescript/stdlib/*`
+- `engine-wasm/engine/src/wavescript/wap_decoder.rs`
+- `engine-wasm/engine/tests/fixtures/wmlscript/`
+- `engine-wasm/examples/source/script-link-execution.*`
 
 4. `Build`:
 
-- Close gaps against spec semantics for arity, pass-by-value, implicit return value, local initialization, and conversion behavior.
+- Execute the effective local-call, variable, constant, control-flow, arithmetic, bitwise,
+  comparison, logical, stack, type, return, and debug instruction families from the verified CFG.
+- Apply WAP-193 automatic conversion precedence and return deterministic `invalid` values for
+  illegal conversions, divide/remainder by zero, range overflow, and invalid operands.
+- Preserve step, stack, call-depth, allocation, and recovery bounds across native and WASM targets.
 
 5. `Tests`:
 
-- Deterministic conformance fixtures mapped to requirement IDs in `docs/waves/SPEC_TEST_COVERAGE.md`.
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_unit_executes_wmls_502_operator_conversion_fixture`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+- `pnpm test:story WMLS-502`
 
 6. `Accept`:
 
@@ -2587,6 +2597,16 @@ Completed `W0-01` through `W0-04` are archived in:
 7. `Spec`:
 
 - `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-006`
+
+8. `Notes`:
+
+- The clause ledger records 47 of the 59 directly mapped WMLS-502 clauses as implemented: 44 by
+  this execution tranche and three by the completed WMLS-501 verifier. The 32 selected parent rows
+  remain conservative (`partial` or `missing`); this work does not claim parent-family closure.
+- The compliance-program work item therefore remains `in-progress` even though the bounded W1-04
+  implementation tranche is complete.
+- WMLS-503 URL/access execution, WMLS-504 standard-library execution, optional integer-only mode,
+  and unfinished WMLS-505 chapter 12 coverage remain excluded.
 
 ### W1-05 SCR conformance matrix and CI guardrail for WMLScript lane
 
@@ -2636,6 +2656,8 @@ Completed `W0-01` through `W0-04` are archived in:
   - WMLScript: 32 partial / 9 missing / 0 implemented;
   - Libraries: 14 partial / 66 missing / 0 implemented;
   - WMLScript direct structural tests: 21.
+- Clause-level evidence is more granular than the parent-row ledger: WMLS-502 now has 47
+  implemented of 59 directly mapped clauses while its 32 selected parents remain partial/missing.
 - Strict decoder tests directly evidence the structural tranche; custom-VM tests remain
   provisional for execution semantics and cannot close standard-library identifier rows.
 
@@ -2646,6 +2668,7 @@ Completed `W0-01` through `W0-04` are archived in:
 3. `Files`:
 
 - `engine-wasm/engine/src/wavescript/vm.rs`
+- `engine-wasm/engine/src/wavescript/wap_runtime.rs`
 - `engine-wasm/engine/src/wavescript/value.rs`
 - `engine-wasm/engine/src/lib.rs`
 - `engine-wasm/contracts/wml-engine.ts`
@@ -2656,7 +2679,11 @@ Completed `W0-01` through `W0-04` are archived in:
 - Implement explicit fatal vs non-fatal execution error classes and map non-fatal computational failures to `invalid` semantics.
 - Keep host contract deterministic: invocation-abort vs recoverable-result outcomes must be machine-checkable.
 - Progress (`2026-03-02`): added structured execution `error_class` + `error_category` + `invocation_aborted` contract fields, non-fatal mapping for computational `TypeError` and `StackUnderflow` traps to `invalid`, preserved deferred side-effects for non-fatal outcomes, added fatal-abort recovery coverage, and enforced explicit `VmTrap` class/category matrix tests across all current variants.
-- Progress (`2026-07-25`): corrected a spec-accuracy bug from the prior slice: `WAP-193_101` 12.3.1.7 classifies Stack Underflow as Fatal ("only generated if compiler generates bad code"), not Non-fatal, and the VM's `TypeError` is the same "compiler generated bad code" condition. Both now classify `fatal`/`integrity` in `classify_vm_trap`/`classify_vm_trap_category` (`engine_script_types.rs`); scripts hitting either trap now abort invocation instead of yielding `invalid`. Updated the affected trace/invocation tests in `engine_tests/script_runtime.rs` and `engine_tests/traces_public_api.rs` to match, and added `non_fatal_execution_outcome_contract_shape` to pin the `ScriptExecutionOutcome::non_fatal` contract shape directly, since no current `VmTrap` variant reaches it. Remaining scope: no VM opcode can trigger a real chapter-12.4 Non-fatal error yet (divide-by-zero, integer/float overflow/underflow, float constant/conversion range) — those need new opcodes, which is `W1-04` territory, not this ticket.
+- Progress (`2026-07-25`): corrected a spec-accuracy bug from the prior slice: `WAP-193_101` 12.3.1.7 classifies Stack Underflow as Fatal ("only generated if compiler generates bad code"), not Non-fatal, and the VM's `TypeError` is the same "compiler generated bad code" condition. Both now classify `fatal`/`integrity` in `classify_vm_trap`/`classify_vm_trap_category` (`engine_script_types.rs`); scripts hitting either trap now abort invocation instead of yielding `invalid`. Updated the affected trace/invocation tests in `engine_tests/script_runtime.rs` and `engine_tests/traces_public_api.rs` to match, and added `non_fatal_execution_outcome_contract_shape` to pin the `ScriptExecutionOutcome::non_fatal` contract shape directly; at that point no `VmTrap` variant reached it.
+- Progress (`2026-08-02`): the WMLS-502 WAP executor now handles divide/remainder by zero,
+  arithmetic overflow, illegal/range-failing conversions, invalid operands, and floating underflow
+  with the source-defined `invalid` or floating-zero values without aborting the invocation. The
+  remaining WMLS-505 matrix includes integer-only constant behavior and broader fatal/error closure.
 
 5. `Tests`:
 

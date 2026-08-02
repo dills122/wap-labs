@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-OPERATOR-CONVERSION-ATOMICITY"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

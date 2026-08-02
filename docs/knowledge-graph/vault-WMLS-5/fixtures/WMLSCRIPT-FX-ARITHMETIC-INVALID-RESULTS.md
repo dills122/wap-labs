@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

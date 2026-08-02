@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 319
+    "assessedClauseCount": 363
   },
   "families": [
     {
@@ -12154,6 +12154,9 @@
           },
           "aggregateContextWorkItems": [
             "WML-301"
+          ],
+          "directWorkItems": [
+            "WMLS-502"
           ]
         },
         {
@@ -26617,8 +26620,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-STRING-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid."
+            "status": "implemented",
+            "assertion": "Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26635,9 +26643,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-072": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-STRING-NUMERIC-GRAMMAR",
@@ -26657,8 +26668,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-STRING-NUMERIC-GRAMMAR",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value."
+            "status": "implemented",
+            "assertion": "Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26675,9 +26691,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-072": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-INTEGER-MATRIX",
@@ -26697,8 +26716,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-INTEGER-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs."
+            "status": "implemented",
+            "assertion": "Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26715,9 +26739,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-073": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-INTEGER-STRING-GRAMMAR",
@@ -26737,8 +26764,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-INTEGER-STRING-GRAMMAR",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Convert a string to integer only when the entire string is a valid decimal integer representation."
+            "status": "implemented",
+            "assertion": "Convert a string to integer only when the entire string is a valid decimal integer representation.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26755,9 +26787,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-073": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-BOOLEAN-MATRIX",
@@ -26777,8 +26812,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-BOOLEAN-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid."
+            "status": "implemented",
+            "assertion": "Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26795,9 +26835,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-075": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-INVALID-PROHIBITED",
@@ -26817,8 +26860,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-INVALID-PROHIBITED",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Do not convert another data type into invalid; create invalid only as a literal or operation-error result."
+            "status": "implemented",
+            "assertion": "Do not convert another data type into invalid; create invalid only as a literal or operation-error result.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26835,9 +26883,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-076": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-INVALID-PROPAGATION",
@@ -26858,8 +26909,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-INVALID-PROPAGATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior."
+            "status": "implemented",
+            "assertion": "Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26877,9 +26933,12 @@
               "WMLS-C-076": "missing",
               "WMLS-C-077": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONVERSION-SUMMARY-MATRIX",
@@ -26902,8 +26961,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONVERSION-SUMMARY-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values."
+            "status": "implemented",
+            "assertion": "Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26923,9 +26987,12 @@
               "WMLS-C-075": "missing",
               "WMLS-C-076": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERATOR-CONVERSION-ORDER",
@@ -26945,8 +27012,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERATOR-CONVERSION-ORDER",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned."
+            "status": "implemented",
+            "assertion": "Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -26963,9 +27035,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERATOR-CONVERSION-ATOMICITY",
@@ -26985,8 +27060,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERATOR-CONVERSION-ATOMICITY",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid."
+            "status": "implemented",
+            "assertion": "Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27003,9 +27083,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERATOR-NUMERIC-PRECEDENCE",
@@ -27025,8 +27108,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERATOR-NUMERIC-PRECEDENCE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands."
+            "status": "implemented",
+            "assertion": "Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27043,9 +27131,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERATOR-CONVERSION-RESULT-INVALID",
@@ -27065,8 +27156,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERATOR-CONVERSION-RESULT-INVALID",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return invalid when a selected legal conversion itself produces invalid."
+            "status": "implemented",
+            "assertion": "Return invalid when a selected legal conversion itself produces invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27083,9 +27179,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-077": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-URL-NAMED-COMPILATION-UNITS",
@@ -27607,8 +27706,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-ARGUMENT-STACK-ORDER",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Push function arguments onto the operand stack in declaration order, beginning with the first argument."
+            "status": "implemented",
+            "assertion": "Push function arguments onto the operand stack in declaration order, beginning with the first argument.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27625,9 +27729,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-083": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-ARGUMENT-CALL-INITIALIZATION",
@@ -27647,8 +27754,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-ARGUMENT-CALL-INITIALIZATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Pop call arguments and use them to initialize the matching callee argument variables without reordering."
+            "status": "implemented",
+            "assertion": "Pop call arguments and use them to initialize the matching callee argument variables without reordering.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27665,9 +27777,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-083": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-ARGUMENT-VARIABLE-INDEXES",
@@ -27687,8 +27802,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-ARGUMENT-VARIABLE-INDEXES",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count."
+            "status": "implemented",
+            "assertion": "Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27705,9 +27825,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-084": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-LOCAL-VARIABLE-INDEXES",
@@ -27727,8 +27850,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-LOCAL-VARIABLE-INDEXES",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Allocate local-variable indexes consecutively after the final argument index and match the declared local count."
+            "status": "implemented",
+            "assertion": "Allocate local-variable indexes consecutively after the final argument index and match the declared local count.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27745,9 +27873,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-084": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-AUTOMATIC-EMPTY-RETURN",
@@ -27767,8 +27898,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return an empty string when execution reaches a function end without a return instruction."
+            "status": "implemented",
+            "assertion": "Return an empty string when execution reaches a function end without a return instruction.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27785,9 +27921,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-085": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-LOCAL-EMPTY-INITIALIZATION",
@@ -27807,8 +27946,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-LOCAL-EMPTY-INITIALIZATION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Initialize every function local variable to an empty string before executing the function body."
+            "status": "implemented",
+            "assertion": "Initialize every function local variable to an empty string before executing the function body.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -27825,9 +27969,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-086": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-EXTERNAL-KEYWORD-GATE",
@@ -28962,8 +29109,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary."
+            "status": "implemented",
+            "assertion": "Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -28986,9 +29138,12 @@
               "WMLS-C-094": "partial",
               "WMLS-C-107": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX",
@@ -29009,8 +29164,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error."
+            "status": "implemented",
+            "assertion": "Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29030,9 +29190,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-095": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONTROL-FLOW-TARGETS",
@@ -29053,8 +29216,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONTROL-FLOW-TARGETS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets."
+            "status": "implemented",
+            "assertion": "Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29077,9 +29245,12 @@
               "WMLS-C-095": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX",
@@ -29123,7 +29294,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES",
@@ -29177,7 +29351,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WMLS-501"
+            "WMLS-501",
+            "WMLS-502"
           ]
         },
         {
@@ -29199,8 +29374,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect."
+            "status": "implemented",
+            "assertion": "Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29220,9 +29400,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-097": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS",
@@ -29243,8 +29426,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Reject a variable instruction whose index is outside the current function argument-and-local variable range."
+            "status": "implemented",
+            "assertion": "Reject a variable instruction whose index is outside the current function argument-and-local variable range.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29267,9 +29455,12 @@
               "WMLS-C-097": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX",
@@ -29290,8 +29481,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects."
+            "status": "implemented",
+            "assertion": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29311,9 +29507,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-098": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS",
@@ -29334,8 +29533,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Reject an indexed constant load that references outside the constant pool or an unsupported constant type."
+            "status": "implemented",
+            "assertion": "Reject an indexed constant load that references outside the constant pool or an unsupported constant type.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29358,9 +29562,12 @@
               "WMLS-C-098": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX",
@@ -29381,8 +29588,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors."
+            "status": "implemented",
+            "assertion": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29402,9 +29614,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-099": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS",
@@ -29426,8 +29641,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation."
+            "status": "implemented",
+            "assertion": "Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29454,9 +29674,12 @@
               "WMLS-C-099": "partial",
               "WMLS-C-111": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX",
@@ -29477,8 +29700,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects."
+            "status": "implemented",
+            "assertion": "Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29498,9 +29726,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-100": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS",
@@ -29521,8 +29752,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Convert bitwise operands to integers and return invalid when an integer conversion is illegal."
+            "status": "implemented",
+            "assertion": "Convert bitwise operands to integers and return invalid when an integer conversion is illegal.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29544,9 +29780,12 @@
               "WMLS-C-077": "partial",
               "WMLS-C-100": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX",
@@ -29567,8 +29806,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect."
+            "status": "implemented",
+            "assertion": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29588,9 +29832,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-101": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-COMPARISON-INVALID-RESULT",
@@ -29611,8 +29858,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-COMPARISON-INVALID-RESULT",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return invalid rather than true or false when a comparison operand conversion or value is invalid."
+            "status": "implemented",
+            "assertion": "Return invalid rather than true or false when a comparison operand conversion or value is invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29634,9 +29886,12 @@
               "WMLS-C-077": "partial",
               "WMLS-C-101": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX",
@@ -29657,8 +29912,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation."
+            "status": "implemented",
+            "assertion": "Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29678,9 +29938,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-102": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION",
@@ -29701,8 +29964,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal."
+            "status": "implemented",
+            "assertion": "Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29724,9 +29992,12 @@
               "WMLS-C-077": "partial",
               "WMLS-C-102": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX",
@@ -29747,8 +30018,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error."
+            "status": "implemented",
+            "assertion": "Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29768,9 +30044,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-103": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL",
@@ -29825,7 +30104,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WMLS-501"
+            "WMLS-501",
+            "WMLS-502"
           ]
         },
         {
@@ -29847,8 +30127,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects."
+            "status": "implemented",
+            "assertion": "Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29868,9 +30153,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-104": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION",
@@ -29890,8 +30178,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Inspect the evaluated operand type without performing an automatic data conversion."
+            "status": "implemented",
+            "assertion": "Inspect the evaluated operand type without performing an automatic data conversion.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29910,9 +30203,12 @@
             "parentImplementationSnapshot": {
               "WMLS-C-104": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX",
@@ -29933,8 +30229,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration."
+            "status": "implemented",
+            "assertion": "Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -29954,9 +30255,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-105": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY",
@@ -29977,8 +30281,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return the selected value to the host caller when leaving the top-level invoked WMLScript function."
+            "status": "implemented",
+            "assertion": "Return the selected value to the host caller when leaving the top-level invoked WMLScript function.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30000,9 +30309,12 @@
               "WMLS-C-085": "partial",
               "WMLS-C-105": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX",
@@ -30023,8 +30335,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state."
+            "status": "implemented",
+            "assertion": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30044,9 +30361,12 @@
               "WMLS-C-069": "partial",
               "WMLS-C-106": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION",
@@ -30090,7 +30410,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK",
@@ -30137,7 +30460,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK",
@@ -30184,7 +30510,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS",
@@ -30235,7 +30564,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES",
@@ -30282,7 +30614,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM",
@@ -30351,7 +30686,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE",
@@ -30401,7 +30739,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY",
@@ -30422,8 +30763,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Require every taken jump target to fall on an instruction boundary within the current function."
+            "status": "implemented",
+            "assertion": "Require every taken jump target to fall on an instruction boundary within the current function.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30446,9 +30792,12 @@
               "WMLS-C-095": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY",
@@ -30495,7 +30844,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY",
@@ -30516,8 +30868,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Validate every variable index against the current function frame before reading or writing it."
+            "status": "implemented",
+            "assertion": "Validate every variable index against the current function frame before reading or writing it.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30540,9 +30897,12 @@
               "WMLS-C-097": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY",
@@ -30563,8 +30923,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY",
             "kind": "error-policy",
-            "status": "planned",
-            "assertion": "Validate every constant index and required constant type before loading or using it."
+            "status": "implemented",
+            "assertion": "Validate every constant index and required constant type before loading or using it.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -30587,9 +30952,12 @@
               "WMLS-C-098": "partial",
               "WMLS-C-108": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY",
@@ -30661,7 +31029,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WMLS-501"
+            "WMLS-501",
+            "WMLS-502"
           ]
         },
         {
@@ -30876,7 +31245,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX",
@@ -30979,8 +31351,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow."
+            "status": "implemented",
+            "assertion": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -31004,9 +31381,12 @@
               "WMLS-C-099": "partial",
               "WMLS-C-111": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX",
@@ -31054,7 +31434,10 @@
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         },
         {
           "id": "WMLSCRIPT-CL-NONFATAL-CONVERSION-MATRIX",
@@ -31076,8 +31459,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows."
+            "status": "implemented",
+            "assertion": "Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -31100,9 +31488,12 @@
               "WMLS-C-077": "partial",
               "WMLS-C-111": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WMLS-502"
+          ]
         }
       ]
     },

@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-CONVERSION-STRING-NUMERIC-GRAMMAR"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

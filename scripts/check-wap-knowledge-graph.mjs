@@ -687,6 +687,7 @@ if (
 if (
   !wmls502Pack.startsWith('# WMLS-502 AI Context Pack') ||
   !wmls502Pack.includes('### WMLS-502:') ||
+  !wmls502Pack.includes('- Status: `in-progress`') ||
   wmls502Pack.includes('### WMLS-501:') ||
   !wmls502Pack.includes('- Selected work items: 1') ||
   !wmls502Pack.includes('- Direct SCR rows: 0') ||
@@ -694,11 +695,13 @@ if (
   !wmls502Pack.includes('- Direct normative clauses: 59') ||
   !wmls502Pack.includes('**WMLSCRIPT-CL-OPERATOR-CONVERSION-ORDER**') ||
   !wmls502Pack.includes('**WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX**') ||
+  (wmls502Pack.match(/, `implemented`\)/g) ?? []).length !== 47 ||
+  (wmls502Pack.match(/, `planned`\)/g) ?? []).length !== 12 ||
   wmlsGraph.summary.workItemsWithoutDirectClauses.includes('WMLS-502') ||
   wmlsGraph.summary.unmappedNormativeFamiliesByWorkItem['WMLS-502']
 ) {
   failures.push(
-    'WMLS-502 context rendering must expose its 59 mapped operator/conversion clauses, 32 selected parents, and explicit closed mapping without a declared-family gap'
+    'WMLS-502 context rendering must expose its in-progress state, 59 mapped clauses (47 implemented / 12 planned), 32 selected parents, and explicit mapping without a declared-family gap'
   );
 }
 

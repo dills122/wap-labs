@@ -434,6 +434,76 @@ function wmls501FixturePath(clauseId) {
 }
 const wmls501TestPath = 'engine-wasm/engine/src/wavescript/wap_decoder.rs';
 const wmls501Command = 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder';
+const implementedWmls502ClauseIds = new Set([
+  'WMLSCRIPT-CL-CONVERSION-STRING-MATRIX',
+  'WMLSCRIPT-CL-CONVERSION-STRING-NUMERIC-GRAMMAR',
+  'WMLSCRIPT-CL-CONVERSION-INTEGER-MATRIX',
+  'WMLSCRIPT-CL-CONVERSION-INTEGER-STRING-GRAMMAR',
+  'WMLSCRIPT-CL-CONVERSION-BOOLEAN-MATRIX',
+  'WMLSCRIPT-CL-CONVERSION-INVALID-PROHIBITED',
+  'WMLSCRIPT-CL-CONVERSION-INVALID-PROPAGATION',
+  'WMLSCRIPT-CL-CONVERSION-SUMMARY-MATRIX',
+  'WMLSCRIPT-CL-OPERATOR-CONVERSION-ORDER',
+  'WMLSCRIPT-CL-OPERATOR-CONVERSION-ATOMICITY',
+  'WMLSCRIPT-CL-OPERATOR-NUMERIC-PRECEDENCE',
+  'WMLSCRIPT-CL-OPERATOR-CONVERSION-RESULT-INVALID',
+  'WMLSCRIPT-CL-ARGUMENT-STACK-ORDER',
+  'WMLSCRIPT-CL-ARGUMENT-CALL-INITIALIZATION',
+  'WMLSCRIPT-CL-ARGUMENT-VARIABLE-INDEXES',
+  'WMLSCRIPT-CL-LOCAL-VARIABLE-INDEXES',
+  'WMLSCRIPT-CL-AUTOMATIC-EMPTY-RETURN',
+  'WMLSCRIPT-CL-LOCAL-EMPTY-INITIALIZATION',
+  'WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES',
+  'WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-CONTROL-FLOW-TARGETS',
+  'WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS',
+  'WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS',
+  'WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS',
+  'WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS',
+  'WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-COMPARISON-INVALID-RESULT',
+  'WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION',
+  'WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION',
+  'WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY',
+  'WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY',
+  'WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY',
+  'WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY',
+  'WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX',
+  'WMLSCRIPT-CL-NONFATAL-CONVERSION-MATRIX'
+]);
+const wmls502ClauseIds = new Set([
+  ...implementedWmls502ClauseIds,
+  'WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE',
+  'WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX',
+  'WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES',
+  'WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL',
+  'WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION',
+  'WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK',
+  'WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK',
+  'WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS',
+  'WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES',
+  'WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM',
+  'WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE',
+  'WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY',
+  'WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY',
+  'WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX',
+  'WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX'
+]);
+const wmls502FixturePath =
+  'engine-wasm/engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex';
+const wmls502TestPath =
+  'engine-wasm/engine/src/wavescript/wap_runtime.rs';
+const wmls502Command =
+  'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime';
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -850,6 +920,7 @@ for (const family of ledger.families ?? []) {
         ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
+        ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
         ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
         ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -871,6 +942,7 @@ for (const family of ledger.families ?? []) {
       ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
+      ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
       ...(trn706ClauseIds.has(candidate.id) ? ['TRN-706'] : []),
       ...(trn707ClauseIds.has(candidate.id) ? ['TRN-707'] : []),
@@ -894,7 +966,8 @@ for (const family of ledger.families ?? []) {
         implementedWmlClauseIds.has(candidate.id) ||
         implementedWsp801ClauseIds.has(candidate.id) ||
         implementedWsp802ClauseIds.has(candidate.id) ||
-        wmls501ClauseIds.has(candidate.id));
+        wmls501ClauseIds.has(candidate.id) ||
+        implementedWmls502ClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -991,7 +1064,15 @@ for (const family of ledger.families ?? []) {
           candidate.fixturePlan.evidence?.testPath !== wmls501TestPath ||
           !fs.existsSync(path.join(root, wmls501FixturePath(candidate.id))) ||
           !fs.existsSync(path.join(root, wmls501TestPath)) ||
-          candidate.fixturePlan.evidence?.command !== wmls501Command))
+          candidate.fixturePlan.evidence?.command !== wmls501Command)) ||
+      (implementedWmls502ClauseIds.has(candidate.id) &&
+        (implementedWmls502ClauseIds.size !== 44 ||
+          wmls502ClauseIds.size !== 59 ||
+          candidate.fixturePlan.evidence?.path !== wmls502FixturePath ||
+          candidate.fixturePlan.evidence?.testPath !== wmls502TestPath ||
+          !fs.existsSync(path.join(root, wmls502FixturePath)) ||
+          !fs.existsSync(path.join(root, wmls502TestPath)) ||
+          candidate.fixturePlan.evidence?.command !== wmls502Command))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }
