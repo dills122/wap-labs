@@ -10,6 +10,7 @@ impl WmlEngine {
             external_nav_intent: None,
             external_nav_request_policy: None,
             viewport_cols: DEFAULT_VIEWPORT_COLS,
+            viewport_offset_row: 0,
             base_url: String::new(),
             content_type: String::new(),
             raw_bytes_base64: None,
@@ -227,6 +228,7 @@ impl WmlEngine {
             .map(|edit| edit.input_name.clone());
         let mut next = WmlEngine::new();
         next.viewport_cols = self.viewport_cols;
+        next.viewport_offset_row = 0;
         next.debug_recorder = self.debug_recorder.clone();
         if navigation.kind == DeckNavigationKind::Independent {
             next.browser_context_epoch = previous_context_epoch.saturating_add(1);
@@ -419,11 +421,27 @@ impl WmlEngine {
             ))
         };
 
+        let content_rows = layout
+            .segments
+            .last()
+            .map_or(0, |segment| segment.y.saturating_add(1));
+        let viewport_rows = ENGINE_VIEWPORT_ROWS;
+        let max_offset_row = content_rows.saturating_sub(viewport_rows);
+        let offset_row = u32::try_from(self.viewport_offset_row)
+            .unwrap_or(u32::MAX)
+            .min(max_offset_row);
+        let visible_end = offset_row.saturating_add(viewport_rows);
+
         let mut rows: Vec<EngineFrameRow> = Vec::new();
-        for segment in &layout.segments {
-            if rows.last().is_none_or(|row| row.index != segment.y) {
+        for segment in layout
+            .segments
+            .iter()
+            .filter(|segment| segment.y >= offset_row && segment.y < visible_end)
+        {
+            let visible_row = segment.y - offset_row;
+            if rows.last().is_none_or(|row| row.index != visible_row) {
                 rows.push(EngineFrameRow {
-                    index: segment.y,
+                    index: visible_row,
                     segments: Vec::new(),
                 });
             }
@@ -458,13 +476,14 @@ impl WmlEngine {
         let hit_regions = layout
             .segments
             .iter()
+            .filter(|segment| segment.y >= offset_row && segment.y < visible_end)
             .filter_map(|segment| {
                 segment.focus_index.map(|index| {
                     let width = u32::try_from(segment.text.chars().count())
                         .map_err(|_| "Frame hit-region width exceeds contract range".to_string())?;
                     Ok(EngineHitRegion {
                         x: segment.x,
-                        y: segment.y,
+                        y: segment.y - offset_row,
                         width,
                         height: 1,
                         action_id: format!("focus:{index}"),
@@ -591,6 +610,9 @@ impl WmlEngine {
             viewport: EngineViewport {
                 cols: u32::try_from(self.viewport_cols)
                     .expect("viewport range is validated before engine state mutation"),
+                rows: viewport_rows,
+                offset_row,
+                content_rows,
             },
             deck: EngineDeckDisplayMetadata {
                 base_url: self.base_url.clone(),
@@ -667,6 +689,21 @@ impl WmlEngine {
                 };
                 self.focus_action_for_click(&action_id)?;
                 self.activate_frame_action(&action_id)
+            }
+            EngineInputEvent::Scroll {
+                frame_id,
+                delta_rows,
+            } => {
+                let frame = self.input_frame(&frame_id)?;
+                let max_offset = frame
+                    .viewport
+                    .content_rows
+                    .saturating_sub(frame.viewport.rows);
+                let next_offset = (i64::from(frame.viewport.offset_row) + i64::from(delta_rows))
+                    .clamp(0, i64::from(max_offset));
+                self.viewport_offset_row = usize::try_from(next_offset)
+                    .expect("clamped viewport offset fits the target pointer width");
+                Ok(())
             }
         }
     }
@@ -782,6 +819,7 @@ impl WmlEngine {
             return Err(EngineViewportError::invalid(cols));
         }
         self.viewport_cols = cols as usize;
+        self.viewport_offset_row = 0;
         Ok(())
     }
 

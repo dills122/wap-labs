@@ -32,8 +32,8 @@ Out of scope:
 1. Engine already emits structured draw commands (`RenderList`, `DrawCmd::Text|Link`).
 2. WASM host sample already consumes draw commands and paints to Canvas2D.
 3. Tauri frontend currently converts draw commands into HTML string lines (`innerHTML`) for viewport presentation.
-4. Input flow supports keys, frame-bound actions, and frame-bound logical clicks; scroll remains a
-   later event-boundary slice.
+4. Input flow supports keys, frame-bound actions, frame-bound logical clicks, and deterministic
+   signed-row scrolling over an engine-owned visible window.
 5. Type contracts are partly centralized:
    - generated host contracts from Rust (`ts-rs`) in `browser/contracts/generated/*`
    - handwritten engine wasm contract in `engine-wasm/contracts/wml-engine.ts`
@@ -117,7 +117,7 @@ Contract guardrails:
 ### Phase F2: Input Event Surface Expansion
 
 - keep the completed click routing and deterministic engine hit testing stable
-- add scroll routing from hosts to engine
+- preserve scroll routing from hosts to the engine-owned clamped row window
 - keep keyboard path behavior identical
 
 ### Phase F3: Internal Engine Boundary Cleanup

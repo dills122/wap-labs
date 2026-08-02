@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "example": "f202DeterministicScroll",
+  "flows": [
+    {
+      "id": "scroll-window-clamps-and-replays",
+      "title": "Engine-owned visible row window follows frame-bound scroll input",
+      "workItems": ["F2-02"],
+      "specItems": ["WBP-08"],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+        "frame": {
+          "contractVersion": 3,
+          "profileId": "class-c-reference",
+          "cardId": "home",
+          "viewport": { "cols": 20, "rows": 20, "offsetRow": 0, "contentRows": 25 },
+          "affordances": []
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "scroll", "deltaRows": 3 },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "frame": {
+              "contractVersion": 3,
+              "profileId": "class-c-reference",
+              "cardId": "home",
+              "viewport": { "cols": 20, "rows": 20, "offsetRow": 3, "contentRows": 25 },
+              "affordances": []
+            }
+          }
+        },
+        {
+          "action": { "type": "scroll", "deltaRows": -99 },
+          "expect": {
+            "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+            "frame": {
+              "contractVersion": 3,
+              "profileId": "class-c-reference",
+              "cardId": "home",
+              "viewport": { "cols": 20, "rows": 20, "offsetRow": 0, "contentRows": 25 },
+              "affordances": []
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -192,8 +192,8 @@ export interface WmlEngineCommon {
   // available until the F1/F4 host cutover is complete.
   renderFrame(): EnginePresentationFrame;
   handleKey(key: EngineKey): void;
-  // Typed key, frame-bound logical click, and stable action dispatch. Wheel
-  // and editor events remain outside F2-01.
+  // Typed key, frame-bound logical click/action dispatch, and signed row
+  // scrolling. Hosts normalize physical wheel input without inspecting WML.
   handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.

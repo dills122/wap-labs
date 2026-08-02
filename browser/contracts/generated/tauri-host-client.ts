@@ -1439,10 +1439,22 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
   "EngineViewport": {
     "kind": "object",
     "required": [
-      "cols"
+      "cols",
+      "rows",
+      "offsetRow",
+      "contentRows"
     ],
     "properties": {
       "cols": {
+        "kind": "number"
+      },
+      "rows": {
+        "kind": "number"
+      },
+      "offsetRow": {
+        "kind": "number"
+      },
+      "contentRows": {
         "kind": "number"
       }
     }

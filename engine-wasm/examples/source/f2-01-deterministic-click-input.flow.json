@@ -10,7 +10,7 @@
       "initial": {
         "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
         "frame": {
-          "contractVersion": 2,
+          "contractVersion": 3,
           "profileId": "class-c-reference",
           "cardId": "home",
           "hitRegions": [

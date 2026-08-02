@@ -111,6 +111,13 @@ export function assertStoryExpectation(evidence, expectation, label) {
       `${label}: frame.profileId`
     );
     assert.equal(evidence.frame.card.id, expectation.frame.cardId, `${label}: frame.card.id`);
+    if (expectation.frame.viewport) {
+      assert.deepEqual(
+        evidence.frame.viewport,
+        expectation.frame.viewport,
+        `${label}: frame.viewport`
+      );
+    }
     const actualAffordances = evidence.frame.affordances.map(
       ({ actionId, label: actionLabel, source, control, enabled }) => ({
         actionId,

@@ -5,10 +5,10 @@ import type {
 } from '../contracts/wml-engine';
 
 export const representativeFrameFixture = {
-  contractVersion: 2,
+  contractVersion: 3,
   frameId: 'fixture-frame',
   profileId: 'class-c-reference',
-  viewport: { cols: 20 },
+  viewport: { cols: 20, rows: 20, offsetRow: 0, contentRows: 2 },
   deck: {
     baseUrl: 'http://local.test/deck.wml',
     contentType: 'text/vnd.wap.wml'

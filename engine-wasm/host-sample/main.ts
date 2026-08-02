@@ -1,4 +1,4 @@
-import { bootWmlEngine, canvasClickInput } from './renderer';
+import { bootWmlEngine, canvasClickInput, wheelScrollInput } from './renderer';
 import { EXAMPLES } from '../examples/generated/examples';
 import type { EngineSnapshot } from './renderer';
 import { mapKeyboardKey } from './utils/keyboard';
@@ -26,6 +26,7 @@ declare global {
       collect(): StoryEvidence;
       activateAction(actionId: string): void;
       click(x: number, y: number): void;
+      scroll(deltaRows: number): void;
     };
   }
 }
@@ -222,6 +223,13 @@ async function main() {
       const snapshot = updateRuntimeState();
       status.textContent = `Clicked (${x}, ${y}). Active card: ${snapshot.activeCardId}`;
       appendEvent(`CLICK (${x},${y})`, snapshot);
+    },
+    scroll: (deltaRows) => {
+      const frame = host.renderFrame();
+      host.handleInput({ type: 'scroll', frameId: frame.frameId, deltaRows });
+      const snapshot = updateRuntimeState();
+      status.textContent = `Scrolled ${deltaRows} row(s).`;
+      appendEvent(`SCROLL (${deltaRows})`, snapshot);
     }
   };
 
@@ -333,6 +341,27 @@ async function main() {
       appendEvent(`POINTER_ERROR ${String(error)}`, snapshot);
     }
   });
+  canvas.addEventListener(
+    'wheel',
+    (event) => {
+      try {
+        const input = wheelScrollInput(host.renderFrame(), event.deltaY);
+        if (!input) {
+          return;
+        }
+        event.preventDefault();
+        host.handleInput(input);
+        const snapshot = updateRuntimeState();
+        status.textContent = `Scrolled ${input.deltaRows} row(s).`;
+        appendEvent(`SCROLL (${input.deltaRows})`, snapshot);
+      } catch (error) {
+        const snapshot = updateRuntimeState();
+        status.textContent = `Scroll error: ${String(error)}`;
+        appendEvent(`SCROLL_ERROR ${String(error)}`, snapshot);
+      }
+    },
+    { passive: false }
+  );
   const tickTime = (deltaMs: number, source: 'manual' | 'auto' = 'manual') => {
     try {
       const beforeCardId = host.snapshot().activeCardId;

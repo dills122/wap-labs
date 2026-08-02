@@ -455,6 +455,35 @@ describe('BrowserController behavior coverage', () => {
     controller.dispose();
   });
 
+  it('routes a Canvas wheel step through the frame-bound scroll input path', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const canvas = refs.viewportEl.querySelector<HTMLCanvasElement>('.viewport-canvas');
+    expect(canvas).not.toBeNull();
+    if (!canvas) {
+      return;
+    }
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+
+    const event = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: 120 });
+    canvas.dispatchEvent(event);
+    await flushAsyncWork();
+
+    expect(event.defaultPrevented).toBe(true);
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: {
+        type: 'scroll',
+        frameId: 'test-frame',
+        deltaRows: 1
+      }
+    });
+    controller.dispose();
+  });
+
   it('uses the local back flow when back is triggered in local mode', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

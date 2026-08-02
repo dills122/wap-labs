@@ -85,7 +85,8 @@ cargo test
 - See the canonical presentation-frame canvas renderer in `engine-wasm/host-sample/renderer.ts`.
   The sample viewport consumes `renderFrame()` rows and segments directly; it does not use the
   legacy `RenderList` compatibility path. Pointer activation sends only the current `frameId` and
-  logical column/row coordinates back through `handleInput()`; target lookup stays in the engine.
+  logical column/row coordinates back through `handleInput()`; wheel input sends a signed row
+  delta. Target lookup, viewport offset, and scroll clamping stay in the engine.
 
 ### 8) Quick local harness (no Electron)
 

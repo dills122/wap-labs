@@ -56,6 +56,7 @@ export interface StoryExpectation {
     contractVersion: number;
     profileId: string;
     cardId: string;
+    viewport?: { cols: number; rows: number; offsetRow: number; contentRows: number };
     affordances: Array<{
       actionId: string;
       label: string;
@@ -80,6 +81,7 @@ export type StoryAction =
   | { type: 'type-text'; text: string }
   | { type: 'activate-action'; actionId: string }
   | { type: 'click'; x: number; y: number }
+  | { type: 'scroll'; deltaRows: number }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
@@ -1329,7 +1331,7 @@ export const EXAMPLES: HostExample[] = [
             "focusedLinkIndex": 0
           },
           "frame": {
-            "contractVersion": 2,
+            "contractVersion": 3,
             "profileId": "class-c-reference",
             "cardId": "home",
             "hitRegions": [
@@ -1375,6 +1377,105 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p><a href=\"#next\">Open</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Pointer activation reached the next card.</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "f202DeterministicScroll",
+    "label": "Deterministic Viewport Scroll",
+    "description": "Exercises engine-owned row windows and frame-bound scrolling across content longer than the Class C reference viewport.",
+    "goal": "Verify that signed row deltas clamp deterministically and publish viewport-relative rows without host-side content interpretation.",
+    "workItems": [
+      "F2-02"
+    ],
+    "specItems": [
+      "WBP-08"
+    ],
+    "testingAc": [
+      "The initial frame exposes a 20-row viewport over 25 content rows.",
+      "Scrolling by three rows publishes offsetRow 3 with the same fixed visible-row window.",
+      "A large negative delta clamps the viewport back to offsetRow 0."
+    ],
+    "flows": [
+      {
+        "id": "scroll-window-clamps-and-replays",
+        "title": "Engine-owned visible row window follows frame-bound scroll input",
+        "target": "host-sample",
+        "workItems": [
+          "F2-02"
+        ],
+        "specItems": [
+          "WBP-08"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "frame": {
+            "contractVersion": 3,
+            "profileId": "class-c-reference",
+            "cardId": "home",
+            "viewport": {
+              "cols": 20,
+              "rows": 20,
+              "offsetRow": 0,
+              "contentRows": 25
+            },
+            "affordances": []
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "scroll",
+              "deltaRows": 3
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "frame": {
+                "contractVersion": 3,
+                "profileId": "class-c-reference",
+                "cardId": "home",
+                "viewport": {
+                  "cols": 20,
+                  "rows": 20,
+                  "offsetRow": 3,
+                  "contentRows": 25
+                },
+                "affordances": []
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "scroll",
+              "deltaRows": -99
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "focusedLinkIndex": 0
+              },
+              "frame": {
+                "contractVersion": 3,
+                "profileId": "class-c-reference",
+                "cardId": "home",
+                "viewport": {
+                  "cols": 20,
+                  "rows": 20,
+                  "offsetRow": 0,
+                  "contentRows": 25
+                },
+                "affordances": []
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>Row 00</p>\n    <p>Row 01</p>\n    <p>Row 02</p>\n    <p>Row 03</p>\n    <p>Row 04</p>\n    <p>Row 05</p>\n    <p>Row 06</p>\n    <p>Row 07</p>\n    <p>Row 08</p>\n    <p>Row 09</p>\n    <p>Row 10</p>\n    <p>Row 11</p>\n    <p>Row 12</p>\n    <p>Row 13</p>\n    <p>Row 14</p>\n    <p>Row 15</p>\n    <p>Row 16</p>\n    <p>Row 17</p>\n    <p>Row 18</p>\n    <p>Row 19</p>\n    <p>Row 20</p>\n    <p>Row 21</p>\n    <p>Row 22</p>\n    <p>Row 23</p>\n    <p>Row 24</p>\n  </card>\n</wml>\n"
   },
   {
     "key": "fieldOpenwave2011Navigation",
@@ -5494,7 +5595,7 @@ export const EXAMPLES: HostExample[] = [
             "focusedLinkIndex": 0
           },
           "frame": {
-            "contractVersion": 2,
+            "contractVersion": 3,
             "profileId": "class-c-reference",
             "cardId": "home",
             "affordances": [
@@ -5538,7 +5639,7 @@ export const EXAMPLES: HostExample[] = [
                 "ACTION_FRAGMENT"
               ],
               "frame": {
-                "contractVersion": 2,
+                "contractVersion": 3,
                 "profileId": "class-c-reference",
                 "cardId": "second",
                 "affordances": [

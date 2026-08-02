@@ -306,6 +306,7 @@ export class BrowserController {
     this.renderActiveLocalExampleNotes();
     this.shellEventBindings.bind();
     this.viewportCanvas.addEventListener('click', this.handleViewportClick);
+    this.viewportCanvas.addEventListener('wheel', this.handleViewportWheel, { passive: false });
     this.timerRuntime.start();
     this.presenter.setBootPhase('engine-ready');
     const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
@@ -318,6 +319,7 @@ export class BrowserController {
     this.timerRuntime.stop();
     this.shellEventBindings.unbind();
     this.viewportCanvas.removeEventListener('click', this.handleViewportClick);
+    this.viewportCanvas.removeEventListener('wheel', this.handleViewportWheel);
     this.presenter.dispose();
   }
 
@@ -499,6 +501,28 @@ export class BrowserController {
       return;
     }
     void this.withAction('viewport-click', async () => this.applyEngineClick(event))();
+  };
+
+  private readonly handleViewportWheel = (event: WheelEvent): void => {
+    if (event.ctrlKey || !Number.isFinite(event.deltaY) || event.deltaY === 0) {
+      return;
+    }
+    const committedFrame = this.committedFrame;
+    if (!committedFrame) {
+      return;
+    }
+    event.preventDefault();
+    const input: EngineInputEvent = {
+      type: 'scroll',
+      frameId: committedFrame.presentation.frameId,
+      deltaRows: event.deltaY > 0 ? 1 : -1
+    };
+    void this.withAction('viewport-scroll', async () => {
+      await this.applyEngineMutation(
+        () => this.hostClient.engineHandleInputFrame({ event: input }),
+        () => this.navigation.applyEngineInput(input)
+      );
+    })();
   };
 
   // ---------------------------------------------------------------------

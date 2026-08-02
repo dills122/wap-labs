@@ -22,10 +22,15 @@ fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
     assert_eq!(
         serde_json::to_value(&frame).expect("frame should serialize"),
         json!({
-            "contractVersion": 2,
+            "contractVersion": 3,
             "frameId": frame.frame_id,
             "profileId": "class-c-reference",
-            "viewport": { "cols": 20 },
+            "viewport": {
+                "cols": 20,
+                "rows": 20,
+                "offsetRow": 0,
+                "contentRows": 1
+            },
             "deck": {
                 "baseUrl": "http://example.test/frame.wml",
                 "contentType": "text/vnd.wap.wml",
@@ -82,6 +87,18 @@ fn wml_309_frame_and_input_contracts_keep_stable_serialized_shapes() {
             "frameId": "0123456789abcdef",
             "x": 7,
             "y": 3
+        })
+    );
+    assert_eq!(
+        serde_json::to_value(EngineInputEvent::Scroll {
+            frame_id: "0123456789abcdef".to_string(),
+            delta_rows: -3
+        })
+        .expect("scroll input should serialize"),
+        json!({
+            "type": "scroll",
+            "frameId": "0123456789abcdef",
+            "deltaRows": -3
         })
     );
 }

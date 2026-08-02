@@ -284,7 +284,7 @@ Archive:
 
 ### F2-02 Add scroll event path and viewport offset semantics
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F2-01`
 3. `Files`:
 
@@ -304,6 +304,16 @@ Archive:
 6. `Accept`:
 
 - identical event traces produce identical visible frame windows.
+
+8. `Notes`:
+
+- Frame contract version 3 adds a neutral 20-row Class C reference window with `offsetRow` and
+  `contentRows`; presentation rows and hit regions are projected relative to the visible window.
+- `EngineInputEvent::Scroll { frameId, deltaRows }` is stale-frame protected and clamps signed row
+  deltas to the content bounds. Browser and host-sample wheel adapters normalize each physical
+  wheel event to one row without inspecting deck content.
+- Native boundary, repeatability, click-after-scroll, browser integration, and the `F2-02`
+  executable story cover the acceptance path.
 
 ### F2-03 Softkey/input abstraction alignment
 

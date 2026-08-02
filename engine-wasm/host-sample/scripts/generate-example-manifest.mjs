@@ -42,6 +42,7 @@ const ACTION_TYPES = new Set([
   'type-text',
   'activate-action',
   'click',
+  'scroll',
   'back',
   'tick',
   'clear-intent'
@@ -370,7 +371,7 @@ function parseFrameExpectation(value, filename, location) {
   const frame = requireRecord(value, filename, location);
   validateKeys(
     frame,
-    new Set(['contractVersion', 'profileId', 'cardId', 'hitRegions', 'affordances']),
+    new Set(['contractVersion', 'profileId', 'cardId', 'viewport', 'hitRegions', 'affordances']),
     filename,
     location
   );
@@ -379,6 +380,21 @@ function parseFrameExpectation(value, filename, location) {
   }
   const profileId = requireString(frame.profileId, filename, `${location}.profileId`);
   const cardId = requireString(frame.cardId, filename, `${location}.cardId`);
+  let viewport;
+  if (frame.viewport !== undefined) {
+    viewport = requireRecord(frame.viewport, filename, `${location}.viewport`);
+    validateKeys(
+      viewport,
+      new Set(['cols', 'rows', 'offsetRow', 'contentRows']),
+      filename,
+      `${location}.viewport`
+    );
+    for (const key of ['cols', 'rows', 'offsetRow', 'contentRows']) {
+      if (!Number.isInteger(viewport[key]) || viewport[key] < 0) {
+        throw new Error(`${filename}: ${location}.viewport.${key} must be a non-negative integer`);
+      }
+    }
+  }
   if (!Array.isArray(frame.affordances)) {
     throw new Error(`${filename}: ${location}.affordances must be an array`);
   }
@@ -456,7 +472,14 @@ function parseFrameExpectation(value, filename, location) {
             )
           };
         });
-  return { contractVersion: frame.contractVersion, profileId, cardId, hitRegions, affordances };
+  return {
+    contractVersion: frame.contractVersion,
+    profileId,
+    cardId,
+    viewport,
+    hitRegions,
+    affordances
+  };
 }
 
 function parseExpectation(value, filename, location) {
@@ -504,7 +527,7 @@ function parseAction(value, filename, location) {
   const action = requireRecord(value, filename, location);
   validateKeys(
     action,
-    new Set(['type', 'key', 'ms', 'text', 'actionId', 'x', 'y']),
+    new Set(['type', 'key', 'ms', 'text', 'actionId', 'x', 'y', 'deltaRows']),
     filename,
     location
   );
@@ -560,6 +583,21 @@ function parseAction(value, filename, location) {
       throw new Error(`${filename}: ${location} click requires non-negative integer x and y`);
     }
     return { type: action.type, x: action.x, y: action.y };
+  }
+
+  if (action.type === 'scroll') {
+    if (
+      !Number.isInteger(action.deltaRows) ||
+      action.key !== undefined ||
+      action.ms !== undefined ||
+      action.text !== undefined ||
+      action.actionId !== undefined ||
+      action.x !== undefined ||
+      action.y !== undefined
+    ) {
+      throw new Error(`${filename}: ${location} scroll requires an integer deltaRows`);
+    }
+    return { type: action.type, deltaRows: action.deltaRows };
   }
 
   if (
@@ -798,6 +836,7 @@ export interface StoryExpectation {
     contractVersion: number;
     profileId: string;
     cardId: string;
+    viewport?: { cols: number; rows: number; offsetRow: number; contentRows: number };
     affordances: Array<{
       actionId: string;
       label: string;
@@ -822,6 +861,7 @@ export type StoryAction =
   | { type: 'type-text'; text: string }
   | { type: 'activate-action'; actionId: string }
   | { type: 'click'; x: number; y: number }
+  | { type: 'scroll'; deltaRows: number }
   | { type: 'back' }
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
