@@ -317,7 +317,7 @@ Archive:
 
 ### F2-03 Softkey/input abstraction alignment
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `F2-01`
 3. `Files`:
 
@@ -337,6 +337,16 @@ Archive:
 6. `Accept`:
 
 - single input abstraction path is used in host application code.
+
+8. `Notes`:
+
+- Browser keyboard intents and the Up, Select, and Down controls now construct
+  `EngineInputEvent::Key` and use the same local/network `handleInput` frame path as pointer input.
+- The native/WASM `handleKey` methods and navigation-state key adapter remain compatibility
+  surfaces until F4; primary browser-controller code no longer calls them.
+- Browser integration coverage asserts physical keyboard and control-button parity, the absence of
+  legacy key-command calls, direct committed-frame publication, and existing failure/cancellation
+  behavior. The `F2-03` Waves executable story covers button and keyboard sources.
 
 ## Phase F3: Engine Internal Boundary Split
 

@@ -5,7 +5,7 @@
     {
       "id": "fragment-and-external-intent",
       "title": "Fragment navigation and external intent stay separate",
-      "workItems": ["A2-01", "A2-02"],
+      "workItems": ["A2-01", "A2-02", "F2-03"],
       "specItems": ["WML-R-006", "WML-R-007"],
       "initial": {
         "state": {
@@ -64,7 +64,7 @@
       "title": "Waves UI drives fragment navigation and captures external intent",
       "target": "waves-browser",
       "setup": { "runMode": "local" },
-      "workItems": ["A2-01", "A2-02"],
+      "workItems": ["A2-01", "A2-02", "F2-03"],
       "specItems": ["WML-R-006", "WML-R-007"],
       "initial": {
         "state": {

@@ -191,9 +191,12 @@ export interface WmlEngineCommon {
   // Canonical engine-owned frame/affordance projection. Legacy render() remains
   // available until the F1/F4 host cutover is complete.
   renderFrame(): EnginePresentationFrame;
+  // Legacy compatibility surface retained until F4. Primary hosts translate
+  // keyboard/control input into EngineInputEvent::Key and call handleInput().
   handleKey(key: EngineKey): void;
-  // Typed key, frame-bound logical click/action dispatch, and signed row
-  // scrolling. Hosts normalize physical wheel input without inspecting WML.
+  // Primary typed input boundary for keys, frame-bound logical clicks/actions,
+  // and signed row scrolling. Hosts normalize physical wheel input without
+  // inspecting WML; editor events remain a later expansion.
   handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.

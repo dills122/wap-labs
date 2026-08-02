@@ -38,12 +38,15 @@ are deterministic no-ops. `primary`, `task`, and `back` are logical control asso
 vendor-specific physical key claims.
 
 The legacy `render()`/`RenderList` and `handleKey()` methods remain additive compatibility paths.
-`renderFrame()` and `handleInput()` use the same runtime/layout/action implementation, and the
-native/WASM parity suites pin their output, trace, serialization, and stale-frame behavior.
+Primary browser keyboard and Up/Select/Down controls construct `EngineInputEvent::Key` and use
+`handleInput()` alongside frame-bound pointer/action input. `renderFrame()` and `handleInput()` use
+the same runtime/layout/action implementation, and the native/WASM parity suites pin their output,
+trace, serialization, and stale-frame behavior.
 `EngineDebug*` remains a separate diagnostics namespace and is not a render or input API. The
 neutral Class C reference window exposes 20 rows plus `offsetRow` and `contentRows`. Scroll clamps
 to `0..contentRows-rows`, and visible frame rows and hit regions are viewport-relative. Editor
-event expansion and physical softkey placement remain later frame-migration work.
+event expansion, renderer cutover, and physical softkey placement remain later frame-migration
+work.
 
 `ENGINE_RENDER_LIMITS` is generated from the Rust-owned render contract: 4,096 layout rows,
 segments, and legacy draw commands, plus 2 MiB for the combined legacy/presentation JSON
