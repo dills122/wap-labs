@@ -439,6 +439,7 @@ Resolution:
 
 ### WBP-12 Persistence and crash recovery
 
+- `Status`: done; packaged launch-after-crash evidence remains a WBP-14 release gate
 - `Lane`: C/browser
 - `Depends On`: stable host history identity; `WBP-11`
 - `Likely Files`:
@@ -460,6 +461,23 @@ Accept:
 - startup can display before persistence and network preflight complete
 - POST bodies and credentials are never automatically replayed
 - safe-session recovery is offered within two seconds after the shell appears
+
+Resolution:
+
+- The existing Rust-owned v1 application-state envelope remains the sole persistence boundary.
+  Serialized frontend component updates and the existing atomic native replacement prevent stale
+  settings, Favorites, window, and recovery writers from replacing one another.
+- Each bounded committed local example or sanitized credential-free GET sets the crash marker. Raw
+  debug loads, POST/request-intent context, sensitive headers/query fields, URL credentials, and
+  oversized targets clear or fail closed instead of becoming recovery candidates. The native
+  event-loop exit path clears only the marker.
+- The shell mounts before state, monitor, or network work. Marked local content restores
+  automatically after engine readiness; network GET recovery is offered non-modally and waits for
+  explicit confirmation. Corrupt/future state and window restore failures leave the shell usable.
+- Deterministic frontend and Rust tests cover restart, the marker lifecycle, the two-second offer
+  budget, GET confirmation, unsafe-session removal, migration/reset coexistence, removed monitors,
+  serialized updates, and failed-replacement atomicity. The packaged relaunch observation remains
+  explicit under WBP-14.
 
 ## Phase 4: Diagnostics and Deterministic Evidence
 
@@ -546,7 +564,8 @@ source-recovery candidates until comparable primary evidence exists.
 5. Run Canvas/input/accessibility integration (`WBP-07` through `WBP-09`).
 6. Preserve merged transport cancellation and WBP-11 recovery presentation; finish WBP-10's
    remaining exported transport metadata.
-7. Complete WBP-12 persistence and crash recovery on the merged WBP-11 presentation seam.
+7. Preserve WBP-12 persistence and crash-recovery implementation; record its remaining packaged
+   launch-after-crash evidence on the merged WBP-11 presentation seam.
 8. Land diagnostics/replay after both contract surfaces stabilize (`WBP-13`).
 9. Close MVP with complete-path evidence (`WBP-14`).
 10. Begin named compatibility profiles only after Class C reference behavior is stable (`WBP-15`);
@@ -627,5 +646,5 @@ The redesigned shell/Developer Tools workspace, pre-release marketing refresh, v
 application-state foundation, Favorites domain, native command registry, safe diagnostic
 projection, D0-02/D0-03 debug source/host bridge, D0-04 read-only Inspector, F2-01 through F2-03
 input/scrolling, issue `#450` shared-history correction, WBP-11 phase recovery, and APP-SHELL-01 are
-merged. WBP-10's remaining exported transport metadata, WBP-12/WBP-13 product slices, and WBP-14
-native and packaged evidence remain explicit follow-ups.
+merged. WBP-10's remaining exported transport metadata, the WBP-13 product slice, WBP-12 packaged
+validation, and WBP-14 native and packaged evidence remain explicit follow-ups.

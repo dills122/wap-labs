@@ -20,6 +20,8 @@ import {
   type EngineDebugInspectorBinding
 } from '../components/engine-debug-inspector';
 import { LibraryPreferencesController } from './library-preferences-controller';
+import { SessionRecoveryController } from './session-recovery-controller';
+import { WindowStateController, type WindowStateAdapter } from './window-state-controller';
 
 const SAMPLE_WML = `<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
@@ -46,11 +48,15 @@ export interface BrowserApplication {
   presenter: BrowserPresenter;
   refs: BrowserShellRefs;
   libraryPreferences: LibraryPreferencesController;
+  sessionRecovery: SessionRecoveryController;
+  windowState?: WindowStateController;
 }
 
 export interface BrowserApplicationOptions {
   startUrl?: string;
   runMode?: 'local' | 'network';
+  windowStateAdapter?: WindowStateAdapter;
+  now?: () => number;
 }
 
 export const isWmlCommandEditingContext = (
@@ -74,6 +80,7 @@ export const composeBrowserApplication = (
   const startUrl = options.startUrl ?? defaultStartUrl();
   const runMode = options.runMode ?? defaultRunMode(undefined, startUrl);
   const refs = mountBrowserShell(startUrl, runMode);
+  const shellAppearedAt = options.now?.() ?? performance.now();
   const initialSession: HostSessionState = {
     runMode,
     navigationStatus: 'idle',
@@ -106,7 +113,25 @@ export const composeBrowserApplication = (
       unsubscribe
     };
   }
-  const controller = new BrowserController(hostClient, presenter, refs);
+  const sessionRecovery: SessionRecoveryController = new SessionRecoveryController({
+    shellAppearedAt,
+    ...(options.now ? { now: options.now } : {}),
+    restoreSession: async (session): Promise<void> => {
+      await controller.restoreSafeSession(session);
+    },
+    notify: (message) => presenter.setStatus(message)
+  });
+  const controller: BrowserController = new BrowserController(hostClient, presenter, refs, {
+    onSafeSessionCommitted: (session): void => {
+      void sessionRecovery.commitSafeSession(session);
+    },
+    onUnsafeSessionCommitted: (): void => {
+      void sessionRecovery.commitUnsafeSession();
+    }
+  });
+  const windowState = options.windowStateAdapter
+    ? new WindowStateController({ adapter: options.windowStateAdapter })
+    : undefined;
   const libraryPreferences = new LibraryPreferencesController({
     openTarget: (target) => controller.openFavoriteTarget(target),
     currentTarget: () => controller.currentFavoriteTarget(),
@@ -119,7 +144,16 @@ export const composeBrowserApplication = (
     handlers: libraryPreferences.commandHandlers()
   });
 
-  return { commandBridge, controller, debugInspector, libraryPreferences, presenter, refs };
+  return {
+    commandBridge,
+    controller,
+    debugInspector,
+    libraryPreferences,
+    presenter,
+    refs,
+    sessionRecovery,
+    windowState
+  };
 };
 
 export const initializeBrowserApplication = async (
@@ -127,10 +161,13 @@ export const initializeBrowserApplication = async (
 ): Promise<void> => {
   try {
     await Promise.all([
+      application.sessionRecovery?.prepare(),
       application.controller.init(SAMPLE_WML),
       application.libraryPreferences?.init(),
+      application.windowState?.init(),
       application.commandBridge.bind()
     ]);
+    await application.sessionRecovery?.activate();
   } catch (error) {
     application.commandBridge.dispose();
     throw error;
@@ -139,6 +176,8 @@ export const initializeBrowserApplication = async (
 
 export const disposeBrowserApplication = (application: BrowserApplication): void => {
   application.commandBridge.dispose();
+  application.sessionRecovery.dispose();
+  application.windowState?.dispose();
   application.libraryPreferences.dispose();
   application.debugInspector?.binding.dispose();
   application.debugInspector?.unsubscribe();

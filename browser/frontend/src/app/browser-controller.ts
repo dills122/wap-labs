@@ -3,6 +3,7 @@ import type {
   HostNavigationSource,
   HostSessionState
 } from '../../../contracts/transport';
+import type { SafeSessionV1 } from '../../../contracts/application-state';
 import {
   ENGINE_VIEWPORT_RANGE,
   type EngineFrame,
@@ -42,6 +43,11 @@ import {
 
 export type RunMode = 'local' | 'network';
 
+export interface BrowserControllerOptions {
+  onSafeSessionCommitted?: (session: SafeSessionV1) => void | Promise<void>;
+  onUnsafeSessionCommitted?: () => void | Promise<void>;
+}
+
 const WAP_ACCEPT_HEADER = 'text/vnd.wap.wml, application/vnd.wap.wmlc, application/vnd.wap.wml+xml';
 
 class NavigationActionFailure extends Error {
@@ -74,6 +80,7 @@ export class BrowserController {
   private bootDeckReadyEmitted = false;
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
+  private committedLocalExampleKey: string | undefined;
   private lastNetworkUrl: string;
   // U2: set by the navigation state machine's onNavigationError hook just
   // before loadTransportUrl below reads state.navigationStatus === 'error',
@@ -99,7 +106,12 @@ export class BrowserController {
       }
     | undefined;
 
-  constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
+  constructor(
+    hostClient: TauriHostClient,
+    presenter: BrowserPresenter,
+    refs: BrowserShellRefs,
+    private readonly options: BrowserControllerOptions = {}
+  ) {
     this.hostClient = hostClient;
     this.presenter = presenter;
     this.refs = refs;
@@ -114,7 +126,10 @@ export class BrowserController {
       this.hostClient,
       this.refs.fetchUrlInput.value,
       {
-        onSessionState: (session) => this.presenter.setSessionState(session),
+        onSessionState: (session) => {
+          this.presenter.setSessionState(session);
+          this.noteCommittedNetworkSession(session);
+        },
         onFrame: (frame) => {
           this.applyFrame(frame);
           if (!this.bootDeckReadyEmitted) {
@@ -385,6 +400,30 @@ export class BrowserController {
     }
   }
 
+  async restoreSafeSession(session: SafeSessionV1): Promise<void> {
+    if (session.kind === 'local-example') {
+      const target = parseLocalExampleFavoriteTarget(session.exampleId, session.fragment);
+      if (!target.ok) throw new Error(target.issue.message);
+      await this.openFavoriteTarget(target.value);
+      return;
+    }
+    const target = parseNetworkFavoriteTarget(session.url);
+    if (!target.ok) throw new Error(target.issue.message);
+    await this.setRunMode('network', { loadLocalOnEnter: false });
+    this.refs.fetchUrlInput.value = target.value.url;
+    await this.loadTransportUrl(
+      target.value.url,
+      'user',
+      true,
+      true,
+      undefined,
+      this.defaultNavigationHeaders()
+    );
+    if (this.presenter.getSessionState().navigationStatus !== 'loaded') {
+      throw new Error('safe-session-network-restore-failed');
+    }
+  }
+
   dispose(): void {
     this.startupProbe.cancel();
     void this.navigation.cancelPendingNavigation();
@@ -430,6 +469,8 @@ export class BrowserController {
       externalNavigationIntent: snapshot.externalNavigationIntent,
       lastError: undefined
     });
+    this.committedLocalExampleKey = undefined;
+    void this.options.onUnsafeSessionCommitted?.();
     this.presenter.setStatus(WAVES_COPY.status.rawWmlLoaded);
   };
 
@@ -823,6 +864,8 @@ export class BrowserController {
         navigationSource: 'user',
         lastError: undefined
       });
+      this.committedLocalExampleKey = example.key;
+      this.noteCommittedLocalSession(snapshot.activeCardId);
       this.timerRuntime.resetScriptTimers();
       this.timerRuntime.applySnapshot(snapshot);
       this.presenter.setStatus(WAVES_COPY.status.loadedLocalDeck(example.label));
@@ -861,12 +904,14 @@ export class BrowserController {
     };
     if (recordTimeline) {
       this.presenter.patchSessionState(patch);
+      this.noteCommittedLocalSession(snapshot.activeCardId);
       return;
     }
     this.presenter.setSessionState({
       ...this.presenter.getSessionState(),
       ...patch
     });
+    this.noteCommittedLocalSession(snapshot.activeCardId);
   }
 
   private syncInteractiveSnapshot(snapshot: EngineRuntimeSnapshot): void {
@@ -1196,7 +1241,83 @@ export class BrowserController {
     this.presenter.setSnapshot(frame.snapshot);
     this.presenter.drawRenderList(frame.render);
   }
+
+  private noteCommittedLocalSession(activeCardId?: string): void {
+    if (!this.committedLocalExampleKey) {
+      void this.options.onUnsafeSessionCommitted?.();
+      return;
+    }
+    const session: SafeSessionV1 = {
+      kind: 'local-example',
+      exampleId: this.committedLocalExampleKey,
+      ...(activeCardId ? { fragment: `#${activeCardId}` } : {})
+    };
+    void this.options.onSafeSessionCommitted?.(session);
+  }
+
+  private noteCommittedNetworkSession(session: HostSessionState): void {
+    if (
+      session.runMode !== 'network' ||
+      session.navigationStatus !== 'loaded' ||
+      !session.finalUrl
+    ) {
+      return;
+    }
+    const history = session.history ?? [];
+    const index = session.historyIndex ?? history.length - 1;
+    const current = history[index];
+    if (!current || current.url !== session.finalUrl) {
+      return;
+    }
+    if (!networkHistoryEntryIsSafeForRecovery(current)) {
+      void this.options.onUnsafeSessionCommitted?.();
+      return;
+    }
+    const url = networkRecoveryUrl(session.finalUrl, session.activeCardId);
+    void this.options.onSafeSessionCommitted?.({ kind: 'network-get', url });
+  }
 }
+
+const SENSITIVE_RECOVERY_HEADER_NAMES = new Set([
+  'authorization',
+  'proxy-authorization',
+  'cookie',
+  'set-cookie'
+]);
+
+export const networkHistoryEntryIsSafeForRecovery = (
+  entry: NonNullable<HostSessionState['history']>[number]
+): boolean => {
+  if ((entry.method ?? 'GET').toUpperCase() !== 'GET') return false;
+  if (
+    Object.keys(entry.headers ?? {}).some((name) => {
+      const normalized = name.trim().toLowerCase();
+      return (
+        SENSITIVE_RECOVERY_HEADER_NAMES.has(normalized) ||
+        /(auth|credential|password|secret|token|api[-_]?key)/.test(normalized)
+      );
+    })
+  ) {
+    return false;
+  }
+  const policy = entry.requestPolicy;
+  return (
+    !policy?.postContext &&
+    (!policy?.requestIntent ||
+      (policy.requestIntent.method === 'get' && policy.requestIntent.postFields.length === 0))
+  );
+};
+
+const networkRecoveryUrl = (value: string, activeCardId?: string): string => {
+  if (!activeCardId) return value;
+  try {
+    const url = new URL(value);
+    url.hash = activeCardId;
+    return url.toString();
+  } catch {
+    return value;
+  }
+};
 
 const wait = (ms: number): Promise<void> =>
   new Promise((resolve) => {

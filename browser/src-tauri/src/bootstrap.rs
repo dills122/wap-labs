@@ -195,7 +195,7 @@ fn build_app_menu<R: tauri::Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result
 
 #[cfg(not(test))]
 pub fn run() {
-    tauri::Builder::default()
+    let app = tauri::Builder::default()
         .manage(AppState::from_local_config())
         .manage(HostFetchState::default())
         .menu(build_app_menu)
@@ -209,6 +209,13 @@ pub fn run() {
         .invoke_handler(crate::command_contract::with_tauri_commands!(
             handler_from_command_contract
         ))
-        .run(tauri::generate_context!())
+        .build(tauri::generate_context!())
         .expect(waves_config::RUN_ERROR_CONTEXT);
+    app.run(|app_handle, event| {
+        if matches!(event, tauri::RunEvent::Exit) {
+            if let Err(error) = crate::mark_application_state_clean_exit(app_handle) {
+                eprintln!("failed to mark application state cleanly closed: {error}");
+            }
+        }
+    });
 }

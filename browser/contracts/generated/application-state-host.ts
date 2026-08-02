@@ -5,6 +5,9 @@ export const APPLICATION_STATE_SCHEMA_VERSION = 1 as const;
 export const APPLICATION_STATE_SAFE_KEYS = ["schemaVersion","settings","onboarding","favorites","windowState","safeSession","diagnosticPreferences","displayScalePercent","theme","highContrast","reducedMotion","defaultRunMode","startBehavior","developerMode","timelineRetention","safeSessionRestore","showWelcomeOnLaunch","completedFirstDeckTour","entries","id","title","target","createdAt","updatedAt","profileId","kind","url","canonicalUrl","exampleId","fragment","bounds","maximized","monitorId","x","y","width","height","timeoutMs","retryLimit","maxResponseBytes","constrainedNetwork","routeOverride","recoveryPending","session"] as const;
 export const APPLICATION_STATE_ALLOWED_NETWORK_SCHEMES = ["http","https","wap","waps"] as const;
 export const APPLICATION_STATE_SENSITIVE_QUERY_KEYS = ["access_token","apikey","api_key","auth","key","password","passwd","pin","secret","session","sessionid","token"] as const;
+export const MAX_SAFE_SESSION_URL_BYTES = 4096 as const;
+export const MAX_SAFE_SESSION_EXAMPLE_ID_BYTES = 256 as const;
+export const MAX_SAFE_SESSION_FRAGMENT_BYTES = 256 as const;
 export const DEFAULT_APPLICATION_STATE_V1 = {"schemaVersion":1,"settings":{"displayScalePercent":100,"theme":"system","highContrast":false,"reducedMotion":false,"defaultRunMode":"local","startBehavior":"home","developerMode":false,"timelineRetention":200,"safeSessionRestore":false},"onboarding":{"showWelcomeOnLaunch":true,"completedFirstDeckTour":false},"favorites":{"entries":[]},"windowState":{"maximized":false},"safeSession":{"recoveryPending":false},"diagnosticPreferences":{"timeoutMs":10000,"retryLimit":1,"maxResponseBytes":1048576,"constrainedNetwork":false}} as const;
 
 export type HostThemePreference = "system" | "light" | "dark";

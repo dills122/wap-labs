@@ -154,6 +154,39 @@ describe('ApplicationStateStore', () => {
     }
   });
 
+  it('serializes component updates so concurrent persistence owners cannot overwrite each other', async () => {
+    const store = new MemoryApplicationStateStore();
+
+    await Promise.all([
+      store.update((state) => ({
+        ...state,
+        settings: { ...state.settings, displayScalePercent: 125 }
+      })),
+      store.update((state) => ({
+        ...state,
+        onboarding: { ...state.onboarding, showWelcomeOnLaunch: false }
+      }))
+    ]);
+
+    expect(store.snapshot()?.settings.displayScalePercent).toBe(125);
+    expect(store.snapshot()?.onboarding.showWelcomeOnLaunch).toBe(false);
+  });
+
+  it('keeps the previous memory snapshot when an injected write fails', async () => {
+    const initialState = defaultApplicationStateV1();
+    initialState.settings.displayScalePercent = 125;
+    const store = new MemoryApplicationStateStore({ initialState, failWrites: true });
+
+    await expect(
+      store.update((state) => ({
+        ...state,
+        settings: { ...state.settings, displayScalePercent: 150 }
+      }))
+    ).rejects.toThrow('application-state-read-before-write-failed');
+
+    expect(store.snapshot()).toEqual(initialState);
+  });
+
   it('clears one component without ambiguously clearing the others', async () => {
     const state = defaultApplicationStateV1();
     state.onboarding.showWelcomeOnLaunch = false;

@@ -4,8 +4,8 @@
   "auditedAt": "2026-08-02",
   "auditBase": {
     "ref": "origin/main",
-    "commit": "d233426d",
-    "pendingPullRequests": []
+    "commit": "6e30f89f",
+    "pendingPullRequests": [549]
   },
   "releaseComplete": false,
   "evidenceClasses": {
@@ -136,12 +136,17 @@
     },
     {
       "id": "crash-recovery",
-      "status": "blocked",
+      "status": "partial",
       "evidenceClass": "packaged-manual",
       "workItems": ["WBP-12", "WBP-14"],
       "requirements": [],
-      "evidence": ["docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md"],
-      "blocker": "WBP-12 has not implemented the crash marker and safe-session recovery offer."
+      "evidence": [
+        "browser/frontend/src/app/session-recovery-controller.test.ts",
+        "browser/frontend/src/app/window-state-controller.test.ts",
+        "browser/src-tauri/src/application_state.rs",
+        "browser/APPLICATION_STATE.md"
+      ],
+      "blocker": "The marker lifecycle, safe local/confirmed-GET policy, two-second offer budget, reset, removed-monitor handling, and failure atomicity have deterministic fixture coverage. A packaged launch-after-crash relaunch has not been executed."
     },
     {
       "id": "native-wasm-parity",

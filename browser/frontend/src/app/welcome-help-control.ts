@@ -64,13 +64,13 @@ const persistWelcomeOnLaunch = async (
 ): Promise<void> => {
   const loaded = await store.load();
   if (!loaded.writeAllowed) return;
-  await store.save({
-    ...loaded.state,
+  await store.update((current) => ({
+    ...current,
     onboarding: {
-      ...loaded.state.onboarding,
+      ...current.onboarding,
       showWelcomeOnLaunch: enabled
     }
-  });
+  }));
   clearWelcomeOnLaunchCache();
 };
 

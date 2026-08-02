@@ -132,6 +132,7 @@ describe('bindWelcomeHelpControls', () => {
     const store = {
       load: () => load,
       save: vi.fn(),
+      update: vi.fn(),
       reset: vi.fn(),
       clear: vi.fn()
     };

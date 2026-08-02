@@ -155,6 +155,22 @@ const locale = {
     confirmResetAll: 'Confirm Reset All',
     cancel: 'Cancel'
   },
+  recovery: {
+    title: 'Recover your safe session',
+    crashLocal: 'Waves closed unexpectedly. Restoring the last bundled example locally.',
+    crashNetwork:
+      'Waves closed unexpectedly. Restore the last sanitized GET location? This will make a network request.',
+    launchLocal: 'Restoring the saved bundled example locally.',
+    launchNetwork: 'Restore the saved sanitized GET location? This will make a network request.',
+    restore: 'Restore GET',
+    dismiss: 'Not Now',
+    restored: 'Safe session restored.',
+    dismissed: 'Safe session recovery dismissed.',
+    failed: 'Safe session recovery failed; the current deck remains available.',
+    stateReset: 'Saved application state was unavailable. Waves started with safe defaults.',
+    futureState:
+      'Saved application state is from a newer Waves version. It remains untouched until reset.'
+  },
   sampleDeck: {
     intro: WAVES_CONFIG.appTagline,
     next: 'Go to next card',
