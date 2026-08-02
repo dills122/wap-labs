@@ -57,6 +57,8 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         content_type: engine.content_type(),
         browser_context_epoch: Some(engine.browser_context_epoch()),
         history_push_sequence: Some(engine.history_push_sequence()),
+        last_runtime_failure_code: engine.last_runtime_failure_code(),
+        last_runtime_failure_message: engine.last_runtime_failure_message(),
         deck_language: engine.deck_language(),
         active_card_language: engine.active_card_language(),
         last_back_navigation_handled: engine.last_back_navigation_handled(),
@@ -127,6 +129,17 @@ fn mutate_then_frame(
     Ok(candidate_frame)
 }
 
+fn allow_recorded_runtime_failure(
+    engine: &WmlEngine,
+    result: Result<(), String>,
+) -> Result<(), String> {
+    match result {
+        Ok(()) => Ok(()),
+        Err(_) if engine.last_runtime_failure_code().is_some() => Ok(()),
+        Err(message) => Err(message),
+    }
+}
+
 #[cfg(test)]
 pub(crate) fn force_next_frame_failure() {
     FORCE_NEXT_FRAME_FAILURE.with(|force| {
@@ -175,7 +188,8 @@ pub fn apply_handle_key(
     engine: &mut WmlEngine,
     request: HandleKeyRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.handle_key(request.key.as_str().to_string())?;
+    let result = engine.handle_key(request.key.as_str().to_string());
+    allow_recorded_runtime_failure(engine, result)?;
     Ok(snapshot(engine))
 }
 
@@ -184,7 +198,8 @@ pub fn apply_handle_key_frame(
     request: HandleKeyRequest,
 ) -> Result<EngineFrame, String> {
     mutate_then_frame(engine, |candidate| {
-        candidate.handle_key(request.key.as_str().to_string())
+        let result = candidate.handle_key(request.key.as_str().to_string());
+        allow_recorded_runtime_failure(candidate, result)
     })
 }
 
@@ -192,14 +207,18 @@ pub fn apply_handle_input_frame(
     engine: &mut WmlEngine,
     request: HandleInputRequest,
 ) -> Result<EngineFrame, String> {
-    mutate_then_frame(engine, |candidate| candidate.handle_input(request.event))
+    mutate_then_frame(engine, |candidate| {
+        let result = candidate.handle_input(request.event.clone());
+        allow_recorded_runtime_failure(candidate, result)
+    })
 }
 
 pub fn apply_navigate_to_card(
     engine: &mut WmlEngine,
     request: NavigateToCardRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.navigate_to_card(request.card_id)?;
+    let result = engine.navigate_to_card(request.card_id);
+    allow_recorded_runtime_failure(engine, result)?;
     Ok(snapshot(engine))
 }
 
@@ -208,7 +227,8 @@ pub fn apply_navigate_to_card_frame(
     request: NavigateToCardRequest,
 ) -> Result<EngineFrame, String> {
     mutate_then_frame(engine, |candidate| {
-        candidate.navigate_to_card(request.card_id)
+        let result = candidate.navigate_to_card(request.card_id.clone());
+        allow_recorded_runtime_failure(candidate, result)
     })
 }
 
@@ -238,7 +258,8 @@ pub fn apply_advance_time_ms(
     engine: &mut WmlEngine,
     request: AdvanceTimeRequest,
 ) -> Result<EngineRuntimeSnapshot, String> {
-    engine.advance_time_ms(request.delta_ms)?;
+    let result = engine.advance_time_ms(request.delta_ms);
+    allow_recorded_runtime_failure(engine, result)?;
     Ok(snapshot(engine))
 }
 
@@ -247,7 +268,8 @@ pub fn apply_advance_time_ms_frame(
     request: AdvanceTimeRequest,
 ) -> Result<EngineFrame, String> {
     mutate_then_frame(engine, |candidate| {
-        candidate.advance_time_ms(request.delta_ms)
+        let result = candidate.advance_time_ms(request.delta_ms);
+        allow_recorded_runtime_failure(candidate, result)
     })
 }
 

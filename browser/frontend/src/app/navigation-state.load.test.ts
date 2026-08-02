@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createNavigationStateMachine, type NavigationFailureContext } from './navigation-state';
 import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-state.test-helpers';
+import { WAVES_COPY } from './waves-copy';
 
 describe('navigation-state load behavior', () => {
   it('transitions idle -> loading -> loaded on successful user load', async () => {
@@ -539,7 +540,7 @@ describe('navigation-state load behavior', () => {
 
   it('keeps host history atomic when the engine rejects destination access', async () => {
     let loadCount = 0;
-    const navigationErrors: Array<{ message: string; kind: string }> = [];
+    const navigationErrors: Array<{ message: string; kind: string; category: string }> = [];
     const machine = createNavigationStateMachine(
       createHostClientMock({
         engineLoadDeckContext: async () => {
@@ -552,7 +553,8 @@ describe('navigation-state load behavior', () => {
       }),
       'http://seed.test',
       {
-        onNavigationError: (message, kind) => navigationErrors.push({ message, kind })
+        onNavigationError: (message, kind, context) =>
+          navigationErrors.push({ message, kind, category: context.category })
       }
     );
 
@@ -571,13 +573,43 @@ describe('navigation-state load behavior', () => {
     expect(machine.getSessionState()).toMatchObject({
       navigationStatus: 'error',
       finalUrl: 'http://example.test/start.wml',
-      lastError: 'Deck access denied for referring URI'
+      lastError: WAVES_COPY.errors.deckAccessDenied
     });
     expect(machine.getHistoryState().entries).toHaveLength(1);
     expect(machine.getHistoryState().entries[0]?.url).toBe('http://example.test/start.wml');
     expect(navigationErrors).toEqual([
-      { message: 'Deck access denied for referring URI', kind: 'parse' }
+      {
+        message: WAVES_COPY.errors.deckAccessDenied,
+        kind: 'parse',
+        category: 'WML_ACCESS_DENIED'
+      }
     ]);
+  });
+
+  it('does not expose technical deck-load failures through user-visible navigation state', async () => {
+    const technical = 'parser offset 42 contained credential=secret-token';
+    const navigationErrors: string[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        engineLoadDeckContextFrame: async () => {
+          throw new Error(technical);
+        }
+      }),
+      'http://seed.test',
+      { onNavigationError: (message) => navigationErrors.push(message) }
+    );
+
+    const result = await machine.loadTransportUrl({
+      url: 'http://example.test/invalid.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    expect(result).toBeNull();
+    expect(machine.getSessionState().lastError).toBe(WAVES_COPY.errors.invalidDeck);
+    expect(machine.getSessionState().lastError).not.toContain('secret-token');
+    expect(navigationErrors).toEqual([WAVES_COPY.errors.invalidDeck]);
+    expect(machine.getHistoryState().entries).toEqual([]);
   });
 
   it('does not let renderer navigation weaken the host destination policy', async () => {

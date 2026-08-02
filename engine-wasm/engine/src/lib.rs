@@ -202,6 +202,34 @@ struct SelectEditState {
     draft_index: usize,
 }
 
+const RUNTIME_TASK_FAILED_CODE: &str = "WML_TASK_FAILED";
+const RUNTIME_TASK_FAILED_MESSAGE: &str = "The requested page action could not be completed.";
+const RUNTIME_CONTEXT_RESET_CODE: &str = "WML_CONTEXT_RESET";
+const RUNTIME_CONTEXT_RESET_MESSAGE: &str =
+    "Browser memory was exhausted. The page context was reset.";
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct RuntimeFailure {
+    code: String,
+    message: String,
+}
+
+impl RuntimeFailure {
+    fn task_failed() -> Self {
+        Self {
+            code: RUNTIME_TASK_FAILED_CODE.to_string(),
+            message: RUNTIME_TASK_FAILED_MESSAGE.to_string(),
+        }
+    }
+
+    fn context_reset() -> Self {
+        Self {
+            code: RUNTIME_CONTEXT_RESET_CODE.to_string(),
+            message: RUNTIME_CONTEXT_RESET_MESSAGE.to_string(),
+        }
+    }
+}
+
 /// Host-authored relationship between the active browser context and a deck
 /// being loaded. The transport remains outside the runtime; this value only
 /// selects the WML context and card-entry semantics applied after parsing.
@@ -277,6 +305,7 @@ pub struct WmlEngine {
     last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
     browser_context_epoch: u32,
     history_push_sequence: u32,
+    last_runtime_failure: Option<RuntimeFailure>,
     debug_recorder: Option<engine_debug_recorder::EngineDebugRecorder>,
 }
 

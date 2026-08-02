@@ -1542,6 +1542,35 @@ fn wasm_wml_204_grouped_control_validation_matches_native_error() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_306_task_failure_matches_native_rollback_and_safe_policy() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r##"<wml><card id="stable"><do type="accept"><go href="#missing"><setvar name="Secret" value="private"/></go></do><p>Stable</p></card></wml>"##,
+        )
+        .expect("failure deck loads");
+
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect_err("native and WASM mutation boundaries retain the technical task error");
+
+    assert_eq!(
+        engine.active_card_id_wasm().as_deref(),
+        Ok("stable"),
+        "failed task remains atomic"
+    );
+    assert_eq!(engine.get_var_wasm("Secret".to_string()), None);
+    assert_eq!(
+        engine.last_runtime_failure_code_wasm().as_deref(),
+        Some("WML_TASK_FAILED")
+    );
+    assert_eq!(
+        engine.last_runtime_failure_message_wasm().as_deref(),
+        Some("The requested page action could not be completed.")
+    );
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_202_template_shadowing_matches_native_task_activation() {
     let mut engine = WmlEngine::wasm_new();
     let xml = r##"

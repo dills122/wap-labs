@@ -43,11 +43,35 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "not-assessed",
-  "evidenceState": "optional-not-assessed",
-  "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
-  "implementationEvidence": [],
-  "testEvidence": [],
+  "implementationStatus": "implemented",
+  "evidenceState": "direct-test-linked",
+  "assessmentNote": "The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.",
+  "implementationEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+      "symbol": "execute_card_task_action"
+    },
+    {
+      "path": "browser/frontend/src/session-history.ts",
+      "symbol": "HOST_HISTORY_ENTRY_CAPACITY"
+    },
+    {
+      "path": "browser/frontend/src/app/browser-presenter.ts",
+      "symbol": "announceRuntimeFailure"
+    }
+  ],
+  "testEvidence": [
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+      "test": "wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically",
+      "command": "cd engine-wasm/engine && cargo test wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically"
+    },
+    {
+      "path": "browser/frontend/src/session-history.test.ts",
+      "test": "implements the WML-306 optional low-memory history policy as bounded LRU",
+      "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+    }
+  ],
   "ownerLayers": [
     "engine-wasm",
     "browser"

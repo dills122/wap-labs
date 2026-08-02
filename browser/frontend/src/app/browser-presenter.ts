@@ -17,7 +17,7 @@ import {
 import type { BrowserShellRefs } from './browser-shell-template';
 import { inferStatusTone, uiEvents } from '../ui-helpers';
 import { WAVES_CONFIG } from './waves-config';
-import { WAVES_COPY } from './waves-copy';
+import { runtimeFailureCopy, WAVES_COPY } from './waves-copy';
 import type { DeveloperToolsHostBridge } from './developer-tools-bridge';
 import { renderDeveloperToolsSummary, type DeveloperToolsState } from './developer-tools-workspace';
 import {
@@ -79,6 +79,7 @@ export class BrowserPresenter {
     errorClass: string | undefined;
     errorCategory: string | undefined;
   } | null = null;
+  private announcedRuntimeFailureCode: string | null = null;
   private latestSnapshot: EngineRuntimeSnapshot | null = null;
   private latestTransportResponse: FetchResponse | null = null;
   private sessionStateText = '';
@@ -503,8 +504,25 @@ export class BrowserPresenter {
     this.latestSnapshot = snapshot;
     this.snapshotDirty = true;
     this.scheduleDeveloperPanelFlush();
+    this.announceRuntimeFailure(snapshot);
     this.announceScriptDialogRequests(snapshot.lastScriptDialogRequests);
     this.announceScriptExecutionFailure(snapshot);
+  }
+
+  private announceRuntimeFailure(snapshot: EngineRuntimeSnapshot): void {
+    const code = snapshot.lastRuntimeFailureCode;
+    if (!code) {
+      this.announcedRuntimeFailureCode = null;
+      return;
+    }
+    if (this.announcedRuntimeFailureCode === code) {
+      return;
+    }
+    this.announcedRuntimeFailureCode = code;
+    const message = runtimeFailureCopy(code);
+    if (message) {
+      this.showToast(message, 'error');
+    }
   }
 
   getSnapshot(): EngineRuntimeSnapshot | null {

@@ -278,6 +278,21 @@ describe('session-history', () => {
     expect(state.index).toBe(0);
   });
 
+  it('implements the WML-306 optional low-memory history policy as bounded LRU', () => {
+    const state = createHostHistoryState();
+    expect(HOST_HISTORY_ENTRY_CAPACITY).toBeGreaterThanOrEqual(10);
+
+    for (let navigation = 0; navigation <= HOST_HISTORY_ENTRY_CAPACITY; navigation += 1) {
+      pushHostHistoryEntry(state, `http://local.test/wml-306/${navigation}`);
+    }
+
+    expect(state.entries).toHaveLength(HOST_HISTORY_ENTRY_CAPACITY);
+    expect(state.entries[0]?.url).toBe('http://local.test/wml-306/1');
+    expect(state.entries.at(-1)?.url).toBe(
+      `http://local.test/wml-306/${HOST_HISTORY_ENTRY_CAPACITY}`
+    );
+  });
+
   it('truncates forward entries before applying oldest-entry eviction', () => {
     const state = createHostHistoryState();
     for (let navigation = 0; navigation < HOST_HISTORY_ENTRY_CAPACITY; navigation += 1) {

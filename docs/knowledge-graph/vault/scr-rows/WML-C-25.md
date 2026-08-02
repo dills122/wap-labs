@@ -66,12 +66,12 @@ tags:
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
       "test": "wml_202_enforces_card_event_timer_content_order",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+      "command": "cd engine-wasm/engine && cargo test wml_202_enforces_card_event_timer_content_order"
     },
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
       "test": "wml_301_inserts_source_required_table_boundaries_at_card_content_edges",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
+      "command": "cd engine-wasm/engine && cargo test wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
     },
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",

@@ -72,6 +72,45 @@ Those defects should be fixed without removing browser-context variable persiste
 - `engine-wasm/engine/src/engine_tests/navigation_metadata.rs`
 - `engine-wasm/examples/source/wml-204-control-validation.wml`
 
+## IB-002: Failed WML tasks keep runtime state and expose bounded host copy
+
+- **Status:** intended WML behavior
+- **Observed:** 2026-08-02 during WML-306 policy closure
+- **Surface:** task execution, low-memory recovery, native/WASM adapters, and browser presentation
+- **Applies to:** failed card tasks and variable-store exhaustion during a task
+
+### What happens
+
+A failed task leaves its invoking card, focus, variables, event state, and history unchanged. Native
+Rust callers still receive the technical error for diagnostics. WASM and Tauri host mutation
+boundaries instead return the rolled-back frame with `lastRuntimeFailureCode` and safe
+`lastRuntimeFailureMessage` fields. The browser maps only the recognized stable codes to
+host-owned copy and never displays an arbitrary technical message from those fields.
+
+When the configured variable-store limit is exhausted, the engine first clears its owned history
+and retries. If that is insufficient, it resets the browser context to the documented empty state,
+increments `browserContextEpoch` so the host clears request history, retries once, and publishes
+`WML_CONTEXT_RESET`. The host history remains a bounded 32-entry LRU, above the WML recommended
+minimum of ten.
+
+### Boundaries that are bugs
+
+- A failed task must not commit assignments, navigation, focus, event, or history state.
+- A context reset must not leave the host's request history in the old epoch.
+- Browser UI must not render raw parser offsets, variable names/values, or other technical error
+  detail; unknown runtime failure codes are ignored by the presenter.
+- The engine must not fetch resources, evict transport cache, or move WML semantics into the host.
+
+### Verification evidence
+
+- `node scripts/wap-context-pack.mjs WML-306`
+- `engine-wasm/engine/tests/fixtures/wml-306/`
+- `engine-wasm/engine/src/engine_tests/wml_306_policy.rs`
+- `browser/src-tauri/src/tests/engine_wrappers.rs`
+- `browser/frontend/src/app/browser-presenter.test.ts`
+- `browser/frontend/src/session-history.test.ts`
+- `engine-wasm/examples/source/wml-306-policy-recovery.flow.json`
+
 ## Entry template
 
 New entries should include:

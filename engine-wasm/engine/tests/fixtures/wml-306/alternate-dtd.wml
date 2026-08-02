@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml SYSTEM "http://example.test/alternate.dtd">
+<wml>
+  <card id="alternate">
+    <vendor-panel secret="ignored"><p>Known content</p></vendor-panel>
+  </card>
+</wml>

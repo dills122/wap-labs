@@ -22,7 +22,7 @@
           "action": { "type": "key", "key": "enter" },
           "expect": {
             "state": { "activeCardId": "accept-broken", "focusedLinkIndex": 0 },
-            "statusIncludes": "Card id not found"
+            "statusIncludes": "The requested page action could not be completed."
           }
         },
         {

@@ -32,6 +32,7 @@ impl WmlEngine {
             last_wml_load_diagnostics: Vec::new(),
             browser_context_epoch: 0,
             history_push_sequence: 0,
+            last_runtime_failure: None,
             debug_recorder: None,
         }
     }
@@ -51,6 +52,10 @@ impl WmlEngine {
         use std::cell::RefCell;
         use std::rc::Rc;
 
+        // Runtime failure publication belongs to the most recent host-visible
+        // mutation only. Clearing before cloning also prevents a later direct
+        // API error from being mistaken for an earlier recorded task failure.
+        self.last_runtime_failure = None;
         let candidate = Rc::new(RefCell::new(self.clone()));
         let operation_candidate = Rc::clone(&candidate);
         let result = catch_engine_panic(move || {
@@ -982,6 +987,21 @@ impl WmlEngine {
     /// without inferring navigation from a changed card identifier.
     pub fn history_push_sequence(&self) -> u32 {
         self.history_push_sequence
+    }
+
+    /// Stable host-facing code for the most recent failed or recovered WML
+    /// runtime action. Technical details remain in bounded engine traces.
+    pub fn last_runtime_failure_code(&self) -> Option<String> {
+        self.last_runtime_failure
+            .as_ref()
+            .map(|failure| failure.code.clone())
+    }
+
+    /// Safe user-facing copy for the most recent runtime failure.
+    pub fn last_runtime_failure_message(&self) -> Option<String> {
+        self.last_runtime_failure
+            .as_ref()
+            .map(|failure| failure.message.clone())
     }
 
     /// Get authored deck-level `xml:lang` metadata.

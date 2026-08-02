@@ -32,6 +32,8 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     contentType: engine.contentType(),
     browserContextEpoch: engine.browserContextEpoch(),
     historyPushSequence: engine.historyPushSequence(),
+    lastRuntimeFailureCode: engine.lastRuntimeFailureCode(),
+    lastRuntimeFailureMessage: engine.lastRuntimeFailureMessage(),
     lastBackNavigationHandled: engine.lastBackNavigationHandled(),
     externalNavigationIntent: engine.externalNavigationIntent(),
     externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy(),
@@ -49,6 +51,15 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     render: render(),
     presentation: engine.renderFrame()
   });
+  const applyRuntimeMutation = (mutation: () => void): void => {
+    try {
+      mutation();
+    } catch (error) {
+      if (!engine.lastRuntimeFailureCode()) {
+        throw error;
+      }
+    }
+  };
 
   const client: TauriHostClient = {
     health: async () => 'waves-browser-test-host:ok',
@@ -73,23 +84,23 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     engineRender: async () => render(),
     engineRenderFrame: async () => frame(),
     engineHandleKey: async ({ key }) => {
-      engine.handleKey(key);
+      applyRuntimeMutation(() => engine.handleKey(key));
       return snapshot();
     },
     engineHandleKeyFrame: async ({ key }) => {
-      engine.handleKey(key);
+      applyRuntimeMutation(() => engine.handleKey(key));
       return frame();
     },
     engineHandleInputFrame: async ({ event }) => {
-      engine.handleInput(event);
+      applyRuntimeMutation(() => engine.handleInput(event));
       return frame();
     },
     engineNavigateToCard: async ({ cardId }) => {
-      engine.navigateToCard(cardId);
+      applyRuntimeMutation(() => engine.navigateToCard(cardId));
       return snapshot();
     },
     engineNavigateToCardFrame: async ({ cardId }) => {
-      engine.navigateToCard(cardId);
+      applyRuntimeMutation(() => engine.navigateToCard(cardId));
       return frame();
     },
     engineNavigateBack: async () => {
@@ -105,11 +116,11 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
       return snapshot();
     },
     engineAdvanceTimeMs: async ({ deltaMs }) => {
-      engine.advanceTimeMs(deltaMs);
+      applyRuntimeMutation(() => engine.advanceTimeMs(deltaMs));
       return snapshot();
     },
     engineAdvanceTimeMsFrame: async ({ deltaMs }) => {
-      engine.advanceTimeMs(deltaMs);
+      applyRuntimeMutation(() => engine.advanceTimeMs(deltaMs));
       return frame();
     },
     engineSnapshot: async () => snapshot(),

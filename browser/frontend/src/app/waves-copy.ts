@@ -246,6 +246,10 @@ const locale = {
     urlRequired: 'URL is required',
     unknownTransportFailure: 'unknown transport failure',
     missingWmlPayload: 'Fetch succeeded but returned no WML payload.',
+    deckAccessDenied: 'Deck access denied for referring URI',
+    invalidDeck: 'The requested page could not be opened.',
+    runtimeTaskFailed: 'The requested page action could not be completed.',
+    runtimeContextReset: 'Browser memory was exhausted. The page context was reset.',
     viewportColsRange: (minCols: number, maxCols: number) =>
       `viewport cols must be an integer from ${minCols} through ${maxCols}`,
     timelineRequiresEvent: 'Timeline export requires at least one event.',
@@ -317,3 +321,10 @@ const locale = {
 } as const;
 
 export const WAVES_COPY = locale;
+
+export const runtimeFailureCopy = (code: string | undefined): string | undefined =>
+  code === 'WML_CONTEXT_RESET'
+    ? WAVES_COPY.errors.runtimeContextReset
+    : code === 'WML_TASK_FAILED'
+      ? WAVES_COPY.errors.runtimeTaskFailed
+      : undefined;

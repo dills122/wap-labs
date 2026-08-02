@@ -17,7 +17,9 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `planned-by` → [[work-items/WML-304|WML-304]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` ← [[clauses/WML-CL-DECK-ACCESS-REQUIRED|WML-CL-DECK-ACCESS-REQUIRED]]
+- `refines` ← [[clauses/WML-CL-GO-ACCESS-BEFORE-TRANSITION|WML-CL-GO-ACCESS-BEFORE-TRANSITION]]
 - `refines` ← [[clauses/WML-CL-GO-REFERER|WML-CL-GO-REFERER]]
 - `sourced-from` → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]
 
@@ -45,9 +47,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+  "assessmentNote": "Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -56,6 +58,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
       "symbol": "wml_go_request_policy"
+    },
+    {
+      "path": "transport-rust/src/request_serialization.rs",
+      "symbol": "smallest_usable_referer"
     }
   ],
   "testEvidence": [
@@ -68,6 +74,16 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
       "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
       "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+      "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+      "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+    },
+    {
+      "path": "transport-rust/src/request_serialization/tests.rs",
+      "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+      "command": "cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
     }
   ],
   "ownerLayers": [
@@ -78,12 +94,14 @@ tags:
     "RQ-RMK-011"
   ],
   "matrixWorkItems": [
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "workItems": [
     "R0-01",
     "R0-07",
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

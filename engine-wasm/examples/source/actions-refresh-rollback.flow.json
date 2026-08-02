@@ -42,7 +42,7 @@
           "action": { "type": "key", "key": "enter" },
           "expect": {
             "state": { "activeCardId": "home", "focusedLinkIndex": 1 },
-            "statusIncludes": "Card id not found"
+            "statusIncludes": "The requested page action could not be completed."
           }
         }
       ]

@@ -206,7 +206,7 @@
           "items": { "$ref": "#/$defs/clause" }
         },
         "capabilityDisposition": {
-          "const": "capability-gated-non-ip-bearer"
+          "enum": ["capability-gated-non-ip-bearer", "optional-class-c-client-capability"]
         },
         "capabilityParentCount": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonNegativeInteger"
@@ -359,7 +359,7 @@
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
         },
         "profileApplicability": {
-          "const": "capability-gated-non-ip-bearer"
+          "enum": ["capability-gated-non-ip-bearer", "optional-class-c-client-capability"]
         },
         "parentRows": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifierArray"

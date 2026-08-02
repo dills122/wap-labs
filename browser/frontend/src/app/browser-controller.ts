@@ -33,7 +33,7 @@ import {
   type LocalDeckExample
 } from './local-examples';
 import { WAVES_CONFIG } from './waves-config';
-import { WAVES_COPY } from './waves-copy';
+import { runtimeFailureCopy, WAVES_COPY } from './waves-copy';
 import { canvasPointerToEngineCoordinates } from './canvas-viewport-renderer';
 import {
   parseLocalExampleFavoriteTarget,
@@ -1053,6 +1053,10 @@ export class BrowserController {
       );
     }
     this.timerRuntime.applySnapshot(snapshot);
+    const runtimeFailureMessage = runtimeFailureCopy(snapshot.lastRuntimeFailureCode);
+    if (runtimeFailureMessage) {
+      this.presenter.setStatus(WAVES_COPY.status.error(runtimeFailureMessage));
+    }
     if (snapshot.externalNavigationIntent) {
       if (this.runMode === 'local') {
         await this.handleExternalIntentInLocalMode(snapshot.externalNavigationIntent);

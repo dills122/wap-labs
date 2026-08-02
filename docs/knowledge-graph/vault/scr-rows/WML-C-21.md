@@ -51,9 +51,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.",
+  "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -77,7 +77,12 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
       "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+      "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+      "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+      "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
     }
   ],
   "ownerLayers": [

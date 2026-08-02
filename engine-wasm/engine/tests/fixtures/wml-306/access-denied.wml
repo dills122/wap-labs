@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <head><access domain="trusted.example" path="/private"/></head>
+  <card id="denied"><p>Denied</p></card>
+</wml>

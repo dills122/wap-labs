@@ -180,6 +180,16 @@ impl WmlEngine {
         self.advance_time_ms(delta_ms).map_err(as_js_err)
     }
 
+    #[wasm_bindgen(js_name = lastRuntimeFailureCode)]
+    pub fn last_runtime_failure_code_wasm(&self) -> Option<String> {
+        self.last_runtime_failure_code()
+    }
+
+    #[wasm_bindgen(js_name = lastRuntimeFailureMessage)]
+    pub fn last_runtime_failure_message_wasm(&self) -> Option<String> {
+        self.last_runtime_failure_message()
+    }
+
     #[wasm_bindgen(js_name = nextTimerWakeupMs)]
     pub fn next_timer_wakeup_ms_wasm(&self) -> Option<u32> {
         self.next_timer_wakeup_ms()

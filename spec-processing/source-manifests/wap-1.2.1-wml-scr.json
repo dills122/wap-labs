@@ -7,7 +7,7 @@
     "markup": "WML 1.3",
     "classProfile": "WAP-215 Class C client (CCR-CLASSC-C-001)"
   },
-  "recordedOn": "2026-07-26",
+  "recordedOn": "2026-08-02",
   "authority": {
     "effectiveSequence": [
       "WAP-191-WML",
@@ -61,12 +61,12 @@
       "wbxml-encoding-and-validation": 4,
       "wml-document-validation": 11
     },
-    "testEvidenceLinkedCount": 33,
-  "mandatoryImplementationStatus": {
-    "implemented": 19,
-    "missing": 14,
-    "partial": 14
-  }
+    "testEvidenceLinkedCount": 34,
+    "mandatoryImplementationStatus": {
+      "implemented": 21,
+      "missing": 14,
+      "partial": 12
+    }
   },
   "obligations": [
     {
@@ -635,7 +635,7 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
             "test": "wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
+            "command": "cd engine-wasm/engine && cargo test wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -792,8 +792,8 @@
           "R0-01",
           "R0-07"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -802,6 +802,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "wml_go_request_policy"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "smallest_usable_referer"
           }
         ],
         "testEvidence": [
@@ -814,6 +818,16 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
             "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -852,11 +866,35 @@
           "R0-01",
           "R0-07"
         ],
-        "implementationStatus": "not-assessed",
-        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "optional-not-assessed"
+        "implementationStatus": "implemented",
+        "assessmentNote": "The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
+          },
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "HOST_HISTORY_ENTRY_CAPACITY"
+          },
+          {
+            "path": "browser/frontend/src/app/browser-presenter.ts",
+            "symbol": "announceRuntimeFailure"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically",
+            "command": "cd engine-wasm/engine && cargo test wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically"
+          },
+          {
+            "path": "browser/frontend/src/session-history.test.ts",
+            "test": "implements the WML-306 optional low-memory history policy as bounded LRU",
+            "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {
@@ -914,12 +952,12 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
             "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+            "command": "cd engine-wasm/engine && cargo test wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
           },
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
             "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
+            "command": "cd engine-wasm/engine && cargo test wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -1173,8 +1211,8 @@
           "C5-03",
           "WML-306"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -1198,7 +1236,12 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
             "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+            "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -1411,12 +1454,12 @@
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_202_enforces_card_event_timer_content_order",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+            "command": "cd engine-wasm/engine && cargo test wml_202_enforces_card_event_timer_content_order"
           },
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_301_inserts_source_required_table_boundaries_at_card_content_edges",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
+            "command": "cd engine-wasm/engine && cargo test wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
           },
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",
@@ -2799,11 +2842,11 @@
             "test": "WML-305 executable stories",
             "command": "pnpm test:story WML-305"
           },
-        {
-          "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
-          "test": "schedules only the exact native timer wakeup and stops it cleanly",
-          "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
-        }
+          {
+            "path": "browser/frontend/src/app/engine-timer-runtime.test.ts",
+            "test": "schedules only the exact native timer wakeup and stops it cleanly",
+            "command": "pnpm --dir browser/frontend test -- engine-timer-runtime.test.ts"
+          }
         ],
         "evidenceState": "direct-test-linked"
       }

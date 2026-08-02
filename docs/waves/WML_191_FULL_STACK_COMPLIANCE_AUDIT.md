@@ -58,7 +58,7 @@ WAE, WSP, WTP, WDP, or security-domain traceability docs.
 | Timer lifecycle | 11.7, 9.10, 12.5, 15.1.2 | runtime + host timing adapter | implemented for selected WML-305 slice | Native/WASM timer lifecycle, host wakeups, refresh, persistence, rollback, and executable-story evidence are complete | Preserve WML-305 evidence while later WMLScript timer-library semantics remain separately scoped |
 | Text layout semantics | 11.8.1-11.8.9 | parser + renderer | partial | Baseline wrap/focus implemented | Complete inline flow, paragraph mode/alignment, table semantics, preformatted handling |
 | Image semantics | 11.9, 15.1.6 | parser + renderer + host media | missing/partial | Minimal/none in engine renderer | Implement `img` element semantics and capability-gated hints |
-| UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | partial | Referring-URI access enforcement, WML-304 sendreferer intent, WML-203 canonical/alternate-DTD behavior, and WML-205 exhaustive invalid-WML plus atomic fetch/access failure handling are deterministic | Add smallest-relative referer wire serialization and low-memory policy behavior under later additive runtime work |
+| UA semantics (access control, low-memory, errors, unknown DTD) | 12.1-12.4 | browser host + runtime | implemented for WML-306 scope | Referring-URI access enforcement and smallest-relative disclosure, the optional WML-C-15 bounded-history/context-reset capability, alternate-DTD recovery, atomic task failure, and safe host copy are deterministic native/WASM/browser paths | Broader WML-C-17 strict prologue/internal-subset/full-DTD validation remains partial outside this policy slice |
 | WML binary representation and token tables | 14.x, 15.2 | transport/encoder tooling | partial | WBXML decode boundary present | Add encoder/validation tooling path and WBXML token/literal conformance fixtures |
 | Static conformance statement execution model | 15.x | all layers + QA tooling | partial (source + clause + mandatory audit) | WML-201 directly projects all 76 source rows and maps all 175 selected WML clauses; WAP-215 selects 39 required Class C client rows assessed as 19 implemented / 14 partial / 6 missing; 33 exact test-linked rows, 14 mapped mandatory gaps, and 29 optional rows remain explicit | Execute remaining direct fixtures, assess optional capabilities, close gaps, and add release CI gate |
 
@@ -74,7 +74,8 @@ WAE, WSP, WTP, WDP, or security-domain traceability docs.
 2. Section 12.5 inter-card process ordering (including failure semantics) is only partially ticketed.
 3. Server/client conformance constraints in section 15.3/15.4 are not yet mapped to deterministic validation tooling.
 4. Table/pre/image semantics in section 11.8/11.9 were under-specified in backlog until this pass.
-5. Access-control semantics (`access` element + deck restrictions) are captured as metadata goals but not fully wired to host policy enforcement.
+5. WML-306 closes the direct access-control policy path; remaining WML-C-17 DTD-validation work
+   must not be inferred complete from alternate-DTD recovery.
 
 ## Conformance Completion Plan (Cross-Board)
 

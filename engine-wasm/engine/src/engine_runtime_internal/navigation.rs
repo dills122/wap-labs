@@ -257,6 +257,46 @@ impl WmlEngine {
         &mut self,
         action: &CardTaskAction,
     ) -> Result<(), String> {
+        self.last_runtime_failure = None;
+        let result = self.execute_card_task_action_once(action);
+        if !result
+            .as_ref()
+            .is_err_and(|error| is_context_memory_error(error))
+        {
+            if result.is_err() {
+                self.last_runtime_failure = Some(RuntimeFailure::task_failed());
+            }
+            return result;
+        }
+
+        // WML 12.2.2 first asks the user agent to reclaim history/cache
+        // memory. The engine owns only its in-deck history; transport/browser
+        // cache remains outside this layer. The context epoch reset below
+        // tells the host to discard its request-shaped history as well.
+        self.nav_stack.clear();
+        self.push_trace("LOW_MEMORY_RECLAIM", "history=cleared".to_string());
+        let retry = self.execute_card_task_action_once(action);
+        if !retry
+            .as_ref()
+            .is_err_and(|error| is_context_memory_error(error))
+        {
+            if retry.is_err() {
+                self.last_runtime_failure = Some(RuntimeFailure::task_failed());
+            }
+            return retry;
+        }
+
+        // History reclamation could not make room in the variable store.
+        // Reset to the documented empty context, retry once, and publish a
+        // safe notification whether the retry succeeds or fails.
+        self.reset_browser_context_state();
+        self.push_trace("LOW_MEMORY_CONTEXT_RESET", String::new());
+        let retry_after_reset = self.execute_card_task_action_once(action);
+        self.last_runtime_failure = Some(RuntimeFailure::context_reset());
+        retry_after_reset
+    }
+
+    fn execute_card_task_action_once(&mut self, action: &CardTaskAction) -> Result<(), String> {
         let task = TaskRollbackGuard::new(self);
         let result = task.engine.execute_card_task_action_bounded(action);
         if result.is_ok() {
@@ -599,6 +639,11 @@ impl WmlEngine {
         let target = resolved_href.split('#').next().unwrap_or(resolved_href);
         !base.is_empty() && base == target
     }
+}
+
+fn is_context_memory_error(message: &str) -> bool {
+    message.starts_with("variable store would exceed the ")
+        && message.ends_with("-byte aggregate budget")
 }
 
 /// Snapshot-and-restore guard for the state one navigation attempt may mutate.

@@ -1648,7 +1648,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### T0-30 Native WSP form POST baseline
 
-1. `Status`: `todo`
+1. `Status`: `done`
 2. `Depends On`: `T0-27`, `T0-28`, `T0-29`
 3. `Owner`: `transport-rust`, `browser`, `docs`
 4. `Files`:
@@ -2944,12 +2944,12 @@ Reference:
 
 4. `Build`:
 
-- Implement policy-consistent handling for deck access-control metadata, low-memory behavior toggles, and unknown-DTD handling strategy.
-- Keep enforcement at host boundary where required by architecture constraints.
+- Enforce access and task/context-memory semantics in native Rust while keeping safe presentation and bounded request history in the browser host.
+- Ignore unknown alternate-DTD wrappers/attributes while retaining recognized nested content.
 
 5. `Tests`:
 
-- Policy fixtures and integration tests for allow/deny paths and deterministic error/reporting behavior.
+- Source-derived fixtures plus native/WASM/Tauri/browser tests for allow/deny, bounded LRU/context reset, unknown DTD, atomic task failure, and non-leaking host copy.
 
 6. `Accept`:
 
@@ -2958,6 +2958,14 @@ Reference:
 7. `Spec`:
 
 - `WML-14`, `WML-15`, `WML-16`, `WML-17`
+
+8. `Evidence`:
+
+- `engine-wasm/engine/tests/fixtures/wml-306/`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306`
+- `pnpm --dir browser/frontend test -- src/app/browser-presenter.test.ts src/app/navigation-state.load.test.ts src/session-history.test.ts`
+- `pnpm test:story WML-306`
+- `node scripts/wap-context-pack.mjs WML-306`
 
 ### R0-08 WML encoder/validation tooling and WBXML conformance fixtures
 

@@ -14,9 +14,7 @@ function option(name) {
 const wmlTextPath = option('--wml-text');
 const sin105TextPath = option('--sin-105-text');
 const recordedOn = option('--recorded-on');
-const outputPath =
-  option('--output') ??
-  'spec-processing/source-manifests/wap-1.2.1-wml-scr.json';
+const outputPath = option('--output') ?? 'spec-processing/source-manifests/wap-1.2.1-wml-scr.json';
 
 if (!wmlTextPath || !sin105TextPath || !recordedOn) {
   console.error(
@@ -29,43 +27,28 @@ if (!wmlTextPath || !sin105TextPath || !recordedOn) {
 }
 
 const release = JSON.parse(
-  fs.readFileSync(
-    'spec-processing/source-manifests/wap-1.2.1-release.json',
-    'utf8'
-  )
+  fs.readFileSync('spec-processing/source-manifests/wap-1.2.1-release.json', 'utf8')
 );
 const effectiveSpec = JSON.parse(
-  fs.readFileSync(
-    'spec-processing/source-manifests/wap-1.2.1-effective-spec.json',
-    'utf8'
-  )
+  fs.readFileSync('spec-processing/source-manifests/wap-1.2.1-effective-spec.json', 'utf8')
 );
 const classConformance = JSON.parse(
-  fs.readFileSync(
-    'spec-processing/source-manifests/wap-1.2.1-class-conformance.json',
-    'utf8'
-  )
+  fs.readFileSync('spec-processing/source-manifests/wap-1.2.1-class-conformance.json', 'utf8')
 );
 
 if (
   classConformance.selectedTarget?.identifier !== 'CCR-CLASSC-C-001' ||
   !classConformance.selectedTarget?.requirementExpressions?.includes('WML:MCF')
 ) {
-  throw new Error(
-    'WAP-215 class ledger must select CCR-CLASSC-C-001 with WML:MCF'
-  );
+  throw new Error('WAP-215 class ledger must select CCR-CLASSC-C-001 with WML:MCF');
 }
 
-const wmlFamily = effectiveSpec.families.find(
-  (family) => family.family === 'wml'
-);
+const wmlFamily = effectiveSpec.families.find((family) => family.family === 'wml');
 if (!wmlFamily) {
   throw new Error('Effective-spec graph does not contain the WML family');
 }
 
-const sourceById = new Map(
-  wmlFamily.documents.map((document) => [document.documentId, document])
-);
+const sourceById = new Map(wmlFamily.documents.map((document) => [document.documentId, document]));
 const requiredSourceIds = ['WAP-191_104-WML', 'WAP-191_105-WML'];
 for (const sourceId of requiredSourceIds) {
   if (!sourceById.has(sourceId)) {
@@ -85,17 +68,22 @@ const rowPattern =
   /^\s*(WML-[CS]-\d{2})\s+(.+?)\s+(\d+(?:\.\d+)*)\s+([MO])(?:\s+(WML-[CS]-\d{2}))?\s*$/gm;
 function extractRows(text) {
   const plainRows = [...text.matchAll(rowPattern)].map((match) => ({
-      id: match[1],
-      feature: match[2].replace(/\s+/g, ' ').trim(),
-      referencedSection: match[3],
-      status: match[4],
-      dependency: match[5] ?? null
-    }));
+    id: match[1],
+    feature: match[2].replace(/\s+/g, ' ').trim(),
+    referencedSection: match[3],
+    status: match[4],
+    dependency: match[5] ?? null
+  }));
   const markdownRows = text
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter((line) => /^\|\s*WML-[CS]-\d{2}\s*\|/.test(line))
-    .map((line) => line.split('|').slice(1, -1).map((value) => value.trim()))
+    .map((line) =>
+      line
+        .split('|')
+        .slice(1, -1)
+        .map((value) => value.trim())
+    )
     .map(([id, feature, referencedSection, status, dependency]) => {
       const combined = /^(\d+(?:\.\d+)*)\s+([MO])$/.exec(referencedSection);
       return combined && !status
@@ -115,8 +103,9 @@ function extractRows(text) {
       status,
       dependency: /^WML-[CS]-\d{2}$/.test(dependency) ? dependency : null
     }));
-  const rows = [...plainRows, ...markdownRows]
-    .sort((left, right) => numberOf(left) - numberOf(right));
+  const rows = [...plainRows, ...markdownRows].sort(
+    (left, right) => numberOf(left) - numberOf(right)
+  );
   return [...new Map(rows.map((row) => [row.id, row])).values()];
 }
 
@@ -130,14 +119,10 @@ const extracted105Rows = extractRows(sin105Text.slice(sin105Start)).filter(
 );
 
 if (extracted104Rows.length !== 75) {
-  throw new Error(
-    `Expected 75 section 15 rows from WAP-191_104, found ${extracted104Rows.length}`
-  );
+  throw new Error(`Expected 75 section 15 rows from WAP-191_104, found ${extracted104Rows.length}`);
 }
 if (extracted105Rows.length !== 1) {
-  throw new Error(
-    `Expected one WML-C-76 row from WAP-191_105, found ${extracted105Rows.length}`
-  );
+  throw new Error(`Expected one WML-C-76 row from WAP-191_105, found ${extracted105Rows.length}`);
 }
 
 const featureOverrides = new Map(
@@ -152,15 +137,13 @@ const featureOverrides = new Map(
     'WML-S-65': 'Variable references must match the production rule var',
     'WML-S-66':
       'Two or more do elements with the same name must not be present in a single card or in the template element',
-    'WML-S-67':
-      'A meta element must not contain more than one attribute of name and http-equiv',
+    'WML-S-67': 'A meta element must not contain more than one attribute of name and http-equiv',
     'WML-S-68': 'The number of columns in a table must not be set to zero',
     'WML-S-69': 'Event bindings must not conflict',
     'WML-C-70': 'Variable references must match the production rule var',
     'WML-C-71':
       'Two or more do elements with the same name must not be present in a single card or in the template element',
-    'WML-C-72':
-      'A meta element must not contain more than one attribute of name and http-equiv',
+    'WML-C-72': 'A meta element must not contain more than one attribute of name and http-equiv',
     'WML-C-73': 'The number of columns in a table must not be set to zero',
     'WML-C-74': 'Event bindings must not conflict'
   })
@@ -209,8 +192,7 @@ function classCDisposition(actor, specificationStatus) {
 }
 
 const renderIds = new Set([
-  22, 23, 24, 27, 31, 32, 36, 44, 45, 46, 49, 50, 51, 54, 55, 56, 57,
-  58, 59, 75
+  22, 23, 24, 27, 31, 32, 36, 44, 45, 46, 49, 50, 51, 54, 55, 56, 57, 58, 59, 75
 ]);
 const navigationIds = new Set([7, 8, 9, 18, 19, 20, 26, 29, 35, 37, 38, 39, 42, 52]);
 const parserIds = new Set([21, 25, 28, 30, 33, 34, 40, 41, 43, 47, 48, 53, 76]);
@@ -239,8 +221,7 @@ const mandatoryImplementationAudit = new Map(
   Object.entries({
     'WML-C-05': {
       status: 'partial',
-      note:
-        'The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.',
+      note: 'The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.',
       implementationEvidence: [
         codeEvidence('transport-rust/src/responses.rs', 'decode_textual_wml_payload')
       ],
@@ -253,13 +234,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-06': {
       status: 'partial',
-      note:
-        'Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.',
+      note: 'Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/xml.rs',
-          'decode_general_entity'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'decode_general_entity')
       ],
       testEvidence: [
         engineTest(
@@ -270,8 +247,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-07': {
       status: 'partial',
-      note:
-        'Card history push/pop and deterministic empty-history behavior exist; full WML request identity and context semantics remain broader than the engine stack.',
+      note: 'Card history push/pop and deterministic empty-history behavior exist; full WML request identity and context semantics remain broader than the engine stack.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
@@ -287,13 +263,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-08': {
       status: 'implemented',
-      note:
-        'The shared deck runtime resolves ordered card and template do/onevent bindings by effective identity, applies card precedence, and removes noop bindings without task side effects.',
+      note: 'The shared deck runtime resolves ordered card and template do/onevent bindings by effective identity, applies card precedence, and removes noop bindings without task side effects.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/deck.rs',
-          'active_event_bindings'
-        ),
+        codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'active_event_bindings'),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'active_onevent_action_internal'
@@ -312,13 +284,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-09': {
       status: 'partial',
-      note:
-        'Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.',
+      note: 'Card/template onenterforward, onenterbackward, and ontimer bindings execute with cross-syntax precedence, but the broader intrinsic-event model remains incomplete.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
-          'push_onevent_binding'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'push_onevent_binding')
       ],
       testEvidence: [
         engineTest(
@@ -329,11 +297,8 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-10': {
       status: 'partial',
-      note:
-        'The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.',
-      implementationEvidence: [
-        codeEvidence('engine-wasm/engine/src/lib.rs', 'WmlEngine')
-      ],
+      note: 'The engine holds variables, navigation history, and runtime state together, but the complete browser-context lifecycle is not modeled.',
+      implementationEvidence: [codeEvidence('engine-wasm/engine/src/lib.rs', 'WmlEngine')],
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/engine_tests/traces_public_api.rs',
@@ -343,15 +308,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-11': {
       status: 'missing',
-      note:
-        'The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.',
+      note: 'The WML card newcontext attribute is not parsed or applied during go traversal; WMLScript newContext support is not a substitute.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-12': {
       status: 'partial',
-      note:
-        'Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.',
+      note: 'Runtime variables exist, and active input/select edits commit before card task execution. General PCDATA, vdata, HREF, conversion, escaping, and undefined-value substitution remain incomplete.',
       implementationEvidence: [
         codeEvidence('engine-wasm/engine/src/engine_public_api.rs', 'set_var'),
         codeEvidence(
@@ -372,21 +335,20 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-13': {
       status: 'missing',
-      note:
-        'Independent user navigation does not establish a separately modeled WML browser context.',
+      note: 'Independent user navigation does not establish a separately modeled WML browser context.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-14': {
-      status: 'partial',
-      note:
-        'Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.',
+      status: 'implemented',
+      note: 'Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.',
       implementationEvidence: [
         codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'allows_referring_uri'),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'wml_go_request_policy'
-        )
+        ),
+        codeEvidence('transport-rust/src/request_serialization.rs', 'smallest_usable_referer')
       ],
       testEvidence: [
         engineTest(
@@ -396,26 +358,52 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
           'wml_304_post_intent_carries_request_attributes_without_constructing_multipart'
-        )
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_306_policy.rs',
+          'wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable'
+        ),
+        {
+          path: 'transport-rust/src/request_serialization/tests.rs',
+          test: 'mapped_fixture_is_byte_exact_and_rejects_invalid_combinations',
+          command:
+            'cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations'
+        }
+      ]
+    },
+    'WML-C-15': {
+      status: 'implemented',
+      note: 'The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'execute_card_task_action'
+        ),
+        codeEvidence('browser/frontend/src/session-history.ts', 'HOST_HISTORY_ENTRY_CAPACITY'),
+        codeEvidence('browser/frontend/src/app/browser-presenter.ts', 'announceRuntimeFailure')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_306_policy.rs',
+          'wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically'
+        ),
+        {
+          path: 'browser/frontend/src/session-history.test.ts',
+          test: 'implements the WML-306 optional low-memory history policy as bounded LRU',
+          command: 'pnpm --dir browser/frontend test -- src/session-history.test.ts'
+        }
       ]
     },
     'WML-C-16': {
       status: 'implemented',
-      note:
-        'Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.',
+      note: 'Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/validation.rs',
           'validate_wml13_document'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/xml.rs',
-          'start_to_element'
-        ),
-        codeEvidence(
-          'browser/frontend/src/app/navigation-state.ts',
-          'loadTransportUrl'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'start_to_element'),
+        codeEvidence('browser/frontend/src/app/navigation-state.ts', 'loadTransportUrl')
       ],
       testEvidence: [
         engineTest(
@@ -430,17 +418,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-17': {
       status: 'partial',
-      note:
-        'Canonical WML 1.3 and alternate external DTD identities are classified without fetching a DTD; alternate-DTD unknown wrappers and attributes are ignored while recognized child content is retained. Strict prologue-presence enforcement, internal subsets, and full DTD validation remain open.',
+      note: 'Canonical WML 1.3 and alternate external DTD identities are classified without fetching a DTD; alternate-DTD unknown wrappers and attributes are ignored while recognized child content is retained. Strict prologue-presence enforcement, internal subsets, and full DTD validation remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
           'map_inline_nodes_recursive'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/xml.rs',
-          'classify_wml_doctype'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'classify_wml_doctype')
       ],
       testEvidence: [
         engineTest(
@@ -457,8 +441,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-18': {
       status: 'partial',
-      note:
-        'Covered go/prev/noop/refresh and rollback paths are ordered deterministically, but setvar, access, newcontext, fetched-deck, and complete fragment-fallback steps remain open.',
+      note: 'Covered go/prev/noop/refresh and rollback paths are ordered deterministically, but setvar, access, newcontext, fetched-deck, and complete fragment-fallback steps remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
@@ -474,8 +457,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-19': {
       status: 'partial',
-      note:
-        'The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.',
+      note: 'The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -491,28 +473,17 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-20': {
       status: 'missing',
-      note:
-        'The anchor element and its nested task/setvar model are not represented.',
+      note: 'The anchor element and its nested task/setvar model are not represented.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-21': {
-      status: 'partial',
-      note:
-        'The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.',
+      status: 'implemented',
+      note: 'The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/head.rs',
-          'parse_access'
-        ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/deck.rs',
-          'allows_referring_uri'
-        ),
-        codeEvidence(
-          'browser/frontend/src/app/navigation-state.ts',
-          'loadTransportUrl'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/head.rs', 'parse_access'),
+        codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'allows_referring_uri'),
+        codeEvidence('browser/frontend/src/app/navigation-state.ts', 'loadTransportUrl')
       ],
       testEvidence: [
         engineTest(
@@ -522,26 +493,23 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_202_residual.rs',
           'wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_306_policy.rs',
+          'wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable'
         )
       ]
     },
     'WML-C-24': {
       status: 'implemented',
-      note:
-        'Card-level br emits a break (Node::Break), and inline br (nested with text/links/inputs/selects in the same paragraph) now emits a dedicated InlineNode::Break honored by the layout engine as a direct line advance, rather than collapsing to an ordinary whitespace text segment. The prior inline path was a silent no-op, not merely a downgraded break: `wrap_text` returns zero chunks for an all-whitespace segment, so the break neither rendered nor advanced the line.',
+      note: 'Card-level br emits a break (Node::Break), and inline br (nested with text/links/inputs/selects in the same paragraph) now emits a dedicated InlineNode::Break honored by the layout engine as a direct line advance, rather than collapsing to an ordinary whitespace text segment. The prior inline path was a silent no-op, not merely a downgraded break: `wrap_text` returns zero chunks for an all-whitespace segment, so the break neither rendered nor advanced the line.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
-          'map_card_level_nodes'
-        ),
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/nodes.rs', 'map_card_level_nodes'),
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
           'map_inline_nodes_recursive'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/layout/flow_layout.rs',
-          'layout_card'
-        )
+        codeEvidence('engine-wasm/engine/src/layout/flow_layout.rs', 'layout_card')
       ],
       testEvidence: [
         engineTest(
@@ -560,17 +528,10 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-25': {
       status: 'implemented',
-      note:
-        'Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.',
+      note: 'Card collection, event/timer/content ordering, source presentation order, language, newcontext, ordered attributes, fragment anchors, and source-required table boundaries are directly fixture-backed across the completed WML-202/WML-203 baseline and additive WML-301 closure.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/mod.rs',
-          'parse_wml'
-        ),
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
-          'TableBoundaryPlan'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/mod.rs', 'parse_wml'),
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/nodes.rs', 'TableBoundaryPlan')
       ],
       testEvidence: [
         engineTest(
@@ -589,13 +550,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-26': {
       status: 'partial',
-      note:
-        'Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.',
+      note: 'Named do bindings retain type/name/label/optional/language metadata and execute with deterministic card/template precedence; dynamic visibility, labelling, and unique user-interface presentation remain incomplete under WBP-06.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
-          'push_do_binding'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'push_do_binding')
       ],
       testEvidence: [
         engineTest(
@@ -606,17 +563,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-29': {
       status: 'partial',
-      note:
-        'The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.',
+      note: 'The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'wml_go_request_policy'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
-          'parse_go_request_xml'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'parse_go_request_xml')
       ],
       testEvidence: [
         engineTest(
@@ -631,13 +584,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-30': {
       status: 'implemented',
-      note:
-        'The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.',
+      note: 'The parser enforces a single ordered deck-level head with one or more recognized access/meta children and retains both child models as deck-wide state. Unknown markup remains forward-compatible under WML-C-17 and does not satisfy the recognized head content model.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/head.rs',
-          'parse_deck_head'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/head.rs', 'parse_deck_head')
       ],
       testEvidence: [
         engineTest(
@@ -652,28 +601,20 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-32': {
       status: 'missing',
-      note:
-        'The img element has no parser/runtime/render representation.',
+      note: 'The img element has no parser/runtime/render representation.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-33': {
       status: 'partial',
-      note:
-        'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics remain assigned to additive WML-308 and keep this parent row partial.',
+      note: 'Input now has deterministic DTD-derived syntax validation, Basic Latin format-mask and emptyok enforcement at commit, maxlength enforcement, and name/value initialization interleaved with select controls in document order. Control-scoped vdata references validate and evaluate with exact CDATA, literal-dollar, undefined-variable, case-sensitive-name, and conversion semantics; invalid masks fall back to *M; invalid existing/default values follow unset/fallback rules; rejected commits preserve the prior variable and active draft for retry. The selected WML-204 tranche is complete; language-aware non-Basic-Latin mask repertoires and broader title/accesskey presentation semantics remain assigned to additive WML-308 and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
           'parse_input_inline_node'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/input_mask.rs',
-          'InputMask'
-        ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/variable.rs',
-          'SubstitutionContext'
-        ),
+        codeEvidence('engine-wasm/engine/src/runtime/input_mask.rs', 'InputMask'),
+        codeEvidence('engine-wasm/engine/src/runtime/variable.rs', 'SubstitutionContext'),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal.rs',
           'commit_focused_input_edit_internal'
@@ -744,8 +685,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-35': {
       status: 'implemented',
-      note:
-        'Noop is parsed as an inactive task binding and produces no navigation, state mutation, task activation, or task trace.',
+      note: 'Noop is parsed as an inactive task binding and produces no navigation, state mutation, task activation, or task trace.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
@@ -761,13 +701,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-36': {
       status: 'partial',
-      note:
-        'Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.',
+      note: 'Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
-          'map_card_level_nodes'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/nodes.rs', 'map_card_level_nodes')
       ],
       testEvidence: [
         engineTest(
@@ -778,8 +714,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-37': {
       status: 'partial',
-      note:
-        'Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.',
+      note: 'Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
@@ -799,8 +734,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-38': {
       status: 'partial',
-      note:
-        'Prev pops card history and executes backward-entry behavior; originating setvar and full fetched-resource identity semantics are absent.',
+      note: 'Prev pops card history and executes backward-entry behavior; originating setvar and full fetched-resource identity semantics are absent.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
@@ -816,13 +750,9 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-39': {
       status: 'partial',
-      note:
-        'Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.',
+      note: 'Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, and execute with immediate-parent scope and shadowing; timer lifecycle completion remains assigned to WML-305.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
-          'push_onevent_binding'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'push_onevent_binding')
       ],
       testEvidence: [
         engineTest(
@@ -833,17 +763,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-41': {
       status: 'partial',
-      note:
-        'Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.',
+      note: 'Option content and allowed attributes receive deterministic DTD-derived syntax validation; exact text labels, absent and explicit empty values, evaluated vdata value references, onpick HREF conversion/dispatch, and immediately scoped onevent task forms are represented. The selected WML-204 and WML-303 tranches are complete; option title/xml:lang presentation remains assigned to additive WML-308 and keeps this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
           'parse_select_inline_node'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/variable.rs',
-          'SubstitutionContext'
-        )
+        codeEvidence('engine-wasm/engine/src/runtime/variable.rs', 'SubstitutionContext')
       ],
       testEvidence: [
         engineTest(
@@ -878,8 +804,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-42': {
       status: 'partial',
-      note:
-        'Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.',
+      note: 'Refresh retains the current card/history and resumes timers, but setvar/substitution and full redisplay semantics remain incomplete.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
@@ -895,8 +820,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-43': {
       status: 'partial',
-      note:
-        'Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial.',
+      note: 'Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -906,18 +830,9 @@ const mandatoryImplementationAudit = new Map(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'execute_card_task_action'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/engine_runtime_internal.rs',
-          'initial_select_indices'
-        ),
-        codeEvidence(
-          'engine-wasm/engine/src/engine_runtime_internal.rs',
-          'sync_select_variables'
-        ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/variable.rs',
-          'SubstitutionContext'
-        )
+        codeEvidence('engine-wasm/engine/src/engine_runtime_internal.rs', 'initial_select_indices'),
+        codeEvidence('engine-wasm/engine/src/engine_runtime_internal.rs', 'sync_select_variables'),
+        codeEvidence('engine-wasm/engine/src/runtime/variable.rs', 'SubstitutionContext')
       ],
       testEvidence: [
         engineTest(
@@ -960,17 +875,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-46': {
       status: 'partial',
-      note:
-        'WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.',
+      note: 'WML-203 enforces table/tr/td structure and WML-301 now applies card-edge table line breaks. Exact column count, short-row padding, long-row aggregation, alignment designators, and non-zero gutter layout remain planned, so the parent stays partial.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/validation.rs',
           'validate_content_model'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
-          'TableBoundaryPlan'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/nodes.rs', 'TableBoundaryPlan')
       ],
       testEvidence: [
         engineTest(
@@ -985,17 +896,13 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-47': {
       status: 'implemented',
-      note:
-        'The parser retains one deck-level template with ordered do/onevent bindings and card-event attributes; the shared runtime applies those bindings to every card unless shadowed.',
+      note: 'The parser retains one deck-level template with ordered do/onevent bindings and card-event attributes; the shared runtime applies those bindings to every card unless shadowed.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
           'parse_template_bindings'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/runtime/deck.rs',
-          'active_event_bindings'
-        )
+        codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'active_event_bindings')
       ],
       testEvidence: [
         engineTest(
@@ -1010,25 +917,15 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-48': {
       status: 'implemented',
-      note:
-        'WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.',
+      note: 'WML-305 closes the native timer lifecycle: one timer per card, variable-precedence initialization, tenths units, invalid and zero disabling, entry start, exit persistence and stop, refresh stop-update-resume, start-before-display ordering, one-to-zero ontimer dispatch, rollback, and exact target-neutral host wakeups.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/actions.rs',
-          'parse_timer_xml'
-        ),
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'parse_timer_xml'),
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/timers.rs',
           'advance_time_ms_internal'
         ),
-        codeEvidence(
-          'engine-wasm/engine/src/engine_public_api.rs',
-          'next_timer_wakeup_ms'
-        ),
-        codeEvidence(
-          'browser/frontend/src/app/engine-timer-runtime.ts',
-          'scheduleNextWakeup'
-        )
+        codeEvidence('engine-wasm/engine/src/engine_public_api.rs', 'next_timer_wakeup_ms'),
+        codeEvidence('browser/frontend/src/app/engine-timer-runtime.ts', 'scheduleNextWakeup')
       ],
       testEvidence: [
         engineTest(
@@ -1053,34 +950,27 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-49': {
       status: 'missing',
-      note:
-        'Table cell structure and significant empty-cell behavior are not represented.',
+      note: 'Table cell structure and significant empty-cell behavior are not represented.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-50': {
       status: 'missing',
-      note:
-        'Table row structure and significant empty-row behavior are not represented.',
+      note: 'Table row structure and significant empty-row behavior are not represented.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-52': {
       status: 'missing',
-      note:
-        'Markup setvar children of go/prev/refresh are not parsed or applied; WMLScript setVar is a separate feature.',
+      note: 'Markup setvar children of go/prev/refresh are not parsed or applied; WMLScript setVar is a separate feature.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-C-53': {
       status: 'implemented',
-      note:
-        'The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.',
+      note: 'The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, and retains all recognized deck-level information. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.',
       implementationEvidence: [
-        codeEvidence(
-          'engine-wasm/engine/src/parser/wml_parser/mod.rs',
-          'parse_wml'
-        )
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/mod.rs', 'parse_wml')
       ],
       testEvidence: [
         engineTest(
@@ -1091,76 +981,300 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-54': {
       status: 'missing',
-      note:
-        'Image alt content has no parser or renderer path because img is not represented.',
+      note: 'Image alt content has no parser or renderer path because img is not represented.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-60': {
       status: 'missing',
-      note:
-        'The project invokes an external WBXML decoder but does not implement the WML encoder/token table required by this actor.',
+      note: 'The project invokes an external WBXML decoder but does not implement the WML encoder/token table required by this actor.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-61': {
       status: 'missing',
-      note:
-        'No WML encoder/tokenizer path performs the actor-specific XML well-formedness gate.',
+      note: 'No WML encoder/tokenizer path performs the actor-specific XML well-formedness gate.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-64': {
       status: 'missing',
-      note:
-        'No server-document authoring validator restricts variable references to vdata attribute values.',
+      note: 'No server-document authoring validator restricts variable references to vdata attribute values.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-65': {
       status: 'missing',
-      note:
-        'No server-document validator enforces the complete var production.',
+      note: 'No server-document validator enforces the complete var production.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-66': {
       status: 'missing',
-      note:
-        'No server-document validator rejects duplicate effective do names in a card or template.',
+      note: 'No server-document validator rejects duplicate effective do names in a card or template.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-67': {
       status: 'missing',
-      note:
-        'No server-document validator enforces mutual exclusion of meta name and http-equiv.',
+      note: 'No server-document validator enforces mutual exclusion of meta name and http-equiv.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-68': {
       status: 'missing',
-      note:
-        'No server-document validator rejects table columns equal to zero.',
+      note: 'No server-document validator rejects table columns equal to zero.',
       implementationEvidence: [],
       testEvidence: []
     },
     'WML-S-69': {
       status: 'missing',
-      note:
-        'No server-document validator rejects conflicting event bindings.',
+      note: 'No server-document validator rejects conflicting event bindings.',
       implementationEvidence: [],
       testEvidence: []
     }
   })
 );
 
+// Preserve completed parent assessments from earlier compliance slices when
+// this generator is rerun for a later slice. These rows are immutable program
+// evidence; WML-306 may add evidence to its own parents but must not reopen
+// WML-301/302/303/304/305 closure.
+const completedParentAudits = new Map([
+  [
+    'WML-C-07',
+    {
+      status: 'implemented',
+      note: 'WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 replays the original typed POST values through the transport boundary when Back must refetch a prior deck.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'navigate_back_internal'
+        ),
+        codeEvidence('browser/frontend/src/session-history.ts', 'cloneRequestPolicy'),
+        codeEvidence('browser/frontend/src/app/navigation-state.ts', 'navigateBackWithFallback')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'navigate_back_restores_previous_card'
+        ),
+        {
+          path: 'browser/frontend/src/app/navigation-state.history.test.ts',
+          test: 'replays typed POST values when history back must refetch the prior deck',
+          command:
+            'pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts'
+        }
+      ]
+    }
+  ],
+  [
+    'WML-C-09',
+    {
+      status: 'implemented',
+      note: 'Card/template onenterforward, onenterbackward, ontimer, and option onpick bindings have direct action, control, and timer evidence across every nested intrinsic-event clause.',
+      implementationEvidence: [
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'push_onevent_binding')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'navigate_runs_onenterforward_action'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-10',
+    {
+      status: 'implemented',
+      note: 'WML-301 keeps variables, request-shaped navigation history, and runtime session state in one observable browser-context scope across native and WASM adapters.',
+      implementationEvidence: [codeEvidence('engine-wasm/engine/src/lib.rs', 'WmlEngine')],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/traces_public_api.rs',
+          'm1_02_load_deck_context_public_api_sets_metadata_and_state'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-11',
+    {
+      status: 'implemented',
+      note: 'The parser retains the card newcontext flag with its false default. Go traversal into a newcontext card clears variables and navigation history and resets implementation-private entry state atomically; direct host navigation does not apply the flag.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'reset_browser_context_for_newcontext'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_202_residual.rs',
+          'wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-12',
+    {
+      status: 'implemented',
+      note: 'WML-302 and WML-204 directly cover variable definition, substitution locations, conversions, escaping, validation, snapshots, and control commit ordering across every nested clause.',
+      implementationEvidence: [
+        codeEvidence('engine-wasm/engine/src/engine_public_api.rs', 'set_var'),
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'execute_card_task_action'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/navigation_metadata.rs',
+          'focused_input_edit_commit_updates_render_and_runtime_var'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'wml_fx_variable_commit_before_task_commits_active_input_before_accept'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-13',
+    {
+      status: 'implemented',
+      note: 'WML-301 establishes a new observable browser context for independent navigation and elects the permitted old-context termination behavior.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_public_api.rs',
+          'load_deck_context_for_navigation'
+        )
+      ],
+      testEvidence: [
+        {
+          path: 'browser/frontend/src/app/navigation-state.load.test.ts',
+          test: 'clears prior host history when the engine establishes a new browser context',
+          command: 'pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts'
+        }
+      ]
+    }
+  ],
+  [
+    'WML-C-18',
+    {
+      status: 'implemented',
+      note: 'WML-202/301/302/303/305 jointly provide direct evidence for access, newcontext, variables, go/prev/refresh ordering, fetched-deck fragment selection, timers, and rollback across every nested inter-card clause.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'execute_card_task_action'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'fixture_accept_go_trace_order_is_deterministic'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-38',
+    {
+      status: 'implemented',
+      note: 'Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'CardTaskAction::Prev'
+        ),
+        codeEvidence('browser/frontend/src/app/navigation-state.ts', 'navigateBackWithFallback')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'enter_accept_prev_action_navigates_back_when_history_exists'
+        ),
+        {
+          path: 'browser/frontend/src/app/navigation-state.history.test.ts',
+          test: 'replays typed POST values when history back must refetch the prior deck',
+          command:
+            'pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts'
+        }
+      ]
+    }
+  ],
+  [
+    'WML-C-39',
+    {
+      status: 'implemented',
+      note: 'Card/template intrinsic and option onpick onevent bindings parse, reject same-scope conflicts, execute with immediate-parent scope and shadowing, and include completed timer lifecycle evidence.',
+      implementationEvidence: [
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'push_onevent_binding')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
+          'wml_303_option_onevent_onpick_executes_in_immediate_option_scope'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-42',
+    {
+      status: 'implemented',
+      note: 'Refresh assignments, variable snapshots, redisplay, timer restart, and named-timer resume have direct WML-302/303/305 evidence across every nested clause.',
+      implementationEvidence: [
+        codeEvidence(
+          'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
+          'CardTaskAction::Refresh'
+        )
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/actions_timers.rs',
+          'enter_accept_refresh_action_keeps_current_card_and_history'
+        )
+      ]
+    }
+  ],
+  [
+    'WML-C-53',
+    {
+      status: 'implemented',
+      note: 'The parser requires a wml root, enforces one ordered head, one ordered template, and one or more cards, retains all recognized deck-level information, and exposes root xml:lang for card language inheritance. Unknown markup remains forward-compatible under WML-C-17 and does not alter recognized ordering.',
+      implementationEvidence: [
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/mod.rs', 'parse_wml'),
+        codeEvidence('engine-wasm/engine/src/runtime/deck.rs', 'card_language')
+      ],
+      testEvidence: [
+        engineTest(
+          'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+          'wml_202_rejects_invalid_wml_root_structure_deterministically'
+        ),
+        {
+          path: 'engine-wasm/engine/src/engine_tests/wml_202_residual.rs',
+          test: 'wml_202_root_language_and_card_language_are_exposed_with_inheritance',
+          command:
+            'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_root_language_and_card_language_are_exposed_with_inheritance'
+        }
+      ]
+    }
+  ]
+]);
+for (const [id, audit] of completedParentAudits) {
+  mandatoryImplementationAudit.set(id, audit);
+}
+
 function unique(values) {
   return [...new Set(values)];
 }
 
 function implementationAuditFor(row) {
-  if (row.status === 'O') {
+  if (row.status === 'O' && row.id !== 'WML-C-15') {
     return {
       implementationStatus: 'not-assessed',
       assessmentNote:
@@ -1180,10 +1294,7 @@ function implementationAuditFor(row) {
     assessmentNote: audit.note,
     implementationEvidence: audit.implementationEvidence,
     testEvidence: audit.testEvidence,
-    evidenceState:
-      audit.testEvidence.length > 0
-        ? 'direct-test-linked'
-        : 'gap-work-item-mapped'
+    evidenceState: audit.testEvidence.length > 0 ? 'direct-test-linked' : 'gap-work-item-mapped'
   };
 }
 
@@ -1202,9 +1313,7 @@ function mappingFor(row) {
     requirementIds.push('RQ-RMK-001', 'RQ-WAE-012');
   } else if (number <= 13) {
     implementationDomain =
-      number <= 9
-        ? 'navigation-and-event-runtime'
-        : 'context-and-variable-runtime';
+      number <= 9 ? 'navigation-and-event-runtime' : 'context-and-variable-runtime';
     ownerLayers = ['engine-wasm', 'browser'];
     workItems.push(number === 7 || number >= 10 ? 'R0-03' : 'R0-02');
     if (number === 7) requirementIds.push('RQ-RMK-003', 'RQ-WAE-016');
@@ -1233,9 +1342,7 @@ function mappingFor(row) {
     ownerLayers = ['engine-wasm', 'browser'];
     workItems.push('R0-02');
     if ([29, 37, 52].includes(number)) workItems.push('R0-06');
-    requirementIds.push(
-      [19, 20].includes(number) ? 'RQ-RMK-006' : 'RQ-RMK-002'
-    );
+    requirementIds.push([19, 20].includes(number) ? 'RQ-RMK-006' : 'RQ-RMK-002');
     if ([9, 39].includes(number)) requirementIds.push('RQ-RMK-004');
   } else if (parserIds.has(number)) {
     implementationDomain = 'deck-parser-and-form-runtime';
@@ -1266,6 +1373,12 @@ function mappingFor(row) {
 
   if ([8, 47].includes(number)) {
     workItems.push('R0-12');
+  }
+  if ([11, 21, 25, 53].includes(number)) {
+    workItems.push('C5-03');
+  }
+  if (number === 21) {
+    ownerLayers.push('browser');
   }
   if (number === 17) {
     workItems.push('WML-203');
@@ -1303,8 +1416,7 @@ const rows = [...extracted104Rows, ...extracted105Rows]
       ordinal: number,
       actor,
       feature: featureOverrides.get(row.id) ?? row.feature,
-      referencedSection:
-        referencedSectionOverrides.get(row.id) ?? row.referencedSection,
+      referencedSection: referencedSectionOverrides.get(row.id) ?? row.referencedSection,
       specificationStatus,
       dependencyExpression: row.dependency
         ? { type: 'all-of', scrIds: [row.dependency] }
@@ -1316,9 +1428,7 @@ const rows = [...extracted104Rows, ...extracted105Rows]
       },
       disposition: {
         strict:
-          row.status === 'M'
-            ? 'required-for-claimed-actor'
-            : 'declare-implemented-or-deferred',
+          row.status === 'M' ? 'required-for-claimed-actor' : 'declare-implemented-or-deferred',
         classCProfile: classCDisposition(actor, specificationStatus),
         enhancementMayReplaceStrictBehavior: false
       },
@@ -1380,33 +1490,23 @@ const ledger = {
       sha256: classConformance.authority.sha256,
       selectedIdentifier: classConformance.selectedTarget.identifier,
       selectedRequirement: 'WML:MCF',
-      ledger:
-        'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'
+      ledger: 'spec-processing/source-manifests/wap-1.2.1-class-conformance.json'
     },
     interpretation:
       'WAP-191_104 supplies the effective 75-row WML 1.3 SCR; WAP-191_105 section 3.3 adds WML-C-76. WAP-215 CCR-CLASSC-C-001 selects WML:MCF for the client, making the 39 mandatory WML user-agent rows required. Optional client rows remain declared capabilities, and encoder/server rows are outside this client profile.'
   },
   summary: {
     itemCount: rows.length,
-    mandatoryCount: rows.filter(
-      (row) => row.specificationStatus === 'mandatory'
-    ).length,
-    optionalCount: rows.filter(
-      (row) => row.specificationStatus === 'optional'
-    ).length,
+    mandatoryCount: rows.filter((row) => row.specificationStatus === 'mandatory').length,
+    optionalCount: rows.filter((row) => row.specificationStatus === 'optional').length,
     selectedClassCRequiredCount: rows.filter(
-      (row) =>
-        row.disposition.classCProfile === 'required-by-class-c-client-mcf'
+      (row) => row.disposition.classCProfile === 'required-by-class-c-client-mcf'
     ).length,
     selectedClassCOptionalCount: rows.filter(
-      (row) =>
-        row.disposition.classCProfile ===
-        'optional-not-required-by-class-c-client'
+      (row) => row.disposition.classCProfile === 'optional-not-required-by-class-c-client'
     ).length,
     selectedClassCNotApplicableCount: rows.filter(
-      (row) =>
-        row.disposition.classCProfile ===
-        'not-applicable-to-class-c-client'
+      (row) => row.disposition.classCProfile === 'not-applicable-to-class-c-client'
     ).length,
     byActor: countsBy('actor'),
     byImplementationDomain: Object.fromEntries(
@@ -1418,9 +1518,7 @@ const ledger = {
         }, {})
       ).sort()
     ),
-    testEvidenceLinkedCount: rows.filter(
-      (row) => row.mapping.testEvidence.length > 0
-    ).length,
+    testEvidenceLinkedCount: rows.filter((row) => row.mapping.testEvidence.length > 0).length,
     mandatoryImplementationStatus: Object.fromEntries(
       Object.entries(
         rows

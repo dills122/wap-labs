@@ -1,0 +1,34 @@
+<!--
+label: WML 1.3 Access and Failure Policy
+work-items: WML-306
+spec-items: WML-C-14,WML-C-16,WML-C-17,WML-C-21
+description: Exercises alternate-DTD recovery and a failed task that must remain atomic while the host presents bounded error copy.
+goal: Verify recognized content remains usable and a missing fragment cannot partially mutate or navigate the invoking card.
+testing-ac:
+- Load the example and confirm the recognized text nested in the vendor wrapper remains visible.
+- Activate Failure policy and confirm the failure-policy card becomes active.
+- Press Select again and confirm the card remains active while the host reports only the safe task-failure message.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 POLICY//EN"
+  "http://vendor.test/wml13-policy.dtd">
+<wml>
+  <card id="home">
+    <p>
+      Before vendor policy.
+      <vendor:policy mode="constrained">
+        Recognized content remains available.
+        <a href="#failure">Failure policy</a>
+      </vendor:policy>
+      After vendor policy.
+    </p>
+  </card>
+  <card id="failure">
+    <do type="accept">
+      <go href="#missing">
+        <setvar name="PrivateState" value="must-roll-back"/>
+      </go>
+    </do>
+    <p>Failed actions keep this card active.</p>
+  </card>
+</wml>

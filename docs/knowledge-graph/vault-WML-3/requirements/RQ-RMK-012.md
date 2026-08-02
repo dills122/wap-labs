@@ -15,6 +15,8 @@ tags:
 
 ## Relationships
 
+- `maps-to` ← [[clauses/WML-CL-ERROR-ENFORCEMENT|WML-CL-ERROR-ENFORCEMENT]]
+- `maps-to` ← [[clauses/WML-CL-ERROR-NO-INTENT-INFERENCE|WML-CL-ERROR-NO-INTENT-INFERENCE]]
 - `maps-to` ← [[clauses/WML-CL-TASK-FAILURE-ATOMICITY|WML-CL-TASK-FAILURE-ATOMICITY]]
 
 ## Data

@@ -19,7 +19,6 @@ tags:
 - `belongs-to` ← [[scr-rows/WAESpec-C-016|WAESpec-C-016]]
 - `belongs-to` ← [[scr-rows/WAESpec-C-017|WAESpec-C-017]]
 - `covers-family` ← [[work-items/WML-301|WML-301]]
-- `covers-family` ← [[work-items/WML-306|WML-306]]
 - `covers-family` ← [[work-items/WML-308|WML-308]]
 - `effective-document` → [[source-documents/WAP-190_101-WAESpec|WAP-190_101-WAESpec]]
 - `effective-document` → [[source-documents/WAP-190_102-WAESpec|WAP-190_102-WAESpec]]

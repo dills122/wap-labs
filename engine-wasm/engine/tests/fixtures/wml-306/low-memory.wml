@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="start"><p><a href="#pressure">Pressure</a></p></card>
+  <card id="pressure">
+    <do type="accept"><refresh><setvar name="Added" value="ok"/></refresh></do>
+    <p>Pressure card</p>
+  </card>
+</wml>

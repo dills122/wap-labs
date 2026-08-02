@@ -219,11 +219,15 @@ Legend:
   - `WAP-191_104` sections 11.4 and 12.1
   - SCR: `WML-C-14`
 - AC:
-  - Evidence: [ ] Link source-derived allow/deny fixtures and host-policy
-    integration tests.
-  - [ ] Domain and path comparisons use the strict WML rules.
-  - [ ] Denied access cannot mutate card, history, variable, or render state.
-  - [ ] Referrer disclosure follows the deck access policy.
+  - Evidence: [x] Source-derived fixtures in
+    `engine-wasm/engine/tests/fixtures/wml-306/`, detailed access comparison tests in
+    `engine-wasm/engine/src/engine_tests/wml_202_residual.rs`, atomic policy tests in
+    `engine-wasm/engine/src/engine_tests/wml_306_policy.rs`, and safe host projection in
+    `browser/frontend/src/app/navigation-state.load.test.ts`.
+  - [x] Domain and path comparisons use the strict WML component/default/case rules.
+  - [x] Denied access cannot mutate card, history, variable, or render state.
+  - [x] Referrer disclosure follows the deck access policy and uses the smallest usable relative
+    URI at the transport request boundary.
 
 ### RQ-RMK-012 User-agent error handling
 
@@ -251,6 +255,12 @@ Legend:
   - [x] Fetch and access-control task failures notify at the host boundary while preserving the
     invoking card, context, pending external intent/task data, focus/event state, committed
     session metadata, and history; the production-WASM story covers both paths.
+  - [x] WML-306 retries variable-store exhaustion after history reclamation, then resets to the
+    documented empty browser context and retries once; the host clears request history on the
+    epoch change and maps only stable failure codes to bounded user-visible copy.
+  - [x] Alternate-DTD unknown wrappers/attributes are ignored without dropping recognized nested
+    content; broader strict prologue/internal-subset/full-DTD validation remains tracked under
+    WML-C-17 and is not inferred complete by WML-306.
 
 ## Notes
 

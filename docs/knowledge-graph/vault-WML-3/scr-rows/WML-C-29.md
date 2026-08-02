@@ -17,7 +17,9 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `planned-by` → [[work-items/WML-304|WML-304]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` ← [[clauses/WML-CL-GO-ACCEPT-CHARSET|WML-CL-GO-ACCEPT-CHARSET]]
+- `refines` ← [[clauses/WML-CL-GO-ACCESS-BEFORE-TRANSITION|WML-CL-GO-ACCESS-BEFORE-TRANSITION]]
 - `refines` ← [[clauses/WML-CL-GO-ASSIGNMENT-ORDER|WML-CL-GO-ASSIGNMENT-ORDER]]
 - `refines` ← [[clauses/WML-CL-GO-ENCTYPE-SUPPORT|WML-CL-GO-ENCTYPE-SUPPORT]]
 - `refines` ← [[clauses/WML-CL-GO-ENTRY-EVENT-PRECEDENCE|WML-CL-GO-ENTRY-EVENT-PRECEDENCE]]
@@ -98,13 +100,15 @@ tags:
     "RQ-RMK-002"
   ],
   "matrixWorkItems": [
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "workItems": [
     "R0-01",
     "R0-02",
     "R0-06",
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

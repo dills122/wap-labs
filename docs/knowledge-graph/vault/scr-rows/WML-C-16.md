@@ -67,12 +67,12 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
       "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+      "command": "cd engine-wasm/engine && cargo test wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
     },
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
       "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
+      "command": "cd engine-wasm/engine && cargo test wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
     }
   ],
   "ownerLayers": [

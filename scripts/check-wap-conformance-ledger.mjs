@@ -297,6 +297,7 @@ for (const obligation of obligations) {
   }
   if (
     obligation.specificationStatus === 'optional' &&
+    obligation.id !== 'WML-C-15' &&
     obligation.mapping?.implementationStatus !== 'not-assessed'
   ) {
     failures.push(
@@ -430,7 +431,7 @@ if (
 }
 if (
   JSON.stringify(sortedMandatoryStatusCounts) !==
-  JSON.stringify({ implemented: 19, missing: 14, partial: 14 })
+  JSON.stringify({ implemented: 21, missing: 14, partial: 12 })
 ) {
   failures.push(
     `mandatory implementation audit drift: ${JSON.stringify(sortedMandatoryStatusCounts)}`
@@ -678,7 +679,7 @@ if (aggregateRowCount !== 712 || aggregateSelectedCount !== 198) {
 }
 if (
   JSON.stringify(aggregateStatusCounts) !==
-  JSON.stringify({ implemented: 43, partial: 76, missing: 79 })
+  JSON.stringify({ implemented: 45, partial: 74, missing: 79 })
 ) {
   aggregateFailures.push(
     `selected-profile status aggregate drift: ${JSON.stringify(aggregateStatusCounts)}`
