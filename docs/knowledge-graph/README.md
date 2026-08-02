@@ -101,8 +101,9 @@ work:
 - `docs/knowledge-graph/context-packs/WMLS-5.md`.
 
 Its focused `WMLS-501` target exposes the canonical bytecode/interpreter clause mappings and
-selected SCR parents while preserving the work item's in-progress state. Decoder evidence does
-not imply closure of deferred execution, standard-library-index, or stack-dataflow families.
+selected SCR parents while preserving the work item's completed state. Its focused `WMLS-502`
+target bounds language operator, conversion, call, local, return, and control-flow execution
+without absorbing URL/access, standard-library behavior, or the unfinished error matrix.
 
 ## Commands
 
@@ -132,7 +133,7 @@ node scripts/wap-context-pack.mjs WML-203
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
 through `WML-306`, `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
-`WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, and `WMLS-501`. A work-item target keeps sprint dependencies and conformance
+`WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, `WMLS-501`, and `WMLS-502`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice
 starts, so graph expansion is explicit and reviewable.
