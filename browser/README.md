@@ -82,8 +82,8 @@ Implemented now:
 
 Not implemented yet:
 
-- Remaining F2 unified softkey/input work plus the F3/F4 internal split and legacy-path removal;
-  deterministic engine-owned scrolling is complete
+- Remaining F3/F4 internal split and legacy-path removal; deterministic engine-owned scrolling and
+  primary keyboard/control-button routing through the unified typed input path are complete
 - Phase-aware recovery and safe session persistence (`WBP-11..12`); true navigation cancellation
   is already implemented
 - Production packaging/signing/notarization
@@ -225,8 +225,8 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
    concurrency hardening; do not reopen completed tickets.
 2. Preserve completed WBP-06/F0 frame, input, drift, and WML-309 evidence. Keep `EngineDebug*`
    separate and retain the legacy render/key compatibility paths until the declared cutover gate.
-3. Preserve the completed issue `#450` history correction and F2-02 scrolling, then continue F2-03
-   unified softkey/input routing on the frame-bound hit-region foundation.
+3. Preserve the completed issue `#450` history correction, F2-02 scrolling, and F2-03 unified input
+   routing on the frame-bound hit-region foundation, then continue the F3/F4 migration.
 4. Sequence `WBP-11` recovery presentation and `APP-SHELL-01` Library/Preferences around their
    shared presenter and shell ownership.
 5. Keep the remaining `M1-09` (`F2-F4` frame migration) dependency-gated and `M1-03` as a

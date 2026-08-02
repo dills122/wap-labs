@@ -146,7 +146,9 @@ const createHostClient = () => {
     engineRenderFrame: vi.fn(async () => frame({ activeCardId: 'render-home' })),
     engineHandleKey: vi.fn(async () => snapshot({ activeCardId: 'key-home' })),
     engineHandleKeyFrame: vi.fn(async () => frame({ activeCardId: 'key-home' })),
-    engineHandleInputFrame: vi.fn(async () => frame({ activeCardId: 'click-home' })),
+    engineHandleInputFrame: vi.fn(async ({ event }: { event: { type: string } }) =>
+      frame({ activeCardId: event.type === 'key' ? 'key-home' : 'click-home' })
+    ),
     engineNavigateToCard: vi.fn(async () => snapshot({ activeCardId: 'card-home' })),
     engineNavigateToCardFrame: vi.fn(async () => frame({ activeCardId: 'card-home' })),
     engineNavigateBack: vi.fn(async () => snapshot({ activeCardId: 'back-home' })),
@@ -260,7 +262,7 @@ describe('BrowserController behavior coverage', () => {
     const committedSession = presenter.getSessionState();
     const committedSnapshot = presenter.getSnapshot();
     const committedViewport = refs.viewportEl.innerHTML;
-    vi.mocked(hostClient.engineHandleKeyFrame).mockRejectedValueOnce(
+    vi.mocked(hostClient.engineHandleInputFrame).mockRejectedValueOnce(
       new Error('Card id not found')
     );
 
@@ -388,7 +390,7 @@ describe('BrowserController behavior coverage', () => {
     );
   });
 
-  it('renders directly from the local engine-key frame without a fallback render call', async () => {
+  it('routes keyboard and control buttons through the unified typed input frame path', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
     const hostClient = createHostClient();
@@ -396,14 +398,24 @@ describe('BrowserController behavior coverage', () => {
 
     await controller.init('<wml><card id="seed"/></wml>');
     vi.mocked(hostClient.engineHandleKeyFrame).mockClear();
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
     vi.mocked(hostClient.engineRenderFrame).mockClear();
 
     document.querySelector<HTMLButtonElement>('#btn-up')?.click();
     await flushAsyncWork();
 
-    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
-    // applyEngineKey renders using the frame the key handler already
-    // returned; it must not fall back to a redundant engineRenderFrame call.
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true }));
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenNthCalledWith(1, {
+      event: { type: 'key', key: 'up' }
+    });
+    expect(hostClient.engineHandleInputFrame).toHaveBeenNthCalledWith(2, {
+      event: { type: 'key', key: 'down' }
+    });
+    expect(hostClient.engineHandleKeyFrame).not.toHaveBeenCalled();
+    // Typed input returns the committed frame directly; neither source falls
+    // back to a redundant engineRenderFrame call.
     expect(hostClient.engineRenderFrame).not.toHaveBeenCalled();
     expect(presenter.getSessionState()).toMatchObject({ activeCardId: 'key-home' });
   });
@@ -656,7 +668,7 @@ describe('BrowserController behavior coverage', () => {
       }
       return frame({ activeCardId: 'invoking-card', focusedLinkIndex: 2, baseUrl: invokingUrl });
     });
-    vi.mocked(hostClient.engineHandleKeyFrame).mockResolvedValue(frame(invokingSnapshot));
+    vi.mocked(hostClient.engineHandleInputFrame).mockResolvedValue(frame(invokingSnapshot));
     vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockImplementation(async () =>
       frame({
         activeCardId: timerIntent ? 'invoking-card' : 'recovered-card',
@@ -773,7 +785,7 @@ describe('BrowserController behavior coverage', () => {
     await flushAsyncWork();
 
     let resolveKey: ((value: ReturnType<typeof frame>) => void) | undefined;
-    vi.mocked(hostClient.engineHandleKeyFrame).mockImplementationOnce(
+    vi.mocked(hostClient.engineHandleInputFrame).mockImplementationOnce(
       () =>
         new Promise((resolve) => {
           resolveKey = resolve;
@@ -785,7 +797,9 @@ describe('BrowserController behavior coverage', () => {
     );
     const pendingKey = controllerPrivates(controller).applyEngineKey('up');
     await Promise.resolve();
-    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: { type: 'key', key: 'up' }
+    });
 
     await controllerPrivates(controller).setRunMode('local', { loadLocalOnEnter: false });
     const activeCardBeforeCompletion = presenter.getSessionState().activeCardId;
@@ -819,7 +833,7 @@ describe('BrowserController behavior coverage', () => {
     await flushAsyncWork();
 
     let rejectKey: ((reason: Error) => void) | undefined;
-    vi.mocked(hostClient.engineHandleKeyFrame).mockImplementationOnce(
+    vi.mocked(hostClient.engineHandleInputFrame).mockImplementationOnce(
       () =>
         new Promise((_resolve, reject) => {
           rejectKey = reject;
@@ -827,7 +841,9 @@ describe('BrowserController behavior coverage', () => {
     );
     const pendingKey = controllerPrivates(controller).applyEngineKey('enter');
     await Promise.resolve();
-    expect(hostClient.engineHandleKeyFrame).toHaveBeenCalledTimes(1);
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: { type: 'key', key: 'enter' }
+    });
 
     await controllerPrivates(controller).setRunMode('local', { loadLocalOnEnter: false });
     const committedSession = presenter.getSessionState();
@@ -897,7 +913,7 @@ describe('BrowserController behavior coverage', () => {
 
     vi.mocked(hostClient.fetchDeck).mockClear();
     vi.mocked(hostClient.engineNavigateBackFrame).mockClear();
-    vi.mocked(hostClient.engineHandleKeyFrame).mockResolvedValueOnce(
+    vi.mocked(hostClient.engineHandleInputFrame).mockResolvedValueOnce(
       frame(
         {
           activeCardId: 'login',

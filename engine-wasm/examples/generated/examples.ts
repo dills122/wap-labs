@@ -918,7 +918,8 @@ export const EXAMPLES: HostExample[] = [
     "goal": "Verify fragment transitions mutate active card while external links only emit host intent.",
     "workItems": [
       "A2-01",
-      "A2-02"
+      "A2-02",
+      "F2-03"
     ],
     "specItems": [
       "WML-R-006",
@@ -937,7 +938,8 @@ export const EXAMPLES: HostExample[] = [
         "target": "host-sample",
         "workItems": [
           "A2-01",
-          "A2-02"
+          "A2-02",
+          "F2-03"
         ],
         "specItems": [
           "WML-R-006",
@@ -1021,7 +1023,8 @@ export const EXAMPLES: HostExample[] = [
         },
         "workItems": [
           "A2-01",
-          "A2-02"
+          "A2-02",
+          "F2-03"
         ],
         "specItems": [
           "WML-R-006",
