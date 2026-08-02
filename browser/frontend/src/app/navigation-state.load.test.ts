@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createNavigationStateMachine } from './navigation-state';
+import { createNavigationStateMachine, type NavigationFailureContext } from './navigation-state';
 import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-state.test-helpers';
 
 describe('navigation-state load behavior', () => {
@@ -29,6 +29,7 @@ describe('navigation-state load behavior', () => {
 
   it('transitions to error on transport failure and emits network unavailable hook', async () => {
     let networkUnavailable = 0;
+    const failures: NavigationFailureContext[] = [];
     const host = createHostClientMock({
       fetchDeck: async () =>
         fetchOk({
@@ -43,7 +44,8 @@ describe('navigation-state load behavior', () => {
     const machine = createNavigationStateMachine(host, 'http://seed.test', {
       onNetworkUnavailable: () => {
         networkUnavailable += 1;
-      }
+      },
+      onNavigationError: (_message, _kind, context) => failures.push(context)
     });
 
     const result = await machine.loadTransportUrl({
@@ -56,6 +58,49 @@ describe('navigation-state load behavior', () => {
     expect(machine.getSessionState().navigationStatus).toBe('error');
     expect(machine.getSessionState().lastError).toBe('offline');
     expect(networkUnavailable).toBe(1);
+    expect(failures).toEqual([
+      {
+        layer: 'connection',
+        category: 'TRANSPORT_UNAVAILABLE',
+        requestId: 'waves-navigation-1-1',
+        requestedUrl: 'http://example.test/start.wml'
+      }
+    ]);
+  });
+
+  it('turns a rejected host transport command into a correlated recovery failure', async () => {
+    const failures: NavigationFailureContext[] = [];
+    const hostFailure = Object.assign(new Error('host fetch task unavailable'), {
+      code: 'HOST_FAILURE'
+    });
+    const machine = createNavigationStateMachine(
+      createHostClientMock({ fetchDeck: async () => Promise.reject(hostFailure) }),
+      'http://seed.test',
+      {
+        onNavigationError: (_message, _kind, context) => failures.push(context)
+      }
+    );
+
+    await expect(
+      machine.loadTransportUrl({
+        url: 'http://example.test/start.wml',
+        source: 'user',
+        followExternalIntent: false
+      })
+    ).resolves.toBeNull();
+
+    expect(machine.getSessionState()).toMatchObject({
+      navigationStatus: 'error',
+      lastError: 'host fetch task unavailable'
+    });
+    expect(failures).toEqual([
+      {
+        layer: 'connection',
+        category: 'HOST_FAILURE',
+        requestId: 'waves-navigation-1-1',
+        requestedUrl: 'http://example.test/start.wml'
+      }
+    ]);
   });
 
   it('keeps the committed deck session and history atomic when a later fetch fails', async () => {
@@ -116,6 +161,14 @@ describe('navigation-state load behavior', () => {
     expect(machine.getHistoryState().entries).toHaveLength(1);
     expect(machine.getHistoryState().entries[0]?.url).toBe('http://example.test/stable.wml');
     expect(navigationErrors).toEqual(['destination unavailable']);
+
+    machine.recoverToCommittedState();
+    expect(machine.getSessionState()).toMatchObject({
+      navigationStatus: 'loaded',
+      finalUrl: 'http://example.test/stable.wml',
+      activeCardId: 'stable'
+    });
+    expect(machine.getSessionState().lastError).toBeUndefined();
   });
 
   it('fires onNavigationError for transport failures, alongside onNetworkUnavailable', async () => {

@@ -87,6 +87,17 @@ export class BrowserController {
   private localBackAvailable = false;
   private pendingLocalTimerFrame: { generation: number; frame: EngineFrame } | undefined;
   private committedFrame: EngineFrame | undefined;
+  private networkNavigationCancellable = false;
+  private lastFailedNavigation:
+    | {
+        url: string;
+        source: HostNavigationSource;
+        followExternalIntent: boolean;
+        pushHistory: boolean;
+        requestPolicy?: FetchRequestPolicy;
+        headers?: Record<string, string>;
+      }
+    | undefined;
 
   constructor(hostClient: TauriHostClient, presenter: BrowserPresenter, refs: BrowserShellRefs) {
     this.hostClient = hostClient;
@@ -121,8 +132,9 @@ export class BrowserController {
             false
           );
         },
-        onNavigationError: (message, kind) => {
+        onNavigationError: (message, kind, context) => {
           this.lastNavigationErrorKind = kind;
+          this.presenter.showNavigationFailure(message, context, this.presenter.hasRenderedDeck());
           this.presenter.showToast(
             kind === 'parse'
               ? WAVES_COPY.status.deckParseFailed(message)
@@ -132,6 +144,9 @@ export class BrowserController {
             false
           );
         },
+        onNavigationPhase: (context) => this.presenter.showNavigationPhase(context),
+        onNavigationCancellableChange: (cancellable) =>
+          this.updateNavigationCancellable(cancellable),
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);
           if (action === 'engine-load-deck-context') {
@@ -278,6 +293,10 @@ export class BrowserController {
         fetchUrlEnter: this.handleFetchUrlClick,
         reload: this.handleReloadClick,
         stopNavigation: this.handleStopNavigationClick,
+        retryNavigation: this.handleRetryNavigationClick,
+        changeNavigationRoute: this.handleChangeNavigationRouteClick,
+        showNavigationDetails: this.handleShowNavigationDetailsClick,
+        returnFromNavigationError: this.handleReturnFromNavigationErrorClick,
         changeMode: this.handleChangeModeClick,
         selectLocalExample: this.handleSelectLocalExampleClick,
         loadLocalExample: this.handleLoadLocalExampleClick,
@@ -415,6 +434,10 @@ export class BrowserController {
   };
 
   private readonly handleFetchUrlClick = async (): Promise<void> => {
+    if (this.networkNavigationCancellable) {
+      await this.handleStopNavigationClick();
+      return;
+    }
     if (this.runMode === 'local') {
       await this.loadSelectedLocalDeck();
       return;
@@ -473,7 +496,47 @@ export class BrowserController {
     if (cancellation) {
       await cancellation;
     }
+    this.presenter.clearNavigationPresentation();
+    this.presenter.setStatus(WAVES_COPY.status.navigationStopped);
     this.updateBackButtonAvailability();
+  };
+
+  private readonly handleRetryNavigationClick = async (): Promise<void> => {
+    const failed = this.lastFailedNavigation;
+    if (!failed) {
+      if (this.navigation.getSessionState().navigationSource === 'history-back') {
+        this.presenter.clearNavigationPresentation();
+        await this.navigateBackWithFallback();
+      }
+      return;
+    }
+    this.presenter.clearNavigationPresentation();
+    await this.loadTransportUrl(
+      failed.url,
+      failed.source,
+      failed.followExternalIntent,
+      failed.pushHistory,
+      failed.requestPolicy,
+      failed.headers
+    );
+  };
+
+  private readonly handleChangeNavigationRouteClick = async (): Promise<void> => {
+    this.refs.fetchUrlInput.disabled = false;
+    this.refs.fetchUrlInput.focus();
+    this.refs.fetchUrlInput.select();
+    this.presenter.setStatus(WAVES_COPY.navigation.chooseAnotherRoute);
+  };
+
+  private readonly handleShowNavigationDetailsClick = async (): Promise<void> => {
+    document.querySelector<HTMLButtonElement>('#btn-inspector')?.click();
+  };
+
+  private readonly handleReturnFromNavigationErrorClick = async (): Promise<void> => {
+    this.navigation.recoverToCommittedState();
+    this.presenter.clearNavigationPresentation();
+    this.presenter.setStatus(WAVES_COPY.navigation.returnedToDeck);
+    this.refs.viewportEl.focus();
   };
 
   private readonly handleChangeModeClick = async (): Promise<void> => {
@@ -620,6 +683,20 @@ export class BrowserController {
         ? this.localBackAvailable
         : canHistoryBack(this.navigation.getHistoryState());
     this.shellEventBindings.setBackButtonAvailable(available);
+  }
+
+  private updateNavigationCancellable(cancellable: boolean): void {
+    this.networkNavigationCancellable = cancellable;
+    const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
+    if (!fetchButton) {
+      return;
+    }
+    fetchButton.textContent = cancellable ? WAVES_COPY.shell.stop : WAVES_COPY.shell.go;
+    fetchButton.dataset.navigationAction = cancellable ? 'stop' : 'go';
+    fetchButton.setAttribute(
+      'aria-label',
+      cancellable ? WAVES_COPY.shell.stop : WAVES_COPY.shell.go
+    );
   }
 
   // See localBackAvailable above: a sequence advance means the engine's nav
@@ -1071,6 +1148,17 @@ export class BrowserController {
         this.lastNetworkUrl = requestedUrl;
       }
       if (state.navigationStatus === 'error') {
+        this.lastFailedNavigation = {
+          url: failedExternalIntent ?? requestedUrl,
+          source: failedExternalIntent ? 'external-intent' : source,
+          followExternalIntent,
+          pushHistory,
+          requestPolicy:
+            failedExternalIntent && currentSnapshot?.externalNavigationRequestPolicy
+              ? currentSnapshot.externalNavigationRequestPolicy
+              : requestPolicy,
+          headers
+        };
         const message = state.lastError ?? WAVES_COPY.errors.unknownTransportFailure;
         this.presenter.setStatus(
           this.lastNavigationErrorKind === 'parse'
@@ -1078,6 +1166,8 @@ export class BrowserController {
             : WAVES_COPY.status.fetchFailed(message)
         );
       } else if (state.navigationStatus === 'loaded' && state.finalUrl) {
+        this.lastFailedNavigation = undefined;
+        this.presenter.clearNavigationPresentation();
         this.presenter.setStatus(WAVES_COPY.status.fetchedAndLoadedDeck(state.finalUrl));
         if (source === 'user' || source === 'reload') {
           this.refs.viewportEl.focus();

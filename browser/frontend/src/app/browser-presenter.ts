@@ -31,6 +31,7 @@ import {
   projectSessionState,
   projectTransportResponse
 } from './diagnostic-projection';
+import type { NavigationFailureContext, NavigationPhaseContext } from './navigation-state';
 
 export type BootPhase = 'booting' | 'shell-ready' | 'engine-ready' | 'deck-ready';
 
@@ -228,6 +229,77 @@ export class BrowserPresenter {
 
   getStatus(): string {
     return this.statusText;
+  }
+
+  showNavigationPhase(context: NavigationPhaseContext): void {
+    const bar = this.refs.navigationPhaseBarEl;
+    if (!bar) {
+      return;
+    }
+    bar.hidden = false;
+    bar.dataset.navigationState = 'loading';
+    this.setPhaseBarText('#navigation-phase-label', WAVES_COPY.navigation.phase[context.phase]);
+    this.setPhaseBarText('#navigation-phase-detail', context.requestedUrl);
+    this.setPhaseBarText(
+      '#navigation-correlation-id',
+      WAVES_COPY.navigation.correlation(context.requestId)
+    );
+    const recovery = bar.querySelector<HTMLElement>('#navigation-recovery');
+    if (recovery) {
+      recovery.hidden = true;
+    }
+  }
+
+  showNavigationFailure(
+    message: string,
+    context: NavigationFailureContext,
+    canReturn: boolean
+  ): void {
+    const bar = this.refs.navigationPhaseBarEl;
+    if (!bar) {
+      return;
+    }
+    bar.hidden = false;
+    bar.dataset.navigationState = 'error';
+    this.setPhaseBarText('#navigation-phase-label', WAVES_COPY.navigation.failed);
+    this.setPhaseBarText('#navigation-phase-detail', '');
+    this.setPhaseBarText(
+      '#navigation-correlation-id',
+      WAVES_COPY.navigation.correlation(context.requestId)
+    );
+    this.setPhaseBarText(
+      '#navigation-error-title',
+      WAVES_COPY.navigation.failureTitle(context.layer, context.category)
+    );
+    this.setPhaseBarText('#navigation-error-message', message);
+    const recovery = bar.querySelector<HTMLElement>('#navigation-recovery');
+    if (recovery) {
+      recovery.hidden = false;
+    }
+    const returnButton = bar.querySelector<HTMLButtonElement>('#btn-navigation-return');
+    if (returnButton) {
+      returnButton.hidden = !canReturn;
+    }
+  }
+
+  clearNavigationPresentation(): void {
+    const bar = this.refs.navigationPhaseBarEl;
+    if (!bar) {
+      return;
+    }
+    bar.hidden = true;
+    bar.dataset.navigationState = 'idle';
+    const recovery = bar.querySelector<HTMLElement>('#navigation-recovery');
+    if (recovery) {
+      recovery.hidden = true;
+    }
+  }
+
+  private setPhaseBarText(selector: string, value: string): void {
+    const element = this.refs.navigationPhaseBarEl?.querySelector<HTMLElement>(selector);
+    if (element) {
+      element.textContent = value;
+    }
   }
 
   setBootPhase(phase: BootPhase): void {

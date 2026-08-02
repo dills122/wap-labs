@@ -55,6 +55,10 @@ Implemented now:
   - frontend user-facing strings route through `frontend/src/app/waves-copy.ts`
 - Transport-first URL navigation flow (`fetch_deck` -> `engine_load_deck_context` -> render)
 - Deterministic host session state model (`idle/loading/loaded/error`)
+- Phase-aware network lifecycle presentation (`Preparing`, `Connecting`, route-supported `Gateway`,
+  `Decode`, `Deck`, and `Card`) with correlation IDs and categorized recovery actions
+- Go/Stop reflects actual cancellability; failed navigation preserves the previous committed frame
+  and offers exact-request Retry, Change route, Details, and Return without engine-authored error UI
 - External intent follow loop (`externalNavigationIntent` -> host fetch/load cycle)
 - Generation-scoped navigation coordination prevents overlapping startup, timer, and user loads
   from committing stale engine, history, status, or persistence state
@@ -88,8 +92,7 @@ Not implemented yet:
 
 - Remaining F3/F4 internal split and legacy-path removal; deterministic engine-owned scrolling and
   primary keyboard/control-button routing through the unified typed input path are complete
-- Phase-aware recovery and safe session persistence (`WBP-11..12`); true navigation cancellation
-  is already implemented
+- Safe session persistence and crash recovery (`WBP-12`)
 - Production packaging/signing/notarization
 
 ## Direction

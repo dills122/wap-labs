@@ -28,6 +28,18 @@ const createRefs = (): BrowserShellRefs => {
   const localExampleDescriptionEl = document.createElement('p');
   const localExampleGoalEl = document.createElement('p');
   const localExampleTestingAcEl = document.createElement('ul');
+  const navigationPhaseBarEl = document.createElement('section');
+  navigationPhaseBarEl.hidden = true;
+  navigationPhaseBarEl.innerHTML = `
+    <strong id="navigation-phase-label"></strong>
+    <span id="navigation-phase-detail"></span>
+    <code id="navigation-correlation-id"></code>
+    <div id="navigation-recovery" hidden>
+      <strong id="navigation-error-title"></strong>
+      <span id="navigation-error-message"></span>
+      <button id="btn-navigation-return"></button>
+    </div>
+  `;
   const statusEl = {
     setStatus: () => {
       // no-op
@@ -57,7 +69,8 @@ const createRefs = (): BrowserShellRefs => {
     localExampleCoverageEl,
     localExampleDescriptionEl,
     localExampleGoalEl,
-    localExampleTestingAcEl
+    localExampleTestingAcEl,
+    navigationPhaseBarEl
   };
 };
 
@@ -86,6 +99,51 @@ describe('BrowserPresenter', () => {
     const presenter = new BrowserPresenter(createRefs(), initialSession, 20);
     presenter.setBootPhase('engine-ready');
     expect(document.body.getAttribute('data-boot-phase')).toBe('engine-ready');
+  });
+
+  it('projects phase and categorized recovery state without replacing viewport content', () => {
+    const refs = createRefs();
+    refs.viewportEl.textContent = 'last committed card';
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+
+    presenter.showNavigationPhase({
+      phase: 'connecting',
+      requestId: 'waves-navigation-2-1',
+      requestedUrl: 'wap://example.test/start.wml'
+    });
+
+    expect(refs.navigationPhaseBarEl?.hidden).toBe(false);
+    expect(refs.navigationPhaseBarEl?.dataset.navigationState).toBe('loading');
+    expect(refs.navigationPhaseBarEl?.querySelector('#navigation-phase-label')?.textContent).toBe(
+      'Connecting'
+    );
+    expect(refs.viewportEl.textContent).toBe('last committed card');
+
+    presenter.showNavigationFailure(
+      'gateway timed out',
+      {
+        layer: 'gateway',
+        category: 'GATEWAY_TIMEOUT',
+        requestId: 'waves-navigation-2-1',
+        requestedUrl: 'wap://example.test/start.wml'
+      },
+      true
+    );
+
+    expect(refs.navigationPhaseBarEl?.dataset.navigationState).toBe('error');
+    expect(refs.navigationPhaseBarEl?.querySelector('#navigation-error-title')?.textContent).toBe(
+      'gateway · GATEWAY_TIMEOUT'
+    );
+    expect(refs.navigationPhaseBarEl?.querySelector('#navigation-error-message')?.textContent).toBe(
+      'gateway timed out'
+    );
+    expect(
+      refs.navigationPhaseBarEl?.querySelector<HTMLButtonElement>('#btn-navigation-return')?.hidden
+    ).toBe(false);
+    expect(refs.viewportEl.textContent).toBe('last committed card');
+
+    presenter.clearNavigationPresentation();
+    expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
   });
 
   it('clears viewport skeleton after first render', () => {

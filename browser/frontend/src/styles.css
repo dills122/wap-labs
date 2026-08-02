@@ -1167,7 +1167,96 @@ pre {
 }
 
 .phase-bar-slot {
-  display: none;
+  flex: 0 0 auto;
+  padding: var(--space-xs) var(--space-md);
+  border-top: var(--rule-hair) solid var(--host-border);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.phase-bar-slot:not([hidden]) {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.phase-bar-summary,
+.phase-bar-recovery,
+.phase-bar-error-copy,
+.phase-bar-actions {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.phase-bar-summary {
+  overflow: hidden;
+}
+
+.phase-bar-summary > span,
+.phase-bar-summary > code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phase-bar-indicator {
+  width: 0.55rem;
+  height: 0.55rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--status-loading-indicator);
+}
+
+.phase-bar-slot[data-navigation-state='loading'] .phase-bar-indicator {
+  animation: phase-pulse 1.1s ease-in-out infinite alternate;
+}
+
+.phase-bar-slot[data-navigation-state='error'] .phase-bar-indicator {
+  background: var(--status-error-indicator);
+}
+
+.phase-bar-recovery {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: var(--space-xs);
+  border-top: var(--rule-hair) solid var(--host-border);
+}
+
+.phase-bar-error-copy {
+  flex: 1 1 20rem;
+  overflow: hidden;
+}
+
+.phase-bar-error-copy > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phase-bar-actions {
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+}
+
+.phase-bar-actions .btn {
+  min-height: 30px;
+  padding: var(--space-2xs) var(--space-sm);
+}
+
+#navigation-correlation-id {
+  margin-left: auto;
+  color: var(--host-muted);
+  font-size: var(--text-xs);
+}
+
+@keyframes phase-pulse {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1367,5 +1456,9 @@ pre {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .phase-bar-indicator {
+    animation: none !important;
   }
 }

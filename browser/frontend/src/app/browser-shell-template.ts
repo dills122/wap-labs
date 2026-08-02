@@ -6,6 +6,7 @@ import { WAVES_CONFIG } from './waves-config';
 import { bindDeveloperToolsWorkspace } from './developer-tools-workspace';
 import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
+import { navigationPhaseBarTemplate } from './shell/navigation-phase-bar-template';
 import { statusBarTemplate } from './shell/status-bar-template';
 import { utilityRailTemplate } from './shell/utility-rail-template';
 import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
@@ -24,7 +25,7 @@ const browserShellTemplate = () => `
 
     ${applicationSurfacesTemplate()}
 
-    <div class="phase-bar-slot" hidden aria-hidden="true"></div>
+    ${navigationPhaseBarTemplate()}
 
     ${statusBarTemplate()}
 
@@ -66,6 +67,7 @@ export interface BrowserShellRefs {
   localExampleDescriptionEl: HTMLParagraphElement;
   localExampleGoalEl: HTMLParagraphElement;
   localExampleTestingAcEl: HTMLUListElement;
+  navigationPhaseBarEl?: HTMLElement;
 }
 
 export const mountBrowserShell = (
@@ -107,6 +109,7 @@ export const mountBrowserShell = (
   const localExampleTestingAcEl = document.querySelector<HTMLUListElement>(
     '#local-example-testing-ac'
   );
+  const navigationPhaseBarEl = document.querySelector<HTMLElement>('#navigation-phase-bar');
 
   if (
     !wmlInput ||
@@ -258,6 +261,7 @@ export const mountBrowserShell = (
     localExampleCoverageEl,
     localExampleDescriptionEl,
     localExampleGoalEl,
-    localExampleTestingAcEl
+    localExampleTestingAcEl,
+    navigationPhaseBarEl: navigationPhaseBarEl ?? undefined
   };
 };
