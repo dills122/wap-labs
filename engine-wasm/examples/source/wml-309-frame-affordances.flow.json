@@ -16,7 +16,7 @@
       "initial": {
         "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
         "frame": {
-          "contractVersion": 2,
+          "contractVersion": 3,
           "profileId": "class-c-reference",
           "cardId": "home",
           "affordances": [
@@ -51,7 +51,7 @@
             "state": { "activeCardId": "second", "focusedLinkIndex": 0 },
             "traceKinds": ["ACTION_AFFORDANCE", "ACTION_FRAGMENT"],
             "frame": {
-              "contractVersion": 2,
+              "contractVersion": 3,
               "profileId": "class-c-reference",
               "cardId": "second",
               "affordances": [

@@ -43,7 +43,7 @@ export type ExternalNavigationRequestPolicySnapshot = { cacheControl?: ExternalN
 
 export type EngineRuntimeSnapshot = { activeCardId?: string, focusedLinkIndex: number, nextTimerWakeupMs?: number, focusedInputEditName?: string, focusedInputEditValue?: string, focusedSelectEditName?: string, focusedSelectEditValue?: string, baseUrl: string, contentType: string, browserContextEpoch?: number, historyPushSequence?: number, deckLanguage?: string, activeCardLanguage?: string, lastBackNavigationHandled: boolean, externalNavigationIntent?: string, externalNavigationRequestPolicy?: ExternalNavigationRequestPolicySnapshot, lastScriptExecutionOk?: boolean, lastScriptExecutionTrap?: string, lastScriptExecutionErrorClass?: string, lastScriptExecutionErrorCategory?: string, lastScriptRequiresRefresh?: boolean, lastScriptDialogRequests: Array<ScriptDialogRequestSnapshot>, lastScriptTimerRequests: Array<ScriptTimerRequestSnapshot>, };
 
-export type EngineViewport = { cols: number, };
+export type EngineViewport = { cols: number, rows: number, offsetRow: number, contentRows: number, };
 
 export type EngineViewportError = { "type": "invalid-viewport", requestedCols: string, minCols: number, maxCols: number, message: string, };
 
@@ -89,7 +89,7 @@ export type EnginePresentationFrame = { contractVersion: number, frameId: string
 
 export type EngineInputKey = "up" | "down" | "enter";
 
-export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, } | { "type": "click", frameId: string, x: number, y: number, };
+export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, } | { "type": "click", frameId: string, x: number, y: number, } | { "type": "scroll", frameId: string, deltaRows: number, };
 
 export type EngineFrame = { snapshot: EngineRuntimeSnapshot, render: RenderList, presentation: EnginePresentationFrame, };
 

@@ -123,6 +123,7 @@ impl WmlEngine {
             nav.engine.nav_stack.push(previous_idx);
         }
         nav.engine.active_card_idx = next_idx;
+        nav.engine.viewport_offset_row = 0;
         nav.engine.set_focused_link_idx_with_debug(0);
         nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         nav.engine.initialize_controls_on_active_card()?;
@@ -201,6 +202,7 @@ impl WmlEngine {
         nav.engine.cancel_active_input_edit_with_debug();
         nav.engine.active_select_edit = None;
         nav.engine.active_card_idx = back_target_idx;
+        nav.engine.viewport_offset_row = 0;
         nav.engine.set_focused_link_idx_with_debug(0);
         nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         if let Err(err) = nav.engine.apply_set_var_assignments(assignments) {
@@ -618,6 +620,7 @@ struct NavRollbackGuard<'a> {
 struct NavStateRollback {
     active_card_idx: usize,
     focused_link_idx: usize,
+    viewport_offset_row: usize,
     nav_stack: Vec<usize>,
     active_timer: Option<CardTimerState>,
     vars: HashMap<String, String>,
@@ -638,6 +641,7 @@ impl NavStateRollback {
         Self {
             active_card_idx: engine.active_card_idx,
             focused_link_idx: engine.focused_link_idx,
+            viewport_offset_row: engine.viewport_offset_row,
             nav_stack: engine.nav_stack.clone(),
             active_timer: engine.active_timer.clone(),
             vars: engine.vars.clone(),
@@ -657,6 +661,7 @@ impl NavStateRollback {
     fn restore(self, engine: &mut WmlEngine) {
         engine.active_card_idx = self.active_card_idx;
         engine.focused_link_idx = self.focused_link_idx;
+        engine.viewport_offset_row = self.viewport_offset_row;
         engine.nav_stack = self.nav_stack;
         engine.active_timer = self.active_timer;
         engine.vars = self.vars;

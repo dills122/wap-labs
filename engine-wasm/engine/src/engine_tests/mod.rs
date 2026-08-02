@@ -147,6 +147,7 @@ fn assert_trace_kinds_subsequence(engine: &WmlEngine, expected: &[&str]) {
 mod actions_timers;
 mod debug_recorder;
 mod f2_01_click;
+mod f2_02_scroll;
 mod navigation_metadata;
 mod panic_containment;
 mod render_limits;

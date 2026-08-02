@@ -121,6 +121,19 @@ async function applyAction(page, action, target) {
     );
     return;
   }
+  if (action.type === 'scroll') {
+    if (target !== 'host-sample') {
+      throw new Error('scroll is currently supported by the host-sample story target');
+    }
+    await page.evaluate((deltaRows) => {
+      const bridge = window.__WAVENAV_STORY_EVIDENCE__;
+      if (!bridge?.scroll) {
+        throw new Error('WaveNav story scroll bridge is unavailable');
+      }
+      bridge.scroll(deltaRows);
+    }, action.deltaRows);
+    return;
+  }
   if (action.type === 'key') {
     const selector =
       target === 'waves-browser'

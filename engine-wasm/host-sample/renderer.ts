@@ -116,6 +116,20 @@ export const canvasClickInput = (
   };
 };
 
+export const wheelScrollInput = (
+  frame: EnginePresentationFrame,
+  deltaY: number
+): Extract<EngineInputEvent, { type: 'scroll' }> | null => {
+  if (!Number.isFinite(deltaY) || deltaY === 0) {
+    return null;
+  }
+  return {
+    type: 'scroll',
+    frameId: frame.frameId,
+    deltaRows: deltaY > 0 ? 1 : -1
+  };
+};
+
 export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Promise<EngineHost> {
   await init();
 

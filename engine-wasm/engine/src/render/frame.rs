@@ -4,8 +4,9 @@ use serde::{Deserialize, Serialize};
 
 use super::render_list::RenderList;
 
-pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 2;
+pub const ENGINE_FRAME_CONTRACT_VERSION: u16 = 3;
 pub const ENGINE_FRAME_PROFILE_ID: &str = "class-c-reference";
+pub const ENGINE_VIEWPORT_ROWS: u32 = 20;
 pub const ENGINE_VIEWPORT_MIN_COLS: u32 = 1;
 pub const ENGINE_VIEWPORT_MAX_COLS: u32 = u32::MAX;
 pub const ENGINE_MAX_LAYOUT_ROWS: usize = 4_096;
@@ -297,6 +298,9 @@ impl EnginePresentationFrame {
 #[serde(rename_all = "camelCase")]
 pub struct EngineViewport {
     pub cols: u32,
+    pub rows: u32,
+    pub offset_row: u32,
+    pub content_rows: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -477,5 +481,11 @@ pub enum EngineInputEvent {
         frame_id: String,
         x: u32,
         y: u32,
+    },
+    Scroll {
+        #[serde(rename = "frameId")]
+        frame_id: String,
+        #[serde(rename = "deltaRows")]
+        delta_rows: i32,
     },
 }

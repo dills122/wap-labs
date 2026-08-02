@@ -87,6 +87,7 @@ pub use render::frame::{
     EngineViewport, EngineViewportError, ENGINE_FRAME_CONTRACT_VERSION, ENGINE_FRAME_PROFILE_ID,
     ENGINE_MAX_DRAW_COMMANDS, ENGINE_MAX_LAYOUT_ROWS, ENGINE_MAX_LAYOUT_SEGMENTS,
     ENGINE_MAX_SERIALIZED_RENDER_BYTES, ENGINE_VIEWPORT_MAX_COLS, ENGINE_VIEWPORT_MIN_COLS,
+    ENGINE_VIEWPORT_ROWS,
 };
 
 #[cfg(feature = "render-test-instrumentation")]
@@ -254,6 +255,7 @@ pub struct WmlEngine {
     external_nav_intent: Option<String>,
     external_nav_request_policy: Option<ScriptNavigationRequestPolicyLiteral>,
     viewport_cols: usize,
+    viewport_offset_row: usize,
     base_url: String,
     content_type: String,
     raw_bytes_base64: Option<String>,

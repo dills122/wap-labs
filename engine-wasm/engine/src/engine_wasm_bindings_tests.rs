@@ -980,6 +980,54 @@ fn wasm_f2_01_click_resolution_matches_native_for_the_same_frame_and_coordinate(
 }
 
 #[wasm_bindgen_test]
+fn wasm_f2_02_scroll_window_matches_native_for_the_same_event_trace() {
+    let paragraphs = (0..25)
+        .map(|index| format!("<p>Row {index:02}</p>"))
+        .collect::<String>();
+    let deck = format!(r#"<wml><card id="home">{paragraphs}</card></wml>"#);
+
+    let mut native = WmlEngine::new();
+    native.load_deck(&deck).expect("native deck should load");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_wasm(&deck).expect("WASM deck should load");
+
+    for delta_rows in [3, i32::MAX, -2] {
+        let native_frame = native.render_frame().expect("native frame should render");
+        let input = EngineInputEvent::Scroll {
+            frame_id: native_frame.frame_id,
+            delta_rows,
+        };
+        native
+            .handle_input(input.clone())
+            .expect("native scroll should dispatch");
+        wasm.handle_input_wasm(
+            serde_wasm_bindgen::to_value(&input).expect("scroll input should serialize"),
+        )
+        .expect("WASM scroll should dispatch");
+
+        let expected = native.render_frame().expect("native result frame");
+        let actual = wasm
+            .render_frame_wasm()
+            .expect("WASM result frame should serialize");
+        assert_eq!(
+            Reflect::get(&actual, &JsValue::from_str("frameId"))
+                .expect("frameId")
+                .as_string()
+                .as_deref(),
+            Some(expected.frame_id.as_str())
+        );
+        let viewport = Reflect::get(&actual, &JsValue::from_str("viewport"))
+            .expect("viewport should be present");
+        assert_eq!(
+            Reflect::get(&viewport, &JsValue::from_str("offsetRow"))
+                .expect("offsetRow")
+                .as_f64(),
+            Some(f64::from(expected.viewport.offset_row))
+        );
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_303_back_override_reports_handled_without_snapshot_change() {
     let mut engine = WmlEngine::wasm_new();
     engine

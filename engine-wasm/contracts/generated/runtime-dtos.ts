@@ -123,7 +123,7 @@ export interface EngineDebugConnector {
   closeDebugSession(request: EngineDebugCloseSessionRequest): Promise<EngineDebugCloseSessionOutcome>;
 }
 
-export type EngineViewport = { cols: number, };
+export type EngineViewport = { cols: number, rows: number, offsetRow: number, contentRows: number, };
 
 export type EngineViewportError = { "type": "invalid-viewport", requestedCols: string, minCols: number, maxCols: number, message: string, };
 
@@ -169,7 +169,7 @@ export type EnginePresentationFrame = { contractVersion: number, frameId: string
 
 export type EngineInputKey = "up" | "down" | "enter";
 
-export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, } | { "type": "click", frameId: string, x: number, y: number, };
+export type EngineInputEvent = { "type": "key", key: EngineInputKey, } | { "type": "activate-action", frameId: string, actionId: string, } | { "type": "click", frameId: string, x: number, y: number, } | { "type": "scroll", frameId: string, deltaRows: number, };
 
 export type DrawCmd = { "type": "text", x: number, y: number, text: string, } | { "type": "link", x: number, y: number, text: string, focused: boolean, href: string, };
 

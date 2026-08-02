@@ -1,6 +1,9 @@
 use super::*;
 use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderResource};
-use crate::{ENGINE_MAX_DRAW_COMMANDS, ENGINE_MAX_LAYOUT_ROWS, ENGINE_MAX_LAYOUT_SEGMENTS};
+use crate::{
+    ENGINE_MAX_DRAW_COMMANDS, ENGINE_MAX_LAYOUT_ROWS, ENGINE_MAX_LAYOUT_SEGMENTS,
+    ENGINE_VIEWPORT_ROWS,
+};
 
 fn deck_with_text_rows(count: usize) -> String {
     format!(
@@ -45,7 +48,14 @@ fn production_structural_limits_accept_exact_output_and_reject_one_more_row() {
     let output = exact
         .render_output()
         .expect("exact production output limits should render");
-    assert_eq!(output.presentation.rows.len(), ENGINE_MAX_LAYOUT_ROWS);
+    assert_eq!(
+        output.presentation.rows.len(),
+        ENGINE_VIEWPORT_ROWS as usize
+    );
+    assert_eq!(
+        output.presentation.viewport.content_rows,
+        ENGINE_MAX_LAYOUT_ROWS as u32
+    );
     assert_eq!(output.render.draw.len(), ENGINE_MAX_DRAW_COMMANDS);
     assert_eq!(
         output
@@ -54,7 +64,7 @@ fn production_structural_limits_accept_exact_output_and_reject_one_more_row() {
             .iter()
             .map(|row| row.segments.len())
             .sum::<usize>(),
-        ENGINE_MAX_LAYOUT_SEGMENTS
+        ENGINE_VIEWPORT_ROWS as usize
     );
 
     let one_over = loaded_engine(&deck_with_text_rows(ENGINE_MAX_LAYOUT_ROWS + 1));
