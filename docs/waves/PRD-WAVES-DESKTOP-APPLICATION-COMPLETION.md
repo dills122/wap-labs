@@ -817,6 +817,12 @@ Use the existing ticket and contract unchanged.
 
 #### APP-SHELL-01 Integrated Library and Preferences
 
+`Status`: done. The integrated shell uses the existing typed favorites, service-catalog,
+application-state, and command contracts. Bundled examples and safe Favorites are actionable;
+unpublished Services remain disabled with an explicit evidence explanation. Preferences affect
+host presentation and future launch choices only, and the full reset requires an explicit second
+confirmation while preserving the currently rendered deck.
+
 1. `Owner`: one browser shell integrator.
 2. `Depends On`: merged shell baseline, `APP-STATE-01`, `APP-PRIV-01`, `APP-FAV-01`, and `APP-CMD-01`.
 3. `Build`:

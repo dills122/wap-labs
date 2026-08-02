@@ -34,6 +34,11 @@ import {
 import { WAVES_CONFIG } from './waves-config';
 import { WAVES_COPY } from './waves-copy';
 import { canvasPointerToEngineCoordinates } from './canvas-viewport-renderer';
+import {
+  parseLocalExampleFavoriteTarget,
+  parseNetworkFavoriteTarget,
+  type FavoriteTarget
+} from './favorites/favorite-model';
 
 export type RunMode = 'local' | 'network';
 
@@ -311,6 +316,54 @@ export class BrowserController {
     this.presenter.setBootPhase('engine-ready');
     const selectedMode = this.refs.runModeSelectEl.value === 'network' ? 'network' : 'local';
     await this.setRunMode(selectedMode, { loadLocalOnEnter: true });
+  }
+
+  currentFavoriteTarget(): { title: string; target: FavoriteTarget } | undefined {
+    if (this.runMode === 'local') {
+      const example = findLocalDeckExample(this.activeLocalExampleKey);
+      const fragment = this.presenter.getSnapshot()?.activeCardId;
+      const target = parseLocalExampleFavoriteTarget(
+        this.activeLocalExampleKey,
+        fragment ? `#${fragment}` : undefined
+      );
+      return target.ok && example ? { title: example.label, target: target.value } : undefined;
+    }
+    const session = this.presenter.getSessionState();
+    const url = session.finalUrl ?? session.requestedUrl ?? this.refs.fetchUrlInput.value;
+    const target = parseNetworkFavoriteTarget(url);
+    return target.ok ? { title: target.value.url, target: target.value } : undefined;
+  }
+
+  async openFavoriteTarget(target: FavoriteTarget): Promise<void> {
+    if (target.kind === 'network') {
+      await this.setRunMode('network', { loadLocalOnEnter: false });
+      this.refs.fetchUrlInput.value = target.url;
+      await this.loadTransportUrl(
+        target.url,
+        'user',
+        true,
+        true,
+        undefined,
+        this.defaultNavigationHeaders()
+      );
+      return;
+    }
+
+    const example = findLocalDeckExample(target.exampleId);
+    if (!example) {
+      throw new Error(`Unknown local example key: ${target.exampleId}`);
+    }
+    this.activeLocalExampleKey = example.key;
+    this.refs.localExampleSelectEl.value = example.key;
+    await this.setRunMode('local', { loadLocalOnEnter: false });
+    await this.loadLocalDeck(example);
+    if (target.fragment) {
+      const frame = await this.hostClient.engineNavigateToCardFrame({
+        cardId: target.fragment.slice(1)
+      });
+      this.applyFrame(frame);
+      this.syncLocalSessionFromSnapshot(frame.snapshot);
+    }
   }
 
   dispose(): void {

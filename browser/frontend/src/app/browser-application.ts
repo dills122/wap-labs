@@ -19,6 +19,7 @@ import {
   bindEngineDebugInspector,
   type EngineDebugInspectorBinding
 } from '../components/engine-debug-inspector';
+import { LibraryPreferencesController } from './library-preferences-controller';
 
 const SAMPLE_WML = `<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
@@ -44,6 +45,7 @@ export interface BrowserApplication {
   };
   presenter: BrowserPresenter;
   refs: BrowserShellRefs;
+  libraryPreferences: LibraryPreferencesController;
 }
 
 export interface BrowserApplicationOptions {
@@ -105,20 +107,30 @@ export const composeBrowserApplication = (
     };
   }
   const controller = new BrowserController(hostClient, presenter, refs);
+  const libraryPreferences = new LibraryPreferencesController({
+    openTarget: (target) => controller.openFavoriteTarget(target),
+    currentTarget: () => controller.currentFavoriteTarget(),
+    notify: (message) => presenter.setStatus(message)
+  });
   const commandBridge = new ApplicationCommandBridge({
     isWmlEditing: () => {
       return isWmlCommandEditingContext(presenter.getSnapshot());
-    }
+    },
+    handlers: libraryPreferences.commandHandlers()
   });
 
-  return { commandBridge, controller, debugInspector, presenter, refs };
+  return { commandBridge, controller, debugInspector, libraryPreferences, presenter, refs };
 };
 
 export const initializeBrowserApplication = async (
   application: BrowserApplication
 ): Promise<void> => {
   try {
-    await Promise.all([application.controller.init(SAMPLE_WML), application.commandBridge.bind()]);
+    await Promise.all([
+      application.controller.init(SAMPLE_WML),
+      application.libraryPreferences?.init(),
+      application.commandBridge.bind()
+    ]);
   } catch (error) {
     application.commandBridge.dispose();
     throw error;
@@ -127,6 +139,7 @@ export const initializeBrowserApplication = async (
 
 export const disposeBrowserApplication = (application: BrowserApplication): void => {
   application.commandBridge.dispose();
+  application.libraryPreferences.dispose();
   application.debugInspector?.binding.dispose();
   application.debugInspector?.unsubscribe();
   void application.debugInspector?.controller.dispose();

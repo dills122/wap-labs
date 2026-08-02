@@ -77,6 +77,15 @@ export const navigationToolbarTemplate = () => `
       </label>
     </div>
 
+    <div class="application-control" role="group" aria-label="${WAVES_COPY.shell.applicationControls}">
+      <button id="btn-library" class="btn chrome-btn" type="button" aria-controls="library-surface" aria-expanded="false">
+        ${WAVES_COPY.library.title}
+      </button>
+      <button id="btn-preferences" class="btn chrome-btn" type="button" aria-controls="preferences-surface" aria-expanded="false">
+        ${WAVES_COPY.preferences.title}
+      </button>
+    </div>
+
     <button
       id="btn-inspector"
       class="btn chrome-btn inspector-toggle"
