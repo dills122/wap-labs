@@ -67,9 +67,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
+  "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification. The transport boundary completes query merge, form-urlencoded and multipart serialization, charset transcoding, origin reload policy, referer emission, and replayable typed POST bodies.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -78,6 +78,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
       "symbol": "parse_go_request_xml"
+    },
+    {
+      "path": "transport-rust/src/request_serialization.rs",
+      "symbol": "serialize_fetch_request"
     }
   ],
   "testEvidence": [
@@ -90,6 +94,16 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
       "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
       "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+    },
+    {
+      "path": "transport-rust/src/request_serialization/tests.rs",
+      "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+      "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
+    },
+    {
+      "path": "transport-rust/src/request_serialization/tests.rs",
+      "test": "multipart_post_builds_deterministic_typed_parts",
+      "command": "cd transport-rust && cargo test --lib multipart_post_builds_deterministic_typed_parts"
     }
   ],
   "ownerLayers": [

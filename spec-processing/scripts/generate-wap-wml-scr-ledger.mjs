@@ -562,14 +562,15 @@ const mandatoryImplementationAudit = new Map(
       ]
     },
     'WML-C-29': {
-      status: 'partial',
-      note: 'The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.',
+      status: 'implemented',
+      note: 'The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification. The transport boundary completes query merge, form-urlencoded and multipart serialization, charset transcoding, origin reload policy, referer emission, and replayable typed POST bodies.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'wml_go_request_policy'
         ),
-        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'parse_go_request_xml')
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/actions.rs', 'parse_go_request_xml'),
+        codeEvidence('transport-rust/src/request_serialization.rs', 'serialize_fetch_request')
       ],
       testEvidence: [
         engineTest(
@@ -579,6 +580,14 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
           'wml_304_post_intent_carries_request_attributes_without_constructing_multipart'
+        ),
+        transportTest(
+          'transport-rust/src/request_serialization/tests.rs',
+          'mapped_fixture_is_byte_exact_and_rejects_invalid_combinations'
+        ),
+        transportTest(
+          'transport-rust/src/request_serialization/tests.rs',
+          'multipart_post_builds_deterministic_typed_parts'
         )
       ]
     },
@@ -713,8 +722,8 @@ const mandatoryImplementationAudit = new Map(
       ]
     },
     'WML-C-37': {
-      status: 'partial',
-      note: 'Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.',
+      status: 'implemented',
+      note: 'Postfield name/value vdata is resolved in document order into the request intent, then transcoded and serialized by the transport boundary as ordered form-urlencoded or multipart form data.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/actions.rs',
@@ -723,12 +732,17 @@ const mandatoryImplementationAudit = new Map(
         codeEvidence(
           'engine-wasm/engine/src/engine_runtime_internal/navigation.rs',
           'resolve_post_fields'
-        )
+        ),
+        codeEvidence('transport-rust/src/request_serialization.rs', 'serialize_fetch_request')
       ],
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs',
           'wml_304_get_intent_preserves_order_without_claiming_query_merge'
+        ),
+        transportTest(
+          'transport-rust/src/request_serialization/tests.rs',
+          'mapped_fixture_is_byte_exact_and_rejects_invalid_combinations'
         )
       ]
     },

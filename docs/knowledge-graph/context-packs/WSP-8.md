@@ -797,7 +797,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-POST-CONTENT-TYPE-CHARSET** — For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
