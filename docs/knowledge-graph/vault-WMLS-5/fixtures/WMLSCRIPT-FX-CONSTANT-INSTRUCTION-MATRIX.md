@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

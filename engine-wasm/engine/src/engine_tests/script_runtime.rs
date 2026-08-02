@@ -195,7 +195,7 @@ fn registered_wap_unit_selects_named_function_and_invokes_return_es() {
 }
 
 #[test]
-fn registered_wap_unit_reports_named_lookup_and_unsupported_execution_failures() {
+fn registered_wap_unit_reports_named_lookup_and_executes_implicit_return() {
     let mut engine = WmlEngine::new();
     engine.register_script_unit(
         "named.wmlsc".to_string(),
@@ -215,18 +215,31 @@ fn registered_wap_unit_reports_named_lookup_and_unsupported_execution_failures()
         Some("wap runtime: external function not found (named.wmlsc#missing)")
     );
 
-    let unsupported =
+    let executed =
         engine.execute_script_ref_function("named.wmlsc".to_string(), "todo".to_string());
-    assert!(!unsupported.ok);
-    assert_eq!(unsupported.error_class, ScriptErrorClassLiteral::Fatal);
-    assert_eq!(
-        unsupported.error_category,
-        ScriptErrorCategoryLiteral::HostBinding
+    assert!(executed.ok);
+    assert_eq!(executed.result, ScriptValueLiteral::String(String::new()));
+    assert_eq!(executed.error_class, ScriptErrorClassLiteral::None);
+    assert_eq!(executed.error_category, ScriptErrorCategoryLiteral::None);
+}
+
+#[test]
+fn registered_wap_unit_executes_wmls_502_operator_conversion_fixture() {
+    let mut engine = WmlEngine::new();
+    engine.register_script_unit(
+        "operators.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_502_OPERATOR_CONVERSIONS_UNIT),
     );
+
+    let outcome =
+        engine.execute_script_ref_function("operators.wmlsc".to_string(), "main".to_string());
+    assert!(outcome.ok);
     assert_eq!(
-        unsupported.trap.as_deref(),
-        Some("wap runtime: unsupported execution opcode 0x14 in function 1 at pc=0")
+        outcome.result,
+        ScriptValueLiteral::String("1242".to_string())
     );
+    assert_eq!(outcome.error_class, ScriptErrorClassLiteral::None);
+    assert_eq!(outcome.error_category, ScriptErrorCategoryLiteral::None);
 }
 
 #[test]

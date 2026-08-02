@@ -363,6 +363,42 @@ pub struct WapInstruction {
     pub operands: Vec<u8>,
 }
 
+impl WapInstruction {
+    pub(crate) fn variable_index(&self) -> Option<usize> {
+        match self.opcode {
+            0xe0..=0xff => Some(usize::from(self.opcode & 0x1f)),
+            0x40..=0x4f => Some(usize::from(self.opcode & 0x0f)),
+            0x70..=0x77 => Some(usize::from(self.opcode & 0x07)),
+            0x0e..=0x11 | 0x1d | 0x1e => self.operands.first().copied().map(usize::from),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn constant_index(&self) -> Option<usize> {
+        match self.opcode {
+            0x50..=0x5f => Some(usize::from(self.opcode & 0x0f)),
+            0x12 => self.operands.first().copied().map(usize::from),
+            0x13 if self.operands.len() == 2 => Some(usize::from(u16::from_be_bytes([
+                self.operands[0],
+                self.operands[1],
+            ]))),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn local_function_index(&self) -> Option<usize> {
+        match self.opcode {
+            0x60..=0x67 => Some(usize::from(self.opcode & 0x07)),
+            0x09 => self.operands.first().copied().map(usize::from),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn jump_target(&self) -> Option<usize> {
+        jump_target(self)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WapFunction {
     pub argument_count: u8,

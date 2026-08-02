@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "error-policy",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Validate every variable index against the current function frame before reading or writing it.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

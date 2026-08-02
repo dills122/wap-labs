@@ -158,7 +158,7 @@ tags:
   ],
   "notes": [
     "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work.",
-    "B2 is ready to implement WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
+    "B2 completed bounded WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
   ],
   "scrMatrix": {
     "family": "wmlscript",

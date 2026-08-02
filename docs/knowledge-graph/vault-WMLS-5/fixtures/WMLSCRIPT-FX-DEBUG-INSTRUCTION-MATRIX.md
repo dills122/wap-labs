@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

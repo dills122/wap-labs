@@ -72,7 +72,7 @@ Evidence commands:
 
 ### WMLS-502: Language operation and conversion parity
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `qa`
 - Source families: `wmlscript`
 - Existing tickets: `W1-04`
@@ -95,7 +95,12 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_unit_executes_wmls_502_operator_conversion_fixture`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+- `pnpm test:story WMLS-502`
+- `node scripts/check-wap-selected-normative-clauses.mjs`
+- `node scripts/check-wap-knowledge-graph.mjs`
 
 ### WMLS-503: Extern, pragma, URL invocation, and access-control closure
 
@@ -467,13 +472,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-099`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY** — Decode every defined bit, byte, signed, unsigned, multi-byte integer, and float32 field type with its specified width and representation.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.1.1 (9.1.1 Used Data Types)
@@ -491,13 +496,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-100`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS** — Convert bitwise operands to integers and return invalid when an integer conversion is illegal.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-100`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT** — Accept compiled WMLScript compilation units in the effective chapter 9 binary format rather than treating source text or project bytecode as WAP bytecode.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8 (8. WMLSCRIPT BYTECODE INTERPRETER)
@@ -545,13 +550,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-101`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-COMPARISON-INVALID-RESULT** — Return invalid rather than true or false when a comparison operand conversion or value is invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-101`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONSTANT-EMBEDDED-NULL** — Preserve embedded null characters inside length-delimited WMLScript string constants.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
@@ -563,13 +568,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX** — Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
   - Parents: `WMLS-C-069`, `WMLS-C-098`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-CONSTANT-INTEGER-WIDTHS** — Decode signed integer constants in the selected 8-bit, 16-bit, or 32-bit two-complement representation.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.4 (9.4 Constant Pool)
@@ -605,19 +610,19 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-095`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX** — Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.12 (10.5.12 Miscellaneous Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-106`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL** — Abort the current WMLScript program on a fatal error and signal failure to the calling user agent.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
@@ -671,7 +676,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
   - Parents: `WMLS-C-094`, `WMLS-C-107`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
@@ -731,13 +736,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-102`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX** — Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-102`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION** — Decode multi-byte integers from seven-bit groups whose high bit is set on every non-final octet and clear on the final octet.
   - Family: `wmlscript`; force: `grammar`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.1.2 (9.1.2 Multi-byte Integer Format)
@@ -761,7 +766,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
@@ -773,13 +778,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
   - Parents: `WMLS-C-069`, `WMLS-C-104`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION** — Inspect the evaluated operand type without performing an automatic data conversion.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
   - Parents: `WMLS-C-104`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS** — Allow at most one access-domain and one access-path pragma in a compilation unit.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §9.5 (9.5   Pragma Pool)
@@ -809,19 +814,19 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-105`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY** — Return the selected value to the host caller when leaving the top-level invoked WMLScript function.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
   - Parents: `WMLS-C-085`, `WMLS-C-105`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY** — Validate every constant index and required constant type before loading or using it.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -833,7 +838,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -845,13 +850,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX** — Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-103`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
   - Family: `wmlscript`; force: `error-condition`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
@@ -863,13 +868,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX** — Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
   - Parents: `WMLS-C-069`, `WMLS-C-097`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS** — Map dialogs function identifiers exactly as follows: prompt=0, confirm=1, alert=2.
   - Family: `wmlscript-libraries`; force: `table`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §appendix-a (Appendix A. Library Summary)
@@ -956,139 +961,139 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §8.4.1 (8.4.1 Passing of Function Arguments)
   - Parents: `WMLS-C-083`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-ARGUMENT-CALL-INITIALIZATION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-CALL-INITIALIZATION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-ARGUMENT-STACK-ORDER** — Push function arguments onto the operand stack in declaration order, beginning with the first argument.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.4.1 (8.4.1 Passing of Function Arguments)
   - Parents: `WMLS-C-083`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-ARGUMENT-STACK-ORDER` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-STACK-ORDER` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-ARGUMENT-VARIABLE-INDEXES** — Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.4.2 (8.4.2 Allocation of Variable Indexes)
   - Parents: `WMLS-C-084`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-ARGUMENT-VARIABLE-INDEXES` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARGUMENT-VARIABLE-INDEXES` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX** — Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-099`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS** — Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-AUTOMATIC-EMPTY-RETURN** — Return an empty string when execution reaches a function end without a return instruction.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.4.3 (8.4.3 Automatic Function Return Value)
   - Parents: `WMLS-C-085`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX** — Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-100`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS** — Convert bitwise operands to integers and return invalid when an integer conversion is illegal.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.6 (10.5.6 Bitwise Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-100`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-BITWISE-INTEGER-RESULTS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX** — Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-101`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-COMPARISON-INVALID-RESULT** — Return invalid rather than true or false when a comparison operand conversion or value is invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.7 (10.5.7 Comparison Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-101`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-COMPARISON-INVALID-RESULT` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS** — Reject an indexed constant load that references outside the constant pool or an unsupported constant type.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX** — Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
   - Parents: `WMLS-C-069`, `WMLS-C-098`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX** — Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-095`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-BOOLEAN-MATRIX** — Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.5 (6.8.5 Conversions to Boolean)
   - Parents: `WMLS-C-075`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-BOOLEAN-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-BOOLEAN-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-INTEGER-MATRIX** — Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.3 (6.8.3 Conversions to Integer)
   - Parents: `WMLS-C-073`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-INTEGER-STRING-GRAMMAR** — Convert a string to integer only when the entire string is a valid decimal integer representation.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.3 (6.8.3 Conversions to Integer)
   - Parents: `WMLS-C-073`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-STRING-GRAMMAR` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INTEGER-STRING-GRAMMAR` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-INVALID-PROHIBITED** — Do not convert another data type into invalid; create invalid only as a literal or operation-error result.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.6 (6.8.6 Conversions to Invalid)
   - Parents: `WMLS-C-076`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROHIBITED` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROHIBITED` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-INVALID-PROPAGATION** — Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.6 (6.8.6 Conversions to Invalid)
   - Parents: `WMLS-C-076`, `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROPAGATION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-INVALID-PROPAGATION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-STRING-MATRIX** — Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.2 (6.8.2 Conversions to String)
   - Parents: `WMLS-C-072`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-STRING-NUMERIC-GRAMMAR** — Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.2 (6.8.2 Conversions to String)
   - Parents: `WMLS-C-072`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-NUMERIC-GRAMMAR` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-STRING-NUMERIC-GRAMMAR` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-CONVERSION-SUMMARY-MATRIX** — Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.8.7 (6.8.7 Summary)
   - Parents: `WMLS-C-072`, `WMLS-C-073`, `WMLS-C-075`, `WMLS-C-076`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-CONVERSION-SUMMARY-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONVERSION-SUMMARY-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX** — Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.12 (10.5.12 Miscellaneous Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-106`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-DEBUG-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX** — Handle verification failure, fatal library error, wrong external arity, missing external function or unit, access violation, and stack underflow as fatal.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.3 (12.3 Fatal Errors)
@@ -1112,7 +1117,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
   - Parents: `WMLS-C-094`, `WMLS-C-107`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
@@ -1160,31 +1165,31 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §8.4.4 (8.4.4 Initialisation of Variables)
   - Parents: `WMLS-C-086`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-LOCAL-EMPTY-INITIALIZATION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOCAL-EMPTY-INITIALIZATION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-LOCAL-VARIABLE-INDEXES** — Allocate local-variable indexes consecutively after the final argument index and match the declared local count.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.4.2 (8.4.2 Allocation of Variable Indexes)
   - Parents: `WMLS-C-084`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`
-  - Fixture: `WMLSCRIPT-FX-LOCAL-VARIABLE-INDEXES` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOCAL-VARIABLE-INDEXES` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION** — Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-102`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX** — Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.8 (10.5.8 Logical Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-102`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-LOGICAL-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX** — Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
@@ -1196,61 +1201,61 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-073`, `WMLS-C-077`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX** — Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
   - Parents: `WMLS-C-069`, `WMLS-C-104`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION** — Inspect the evaluated operand type without performing an automatic data conversion.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.10 (10.5.10 Access to Operand Type)
   - Parents: `WMLS-C-104`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERAND-TYPE-NO-CONVERSION` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-OPERATOR-CONVERSION-ATOMICITY** — Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
   - Parents: `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ATOMICITY` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ATOMICITY` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-OPERATOR-CONVERSION-ORDER** — Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
   - Parents: `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ORDER` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-ORDER` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-OPERATOR-CONVERSION-RESULT-INVALID** — Return invalid when a selected legal conversion itself produces invalid.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
   - Parents: `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-RESULT-INVALID` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-CONVERSION-RESULT-INVALID` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-OPERATOR-NUMERIC-PRECEDENCE** — Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §6.9 (6.9 Operator Data Type Conversion Rules)
   - Parents: `WMLS-C-077`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`
-  - Fixture: `WMLSCRIPT-FX-OPERATOR-NUMERIC-PRECEDENCE` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-OPERATOR-NUMERIC-PRECEDENCE` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX** — Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-105`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RETURN-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY** — Return the selected value to the host caller when leaving the top-level invoked WMLScript function.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.11 (10.5.11 Function Return Instructions)
   - Parents: `WMLS-C-085`, `WMLS-C-105`
   - Requirements: `RQ-WMLS-004`, `RQ-WMLS-005`, `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY** — Validate every constant index and required constant type before loading or using it.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -1262,7 +1267,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -1274,13 +1279,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX** — Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
   - Parents: `WMLS-C-069`, `WMLS-C-103`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-STACK-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
   - Family: `wmlscript`; force: `error-condition`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)
@@ -1292,13 +1297,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX** — Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
   - Parents: `WMLS-C-069`, `WMLS-C-097`
   - Requirements: `RQ-WMLS-008`
-  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-MATRIX` (`binary-decoder`, `implemented`)
 
 ### WMLS-503
 
@@ -1337,13 +1342,13 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.4 (10.5.4 Access To Constants)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONSTANT-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-CONTROL-FLOW-TARGETS** — Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.1 (10.5.1 Control Flow Instructions)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-CONTROL-FLOW-TARGETS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-EXTERNAL-KEYWORD-GATE** — Permit calls from another compilation unit only to functions marked external.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.5 (8.5 Access Control)
@@ -1385,7 +1390,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §9.6 (9.6 Function Pool)
   - Parents: `WMLS-C-094`, `WMLS-C-107`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-FUNCTION-RECORD-BOUNDARIES` (`binary-decoder`, `implemented`)
 - **WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION** — Complete bytecode integrity verification before executing the compilation unit.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.1 (11.1 Integrity Check)
@@ -1445,7 +1450,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-098`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-CONSTANT-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY** — Validate called function, library, URL, and argument-count references before transferring control.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -1457,7 +1462,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-095`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-JUMP-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY** — Check operand availability for each instruction before applying its stack effect.
   - Family: `wmlscript`; force: `explicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
@@ -1469,7 +1474,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §11.2 (11.2 Runtime Validity Checks)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-RUNTIME-VARIABLE-VALIDITY` (`error-policy`, `implemented`)
 - **WMLSCRIPT-CL-URL-CALL-ACCESS-FIRST** — Perform compilation-unit access control before matching or invoking the requested external function.
   - Family: `wmlscript`; force: `implicit-must`; level: `required`
   - Source: `WAP-193_101-WMLScript` §8.3.4 (8.3.4 URL Calls and Parameter Passing)
@@ -1529,7 +1534,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.3 (10.5.3 Variable Access and Manipulation)
   - Parents: `WMLS-C-097`, `WMLS-C-108`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-009`
-  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-VARIABLE-INSTRUCTION-BOUNDS` (`error-policy`, `implemented`)
 
 ### WMLS-504
 
@@ -2813,7 +2818,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §10.5.5 (10.5.5 Arithmetic Instructions)
   - Parents: `WMLS-C-077`, `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-ARITHMETIC-INVALID-RESULTS` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-ERROR-ABORT-LAST-RESORT** — Use invocation abort only when the error cannot be represented by a specified non-fatal result.
   - Family: `wmlscript`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-193_101-WMLScript` §12.2 (12.2 Error Handling)
@@ -2861,7 +2866,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-099`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-008`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-COMPUTATION-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX** — Return invalid for NaN, infinity, or a floating constant referenced by an integer-only interpreter.
   - Family: `wmlscript`; force: `table`; level: `required`
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
@@ -2879,7 +2884,7 @@ Evidence commands:
   - Source: `WAP-193_101-WMLScript` §12.4 (12.4 Non-Fatal Errors)
   - Parents: `WMLS-C-073`, `WMLS-C-077`, `WMLS-C-111`
   - Requirements: `RQ-WMLS-006`, `RQ-WMLS-007`, `RQ-WMLS-010`
-  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-FX-NONFATAL-CONVERSION-MATRIX` (`runtime`, `implemented`)
 - **WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL** — Treat an instruction that pops an empty operand stack as the specified fatal bytecode error.
   - Family: `wmlscript`; force: `error-condition`; level: `required`
   - Source: `WAP-193_101-WMLScript` §10.5.9 (10.5.9 Stack Instructions)

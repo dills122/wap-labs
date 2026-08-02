@@ -89,7 +89,7 @@ for the complete command surface.
 
 The implementation is substantial but deliberately does not claim full WAP Class C conformance.
 At the current evidence checkpoint, 45/198 selected parent rows are implemented;
-319/762 clauses are directly assessed. Current assessments, clause evidence, and remaining gaps
+363/762 clauses are directly assessed. Current assessments, clause evidence, and remaining gaps
 live in
 [Project Atlas](https://dills122.github.io/wap-labs/atlas/) and the
 [compliance program](docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md).

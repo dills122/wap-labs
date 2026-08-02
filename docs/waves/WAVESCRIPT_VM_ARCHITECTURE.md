@@ -105,15 +105,19 @@ Derived implementation standards for Waves WaveScript VM runtime:
 
 ## Architecture
 
-### WMLS-501 registered-unit routing boundary
+### WMLS-501 verifier and WMLS-502 language executor
 
 - `registerScriptUnit` stores raw bytes. When invoked without manual PC metadata, the engine
   decodes the bytes with `decode_wap_compilation_unit`, verifies every pool/function/reference,
   resolves the requested external name from the decoded function-name table, and only then enters
   the bounded WAP executor.
-- The bounded executor currently implements only WAP-193 `RETURN_ES`. Structurally valid but
-  unsupported opcodes return fatal/host-binding outcomes; verification failures return
-  fatal/integrity outcomes. Both remain observable through native/WASM invocation and trace state.
+- The bounded executor consumes the verified instruction/CFG representation directly. It implements
+  local calls and frames, arguments and empty-initialized locals, implicit and explicit returns,
+  variable/constant access, control flow, WAP-193 language operators, automatic conversions, and
+  deterministic `invalid` results for illegal conversions and non-fatal computation failures.
+- Execution retains explicit ceilings of 512 instructions, 64 operand-stack values, 16 call frames,
+  and 64 KiB of cumulative string allocation. Exhaustion is a fatal resource outcome; verified
+  integrity failures remain fatal/integrity outcomes through native and WASM boundaries.
 - Before execution, the verifier validates WAP-194 Appendix A library/function identifiers and
   their arities, then propagates source-defined stack effects through reachable control flow.
   Underflow, a depth above 64, and inconsistent branch merges fail deterministically; balanced
@@ -121,8 +125,9 @@ Derived implementation standards for Waves WaveScript VM runtime:
 - `registerScriptEntryPoint` is the explicit compatibility opt-in for the project-specific
   nine-opcode fixture VM. Manual PCs are not part of the WAP-193 function-name model and must not
   be treated as normative evidence.
-- This slice does not implement WMLS-502 operators/conversions, WMLS-504 standard-library
-  behavior, access control, URL fetch, or complete chapter 12 behavior.
+- Library and URL call opcodes remain verified but return explicit host-binding outcomes. Their
+  execution belongs to WMLS-504 and WMLS-503 respectively. Integer-only optional behavior and the
+  remaining chapter 12 fatal/non-fatal matrix stay outside the bounded WMLS-502 tranche.
 
 ### Components
 

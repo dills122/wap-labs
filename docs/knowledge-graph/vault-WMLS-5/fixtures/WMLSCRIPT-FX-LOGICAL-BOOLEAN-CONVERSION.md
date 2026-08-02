@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-LOGICAL-BOOLEAN-CONVERSION"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

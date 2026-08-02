@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-CONVERSION-BOOLEAN-MATRIX"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

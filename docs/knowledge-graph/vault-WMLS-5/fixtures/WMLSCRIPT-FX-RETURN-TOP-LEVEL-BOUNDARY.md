@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-RETURN-TOP-LEVEL-BOUNDARY"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Return the selected value to the host caller when leaving the top-level invoked WMLScript function.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

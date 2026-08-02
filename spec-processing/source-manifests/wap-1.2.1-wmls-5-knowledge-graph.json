@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "d2d6fabeaf1aaece42bd1431295476c93e60dacc2893be42102bc7fbcb0aa44e"
+        "sha256": "1a77c346936f8e46c7cb04cc6a4c1d370305627620a1db254e78c17cc33f73e5"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "6cd9374b45b75eec897f36d4df67ed0da18a7764a65c2372c0970d93c5490cf5"
+        "sha256": "29670577a419d0c02fbdb5708b9673b7dc4115c690fa7118d46d792518f4f831"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "ad95d7b713511e6692f278468ad661adfd158563b91e6d0e53ecf53597402649"
@@ -534,7 +534,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -569,7 +569,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -604,7 +604,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -642,7 +642,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -687,7 +687,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -722,7 +722,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -830,7 +830,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -870,7 +870,7 @@
           "RQ-WMLS-007",
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1157,7 +1157,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1197,7 +1197,7 @@
           "RQ-WMLS-007",
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1273,7 +1273,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1311,7 +1311,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1526,7 +1526,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1567,7 +1567,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1602,7 +1602,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1637,7 +1637,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1672,7 +1672,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1707,7 +1707,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1743,7 +1743,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1778,7 +1778,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1813,7 +1813,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1851,7 +1851,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1889,7 +1889,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2454,7 +2454,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2858,7 +2858,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2893,7 +2893,7 @@
           "RQ-WMLS-004",
           "RQ-WMLS-005"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2933,7 +2933,7 @@
           "RQ-WMLS-007",
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -2971,7 +2971,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3118,7 +3118,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3236,7 +3236,7 @@
           "RQ-WMLS-007",
           "RQ-WMLS-010"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3274,7 +3274,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3311,7 +3311,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3346,7 +3346,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3381,7 +3381,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3416,7 +3416,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3451,7 +3451,7 @@
           "RQ-WMLS-006",
           "RQ-WMLS-007"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3671,7 +3671,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3711,7 +3711,7 @@
           "RQ-WMLS-005",
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3752,7 +3752,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3834,7 +3834,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3925,7 +3925,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3963,7 +3963,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4410,7 +4410,7 @@
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -4448,7 +4448,7 @@
         "requirementIds": [
           "RQ-WMLS-008"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12476,7 +12476,7 @@
       "title": "Pop call arguments and use them to initialize the matching callee argument variables without reordering.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Pop call arguments and use them to initialize the matching callee argument variables without reordering.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12488,7 +12488,7 @@
       "title": "Push function arguments onto the operand stack in declaration order, beginning with the first argument.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Push function arguments onto the operand stack in declaration order, beginning with the first argument.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12500,7 +12500,7 @@
       "title": "Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Allocate argument variable indexes consecutively from zero in operand-stack order and match the function argument count.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12512,7 +12512,7 @@
       "title": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12524,7 +12524,7 @@
       "title": "Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return invalid for arithmetic conversion failure, division by zero, remainder by zero, or integer overflow without aborting the invocation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12536,7 +12536,7 @@
       "title": "Return an empty string when execution reaches a function end without a return instruction.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return an empty string when execution reaches a function end without a return instruction.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12572,7 +12572,7 @@
       "title": "Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the complete bitwise and shift opcode table using integer conversion and the specified stack effects.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12584,7 +12584,7 @@
       "title": "Convert bitwise operands to integers and return invalid when an integer conversion is illegal.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Convert bitwise operands to integers and return invalid when an integer conversion is illegal.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12680,7 +12680,7 @@
       "title": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12692,7 +12692,7 @@
       "title": "Return invalid rather than true or false when a comparison operand conversion or value is invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return invalid rather than true or false when a comparison operand conversion or value is invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12716,7 +12716,7 @@
       "title": "Reject an indexed constant load that references outside the constant pool or an unsupported constant type.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reject an indexed constant load that references outside the constant pool or an unsupported constant type.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12728,7 +12728,7 @@
       "title": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement indexed constant loads and immediate zero, one, minus-one, empty-string, invalid, true, and false instructions with exact stack effects.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12800,7 +12800,7 @@
       "title": "Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement every effective control-flow opcode, parameter width, stack effect, conversion rule, and declared error.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12812,7 +12812,7 @@
       "title": "Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve forward and backward jump offsets from the current instruction and execute only verified in-function instruction targets.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12824,7 +12824,7 @@
       "title": "Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Convert empty string, integer zero, and floating zero to false; convert other string and numeric values to true; reject invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12836,7 +12836,7 @@
       "title": "Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Convert decimal-integer strings and booleans to integers, while rejecting floating-point and invalid inputs.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12848,7 +12848,7 @@
       "title": "Convert a string to integer only when the entire string is a valid decimal integer representation.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Convert a string to integer only when the entire string is a valid decimal integer representation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12860,7 +12860,7 @@
       "title": "Do not convert another data type into invalid; create invalid only as a literal or operation-error result.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not convert another data type into invalid; create invalid only as a literal or operation-error result.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12872,7 +12872,7 @@
       "title": "Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Propagate invalid through operators except where the operator definition explicitly provides different invalid behavior.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12884,7 +12884,7 @@
       "title": "Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Convert integers, floating-point values, and booleans to their specified string forms, while rejecting conversion from invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12896,7 +12896,7 @@
       "title": "Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Produce numeric strings that satisfy the decimal numeric-string grammar and preserve the represented numeric value.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12908,7 +12908,7 @@
       "title": "Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the complete effective automatic-conversion matrix for Boolean, Integer, Floating-point, String, and Invalid source values.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12920,7 +12920,7 @@
       "title": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Recognize the effective debug opcode and perform its specified no-semantic-operation behavior without corrupting interpreter state.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13100,7 +13100,7 @@
       "title": "Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Decode each function argument count, local count, code size, and instruction bytes without crossing its declared boundary.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13220,7 +13220,7 @@
       "title": "Initialize every function local variable to an empty string before executing the function body.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Initialize every function local variable to an empty string before executing the function body.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13232,7 +13232,7 @@
       "title": "Allocate local-variable indexes consecutively after the final argument index and match the declared local count.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Allocate local-variable indexes consecutively after the final argument index and match the declared local count.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13244,7 +13244,7 @@
       "title": "Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply the Boolean conversion category to logical instruction operands and return invalid when conversion is illegal.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13256,7 +13256,7 @@
       "title": "Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement logical not and short-circuit-related opcode semantics with boolean conversion, specified stack effects, and invalid propagation.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13304,7 +13304,7 @@
       "title": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return invalid for divide-by-zero and integer or floating overflow, and return floating zero for floating underflow.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13340,7 +13340,7 @@
       "title": "Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return invalid when conversion exceeds integer or floating range, and floating zero when conversion underflows.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13352,7 +13352,7 @@
       "title": "Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement typeof and validity-test instructions with their exact type-code or boolean results and stack effects.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13364,7 +13364,7 @@
       "title": "Inspect the evaluated operand type without performing an automatic data conversion.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Inspect the evaluated operand type without performing an automatic data conversion.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13376,7 +13376,7 @@
       "title": "Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Perform an operation only when every required operand conversion is legal; otherwise continue its ordered rules or return invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13388,7 +13388,7 @@
       "title": "Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply each operator conversion step in specification order until an operation and operand types are selected or invalid is returned.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13400,7 +13400,7 @@
       "title": "Return invalid when a selected legal conversion itself produces invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return invalid when a selected legal conversion itself produces invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13412,7 +13412,7 @@
       "title": "Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply string, floating-point, and integer operation precedence exactly for multi-typed arithmetic, addition, and comparison operands.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13484,7 +13484,7 @@
       "title": "Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement value-return and empty-string-return instructions with exact caller stack and instruction-pointer restoration.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13496,7 +13496,7 @@
       "title": "Return the selected value to the host caller when leaving the top-level invoked WMLScript function.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return the selected value to the host caller when leaving the top-level invoked WMLScript function.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13508,7 +13508,7 @@
       "title": "Validate every constant index and required constant type before loading or using it.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Validate every constant index and required constant type before loading or using it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13532,7 +13532,7 @@
       "title": "Require every taken jump target to fall on an instruction boundary within the current function.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Require every taken jump target to fall on an instruction boundary within the current function.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13556,7 +13556,7 @@
       "title": "Validate every variable index against the current function frame before reading or writing it.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Validate every variable index against the current function frame before reading or writing it.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13568,7 +13568,7 @@
       "title": "Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement the effective pop opcode with its exact operand-stack effect and stack-underflow error.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13712,7 +13712,7 @@
       "title": "Reject a variable instruction whose index is outside the current function argument-and-local variable range.",
       "properties": {
         "kind": "error-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Reject a variable instruction whose index is outside the current function argument-and-local variable range.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -13724,7 +13724,7 @@
       "title": "Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.",
       "properties": {
         "kind": "binary-decoder",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement every load, store, increment, and decrement variable opcode variant with its declared index width, conversion, and stack effect.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -21205,7 +21205,7 @@
         ],
         "notes": [
           "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work.",
-          "B2 is ready to implement WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
+          "B2 completed bounded WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."
         ],
         "scrMatrix": {
           "family": "wmlscript",
@@ -21236,13 +21236,18 @@
       "type": "work-item",
       "title": "Language operation and conversion parity",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "qa"
         ],
         "sourceFamilies": [
           "wmlscript"
+        ],
+        "notes": [
+          "The bounded floating-capable language executor directly implements 44 clauses; three additional clauses retain completed WMLS-501 verifier evidence, for 47 implemented of 59 clauses directly mapped to WMLS-502. The work item remains in progress rather than overstating closure of its broader parent mappings.",
+          "The 32 selected parent rows remain partial or missing in the machine ledger. This work item does not claim that all 41 selected WMLScript language parents or the WMLS-5 sprint are complete.",
+          "WMLS-503 URL/access execution, WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
         ],
         "existingTickets": [
           "W1-04"
@@ -21254,7 +21259,12 @@
           "Types, conversions, operators, calls, locals, return values, control flow, and invalid-operation semantics match the effective specification."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_unit_executes_wmls_502_operator_conversion_fixture",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+          "pnpm test:story WMLS-502",
+          "node scripts/check-wap-selected-normative-clauses.mjs",
+          "node scripts/check-wap-knowledge-graph.mjs"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }

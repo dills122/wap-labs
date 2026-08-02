@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-ARITHMETIC-INSTRUCTION-MATRIX"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Implement the complete arithmetic opcode table with exact operand order, conversion category, result type, stack effect, and declared errors.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

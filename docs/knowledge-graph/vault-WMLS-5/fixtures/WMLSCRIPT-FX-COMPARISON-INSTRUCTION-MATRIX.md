@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-COMPARISON-INSTRUCTION-MATRIX"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "binary-decoder",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Implement every equality and ordering opcode with its multi-type conversion rules, boolean result, and stack effect.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

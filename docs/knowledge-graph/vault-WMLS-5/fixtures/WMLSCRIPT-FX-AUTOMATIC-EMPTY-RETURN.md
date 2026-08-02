@@ -4,7 +4,7 @@ key: "WMLSCRIPT-FX-AUTOMATIC-EMPTY-RETURN"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Return an empty string when execution reaches a function end without a return instruction.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

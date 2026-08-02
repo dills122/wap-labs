@@ -125,10 +125,13 @@ Legend:
   - `WAP-193_101` 6.4.1, 6.4.2.1, 6.4.3, 8.4.1, 8.4.3
   - SCRs: `WMLS-S-030..033 (M)`, `WMLS-C-083..086 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Wrong-arity calls fail deterministically.
-  - [ ] Implicit return value is `""` with no undefined behavior.
-  - [ ] Arguments appear in callee locals in declared order.
+  - Evidence: [x] `wavescript::wap_runtime::tests::executes_local_calls_argument_order_locals_and_returns`,
+    `registered_wap_unit_executes_wmls_502_operator_conversion_fixture`, and
+    `wap-193-operator-conversions.wmlsc.hex`; command:
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime`.
+  - [x] Wrong-arity external calls fail deterministically before execution.
+  - [x] Implicit return value is `""` with no undefined behavior.
+  - [x] Arguments appear in callee locals in declared order.
 
 ### RQ-WMLS-005: Variable indexing and initialization
 
@@ -138,9 +141,10 @@ Legend:
   - `WAP-193_101` 8.4.2, 8.4.4
   - SCRs: `WMLS-S-047 (M)`, `WMLS-S-049 (M)`, `WMLS-C-084 (M)`, `WMLS-C-086 (M)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Index assignment for args/locals matches section 8.4.2 rules.
-  - [ ] Uninitialized locals read as empty string.
+  - Evidence: [x] `wavescript::wap_runtime::tests::executes_local_calls_argument_order_locals_and_returns`
+    and the native/WASM `wap-193-operator-conversions.wmlsc.hex` parity tests.
+  - [x] Index assignment for args/locals matches section 8.4.2 rules.
+  - [x] Uninitialized locals read as empty string.
 
 ### RQ-WMLS-006: Type system and conversion rules
 
@@ -150,10 +154,15 @@ Legend:
   - `WAP-193_101` 6.8, 6.9, 6.10
   - SCRs: `WMLS-C-072 (M)`, `WMLS-C-073 (M)`, `WMLS-C-075 (M)`, `WMLS-C-076 (M)`, `WMLS-C-077 (M)`, `WMLS-C-071 (O)`, `WMLS-C-074 (O)`
 - AC:
-  - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Conversion behavior matches per-type legal conversions.
-  - [ ] Invalid-conversion cases return `invalid` consistently.
+  - Evidence: [x] `value::tests::wmlscript_conversions_follow_the_effective_numeric_grammar`,
+    `value::tests::wmlscript_string_conversion_is_deterministic_and_invalid_safe`, and the
+    source-section-derived opcode matrices in `wavescript::wap_runtime::tests`.
+  - [x] Conversion behavior matches per-type legal conversions for the selected floating-capable
+    interpreter profile.
+  - [x] Invalid-conversion cases return `invalid` consistently.
   - [ ] Floating-point optionality is configurable and testable.
+  - Scope note: integer-only optional behavior remains in `RQ-WMLS-007`; it is not part of the
+    bounded Class C WMLS-502 closure.
 
 ### RQ-WMLS-007: Integer-only mode behavior
 
@@ -210,8 +219,8 @@ Legend:
   - [x] Reachable whole-function stack dataflow rejects underflow, the bounded 64-value overflow
     boundary, and inconsistent branch merges while accepting balanced loops, unreachable
     stack-invalid regions, and implicit/explicit returns.
-  - Scope note: these checks verify bytecode before execution. They do not implement WMLS-502
-    operator/conversion execution or WMLS-504 standard-library behavior.
+  - Scope note: these checks verify bytecode before execution. WMLS-502 now consumes that verified
+    representation for bounded language execution; WMLS-504 standard-library behavior remains open.
 
 ### RQ-WMLS-010: Error detection and handling model
 
@@ -226,7 +235,8 @@ Legend:
     integrity/resource classification, `SCRIPT_TRAP` serialization, and recovery after stack
     verification failures. `pnpm test:story WMLS-501` replays the stable host-visible failure and
     replacement-invocation recovery path; full chapter 12 remains open.
-  - [ ] Non-fatal errors return defined error/invalid results where applicable.
+  - [x] WMLS-502 computational and conversion failures return the defined `invalid` value without
+    aborting the invocation; floating underflow returns floating zero.
   - [x] Fatal errors terminate current script invocation safely.
   - [x] Host remains alive and recoverable after script failure.
   - Note (`2026-07-25`): corrected a spec-accuracy gap in the `TypeError`/`StackUnderflow`
@@ -237,17 +247,13 @@ Legend:
     hitting either trap now abort invocation (`invocation_aborted: true`) instead of
     yielding `invalid` and continuing. See `engine-wasm/engine/src/engine_script_types.rs`
     `classify_vm_trap` / `classify_vm_trap_category`.
-  - Gap: no current `VmTrap` variant maps to `non-fatal`. The VM has no opcodes for the
-    chapter 12.4 Non-fatal Computational/Constant-Reference/Conversion errors (divide-by-zero,
-    integer/float overflow/underflow, NaN/infinite float constant, illegal float reference,
-    integer/float conversion range) — those require new opcodes (e.g. integer divide), which
-    is `W1-04`/opcode-expansion scope, not this ticket. The `ScriptExecutionOutcome::non_fatal`
-    contract shape is still pinned directly by
-    `non_fatal_execution_outcome_contract_shape` in
-    `engine-wasm/engine/src/engine_tests/script_runtime.rs` so it stays correct once such an
-    opcode lands.
+  - Gap: the full WMLS-505 chapter 12 matrix remains open, including integer-only floating-constant
+    references. `ScriptExecutionOutcome::non_fatal` remains pinned for boundary errors that require
+    a classified outcome; source-defined WMLScript computation/conversion failures complete normally
+    with an `invalid` result instead.
   - Current implementation-class matrix:
-    - Non-fatal: none currently reachable (see gap above).
+    - Non-fatal: WMLS-502 divide/remainder by zero, numeric overflow, conversion range failure,
+      illegal conversion, and invalid operands -> `invalid`; floating underflow -> floating zero.
     - Fatal: all current traps (`TypeError`, `StackUnderflow`, decode/integrity/resource/host-binding
       failures such as `UnsupportedOpcode`, `TruncatedImmediate`, `Invalid*Index/Target`,
       `CallDepthExceeded`, `ExecutionLimitExceeded`, `HostCall*`, etc.) -> invocation abort.

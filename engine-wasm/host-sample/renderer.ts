@@ -10,6 +10,7 @@ import type {
   WmlEngineWasm
 } from '../contracts/wml-engine';
 import wap193MinimalReturnEsHex from '../engine/tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex?raw';
+import wap193OperatorConversionsHex from '../engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex?raw';
 import wap193StackUnderflowHex from '../engine/tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex?raw';
 
 const lineHeight = 16;
@@ -319,21 +320,15 @@ function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
   engine.clearScriptEntryPoints();
   engine.registerScriptUnit(
     'wap-193-minimal-return-es.wmlsc',
-    new Uint8Array(
-      wap193MinimalReturnEsHex
-        .trim()
-        .split(/\s+/u)
-        .map((token) => Number.parseInt(token, 16))
-    )
+    parseHexFixture(wap193MinimalReturnEsHex)
+  );
+  engine.registerScriptUnit(
+    'wap-193-operator-conversions.wmlsc',
+    parseHexFixture(wap193OperatorConversionsHex)
   );
   engine.registerScriptUnit(
     'wap-193-stack-underflow.wmlsc',
-    new Uint8Array(
-      wap193StackUnderflowHex
-        .trim()
-        .split(/\s+/u)
-        .map((token) => Number.parseInt(token, 16))
-    )
+    parseHexFixture(wap193StackUnderflowHex)
   );
   engine.registerScriptUnit(
     'wmlbrowser-demo.wmlsc',
@@ -572,4 +567,13 @@ function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'externalGo', 39);
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'goThenPrev', 65);
   engine.registerScriptEntryPoint('wavescript-fixtures.wmlsc', 'prevThenGo', 79);
+}
+
+function parseHexFixture(fixture: string): Uint8Array {
+  return new Uint8Array(
+    fixture
+      .trim()
+      .split(/\s+/u)
+      .map((token) => Number.parseInt(token, 16))
+  );
 }

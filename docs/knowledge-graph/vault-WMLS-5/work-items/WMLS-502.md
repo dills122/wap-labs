@@ -4,7 +4,7 @@ key: "WMLS-502"
 type: "work-item"
 generated: true
 slice: "WMLS-5"
-status: "todo"
+status: "in-progress"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/work-item"
@@ -109,13 +109,18 @@ tags:
 
 ```json
 {
-  "status": "todo",
+  "status": "in-progress",
   "ownerLayers": [
     "engine-wasm",
     "qa"
   ],
   "sourceFamilies": [
     "wmlscript"
+  ],
+  "notes": [
+    "The bounded floating-capable language executor directly implements 44 clauses; three additional clauses retain completed WMLS-501 verifier evidence, for 47 implemented of 59 clauses directly mapped to WMLS-502. The work item remains in progress rather than overstating closure of its broader parent mappings.",
+    "The 32 selected parent rows remain partial or missing in the machine ledger. This work item does not claim that all 41 selected WMLScript language parents or the WMLS-5 sprint are complete.",
+    "WMLS-503 URL/access execution, WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
   ],
   "existingTickets": [
     "W1-04"
@@ -127,7 +132,12 @@ tags:
     "Types, conversions, operators, calls, locals, return values, control flow, and invalid-operation semantics match the effective specification."
   ],
   "evidence": [
-    "cargo test --manifest-path engine-wasm/engine/Cargo.toml"
+    "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime",
+    "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_unit_executes_wmls_502_operator_conversion_fixture",
+    "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+    "pnpm test:story WMLS-502",
+    "node scripts/check-wap-selected-normative-clauses.mjs",
+    "node scripts/check-wap-knowledge-graph.mjs"
   ],
   "source": "docs/waves/wap-1.2.1-compliance-program.json"
 }

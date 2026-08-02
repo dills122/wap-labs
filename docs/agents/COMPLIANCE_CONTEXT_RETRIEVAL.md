@@ -49,11 +49,15 @@ slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pa
 canonical mappings and gaps that exist now; it does
 not by itself establish implementation readiness or complete a source audit.
 
-For the WMLScript bytecode decoder/verifier lane, use `WMLS-501`. Use `WMLS-5` only for
-sprint-wide WMLScript planning:
+For the WMLScript bytecode decoder/verifier lane, use `WMLS-501`. For bounded language operator
+and conversion execution, use `WMLS-502`. Use `WMLS-5` only for sprint-wide WMLScript planning:
 
 ```sh
 node scripts/wap-context-pack.mjs WMLS-501
+```
+
+```sh
+node scripts/wap-context-pack.mjs WMLS-502
 ```
 
 ## Retrieval workflow

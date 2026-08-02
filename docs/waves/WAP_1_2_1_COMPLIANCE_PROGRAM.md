@@ -195,17 +195,17 @@ closes `SRC-004` without changing the redistribution boundary.
 
 ## Immediate execution order
 
-After the merged WSP-805 request work, WML-309 frame-contract closure, and additive WMLS-501
-verifier tranche, the canonical program records 31 work items `done`, 10 `in-progress`, 41 `todo`,
-and one `blocked`, with 45/198 selected parents implemented and 319/762 clauses assessed. Project
+After the merged WSP-805 request work, WML-306 policy closure, WML-309 frame-contract closure, and
+additive WMLS-501 verifier tranche, the canonical program records 31 work items `done`, 11
+`in-progress`, 40 `todo`, and one `blocked`, with 45/198 selected parents implemented and 363/762
+clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.
 
 The dispatch baton is residual `WML-304`/`WSP-805` request application, residual `WML-301`
-aggregate card/WAE evidence, and `WMLS-502` operator/conversion execution after the stable
-WMLS-501 verifier boundary. `WML-306` follows after request/history work releases the overlapping
-browser-policy files. Completed-ticket history remains immutable; newly exposed gaps require
-additive follow-ups.
+aggregate card/WAE evidence, and the remaining WMLS-502 parent/unsupported-clause follow-through
+after its bounded operator/conversion executor. Completed-ticket history remains immutable; newly
+exposed gaps require additive follow-ups.
 
 1. Treat `SRC-005` external-dependency normalization as complete, including
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`

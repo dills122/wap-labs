@@ -26,6 +26,8 @@ const WMLS_501_MINIMAL_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
 const WMLS_501_NAMED_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
+const WMLS_502_OPERATOR_CONVERSIONS_UNIT: &str =
+    include_str!("../tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex");
 const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
     include_str!("../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
 const WMLS_501_STACK_UNDERFLOW_UNIT: &str =
@@ -136,22 +138,21 @@ fn wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace() 
         "named.wmlsc".to_string(),
         wmls_501_fixture_bytes(WMLS_501_NAMED_UNIT),
     );
-    let unsupported = engine
+    let executed = engine
         .execute_script_ref_function_wasm("named.wmlsc".to_string(), "todo".to_string())
-        .expect("typed unsupported outcome should serialize");
+        .expect("implicit return outcome should serialize");
     assert_eq!(
-        Reflect::get(&unsupported, &JsValue::from_str("errorClass"))
-            .expect("errorClass field")
-            .as_string()
-            .as_deref(),
-        Some("fatal")
+        Reflect::get(&executed, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
     );
     assert_eq!(
-        Reflect::get(&unsupported, &JsValue::from_str("errorCategory"))
-            .expect("errorCategory field")
+        Reflect::get(&executed, &JsValue::from_str("result"))
+            .expect("result field")
             .as_string()
             .as_deref(),
-        Some("host-binding")
+        Some("")
     );
 
     engine.register_script_unit_wasm(
@@ -192,6 +193,32 @@ fn wasm_wmls_501_registered_runtime_routing_matches_native_outcomes_and_trace() 
         })
         .collect();
     assert!(trace_kinds.ends_with(&["ACTION_SCRIPT".to_string(), "SCRIPT_OK".to_string()]));
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_502_operator_conversion_execution_matches_native_result() {
+    let mut engine = WmlEngine::wasm_new();
+    engine.register_script_unit_wasm(
+        "operators.wmlsc".to_string(),
+        wmls_501_fixture_bytes(WMLS_502_OPERATOR_CONVERSIONS_UNIT),
+    );
+
+    let outcome = engine
+        .execute_script_ref_function_wasm("operators.wmlsc".to_string(), "main".to_string())
+        .expect("WMLS-502 outcome should serialize");
+    assert_eq!(
+        Reflect::get(&outcome, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
+    );
+    assert_eq!(
+        Reflect::get(&outcome, &JsValue::from_str("result"))
+            .expect("result field")
+            .as_string()
+            .as_deref(),
+        Some("1242")
+    );
 }
 
 #[wasm_bindgen_test]
