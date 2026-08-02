@@ -274,6 +274,7 @@ pub struct WmlEngine {
     last_back_navigation_handled: bool,
     last_wml_load_diagnostics: Vec<WmlLoadDiagnostic>,
     browser_context_epoch: u32,
+    history_push_sequence: u32,
     debug_recorder: Option<engine_debug_recorder::EngineDebugRecorder>,
 }
 

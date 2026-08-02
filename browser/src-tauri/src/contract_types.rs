@@ -305,6 +305,8 @@ pub struct EngineRuntimeSnapshot {
     #[ts(optional)]
     pub browser_context_epoch: Option<u32>,
     #[ts(optional)]
+    pub history_push_sequence: Option<u32>,
+    #[ts(optional)]
     pub deck_language: Option<String>,
     #[ts(optional)]
     pub active_card_language: Option<String>,

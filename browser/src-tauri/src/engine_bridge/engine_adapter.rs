@@ -56,6 +56,7 @@ fn snapshot(engine: &WmlEngine) -> EngineRuntimeSnapshot {
         base_url: engine.base_url(),
         content_type: engine.content_type(),
         browser_context_epoch: Some(engine.browser_context_epoch()),
+        history_push_sequence: Some(engine.history_push_sequence()),
         deck_language: engine.deck_language(),
         active_card_language: engine.active_card_language(),
         last_back_navigation_handled: engine.last_back_navigation_handled(),

@@ -145,6 +145,7 @@ export const createNavigationStateMachine = (
       }
     | undefined;
   let observedBrowserContextEpoch: number | undefined;
+  let observedHistoryPushSequence: number | undefined;
   // WML-205 keeps a failed task's engine state and intent intact. This
   // browser-only record prevents that preserved intent from becoming an
   // implicit retry loop while retaining it for an explicit user retry.
@@ -241,6 +242,18 @@ export const createNavigationStateMachine = (
       observedBrowserContextEpoch !== undefined &&
       observedBrowserContextEpoch !== snapshot.browserContextEpoch;
     observedBrowserContextEpoch = snapshot.browserContextEpoch;
+    return changed;
+  };
+
+  const observeHistoryPush = (snapshot: EngineRuntimeSnapshot): boolean | undefined => {
+    if (snapshot.historyPushSequence === undefined) {
+      observedHistoryPushSequence = undefined;
+      return undefined;
+    }
+    const changed =
+      observedHistoryPushSequence !== undefined &&
+      observedHistoryPushSequence !== snapshot.historyPushSequence;
+    observedHistoryPushSequence = snapshot.historyPushSequence;
     return changed;
   };
 
@@ -472,6 +485,7 @@ export const createNavigationStateMachine = (
       return null;
     }
     const browserContextChanged = observeBrowserContext(frame.snapshot);
+    observeHistoryPush(frame.snapshot);
     if (browserContextChanged) {
       resetHostHistoryState(hostHistory);
       hooks.onStateEvent?.('browser-context-reset', {
@@ -608,9 +622,15 @@ export const createNavigationStateMachine = (
     if (!isCurrentNavigation(generation) || isNavigationInFlight()) {
       return null;
     }
-    if (observeBrowserContext(frame.snapshot)) {
+    const browserContextChanged = observeBrowserContext(frame.snapshot);
+    const historyPushed = observeHistoryPush(frame.snapshot);
+    if (browserContextChanged) {
       resetHistoryToCurrentCard(frame.snapshot);
-    } else if (frame.snapshot.activeCardId && frame.snapshot.activeCardId !== previousCardId) {
+    } else if (
+      frame.snapshot.activeCardId &&
+      (historyPushed === true ||
+        (historyPushed === undefined && frame.snapshot.activeCardId !== previousCardId))
+    ) {
       pushCurrentRequestHistoryCard(frame.snapshot.activeCardId);
     } else {
       updateCurrentHistoryCard(hostHistory, frame.snapshot.activeCardId);
@@ -636,8 +656,12 @@ export const createNavigationStateMachine = (
       return null;
     }
     const snapshot = frame.snapshot;
-    const shouldRender = shouldRenderTimerSnapshot(snapshot, hostSessionState);
     const browserContextChanged = observeBrowserContext(snapshot);
+    const historyPushed = observeHistoryPush(snapshot);
+    const shouldRender =
+      shouldRenderTimerSnapshot(snapshot, hostSessionState) ||
+      browserContextChanged ||
+      historyPushed === true;
     if (browserContextChanged) {
       resetHistoryToCurrentCard(snapshot);
     }
@@ -647,7 +671,8 @@ export const createNavigationStateMachine = (
     if (
       !browserContextChanged &&
       snapshot.activeCardId &&
-      snapshot.activeCardId !== previousCardId
+      (historyPushed === true ||
+        (historyPushed === undefined && snapshot.activeCardId !== previousCardId))
     ) {
       pushCurrentRequestHistoryCard(snapshot.activeCardId);
     } else {
@@ -672,6 +697,7 @@ export const createNavigationStateMachine = (
       }
       const after = afterFrame.snapshot;
       const browserContextChanged = observeBrowserContext(after);
+      observeHistoryPush(after);
       if (browserContextChanged) {
         resetHistoryToCurrentCard(after);
       }

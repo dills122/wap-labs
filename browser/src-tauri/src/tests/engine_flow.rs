@@ -463,3 +463,34 @@ fn wml_301_adapter_preserves_context_and_fragment_for_forward_deck_load() {
     );
     assert_eq!(engine.get_var("token".to_string()).as_deref(), Some("kept"));
 }
+
+#[test]
+fn wml_301_adapter_projects_duplicate_same_card_history_pushes() {
+    let mut engine = WmlEngine::new();
+    let initial = apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(
+                r##"<wml><card id="a"><p><a href="#a">Again</a></p></card></wml>"##,
+            ),
+            base_url: "http://example.test/a.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("same-card fixture should load");
+    assert_eq!(initial.history_push_sequence, Some(0));
+
+    let duplicate = apply_handle_key(
+        &mut engine,
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("same-card key access should succeed");
+    assert_eq!(duplicate.active_card_id.as_deref(), Some("a"));
+    assert_eq!(duplicate.history_push_sequence, Some(1));
+}

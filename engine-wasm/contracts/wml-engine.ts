@@ -211,6 +211,9 @@ export interface WmlEngineCommon {
   baseUrl(): string;
   contentType(): string;
   browserContextEpoch(): number;
+  // Advances for every committed same-deck forward history push, including
+  // explicit navigation to the already-active card; resets with newcontext.
+  historyPushSequence(): number;
   deckLanguage(): string | undefined;
   activeCardLanguage(): string | undefined;
   getVar(name: string): string | undefined;

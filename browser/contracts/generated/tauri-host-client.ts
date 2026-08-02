@@ -280,6 +280,9 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
       "browserContextEpoch": {
         "kind": "number"
       },
+      "historyPushSequence": {
+        "kind": "number"
+      },
       "deckLanguage": {
         "kind": "string"
       },

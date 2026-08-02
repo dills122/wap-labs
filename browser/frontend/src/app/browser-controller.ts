@@ -76,11 +76,9 @@ export class BrowserController {
   // vs. a deck that fetched fine but didn't parse into usable WML.
   private lastNavigationErrorKind: NavigationErrorKind = 'network';
   // U3: back-button availability tracking. Network mode has an exact answer
-  // (host history array); local mode has no engine-exposed "nav stack depth"
-  // to query without attempting a (destructive) back navigation, so this is
-  // maintained as a frontend-side approximation: reset false on every fresh
-  // engine deck load (which always clears the engine's nav stack) and set
-  // true whenever a forward card change is observed while in local mode.
+  // (host history array); local mode observes the engine's committed history
+  // push sequence, including duplicate same-card accesses, and still uses the
+  // result of an attempted Back as definitive empty-stack ground truth.
   private localBackAvailable = false;
   private pendingLocalTimerFrame: { generation: number; frame: EngineFrame } | undefined;
   private committedFrame: EngineFrame | undefined;
@@ -168,6 +166,7 @@ export class BrowserController {
           return null;
         }
         const generation = this.navigation.captureNavigationGeneration();
+        const previousSnapshot = this.presenter.getSnapshot();
         const frame = await this.hostClient.engineAdvanceTimeMsFrame({ deltaMs });
         if (
           this.runMode !== 'local' ||
@@ -176,6 +175,14 @@ export class BrowserController {
         ) {
           return null;
         }
+        this.noteLocalForwardNavigation(
+          previousSnapshot?.historyPushSequence,
+          frame.snapshot.historyPushSequence,
+          previousSnapshot?.activeCardId,
+          frame.snapshot.activeCardId,
+          previousSnapshot?.browserContextEpoch,
+          frame.snapshot.browserContextEpoch
+        );
         if (shouldRenderTimerSnapshot(frame.snapshot, this.presenter.getSessionState())) {
           this.pendingLocalTimerFrame = { generation, frame };
         }
@@ -195,10 +202,8 @@ export class BrowserController {
         ) {
           return;
         }
-        const previousActiveCardId = this.presenter.getSessionState().activeCardId;
         this.applyFrame(pending.frame);
         this.syncLocalSessionFromSnapshot(snapshot);
-        this.noteLocalForwardNavigation(previousActiveCardId, snapshot.activeCardId);
       },
       handleExternalIntent: async (intentUrl, snapshot) => {
         if (this.runMode === 'local') {
@@ -540,13 +545,31 @@ export class BrowserController {
     this.shellEventBindings.setBackButtonAvailable(available);
   }
 
-  // See localBackAvailable above: a forward card change while in local mode
-  // means the engine's nav stack just grew, so back becomes available.
+  // See localBackAvailable above: a sequence advance means the engine's nav
+  // stack just grew, even when the destination card ID equals the source ID.
   private noteLocalForwardNavigation(
+    previousHistoryPushSequence: number | undefined,
+    nextHistoryPushSequence: number | undefined,
     previousCardId: string | undefined,
-    nextCardId: string | undefined
+    nextCardId: string | undefined,
+    previousBrowserContextEpoch: number | undefined,
+    nextBrowserContextEpoch: number | undefined
   ): void {
-    if (this.runMode !== 'local' || previousCardId === nextCardId) {
+    if (
+      this.runMode === 'local' &&
+      previousBrowserContextEpoch !== undefined &&
+      nextBrowserContextEpoch !== undefined &&
+      previousBrowserContextEpoch !== nextBrowserContextEpoch
+    ) {
+      this.localBackAvailable = false;
+      this.updateBackButtonAvailability();
+      return;
+    }
+    const historyPushed =
+      previousHistoryPushSequence !== undefined && nextHistoryPushSequence !== undefined
+        ? previousHistoryPushSequence !== nextHistoryPushSequence
+        : previousCardId !== nextCardId;
+    if (this.runMode !== 'local' || !historyPushed) {
       return;
     }
     this.localBackAvailable = true;
@@ -793,7 +816,7 @@ export class BrowserController {
     }
     const startingRunMode = this.runMode;
     const startingGeneration = this.navigation.captureNavigationGeneration();
-    const previousActiveCardId = this.presenter.getSessionState().activeCardId;
+    const previousSnapshot = this.presenter.getSnapshot();
     let localFrame: EngineFrame | null;
     let snapshot: EngineRuntimeSnapshot | null;
     try {
@@ -820,7 +843,14 @@ export class BrowserController {
     if (startingRunMode === 'local' && localFrame) {
       this.applyFrame(localFrame);
       this.syncLocalSessionFromSnapshot(snapshot);
-      this.noteLocalForwardNavigation(previousActiveCardId, snapshot.activeCardId);
+      this.noteLocalForwardNavigation(
+        previousSnapshot?.historyPushSequence,
+        snapshot.historyPushSequence,
+        previousSnapshot?.activeCardId,
+        snapshot.activeCardId,
+        previousSnapshot?.browserContextEpoch,
+        snapshot.browserContextEpoch
+      );
     }
     this.timerRuntime.applySnapshot(snapshot);
     if (snapshot.externalNavigationIntent) {
