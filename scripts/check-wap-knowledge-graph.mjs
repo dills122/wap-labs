@@ -151,9 +151,7 @@ for (const workItem of workItemNodes) {
   }
   const aggregateContextClauseEdges = graph.edges.filter(
     (edge) =>
-      edge.relation === 'context-for' &&
-      edge.to === workItem.id &&
-      edge.from.startsWith('clause:')
+      edge.relation === 'context-for' && edge.to === workItem.id && edge.from.startsWith('clause:')
   );
   if (
     graph.summary.aggregateContextClauseCountsByWorkItem[workItem.key] !==
@@ -175,14 +173,9 @@ for (const workItem of workItemNodes) {
     failures.push(`${workItem.key}: aggregate-context clause family summary drift`);
   }
   const directScrRows = graph.nodes.filter(
-    (node) =>
-      node.type === 'scr-row' &&
-      node.properties.matrixWorkItems?.includes(workItem.key)
+    (node) => node.type === 'scr-row' && node.properties.matrixWorkItems?.includes(workItem.key)
   );
-  if (
-    graph.summary.directScrRowCountsByWorkItem[workItem.key] !==
-    directScrRows.length
-  ) {
+  if (graph.summary.directScrRowCountsByWorkItem[workItem.key] !== directScrRows.length) {
     failures.push(`${workItem.key}: direct SCR-row summary count drift`);
   }
   const evidenceStates = {};
@@ -235,11 +228,7 @@ if (
 }
 
 const wml201Rows = graph.nodes
-  .filter(
-    (node) =>
-      node.type === 'scr-row' &&
-      node.properties.matrixWorkItems?.includes('WML-201')
-  )
+  .filter((node) => node.type === 'scr-row' && node.properties.matrixWorkItems?.includes('WML-201'))
   .sort((left, right) => left.properties.ordinal - right.properties.ordinal);
 const expectedWml201RowIds = Array.from({ length: 76 }, (_, index) => {
   const ordinal = index + 1;
@@ -248,8 +237,7 @@ const expectedWml201RowIds = Array.from({ length: 76 }, (_, index) => {
 });
 const wml201Pack = renderContextPack(graph, 'WML-201');
 if (
-  JSON.stringify(wml201Rows.map((row) => row?.key)) !==
-    JSON.stringify(expectedWml201RowIds) ||
+  JSON.stringify(wml201Rows.map((row) => row?.key)) !== JSON.stringify(expectedWml201RowIds) ||
   wml201Rows.some(
     (row) =>
       !row?.properties.sourceAnchor?.documentId ||
@@ -259,9 +247,9 @@ if (
   ) ||
   JSON.stringify(graph.summary.directScrRowEvidenceStatesByWorkItem['WML-201']) !==
     JSON.stringify({
-      'direct-test-linked': 33,
+      'direct-test-linked': 34,
       'gap-work-item-mapped': 14,
-      'optional-not-assessed': 29
+      'optional-not-assessed': 28
     }) ||
   graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
   JSON.stringify(graph.summary.directClauseFamiliesByWorkItem['WML-201']) !==
@@ -269,9 +257,9 @@ if (
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
   !wml201Pack.includes('- Direct normative clauses: 178') ||
-  !wml201Pack.includes('33 `direct-test-linked`') ||
+  !wml201Pack.includes('34 `direct-test-linked`') ||
   !wml201Pack.includes('14 `gap-work-item-mapped`') ||
-  !wml201Pack.includes('29 `optional-not-assessed`') ||
+  !wml201Pack.includes('28 `optional-not-assessed`') ||
   !wml201Pack.includes('**WML-C-01**') ||
   !wml201Pack.includes('**WML-C-76**')
 ) {
@@ -343,7 +331,9 @@ if (
   !wml302Pack.includes('**WML-CL-GO-ASSIGNMENT-ORDER**') ||
   !wml302Pack.includes('**WML-CL-PREV-ASSIGNMENT-ORDER**') ||
   !wml302Pack.includes('**WML-CL-REFRESH-ASSIGNMENTS**') ||
-  !wml302Pack.includes('`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`') ||
+  !wml302Pack.includes(
+    '`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`'
+  ) ||
   wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-302') ||
   wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-302']
 ) {
@@ -361,7 +351,9 @@ if (
   !wml303Pack.includes('- Selected work items: 1') ||
   !wml303Pack.includes('- Selected SCR parents: 12') ||
   !wml303Pack.includes('- Direct normative clauses: 27') ||
-  !wml303Pack.includes('`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`') ||
+  !wml303Pack.includes(
+    '`WAP-191-WML` -> `WAP-191_102-WML` -> `WAP-191_104-WML` -> `WAP-191_105-WML`'
+  ) ||
   !wml303Pack.includes('`WAP-236-WAESpec-20020207-a`') ||
   wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-303') ||
   wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-303']
@@ -389,6 +381,28 @@ if (
 ) {
   failures.push(
     'WML-305 context rendering must expose its ten mapped timer clauses, five selected parents, and effective WML source order without a mapping gap'
+  );
+}
+
+const wml306Pack = renderContextPack(wml3Graph, 'WML-306');
+if (
+  !wml306Pack.startsWith('# WML-306 AI Context Pack') ||
+  !wml306Pack.includes('### WML-306:') ||
+  wml306Pack.includes('### WML-305:') ||
+  !wml306Pack.includes('- Selected work items: 1') ||
+  !wml306Pack.includes('- Direct SCR rows: 8') ||
+  !wml306Pack.includes('- Selected SCR parents: 8') ||
+  !wml306Pack.includes('- Direct normative clauses: 18') ||
+  !wml306Pack.includes('**WML-CL-DECK-ACCESS-REQUIRED**') ||
+  !wml306Pack.includes('**WML-CL-LOW-MEMORY-HISTORY-LRU**') ||
+  !wml306Pack.includes('**WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET**') ||
+  !wml306Pack.includes('**WML-CL-UNKNOWN-MARKUP-IGNORED**') ||
+  !wml306Pack.includes('**WML-CL-TASK-FAILURE-ATOMICITY**') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-306') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-306']
+) {
+  failures.push(
+    'WML-306 context rendering must expose its 18 mapped policy clauses, optional WML-C-15 capability, and eight direct parent rows without a declared-family gap'
   );
 }
 
@@ -440,10 +454,7 @@ if (
 
 const trnGraph = trnArtifacts.graph;
 const trnNodeIds = new Set(trnGraph.nodes.map((node) => node.id));
-const selectedWcmpRows = [
-  'WCMP-C-001',
-  'WCMP-SP-C-001'
-];
+const selectedWcmpRows = ['WCMP-C-001', 'WCMP-SP-C-001'];
 if (
   trnGraph.target.sprint !== 'TRN-7' ||
   trnGraph.target.profile !== 'CCR-CLASSC-C-001' ||

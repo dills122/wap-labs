@@ -17,6 +17,7 @@ tags:
 
 - `belongs-to` → [[source-families/wml|wml]]
 - `planned-by` → [[work-items/WML-304|WML-304]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` ← [[clauses/WML-CL-HISTORY-POST-REPLAY|WML-CL-HISTORY-POST-REPLAY]]
 - `refines` ← [[clauses/WML-CL-HISTORY-PREV-POP|WML-CL-HISTORY-PREV-POP]]
 - `refines` ← [[clauses/WML-CL-PREV-ASSIGNMENT-ORDER|WML-CL-PREV-ASSIGNMENT-ORDER]]
@@ -83,12 +84,14 @@ tags:
     "RQ-RMK-002"
   ],
   "matrixWorkItems": [
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "workItems": [
     "R0-01",
     "R0-02",
-    "WML-304"
+    "WML-304",
+    "WML-306"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
 }

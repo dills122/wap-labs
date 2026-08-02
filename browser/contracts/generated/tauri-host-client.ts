@@ -283,6 +283,12 @@ const RUNTIME_SCHEMAS: Record<string, RuntimeSchema> = {
       "historyPushSequence": {
         "kind": "number"
       },
+      "lastRuntimeFailureCode": {
+        "kind": "string"
+      },
+      "lastRuntimeFailureMessage": {
+        "kind": "string"
+      },
       "deckLanguage": {
         "kind": "string"
       },

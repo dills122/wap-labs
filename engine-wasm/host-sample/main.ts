@@ -250,12 +250,30 @@ async function main() {
     try {
       host.pressKey(key);
       const snapshot = updateRuntimeState();
-      status.textContent = `Key "${key}" applied. Active card: ${snapshot.activeCardId}`;
-      appendEvent(`KEY ${key}`, snapshot);
+      if (snapshot.lastRuntimeFailureCode) {
+        const safeMessage =
+          snapshot.lastRuntimeFailureCode === 'WML_CONTEXT_RESET'
+            ? 'Browser memory was exhausted. The page context was reset.'
+            : 'The requested page action could not be completed.';
+        status.textContent = `Key error (${key}): ${safeMessage}`;
+        appendEvent(`KEY_ERROR ${key} ${snapshot.lastRuntimeFailureCode}`, snapshot);
+      } else {
+        status.textContent = `Key "${key}" applied. Active card: ${snapshot.activeCardId}`;
+        appendEvent(`KEY ${key}`, snapshot);
+      }
     } catch (error) {
-      status.textContent = `Key error (${key}): ${String(error)}`;
       const snapshot = updateRuntimeState();
-      appendEvent(`KEY_ERROR ${key} ${String(error)}`, snapshot);
+      if (snapshot.lastRuntimeFailureCode) {
+        const safeMessage =
+          snapshot.lastRuntimeFailureCode === 'WML_CONTEXT_RESET'
+            ? 'Browser memory was exhausted. The page context was reset.'
+            : 'The requested page action could not be completed.';
+        status.textContent = `Key error (${key}): ${safeMessage}`;
+        appendEvent(`KEY_ERROR ${key} ${snapshot.lastRuntimeFailureCode}`, snapshot);
+      } else {
+        status.textContent = `Key error (${key}): ${String(error)}`;
+        appendEvent(`KEY_ERROR ${key} ${String(error)}`, snapshot);
+      }
     }
   };
 

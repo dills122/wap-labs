@@ -217,6 +217,10 @@ export interface WmlEngineCommon {
   // Advances for every committed same-deck forward history push, including
   // explicit navigation to the already-active card; resets with newcontext.
   historyPushSequence(): number;
+  // Stable code and safe copy for a failed or low-memory-recovered WML task.
+  // Technical details remain in bounded diagnostics and traces.
+  lastRuntimeFailureCode(): string | undefined;
+  lastRuntimeFailureMessage(): string | undefined;
   deckLanguage(): string | undefined;
   activeCardLanguage(): string | undefined;
   getVar(name: string): string | undefined;

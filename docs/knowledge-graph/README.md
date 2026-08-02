@@ -74,7 +74,10 @@ action/event clauses, their selected SCR parents and planned fixtures, the effec
 amendment order, and the explicit WAP-236 successor-only context used by `RQ-WAE-017`. The
 focused `WML-304` target exposes the current request/access mappings and its declared WAE-family
 gap without implying readiness. The focused `WML-305` target exposes the ten directly mapped
-timer-lifecycle clauses and their five selected SCR parents without changing fixture status.
+timer-lifecycle clauses and their five selected SCR parents without changing fixture status. The
+focused `WML-306` target activates WML-C-15 as an explicit optional Class C capability and exposes
+the source-audited access, error, unknown-DTD, and task-failure obligations without inferring an
+unrelated WAE-family mapping.
 
 The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP lane:
 
@@ -128,7 +131,7 @@ node scripts/wap-context-pack.mjs WML-203
 ```
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
-through `WML-305`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
+through `WML-306`, `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
 `WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, and `WMLS-501`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice

@@ -153,10 +153,15 @@ const expectedLevelByForce = {
   table: 'required',
   'error-condition': 'required'
 };
-const generalWcmpCapabilityParentIds = ['WCMP-SP-C-002', 'WCMP-GEN-C-001', 'WCMP-GEN-C-003', 'WCMP-GEN-C-006'];
+const generalWcmpCapabilityParentIds = [
+  'WCMP-SP-C-002',
+  'WCMP-GEN-C-001',
+  'WCMP-GEN-C-003',
+  'WCMP-GEN-C-006'
+];
 const generalWcmpCapabilitySectionCounts = {
-  '5.1': 4,
-  '5.2': 1,
+  5.1: 4,
+  5.2: 1,
   '5.5.1': 4,
   '5.5.2': 2,
   '5.5.3.1': 6,
@@ -235,16 +240,15 @@ const wml301EvidenceByClauseId = new Map([
       command: 'pnpm test:story WML-301'
     }
   ]),
-  ...[
-    'WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT',
-    'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT'
-  ].map((id) => [
-    id,
-    {
-      path: 'browser/frontend/src/app/navigation-state.load.test.ts',
-      command: 'pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts'
-    }
-  ]),
+  ...['WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT', 'WML-CL-EXTERNAL-NAVIGATION-OLD-CONTEXT'].map(
+    (id) => [
+      id,
+      {
+        path: 'browser/frontend/src/app/navigation-state.load.test.ts',
+        command: 'pnpm --dir browser/frontend test -- src/app/navigation-state.load.test.ts'
+      }
+    ]
+  ),
   ...['WML-CL-GO-FRAGMENT-FALLBACK', 'WML-CL-CARD-ID-FRAGMENT'].map((id) => [
     id,
     {
@@ -368,6 +372,31 @@ const wml305ClauseIds = new Set([
   'WML-CL-TIMER-START-STOP',
   'WML-CL-TIMER-UNITS'
 ]);
+const wml306ClauseIds = new Set([
+  'WML-CL-ACCESS-ABSENT-ALLOWS',
+  'WML-CL-ACCESS-COMPONENT-MATCH',
+  'WML-CL-ACCESS-DEFAULTS',
+  'WML-CL-ACCESS-REFERRER-MATCH',
+  'WML-CL-ACCESS-RELATIVE-PATH',
+  'WML-CL-ACCESS-SINGLE-ELEMENT',
+  'WML-CL-ACCESS-URL-CASE-RULES',
+  'WML-CL-DECK-ACCESS-REQUIRED',
+  'WML-CL-ERROR-ENFORCEMENT',
+  'WML-CL-ERROR-NO-INTENT-INFERENCE',
+  'WML-CL-GO-ACCESS-BEFORE-TRANSITION',
+  'WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET',
+  'WML-CL-LOW-MEMORY-CONTEXT-RECLAIM',
+  'WML-CL-LOW-MEMORY-HISTORY-LRU',
+  'WML-CL-LOW-MEMORY-HISTORY-MINIMUM',
+  'WML-CL-TASK-FAILURE-ATOMICITY',
+  'WML-CL-UNKNOWN-CONTENT-PRESERVED',
+  'WML-CL-UNKNOWN-MARKUP-IGNORED'
+]);
+const wml306AccessFixtureEvidence = {
+  path: 'engine-wasm/engine/tests/fixtures/wml-306/access-denied.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_306_policy.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306'
+};
 const wml309ClauseIds = new Set([
   'WML-CL-DO-ACTIVE-VISIBILITY',
   'WML-CL-DO-LABEL-BEST-EFFORT',
@@ -403,10 +432,8 @@ function wmls501FixturePath(clauseId) {
         : 'wap-193-valid-library-refs.wmlsc.hex';
   return `engine-wasm/engine/tests/fixtures/wmlscript/${fixtureName}`;
 }
-const wmls501TestPath =
-  'engine-wasm/engine/src/wavescript/wap_decoder.rs';
-const wmls501Command =
-  'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder';
+const wmls501TestPath = 'engine-wasm/engine/src/wavescript/wap_decoder.rs';
+const wmls501Command = 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder';
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -554,6 +581,7 @@ const implementedWmlClauseIds = new Set([
   ...wml303ClauseIds,
   ...wml305ClauseIds,
   ...wml309ClauseIds,
+  'WML-CL-DECK-ACCESS-REQUIRED',
   'WML-CL-BR-LINE-BREAK',
   ...implementedWml202ClauseIds
 ]);
@@ -646,8 +674,8 @@ for (const family of ledger.families ?? []) {
   )
     ? 'nested-clauses-fixture-backed'
     : family.clauses?.some((candidate) => candidate.fixturePlan?.status === 'implemented')
-    ? 'nested-clauses-partially-fixture-backed'
-    : 'nested-clauses-anchored-fixtures-planned';
+      ? 'nested-clauses-partially-fixture-backed'
+      : 'nested-clauses-anchored-fixtures-planned';
 
   if (
     family.status !== expectedFamilyStatus ||
@@ -819,6 +847,7 @@ for (const family of ledger.families ?? []) {
         ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
         ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
+        ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
         ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
@@ -839,6 +868,7 @@ for (const family of ledger.families ?? []) {
       ...(wml304ClauseIds.has(candidate.id) ? ['WML-304'] : []),
       ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
+      ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
       ...(trn702ClauseIds.has(candidate.id) ? ['TRN-702'] : []),
@@ -859,19 +889,17 @@ for (const family of ledger.families ?? []) {
     const directFixtureImplemented =
       candidate.fixturePlan?.status === 'implemented' &&
       (candidate.family === 'wcmp' ||
-      candidate.family === 'wdp' ||
-      (candidate.family === 'wbxml' &&
-        !deferredWbxmlClauseIds.has(candidate.id)) ||
-      implementedWmlClauseIds.has(candidate.id) ||
-      implementedWsp801ClauseIds.has(candidate.id) ||
-      implementedWsp802ClauseIds.has(candidate.id) ||
-      wmls501ClauseIds.has(candidate.id));
+        candidate.family === 'wdp' ||
+        (candidate.family === 'wbxml' && !deferredWbxmlClauseIds.has(candidate.id)) ||
+        implementedWmlClauseIds.has(candidate.id) ||
+        implementedWsp801ClauseIds.has(candidate.id) ||
+        implementedWsp802ClauseIds.has(candidate.id) ||
+        wmls501ClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
       JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
-      JSON.stringify(candidate.directWorkItems ?? []) !==
-        JSON.stringify(expectedDirectWorkItems) ||
+      JSON.stringify(candidate.directWorkItems ?? []) !== JSON.stringify(expectedDirectWorkItems) ||
       JSON.stringify(candidate.aggregateContextWorkItems ?? []) !==
         JSON.stringify(expectedAggregateContextWorkItems) ||
       JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
@@ -912,32 +940,36 @@ for (const family of ledger.families ?? []) {
                 : 'wcmp_cdpd_icmp_profile'
           ))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
-        (implementedWml304TransportClauseIds.has(candidate.id)
-          ? candidate.fixturePlan.evidence?.path !== wml304TransportFixturePath ||
-            candidate.fixturePlan.evidence?.testPath !== wml304TransportTestPath ||
-            !fs.existsSync(path.join(root, wml304TransportFixturePath)) ||
-            !fs.existsSync(path.join(root, wml304TransportTestPath)) ||
-            candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
-          : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
-            !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
-            (candidate.id === 'WML-CL-HISTORY-POST-REPLAY'
-              ? candidate.fixturePlan.evidence?.path !==
-                  wml304HistoryFixtureEvidence.path ||
-                candidate.fixturePlan.evidence?.command !==
-                  wml304HistoryFixtureEvidence.command
-              : wml309ClauseIds.has(candidate.id)
-              ? candidate.fixturePlan.evidence?.path !== wml309FixtureEvidence.path ||
-                candidate.fixturePlan.evidence?.command !== wml309FixtureEvidence.command
-              : wml301EvidenceByClauseId.has(candidate.id)
-            ? candidate.fixturePlan.evidence?.path !==
-                wml301EvidenceByClauseId.get(candidate.id).path ||
-              candidate.fixturePlan.evidence?.command !==
-                wml301EvidenceByClauseId.get(candidate.id).command
-            : !candidate.fixturePlan.evidence?.command?.includes(
-                candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
-                  ? 'pnpm test:story WML-205'
-                  : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
-              )))) ||
+        (candidate.id === 'WML-CL-DECK-ACCESS-REQUIRED'
+          ? candidate.fixturePlan.evidence?.path !== wml306AccessFixtureEvidence.path ||
+            candidate.fixturePlan.evidence?.testPath !== wml306AccessFixtureEvidence.testPath ||
+            !fs.existsSync(path.join(root, wml306AccessFixtureEvidence.path)) ||
+            !fs.existsSync(path.join(root, wml306AccessFixtureEvidence.testPath)) ||
+            candidate.fixturePlan.evidence?.command !== wml306AccessFixtureEvidence.command
+          : implementedWml304TransportClauseIds.has(candidate.id)
+            ? candidate.fixturePlan.evidence?.path !== wml304TransportFixturePath ||
+              candidate.fixturePlan.evidence?.testPath !== wml304TransportTestPath ||
+              !fs.existsSync(path.join(root, wml304TransportFixturePath)) ||
+              !fs.existsSync(path.join(root, wml304TransportTestPath)) ||
+              candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
+            : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
+              !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
+              (candidate.id === 'WML-CL-HISTORY-POST-REPLAY'
+                ? candidate.fixturePlan.evidence?.path !== wml304HistoryFixtureEvidence.path ||
+                  candidate.fixturePlan.evidence?.command !== wml304HistoryFixtureEvidence.command
+                : wml309ClauseIds.has(candidate.id)
+                  ? candidate.fixturePlan.evidence?.path !== wml309FixtureEvidence.path ||
+                    candidate.fixturePlan.evidence?.command !== wml309FixtureEvidence.command
+                  : wml301EvidenceByClauseId.has(candidate.id)
+                    ? candidate.fixturePlan.evidence?.path !==
+                        wml301EvidenceByClauseId.get(candidate.id).path ||
+                      candidate.fixturePlan.evidence?.command !==
+                        wml301EvidenceByClauseId.get(candidate.id).command
+                    : !candidate.fixturePlan.evidence?.command?.includes(
+                        candidate.id === 'WML-CL-TASK-FAILURE-ATOMICITY'
+                          ? 'pnpm test:story WML-205'
+                          : 'cargo test --manifest-path engine-wasm/engine/Cargo.toml'
+                      )))) ||
       (implementedWsp801ClauseIds.has(candidate.id) &&
         (implementedWsp801ClauseIds.size !== 35 ||
           candidate.fixturePlan.evidence?.path !== wsp801FixturePath ||
@@ -972,28 +1004,75 @@ for (const family of ledger.families ?? []) {
     if (candidate.obligationLevel === 'permitted') permittedClauseCount += 1;
   }
 
+  if (family.family === 'wml') {
+    const capabilityParents = family.capabilityParents ?? [];
+    const capabilityClauses = family.capabilityClauses ?? [];
+    const sourceParent = parentLedger.obligations.find((candidate) => candidate.id === 'WML-C-15');
+    if (
+      family.capabilityDisposition !== 'optional-class-c-client-capability' ||
+      family.capabilityParentCount !== 1 ||
+      family.capabilityClauseCount !== 4 ||
+      capabilityParents.length !== 1 ||
+      capabilityParents[0]?.id !== 'WML-C-15' ||
+      capabilityClauses.length !== 4 ||
+      sourceParent?.disposition?.classCProfile !== 'optional-not-required-by-class-c-client'
+    ) {
+      failures.push('wml: WML-C-15 optional low-memory capability scope drift');
+    }
+    const expectedIds = [...wml306ClauseIds]
+      .filter((id) => id.startsWith('WML-CL-LOW-MEMORY-'))
+      .sort();
+    if (JSON.stringify(capabilityParents[0]?.clauseIds) !== JSON.stringify(expectedIds)) {
+      failures.push('wml/WML-C-15: optional clause projection drift');
+    }
+    for (const candidate of capabilityClauses) {
+      if (
+        globalClauseIds.has(candidate.id) ||
+        !expectedIds.includes(candidate.id) ||
+        candidate.profileApplicability !== 'optional-class-c-client-capability' ||
+        JSON.stringify(candidate.parentRows) !== JSON.stringify(['WML-C-15']) ||
+        JSON.stringify(candidate.directWorkItems) !== JSON.stringify(['WML-306']) ||
+        candidate.sourceAnchor?.documentId !== 'WAP-191_104-WML' ||
+        !hashPattern.test(candidate.sourceAnchor?.normalizedTextSha256 ?? '') ||
+        candidate.normativeForce !== 'explicit-should' ||
+        candidate.obligationLevel !== 'recommended' ||
+        candidate.fixturePlan?.status !== 'implemented' ||
+        candidate.mapping?.clauseImplementationStatus !== 'implemented' ||
+        !candidate.fixturePlan?.evidence?.path ||
+        !candidate.fixturePlan?.evidence?.testPath ||
+        !candidate.fixturePlan?.evidence?.command ||
+        !fs.existsSync(path.join(root, candidate.fixturePlan.evidence.path)) ||
+        !fs.existsSync(path.join(root, candidate.fixturePlan.evidence.testPath)) ||
+        candidate.mapping?.parentImplementationSnapshot?.['WML-C-15'] !==
+          sourceParent?.mapping?.implementationStatus
+      ) {
+        failures.push(`${candidate.id}: optional low-memory mapping drift`);
+      }
+      globalClauseIds.add(candidate.id);
+      if (globalFixtureIds.has(candidate.fixturePlan?.id)) {
+        failures.push(`${candidate.id}: duplicate optional fixture ID`);
+      }
+      globalFixtureIds.add(candidate.fixturePlan?.id);
+    }
+  }
+
   if (family.family === 'wbxml') {
     const directEvidence = family.directEvidence;
     const corpusPath = path.join(root, directEvidence?.corpusPath ?? '');
     const testPath = path.join(root, directEvidence?.testPath ?? '');
-    const evidencePathsExist =
-      fs.existsSync(corpusPath) && fs.existsSync(testPath);
+    const evidencePathsExist = fs.existsSync(corpusPath) && fs.existsSync(testPath);
     const corpus = evidencePathsExist ? readJson(corpusPath) : {};
     const expectedImplementedIds = (family.clauses ?? [])
       .filter((candidate) => !deferredWbxmlClauseIds.has(candidate.id))
       .map((candidate) => candidate.id)
       .sort();
-    const recordedImplementedIds = [
-      ...(directEvidence?.implementedClauseIds ?? [])
-    ].sort();
+    const recordedImplementedIds = [...(directEvidence?.implementedClauseIds ?? [])].sort();
     const corpusImplementedIds = [...(corpus.implementedClauses ?? [])].sort();
     const tests = evidencePathsExist ? fs.readFileSync(testPath, 'utf8') : '';
     if (
       !evidencePathsExist ||
-      JSON.stringify(recordedImplementedIds) !==
-        JSON.stringify(expectedImplementedIds) ||
-      JSON.stringify(corpusImplementedIds) !==
-        JSON.stringify(expectedImplementedIds) ||
+      JSON.stringify(recordedImplementedIds) !== JSON.stringify(expectedImplementedIds) ||
+      JSON.stringify(corpusImplementedIds) !== JSON.stringify(expectedImplementedIds) ||
       directEvidence?.commands?.length !== 4 ||
       !directEvidence.commands.every((command) => {
         const test = command.split(' ').at(-1);
@@ -1007,26 +1086,35 @@ for (const family of ledger.families ?? []) {
   if (family.family === 'wcmp') {
     const capabilityParents = family.capabilityParents ?? [];
     const capabilityClauses = family.capabilityClauses ?? [];
-    const capabilityParentById = new Map(generalWcmpCapabilityParentIds.map((parentId) => [
-      parentId,
-      parentLedger.obligations.find((candidate) => candidate.id === parentId)
-    ]));
-    const actualSectionCounts = Object.fromEntries(Object.keys(generalWcmpCapabilitySectionCounts).map((section) => [
-      section,
-      capabilityClauses.filter((candidate) => candidate.sourceAnchor?.section === section).length
-    ]));
+    const capabilityParentById = new Map(
+      generalWcmpCapabilityParentIds.map((parentId) => [
+        parentId,
+        parentLedger.obligations.find((candidate) => candidate.id === parentId)
+      ])
+    );
+    const actualSectionCounts = Object.fromEntries(
+      Object.keys(generalWcmpCapabilitySectionCounts).map((section) => [
+        section,
+        capabilityClauses.filter((candidate) => candidate.sourceAnchor?.section === section).length
+      ])
+    );
     if (
       family.capabilityDisposition !== 'capability-gated-non-ip-bearer' ||
       family.capabilityParentCount !== 4 ||
       family.capabilityClauseCount !== 27 ||
-      JSON.stringify(capabilityParents.map((parent) => parent.id)) !== JSON.stringify(generalWcmpCapabilityParentIds) ||
+      JSON.stringify(capabilityParents.map((parent) => parent.id)) !==
+        JSON.stringify(generalWcmpCapabilityParentIds) ||
       capabilityClauses.length !== 27 ||
       JSON.stringify(actualSectionCounts) !== JSON.stringify(generalWcmpCapabilitySectionCounts)
-    ) failures.push('wcmp: general-WCMP capability scope/count drift');
+    )
+      failures.push('wcmp: general-WCMP capability scope/count drift');
 
     for (const parent of capabilityParents) {
       const sourceParent = capabilityParentById.get(parent.id);
-      const expectedClauseIds = capabilityClauses.filter((candidate) => candidate.parentRows.includes(parent.id)).map((candidate) => candidate.id).sort();
+      const expectedClauseIds = capabilityClauses
+        .filter((candidate) => candidate.parentRows.includes(parent.id))
+        .map((candidate) => candidate.id)
+        .sort();
       if (
         !sourceParent ||
         sourceParent.disposition?.classCProfile !== 'capability-gated-non-ip-bearer' ||
@@ -1038,16 +1126,27 @@ for (const family of ledger.families ?? []) {
         JSON.stringify(parent.ownerLayers) !== JSON.stringify(sourceParent.mapping.ownerLayers) ||
         JSON.stringify(parent.workItems) !== JSON.stringify(sourceParent.mapping.workItems) ||
         JSON.stringify(parent.clauseIds) !== JSON.stringify(expectedClauseIds)
-      ) failures.push(`wcmp/${parent.id}: capability parent traceability drift`);
+      )
+        failures.push(`wcmp/${parent.id}: capability parent traceability drift`);
     }
 
     const capabilityClauseById = new Map();
     for (const candidate of capabilityClauses) {
-      const parents = candidate.parentRows.map((parentId) => capabilityParentById.get(parentId)).filter(Boolean);
-      const expectedOwners = [...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))].sort();
-      const expectedWorkItems = [...new Set([...parents.flatMap((parent) => parent.mapping.workItems), 'TRN-710'])].sort();
-      const expectedRequirements = [...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))].sort();
-      const expectedSnapshot = Object.fromEntries(parents.map((parent) => [parent.id, parent.mapping.implementationStatus]));
+      const parents = candidate.parentRows
+        .map((parentId) => capabilityParentById.get(parentId))
+        .filter(Boolean);
+      const expectedOwners = [
+        ...new Set(parents.flatMap((parent) => parent.mapping.ownerLayers))
+      ].sort();
+      const expectedWorkItems = [
+        ...new Set([...parents.flatMap((parent) => parent.mapping.workItems), 'TRN-710'])
+      ].sort();
+      const expectedRequirements = [
+        ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
+      ].sort();
+      const expectedSnapshot = Object.fromEntries(
+        parents.map((parent) => [parent.id, parent.mapping.implementationStatus])
+      );
       const testFilter = candidate.fixturePlan?.evidence?.command?.split(' ').at(-1);
       const testName = testFilter?.split('::').at(-1);
       const testPath = path.join(root, candidate.fixturePlan?.evidence?.testPath ?? '');
@@ -1071,18 +1170,25 @@ for (const family of ledger.families ?? []) {
         JSON.stringify(candidate.directWorkItems) !== JSON.stringify(['TRN-710']) ||
         JSON.stringify(candidate.mapping?.ownerLayers) !== JSON.stringify(expectedOwners) ||
         JSON.stringify(candidate.mapping?.workItems) !== JSON.stringify(expectedWorkItems) ||
-        JSON.stringify(candidate.mapping?.requirementIds) !== JSON.stringify(expectedRequirements) ||
-        JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !== JSON.stringify(expectedSnapshot) ||
+        JSON.stringify(candidate.mapping?.requirementIds) !==
+          JSON.stringify(expectedRequirements) ||
+        JSON.stringify(candidate.mapping?.parentImplementationSnapshot) !==
+          JSON.stringify(expectedSnapshot) ||
         candidate.mapping?.clauseImplementationStatus !== 'implemented' ||
         candidate.fixturePlan?.status !== 'implemented' ||
         candidate.fixturePlan?.assertion !== candidate.obligationSynopsis ||
-        candidate.fixturePlan?.evidence?.path !== 'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
-        !testName || !tests.includes(`fn ${testName}`)
-      ) failures.push(`${candidate.id}: general-WCMP capability mapping drift`);
+        candidate.fixturePlan?.evidence?.path !==
+          'transport-rust/tests/fixtures/transport/wcmp_core_mapped/wcmp_fixture.json' ||
+        !testName ||
+        !tests.includes(`fn ${testName}`)
+      )
+        failures.push(`${candidate.id}: general-WCMP capability mapping drift`);
       globalClauseIds.add(candidate.id);
-      if (capabilityClauseById.has(candidate.id)) failures.push(`${candidate.id}: duplicate capability clause ID`);
+      if (capabilityClauseById.has(candidate.id))
+        failures.push(`${candidate.id}: duplicate capability clause ID`);
       capabilityClauseById.set(candidate.id, candidate);
-      if (globalFixtureIds.has(candidate.fixturePlan?.id)) failures.push(`${candidate.id}: duplicate capability fixture ID`);
+      if (globalFixtureIds.has(candidate.fixturePlan?.id))
+        failures.push(`${candidate.id}: duplicate capability fixture ID`);
       globalFixtureIds.add(candidate.fixturePlan?.id);
     }
   }
@@ -1102,8 +1208,7 @@ const expectedSummary = {
   plannedFixtureCount: clauseCount,
   assessedClauseCount: (ledger.families ?? [])
     .flatMap((family) => family.clauses ?? [])
-    .filter((candidate) => candidate.mapping?.clauseImplementationStatus === 'implemented')
-    .length
+    .filter((candidate) => candidate.mapping?.clauseImplementationStatus === 'implemented').length
 };
 if (
   selectedParentCount !== 198 ||

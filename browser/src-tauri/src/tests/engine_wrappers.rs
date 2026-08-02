@@ -686,6 +686,45 @@ fn command_engine_load_deck_context_surfaces_oversized_raw_payload_error() {
 }
 
 #[test]
+fn wml_306_tauri_frame_surfaces_safe_task_failure_after_atomic_rollback() {
+    let mut engine = WmlEngine::new();
+    apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(
+                r##"<wml><card id="stable"><do type="accept"><go href="#missing"><setvar name="Secret" value="private"/></go></do><p>Stable</p></card></wml>"##,
+            ),
+            base_url: "http://local.test/policy.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("failure deck loads");
+
+    let frame = apply_handle_key_frame(
+        &mut engine,
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("recorded WML task failure remains a host-visible frame");
+
+    assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("stable"));
+    assert_eq!(engine.get_var("Secret".to_string()), None);
+    assert_eq!(
+        frame.snapshot.last_runtime_failure_code.as_deref(),
+        Some("WML_TASK_FAILED")
+    );
+    assert_eq!(
+        frame.snapshot.last_runtime_failure_message.as_deref(),
+        Some("The requested page action could not be completed.")
+    );
+}
+
+#[test]
 fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
     let mut engine = WmlEngine::new();
     apply_load_deck_context(
@@ -846,16 +885,22 @@ fn tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic() {
     )
     .expect("enter should navigate to accept-broken");
     engine.clear_trace_entries();
-    let err = apply_handle_key(
+    let snapshot = apply_handle_key(
         &mut engine,
         HandleKeyRequest {
             key: EngineKey::Enter,
         },
     )
-    .expect_err("accept-broken should fail deterministically");
-    assert!(err.contains("Card id not found"));
-    let snapshot = apply_engine_snapshot(&engine);
+    .expect("accept-broken should return its rolled-back safe host snapshot");
     assert_eq!(snapshot.active_card_id.as_deref(), Some("accept-broken"));
+    assert_eq!(
+        snapshot.last_runtime_failure_code.as_deref(),
+        Some("WML_TASK_FAILED")
+    );
+    assert_eq!(
+        snapshot.last_runtime_failure_message.as_deref(),
+        Some("The requested page action could not be completed.")
+    );
     assert_trace_kinds_subsequence(&engine, &["KEY", "ACTION_ACCEPT", "ACTION_FRAGMENT"]);
 }
 

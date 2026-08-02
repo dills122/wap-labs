@@ -46,9 +46,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+  "assessmentNote": "Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -57,6 +57,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
       "symbol": "wml_go_request_policy"
+    },
+    {
+      "path": "transport-rust/src/request_serialization.rs",
+      "symbol": "smallest_usable_referer"
     }
   ],
   "testEvidence": [
@@ -69,6 +73,16 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
       "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
       "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+      "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+      "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+    },
+    {
+      "path": "transport-rust/src/request_serialization/tests.rs",
+      "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+      "command": "cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
     }
   ],
   "ownerLayers": [

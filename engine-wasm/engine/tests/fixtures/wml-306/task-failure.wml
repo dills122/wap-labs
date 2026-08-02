@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="stable">
+    <do type="accept">
+      <go href="#missing"><setvar name="Secret" value="private-value"/></go>
+    </do>
+    <p>Stable</p>
+  </card>
+</wml>

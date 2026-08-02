@@ -16,6 +16,7 @@ tags:
 ## Relationships
 
 - `maps-to` ← [[clauses/WML-CL-DECK-ACCESS-REQUIRED|WML-CL-DECK-ACCESS-REQUIRED]]
+- `maps-to` ← [[clauses/WML-CL-GO-ACCESS-BEFORE-TRANSITION|WML-CL-GO-ACCESS-BEFORE-TRANSITION]]
 - `maps-to` ← [[clauses/WML-CL-GO-REFERER|WML-CL-GO-REFERER]]
 
 ## Data

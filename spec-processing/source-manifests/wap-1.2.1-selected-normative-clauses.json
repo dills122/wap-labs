@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 318
+    "assessedClauseCount": 319
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "44f1fd7430b9b26af230b816a0d830b0a6ef0dea6b9de29777714a4f6b795957",
+      "parentLedgerSha256": "1586f52e737736b1025d2933793b8a085d75e6f7e724256253bed9f8b45f47ee",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -328,7 +328,7 @@
             "staticConformanceSection": "15.1.4",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -489,7 +489,7 @@
             "staticConformanceSection": "15.1.5",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "browser"
@@ -3570,8 +3570,13 @@
           "fixturePlan": {
             "id": "WML-FX-DECK-ACCESS-REQUIRED",
             "kind": "security-policy",
-            "status": "planned",
-            "assertion": "Enforce deck-level access control using access, sendreferer, domain, and path semantics."
+            "status": "implemented",
+            "assertion": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wml-306/access-denied.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -3591,14 +3596,15 @@
               "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-14": "partial",
-              "WML-C-21": "partial"
+              "WML-C-14": "implemented",
+              "WML-C-21": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-306"
           ]
         },
         {
@@ -3644,14 +3650,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3697,14 +3704,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3750,14 +3758,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3803,14 +3812,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3856,14 +3866,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3909,14 +3920,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -3962,14 +3974,15 @@
               "RQ-RMK-001"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-21": "partial"
+              "WML-C-21": "implemented"
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -4007,7 +4020,8 @@
               "R0-01",
               "R0-07",
               "WML-201",
-              "WML-205"
+              "WML-205",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -4020,7 +4034,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-205"
+            "WML-205",
+            "WML-306"
           ]
         },
         {
@@ -4058,7 +4073,8 @@
               "R0-01",
               "R0-07",
               "WML-201",
-              "WML-205"
+              "WML-205",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-012"
@@ -4071,7 +4087,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-205"
+            "WML-205",
+            "WML-306"
           ]
         },
         {
@@ -4109,7 +4126,8 @@
               "R0-01",
               "R0-07",
               "WML-201",
-              "WML-203"
+              "WML-203",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-009"
@@ -4121,7 +4139,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-306"
           ]
         },
         {
@@ -4159,7 +4178,8 @@
               "R0-01",
               "R0-07",
               "WML-201",
-              "WML-203"
+              "WML-203",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-009"
@@ -4171,7 +4191,8 @@
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-306"
           ]
         },
         {
@@ -4374,7 +4395,8 @@
               "R0-06",
               "R0-07",
               "WML-201",
-              "WML-202"
+              "WML-202",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -4382,7 +4404,7 @@
               "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-14": "partial",
+              "WML-C-14": "implemented",
               "WML-C-18": "implemented",
               "WML-C-29": "partial"
             },
@@ -4391,7 +4413,8 @@
           },
           "directWorkItems": [
             "WML-201",
-            "WML-202"
+            "WML-202",
+            "WML-306"
           ]
         },
         {
@@ -5105,7 +5128,8 @@
               "R0-07",
               "WML-201",
               "WML-205",
-              "WML-303"
+              "WML-303",
+              "WML-306"
             ],
             "requirementIds": [
               "RQ-RMK-002",
@@ -5124,7 +5148,8 @@
           "directWorkItems": [
             "WML-201",
             "WML-205",
-            "WML-303"
+            "WML-303",
+            "WML-306"
           ]
         },
         {
@@ -5551,7 +5576,7 @@
               "RQ-RMK-011"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-14": "partial",
+              "WML-C-14": "implemented",
               "WML-C-29": "partial"
             },
             "clauseImplementationStatus": "implemented",
@@ -10228,6 +10253,230 @@
           "directWorkItems": [
             "WML-201"
           ]
+        }
+      ],
+      "capabilityDisposition": "optional-class-c-client-capability",
+      "capabilityParentCount": 1,
+      "capabilityClauseCount": 4,
+      "capabilityParents": [
+        {
+          "id": "WML-C-15",
+          "feature": "Low-memory behaviour",
+          "referencedSection": "12.2",
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "staticConformanceSection": "15.1.4",
+            "changeSection": null
+          },
+          "implementationStatus": "implemented",
+          "ownerLayers": [
+            "engine-wasm",
+            "browser"
+          ],
+          "workItems": [
+            "R0-01",
+            "R0-07"
+          ],
+          "clauseIds": [
+            "WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+            "WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+            "WML-CL-LOW-MEMORY-HISTORY-LRU",
+            "WML-CL-LOW-MEMORY-HISTORY-MINIMUM"
+          ]
+        }
+      ],
+      "capabilityClauses": [
+        {
+          "id": "WML-CL-LOW-MEMORY-HISTORY-LRU",
+          "family": "wml",
+          "profileApplicability": "optional-class-c-client-capability",
+          "parentRows": [
+            "WML-C-15"
+          ],
+          "directWorkItems": [
+            "WML-306"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "section": "12.2.1",
+            "heading": "12.2.1 Limited History",
+            "normalizedTextSha256": "7c8fa322a4b4058ae8677683a417e3b43d595240b3ef004d63e80d9459ec2189"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+          "fixturePlan": {
+            "id": "WML-FX-LOW-MEMORY-HISTORY-LRU",
+            "kind": "state-machine",
+            "status": "implemented",
+            "assertion": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+            "evidence": {
+              "path": "browser/frontend/src/session-history.test.ts",
+              "testPath": "browser/frontend/src/session-history.test.ts",
+              "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "engine-wasm",
+              "browser"
+            ],
+            "workItems": [
+              "R0-01",
+              "R0-07",
+              "WML-306"
+            ],
+            "requirementIds": [],
+            "parentImplementationSnapshot": {
+              "WML-C-15": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests."
+          }
+        },
+        {
+          "id": "WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+          "family": "wml",
+          "profileApplicability": "optional-class-c-client-capability",
+          "parentRows": [
+            "WML-C-15"
+          ],
+          "directWorkItems": [
+            "WML-306"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "section": "12.2.1",
+            "heading": "12.2.1 Limited History",
+            "normalizedTextSha256": "7c8fa322a4b4058ae8677683a417e3b43d595240b3ef004d63e80d9459ec2189"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
+          "fixturePlan": {
+            "id": "WML-FX-LOW-MEMORY-HISTORY-MINIMUM",
+            "kind": "state-machine",
+            "status": "implemented",
+            "assertion": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
+            "evidence": {
+              "path": "browser/frontend/src/session-history.test.ts",
+              "testPath": "browser/frontend/src/session-history.test.ts",
+              "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "engine-wasm",
+              "browser"
+            ],
+            "workItems": [
+              "R0-01",
+              "R0-07",
+              "WML-306"
+            ],
+            "requirementIds": [],
+            "parentImplementationSnapshot": {
+              "WML-C-15": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests."
+          }
+        },
+        {
+          "id": "WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+          "family": "wml",
+          "profileApplicability": "optional-class-c-client-capability",
+          "parentRows": [
+            "WML-C-15"
+          ],
+          "directWorkItems": [
+            "WML-306"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "section": "12.2.2",
+            "heading": "12.2.2 Limited Browser Context Size",
+            "normalizedTextSha256": "56b4cd8a388c0ac36a6379f3a9eeb0ee4f34e1c40e98718d1bcff7d2a9d66a0a"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+          "fixturePlan": {
+            "id": "WML-FX-LOW-MEMORY-CONTEXT-RECLAIM",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wml-306/low-memory.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "engine-wasm",
+              "browser"
+            ],
+            "workItems": [
+              "R0-01",
+              "R0-07",
+              "WML-306"
+            ],
+            "requirementIds": [],
+            "parentImplementationSnapshot": {
+              "WML-C-15": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests."
+          }
+        },
+        {
+          "id": "WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+          "family": "wml",
+          "profileApplicability": "optional-class-c-client-capability",
+          "parentRows": [
+            "WML-C-15"
+          ],
+          "directWorkItems": [
+            "WML-306"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "section": "12.2.2",
+            "heading": "12.2.2 Limited Browser Context Size",
+            "normalizedTextSha256": "56b4cd8a388c0ac36a6379f3a9eeb0ee4f34e1c40e98718d1bcff7d2a9d66a0a"
+          },
+          "normativeForce": "explicit-should",
+          "obligationLevel": "recommended",
+          "obligationSynopsis": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+          "fixturePlan": {
+            "id": "WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+            "kind": "error-policy",
+            "status": "implemented",
+            "assertion": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wml-306/low-memory.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306"
+            }
+          },
+          "mapping": {
+            "ownerLayers": [
+              "engine-wasm",
+              "browser"
+            ],
+            "workItems": [
+              "R0-01",
+              "R0-07",
+              "WML-306"
+            ],
+            "requirementIds": [],
+            "parentImplementationSnapshot": {
+              "WML-C-15": "implemented"
+            },
+            "clauseImplementationStatus": "implemented",
+            "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests."
+          }
         }
       ]
     },

@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "bce3d73f3c918d1e7be3bac70be1bf6a5709305396923da9bb37350afc54d6a3"
+        "sha256": "d2d6fabeaf1aaece42bd1431295476c93e60dacc2893be42102bc7fbcb0aa44e"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,28 +25,28 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "e21fe3df307bc0028777ee4d9aa7e9e04e0559113bc8b12fdb92514ac39f2dc0"
+        "sha256": "6cd9374b45b75eec897f36d4df67ed0da18a7764a65c2372c0970d93c5490cf5"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f0d0fc59fcb728fc58cc1f77ff8a58e41e49932fa9de643aa87aa8952a38fb98"
+        "sha256": "ad95d7b713511e6692f278468ad661adfd158563b91e6d0e53ecf53597402649"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "44f1fd7430b9b26af230b816a0d830b0a6ef0dea6b9de29777714a4f6b795957"
+        "sha256": "1586f52e737736b1025d2933793b8a085d75e6f7e724256253bed9f8b45f47ee"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 341,
-    "edgeCount": 904,
+    "nodeCount": 362,
+    "edgeCount": 963,
     "nodesByType": {
-      "clause": 124,
-      "fixture": 124,
+      "clause": 133,
+      "fixture": 133,
       "legacy-ticket": 16,
       "owner-layer": 4,
       "profile": 1,
-      "requirement": 12,
-      "scr-row": 29,
+      "requirement": 13,
+      "scr-row": 31,
       "source-document": 13,
       "source-family": 3,
       "sprint": 6,
@@ -55,23 +55,23 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 29,
+      "belongs-to": 31,
       "contains": 9,
       "context-for": 7,
-      "covers-family": 13,
+      "covers-family": 12,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 200,
+      "maps-to": 207,
       "owned-by": 27,
-      "planned-by": 130,
-      "refines": 180,
+      "planned-by": 147,
+      "refines": 191,
       "relates-to": 18,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 129,
+      "sourced-from": 143,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 124
+      "verified-by": 133
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 13,
@@ -79,7 +79,7 @@
       "WML-303": 27,
       "WML-304": 15,
       "WML-305": 10,
-      "WML-306": 8,
+      "WML-306": 18,
       "WML-307": 0,
       "WML-308": 23,
       "WML-309": 3
@@ -142,7 +142,7 @@
       "WML-303": 0,
       "WML-304": 5,
       "WML-305": 0,
-      "WML-306": 0,
+      "WML-306": 8,
       "WML-307": 0,
       "WML-308": 0,
       "WML-309": 0
@@ -155,15 +155,14 @@
         "direct-test-linked": 5
       },
       "WML-305": {},
-      "WML-306": {},
+      "WML-306": {
+        "direct-test-linked": 8
+      },
       "WML-307": {},
       "WML-308": {},
       "WML-309": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "WML-306": [
-        "wae"
-      ],
       "WML-307": [
         "wbxml",
         "wml"
@@ -996,7 +995,7 @@
           "RQ-RMK-001",
           "RQ-RMK-011"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1342,6 +1341,82 @@
       }
     },
     {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "key": "WML-CL-ERROR-ENFORCEMENT",
+      "type": "clause",
+      "title": "Enforce every error condition defined by WML.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-16"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.3",
+          "heading": "12.3 Error Handling",
+          "normalizedTextSha256": "5878eb7729cda9ab8d71cd531aae0f2d5f4af1425b9b6bc9b21dbfe0b0e42d2b"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Enforce every error condition defined by WML.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-201",
+          "WML-205",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "key": "WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "type": "clause",
+      "title": "Do not hide invalid decks by guessing author or origin-server intent.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-16"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.3",
+          "heading": "12.3 Error Handling",
+          "normalizedTextSha256": "5878eb7729cda9ab8d71cd531aae0f2d5f4af1425b9b6bc9b21dbfe0b0e42d2b"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Do not hide invalid decks by guessing author or origin-server intent.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-201",
+          "WML-205",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
       "key": "WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
       "type": "clause",
@@ -1449,6 +1524,50 @@
         ],
         "requirementIds": [
           "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "key": "WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "type": "clause",
+      "title": "Evaluate destination-deck access control before committing the card transition.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-14",
+          "WML-C-18",
+          "WML-C-29"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.5.1",
+          "heading": "12.5.1 The Go Task",
+          "normalizedTextSha256": "64953475f2bdd343ead6d19fab5489ca50c840303fc961f186284ccef87bab9c"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Evaluate destination-deck access control before committing the card transition.",
+        "workItems": [
+          "R0-01",
+          "R0-02",
+          "R0-06",
+          "R0-07",
+          "WML-201",
+          "WML-202",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-002",
+          "RQ-RMK-003",
+          "RQ-RMK-011"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -3029,6 +3148,146 @@
       }
     },
     {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "key": "WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "type": "clause",
+      "title": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-15"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.2.2",
+          "heading": "12.2.2 Limited Browser Context Size",
+          "normalizedTextSha256": "56b4cd8a388c0ac36a6379f3a9eeb0ee4f34e1c40e98718d1bcff7d2a9d66a0a"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "profileApplicability": "optional-class-c-client-capability",
+        "obligationSynopsis": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "implementationStatus": "implemented",
+        "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "key": "WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "type": "clause",
+      "title": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-15"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.2.2",
+          "heading": "12.2.2 Limited Browser Context Size",
+          "normalizedTextSha256": "56b4cd8a388c0ac36a6379f3a9eeb0ee4f34e1c40e98718d1bcff7d2a9d66a0a"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "profileApplicability": "optional-class-c-client-capability",
+        "obligationSynopsis": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "implementationStatus": "implemented",
+        "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "key": "WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "type": "clause",
+      "title": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-15"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.2.1",
+          "heading": "12.2.1 Limited History",
+          "normalizedTextSha256": "7c8fa322a4b4058ae8677683a417e3b43d595240b3ef004d63e80d9459ec2189"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "profileApplicability": "optional-class-c-client-capability",
+        "obligationSynopsis": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "implementationStatus": "implemented",
+        "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "key": "WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "type": "clause",
+      "title": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-15"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.2.1",
+          "heading": "12.2.1 Limited History",
+          "normalizedTextSha256": "7c8fa322a4b4058ae8677683a417e3b43d595240b3ef004d63e80d9459ec2189"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "profileApplicability": "optional-class-c-client-capability",
+        "obligationSynopsis": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "implementationStatus": "implemented",
+        "evidenceGate": "Implemented optional Class C capability backed by source-derived WML-306 fixtures and direct engine/browser tests.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-NAVIGATION-REFERENCE-MODEL",
       "key": "WML-CL-NAVIGATION-REFERENCE-MODEL",
       "type": "clause",
@@ -4260,7 +4519,8 @@
           "R0-07",
           "WML-201",
           "WML-205",
-          "WML-303"
+          "WML-303",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -4650,6 +4910,82 @@
         "requirementIds": [
           "RQ-RMK-001",
           "RQ-RMK-004"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "key": "WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "type": "clause",
+      "title": "Continue rendering recognized content nested inside an unrecognized element.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-17"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.4",
+          "heading": "12.4 Unknown DTD",
+          "normalizedTextSha256": "9baf0c88a816840e176f22ed82307041e281a99499bc4479b16410c26ab99a44"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "Continue rendering recognized content nested inside an unrecognized element.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-201",
+          "WML-203",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "key": "WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "type": "clause",
+      "title": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-17"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "12.4",
+          "heading": "12.4 Unknown DTD",
+          "normalizedTextSha256": "9baf0c88a816840e176f22ed82307041e281a99499bc4479b16410c26ab99a44"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-201",
+          "WML-203",
+          "WML-306"
+        ],
+        "ownerLayers": [
+          "browser",
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -5311,7 +5647,7 @@
       "title": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
       "properties": {
         "kind": "security-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5425,6 +5761,30 @@
       }
     },
     {
+      "id": "fixture:WML-FX-ERROR-ENFORCEMENT",
+      "key": "WML-FX-ERROR-ENFORCEMENT",
+      "type": "fixture",
+      "title": "Enforce every error condition defined by WML.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Enforce every error condition defined by WML.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-ERROR-NO-INTENT-INFERENCE",
+      "key": "WML-FX-ERROR-NO-INTENT-INFERENCE",
+      "type": "fixture",
+      "title": "Do not hide invalid decks by guessing author or origin-server intent.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Do not hide invalid decks by guessing author or origin-server intent.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-EXTERNAL-NAVIGATION-NEW-CONTEXT",
       "key": "WML-FX-EXTERNAL-NAVIGATION-NEW-CONTEXT",
       "type": "fixture",
@@ -5457,6 +5817,18 @@
         "kind": "transport-boundary",
         "status": "implemented",
         "assertion": "Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-GO-ACCESS-BEFORE-TRANSITION",
+      "key": "WML-FX-GO-ACCESS-BEFORE-TRANSITION",
+      "type": "fixture",
+      "title": "Evaluate destination-deck access control before committing the card transition.",
+      "properties": {
+        "kind": "security-policy",
+        "status": "implemented",
+        "assertion": "Evaluate destination-deck access control before committing the card transition.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -5937,6 +6309,54 @@
         "kind": "runtime",
         "status": "implemented",
         "assertion": "Keep an intrinsic event binding active only within the element where it is declared.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "key": "WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "type": "fixture",
+      "title": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-LOW-MEMORY-CONTEXT-RECLAIM",
+      "key": "WML-FX-LOW-MEMORY-CONTEXT-RECLAIM",
+      "type": "fixture",
+      "title": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+      "properties": {
+        "kind": "error-policy",
+        "status": "implemented",
+        "assertion": "Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-LOW-MEMORY-HISTORY-LRU",
+      "key": "WML-FX-LOW-MEMORY-HISTORY-LRU",
+      "type": "fixture",
+      "title": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "When a configured history limit is exhausted, delete the least-recently-used history information first.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-LOW-MEMORY-HISTORY-MINIMUM",
+      "key": "WML-FX-LOW-MEMORY-HISTORY-MINIMUM",
+      "type": "fixture",
+      "title": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
+      "properties": {
+        "kind": "state-machine",
+        "status": "implemented",
+        "assertion": "Provide a default history capacity of at least ten entries when the low-memory policy is enabled.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -6445,6 +6865,30 @@
       }
     },
     {
+      "id": "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "key": "WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "type": "fixture",
+      "title": "Continue rendering recognized content nested inside an unrecognized element.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Continue rendering recognized content nested inside an unrecognized element.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "key": "WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "type": "fixture",
+      "title": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "For an alternate DTD, ignore unrecognized element tags and attributes during presentation.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
       "key": "WML-FX-VARIABLE-COMMIT-BEFORE-TASK",
       "type": "fixture",
@@ -6834,6 +7278,15 @@
       "key": "RQ-RMK-005",
       "type": "requirement",
       "title": "RQ-RMK-005",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-009",
+      "key": "RQ-RMK-009",
+      "type": "requirement",
+      "title": "RQ-RMK-009",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7234,9 +7687,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+        "assessmentNote": "Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -7245,6 +7698,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "wml_go_request_policy"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "smallest_usable_referer"
           }
         ],
         "testEvidence": [
@@ -7257,6 +7714,16 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
             "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
           }
         ],
         "ownerLayers": [
@@ -7267,12 +7734,85 @@
           "RQ-RMK-011"
         ],
         "matrixWorkItems": [
-          "WML-304"
+          "WML-304",
+          "WML-306"
         ],
         "workItems": [
           "R0-01",
           "R0-07",
-          "WML-304"
+          "WML-304",
+          "WML-306"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-15",
+      "key": "WML-C-15",
+      "type": "scr-row",
+      "title": "Low-memory behaviour",
+      "properties": {
+        "family": "wml",
+        "ordinal": 15,
+        "actor": "wml-user-agent",
+        "referencedSection": "12.2",
+        "specificationStatus": "optional",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.4",
+          "changeSection": null
+        },
+        "disposition": {
+          "strict": "declare-implemented-or-deferred",
+          "classCProfile": "optional-not-required-by-class-c-client",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
+          },
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "HOST_HISTORY_ENTRY_CAPACITY"
+          },
+          {
+            "path": "browser/frontend/src/app/browser-presenter.ts",
+            "symbol": "announceRuntimeFailure"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically",
+            "command": "cd engine-wasm/engine && cargo test wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically"
+          },
+          {
+            "path": "browser/frontend/src/session-history.test.ts",
+            "test": "implements the WML-306 optional low-memory history policy as bounded LRU",
+            "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+          }
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [],
+        "matrixWorkItems": [
+          "WML-306"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-306"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -7284,22 +7824,140 @@
       "title": "Error handling",
       "properties": {
         "family": "wml",
+        "ordinal": 16,
+        "actor": "wml-user-agent",
         "referencedSection": "12.3",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.4",
           "changeSection": null
         },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/validation.rs",
+            "symbol": "validate_wml13_document"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
+            "symbol": "start_to_element"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "loadTransportUrl"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+            "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
+            "command": "cd engine-wasm/engine && cargo test wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
+            "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
+            "command": "cd engine-wasm/engine && cargo test wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-012"
+        ],
+        "matrixWorkItems": [
+          "WML-306"
+        ],
         "workItems": [
           "R0-01",
-          "R0-07"
+          "R0-07",
+          "WML-306"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-17",
+      "key": "WML-C-17",
+      "type": "scr-row",
+      "title": "Unknown DTD handling",
+      "properties": {
+        "family": "wml",
+        "ordinal": 17,
+        "actor": "wml-user-agent",
+        "referencedSection": "12.4",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.4",
+          "changeSection": null
+        },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "implementationStatus": "partial",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "Canonical WML 1.3 and alternate external DTD identities are classified without fetching a DTD; alternate-DTD unknown wrappers and attributes are ignored while recognized child content is retained. Strict prologue-presence enforcement, internal subsets, and full DTD validation remain open.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
+            "symbol": "map_inline_nodes_recursive"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
+            "symbol": "classify_wml_doctype"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "parses_mixed_inline_text_links_break_and_unknown_wrappers",
+            "command": "cd engine-wasm/engine && cargo test parses_mixed_inline_text_links_break_and_unknown_wrappers"
+          },
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content",
+            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content"
+          }
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "browser"
+        ],
+        "requirementIds": [
+          "RQ-RMK-009"
+        ],
+        "matrixWorkItems": [
+          "WML-306"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-07",
+          "WML-203",
+          "WML-306"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -7309,22 +7967,57 @@
       "title": "Inter-card navigation",
       "properties": {
         "family": "wml",
+        "ordinal": 18,
+        "actor": "wml-user-agent",
         "referencedSection": "12.5",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.4",
           "changeSection": null
         },
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "WML-202/301/302/303/305 jointly provide direct evidence for access, newcontext, variables, go/prev/refresh ordering, fetched-deck fragment selection, timers, and rollback across every nested inter-card clause.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
+            "test": "fixture_accept_go_trace_order_is_deterministic",
+            "command": "cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
+        "requirementIds": [
+          "RQ-RMK-003"
+        ],
+        "matrixWorkItems": [
+          "WML-306"
+        ],
         "workItems": [
           "R0-01",
-          "R0-02"
+          "R0-02",
+          "WML-306"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -7334,24 +8027,76 @@
       "title": "access",
       "properties": {
         "family": "wml",
+        "ordinal": 21,
+        "actor": "wml-user-agent",
         "referencedSection": "11.3.1",
+        "specificationStatus": "mandatory",
+        "dependencyExpression": {
+          "type": "none",
+          "scrIds": []
+        },
         "sourceAnchor": {
           "documentId": "WAP-191_104-WML",
           "staticConformanceSection": "15.1.5",
           "changeSection": null
         },
-        "implementationStatus": "partial",
+        "disposition": {
+          "strict": "required-for-claimed-actor",
+          "classCProfile": "required-by-class-c-client-mcf",
+          "enhancementMayReplaceStrictBehavior": false
+        },
+        "reviewState": "source-extracted-class-c-applied-mapping-provisional",
+        "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
+            "symbol": "parse_access"
+          },
+          {
+            "path": "engine-wasm/engine/src/runtime/deck.rs",
+            "symbol": "allows_referring_uri"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "loadTransportUrl"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+            "test": "wml_202_retains_access_and_ordered_meta_for_the_whole_deck",
+            "command": "cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
+            "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
+            "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
         ],
-        "workItems": [
-          "R0-01",
-          "R0-04",
-          "C5-03",
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "matrixWorkItems": [
           "WML-306"
         ],
-        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "workItems": [
+          "C5-03",
+          "R0-01",
+          "R0-04",
+          "WML-306"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
     },
     {
@@ -7464,13 +8209,15 @@
           "RQ-RMK-002"
         ],
         "matrixWorkItems": [
-          "WML-304"
+          "WML-304",
+          "WML-306"
         ],
         "workItems": [
           "R0-01",
           "R0-02",
           "R0-06",
-          "WML-304"
+          "WML-304",
+          "WML-306"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -7650,12 +8397,14 @@
           "RQ-RMK-002"
         ],
         "matrixWorkItems": [
-          "WML-304"
+          "WML-304",
+          "WML-306"
         ],
         "workItems": [
           "R0-01",
           "R0-02",
-          "WML-304"
+          "WML-304",
+          "WML-306"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       }
@@ -8476,15 +9225,27 @@
       "type": "work-item",
       "title": "Access control, low-memory, and runtime error policy",
       "properties": {
-        "status": "todo",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "browser",
           "qa"
         ],
         "sourceFamilies": [
-          "wml",
-          "wae"
+          "wml"
+        ],
+        "notes": [
+          "WML-306 activates the optional WML-C-15 low-memory capability explicitly; it does not change the mandatory Class C selected-parent count.",
+          "The WAE family declaration was removed because the source-audited policy boundary is fully defined by WML 1.3; no unrelated WAE clause is inferred as direct coverage.",
+          "All 18 directly mapped WML-306 clauses are fixture-backed: 14 selected clauses plus four optional WML-C-15 capability clauses. WML-C-14, WML-C-15, WML-C-16, and WML-C-21 advance to implemented; WML-C-17 remains partial for broader prologue/internal-subset/full-DTD validation outside this policy slice.",
+          "Native Rust owns access, task rollback, and context-memory policy; browser history remains a 32-entry LRU and host presentation maps only stable runtime codes to bounded copy. The canonical WML-306 story covers alternate-DTD content recovery and safe atomic task failure through production WASM."
+        ],
+        "scrMatrix": {
+          "family": "wml",
+          "scope": "selected-clause-parents"
+        },
+        "specReferences": [
+          "WAP-191_104-WML sections 11.3.1, 12.1 through 12.4, and 12.5.5"
         ],
         "existingTickets": [
           "R0-07"
@@ -8496,8 +9257,14 @@
           "Deck access checks, low-memory behavior, unknown DTDs, task failures, and user-visible errors have strict deterministic policies."
         ],
         "evidence": [
-          "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-          "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306",
+          "wasm-pack test --node engine-wasm/engine",
+          "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+          "pnpm --dir browser/frontend test",
+          "pnpm test:story WML-306",
+          "node scripts/wap-context-pack.mjs WML-306",
+          "pnpm wap-compliance:check",
+          "pnpm wap-graph:check"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -10062,6 +10829,96 @@
       ]
     },
     {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|maps-to|requirement:RQ-RMK-012",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|refines|scr-row:WML-C-16",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "refines",
+      "to": "scr-row:WML-C-16",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-ENFORCEMENT|verified-by|fixture:WML-FX-ERROR-ENFORCEMENT",
+      "from": "clause:WML-CL-ERROR-ENFORCEMENT",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-ERROR-ENFORCEMENT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|maps-to|requirement:RQ-RMK-012",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|refines|scr-row:WML-C-16",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-16",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE|verified-by|fixture:WML-FX-ERROR-NO-INTENT-INFERENCE",
+      "from": "clause:WML-CL-ERROR-NO-INTENT-INFERENCE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-ERROR-NO-INTENT-INFERENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT|maps-to|requirement:RQ-RMK-003",
       "from": "clause:WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT",
       "relation": "maps-to",
@@ -10192,6 +11049,87 @@
       "from": "clause:WML-CL-GO-ACCEPT-CHARSET",
       "relation": "verified-by",
       "to": "fixture:WML-FX-GO-ACCEPT-CHARSET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|maps-to|requirement:RQ-RMK-002",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-002",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|maps-to|requirement:RQ-RMK-003",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-003",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|maps-to|requirement:RQ-RMK-011",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-011",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|refines|scr-row:WML-C-14",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-14",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|refines|scr-row:WML-C-18",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-18",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|refines|scr-row:WML-C-29",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-29",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION|verified-by|fixture:WML-FX-GO-ACCESS-BEFORE-TRANSITION",
+      "from": "clause:WML-CL-GO-ACCESS-BEFORE-TRANSITION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-GO-ACCESS-BEFORE-TRANSITION",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -12420,6 +13358,150 @@
       ]
     },
     {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET|refines|scr-row:WML-C-15",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-15",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET|verified-by|fixture:WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM|refines|scr-row:WML-C-15",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "relation": "refines",
+      "to": "scr-row:WML-C-15",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM|verified-by|fixture:WML-FX-LOW-MEMORY-CONTEXT-RECLAIM",
+      "from": "clause:WML-CL-LOW-MEMORY-CONTEXT-RECLAIM",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-LOW-MEMORY-CONTEXT-RECLAIM",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU|refines|scr-row:WML-C-15",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "relation": "refines",
+      "to": "scr-row:WML-C-15",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU|verified-by|fixture:WML-FX-LOW-MEMORY-HISTORY-LRU",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-LRU",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-LOW-MEMORY-HISTORY-LRU",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM|refines|scr-row:WML-C-15",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "relation": "refines",
+      "to": "scr-row:WML-C-15",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM|verified-by|fixture:WML-FX-LOW-MEMORY-HISTORY-MINIMUM",
+      "from": "clause:WML-CL-LOW-MEMORY-HISTORY-MINIMUM",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-LOW-MEMORY-HISTORY-MINIMUM",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-NAVIGATION-REFERENCE-MODEL|maps-to|requirement:RQ-RMK-003",
       "from": "clause:WML-CL-NAVIGATION-REFERENCE-MODEL",
       "relation": "maps-to",
@@ -14121,6 +15203,15 @@
       ]
     },
     {
+      "id": "clause:WML-CL-TASK-FAILURE-ATOMICITY|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-TASK-FAILURE-ATOMICITY",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-TASK-FAILURE-ATOMICITY|refines|scr-row:WML-C-16",
       "from": "clause:WML-CL-TASK-FAILURE-ATOMICITY",
       "relation": "refines",
@@ -14719,6 +15810,96 @@
       "from": "clause:WML-CL-TIMER-UNITS",
       "relation": "verified-by",
       "to": "fixture:WML-FX-TIMER-UNITS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|maps-to|requirement:RQ-RMK-009",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-009",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|refines|scr-row:WML-C-17",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-17",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED|verified-by|fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "from": "clause:WML-CL-UNKNOWN-CONTENT-PRESERVED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-UNKNOWN-CONTENT-PRESERVED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|maps-to|requirement:RQ-RMK-009",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-009",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|planned-by|work-item:WML-306",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|refines|scr-row:WML-C-17",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "refines",
+      "to": "scr-row:WML-C-17",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED|verified-by|fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
+      "from": "clause:WML-CL-UNKNOWN-MARKUP-IGNORED",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-UNKNOWN-MARKUP-IGNORED",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -15574,8 +16755,47 @@
       ]
     },
     {
+      "id": "scr-row:WML-C-14|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-14",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
       "id": "scr-row:WML-C-14|sourced-from|source-document:WAP-191_104-WML",
       "from": "scr-row:WML-C-14",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-15|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-15",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-15|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-15",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-15|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-15",
       "relation": "sourced-from",
       "to": "source-document:WAP-191_104-WML",
       "sourceRefs": [
@@ -15588,7 +16808,56 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-16|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-16",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-16|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-16",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-17|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-17",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-17|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-17",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-17|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-17",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -15597,7 +16866,27 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-18|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-18",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-18|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-18",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -15606,7 +16895,8 @@
       "relation": "belongs-to",
       "to": "source-family:wml",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -15615,7 +16905,17 @@
       "relation": "planned-by",
       "to": "work-item:WML-306",
       "sourceRefs": [
-        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-21|sourced-from|source-document:WAP-191_104-WML",
+      "from": "scr-row:WML-C-21",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
       ]
     },
     {
@@ -15660,6 +16960,16 @@
       "from": "scr-row:WML-C-29",
       "relation": "planned-by",
       "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-29|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-29",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
@@ -15745,6 +17055,16 @@
       "from": "scr-row:WML-C-38",
       "relation": "planned-by",
       "to": "work-item:WML-304",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
+        "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-38|planned-by|work-item:WML-306",
+      "from": "scr-row:WML-C-38",
+      "relation": "planned-by",
+      "to": "work-item:WML-306",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json",
         "spec-processing/source-manifests/wap-1.2.1-wml-scr.json"
@@ -16540,15 +17860,6 @@
       "from": "work-item:WML-305",
       "relation": "relates-to",
       "to": "legacy-ticket:W0-05",
-      "sourceRefs": [
-        "docs/waves/wap-1.2.1-compliance-program.json"
-      ]
-    },
-    {
-      "id": "work-item:WML-306|covers-family|source-family:wae",
-      "from": "work-item:WML-306",
-      "relation": "covers-family",
-      "to": "source-family:wae",
       "sourceRefs": [
         "docs/waves/wap-1.2.1-compliance-program.json"
       ]

@@ -19,6 +19,7 @@ tags:
 - `maps-to` → [[requirements/RQ-RMK-003|RQ-RMK-003]]
 - `maps-to` → [[requirements/RQ-RMK-012|RQ-RMK-012]]
 - `planned-by` → [[work-items/WML-303|WML-303]]
+- `planned-by` → [[work-items/WML-306|WML-306]]
 - `refines` → [[scr-rows/WML-C-16|WML-C-16]]
 - `refines` → [[scr-rows/WML-C-18|WML-C-18]]
 - `refines` → [[scr-rows/WML-C-29|WML-C-29]]
@@ -53,7 +54,8 @@ tags:
     "R0-07",
     "WML-201",
     "WML-205",
-    "WML-303"
+    "WML-303",
+    "WML-306"
   ],
   "ownerLayers": [
     "browser",

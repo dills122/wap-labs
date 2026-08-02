@@ -63,6 +63,13 @@ const navigationErrorKindForFetchFailure = (response: FetchResponse): Navigation
     ? 'parse'
     : 'network';
 
+const safeDeckLoadFailure = (error: unknown): { message: string; category: string } => {
+  const technicalMessage = error instanceof Error ? error.message : String(error);
+  return technicalMessage === 'Deck access denied for referring URI'
+    ? { message: WAVES_COPY.errors.deckAccessDenied, category: 'WML_ACCESS_DENIED' }
+    : { message: WAVES_COPY.errors.invalidDeck, category: 'ENGINE_LOAD_FAILED' };
+};
+
 export interface NavigationHostClient {
   fetchDeck(request: FetchRequest): Promise<FetchResponse>;
   cancelFetch(requestId: string): Promise<boolean>;
@@ -568,17 +575,17 @@ export const createNavigationStateMachine = (
       if (!isCurrentNavigation(generation)) {
         return null;
       }
-      const message = error instanceof Error ? error.message : String(error);
+      const failure = safeDeckLoadFailure(error);
       mergeSessionState({
         navigationStatus: 'error',
-        lastError: message
+        lastError: failure.message
       });
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(message, 'parse', {
+      hooks.onNavigationError?.(failure.message, 'parse', {
         layer: 'deck',
-        category: 'ENGINE_LOAD_FAILED',
+        category: failure.category,
         requestId,
         requestedUrl
       });

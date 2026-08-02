@@ -29,7 +29,7 @@ pnpm wap-graph:check
 
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
-evidence state: 33 `direct-test-linked`, 14 `gap-work-item-mapped`, or 29
+evidence state: 34 `direct-test-linked`, 14 `gap-work-item-mapped`, or 28
 `optional-not-assessed`. All 175 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
@@ -108,7 +108,7 @@ The source table contains one explicit SCR dependency:
 - Enhancements are never allowed to replace strict behavior.
 - Every mandatory row maps to a substantive implementation work item in
   addition to `R0-01`.
-- Direct executable evidence is linked for `33/76` rows. Existing thematic
+- Direct executable evidence is linked for `34/76` rows. Existing thematic
   tests are counted only when their path, test name, command, code symbol, and
   limitation are reviewed against the exact SCR feature.
 
@@ -130,18 +130,18 @@ the element's `domain`/`path` defaults and component-aware policy are now enforc
 against the host-supplied referring URI before deck commit. WML-304 now preserves
 `sendreferer` opt-in at the engine boundary and the R0-06/WSP-805 transport path emits
 the smallest usable relative referring URI with byte-exact direct evidence. Across the 39 required Class C client rows, the audit
-currently records 19 implemented, 14 partial, and 6 missing. This is not a compliance percentage: nested normative
+currently records 21 implemented, 12 partial, and 6 missing. This is not a compliance percentage: nested normative
 clauses, optional capabilities, cross-target parity, and release evidence
 still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 141
+owner/work mapping and a direct fixture plan. The WML family now has 142
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
 slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
 assessed WML-304 request-serialization clauses, typed POST-history replay, and WML-309
-frame-affordance closure; shared clauses are deduplicated. The other 34 clauses stay
+frame-affordance closure; shared clauses are deduplicated. The other 33 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

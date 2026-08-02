@@ -61,7 +61,7 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
       "test": "wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go",
-      "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
+      "command": "cd engine-wasm/engine && cargo test wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
     }
   ],
   "ownerLayers": [

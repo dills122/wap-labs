@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "bce3d73f3c918d1e7be3bac70be1bf6a5709305396923da9bb37350afc54d6a3"
+        "sha256": "d2d6fabeaf1aaece42bd1431295476c93e60dacc2893be42102bc7fbcb0aa44e"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "e21fe3df307bc0028777ee4d9aa7e9e04e0559113bc8b12fdb92514ac39f2dc0"
+        "sha256": "6cd9374b45b75eec897f36d4df67ed0da18a7764a65c2372c0970d93c5490cf5"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f0d0fc59fcb728fc58cc1f77ff8a58e41e49932fa9de643aa87aa8952a38fb98"
+        "sha256": "ad95d7b713511e6692f278468ad661adfd158563b91e6d0e53ecf53597402649"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "44f1fd7430b9b26af230b816a0d830b0a6ef0dea6b9de29777714a4f6b795957"
+        "sha256": "1586f52e737736b1025d2933793b8a085d75e6f7e724256253bed9f8b45f47ee"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -120,9 +120,9 @@
     },
     "directScrRowEvidenceStatesByWorkItem": {
       "WML-201": {
-        "direct-test-linked": 33,
+        "direct-test-linked": 34,
         "gap-work-item-mapped": 14,
-        "optional-not-assessed": 29
+        "optional-not-assessed": 28
       },
       "WML-202": {},
       "WML-203": {},
@@ -3017,7 +3017,7 @@
           "RQ-RMK-001",
           "RQ-RMK-011"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3499,7 +3499,8 @@
           "R0-01",
           "R0-07",
           "WML-201",
-          "WML-205"
+          "WML-205",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -3536,7 +3537,8 @@
           "R0-01",
           "R0-07",
           "WML-201",
-          "WML-205"
+          "WML-205",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -3691,7 +3693,8 @@
           "R0-06",
           "R0-07",
           "WML-201",
-          "WML-202"
+          "WML-202",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -7642,7 +7645,8 @@
           "R0-07",
           "WML-201",
           "WML-205",
-          "WML-303"
+          "WML-303",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -8207,7 +8211,8 @@
           "R0-01",
           "R0-07",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -8244,7 +8249,8 @@
           "R0-01",
           "R0-07",
           "WML-201",
-          "WML-203"
+          "WML-203",
+          "WML-306"
         ],
         "ownerLayers": [
           "browser",
@@ -9697,7 +9703,7 @@
       "title": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
       "properties": {
         "kind": "security-policy",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Enforce deck-level access control using access, sendreferer, domain, and path semantics.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12612,7 +12618,7 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
             "test": "wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
+            "command": "cd engine-wasm/engine && cargo test wml_202_newcontext_resets_vars_history_and_private_entry_state_only_for_go"
           }
         ],
         "ownerLayers": [
@@ -12790,9 +12796,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.",
+        "assessmentNote": "Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/runtime/deck.rs",
@@ -12801,6 +12807,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "wml_go_request_policy"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "smallest_usable_referer"
           }
         ],
         "testEvidence": [
@@ -12813,6 +12823,16 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
             "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
           }
         ],
         "ownerLayers": [
@@ -12859,11 +12879,35 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "not-assessed",
-        "evidenceState": "optional-not-assessed",
-        "assessmentNote": "Optional capability implementation is deferred to the capability-declaration pass.",
-        "implementationEvidence": [],
-        "testEvidence": [],
+        "implementationStatus": "implemented",
+        "evidenceState": "direct-test-linked",
+        "assessmentNote": "The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.",
+        "implementationEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
+            "symbol": "execute_card_task_action"
+          },
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "HOST_HISTORY_ENTRY_CAPACITY"
+          },
+          {
+            "path": "browser/frontend/src/app/browser-presenter.ts",
+            "symbol": "announceRuntimeFailure"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically",
+            "command": "cd engine-wasm/engine && cargo test wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically"
+          },
+          {
+            "path": "browser/frontend/src/session-history.test.ts",
+            "test": "implements the WML-306 optional low-memory history policy as bounded LRU",
+            "command": "pnpm --dir browser/frontend test -- src/session-history.test.ts"
+          }
+        ],
         "ownerLayers": [
           "engine-wasm",
           "browser"
@@ -12927,12 +12971,12 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
             "test": "wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
+            "command": "cd engine-wasm/engine && cargo test wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically"
           },
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_load_errors.rs",
             "test": "wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
+            "command": "cd engine-wasm/engine && cargo test wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions"
           }
         ],
         "ownerLayers": [
@@ -13218,9 +13262,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. The parent stays partial for the broader access/error policy assigned to WML-306; WML-304 owns only the go sendreferer request intent.",
+        "assessmentNote": "The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/head.rs",
@@ -13244,7 +13288,12 @@
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_202_residual.rs",
             "test": "wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+            "command": "cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_306_policy.rs",
+            "test": "wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable",
+            "command": "cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable"
           }
         ],
         "ownerLayers": [
@@ -13486,12 +13535,12 @@
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_202_enforces_card_event_timer_content_order",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_202_enforces_card_event_timer_content_order"
+            "command": "cd engine-wasm/engine && cargo test wml_202_enforces_card_event_timer_content_order"
           },
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "wml_301_inserts_source_required_table_boundaries_at_card_content_edges",
-            "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
+            "command": "cd engine-wasm/engine && cargo test wml_301_inserts_source_required_table_boundaries_at_card_content_edges"
           },
           {
             "path": "engine-wasm/engine/src/engine_tests/wml_301_context_history.rs",

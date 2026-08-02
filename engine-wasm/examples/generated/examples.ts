@@ -5553,6 +5553,107 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      WML timer lifecycle.\n      <a href=\"#refresh-timer\">Refresh lifecycle</a>\n      <a href=\"#exit-timer\">Exit persistence</a>\n    </p>\n  </card>\n\n  <card id=\"refresh-timer\">\n    <onevent type=\"ontimer\"><go href=\"#expired\"/></onevent>\n    <timer name=\"remaining\" value=\"5\"/>\n    <do type=\"accept\" label=\"Refresh timer\">\n      <refresh><setvar name=\"remaining\" value=\"2\"/></refresh>\n    </do>\n    <p>Press Enter after one tick to refresh the timer.</p>\n  </card>\n\n  <card id=\"exit-timer\">\n    <timer name=\"saved\" value=\"5\"/>\n    <p><a href=\"#persisted\">Leave timer card</a></p>\n  </card>\n\n  <card id=\"expired\"><p>Expired at $(remaining).</p></card>\n  <card id=\"persisted\"><p>Persisted timer value: $(saved).</p></card>\n</wml>\n"
   },
   {
+    "key": "wml306PolicyRecovery",
+    "label": "WML 1.3 Access and Failure Policy",
+    "description": "Exercises alternate-DTD recovery and a failed task that must remain atomic while the host presents bounded error copy.",
+    "goal": "Verify recognized content remains usable and a missing fragment cannot partially mutate or navigate the invoking card.",
+    "workItems": [
+      "WML-306"
+    ],
+    "specItems": [
+      "WML-C-14",
+      "WML-C-16",
+      "WML-C-17",
+      "WML-C-21"
+    ],
+    "testingAc": [
+      "Load the example and confirm the recognized text nested in the vendor wrapper remains visible.",
+      "Activate Failure policy and confirm the failure-policy card becomes active.",
+      "Press Select again and confirm the card remains active while the host reports only the safe task-failure message."
+    ],
+    "flows": [
+      {
+        "id": "unknown-dtd-and-atomic-task-failure",
+        "title": "Unknown DTD content recovers and failed tasks expose bounded host copy",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-306"
+        ],
+        "specItems": [
+          "WML-C-14",
+          "WML-C-16",
+          "WML-C-17",
+          "WML-C-21"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "externalNavigationIntent": null
+          },
+          "render": {
+            "textIncludes": [
+              "Before vendor policy.",
+              "Recognized content remains available.",
+              "After vendor policy."
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "failure",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Failed actions keep this card active."
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "failure",
+                "focusedLinkIndex": 0,
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "ACTION_ACCEPT",
+                "ACTION_FRAGMENT"
+              ],
+              "statusIncludes": "The requested page action could not be completed.",
+              "render": {
+                "textIncludes": [
+                  "Failed actions keep this card active."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 POLICY//EN\"\n  \"http://vendor.test/wml13-policy.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Before vendor policy.\n      <vendor:policy mode=\"constrained\">\n        Recognized content remains available.\n        <a href=\"#failure\">Failure policy</a>\n      </vendor:policy>\n      After vendor policy.\n    </p>\n  </card>\n  <card id=\"failure\">\n    <do type=\"accept\">\n      <go href=\"#missing\">\n        <setvar name=\"PrivateState\" value=\"must-roll-back\"/>\n      </go>\n    </do>\n    <p>Failed actions keep this card active.</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml309FrameAffordances",
     "label": "WML-309 Frame Affordances",
     "description": "Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.",

@@ -22,6 +22,8 @@ type ScriptErrorCategory = 'none' | 'computational' | 'integrity' | 'resource' |
 
 interface EngineWithOptionalScriptErrorDiagnostics {
   externalNavigationRequestPolicy?: () => WmlGoRequestPolicy | null | undefined;
+  lastRuntimeFailureCode?: () => string | undefined;
+  lastRuntimeFailureMessage?: () => string | undefined;
   lastScriptExecutionErrorClass?: () => ScriptErrorClass | undefined;
   lastScriptExecutionErrorCategory?: () => ScriptErrorCategory | undefined;
 }
@@ -35,6 +37,8 @@ export interface EngineSnapshot {
   nextCardVar?: string;
   externalNavigationIntent?: string;
   externalNavigationRequestPolicy?: WmlGoRequestPolicy;
+  lastRuntimeFailureCode?: string;
+  lastRuntimeFailureMessage?: string;
   lastScriptDialogRequests: ScriptDialogRequest[];
   lastScriptExecutionOk?: boolean;
   lastScriptExecutionTrap?: string;
@@ -209,6 +213,8 @@ export async function bootWmlEngine(canvas: HTMLCanvasElement, xml: string): Pro
         externalNavigationIntent: engine.externalNavigationIntent(),
         externalNavigationRequestPolicy:
           diagnostics.externalNavigationRequestPolicy?.() ?? undefined,
+        lastRuntimeFailureCode: diagnostics.lastRuntimeFailureCode?.() ?? undefined,
+        lastRuntimeFailureMessage: diagnostics.lastRuntimeFailureMessage?.() ?? undefined,
         lastScriptDialogRequests: engine.lastScriptDialogRequests(),
         lastScriptExecutionOk: engine.lastScriptExecutionOk(),
         lastScriptExecutionTrap: engine.lastScriptExecutionTrap(),

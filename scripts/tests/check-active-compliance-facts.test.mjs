@@ -115,12 +115,12 @@ test('active rollup guard rejects stale WML evidence-state counts', (context) =>
 
   const ledgerPath = join(fixtureRoot, 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md');
   const ledger = readFileSync(ledgerPath, 'utf8');
-  assert.ok(ledger.includes('33 `direct-test-linked`, 14 `gap-work-item-mapped`'));
+  assert.ok(ledger.includes('34 `direct-test-linked`, 14 `gap-work-item-mapped`'));
   writeFileSync(
     ledgerPath,
     ledger.replace(
-      '33 `direct-test-linked`, 14 `gap-work-item-mapped`',
-      '32 `direct-test-linked`, 15 `gap-work-item-mapped`'
+      '34 `direct-test-linked`, 14 `gap-work-item-mapped`',
+      '33 `direct-test-linked`, 15 `gap-work-item-mapped`'
     )
   );
 

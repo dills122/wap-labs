@@ -307,6 +307,10 @@ pub struct EngineRuntimeSnapshot {
     #[ts(optional)]
     pub history_push_sequence: Option<u32>,
     #[ts(optional)]
+    pub last_runtime_failure_code: Option<String>,
+    #[ts(optional)]
+    pub last_runtime_failure_message: Option<String>,
+    #[ts(optional)]
     pub deck_language: Option<String>,
     #[ts(optional)]
     pub active_card_language: Option<String>,

@@ -712,10 +712,14 @@
         },
         {
           "id": "WML-306",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "browser", "qa"],
-          "sourceFamilies": ["wml", "wae"],
+          "sourceFamilies": ["wml"],
           "existingTickets": ["R0-07"],
+          "scrMatrix": {
+            "family": "wml",
+            "scope": "selected-clause-parents"
+          },
           "outputs": [
             "Access control, low-memory, and runtime error policy"
           ],
@@ -723,8 +727,23 @@
             "Deck access checks, low-memory behavior, unknown DTDs, task failures, and user-visible errors have strict deterministic policies."
           ],
           "evidence": [
-            "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
-            "cargo test --manifest-path browser/src-tauri/Cargo.toml"
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306",
+            "wasm-pack test --node engine-wasm/engine",
+            "cargo test --manifest-path browser/src-tauri/Cargo.toml",
+            "pnpm --dir browser/frontend test",
+            "pnpm test:story WML-306",
+            "node scripts/wap-context-pack.mjs WML-306",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 11.3.1, 12.1 through 12.4, and 12.5.5"
+          ],
+          "notes": [
+            "WML-306 activates the optional WML-C-15 low-memory capability explicitly; it does not change the mandatory Class C selected-parent count.",
+            "The WAE family declaration was removed because the source-audited policy boundary is fully defined by WML 1.3; no unrelated WAE clause is inferred as direct coverage.",
+            "All 18 directly mapped WML-306 clauses are fixture-backed: 14 selected clauses plus four optional WML-C-15 capability clauses. WML-C-14, WML-C-15, WML-C-16, and WML-C-21 advance to implemented; WML-C-17 remains partial for broader prologue/internal-subset/full-DTD validation outside this policy slice.",
+            "Native Rust owns access, task rollback, and context-memory policy; browser history remains a 32-entry LRU and host presentation maps only stable runtime codes to bounded copy. The canonical WML-306 story covers alternate-DTD content recovery and safe atomic task failure through production WASM."
           ]
         },
         {

@@ -13,14 +13,14 @@
 
 ## Graph summary
 
-- Nodes: 341
-- Edges: 904
+- Nodes: 362
+- Edges: 963
 - Selected work items: 9
-- Direct SCR rows: 5
-- Direct normative clauses: 119
+- Direct SCR rows: 13
+- Direct normative clauses: 129
 - Aggregate regression/delegate context clauses: 7
 - Work items without direct clause mappings: 1
-- Work items with unmapped declared normative families: 3
+- Work items with unmapped declared normative families: 2
 
 ## Execution target
 
@@ -208,16 +208,16 @@ Evidence commands:
 
 ### WML-306: Access control, low-memory, and runtime error policy
 
-- Status: `todo`
+- Status: `done`
 - Owner layers: `engine-wasm`, `browser`, `qa`
-- Source families: `wml`, `wae`
+- Source families: `wml`
 - Existing tickets: `R0-07`
-- Direct SCR rows: 0
-- Selected SCR parents: 2 (`WML-C-14`, `WML-C-21`)
-- Direct normative clauses: 8
+- Direct SCR rows: 8 (8 `direct-test-linked`)
+- Selected SCR parents: 8 (`WML-C-14`, `WML-C-15`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-21`, `WML-C-29`, `WML-C-38`)
+- Direct normative clauses: 18
 - Aggregate regression/delegate context: 0
-- Requirements: `RQ-RMK-001`, `RQ-RMK-011`
-- Spec references: None
+- Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`
+- Spec references: `WAP-191_104-WML sections 11.3.1, 12.1 through 12.4, and 12.5.5`
 - Follow-up work items: None
 - Depends on: None
 
@@ -231,8 +231,14 @@ Acceptance:
 
 Evidence commands:
 
-- `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306`
+- `wasm-pack test --node engine-wasm/engine`
 - `cargo test --manifest-path browser/src-tauri/Cargo.toml`
+- `pnpm --dir browser/frontend test`
+- `pnpm test:story WML-306`
+- `node scripts/wap-context-pack.mjs WML-306`
+- `pnpm wap-compliance:check`
+- `pnpm wap-graph:check`
 
 ### WML-307: Additive WML character-processing and generic WBXML residual closure
 
@@ -340,18 +346,18 @@ Evidence commands:
 - **WML-C-14** — Deck access control
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §12.1 (SCR §15.1.4)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
-  - Work items: `R0-01`, `R0-07`, `WML-304`
-  - Assessment note: Deck access domain/path checks are enforced and WML-304 preserves sendreferer opt-in in the request intent; smallest-relative referer transport serialization remains open.
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `transport-rust/src/request_serialization.rs#smallest_usable_referer`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`), `engine-wasm/engine/src/engine_tests/wml_306_policy.rs::wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable` (`cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable`), `transport-rust/src/request_serialization/tests.rs::mapped_fixture_is_byte_exact_and_rejects_invalid_combinations` (`cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations`)
+  - Work items: `R0-01`, `R0-07`, `WML-304`, `WML-306`
+  - Assessment note: Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.
 - **WML-C-29** — go
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.1 (SCR §15.1.5)
   - Assessment: `partial`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`
   - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
-  - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-304`
+  - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-304`, `WML-306`
   - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.
 - **WML-C-37** — postfield
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
@@ -367,7 +373,74 @@ Evidence commands:
   - Assessment: `implemented`; evidence `direct-test-linked`
   - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`, `browser/frontend/src/app/navigation-state.ts#navigateBackWithFallback`
   - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`), `browser/frontend/src/app/navigation-state.history.test.ts::replays typed POST values when history back must refetch the prior deck` (`pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts`)
-  - Work items: `R0-01`, `R0-02`, `WML-304`
+  - Work items: `R0-01`, `R0-02`, `WML-304`, `WML-306`
+  - Assessment note: Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.
+
+### WML-306
+
+- **WML-C-14** — Deck access control
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §12.1 (SCR §15.1.4)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `transport-rust/src/request_serialization.rs#smallest_usable_referer`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`), `engine-wasm/engine/src/engine_tests/wml_306_policy.rs::wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable` (`cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable`), `transport-rust/src/request_serialization/tests.rs::mapped_fixture_is_byte_exact_and_rejects_invalid_combinations` (`cargo test --manifest-path transport-rust/Cargo.toml mapped_fixture_is_byte_exact_and_rejects_invalid_combinations`)
+  - Work items: `R0-01`, `R0-07`, `WML-304`, `WML-306`
+  - Assessment note: Deck access domain/path checks run before commit, WML-304 preserves sendreferer opt-in in the request intent, and the transport request boundary emits the smallest usable relative referer. WML-306 adds direct atomic-denial and safe host-presentation evidence.
+- **WML-C-15** — Low-memory behaviour
+  - Actor/status/profile: `wml-user-agent`; `optional`; `optional-not-required-by-class-c-client`
+  - Spec: `WAP-191_104-WML` §12.2 (SCR §15.1.4)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_card_task_action`, `browser/frontend/src/session-history.ts#HOST_HISTORY_ENTRY_CAPACITY`, `browser/frontend/src/app/browser-presenter.ts#announceRuntimeFailure`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_306_policy.rs::wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically` (`cd engine-wasm/engine && cargo test wml_306_low_memory_reclaims_history_resets_context_and_retries_atomically`), `browser/frontend/src/session-history.test.ts::implements the WML-306 optional low-memory history policy as bounded LRU` (`pnpm --dir browser/frontend test -- src/session-history.test.ts`)
+  - Work items: `R0-01`, `R0-07`, `WML-306`
+  - Assessment note: The optional Class C low-memory capability uses a 32-entry host LRU window (above the recommended minimum of ten), reclaims engine and host history before failure, resets the browser context to an empty predictable state when variable storage remains exhausted, retries the pending task once, and publishes bounded host-owned notification copy.
+- **WML-C-16** — Error handling
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §12.3 (SCR §15.1.4)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/validation.rs#validate_wml13_document`, `engine-wasm/engine/src/parser/wml_parser/xml.rs#start_to_element`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_load_errors.rs::wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically` (`cd engine-wasm/engine && cargo test wml_205_rejects_an_invalid_form_of_every_declared_wml_element_atomically`), `engine-wasm/engine/src/engine_tests/wml_load_errors.rs::wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions` (`cd engine-wasm/engine && cargo test wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions`)
+  - Work items: `R0-01`, `R0-07`, `WML-306`
+  - Assessment note: Strict WML 1.3 loads preserve XML case sensitivity, reject an invalid form of every declared element, enforce the specification-defined literal, length, table, task, event, variable, prologue, and structural error conditions, and publish deterministic diagnostics without replacing the active deck. Host fetch and destination access failures notify the user while preserving the invoking engine state, pending external intent, committed deck session, and history.
+- **WML-C-17** — Unknown DTD handling
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §12.4 (SCR §15.1.4)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#map_inline_nodes_recursive`, `engine-wasm/engine/src/parser/wml_parser/xml.rs#classify_wml_doctype`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::parses_mixed_inline_text_links_break_and_unknown_wrappers` (`cd engine-wasm/engine && cargo test parses_mixed_inline_text_links_break_and_unknown_wrappers`), `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content` (`cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content`)
+  - Work items: `R0-01`, `R0-07`, `WML-203`, `WML-306`
+  - Assessment note: Canonical WML 1.3 and alternate external DTD identities are classified without fetching a DTD; alternate-DTD unknown wrappers and attributes are ignored while recognized child content is retained. Strict prologue-presence enforcement, internal subsets, and full DTD validation remain open.
+- **WML-C-18** — Inter-card navigation
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §12.5 (SCR §15.1.4)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#execute_card_task_action`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::fixture_accept_go_trace_order_is_deterministic` (`cd engine-wasm/engine && cargo test fixture_accept_go_trace_order_is_deterministic`)
+  - Work items: `R0-01`, `R0-02`, `WML-306`
+  - Assessment note: WML-202/301/302/303/305 jointly provide direct evidence for access, newcontext, variables, go/prev/refresh ordering, fetched-deck fragment selection, timers, and rollback across every nested inter-card clause.
+- **WML-C-21** — access
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/head.rs#parse_access`, `engine-wasm/engine/src/runtime/deck.rs#allows_referring_uri`, `browser/frontend/src/app/navigation-state.ts#loadTransportUrl`
+  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::wml_202_retains_access_and_ordered_meta_for_the_whole_deck` (`cd engine-wasm/engine && cargo test wml_202_retains_access_and_ordered_meta_for_the_whole_deck`), `engine-wasm/engine/src/engine_tests/wml_202_residual.rs::wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules` (`cd engine-wasm/engine && cargo test wml_202_access_policy_applies_defaults_components_relative_paths_and_url_case_rules`), `engine-wasm/engine/src/engine_tests/wml_306_policy.rs::wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable` (`cd engine-wasm/engine && cargo test wml_306_access_denial_is_atomic_and_unknown_dtd_content_remains_renderable`)
+  - Work items: `C5-03`, `R0-01`, `R0-04`, `WML-306`
+  - Assessment note: The access element is parsed and retained, its grammar and uniqueness are enforced, and the engine applies defaults, component-aware domain/path matching, relative-path resolution, and URL case rules against the host-supplied referring URI before committing a deck transition. WML-306 adds direct atomic-denial and safe host-presentation evidence; WML-304 separately owns go sendreferer request intent.
+- **WML-C-29** — go
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.5.1 (SCR §15.1.5)
+  - Assessment: `partial`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
+  - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-304`, `WML-306`
+  - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.
+- **WML-C-38** — prev
+  - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
+  - Spec: `WAP-191_104-WML` §9.5.2 (SCR §15.1.5)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`, `browser/frontend/src/app/navigation-state.ts#navigateBackWithFallback`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`), `browser/frontend/src/app/navigation-state.history.test.ts::replays typed POST values when history back must refetch the prior deck` (`pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts`)
+  - Work items: `R0-01`, `R0-02`, `WML-304`, `WML-306`
   - Assessment note: Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.
 
 ## Direct normative obligations
@@ -946,7 +1019,71 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §12.1 (12.1 Deck Access Control)
   - Parents: `WML-C-14`, `WML-C-21`
   - Requirements: `RQ-RMK-001`, `RQ-RMK-011`
-  - Fixture: `WML-FX-DECK-ACCESS-REQUIRED` (`security-policy`, `planned`)
+  - Fixture: `WML-FX-DECK-ACCESS-REQUIRED` (`security-policy`, `implemented`)
+- **WML-CL-ERROR-ENFORCEMENT** — Enforce every error condition defined by WML.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
+  - Parents: `WML-C-16`
+  - Requirements: `RQ-RMK-012`
+  - Fixture: `WML-FX-ERROR-ENFORCEMENT` (`error-policy`, `implemented`)
+- **WML-CL-ERROR-NO-INTENT-INFERENCE** — Do not hide invalid decks by guessing author or origin-server intent.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
+  - Parents: `WML-C-16`
+  - Requirements: `RQ-RMK-012`
+  - Fixture: `WML-FX-ERROR-NO-INTENT-INFERENCE` (`error-policy`, `implemented`)
+- **WML-CL-GO-ACCESS-BEFORE-TRANSITION** — Evaluate destination-deck access control before committing the card transition.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.1 (12.5.1 The Go Task)
+  - Parents: `WML-C-14`, `WML-C-18`, `WML-C-29`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-011`
+  - Fixture: `WML-FX-GO-ACCESS-BEFORE-TRANSITION` (`security-policy`, `implemented`)
+- **WML-CL-LOW-MEMORY-CONTEXT-FAILURE-RESET** — If reclamation cannot satisfy the context limit, notify the user and reset the context to a documented predictable state.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Applicability: `optional-class-c-client-capability`
+  - Source: `WAP-191_104-WML` §12.2.2 (12.2.2 Limited Browser Context Size)
+  - Parents: `WML-C-15`
+  - Requirements: None
+  - Fixture: `WML-FX-LOW-MEMORY-CONTEXT-FAILURE-RESET` (`error-policy`, `implemented`)
+- **WML-CL-LOW-MEMORY-CONTEXT-RECLAIM** — Before declaring browser-context memory exhaustion, reclaim cache and oldest history memory and retry the pending context update.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Applicability: `optional-class-c-client-capability`
+  - Source: `WAP-191_104-WML` §12.2.2 (12.2.2 Limited Browser Context Size)
+  - Parents: `WML-C-15`
+  - Requirements: None
+  - Fixture: `WML-FX-LOW-MEMORY-CONTEXT-RECLAIM` (`error-policy`, `implemented`)
+- **WML-CL-LOW-MEMORY-HISTORY-LRU** — When a configured history limit is exhausted, delete the least-recently-used history information first.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Applicability: `optional-class-c-client-capability`
+  - Source: `WAP-191_104-WML` §12.2.1 (12.2.1 Limited History)
+  - Parents: `WML-C-15`
+  - Requirements: None
+  - Fixture: `WML-FX-LOW-MEMORY-HISTORY-LRU` (`state-machine`, `implemented`)
+- **WML-CL-LOW-MEMORY-HISTORY-MINIMUM** — Provide a default history capacity of at least ten entries when the low-memory policy is enabled.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Applicability: `optional-class-c-client-capability`
+  - Source: `WAP-191_104-WML` §12.2.1 (12.2.1 Limited History)
+  - Parents: `WML-C-15`
+  - Requirements: None
+  - Fixture: `WML-FX-LOW-MEMORY-HISTORY-MINIMUM` (`state-machine`, `implemented`)
+- **WML-CL-TASK-FAILURE-ATOMICITY** — On fetch or access-control failure, notify the user and preserve the invoking card, context, pending assignments, and event state.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §12.5.5 (12.5.5 Task Execution Failure)
+  - Parents: `WML-C-16`, `WML-C-18`, `WML-C-29`, `WML-C-38`
+  - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-012`
+  - Fixture: `WML-FX-TASK-FAILURE-ATOMICITY` (`error-policy`, `implemented`)
+- **WML-CL-UNKNOWN-CONTENT-PRESERVED** — Continue rendering recognized content nested inside an unrecognized element.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
+  - Parents: `WML-C-17`
+  - Requirements: `RQ-RMK-009`
+  - Fixture: `WML-FX-UNKNOWN-CONTENT-PRESERVED` (`rendering`, `implemented`)
+- **WML-CL-UNKNOWN-MARKUP-IGNORED** — For an alternate DTD, ignore unrecognized element tags and attributes during presentation.
+  - Family: `wml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-191_104-WML` §12.4 (12.4 Unknown DTD)
+  - Parents: `WML-C-17`
+  - Requirements: `RQ-RMK-009`
+  - Fixture: `WML-FX-UNKNOWN-MARKUP-IGNORED` (`parser`, `implemented`)
 
 ### WML-308
 
@@ -1163,7 +1300,6 @@ Evidence commands:
 
 Declared-family gaps:
 
-- `WML-306` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-307` declares `wbxml`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-308` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 

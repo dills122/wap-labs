@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "example": "wml306PolicyRecovery",
+  "flows": [
+    {
+      "id": "unknown-dtd-and-atomic-task-failure",
+      "title": "Unknown DTD content recovers and failed tasks expose bounded host copy",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-306"],
+      "specItems": ["WML-C-14", "WML-C-16", "WML-C-17", "WML-C-21"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "externalNavigationIntent": null
+        },
+        "render": {
+          "textIncludes": [
+            "Before vendor policy.",
+            "Recognized content remains available.",
+            "After vendor policy."
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "failure",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "render": { "textIncludes": ["Failed actions keep this card active."] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "failure",
+              "focusedLinkIndex": 0,
+              "externalNavigationIntent": null
+            },
+            "statusIncludes": "The requested page action could not be completed.",
+            "render": { "textIncludes": ["Failed actions keep this card active."] },
+            "traceKinds": ["ACTION_ACCEPT", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

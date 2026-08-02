@@ -495,6 +495,52 @@ describe('BrowserPresenter', () => {
     }
   });
 
+  it('maps WML-306 runtime failure codes to bounded host-owned copy', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      const baseSnapshot = {
+        activeCardId: 'home',
+        focusedLinkIndex: 0,
+        baseUrl: 'http://local.test/start.wml',
+        contentType: 'text/vnd.wap.wml',
+        lastBackNavigationHandled: false,
+        lastScriptDialogRequests: [],
+        lastScriptTimerRequests: []
+      };
+
+      presenter.setSnapshot({
+        ...baseSnapshot,
+        lastRuntimeFailureCode: 'WML_TASK_FAILED',
+        lastRuntimeFailureMessage: 'private variable: secret-token'
+      });
+
+      expect(refs.toastEl.textContent).toBe(WAVES_COPY.errors.runtimeTaskFailed);
+      expect(refs.toastEl.textContent).not.toContain('secret-token');
+
+      refs.toastEl.textContent = '__unchanged__';
+      presenter.setSnapshot({
+        ...baseSnapshot,
+        lastRuntimeFailureCode: 'WML_TASK_FAILED',
+        lastRuntimeFailureMessage: 'different technical detail'
+      });
+      expect(refs.toastEl.textContent).toBe('__unchanged__');
+
+      presenter.setSnapshot(baseSnapshot);
+      vi.runAllTimers();
+      presenter.setSnapshot({
+        ...baseSnapshot,
+        lastRuntimeFailureCode: 'WML_CONTEXT_RESET',
+        lastRuntimeFailureMessage: 'untrusted engine copy'
+      });
+      expect(refs.toastEl.textContent).toBe(WAVES_COPY.errors.runtimeContextReset);
+      expect(refs.toastEl.textContent).not.toContain('untrusted');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('shows the first-render skeleton immediately with no delay', () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
