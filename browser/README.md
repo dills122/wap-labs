@@ -233,7 +233,7 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 2. Preserve completed WBP-06/F0 frame, input, drift, and WML-309 evidence. Keep `EngineDebug*`
    separate and retain the legacy render/key compatibility paths until the declared cutover gate.
 3. Preserve the merged typed POST history `#541`, F2-02 scrolling `#542`, F2-03 unified input
-   `#543`, and APP-SHELL-01 Library/Preferences `#545` slices; land WBP-11 phase recovery `#544`
+   `#543`, WBP-11 phase recovery `#544`, and APP-SHELL-01 Library/Preferences `#545` slices
    without destabilizing their shared browser shell seams.
 4. Use the machine-checked
    [`WBP-14` desktop-path evidence audit](../docs/waves/WBP_14_DESKTOP_PATH_EVIDENCE.md) to add
