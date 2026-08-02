@@ -77,7 +77,7 @@ transport behavior in the frontend.
 
 ### 3.3 Current-state inventory
 
-| Capability       | Implemented at the 2026-07-30 checkpoint                                                                                                                                     | Gap                                                                                                          |
+| Capability       | Implemented at the 2026-08-02 checkpoint                                                                                                                                     | Gap                                                                                                          |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 | Desktop identity | Tauri identity and native menus plus one shared application-command registry and versioned native application-state store                                                    | Production packaging/updater, integrated window restore, and user-facing import/export workflows             |
 | Browsing shell   | Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples                             | Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface       |
@@ -86,16 +86,17 @@ transport behavior in the frontend.
 | Diagnostics      | Safe timeline projection plus bounded, masked D0-02 events/snapshots, D0-03 host sessions, and the D0-04 read-only Inspector/capture workflow                                | External tooling and any separately designed controlled replay                                               |
 | Settings         | Versioned schema/store, native atomic backend, migration, reset/clear operations, and memory test adapter                                                                    | Integrated Preferences UI, complete window restore, and diagnostic/accessibility controls                    |
 | Onboarding       | Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state                                                                | Broader task progress and contextual onboarding remain later work                                            |
-| Public services  | Private exact-host deployment, deterministic first-party origin, safe Favorites/service-catalog domain, and publication-state model                                          | Public authorization, guided entry, external verification, and desktop release gates remain open             |
+| Public services  | Live exact-host public deployment, deterministic first-party origin, bounded positive probes, safe Favorites/service-catalog domain, and publication-state model             | Publication-governance reconciliation, guided entry, negative/operations evidence, and desktop release gates remain open |
 
 ### 3.4 Current overlap and blockers
 
-At the synchronized `6cf1682a` baseline:
+At the synchronized `0028946e` baseline:
 
-- PRs `#502` and `#517` through `#533` are merged. The redesigned shell, canonical Canvas/frame
+- PRs `#502`, `#517` through `#536`, and `#538` are merged. The redesigned shell, canonical Canvas/frame
   path, cancellation, bounded render/IPC surfaces, Favorites domain, application state, native
   command registry, safe diagnostic projection, truthful navigation errors, D0-03 debug host
-  bridge, and selective CI/docs maintenance gates are the current integration baseline. The
+  bridge, D0-04 Inspector, F2-01 click input, public-lab documentation, and selective CI/docs
+  maintenance gates are the current integration baseline. The
   open/draft PR queue is empty at this checkpoint.
 - Issue `#450` blocks persistent/searchable history because same-card entries can be lost across a
   deck boundary.
@@ -630,11 +631,11 @@ Before feature UI begins:
 3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
    window restore, and local/GET-safe recovery remain.
 4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.
-5. Safe timeline/export projection is complete in PR `#532`; the D0-04 Inspector consumer adds a
-   separately versioned bounded engine capture.
+5. Safe timeline/export projection is complete in PR `#532`; the D0-04 Inspector consumer and its
+   separately versioned bounded engine capture are complete in PR `#536`.
 6. Shared native commands and platform shortcuts are complete in PR `#523`.
-7. Complete public-lab desktop profile/resource separation and guided safety messaging only after
-   its publication dependencies authorize them.
+7. Reconcile the now-live public lab with its publication evidence, then complete desktop
+   profile/resource separation and guided safety messaging.
 8. Complete the packaged desktop success/failure matrix, signing, checksums, and install guidance.
 
 ### 8.3 Phase B: next application-quality increment
