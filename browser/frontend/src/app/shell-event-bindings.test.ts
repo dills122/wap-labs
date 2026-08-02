@@ -13,6 +13,10 @@ const BUTTON_IDS = [
   'btn-back',
   'btn-reload',
   'btn-stop-navigation',
+  'btn-navigation-retry',
+  'btn-navigation-change-route',
+  'btn-navigation-details',
+  'btn-navigation-return',
   'btn-fetch-url',
   'btn-up',
   'btn-enter',
@@ -74,6 +78,10 @@ const createActions = (): ShellEventBindingActions & Record<string, ReturnType<t
   fetchUrlEnter: vi.fn(async () => undefined),
   reload: vi.fn(async () => undefined),
   stopNavigation: vi.fn(async () => undefined),
+  retryNavigation: vi.fn(async () => undefined),
+  changeNavigationRoute: vi.fn(async () => undefined),
+  showNavigationDetails: vi.fn(async () => undefined),
+  returnFromNavigationError: vi.fn(async () => undefined),
   changeMode: vi.fn(async () => undefined),
   selectLocalExample: vi.fn(async () => undefined),
   loadLocalExample: vi.fn(async () => undefined),
@@ -127,6 +135,10 @@ describe('ShellEventBindings', () => {
     document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
     document.querySelector<HTMLButtonElement>('#btn-reload')?.click();
     document.querySelector<HTMLButtonElement>('#btn-stop-navigation')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-navigation-retry')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-navigation-change-route')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-navigation-details')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-navigation-return')?.click();
     document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
     document.querySelector<HTMLButtonElement>('#btn-back')?.click();
     refs.loadLocalBtnEl.click();
@@ -144,6 +156,10 @@ describe('ShellEventBindings', () => {
     expect(actions.loadRawWml).toHaveBeenCalledTimes(1);
     expect(actions.reload).toHaveBeenCalledTimes(1);
     expect(actions.stopNavigation).toHaveBeenCalledTimes(1);
+    expect(actions.retryNavigation).toHaveBeenCalledTimes(1);
+    expect(actions.changeNavigationRoute).toHaveBeenCalledTimes(1);
+    expect(actions.showNavigationDetails).toHaveBeenCalledTimes(1);
+    expect(actions.returnFromNavigationError).toHaveBeenCalledTimes(1);
     expect(actions.fetchUrl).toHaveBeenCalledTimes(1);
     expect(actions.navigateBack).toHaveBeenCalledTimes(1);
     expect(actions.loadLocalExample).toHaveBeenCalledTimes(1);

@@ -5,7 +5,7 @@ import { BrowserController } from './browser-controller';
 import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
 import { defaultLocalDeckExample } from './local-examples';
-import { frame, renderStub, snapshot } from './navigation-state.test-helpers';
+import { fetchOk, frame, renderStub, snapshot } from './navigation-state.test-helpers';
 import { WAVES_COPY } from './waves-copy';
 
 const flushAsyncWork = async (): Promise<void> => {
@@ -38,6 +38,23 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
   createButton('btn-clear-intent');
   createButton('btn-export-timeline');
   createButton('btn-clear-timeline');
+  const navigationPhaseBarEl = document.createElement('section');
+  navigationPhaseBarEl.id = 'navigation-phase-bar';
+  navigationPhaseBarEl.hidden = true;
+  navigationPhaseBarEl.innerHTML = `
+    <strong id="navigation-phase-label"></strong>
+    <span id="navigation-phase-detail"></span>
+    <code id="navigation-correlation-id"></code>
+    <div id="navigation-recovery" hidden>
+      <strong id="navigation-error-title"></strong>
+      <span id="navigation-error-message"></span>
+      <button id="btn-navigation-retry"></button>
+      <button id="btn-navigation-change-route"></button>
+      <button id="btn-navigation-details"></button>
+      <button id="btn-navigation-return"></button>
+    </div>
+  `;
+  document.body.append(navigationPhaseBarEl);
 
   const viewportEl = document.createElement('div');
   viewportEl.tabIndex = -1;
@@ -104,6 +121,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
     localExampleDescriptionEl,
     localExampleGoalEl,
     localExampleTestingAcEl,
+    navigationPhaseBarEl,
     statusMessages
   };
 };
@@ -1083,6 +1101,14 @@ describe('BrowserController behavior coverage', () => {
       // already been invoked and its delay timer scheduled.
       await vi.advanceTimersByTimeAsync(0);
 
+      expect(refs.navigationPhaseBarEl?.hidden).toBe(false);
+      expect(refs.navigationPhaseBarEl?.querySelector('#navigation-phase-label')?.textContent).toBe(
+        'Connecting'
+      );
+      expect(document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.textContent).toBe(
+        WAVES_COPY.shell.stop
+      );
+
       // Still well under the delay threshold: no indicator yet.
       await vi.advanceTimersByTimeAsync(50);
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
@@ -1132,7 +1158,7 @@ describe('BrowserController behavior coverage', () => {
   });
 });
 
-it('admits one fetch for eight rapid identical URL actions', async () => {
+it('switches Go to Stop only while a network fetch is cancellable', async () => {
   const refs = createRefs();
   const presenter = new BrowserPresenter(refs, initialSession, 20);
   const hostClient = createHostClient();
@@ -1153,26 +1179,76 @@ it('admits one fetch for eight rapid identical URL actions', async () => {
   );
   refs.fetchUrlInput.value = 'http://example.test/coalesced.wml';
   const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
-  for (let action = 0; action < 8; action += 1) {
-    fetchButton?.click();
-  }
+  fetchButton?.click();
   await flushAsyncWork();
 
   expect(hostClient.fetchDeck).toHaveBeenCalledTimes(1);
   expect(hostClient.cancelFetch).not.toHaveBeenCalled();
+  expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.stop);
+  expect(fetchButton?.dataset.navigationAction).toBe('stop');
 
-  resolveFetch?.({
-    ok: true,
-    status: 200,
-    finalUrl: 'http://example.test/coalesced.wml',
-    contentType: 'text/vnd.wap.wml',
-    wml: '<wml><card id="coalesced"><p>ok</p></card></wml>',
-    timingMs: { encode: 0, udpRtt: 0, decode: 0 },
-    engineDeckInput: {
-      wmlXml: '<wml><card id="coalesced"><p>ok</p></card></wml>',
-      baseUrl: 'http://example.test/coalesced.wml',
-      contentType: 'text/vnd.wap.wml'
-    }
-  });
+  fetchButton?.click();
   await flushAsyncWork();
+
+  expect(hostClient.cancelFetch).toHaveBeenCalledTimes(1);
+  expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.go);
+  expect(fetchButton?.dataset.navigationAction).toBe('go');
+
+  resolveFetch?.(fetchOk({ finalUrl: 'http://example.test/coalesced.wml' }));
+  await flushAsyncWork();
+});
+
+it('retries a categorized failure and keeps the committed frame visible', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const hostClient = createHostClient();
+  const controller = new BrowserController(hostClient as never, presenter, refs);
+
+  await controller.init('<wml><card id="seed"><p>stable</p></card></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  const committedRender = presenter.getRenderList();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(hostClient.fetchDeck).mockClear();
+  vi.mocked(hostClient.fetchDeck)
+    .mockResolvedValueOnce(
+      fetchOk({
+        ok: false,
+        status: 504,
+        finalUrl: 'wap://example.test/failing.wml',
+        contentType: 'text/plain',
+        error: { code: 'GATEWAY_TIMEOUT', message: 'gateway timed out' },
+        wml: undefined,
+        engineDeckInput: undefined
+      }) as Awaited<ReturnType<typeof hostClient.fetchDeck>>
+    )
+    .mockResolvedValueOnce(
+      fetchOk({
+        finalUrl: 'wap://example.test/failing.wml'
+      }) as Awaited<ReturnType<typeof hostClient.fetchDeck>>
+    );
+
+  refs.fetchUrlInput.value = 'wap://example.test/failing.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+
+  expect(refs.navigationPhaseBarEl?.dataset.navigationState).toBe('error');
+  expect(refs.navigationPhaseBarEl?.querySelector('#navigation-error-title')?.textContent).toBe(
+    'gateway · GATEWAY_TIMEOUT'
+  );
+  expect(
+    refs.navigationPhaseBarEl?.querySelector('#navigation-correlation-id')?.textContent
+  ).toMatch(/^Request waves-navigation-\d+-1$/);
+  expect(presenter.getRenderList()).toEqual(committedRender);
+
+  document.querySelector<HTMLButtonElement>('#btn-navigation-retry')?.click();
+  await flushAsyncWork();
+
+  expect(hostClient.fetchDeck).toHaveBeenCalledTimes(2);
+  expect(vi.mocked(hostClient.fetchDeck).mock.calls[1]?.[0]).toMatchObject({
+    url: 'wap://example.test/failing.wml',
+    method: 'GET'
+  });
+  expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
+  expect(presenter.getSessionState().navigationStatus).toBe('loaded');
 });

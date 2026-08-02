@@ -38,6 +38,32 @@ const fetchOkFor = (url: string): FetchResponse => {
 };
 
 describe('NavigationStateMachine concurrency ownership', () => {
+  it('publishes deterministic WAP phases and exposes Stop only while the fetch is cancellable', async () => {
+    const pendingFetch = deferred<FetchResponse>();
+    const phases: string[] = [];
+    const cancellable: boolean[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({ fetchDeck: vi.fn(() => pendingFetch.promise) }),
+      'wap://seed.test',
+      {
+        onNavigationPhase: ({ phase }) => phases.push(phase),
+        onNavigationCancellableChange: (available) => cancellable.push(available)
+      }
+    );
+
+    const pendingLoad = load(machine, 'wap://example.test/start.wml');
+    await Promise.resolve();
+
+    expect(phases).toEqual(['preparing', 'connecting', 'gateway']);
+    expect(cancellable).toEqual([true]);
+
+    pendingFetch.resolve(fetchOk({ finalUrl: 'wap://example.test/start.wml' }));
+    await pendingLoad;
+
+    expect(phases).toEqual(['preparing', 'connecting', 'gateway', 'decode', 'deck', 'card']);
+    expect(cancellable).toEqual([true, false]);
+  });
+
   it('coalesces eight rapid identical loads into one active fetch', async () => {
     const pendingFetch = deferred<FetchResponse>();
     const fetchDeck = vi.fn(() => pendingFetch.promise);

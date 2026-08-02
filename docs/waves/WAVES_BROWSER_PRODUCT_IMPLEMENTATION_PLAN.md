@@ -403,6 +403,7 @@ Accept:
 
 ### WBP-11 Phase-aware loading and recovery presentation
 
+- `Status`: done
 - `Lane`: C with browser integration
 - `Depends On`: `WBP-03`, `WBP-10`
 
@@ -419,6 +420,21 @@ Accept:
 - delayed visual progress appears by 200 milliseconds for slow operations
 - every transport error includes a layer/category, correlation ID, and safe recovery action
 - no browser-authored error card is injected into the engine
+
+Resolution:
+
+- The browser navigation state machine publishes deterministic Preparing, Connecting,
+  route-supported Gateway, Decode, Deck, and Card boundaries with the active request ID. Immediate
+  visible feedback is synchronous and the existing non-destructive slow-navigation hint appears at
+  180 milliseconds while the previous committed frame remains intact.
+- Go changes to Stop only while a registered transport request can be cancelled. Completion,
+  failure, cancellation, and supersession restore Go without allowing stale results to publish.
+- The reserved phase-bar shell seam now presents the failing layer/category, safe correlation ID,
+  and exact-request Retry, Change route, Details, and committed-frame Return actions. The surface is
+  host-owned and never injects an error deck/card into the engine.
+- Frontend integration coverage exercises phase order, WAP gateway routing, host-command rejection,
+  correlated transport failure, Go/Stop cancellation, the 180-millisecond progress threshold,
+  exact Retry, committed-frame preservation, and the single accessible announcement channel.
 
 ### WBP-12 Persistence and crash recovery
 
