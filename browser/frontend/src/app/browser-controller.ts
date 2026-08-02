@@ -853,9 +853,10 @@ export class BrowserController {
     };
 
   private async applyEngineKey(key: EngineKey): Promise<void> {
+    const input: EngineInputEvent = { type: 'key', key };
     await this.applyEngineMutation(
-      () => this.hostClient.engineHandleKeyFrame({ key }),
-      () => this.navigation.applyEngineKey(key)
+      () => this.hostClient.engineHandleInputFrame({ event: input }),
+      () => this.navigation.applyEngineInput(input)
     );
   }
 

@@ -86,8 +86,8 @@ Implemented now:
 
 Not implemented yet:
 
-- Remaining F2 unified softkey/input work plus the F3/F4 internal split and legacy-path removal;
-  deterministic engine-owned scrolling is complete
+- Remaining F3/F4 internal split and legacy-path removal; deterministic engine-owned scrolling and
+  primary keyboard/control-button routing through the unified typed input path are complete
 - Phase-aware recovery and safe session persistence (`WBP-11..12`); true navigation cancellation
   is already implemented
 - Production packaging/signing/notarization
