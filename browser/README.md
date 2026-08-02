@@ -245,6 +245,7 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 - Desktop application completion PRD: `docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md`
 - WBP-00/WBP-01 decisions, measurements, and integration seams: `docs/waves/WAVES_BROWSER_BASELINE.md`
 - WBP-05A rendered accessibility evidence: `docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`
+- Browser functionality/manual audit: `docs/waves/WAVES_BROWSER_MANUAL_AUDIT.md`
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`

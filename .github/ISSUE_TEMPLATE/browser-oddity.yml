@@ -1,0 +1,147 @@
+name: Browser oddity
+description: Report a reproducible Waves browser behavior for triage and ticketing.
+title: '[Browser] '
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use one observable problem per report. Do not attach secrets, credentials, cookies, password values, sensitive query strings, or POST bodies.
+  - type: input
+    id: build
+    attributes:
+      label: Build commit
+      description: Exact Git commit plus any stacked pull requests or local changes.
+      placeholder: 74432d27; PRs #543 and #545
+    validations:
+      required: true
+  - type: dropdown
+    id: launch
+    attributes:
+      label: Launch kind
+      options:
+        - Tauri dev
+        - Debug binary
+        - Packaged app
+        - Browser story
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS/version, architecture, window size, display scaling, and app zoom.
+      placeholder: macOS 15.x, arm64, 1024x768, display 2x, app zoom 100%
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target and route
+      description: Local example or URL, Local/Network mode, gateway, transport profile, and fallback.
+      placeholder: Network; wap://localhost/; local Kannel; wap-net-core; fallback disabled
+    validations:
+      required: true
+  - type: dropdown
+    id: starting_state
+    attributes:
+      label: Starting state
+      options:
+        - Clean state
+        - Existing state
+        - Deliberately corrupt state
+        - Unknown
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Launch Waves in Network mode.
+        2. Load ...
+        3. Press ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the visible phase, error category, correlation ID, and whether the last good frame survived when applicable.
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Reproduction frequency
+      options:
+        - Always
+        - Intermittent
+        - Once
+    validations:
+      required: true
+  - type: input
+    id: rate
+    attributes:
+      label: Intermittent rate
+      description: For intermittent results, provide passes/runs or an approximate rate.
+      placeholder: 3 of 10 runs
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Regression status
+      options:
+        - Unknown
+        - Yes
+        - No
+    validations:
+      required: true
+  - type: input
+    id: known_good
+    attributes:
+      label: Known-good build
+      description: Required only for a known regression.
+      placeholder: commit or release
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Suggested severity
+      options:
+        - P0 crash, data loss, secret exposure, or unsafe replay
+        - P1 core path blocked or silently wrong
+        - P2 important degradation with workaround
+        - P3 localized polish or discoverability
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Likely owning layer
+      options:
+        - Unknown
+        - Browser shell or Tauri host
+        - Browser state or navigation adapter
+        - Engine runtime or renderer
+        - Transport or gateway
+        - Evidence harness
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Screenshots, safe Inspector/timeline export, console output, and related issue links. Inspect every attachment first.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I checked the report and attachments for credentials, cookies, password values, sensitive query strings, POST bodies, and other secrets.
+          required: true
