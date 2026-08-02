@@ -351,6 +351,11 @@ const wml304TransportFixturePath =
 const wml304TransportTestPath = 'transport-rust/src/request_serialization/tests.rs';
 const wml304TransportTestCommand =
   'cargo test --manifest-path transport-rust/Cargo.toml request_serialization';
+const wml304HistoryFixtureEvidence = {
+  path: 'browser/frontend/src/app/navigation-state.history.test.ts',
+  command:
+    'pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts'
+};
 const wml305ClauseIds = new Set([
   'WML-CL-GO-TIMER-THEN-DISPLAY',
   'WML-CL-REFRESH-TIMER-RESTART',
@@ -539,6 +544,7 @@ const implementedWmlClauseIds = new Set([
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
+  'WML-CL-HISTORY-POST-REPLAY',
   ...implementedWml304TransportClauseIds,
   ...wml203ClauseIds,
   ...wml204ClauseIds,
@@ -914,7 +920,12 @@ for (const family of ledger.families ?? []) {
             candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
           : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
             !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
-            (wml309ClauseIds.has(candidate.id)
+            (candidate.id === 'WML-CL-HISTORY-POST-REPLAY'
+              ? candidate.fixturePlan.evidence?.path !==
+                  wml304HistoryFixtureEvidence.path ||
+                candidate.fixturePlan.evidence?.command !==
+                  wml304HistoryFixtureEvidence.command
+              : wml309ClauseIds.has(candidate.id)
               ? candidate.fixturePlan.evidence?.path !== wml309FixtureEvidence.path ||
                 candidate.fixturePlan.evidence?.command !== wml309FixtureEvidence.command
               : wml301EvidenceByClauseId.has(candidate.id)

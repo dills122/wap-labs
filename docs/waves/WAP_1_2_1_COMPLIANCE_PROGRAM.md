@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 41 implemented, 78 partial, and 79
+- the selected implementation audit is 43 implemented, 76 partial, and 79
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -56,12 +56,12 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 17 implemented, 16 partial, and
-  14 missing; the selected 39-row client subset is 17 implemented, 16 partial,
+- the source-wide mandatory code audit finds 19 implemented, 14 partial, and
+  14 missing; the selected 39-row client subset is 19 implemented, 14 partial,
   and 6 missing;
 - 33 rows have direct code symbols and runnable test evidence.
 - `WML-201` directly projects all 76 WML rows and all 175 selected WML
-  clauses; the remaining 16 mandatory gaps and 29 optional unassessed rows
+  clauses; the remaining 14 mandatory gaps and 29 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
   chain, with another 22 removed rows retained as historical change records;
@@ -197,7 +197,7 @@ closes `SRC-004` without changing the redistribution boundary.
 
 After the merged WSP-805 request work, WML-309 frame-contract closure, and additive WMLS-501
 verifier tranche, the canonical program records 30 work items `done`, 10 `in-progress`, 42 `todo`,
-and one `blocked`, with 41/198 selected parents implemented and 317/762 clauses assessed. Project
+and one `blocked`, with 43/198 selected parents implemented and 318/762 clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.
 

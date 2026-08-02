@@ -3,7 +3,7 @@
   "releaseId": "wap-1.2.1",
   "generatedFrom": {
     "programWorkItem": "CONF-007",
-    "recordedOn": "2026-07-28",
+    "recordedOn": "2026-08-02",
     "generator": "spec-processing/scripts/generate-wap-delta-register.mjs"
   },
   "target": {
@@ -293,7 +293,7 @@
         "staticConformanceSection": "15.1.2",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -1357,7 +1357,7 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",

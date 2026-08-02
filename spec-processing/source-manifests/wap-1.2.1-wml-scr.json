@@ -62,11 +62,11 @@
       "wml-document-validation": 11
     },
     "testEvidenceLinkedCount": 33,
-    "mandatoryImplementationStatus": {
-      "implemented": 17,
-      "missing": 14,
-      "partial": 16
-    }
+  "mandatoryImplementationStatus": {
+    "implemented": 19,
+    "missing": 14,
+    "partial": 14
+  }
   },
   "obligations": [
     {
@@ -387,12 +387,20 @@
           "R0-01",
           "R0-03"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 replays the original typed POST values through the transport boundary when Back must refetch a prior deck.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "navigate_back_internal"
+          },
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "cloneRequestPolicy"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "navigateBackWithFallback"
           }
         ],
         "testEvidence": [
@@ -400,6 +408,11 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "navigate_back_restores_previous_card",
             "command": "cd engine-wasm/engine && cargo test navigate_back_restores_previous_card"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.history.test.ts",
+            "test": "replays typed POST values when history back must refetch the prior deck",
+            "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2133,12 +2146,16 @@
           "R0-01",
           "R0-02"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "CardTaskAction::Prev"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "navigateBackWithFallback"
           }
         ],
         "testEvidence": [
@@ -2146,6 +2163,11 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "enter_accept_prev_action_navigates_back_when_history_exists",
             "command": "cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.history.test.ts",
+            "test": "replays typed POST values when history back must refetch the prior deck",
+            "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts"
           }
         ],
         "evidenceState": "direct-test-linked"

@@ -265,11 +265,11 @@ Evidence commands:
 - **WML-C-07** — History
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.2 (SCR §15.1.2)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#navigate_back_internal`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_back_restores_previous_card` (`cd engine-wasm/engine && cargo test navigate_back_restores_previous_card`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#navigate_back_internal`, `browser/frontend/src/session-history.ts#cloneRequestPolicy`, `browser/frontend/src/app/navigation-state.ts#navigateBackWithFallback`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::navigate_back_restores_previous_card` (`cd engine-wasm/engine && cargo test navigate_back_restores_previous_card`), `browser/frontend/src/app/navigation-state.history.test.ts::replays typed POST values when history back must refetch the prior deck` (`pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts`)
   - Work items: `R0-01`, `R0-03`, `WML-201`
-  - Assessment note: WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.
+  - Assessment note: WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 replays the original typed POST values through the transport boundary when Back must refetch a prior deck.
 - **WML-C-08** — Card/Deck task shadowing
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.6 (SCR §15.1.2)
@@ -513,11 +513,11 @@ Evidence commands:
 - **WML-C-38** — prev
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.2 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`
-  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#CardTaskAction::Prev`, `browser/frontend/src/app/navigation-state.ts#navigateBackWithFallback`
+  - Tests: `engine-wasm/engine/src/engine_tests/actions_timers.rs::enter_accept_prev_action_navigates_back_when_history_exists` (`cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists`), `browser/frontend/src/app/navigation-state.history.test.ts::replays typed POST values when history back must refetch the prior deck` (`pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.
+  - Assessment note: Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.
 - **WML-C-39** — onevent
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.10.1 (SCR §15.1.5)
@@ -1246,7 +1246,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)
   - Parents: `WML-C-07`, `WML-C-38`
   - Requirements: `RQ-RMK-002`, `RQ-RMK-003`, `RQ-WAE-016`
-  - Fixture: `WML-FX-HISTORY-POST-REPLAY` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-HISTORY-POST-REPLAY` (`transport-boundary`, `implemented`)
 - **WML-CL-HISTORY-PREV-POP** — A prev task pops the current entry and returns to the prior history entry.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.2 (9.2 History)

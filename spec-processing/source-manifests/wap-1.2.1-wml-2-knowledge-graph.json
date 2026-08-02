@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "23db3298aaa1dbe06f56e83a053fcc85558176024e2c30ee9f01680d2a8a2ef0"
+        "sha256": "e21fe3df307bc0028777ee4d9aa7e9e04e0559113bc8b12fdb92514ac39f2dc0"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "9e7a2a3b95ac5b864a613053136010dcc87fee448f01bbd8d478345ddb891e19"
+        "sha256": "f0d0fc59fcb728fc58cc1f77ff8a58e41e49932fa9de643aa87aa8952a38fb98"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "a85a09d985204f733cbb9834ef1826475446919896985bf0e72546625a47f3ac"
+        "sha256": "44f1fd7430b9b26af230b816a0d830b0a6ef0dea6b9de29777714a4f6b795957"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -4662,7 +4662,7 @@
           "RQ-RMK-003",
           "RQ-WAE-016"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10201,7 +10201,7 @@
       "title": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When a prior deck must be fetched again, replay the original POST data values associated with that history entry.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12335,13 +12335,21 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 retains the remaining POST replay clause.",
+        "assessmentNote": "WML-301 closes request-shaped ordered history, duplicate access, content exclusion, and context-aware push/pop. WML-304 replays the original typed POST values through the transport boundary when Back must refetch a prior deck.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "navigate_back_internal"
+          },
+          {
+            "path": "browser/frontend/src/session-history.ts",
+            "symbol": "cloneRequestPolicy"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "navigateBackWithFallback"
           }
         ],
         "testEvidence": [
@@ -12349,6 +12357,11 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "navigate_back_restores_previous_card",
             "command": "cd engine-wasm/engine && cargo test navigate_back_restores_previous_card"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.history.test.ts",
+            "test": "replays typed POST values when history back must refetch the prior deck",
+            "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts"
           }
         ],
         "ownerLayers": [
@@ -14299,13 +14312,17 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Prev pops request-shaped card history and executes variable assignments and backward-entry behavior; WML-304 retains the remaining POST replay clause.",
+        "assessmentNote": "Prev pops request-shaped card history, executes variable assignments and backward-entry behavior, and replays typed POST values when the prior deck must be fetched again.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "CardTaskAction::Prev"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.ts",
+            "symbol": "navigateBackWithFallback"
           }
         ],
         "testEvidence": [
@@ -14313,6 +14330,11 @@
             "path": "engine-wasm/engine/src/engine_tests/actions_timers.rs",
             "test": "enter_accept_prev_action_navigates_back_when_history_exists",
             "command": "cd engine-wasm/engine && cargo test enter_accept_prev_action_navigates_back_when_history_exists"
+          },
+          {
+            "path": "browser/frontend/src/app/navigation-state.history.test.ts",
+            "test": "replays typed POST values when history back must refetch the prior deck",
+            "command": "pnpm --dir browser/frontend test -- src/app/navigation-state.history.test.ts src/session-history.test.ts"
           }
         ],
         "ownerLayers": [

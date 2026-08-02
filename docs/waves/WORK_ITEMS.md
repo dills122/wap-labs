@@ -121,9 +121,9 @@ Current priority order is:
    completed `WSP-801` and `WSP-802` as the connectionless PDU/header foundation
    while `WSP-8` remains behind `WAE-6`. Preserve completed WML-301
    context/history/card-table evidence, WML-304's merged request-intent and native request
-   application boundary, and WMLS-501's completed decoder/verifier, verified-unit routing, and
-   stack-dataflow closure. Advance replayable POST history and WMLS-502 execution as separate
-   implementation lanes. Preserve the completed D0-01 through D0-04 debug path and completed
+   application boundary, Request A2's completed typed POST-history replay, and WMLS-501's
+   completed decoder/verifier, verified-unit routing, and stack-dataflow closure. Advance
+   WMLS-502 execution as the remaining implementation lane. Preserve the completed D0-01 through D0-04 debug path and completed
    F0/F1/F2-01 frame migration; keep F2-02 through F4, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
@@ -143,8 +143,9 @@ Current implementation batch, ordered within each lane:
 1. **Request lane A1 (complete):** the merged `WML-304` intent is applied through `R0-06`/`WSP-805` for GET query,
    form-urlencoded POST, charset/content-type, smallest-relative referer, and no-cache transport
    behavior. This owns request serialization and the browser fetch handoff.
-2. **Request lane A2:** add replayable POST history only after A1 stabilizes the serialized request
-   identity. C1 leaves `WML-CL-HISTORY-POST-REPLAY` untouched as the explicit A2 baton.
+2. **Request lane A2 (complete):** retained typed request intent is replayed when Back must refetch
+   a prior POST deck. The browser does not retain legacy serialized `postContext` bytes when the
+   semantic intent is available, and `WML-CL-HISTORY-POST-REPLAY` has direct browser-boundary evidence.
 3. **Script lane B1 (complete):** the additive `WMLS-501` library-index and stack-dataflow
    verification tranche is closed without reopening or replacing the merged decoder/runtime
    history.
@@ -166,12 +167,12 @@ charset list, same-deck classification, ordered resolved postfields, and referri
 Content-Type), together with cache policy, absolute referring URL, explicit request headers, and
 UA capability profile. Transport deterministically derives the effective method, query or body
 bytes, charset-bearing Content-Type, smallest usable Referer, and no-cache headers from that
-identity. A2 may persist and replay that semantic input; it must not invent an independent form
-serializer or treat the legacy pre-serialized `postContext` payload as the new identity.
+identity. A2 now retains and replays that semantic input without inventing an independent form
+serializer or treating the legacy pre-serialized `postContext` payload as the new identity.
 
 The dependency, overlap, and release-contribution matrix is canonical in
-`SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. `WML-306` remains next after this batch because its
-browser policy files conflict with A1/A2. `PERF-101`, `OPS-101`, and public release-gate closure
+`SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. With A2 complete, `WML-306` is the next compliance
+slice. `PERF-101`, `OPS-101`, and public release-gate closure
 remain evidence-gated rather than ready implementation dispatches.
 
 The separately owned public-WAP-services lane may continue in parallel. Public DNS and UDP 9200
@@ -2738,7 +2739,7 @@ Reference:
   `spec-processing/source-manifests/wap-1.2.1-wml-scr.json` and guarded by
   `node scripts/check-wap-conformance-ledger.mjs`.
 - The exact sequence includes `WML-S-60..69`. The mandatory code audit records
-  17 implemented, 16 partial, and 14 missing rows, with validated code/test
+  19 implemented, 14 partial, and 14 missing rows, with validated code/test
   evidence for 33 rows. `WML-201` directly projects all 76 rows and maps all
   175 selected WML clauses without treating gaps as implementation. Nested
   clause, optional capability, and release-gate evidence remain, so this
@@ -2919,9 +2920,9 @@ Reference:
 - WML-304 now supplies the Rust-owned typed request intent across native, WASM, generated engine,
   and Tauri serialization contracts. R0-06/WSP-805 now consumes that intent for deterministic
   GET query and form-urlencoded POST construction, charset-bearing Content-Type, smallest-relative
-  Referer, no-cache headers, direct HTTP and native WSP handoff, bringing WML-304 to 13 of 15
-  directly assessed clauses. Multipart part Content-Type remains explicit; replayable POST history
-  stays in dependent lane A2.
+  Referer, no-cache headers, direct HTTP and native WSP handoff. Request A2 adds typed POST-history
+  replay, bringing WML-304 to 14 of 15 directly assessed clauses. Multipart part Content-Type
+  remains explicit.
 
 ### R0-07 Browser policy path: access control, low-memory, unknown-DTD behavior
 
