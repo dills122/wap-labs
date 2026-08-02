@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>CI Maintenance Baseline · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="ci/ci_maintenance"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>ci</span></nav><p class="doc-path">docs/ci/ci_maintenance.md</p><div class="markdown-body"><h1 id="ci-maintenance-baseline">CI Maintenance Baseline</h1>
+<p>This is the active maintenance baseline for repository automation. Update it when a workflow’s
+trigger, required-check contract, cache policy, or measured critical path changes. Archived and
+date-stamped documents are outside this baseline by default.</p>
+<h2 id="evidence-snapshot">Evidence snapshot</h2>
+<p>The 2026-07-30 baseline used the latest 100 public GitHub Actions runs and job/step metadata from
+five representative runs for each expensive path. Successful run durations use <code>run_started_at</code>
+to <code>updated_at</code>; failed native-E2E runs are excluded from the workflow median but retained when
+examining failure behavior.</p>
+<table>
+<thead>
+<tr>
+<th>Workflow or job</th>
+<th style="text-align: right">Sample</th>
+<th style="text-align: right">Median</th>
+<th style="text-align: right">Observed range</th>
+<th>Critical evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native Tauri Kannel E2E</td>
+<td style="text-align: right">4 successful runs</td>
+<td style="text-align: right">15m44s</td>
+<td style="text-align: right">9m01s-16m08s</td>
+<td>Pinned Tauri tools: 5m44s median, 1s-5m54s; pilot: 9m02s median, 7m51s-9m16s</td>
+</tr>
+<tr>
+<td>Transport WAP Smoke</td>
+<td style="text-align: right">5 runs</td>
+<td style="text-align: right">10m13s</td>
+<td style="text-align: right">9m58s-11m15s</td>
+<td>Development image build/start: 6m51s median, 6m48s-7m03s; smoke assertions: 2m07s median, 2m03s-2m37s</td>
+</tr>
+<tr>
+<td>Security</td>
+<td style="text-align: right">14 runs</td>
+<td style="text-align: right">11m33s</td>
+<td style="text-align: right">11m07s-11m47s</td>
+<td>Image audit build: 7m09s median; Syft/Grype install: 3m02s median; scan: 1m01s median</td>
+</tr>
+<tr>
+<td>CodeQL</td>
+<td style="text-align: right">15 runs</td>
+<td style="text-align: right">7m59s</td>
+<td style="text-align: right">7m11s-8m19s</td>
+<td>Longest always-triggered PR workflow after unrelated image scans are removed</td>
+</tr>
+<tr>
+<td>CI</td>
+<td style="text-align: right">16 runs</td>
+<td style="text-align: right">3m52s</td>
+<td style="text-align: right">1m18s-5m41s</td>
+<td>Host-sample job is the full-matrix critical path at about 3m-3m38s</td>
+</tr>
+<tr>
+<td>Extended Quality</td>
+<td style="text-align: right">15 runs</td>
+<td style="text-align: right">1m55s</td>
+<td style="text-align: right">20s-2m19s</td>
+<td>Path selection already avoids the expensive rendered lane on unrelated PRs</td>
+</tr>
+</tbody>
+</table>
+<p>Before this maintenance slice, the repository had 14 checked-in workflows, 34 jobs, 30 checkout
+uses, 15 Node setups, 14 pnpm setups, 14 Rust toolchain setups, 13 Rust caches, 6 explicit generic
+caches, and 8 artifact uploads. Repetition is mostly a consequence of runner/job isolation; share
+immutable dependency stores and build layers, not mutable workspaces or test results.</p>
+<h2 id="workflow-inventory-and-gate-policy">Workflow inventory and gate policy</h2>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Triggers and path scope</th>
+<th>Gate class</th>
+<th>Main dependencies, caches, and artifacts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CI</td>
+<td>Every PR, push to <code>main</code>, manual; jobs are path-selected on ordinary PRs</td>
+<td>Required aggregate: <code>CI Required Gate</code></td>
+<td>pnpm store, Rust targets, Go caches, pinned <code>wasm-pack</code>; story failure artifact</td>
+</tr>
+<tr>
+<td>Extended Quality</td>
+<td>PR, <code>main</code>, weekly, manual; required lanes path-selected</td>
+<td>Required aggregate plus scheduled/manual advisory</td>
+<td>pnpm, Rust, <code>wasm-pack</code>, Playwright; accessibility and baseline evidence</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>PR, <code>main</code>, weekly, manual; image audit path-selected only on PRs</td>
+<td>Four documented required dependency gates; image audit optional</td>
+<td>pnpm/Rust/Go caches, exact Syft/Grype binaries, BuildKit image layers, SBOM artifact</td>
+</tr>
+<tr>
+<td>CodeQL</td>
+<td>PR, <code>main</code>, weekly, manual</td>
+<td>Three required language contexts</td>
+<td>CodeQL-managed analysis state; no repository artifact</td>
+</tr>
+<tr>
+<td>Transport WAP Smoke</td>
+<td>Relevant PR paths and manual</td>
+<td>Optional path-scoped authentic E2E</td>
+<td>BuildKit Kannel/WML layers, Rust target, deterministic logs</td>
+</tr>
+<tr>
+<td>Native Tauri Kannel E2E</td>
+<td>Traversed product paths on PRs, weekly, manual</td>
+<td>Optional pilot</td>
+<td>BuildKit Kannel/WML layers, Rust targets, exact Tauri binaries, UI/service diagnostics</td>
+</tr>
+<tr>
+<td>OpenTofu Static</td>
+<td>Infrastructure paths on PR/<code>main</code>, manual</td>
+<td>Optional path-scoped static gate</td>
+<td>Go/OpenTofu provider caches; no cloud state or credentials</td>
+</tr>
+<tr>
+<td>Protected OpenTofu Plan/Apply</td>
+<td>Manual only, shared non-cancelling state lock</td>
+<td>Access-backed operational gates</td>
+<td>Encrypted plan artifact; no decrypted state artifact</td>
+</tr>
+<tr>
+<td>Deploy Pages</td>
+<td>Relevant pushes to <code>main</code>, manual</td>
+<td>Deployment only</td>
+<td>pnpm/Rust/<code>wasm-pack</code>; deploys <code>_site</code> to <code>gh-pages</code></td>
+</tr>
+<tr>
+<td>Dependabot Auto Merge</td>
+<td>Dependabot PR lifecycle events</td>
+<td>Automation only</td>
+<td>Metadata only; no checkout or PR-code execution in write job</td>
+</tr>
+<tr>
+<td>Engine Fuzzing</td>
+<td>Weekly and manual</td>
+<td>Advisory/deep</td>
+<td>Fuzz artifacts retained for 14 days</td>
+</tr>
+<tr>
+<td>Release Prepare</td>
+<td>Manual</td>
+<td>Release operation</td>
+<td>Creates immutable release branch with <code>contents: write</code></td>
+</tr>
+<tr>
+<td>Milestone Release</td>
+<td>Manual</td>
+<td>Release operation</td>
+<td>Builds release assets and publishes tag/release with <code>contents: write</code></td>
+</tr>
+</tbody>
+</table>
+<p>The required-check names and migration rules remain defined in
+<a href="REQUIRED_CHECKS.md"><code>REQUIRED_CHECKS.md</code></a>. Job-level selection is paired with stable aggregate
+checks where those aggregates are required. Workflow-level path filters are used only for signals
+that must not be configured globally as required contexts.</p>
+<h2 id="path-to-gate-map">Path-to-gate map</h2>
+<table>
+<thead>
+<tr>
+<th>Changed area</th>
+<th>Required CI lanes</th>
+<th>Additional signals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>engine-wasm/engine/**</code></td>
+<td>engine, host sample, browser shell, relevant extended gates</td>
+<td>transport smoke, native pilot</td>
+</tr>
+<tr>
+<td><code>engine-wasm/contracts/**</code></td>
+<td>engine, host sample, browser shell</td>
+<td>transport smoke, native pilot</td>
+</tr>
+<tr>
+<td><code>transport-rust/**</code> or generated transport contract</td>
+<td>transport, browser shell; Atlas evidence where selected</td>
+<td>transport smoke, native pilot</td>
+</tr>
+<tr>
+<td><code>browser/frontend/**</code></td>
+<td>host sample, browser shell, frontend</td>
+<td>rendered accessibility; native pilot for runtime/package paths</td>
+</tr>
+<tr>
+<td><code>browser/src-tauri/**</code></td>
+<td>browser shell</td>
+<td>transport smoke, native pilot</td>
+</tr>
+<tr>
+<td><code>wml-server/**</code></td>
+<td>Go server</td>
+<td>transport smoke, native pilot, image security audit</td>
+</tr>
+<tr>
+<td><code>docker/kannel/**</code> or production topology</td>
+<td>repo hygiene remains always-on</td>
+<td>transport smoke, native pilot, image security audit, OpenTofu static</td>
+</tr>
+<tr>
+<td><code>docs/waves/**</code> and knowledge graph</td>
+<td>compliance, Atlas, repo hygiene docs check</td>
+<td>Pages after merge</td>
+</tr>
+<tr>
+<td>other active <code>docs/**</code></td>
+<td>Atlas, repo hygiene docs check</td>
+<td>Pages after merge</td>
+</tr>
+<tr>
+<td>workflow/config/toolchain/root lockfile</td>
+<td>full ordinary CI through <code>ci=true</code></td>
+<td>affected workflow self-validation</td>
+</tr>
+</tbody>
+</table>
+<p>The routing fixture at <code>scripts/tests/fixtures/ci-path-routing.json</code> locks representative mappings
+for engine, transport, browser, gateway, infrastructure, documentation, and shared-contract paths.</p>
+<h2 id="cache-correctness-and-invalidation">Cache correctness and invalidation</h2>
+<ul>
+<li>pnpm: <code>actions/setup-node</code> caches only the pnpm content-addressed store and keys it from the
+applicable lockfile. Every job still performs a frozen install; <code>node_modules</code> is not cached.</li>
+<li>Rust: <code>Swatinem/rust-cache</code> is scoped by named workspace and target directory. Product lockfile
+changes invalidate build artifacts. The two pinned native Tauri executables have a separate
+exact OS, architecture, CLI-version, and driver-version key so product lockfile churn cannot
+force a five-minute reinstall. A dedicated Cargo install root keeps exact crate-version
+provenance beside those cached executables.</li>
+<li>Go: module/build caches remain managed by <code>actions/setup-go</code> for product jobs. Syft and Grype are
+cached only as exact pinned executables and are checked against their embedded Go module versions
+after restore before each command is smoke-tested.</li>
+<li>Docker: BuildKit GHA scopes are separated for Kannel development, Kannel production, and the WML
+origin. Dockerfile context, copied source, target, and pinned base digest provide content
+invalidation; development and production tags are loaded explicitly before Compose uses
+<code>--no-build</code>.</li>
+<li>Never cache secrets, Compose runtime state, generated test results, coverage results, SBOMs, or
+pass/fail outcomes. Diagnostics remain run-scoped artifacts with bounded retention.</li>
+</ul>
+<h2 id="implemented-priorities">Implemented priorities</h2>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Change</th>
+<th>Impact</th>
+<th>Risk/effort</th>
+<th>Expected steady-state saving</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>BuildKit layer reuse for Kannel/WML development and production images</td>
+<td>Removes the dominant Kannel source rebuild on warm runs</td>
+<td>Low-medium; content-addressed, target-specific keys</td>
+<td>Up to about 6m51s per smoke and 7m09s per affected image audit</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>Exact binary caches for Tauri CLI/driver and Syft/Grype</td>
+<td>Decouples tool installs from product dependency churn</td>
+<td>Low; exact keys plus version checks</td>
+<td>About 5m44s native and 3m02s image audit on cache hit</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>Skip optional image audit on unrelated PRs</td>
+<td>Removes the 11m33s global PR critical path without deleting the scan</td>
+<td>Low; remains on affected PRs, every <code>main</code> push, schedule, manual</td>
+<td>About 11m33s elapsed on unrelated PRs</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>PR-only concurrency cancellation</td>
+<td>Stops superseded PR runs while preserving every push-to-main and scheduled run</td>
+<td>Low</td>
+<td>Variable runner-minute reduction</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Shared engine-contract routing fix</td>
+<td>Prevents host/browser consumers from silently missing contract changes</td>
+<td>Low</td>
+<td>Correctness improvement, not a speed saving</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>Active Markdown file/anchor link check</td>
+<td>Covers 2,300 active docs deterministically without live network access</td>
+<td>Low; archive/date snapshots explicitly excluded</td>
+<td>Earlier documentation failures</td>
+</tr>
+</tbody>
+</table>
+<p>Cold-cache runs still compile Kannel and install tools; after timings must be recorded from warm PR
+or <code>main</code> runs before tightening timeouts. The development Kannel supervisor now gates <code>wapbox</code>
+startup on the same bounded authenticated bearerbox status pattern used by production instead of a
+fixed two-second sleep. The smoke’s external readiness probes, WAP/WBXML assertions, fixtures,
+native UI path, failure artifacts, and teardown remain unchanged.</p>
+<p>Local warm-cache validation on the audit worktree built both development images in 0.91 seconds,
+started the explicitly loaded Compose images with <code>--no-build</code> in 0.24 seconds, and completed all
+10 transport/host/render/privacy Kannel smoke assertions in 11.60 seconds. These macOS/arm64
+measurements prove layer reuse and preserved behavior, but they are not a substitute for the first
+warm <code>ubuntu-latest</code> timings. The native UI pilot remains Linux-only because <code>tauri-driver</code> does
+not support macOS, so its before/after comparison must come from Actions.</p>
+<h2 id="documentation-maintenance-contract">Documentation maintenance contract</h2>
+<p>Run <code>pnpm docs:check</code> for deterministic active Markdown file and anchor validation. It excludes
+archive directories, archive-named files, legacy-ticket snapshots, and date-stamped historical
+snapshots. <code>pnpm verify</code>, <code>pnpm verify:full</code>, and Repo Hygiene run the same check. Project Atlas
+continues to own schema/metadata and generated-data validation; the compliance wrapper owns ledger,
+status, and knowledge-graph drift.</p>
+<p>Repository-wide Prettier enforcement is not enabled for Markdown: the measured baseline has 2,292
+files that would be reformatted, dominated by generated knowledge-graph content. Adopting that gate
+requires a separately reviewed formatting/generated-source policy rather than a maintenance PR with
+thousands of unrelated edits. External-link checking is also excluded from the critical PR path;
+add a scheduled advisory checker only after defining retries, allowlists, and an ownership policy
+for transient failures.</p>
+<h2 id="security-review-and-residual-follow-ups">Security review and residual follow-ups</h2>
+<p>All checked-in third-party action references are full 40-character commit SHAs. PR validation uses
+GitHub-hosted runners, read-only permissions by default, and non-persisted checkout credentials.
+There is no <code>pull_request_target</code>, unauthenticated comment command, self-hosted PR runner, or
+cross-workflow artifact execution path. No externally exploitable GitHub Actions finding was
+identified in this audit.</p>
+<p>Follow-ups that need separate policy or branch-protection work:</p>
+<ul>
+<li>Whole-repository <code>actionlint</code> still reports the pre-existing constant-false disabled engine
+Clippy step; validation ignores only that known baseline diagnostic.</li>
+<li>CodeQL becomes the typical unrelated-PR critical path at about eight minutes. Path-selecting its
+three individually required contexts needs a stable aggregate check and a ruleset migration.</li>
+<li>The native pilot remains optional, but its PR paths now cover every engine, transport, host,
+Kannel, WML, Compose, and lockfile surface that the pilot actually traverses.</li>
+<li>Consider a reusable setup action only after measuring whether reducing YAML duplication offsets
+the extra local-action maintenance surface.</li>
+<li>Measure two warm BuildKit runs and record actual cache-hit timing before lowering Kannel workflow
+timeouts.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ci-maintenance-baseline">CI Maintenance Baseline</a></li><li class="depth-2"><a href="#evidence-snapshot">Evidence snapshot</a></li><li class="depth-2"><a href="#workflow-inventory-and-gate-policy">Workflow inventory and gate policy</a></li><li class="depth-2"><a href="#path-to-gate-map">Path-to-gate map</a></li><li class="depth-2"><a href="#cache-correctness-and-invalidation">Cache correctness and invalidation</a></li><li class="depth-2"><a href="#implemented-priorities">Implemented priorities</a></li><li class="depth-2"><a href="#documentation-maintenance-contract">Documentation maintenance contract</a></li><li class="depth-2"><a href="#security-review-and-residual-follow-ups">Security review and residual follow-ups</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/ci/ci_maintenance.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

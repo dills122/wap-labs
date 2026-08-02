@@ -1,0 +1,666 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>CI Setup and Operations · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="ci/ci_setup"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>ci</span></nav><p class="doc-path">docs/ci/ci_setup.md</p><div class="markdown-body"><h1 id="ci-setup-and-operations">CI Setup and Operations</h1>
+<p>This document describes all active GitHub Actions automation for this repository, including validation CI, security scanning, dependency updates, and deployment.</p>
+<h2 id="quick-reference">Quick Reference</h2>
+<ul>
+<li>Main validation workflow: <code>.github/workflows/ci.yml</code></li>
+<li>Secret-free network-preview infrastructure validation: <code>.github/workflows/opentofu.yml</code></li>
+<li>Extended deterministic quality workflow: <code>.github/workflows/extended-quality.yml</code></li>
+<li>Release branch preparation workflow: <code>.github/workflows/release-prepare.yml</code></li>
+<li>Milestone GitHub release workflow: <code>.github/workflows/milestone-release.yml</code></li>
+<li>Security workflow: <code>.github/workflows/security.yml</code></li>
+<li>Dependabot auto-merge workflow: <code>.github/workflows/dependabot-auto-merge.yml</code></li>
+<li>Code scanning workflow: <code>.github/workflows/codeql.yml</code></li>
+<li>Pages deployment workflow: <code>.github/workflows/pages.yml</code></li>
+<li>Path-scoped PR/manual transport smoke workflow: <code>.github/workflows/transport-wap-smoke.yml</code></li>
+<li>Self-validating PR/scheduled/manual native Tauri/Kannel UI pilot: <code>.github/workflows/native-tauri-kannel-e2e.yml</code></li>
+<li>Canonical local verification contract: <code>docs/ci/LOCAL_VERIFICATION.md</code></li>
+<li>Dependency updates: <code>.github/dependabot.yml</code></li>
+<li>Branch protection check policy: <code>docs/ci/REQUIRED_CHECKS.md</code></li>
+<li>Active automation inventory, timing baseline, and cache policy: <code>docs/ci/CI_MAINTENANCE.md</code></li>
+</ul>
+<h2 id="workflows">Workflows</h2>
+<h3 id="1-ci-githubworkflowsciyml">1) CI (<code>.github/workflows/ci.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Primary merge gate for product code quality and parity checks.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Core behavior:</p>
+<ul>
+<li>Uses path filtering (<code>Detect Changed Areas</code>) to skip unrelated layer jobs on PRs.</li>
+<li>Derives <code>full_ci</code> from the event and pull-request author.</li>
+<li>Forces the complete validation matrix for Dependabot-authored PRs, pushes to <code>main</code>, and manual
+runs while preserving path filtering for ordinary PRs.</li>
+<li>Requires a Dependabot-authored PR to use a repository-owned head branch before granting it
+full-matrix treatment.</li>
+<li>Runs repository-wide hygiene checks and layer-specific Rust/Node checks.</li>
+<li>Runs the complete compliance wrapper, including active requirement/status drift, when
+compliance inputs or CI surfaces change and on full-matrix events.</li>
+<li>Reports the stable aggregate check <code>CI Required Gate</code>.</li>
+<li>Cancels superseded pull-request runs while preserving push-to-main and manual coverage.</li>
+<li>Keeps PR validation read-only, does not persist checkout credentials for later build steps, and
+does not expose a write token or repository secrets to checked-out PR code.</li>
+<li>Sets explicit job timeouts so a hung build or dependency cannot consume the default six-hour
+GitHub-hosted runner window.</li>
+<li>Runs deterministic active-document file and anchor checks before Rust/WASM setup, and routes
+engine contract changes through the host-sample and browser-shell consumers.</li>
+</ul>
+<p>Jobs:</p>
+<ul>
+<li><code>Repo Hygiene</code>
+<ul>
+<li>Node workspace install and lint/type/format checks</li>
+<li>WaveNav WASM package build</li>
+<li>Host-sample example manifest generation</li>
+<li>Browser frontend typecheck contract drift guard</li>
+<li>Transport contract parity script</li>
+<li>canonical verification selection/failure-propagation tests</li>
+</ul>
+</li>
+<li><code>WAP Compliance and Status Drift</code>
+<ul>
+<li>path-selected for active compliance docs, canonical manifests/generators, graph inputs, and
+compliance/status scripts</li>
+<li>runs <code>pnpm wap-compliance:check</code>, including effective-spec determinism, selected-clause and
+transport ledgers, active fact derivation, requirement/status drift, and graph drift</li>
+<li>participates in <code>CI Required Gate</code>; a selected failure cannot be accepted as a path skip</li>
+</ul>
+</li>
+<li><code>Rust Engine</code>
+<ul>
+<li>verifies the engine and engine-fuzz lockfiles with <code>cargo metadata --locked</code></li>
+<li><code>cargo fmt --check</code></li>
+<li>coverage gate with <code>cargo llvm-cov</code></li>
+</ul>
+</li>
+<li><code>Rust Transport</code>
+<ul>
+<li>verifies <code>transport-rust/Cargo.lock</code> with <code>cargo metadata --locked</code></li>
+<li>exercises the pinned built-in WML 1.3 WBXML decoder</li>
+<li><code>cargo fmt --check</code></li>
+<li><code>cargo clippy -- -D warnings</code></li>
+<li>coverage gate with <code>cargo llvm-cov</code></li>
+</ul>
+</li>
+<li><code>WaveNav Host Sample Build</code>
+<ul>
+<li>builds WASM package and host-sample app</li>
+<li>validates executable-flow schema and exact ticket/spec mappings</li>
+<li>installs Playwright Chromium and runs all story-driven WASM host flows</li>
+<li>uploads screenshots, traces, and structured evidence when a story fails</li>
+<li>host-sample typecheck/lint/format checks</li>
+</ul>
+</li>
+<li><code>Marketing Site Build</code>
+<ul>
+<li>installs with lifecycle scripts disabled</li>
+<li>builds the marketing site when selected by path filtering or full CI</li>
+</ul>
+</li>
+<li><code>Project Atlas Build</code>
+<ul>
+<li>validates the WAP knowledge graph</li>
+<li>validates transport conformance evidence references against current source and tests</li>
+<li>builds the Project Atlas documentation portal</li>
+</ul>
+</li>
+<li><code>Browser Shell Skeleton Checks</code>
+<ul>
+<li>installs Linux Tauri system packages</li>
+<li>verifies <code>browser/src-tauri/Cargo.lock</code> with <code>cargo metadata --locked</code></li>
+<li>Rust fmt and coverage checks for <code>browser/src-tauri</code></li>
+<li>Rust-&gt;TS contract codegen drift check</li>
+</ul>
+</li>
+<li><code>Browser Frontend Unit Tests</code>
+<ul>
+<li>runs the browser frontend unit suite and coverage gate</li>
+</ul>
+</li>
+<li><code>WML Server Sanity</code>
+<ul>
+<li>installs Go from the module directive</li>
+<li>runs <code>gofmt</code> drift, <code>go vet ./...</code>, and race-enabled Go tests</li>
+<li>builds the static non-root container and validates the Compose model</li>
+</ul>
+</li>
+<li><code>CI Required Gate</code>
+<ul>
+<li>runs with <code>always()</code> after all validation jobs</li>
+<li>fails on failed/cancelled prerequisites</li>
+<li>permits job-level path-filter skips only for ordinary pull requests</li>
+<li>requires every validation job to succeed for Dependabot PRs and other full-CI events</li>
+</ul>
+</li>
+</ul>
+<p>Local <code>fast</code>, <code>change</code>, <code>full</code>, and <code>extended</code> profiles are documented separately in
+<code>docs/ci/LOCAL_VERIFICATION.md</code>. They do not claim to reproduce GitHub-hosted coverage, security,
+or OS-specific jobs.</p>
+<h3 id="opentofu-static-validation-githubworkflowsopentofuyml">OpenTofu Static Validation (<code>.github/workflows/opentofu.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Validate the staged network-preview infrastructure without cloud credentials or a remote
+backend.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li>path-scoped <code>pull_request</code> and pushes to <code>main</code></li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>installs OpenTofu from <code>infra/network-preview/.opentofu-version</code> through a full-SHA-pinned
+setup action;</li>
+<li>checks recursive formatting;</li>
+<li>initializes the preview root with <code>-backend=false -lockfile=readonly</code>;</li>
+<li>validates the root with a non-secret, validation-only encryption sentinel;</li>
+<li>regenerates the <code>linux_amd64</code>, <code>darwin_arm64</code>, and <code>darwin_amd64</code> provider checksums and fails
+on lock-file drift;</li>
+<li>installs pinned actionlint 1.7.12 through Go 1.25 and semantically validates the static,
+protected-plan, and protected-apply workflow definitions, including expression-context
+availability;</li>
+<li>checks every network-preview CI helper’s POSIX syntax, runs <code>shellcheck</code>, validates the local
+plan helper, and exercises the protected workflow contracts without credentials;</li>
+<li>has only <code>contents: read</code>, does not persist checkout credentials, and receives no repository or
+environment secrets.</li>
+</ul>
+<p>This workflow does not contact R2 or DigitalOcean, produce a speculative plan, create a GitHub
+environment, or run <code>tofu apply</code>. It proves that the workflow definitions pass the pinned offline
+GitHub Actions validator, proves locally that enforced plan encryption produces an opaque saved
+plan, and runs contract tests over the protected workflow definitions. That validation is distinct
+from operational readiness. An owner-local provider plan follows
+<code>infra/network-preview/LOCAL_DEPLOYMENT.md</code>; protected shared/public execution remains blocked by
+<code>PRE-003</code>. Do not make this path-triggered job a global required context; ordinary PRs outside its
+paths do not create it.</p>
+<h3 id="opentofu-protected-plan-and-apply">OpenTofu Protected Plan and Apply</h3>
+<p><code>.github/workflows/opentofu-protected-plan.yml</code> and
+<code>.github/workflows/opentofu-protected-apply.yml</code> are manual-only access-backed workflows. They:</p>
+<ul>
+<li>run only from <code>main</code> through the <code>network-preview-plan</code> and <code>network-preview-apply</code>
+environments;</li>
+<li>share <code>opentofu-network-preview-state</code> concurrency with <code>cancel-in-progress: false</code>;</li>
+<li>generate an encrypted plan whose SHA-256 is bound into its GitHub artifact name alongside the
+source commit and run attempt;</li>
+<li>let apply accept only the plan run ID and exact artifact ID, then verify the repository,
+workflow identity/ref, successful conclusion, source commit, artifact ownership, and digest via
+GitHub’s read-only Actions API;</li>
+<li>reject a reviewed plan when <code>main</code> advanced, and apply the downloaded encrypted plan without
+generating a replacement;</li>
+<li>create and verify an encrypted pre-apply R2 recovery object, reconfirm source/lock/copy state
+immediately before apply, and retain at most the five newest verified recovery objects only
+after successful apply and current-state verification.</li>
+</ul>
+<p>All external actions are full-SHA pinned. Decrypted plan/state content is neither logged nor
+retained; workflow summaries contain only sanitized action/address/count data and provenance
+digests. These workflow definitions must not be enabled or run until <code>PRE-001</code>/<code>PRE-003</code>, protected
+environment review, real credential scope, and exact operation authority are complete.</p>
+<p>For the owner-local plan and later protected-environment sequences, use
+<code>infra/network-preview/LOCAL_DEPLOYMENT.md</code> and <code>infra/network-preview/bootstrap/OWNER_SETUP.md</code>.
+In those guides and these workflows,
+<code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> contain Cloudflare R2 S3-compatible credentials;
+they are not AWS credentials and do not require an AWS account.</p>
+<p>Caching:</p>
+<ul>
+<li>pnpm lockfile caches (via <code>actions/setup-node</code>)</li>
+<li>Go build and module caches (via <code>actions/setup-go</code>)</li>
+<li>Rust build artifact cache (<code>Swatinem/rust-cache</code>)</li>
+<li><code>wasm-pack</code> binary cache (<code>actions/cache</code>)</li>
+</ul>
+<h3 id="2-extended-quality-githubworkflowsextended-qualityyml">2) Extended Quality (<code>.github/workflows/extended-quality.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Required, path-scoped engine lint and rendered browser accessibility gates.</li>
+<li>Scheduled and manually dispatchable advisory browser stability measurements.</li>
+</ul>
+<p>Triggers and classification:</p>
+<ul>
+<li><code>pull_request</code> and <code>push</code> to <code>main</code>
+<ul>
+<li><code>Required - Engine Clippy (path-scoped)</code> runs for engine or workflow changes and enforces
+<code>cargo clippy --all-targets --all-features -- -D warnings</code> without warning suppression.</li>
+<li><code>Required - Rendered Accessibility (path-scoped)</code> runs for browser frontend and its
+engine/contract/build inputs. It preserves the deterministic unit accessibility test and adds
+the production-built Chromium/axe rendered check.</li>
+<li><code>Extended Quality Required Gate</code> is the stable required aggregate. It succeeds when selected
+jobs pass and permits only intentional path-filter skips.</li>
+</ul>
+</li>
+<li>Weekly schedule (<code>17 7 * * 0</code>) and <code>workflow_dispatch</code>
+<ul>
+<li><code>Advisory - Browser Stability Baseline (scheduled/manual)</code> exercises startup, navigation,
+input/render, layout, and keyboard behavior with <code>WAVES_BASELINE_RUNS</code> (20 by default; manual
+runs accept 5 through 100).</li>
+<li>Deterministic behavior assertions can fail the advisory run. Recorded latency samples have no
+pass/fail threshold until the project accepts a stable reference, so timing variability never
+blocks a pull request.</li>
+</ul>
+</li>
+</ul>
+<p>Prerequisites and artifacts:</p>
+<ul>
+<li>Uses the repository Node 22 and pnpm lockfile, stable Rust, pinned <code>wasm-pack</code> 0.13.1, and the
+Playwright-lockfile Chromium version.</li>
+<li>Rendered accessibility failures upload JSON, screenshots, and Playwright traces when a page was
+available. The dedicated failure artifact is retained for 14 days.</li>
+<li>Baseline runs always attempt to upload the JSON and screenshots produced before completion for
+14 days. These runtime outputs remain ignored local/generated evidence and are not committed.</li>
+<li>All actions are pinned to full commit SHAs, permissions are read-only, and checkout credentials
+are not persisted.</li>
+</ul>
+<h3 id="3-security-githubworkflowssecurityyml">3) Security (<code>.github/workflows/security.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Dependency risk checks and advisory scanning.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li>weekly cron (<code>27 6 * * 1</code>)</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Jobs:</p>
+<ul>
+<li><code>Classify Security Paths</code>
+<ul>
+<li>selects the optional image audit for WML-origin, Kannel, production-topology, or workflow
+changes on pull requests</li>
+<li>forces the image audit on every push to <code>main</code>, weekly schedule, and manual run</li>
+</ul>
+</li>
+<li><code>Dependency Review</code>
+<ul>
+<li>PR-only</li>
+<li>read-only; it does not post PR comments</li>
+<li>runs <code>actions/dependency-review-action</code></li>
+</ul>
+</li>
+<li><code>Rust Advisory Audit</code>
+<ul>
+<li>runs <code>cargo audit</code> in:
+<ul>
+<li><code>engine-wasm/engine</code></li>
+<li><code>transport-rust</code></li>
+<li><code>browser/src-tauri</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Node Dependency Audit</code>
+<ul>
+<li>runs <code>pnpm audit --audit-level high</code></li>
+</ul>
+</li>
+<li><code>Go Vulnerability Audit</code>
+<ul>
+<li>runs pinned <code>govulncheck</code> against the WML origin and selected Go standard library</li>
+</ul>
+</li>
+<li><code>Network Preview Image Audit</code>
+<ul>
+<li>scans affected PRs plus every <code>main</code>, scheduled, and manual run</li>
+<li>restores exact-version Syft/Grype binaries and content-addressed BuildKit production layers</li>
+<li>still emits run-scoped CycloneDX SBOM artifacts and fails on high vulnerabilities</li>
+</ul>
+</li>
+</ul>
+<p>Caching:</p>
+<ul>
+<li>Rust build artifact cache for audit crates</li>
+<li>pnpm cache for workspace audit</li>
+<li>Go build and module cache for the WML origin audit</li>
+<li>exact OS/architecture/version caches for Syft and Grype, verified after restore</li>
+<li>target-separated BuildKit GHA caches for the production WML and Kannel images</li>
+</ul>
+<h3 id="4-release-prepare-githubworkflowsrelease-prepareyml">4) Release Prepare (<code>.github/workflows/release-prepare.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Manually create a frozen <code>release/vX.Y.Z</code> branch without publishing a GitHub release.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>checks out a chosen source ref (default <code>main</code>)</li>
+<li>syncs all managed manifest versions from the requested semver</li>
+<li>verifies version consistency</li>
+<li>commits the release version bump only if needed</li>
+<li>pushes a new <code>release/vX.Y.Z</code> branch and fails if it already exists</li>
+</ul>
+<h3 id="5-milestone-release-githubworkflowsmilestone-releaseyml">5) Milestone Release (<code>.github/workflows/milestone-release.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Manually publish a milestone-tagged GitHub release from an existing release branch.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>checks out <code>release/vX.Y.Z</code> by default</li>
+<li>verifies managed versions still match <code>VERSION</code></li>
+<li>builds the static site and simulator bundle</li>
+<li>creates an annotated <code>vX.Y.Z</code> tag</li>
+<li>publishes a GitHub release with downloadable source and site-bundle assets</li>
+</ul>
+<h3 id="6-codeql-githubworkflowscodeqlyml">6) CodeQL (<code>.github/workflows/codeql.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Repository-controlled advanced CodeQL scanning (SAST) for Rust, Go, and JavaScript/TypeScript.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code> targeting <code>main</code></li>
+<li><code>push</code> to <code>main</code></li>
+<li>weekly cron (<code>43 5 * * 2</code>)</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Matrix checks:</p>
+<ul>
+<li><code>Analyze (javascript-typescript)</code></li>
+<li><code>Analyze (rust)</code></li>
+</ul>
+<p>Build modes:</p>
+<ul>
+<li>JavaScript/TypeScript uses <code>none</code>.</li>
+<li>Go uses <code>none</code>.</li>
+<li>Rust uses <code>none</code>, the only CodeQL build mode supported for Rust. CodeQL extracts the Rust
+source directly, so this workflow does not install Tauri system dependencies or run manual
+Cargo builds. Compilation remains covered by the main CI workflow.</li>
+</ul>
+<p>All CodeQL actions are pinned to immutable commit SHAs. The repository must leave CodeQL default
+setup disabled while this advanced workflow manages the same languages.</p>
+<p>Config:</p>
+<ul>
+<li><code>.github/codeql/codeql-config.yml</code>
+<ul>
+<li>includes core source paths: <code>browser</code>, <code>engine-wasm</code>, <code>transport-rust</code>, <code>wml-server</code>, <code>scripts</code></li>
+<li>excludes generated/build paths such as <code>target</code>, <code>dist</code>, <code>node_modules</code>, <code>engine-wasm/pkg</code>, and generated browser contracts</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-deploy-pages-githubworkflowspagesyml">7) Deploy Pages (<code>.github/workflows/pages.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Build and publish static artifacts to <code>gh-pages</code>.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>push</code> to <code>main</code> when paths change:
+<ul>
+<li><code>marketing-site/**</code></li>
+<li><code>docs-portal/**</code></li>
+<li><code>docs/**</code></li>
+<li><code>spec-processing/source-manifests/**</code></li>
+<li><code>engine-wasm/host-sample/**</code></li>
+<li><code>pnpm-lock.yaml</code></li>
+<li><code>pnpm-workspace.yaml</code></li>
+<li><code>.github/workflows/pages.yml</code></li>
+</ul>
+</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>builds the marketing site, WaveNav simulator, and Project Atlas</li>
+<li>assembles the three applications under <code>/</code>, <code>/simulator/</code>, and <code>/atlas/</code></li>
+<li>deploys to <code>gh-pages</code> branch with <code>peaceiris/actions-gh-pages</code></li>
+</ul>
+<h3 id="8-transport-wap-smoke-githubworkflowstransport-wap-smokeyml">8) Transport WAP Smoke (<code>.github/workflows/transport-wap-smoke.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Path-scoped pull-request and on-demand smoke for Kannel + WML stack integration.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code> targeting <code>main</code> when gateway/Kannel, transport, engine contracts/runtime,
+browser host/contracts, WML server, smoke runner, or its workflow changes</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>builds development and sealed-production images through full-SHA-pinned BuildKit actions,
+restores target-specific GHA layer caches, and starts only the explicitly loaded tags</li>
+<li>starts Docker services (<code>kannel</code>, <code>wml-server</code>) without rebuilding the loaded images</li>
+<li>serves WML 1.3 through an explicit test-only DTD setting; the server default remains WML 1.1</li>
+<li>fetches the example directory plus the Pocket Portal, Local Preferences, and Interop Wire Check
+routes through Kannel; verifies <code>application/vnd.wap.wmlc</code>, the raw <code>03 0a</code> WBXML
+version/public-ID prefix, and each normalized deck marker</li>
+<li>sends <code>Encoding-Version: 1.3</code> as the WSP-defined short-integer version-value, and uses the
+locally patched Kannel connectionless path to decode and carry that request negotiation into WML
+compilation</li>
+<li>runs <code>make smoke-transport-wap</code></li>
+<li>executes:
+<ul>
+<li>transport-rust ignored Kannel smoke tests</li>
+<li>browser host ignored Kannel smoke test</li>
+<li>browser engine/render ignored Kannel smoke test</li>
+</ul>
+</li>
+<li>dumps service logs on failure</li>
+<li>uploads the deterministic smoke logs for every run with 14-day retention</li>
+<li>always tears down stack</li>
+</ul>
+<p>This is a relevant-PR signal, but it is not a globally required context because workflow-level
+path filters mean the check correctly does not exist on unrelated pull requests.</p>
+<h3 id="9-native-tauri-kannel-e2e-githubworkflowsnative-tauri-kannel-e2eyml">9) Native Tauri Kannel E2E (<code>.github/workflows/native-tauri-kannel-e2e.yml</code>)</h3>
+<p>Purpose:</p>
+<ul>
+<li>Non-optimistic Linux pilot for the complete visible path from production Tauri frontend controls
+through generated IPC, the native Rust host/engine, <code>transport-rust</code>, and local Kannel.</li>
+</ul>
+<p>Triggers:</p>
+<ul>
+<li><code>pull_request</code> when the engine, shared contracts, transport, Tauri host, native UI pilot,
+Kannel/WML services, Compose topology, or workspace lockfiles traversed by the pilot change</li>
+<li>weekly schedule (<code>17 5 * * 1</code>)</li>
+<li><code>workflow_dispatch</code></li>
+</ul>
+<p>Behavior:</p>
+<ul>
+<li>installs the Linux WebKit WebDriver and Xvfb dependencies documented by Tauri</li>
+<li>restores pinned <code>tauri-cli</code> 2.10.0 and <code>tauri-driver</code> 2.0.6 binaries from an exact
+OS/architecture/version cache independent of product Rust lockfiles, installs on an exact-key
+miss, verifies both crate versions from the dedicated Cargo install metadata, checks executable
+resolution, and validates the Tauri CLI version through its supported command interface</li>
+<li>restores content-addressed Kannel/WML BuildKit layers and starts only the explicitly loaded
+development image tags</li>
+<li>builds the production frontend and an unbundled debug Tauri application</li>
+<li>starts Kannel and the WML server, then opts into local/private access only with the existing
+<code>WAVES_FETCH_DESTINATION_POLICY=allow-private</code> host boundary</li>
+<li>pins <code>wap-net-core</code> and disables gateway fallback</li>
+<li>serves WML 1.3 through the same explicit WML-server test boundary and requires Kannel to emit
+the negotiated WBXML 1.3 envelope accepted by the pinned decoder</li>
+<li>fetches and renders every first-party example through the visible native path, and observes the
+origin counter for two seconds to require one successful repeat navigation to issue one request</li>
+<li>uses Selenium to click the real Go and Select controls, assert the gateway-served home/menu UI,
+traverse menu option 4 into the static example deck, assert a visible invalid-URL failure, and
+recover with another real gateway load</li>
+<li>uploads fixed-name screenshots, page source, structured evidence, driver logs, environment
+versions, service logs, and pre/post-teardown state with 21-day retention</li>
+<li>closes the WebDriver session, terminates the isolated GUI process group, and always tears down
+Docker services</li>
+</ul>
+<p>The pilot is intentionally not a required or product-change pull-request check yet. Its narrow PR
+filter validates the pilot implementation itself. Widen it additively to relevant product paths
+only after all criteria in the active E2E readiness scorecard are met.</p>
+<h2 id="dependency-update-automation">Dependency Update Automation</h2>
+<p>File:</p>
+<ul>
+<li><code>.github/dependabot.yml</code></li>
+<li><code>.github/workflows/dependabot-auto-merge.yml</code></li>
+</ul>
+<p>Configured ecosystems:</p>
+<ul>
+<li><code>github-actions</code> (root)</li>
+<li>npm:
+<ul>
+<li>root workspace (<code>/</code>)</li>
+<li><code>/marketing-site</code></li>
+</ul>
+</li>
+<li>Go modules:
+<ul>
+<li><code>/wml-server</code></li>
+</ul>
+</li>
+<li>OpenTofu/Terraform providers:
+<ul>
+<li><code>/infra/network-preview/environments/preview</code></li>
+</ul>
+</li>
+<li>cargo:
+<ul>
+<li><code>/engine-wasm/engine</code></li>
+<li><code>/engine-wasm/engine/fuzz</code></li>
+<li><code>/transport-rust</code></li>
+<li><code>/browser/src-tauri</code></li>
+</ul>
+</li>
+</ul>
+<p>Grouping and cadence:</p>
+<ul>
+<li>Patch and minor version updates are grouped only within one package ecosystem and one configured
+directory/lockfile boundary.</li>
+<li>Major version updates do not match a group and therefore remain individual pull requests for
+manual review.</li>
+<li>Security updates do not match the version-update groups and remain individual for focused
+review.</li>
+<li>Checks run weekly at deterministic UTC times: GitHub Actions on Monday, Node ecosystems on
+Tuesday, and Rust ecosystems on Wednesday.</li>
+<li>Node and Cargo releases use a three-day patch, seven-day minor, and fourteen-day major
+cooldown. GitHub Actions uses a seven-day default cooldown because that ecosystem does not
+support SemVer-specific cooldown keys.
+Cooldowns do not delay security updates.</li>
+<li>Open-PR limits are set per ecosystem/directory to prevent an update burst from flooding the
+review queue.</li>
+<li>No multi-ecosystem groups are used. The root pnpm workspace is grouped together because its
+declared workspaces share <code>pnpm-lock.yaml</code>; marketing-site, the WML Go module, and every Cargo
+lockfile remain independent.</li>
+</ul>
+<p>Auto-merge behavior:</p>
+<ul>
+<li>The workflow runs on <code>pull_request</code>, not <code>pull_request_target</code>.</li>
+<li>The workflow defaults to no token permissions and first evaluates repository-owned Dependabot
+PR metadata in a read-only job.</li>
+<li><code>dependabot/fetch-metadata</code> is pinned to a full commit SHA and verifies that the PR and commits
+are Dependabot-owned.</li>
+<li>Only patch and minor updates have auto-merge enabled. The metadata action reports the highest
+semver change in grouped PRs, so a group cannot hide a major update.</li>
+<li>Major updates and updates without recognized patch/minor metadata require manual review.</li>
+<li>Security updates follow the same semver auto-merge rule when the repository setting for
+Dependabot security updates is enabled; unlike routine version updates, they remain ungrouped
+and are not delayed by cooldowns.</li>
+<li>The workflow uses <code>gh pr merge --auto --squash</code>, so GitHub queues the merge and waits for every
+required ruleset check. It does not merge around CI, security, CodeQL, review, or signature
+requirements.</li>
+<li>Only the final, policy-approved job receives <code>contents: write</code> and <code>pull-requests: write</code>. That
+job does not check out or execute PR code, and the write token is not passed to the metadata
+action.</li>
+<li>On Dependabot rebases/synchronizations, the workflow re-runs and re-enables auto-merge for the updated head.</li>
+</ul>
+<p>Lockfile ownership:</p>
+<ul>
+<li>Dependabot owns manifest and lockfile changes for its configured ecosystem.</li>
+<li>The former write-back workflow was removed. CI never checks out PR code under
+<code>pull_request_target</code>, broadly refreshes unrelated lockfiles, or commits generated lockfile
+changes.</li>
+<li>pnpm frozen installs, Go module verification, and <code>cargo metadata --locked</code> verify that
+Dependabot supplied usable dependency metadata without mutating the PR.</li>
+<li>Node package installation uses <code>--ignore-scripts</code> in PR CI. Later build and test commands still
+execute the checked-in project scripts and dependency binaries required for validation, but
+only with read-only job permissions and without persisted checkout credentials.</li>
+</ul>
+<p>Repository setting prerequisites are documented in <code>docs/ci/REQUIRED_CHECKS.md</code>.</p>
+<h2 id="branch-protection-guidance">Branch Protection Guidance</h2>
+<p>Use <code>docs/ci/REQUIRED_CHECKS.md</code> as the source of truth for required checks on <code>main</code>.</p>
+<p>For immutable release branches, use <code>docs/ci/RELEASE_BRANCH_RULESET.md</code> as the source of truth for GitHub ruleset configuration.</p>
+<p>At minimum, require:</p>
+<ul>
+<li><code>CI Required Gate</code> from <code>ci.yml</code></li>
+<li><code>Extended Quality Required Gate</code> from <code>extended-quality.yml</code></li>
+<li>Security jobs from <code>security.yml</code></li>
+<li>CodeQL matrix checks from <code>codeql.yml</code></li>
+</ul>
+<p>Do not require:</p>
+<ul>
+<li><code>Transport WAP Smoke</code> globally (it is a path-scoped PR signal and does not run for unrelated PRs)</li>
+<li><code>Native Tauri Kannel E2E</code> until its documented pilot promotion criteria are met</li>
+<li><code>OpenTofu Static Validation</code> globally (it is path-scoped and otherwise absent)</li>
+<li><code>Deploy Pages</code> (deployment workflow)</li>
+</ul>
+<h2 id="common-failure-modes">Common Failure Modes</h2>
+<ul>
+<li>Tauri/GTK pkg-config errors (<code>gio-2.0</code>, <code>glib-2.0</code>, <code>gobject-2.0</code>)
+<ul>
+<li>Ensure Linux dependencies are installed in the workflow before Rust build/check steps.</li>
+</ul>
+</li>
+<li>Tauri frontend dist missing during Rust compile
+<ul>
+<li><code>pnpm --dir browser run contracts:codegen</code> and <code>contracts:check</code> create the minimal
+<code>browser/frontend/dist/index.html</code> automatically. Direct Tauri compile/coverage commands still
+need a real frontend build or an explicit placeholder for the compile-time config.</li>
+</ul>
+</li>
+<li>Lockfile/cache mismatches
+<ul>
+<li>Confirm the correct lockfile path is used for <code>actions/setup-node</code> cache keys.</li>
+</ul>
+</li>
+<li>Branch protection check name mismatch
+<ul>
+<li>If a workflow job name changes, update <code>docs/ci/REQUIRED_CHECKS.md</code> and branch protection settings immediately.</li>
+</ul>
+</li>
+<li>Release branch remains mutable
+<ul>
+<li>Confirm the <code>release/v*</code> ruleset blocks updates and deletions after branch creation.</li>
+</ul>
+</li>
+<li>Version drift failure in CI
+<ul>
+<li>Run <code>node scripts/set-release-version.mjs &lt;semver&gt;</code> and then <code>node scripts/check-release-version.mjs</code>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="maintenance-checklist">Maintenance Checklist</h2>
+<p>When changing CI:</p>
+<ol>
+<li>Update workflow YAML.</li>
+<li>Update <code>docs/ci/REQUIRED_CHECKS.md</code> if check names change or required policy changes.</li>
+<li>Update <code>docs/ci/RELEASE_BRANCH_RULESET.md</code> when release branch governance changes.</li>
+<li>Update <code>docs/releases/VERSIONING.md</code> when versioning semantics or release cadence changes.</li>
+<li>Update this document when behavior/triggers/caches change.</li>
+<li>Run <code>pnpm docs:check</code>, <code>pnpm verify:test</code>, <code>actionlint</code>, <code>sh -n</code>, and <code>shellcheck</code> for the
+workflow/scripts touched.</li>
+<li>Validate with at least one PR run after merge and update <code>docs/ci/CI_MAINTENANCE.md</code> when the
+critical-path evidence changes materially.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ci-setup-and-operations">CI Setup and Operations</a></li><li class="depth-2"><a href="#quick-reference">Quick Reference</a></li><li class="depth-2"><a href="#workflows">Workflows</a></li><li class="depth-3"><a href="#1-ci-githubworkflowsciyml">1) CI (.github/workflows/ci.yml)</a></li><li class="depth-3"><a href="#opentofu-static-validation-githubworkflowsopentofuyml">OpenTofu Static Validation (.github/workflows/opentofu.yml)</a></li><li class="depth-3"><a href="#opentofu-protected-plan-and-apply">OpenTofu Protected Plan and Apply</a></li><li class="depth-3"><a href="#2-extended-quality-githubworkflowsextended-qualityyml">2) Extended Quality (.github/workflows/extended-quality.yml)</a></li><li class="depth-3"><a href="#3-security-githubworkflowssecurityyml">3) Security (.github/workflows/security.yml)</a></li><li class="depth-3"><a href="#4-release-prepare-githubworkflowsrelease-prepareyml">4) Release Prepare (.github/workflows/release-prepare.yml)</a></li><li class="depth-3"><a href="#5-milestone-release-githubworkflowsmilestone-releaseyml">5) Milestone Release (.github/workflows/milestone-release.yml)</a></li><li class="depth-3"><a href="#6-codeql-githubworkflowscodeqlyml">6) CodeQL (.github/workflows/codeql.yml)</a></li><li class="depth-3"><a href="#7-deploy-pages-githubworkflowspagesyml">7) Deploy Pages (.github/workflows/pages.yml)</a></li><li class="depth-3"><a href="#8-transport-wap-smoke-githubworkflowstransport-wap-smokeyml">8) Transport WAP Smoke (.github/workflows/transport-wap-smoke.yml)</a></li><li class="depth-3"><a href="#9-native-tauri-kannel-e2e-githubworkflowsnative-tauri-kannel-e2eyml">9) Native Tauri Kannel E2E (.github/workflows/native-tauri-kannel-e2e.yml)</a></li><li class="depth-2"><a href="#dependency-update-automation">Dependency Update Automation</a></li><li class="depth-2"><a href="#branch-protection-guidance">Branch Protection Guidance</a></li><li class="depth-2"><a href="#common-failure-modes">Common Failure Modes</a></li><li class="depth-2"><a href="#maintenance-checklist">Maintenance Checklist</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/ci/ci_setup.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

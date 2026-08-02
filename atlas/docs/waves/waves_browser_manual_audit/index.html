@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Browser Functionality and Manual Audit · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_browser_manual_audit"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_browser_manual_audit.md</p><div class="markdown-body"><h1 id="waves-browser-functionality-and-manual-audit">Waves Browser Functionality and Manual Audit</h1>
+<p>Status: active pre-alpha test guide</p>
+<p>Audit baseline: <code>origin/main</code> at <code>dfe2c4c9</code> on 2026-08-02</p>
+<p>Purpose: make exploratory browser testing reproducible and turn each genuine oddity into a small,
+well-owned work item. This guide audits active product behavior only; archived plans and historical
+snapshots are not normative.</p>
+<h2 id="know-which-build-you-are-testing">Know which build you are testing</h2>
+<p>Always record the exact commit and any stacked pull requests. The 2026-08-02 baseline and pending
+desktop work differ materially:</p>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Current <code>main</code></th>
+<th>Pending change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native shell, address bar, Local/Network modes, Welcome/Help, handset viewport</td>
+<td>available</td>
+<td>retained</td>
+</tr>
+<tr>
+<td>Engine-owned frame, Canvas renderer, click regions</td>
+<td>available</td>
+<td>retained</td>
+</tr>
+<tr>
+<td>Back/Reload/Go and request-shaped history</td>
+<td>available, including typed POST replay</td>
+<td>native replay evidence remains</td>
+</tr>
+<tr>
+<td>Long-deck movement</td>
+<td>deterministic viewport scrolling available</td>
+<td>native scrolling evidence remains</td>
+</tr>
+<tr>
+<td>Keyboard, buttons, pointer, and softkey routing</td>
+<td>unified engine input routing available</td>
+<td>native input-equivalence evidence remains</td>
+</tr>
+<tr>
+<td>Loading and recovery</td>
+<td>basic loading/error state</td>
+<td><code>#544</code> adds phase-aware presentation and recovery actions</td>
+</tr>
+<tr>
+<td>Library, Favorites, Preferences</td>
+<td>integrated surfaces and safe import/export/reset available</td>
+<td>manual desktop-path evidence remains</td>
+</tr>
+<tr>
+<td>Inspector, bounded timeline, safe capture export</td>
+<td>available</td>
+<td>retained</td>
+</tr>
+<tr>
+<td>Crash marker and safe-session recovery offer</td>
+<td>not implemented (<code>WBP-12</code>)</td>
+<td>no pending PR</td>
+</tr>
+<tr>
+<td><code>.waves-session.json</code> import/replay and 1,000-step memory gate</td>
+<td>not implemented (<code>WBP-13</code>)</td>
+<td>no pending PR</td>
+</tr>
+<tr>
+<td>Signed/notarized packaged build and packaged VoiceOver result</td>
+<td>not available</td>
+<td>no pending PR</td>
+</tr>
+</tbody>
+</table>
+<p>An observation against a stacked or locally modified build must not be filed as a <code>main</code> regression.</p>
+<h2 id="test-record-header">Test record header</h2>
+<p>Start every session with this block. One header can cover several findings from the same run.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Build commit:</span></span>
+<span class="line"><span>Additional PRs/changes:</span></span>
+<span class="line"><span>Launch kind: Tauri dev | debug binary | packaged app | browser story</span></span>
+<span class="line"><span>OS and version:</span></span>
+<span class="line"><span>CPU architecture:</span></span>
+<span class="line"><span>Display size/scaling:</span></span>
+<span class="line"><span>Window size and app zoom:</span></span>
+<span class="line"><span>State: clean | existing | deliberately corrupt</span></span>
+<span class="line"><span>Run mode: Local | Network</span></span>
+<span class="line"><span>Target URL or local example:</span></span>
+<span class="line"><span>Transport profile and fallback:</span></span>
+<span class="line"><span>Gateway/origin setup:</span></span>
+<span class="line"><span>Developer mode/debug policy:</span></span></code></pre>
+<p>For network runs, note whether the route is the controlled local Kannel stack, a published
+first-party service, or another endpoint. Never describe a local fixture as a real-gateway result.</p>
+<h2 id="recommended-audit-tour">Recommended audit tour</h2>
+<p>Run the short core tour first. Continue into the focused sections when the core is stable. A result
+is <code>pass</code>, <code>oddity</code>, <code>blocked</code>, or <code>not-applicable</code>; <code>blocked</code> must name the prerequisite.</p>
+<h3 id="1-startup-and-shell">1. Startup and shell</h3>
+<ul>
+<li>Launch with clean state. The shell should paint before any network result and remain operable if
+gateway preflight fails.</li>
+<li>Confirm native title/menu identity, minimum/default window usability, and absence of a second
+faux application frame.</li>
+<li>Open and close Welcome/Help. Try Tour, Local examples, and Connect to a WAP server.</li>
+<li>Switch Local/Network modes repeatedly. The visible source, route, profile, and available primary
+action must stay truthful.</li>
+<li>Exercise address focus, Reload, Inspector, and Help through both visible controls and platform
+shortcuts. Focused host text fields must retain ordinary typing/editing shortcuts.</li>
+</ul>
+<h3 id="2-local-wml-runtime">2. Local WML runtime</h3>
+<ul>
+<li>Load <code>Your First Deck</code>; traverse it with viewport focus, Up/Down/Enter, and visible handset
+buttons.</li>
+<li>Load <code>Basic</code>; follow a fragment link, an external intent, and Back until history is empty.</li>
+<li>Load <code>F2-01 Deterministic Click Input</code>; compare pointer activation with keyboard activation.</li>
+<li>Load <code>Wrap Stress</code>; traverse all focusable content with wheel/trackpad and long jumps, and watch
+for clipping, stale focus, or content that cannot be brought into view.</li>
+<li>Load text/select form examples. Test edit, cancel, commit, empty values, maxlength, password
+concealment, and submission intent.</li>
+<li>Load timer and script examples. Confirm timers do not interleave visibly with an in-flight input
+action and recoverable script failures do not crash or silently navigate.</li>
+</ul>
+<h3 id="3-controlled-gateway-path">3. Controlled gateway path</h3>
+<p>Use the same local stack as <code>make smoke-native-tauri-kannel-ui</code> when practical.</p>
+<ul>
+<li>Load <code>wap://localhost/</code>, enter the menu, and open the static example.</li>
+<li>Load Pocket Portal and follow its fragment directory link.</li>
+<li>Load Preferences and Interop examples; confirm content type, final address, route, and active card
+in Developer Tools.</li>
+<li>Repeat one navigation and watch origin metrics for duplicate requests.</li>
+<li>Exercise GET, form-urlencoded POST, and Back. Confirm Back replays the typed POST identity and
+never changes method/body semantics.</li>
+<li>Return to a known-good deck after every injected failure.</li>
+</ul>
+<h3 id="4-navigation-input-and-scrolling">4. Navigation, input, and scrolling</h3>
+<ul>
+<li>Compare each action through physical keyboard, visible handset button, pointer hit region, and
+dynamic softkey where applicable. Outcomes should agree; input source must not change engine
+semantics.</li>
+<li>Test focused host controls separately from the WML viewport. Arrow, Enter, Backspace, text,
+modifier, and composition input must reach the correct owner.</li>
+<li>Test same-card duplicates, repeated fragments, cross-deck Back, failed Back loads, Reload, and
+Back at the beginning of history.</li>
+<li>On current <code>main</code>, test wheel/trackpad, keyboard traversal, wrapped links, top/bottom clamping,
+stale frame clicks, empty-space clicks, and input/select controls at scrolled positions. Repeat
+activation through keyboard, buttons, and pointer to verify unified routing.</li>
+</ul>
+<h3 id="5-loading-cancellation-and-recovery">5. Loading, cancellation, and recovery</h3>
+<p>This section is partial until <code>#544</code> merges and the controlled fault routes exist.</p>
+<ul>
+<li>Start a slow request. The previous committed frame should remain visible and feedback should be
+immediate; delayed phase presentation should not flicker on fast loads.</li>
+<li>Confirm Go changes to Stop only while cancellation is real. Cancel and verify no late response
+mutates frame, history, status, or persisted state.</li>
+<li>Exercise invalid address, timeout, transport failure, decode failure, invalid deck, script trap,
+and a successful retry. Record the visible phase/category, correlation ID, offered recovery
+actions, and whether the last good frame survived.</li>
+<li>Try a second navigation while one is active. Only the current generation may commit.</li>
+</ul>
+<h3 id="6-library-and-preferences">6. Library and Preferences</h3>
+<p>This section applies to current <code>main</code>.</p>
+<ul>
+<li>Open Library from menu and shortcut. Load a bundled example and add/open/remove a Favorite.</li>
+<li>Import valid, duplicate, malformed, sensitive, and over-limit favorite sets. Unsafe entries must
+be quarantined or rejected without replacing safe data. Exported data must contain no secrets.</li>
+<li>Confirm unpublished Services are visibly disabled and explain why.</li>
+<li>Change launch behavior, display scale, high contrast, reduced motion, developer mode, timeline
+retention, and safe restore policy. Relaunch and confirm only the documented safe values persist.</li>
+<li>Exercise component clears and the two-step full reset. Cancel once, then confirm; the current
+committed deck should remain visible and unsafe sessions must not replay.</li>
+</ul>
+<p>Do not file missing safe-session crash recovery as an APP-SHELL regression; it remains <code>WBP-12</code>.</p>
+<h3 id="7-developer-tools-and-diagnostics">7. Developer Tools and diagnostics</h3>
+<ul>
+<li>Toggle the docked Inspector and open its separate window. Opening, closing, or changing tabs must
+not change runtime ordering, focus, navigation, or timer behavior.</li>
+<li>Exercise Overview, Transport, Runtime, Inspector, Timeline, and Source panels. Arrow/Home/End tab
+navigation and focus return should be predictable.</li>
+<li>Run Health, Render, Snapshot, clear intent, clear/export timeline, raw WML load, and the
+default-disabled engine debug session boundary.</li>
+<li>Export a safe capture after a seeded failure. Inspect it before attaching: credentials, cookies,
+sensitive query values, POST bodies, password values, and raw secrets must be absent.</li>
+<li>Record cursor gaps, retention behavior, window/docked synchronization, and any mismatch between
+visible state and diagnostic state.</li>
+</ul>
+<h3 id="8-accessibility-and-resilience">8. Accessibility and resilience</h3>
+<ul>
+<li>Traverse the whole shell with Tab/Shift+Tab at default and minimum windows. Every enabled control
+must be reachable, visible, and have an obvious focus indicator.</li>
+<li>Repeat at effective 200 percent zoom, high contrast, and reduced motion. Check horizontal
+overflow, clipped controls, target size, and whether the LCD remains usable by vertical scroll.</li>
+<li>Confirm loading, failure, and toast-only events use one announcement channel and do not duplicate
+spoken/status output.</li>
+<li>Resize aggressively during navigation and while Developer Tools are open. No panic, blank shell,
+lost current frame, or unbounded layout loop is acceptable.</li>
+<li>Packaged VoiceOver behavior remains <code>blocked</code>, not <code>pass</code>, until packaging exists and the manual
+procedure in <code>WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md</code> is recorded.</li>
+</ul>
+<h2 id="capture-an-oddity">Capture an oddity</h2>
+<p>Prefer one observable problem per report. Combine symptoms only when the same short reproduction
+proves they are one failure.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Title: [Browser] &lt;specific observed failure&gt;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Build/environment:</span></span>
+<span class="line"><span>Starting state:</span></span>
+<span class="line"><span>Target deck/URL:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Steps:</span></span>
+<span class="line"><span>1.</span></span>
+<span class="line"><span>2.</span></span>
+<span class="line"><span>3.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Expected:</span></span>
+<span class="line"><span>Actual:</span></span>
+<span class="line"><span>Reproduction: always | intermittent (&lt;rate&gt;) | once</span></span>
+<span class="line"><span>Regression: yes (&lt;known-good&gt;) | no | unknown</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Visible phase/category/correlation ID:</span></span>
+<span class="line"><span>Last good frame preserved: yes | no | not applicable</span></span>
+<span class="line"><span>Likely layer: shell | browser state | engine/runtime | transport/gateway | evidence harness | unknown</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Attachments:</span></span>
+<span class="line"><span>Privacy check completed: yes | no</span></span></code></pre>
+<p>Use the repository’s <strong>Browser oddity</strong> issue form when filing directly in GitHub.</p>
+<h3 id="severity-guide">Severity guide</h3>
+<table>
+<thead>
+<tr>
+<th>Priority</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>P0</code></td>
+<td>crash/data loss, secret exposure, unsafe automatic replay, or a release-blocking security failure</td>
+</tr>
+<tr>
+<td><code>P1</code></td>
+<td>core load/navigation/input path is blocked, content/history is silently wrong, cancellation commits stale state, or recovery is impossible</td>
+</tr>
+<tr>
+<td><code>P2</code></td>
+<td>important behavior is degraded but a reliable workaround exists, including accessibility failures on a supported path</td>
+</tr>
+<tr>
+<td><code>P3</code></td>
+<td>localized polish, wording, discoverability, or low-impact visual inconsistency</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ownership-hints">Ownership hints</h3>
+<ul>
+<li>Shell/menu/Library/Preferences/accessibility presentation: <code>browser/frontend</code> or Tauri shell.</li>
+<li>WML navigation, focus, input, script, timer, frame, or render semantics: <code>engine-wasm</code>.</li>
+<li>WBXML, request serialization, timeout, retry, destination policy, or protocol behavior:
+<code>transport-rust</code>/gateway.</li>
+<li>Only assign a layer when evidence distinguishes it. <code>unknown</code> is better than an incorrect
+cross-layer ticket.</li>
+</ul>
+<h2 id="known-gaps-that-are-not-fresh-oddities">Known gaps that are not fresh oddities</h2>
+<p>Do not open duplicates for these without a narrower new symptom:</p>
+<ul>
+<li>WBP-14 native timeout, cancellation, invalid-deck, and script-trap evidence;</li>
+<li>WBP-12 crash marker and safe-session recovery offer;</li>
+<li>WBP-13 sanitized session import/replay and bounded 1,000-step replay;</li>
+<li>packaged signing/notarization and packaged screen-reader evidence;</li>
+<li>history search/safe recents, multi-window browsing, and named handset profiles; and</li>
+<li>the explicit WTP/compliance mapping gaps recorded by the canonical compliance program.</li>
+</ul>
+<p>The current WBP-14 audit is tracked separately in <code>WBP_14_DESKTOP_PATH_EVIDENCE.md</code> and should be
+updated as evidence lands rather than reinterpreted from manual notes.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-browser-functionality-and-manual-audit">Waves Browser Functionality and Manual Audit</a></li><li class="depth-2"><a href="#know-which-build-you-are-testing">Know which build you are testing</a></li><li class="depth-2"><a href="#test-record-header">Test record header</a></li><li class="depth-2"><a href="#recommended-audit-tour">Recommended audit tour</a></li><li class="depth-3"><a href="#1-startup-and-shell">1. Startup and shell</a></li><li class="depth-3"><a href="#2-local-wml-runtime">2. Local WML runtime</a></li><li class="depth-3"><a href="#3-controlled-gateway-path">3. Controlled gateway path</a></li><li class="depth-3"><a href="#4-navigation-input-and-scrolling">4. Navigation, input, and scrolling</a></li><li class="depth-3"><a href="#5-loading-cancellation-and-recovery">5. Loading, cancellation, and recovery</a></li><li class="depth-3"><a href="#6-library-and-preferences">6. Library and Preferences</a></li><li class="depth-3"><a href="#7-developer-tools-and-diagnostics">7. Developer Tools and diagnostics</a></li><li class="depth-3"><a href="#8-accessibility-and-resilience">8. Accessibility and resilience</a></li><li class="depth-2"><a href="#capture-an-oddity">Capture an oddity</a></li><li class="depth-3"><a href="#severity-guide">Severity guide</a></li><li class="depth-3"><a href="#ownership-hints">Ownership hints</a></li><li class="depth-2"><a href="#known-gaps-that-are-not-fresh-oddities">Known gaps that are not fresh oddities</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_browser_manual_audit.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

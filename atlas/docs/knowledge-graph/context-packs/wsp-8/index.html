@@ -1,0 +1,1413 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WSP-8 AI Context Pack · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/context-packs/wsp-8"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/context-packs/wsp-8.md</p><div class="markdown-body"><h1 id="wsp-8-ai-context-pack">WSP-8 AI Context Pack</h1>
+<blockquote>
+<p>Generated from the WAP 1.2.1 knowledge graph slice. Canonical manifests remain authoritative.</p>
+</blockquote>
+<h2 id="retrieval-contract">Retrieval contract</h2>
+<ul>
+<li>Target: <code>WSP-8</code></li>
+<li>Release/profile: WAP 1.2.1, WML 1.3, <code>CCR-CLASSC-C-001</code></li>
+<li>Compatibility floor: <code>strict-historical-observable-behavior</code></li>
+<li>Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.</li>
+<li>Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.</li>
+<li>Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.</li>
+</ul>
+<h2 id="graph-summary">Graph summary</h2>
+<ul>
+<li>Nodes: 202</li>
+<li>Edges: 577</li>
+<li>Selected work items: 6</li>
+<li>Direct SCR rows: 0</li>
+<li>Direct normative clauses: 123</li>
+<li>Aggregate regression/delegate context clauses: 0</li>
+<li>Work items without direct clause mappings: 2</li>
+<li>Work items with unmapped declared normative families: 4</li>
+</ul>
+<h2 id="execution-target">Execution target</h2>
+<h3 id="wsp-8-wsp-session-connectionless-headers-and-host-fetch">WSP-8: WSP session, connectionless, headers, and host fetch</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Goal: Complete the WAP 1.2.1 session layer and make it the real desktop ingress path.</li>
+<li>Depends on: <code>CONF-1</code>, <code>WAE-6</code></li>
+<li>Direct downstream sprints: <code>INT-9</code></li>
+</ul>
+<p>Exit gates:</p>
+<ul>
+<li>The eight-row selected connectionless WSP path has executable evidence.</li>
+<li>Connection-oriented WSP and WTP remain separately capability-gated.</li>
+<li>Desktop GET and POST use the native stack with explicit fallback.</li>
+<li>Generated Rust/TypeScript transport contracts have no drift.</li>
+</ul>
+<h2 id="work-items">Work items</h2>
+<h3 id="wsp-801-effective-wsp-pdu-primitive-and-method-matrix">WSP-801: Effective WSP PDU, primitive, and method matrix</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code></li>
+<li>Existing tickets: <code>T0-09</code>, <code>T0-11</code>, <code>T0-20</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 7 (<code>WSP-C-001</code>, <code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code>)</li>
+<li>Direct normative clauses: 35</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Effective WSP PDU, primitive, and method matrix</li>
+<li>transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json</li>
+<li>spec-processing/source-manifests/wap-1.2.1-wsp-scr.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>All 109 WSP rows retain exact source disposition; the 35 WSP-801 clauses and seven selected parents keep their byte-exact evidence, and WSP-802 closes the delegated WSP-CL-C-003 and WSP-CL-C-020 header residuals without changing that matrix.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs WSP-801</code></li>
+</ul>
+<h3 id="wsp-802-wsp-headerassigned-numberencoding-version-closure">WSP-802: WSP header/assigned-number/encoding-version closure</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code></li>
+<li>Existing tickets: <code>T0-10</code>, <code>T0-20</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 6 (<code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code>, <code>WSP-CL-C-020</code>)</li>
+<li>Direct normative clauses: 25</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WSP header/assigned-number/encoding-version closure</li>
+<li>transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json</li>
+<li>docs/waves/WSP_802_HEADER_ENCODING_EVIDENCE.md</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Known tokens, code pages, text fallbacks, unknown policy, encoding versions, and round trips match the WAP 1.2.1 effective set.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs WSP-802</code></li>
+</ul>
+<h3 id="wsp-803-wsp-capability-negotiation-and-session-lifecycle">WSP-803: WSP capability negotiation and session lifecycle</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code></li>
+<li>Existing tickets: <code>T0-11</code>, <code>T0-18</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 0</li>
+<li>Direct normative clauses: 0</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: None</li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WSP capability negotiation and session lifecycle</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Connect, capability bounds, suspend/resume, disconnect, re-establishment, and overage behavior are deterministic.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+</ul>
+<h3 id="wsp-804-native-wap-transport-desktop-get-ingress">WSP-804: Native WAP transport desktop GET ingress</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>browser</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code>, <code>wdp</code></li>
+<li>Existing tickets: <code>T0-27</code>, <code>T0-28</code>, <code>T0-29</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 6 (<code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code>)</li>
+<li>Direct normative clauses: 26</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Native WAP transport desktop GET ingress</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Browser mode selection, native fetch, fallback policy, error mapping, and Kannel smoke behavior preserve the generated transport contract.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>cargo test --manifest-path browser/src-tauri/Cargo.toml</code></li>
+<li><code>./scripts/transport-wap-smoke.sh</code></li>
+</ul>
+<h3 id="wsp-805-native-wsp-form-post-ingress">WSP-805: Native WSP form POST ingress</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>browser</code>, <code>engine-wasm</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code>, <code>wdp</code>, <code>wml</code>, <code>wae</code></li>
+<li>Existing tickets: <code>T0-30</code>, <code>R0-06</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 9 (<code>WML-C-14</code>, <code>WML-C-29</code>, <code>WML-C-37</code>, <code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code>)</li>
+<li>Direct normative clauses: 37</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-RMK-002</code>, <code>RQ-RMK-011</code>, <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Spec references: <code>WAP-191_104-WML sections 9.3 and 9.5.1 as amended by WAP-191_105-WML section 4.3</code>, <code>WAP-203-WSP sections 6.4 and 8.2.3</code></li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Native WSP form POST ingress</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Effective WML form data crosses engine, host, connectionless WSP, and WDP with exact method/content/request-policy semantics; WTP is activated only for connection-oriented WSP.</li>
+<li>The focused WSP-805 context directly maps only selected WML request-serialization and WSP method/PDU clauses; unresolved WAE and WDP source-family mappings remain explicit gaps.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path engine-wasm/engine/Cargo.toml</code></li>
+<li><code>transport-rust/tests/fixtures/transport/wml_request_serialization_mapped/request_fixture.json</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml request_serialization</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>cargo test --manifest-path browser/src-tauri/Cargo.toml fetch_deck_command_serializes_typed_post_intent_before_http_handoff</code></li>
+<li><code>cargo test --manifest-path browser/src-tauri/Cargo.toml</code></li>
+<li><code>pnpm --dir browser/frontend test</code></li>
+<li><code>node scripts/wap-context-pack.mjs WSP-805</code></li>
+<li><code>pnpm wap-graph:check</code></li>
+</ul>
+<h3 id="wsp-806-wap-121-to-wap-20-wsp-delta-register">WSP-806: WAP 1.2.1-to-WAP 2.0 WSP delta register</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>documentation</code>, <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wsp</code></li>
+<li>Existing tickets: None</li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 0</li>
+<li>Direct normative clauses: 0</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: None</li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WAP 1.2.1-to-WAP 2.0 WSP delta register</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>WAP-230-derived behavior is classified as compatible, strict correction, or successor-only.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>node scripts/check-wap-delta-register.mjs</code></li>
+</ul>
+<h2 id="direct-scr-evidence">Direct SCR evidence</h2>
+<ul>
+<li>No direct SCR matrix rows are mapped for this selection.</li>
+</ul>
+<h2 id="direct-normative-obligations">Direct normative obligations</h2>
+<h3 id="wsp-801">WSP-801</h3>
+<ul>
+<li><strong>WSP-CL-COMMUNICATION-FAILURE-LOCAL</strong> — Generate no peer indication when a request cannot be communicated and handle exceptional conditions as a local implementation matter.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.4 (6.4.4 Error Handling)</li>
+<li>Parents: <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-COMMUNICATION-FAILURE-LOCAL</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-METHOD-FACILITY</strong> — Implement the connectionless method-invocation facility for selected GET and POST requests and replies.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.1 (6.4.1 Overview)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-METHOD-FACILITY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-NONCONFIRMED</strong> — Exchange method content through non-confirmed facilities and tolerate unreliable peer communication.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.1 (6.4.1 Overview)</li>
+<li>Parents: <code>WSP-C-001</code>, <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-NONCONFIRMED</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-TID-REQUIRED</strong> — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-TID-REQUIRED</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-DEVICE-CONNECTIONLESS-MODE</strong> — Provide the selected connectionless WSP device mode without requiring connection-oriented WSP or WTP.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.1 (6.4.1 Overview)</li>
+<li>Parents: <code>WSP-C-001</code>, <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-DEVICE-CONNECTIONLESS-MODE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-LAYOUT</strong> — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-METHOD</strong> — Encode the selected HTTP GET method using the Get PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Get URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-INTEGER-NETWORK-ORDER</strong> — Encode multi-octet integer values in big-endian network octet order.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.1.1 (8.1.1 Primitive Data Types)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-INTEGER-NETWORK-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-BODY-CONSTRAINT</strong> — Do not provide a request body when the invoked HTTP method does not permit an entity body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-BODY-CONSTRAINT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-ERROR-BODY</strong> — When a result status is an error, preserve any response body that supplies human-displayable error information.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-ERROR-BODY</code> (<code>rendering</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-HTTP-SEMANTICS</strong> — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-PARAMETERS</strong> — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-TRANSPARENCY</strong> — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-HTTP-SEMANTICS</strong> — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-PARAMETERS</strong> — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-OUT-OF-BAND-PARAMETERS</strong> — Permit MRU and persistent-header settings to be agreed out of band, including by implication from a well-known server port.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-OUT-OF-BAND-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PDU-TYPE-DISPATCH</strong> — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PDU-TYPE-DISPATCH</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PEER-INDICATION-DELIVERY</strong> — Deliver an indication primitive when the corresponding peer request primitive is received.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.3 (6.4.3 Constraints on Using the Service Primitives)</li>
+<li>Parents: <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-PEER-INDICATION-DELIVERY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-BODY-TO-SDU-END</strong> — Treat every octet after the declared headers as request body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-CONTENT-TYPE</strong> — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-POST-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-LAYOUT</strong> — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-METHOD</strong> — Encode the selected HTTP POST method using the Post PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Post URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS</strong> — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.3 (6.4.3 Constraints on Using the Service Primitives)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-BODY-TO-SDU-END</strong> — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-CONTENT-TYPE</strong> — Decode the Reply body media type before the remaining response headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-PDU-LAYOUT</strong> — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-STATUS-ASSIGNMENT</strong> — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-STATUS-ASSIGNMENT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-SELECTED-PDU-ASSIGNMENTS</strong> — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-SELECTED-PDU-ASSIGNMENTS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-TID-PEER-CORRELATION</strong> — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-TID-PEER-CORRELATION</code> (<code>state-machine</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-TRANSPORT-ERROR-IGNORED</strong> — Ignore underlying transport error indications at the connectionless WSP protocol layer.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-TRANSPORT-ERROR-IGNORED</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNITDATA-DIRECT-MAPPING</strong> — Map each connectionless service request directly to one WSP PDU sent by an underlying Unitdata request, without a WSP state machine.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-C-001</code>, <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-UNITDATA-DIRECT-MAPPING</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNITDATA-RECEIVE-DISPATCH</strong> — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-UNITDATA-RECEIVE-DISPATCH</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNITDATA-SECURITY-EQUIVALENCE</strong> — Preserve one-to-one primitive behavior whether Unitdata is supplied directly by WDP or by an optional security SAP.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-010</code></li>
+<li>Fixture: <code>WSP-FX-UNITDATA-SECURITY-EQUIVALENCE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="wsp-802">WSP-802</h3>
+<ul>
+<li><strong>WSP-CL-ENCODING-VERSION-ABSENT-DEFAULT</strong> — When Encoding-Version is absent, assume only version 1.2-or-lower encodings for the default page and the lowest version for an extension page.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-ABSENT-DEFAULT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-CLIENT-SELECTION</strong> — Send the highest encoding version the client implements that does not exceed the known server maximum.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-CLIENT-SELECTION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-EXTENSION-PAGES</strong> — Send a dedicated Encoding-Version value for each used extended header code page.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-EXTENSION-PAGES</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-HOP-BY-HOP</strong> — Treat Encoding-Version as hop-by-hop rather than forwarding it as an end-to-end application header.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.4 (8.4.4 End-to-end and Hop-by-hop Headers)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-HOP-BY-HOP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-NO-OVERCLAIM</strong> — Never advertise or emit a binary encoding version for which the sending peer is not compliant.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-NO-OVERCLAIM</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-PEER-CACHE</strong> — Cache the server-supported encoding version and use it to choose compatible encodings on later requests.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-PEER-CACHE</code> (<code>state-machine</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-REQUIRED</strong> — Include the hop-by-hop Encoding-Version header in every connectionless request and reply.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-REQUIRED</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-ENCODING-VERSION-TEXT-FORM</strong> — Encode textual Encoding-Version as an optional code-page identity plus major-dot-minor version using the defined text-value rules.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.3.1 (8.4.3.1 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-ENCODING-VERSION-TEXT-FORM</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-EXPECT-SIN-ENCODING</strong> — Apply the effective SIN 001 replacement grammar for the Expect header rather than the superseded base encoding.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203_001-WSP</code> §3.3 (3.3 Change)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-EXPECT-SIN-ENCODING</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-CODE-PAGE-RANGES</strong> — Reserve code page 1 for defaults, 2 through 15 for WAP, 16 through 127 for applications, and 128 through 255 for future use.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.1 (8.4.1.1 Field name)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-CODE-PAGE-RANGES</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-COMPACTION-FORMS</strong> — Support well-known binary tokens, binary numeric/date/quality values, and mixed binary or text strings without losing header semantics.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1 (8.4.1 General)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-COMPACTION-FORMS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-DEFAULT-PAGE</strong> — Start every header set on default code page 1 and keep a shifted page active only through that header set.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.1 (8.4.1.1 Field name)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-DEFAULT-PAGE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-EXTENSION-PAGE-AGREEMENT</strong> — Use application-page single-octet field names only after agreement; otherwise use Token-text field names.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.1 (8.4.1.1 Field name)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-EXTENSION-PAGE-AGREEMENT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-FIELD-ASSIGNMENTS</strong> — Implement every default-page header name token and minimum encoding version in effective Table 39 without reusing deprecated assignments.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-003</code>, <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-FIELD-ASSIGNMENTS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-HTTP-COMPATIBILITY</strong> — Encode WSP header fields as compact field-name/value pairs whose semantics remain compatible with HTTP/1.1.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1 (8.4.1 General)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-HTTP-COMPATIBILITY</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-LIST-EXPANSION</strong> — Expand an HTTP comma-list header into ordered repeated WSP fields before applying the well-known field encoding rule.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.3 (8.4.1.3 Encoding of list values)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-LIST-EXPANSION</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-NAME-VERSION-CHOICE</strong> — Use a well-known field-name token only when its encoding version is supported; otherwise encode the field name as text.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.1 (8.4.1.1 Field name)</li>
+<li>Parents: <code>WSP-CL-C-003</code>, <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-NAME-VERSION-CHOICE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-SYNTAX-REGISTRY</strong> — Implement the complete effective WSP 8.4.2 header grammar registry, including the SIN-corrected Expect field encoding.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2 (8.4.2 Header syntax)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-SYNTAX-REGISTRY</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-UNKNOWN-VALUE-SKIP</strong> — Determine and skip an unrecognized field value from its generic length form without interpreting its detailed syntax.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.2 (8.4.1.2 Field values)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-UNKNOWN-VALUE-SKIP</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-VALUE-ENCODING-CHOICE</strong> — Use compact syntax for well-known binary field values and textual values whenever the field name is encoded as text.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.2 (8.4.1.2 Field values)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-VALUE-ENCODING-CHOICE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-HEADER-VALUE-LENGTH-PREFIX</strong> — Interpret first-octet ranges as short length, uintvar-following length, NUL-terminated text, or terminal seven-bit encoded value.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.1.2 (8.4.1.2 Field values)</li>
+<li>Parents: <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-HEADER-VALUE-LENGTH-PREFIX</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-INTEGER-NETWORK-ORDER</strong> — Encode multi-octet integer values in big-endian network octet order.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.1.1 (8.1.1 Primitive Data Types)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-INTEGER-NETWORK-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-CONTENT-TYPE</strong> — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-POST-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-CONTENT-TYPE</strong> — Decode the Reply body media type before the remaining response headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNSUPPORTED-ENCODING-RETRY</strong> — On a peer rejection of unsupported binary encoding, retry with textual encoding compatible with the returned supported-version information.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.4.2.70 (8.4.2.70 Encoding-Version field)</li>
+<li>Parents: <code>WSP-CL-C-003</code>, <code>WSP-CL-C-020</code></li>
+<li>Requirements: <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-UNSUPPORTED-ENCODING-RETRY</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="wsp-804">WSP-804</h3>
+<ul>
+<li><strong>WSP-CL-CONNECTIONLESS-METHOD-FACILITY</strong> — Implement the connectionless method-invocation facility for selected GET and POST requests and replies.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.1 (6.4.1 Overview)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-METHOD-FACILITY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-TID-REQUIRED</strong> — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-TID-REQUIRED</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-LAYOUT</strong> — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-METHOD</strong> — Encode the selected HTTP GET method using the Get PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Get URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-BODY-CONSTRAINT</strong> — Do not provide a request body when the invoked HTTP method does not permit an entity body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-BODY-CONSTRAINT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-ERROR-BODY</strong> — When a result status is an error, preserve any response body that supplies human-displayable error information.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-ERROR-BODY</code> (<code>rendering</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-HTTP-SEMANTICS</strong> — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-PARAMETERS</strong> — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-TRANSPARENCY</strong> — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-HTTP-SEMANTICS</strong> — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-PARAMETERS</strong> — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PDU-TYPE-DISPATCH</strong> — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PDU-TYPE-DISPATCH</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-BODY-TO-SDU-END</strong> — Treat every octet after the declared headers as request body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-CONTENT-TYPE</strong> — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-POST-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-LAYOUT</strong> — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-METHOD</strong> — Encode the selected HTTP POST method using the Post PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Post URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS</strong> — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.3 (6.4.3 Constraints on Using the Service Primitives)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-BODY-TO-SDU-END</strong> — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-CONTENT-TYPE</strong> — Decode the Reply body media type before the remaining response headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-PDU-LAYOUT</strong> — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-STATUS-ASSIGNMENT</strong> — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-STATUS-ASSIGNMENT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-SELECTED-PDU-ASSIGNMENTS</strong> — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-SELECTED-PDU-ASSIGNMENTS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-TID-PEER-CORRELATION</strong> — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-TID-PEER-CORRELATION</code> (<code>state-machine</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNITDATA-RECEIVE-DISPATCH</strong> — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-UNITDATA-RECEIVE-DISPATCH</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="wsp-805">WSP-805</h3>
+<ul>
+<li><strong>WML-CL-GO-ACCEPT-CHARSET</strong> — Encode submitted field names and values using an accepted charset, falling back to the deck encoding when unspecified or unknown.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-ACCEPT-CHARSET</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-ENCTYPE-SUPPORT</strong> — Support form-urlencoded submission and the declared multipart form-data behavior for POST requests.
+<ul>
+<li>Family: <code>wml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-ENCTYPE-SUPPORT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-FORM-URLENCODING</strong> — URI-escape form field names and values, join each name to its value with equals, and join pairs with ampersands.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code>, <code>WML-C-37</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-FORM-URLENCODING</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-GET-QUERY-MERGE</strong> — For form-urlencoded GET, combine encoded fields with any existing query into a valid query component.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-GET-QUERY-MERGE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-METHOD</strong> — Map get and post method values to the corresponding request operation.
+<ul>
+<li>Family: <code>wml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-METHOD</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-NO-CACHE</strong> — For cache-control no-cache, reload from the origin and send the matching request cache-control value.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-NO-CACHE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-PART-CONTENT-TYPE</strong> — Provide a content type for each multipart part and a charset when its content is not US-ASCII.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-PART-CONTENT-TYPE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-POST-CONTENT-TYPE-CHARSET</strong> — For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-POST-CONTENT-TYPE-CHARSET</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-REFERER</strong> — When sendreferer is true, transmit the smallest usable relative URI for the referring deck.
+<ul>
+<li>Family: <code>wml</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-14</code>, <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code>, <code>RQ-RMK-011</code></li>
+<li>Fixture: <code>WML-FX-GO-REFERER</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-GO-SUBMISSION-ORDER</strong> — Substitute variables, transcode fields, then serialize postfields in document order.
+<ul>
+<li>Family: <code>wml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.5.1 (9.5.1 The Go Element)</li>
+<li>Parents: <code>WML-C-29</code>, <code>WML-C-37</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-GO-SUBMISSION-ORDER</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WML-CL-POSTFIELD-REQUEST-PAIR</strong> — Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.
+<ul>
+<li>Family: <code>wml</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-191_104-WML</code> §9.3 (9.3 The Postfield Element)</li>
+<li>Parents: <code>WML-C-37</code>, <code>WML-C-29</code></li>
+<li>Requirements: <code>RQ-RMK-002</code></li>
+<li>Fixture: <code>WML-FX-POSTFIELD-REQUEST-PAIR</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-METHOD-FACILITY</strong> — Implement the connectionless method-invocation facility for selected GET and POST requests and replies.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.1 (6.4.1 Overview)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-METHOD-FACILITY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-CONNECTIONLESS-TID-REQUIRED</strong> — Include the one-octet transaction identifier before the PDU type in every selected connectionless method or reply PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-CONNECTIONLESS-TID-REQUIRED</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-LAYOUT</strong> — Encode Get contents as a uintvar URI length, exactly that many URI octets, then request headers through the end of the SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-PDU-METHOD</strong> — Encode the selected HTTP GET method using the Get PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-GET-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Get URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.1 (8.2.3.1 Get)</li>
+<li>Parents: <code>WSP-CL-C-004</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-GET-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-BODY-CONSTRAINT</strong> — Do not provide a request body when the invoked HTTP method does not permit an entity body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-BODY-CONSTRAINT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-ERROR-BODY</strong> — When a result status is an error, preserve any response body that supplies human-displayable error information.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-ERROR-BODY</code> (<code>rendering</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-HTTP-SEMANTICS</strong> — Represent the method, request headers, and request body with semantics equivalent to their HTTP/1.1 counterparts.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-PARAMETERS</strong> — Carry server address, client address, transaction identifier, method, request URI, optional headers, and method-permitted request body.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-INVOKE-TRANSPARENCY</strong> — Preserve the addresses, transaction identifier, method, URI, headers, and body from request to peer indication.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.1 (6.4.2.1 S-Unit-MethodInvoke)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-INVOKE-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-HTTP-SEMANTICS</strong> — Represent result status, response headers, and response body with semantics equivalent to HTTP/1.1.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-HTTP-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-METHOD-RESULT-PARAMETERS</strong> — Carry client address, server address, transaction identifier, status, optional response headers, and conditional response body in a method result.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.2.2 (6.4.2.2 S-Unit-MethodResult)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-METHOD-RESULT-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PDU-TYPE-DISPATCH</strong> — Use the PDU type octet to select the function and type-specific remainder of the WSP PDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PDU-TYPE-DISPATCH</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-BODY-TO-SDU-END</strong> — Treat every octet after the declared headers as request body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-CONTENT-TYPE</strong> — Encode the Post body media type using the WSP Content-Type field-value grammar before the remaining headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-POST-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-LAYOUT</strong> — Encode Post contents as URI length, combined Content-Type-plus-headers length, URI, Content-Type, headers, then body data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-PDU-METHOD</strong> — Encode the selected HTTP POST method using the Post PDU format.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-PDU-METHOD</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-POST-URI-NO-NUL</strong> — Exclude a storage string terminator from the length-delimited Post URI field.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.2 (8.2.3.2 Post)</li>
+<li>Parents: <code>WSP-CL-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-POST-URI-NO-NUL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-PRIMITIVE-ROLE-RESTRICTIONS</strong> — Allow clients to request method invocation and receive results while allowing servers to receive invocations and request results.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §6.4.3 (6.4.3 Constraints on Using the Service Primitives)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-PRIMITIVE-ROLE-RESTRICTIONS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-BODY-TO-SDU-END</strong> — Treat every octet after the declared Reply headers as response body data through the end of the transport SDU.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-BODY-TO-SDU-END</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-CONTENT-TYPE</strong> — Decode the Reply body media type before the remaining response headers.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code>, <code>WSP-CL-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-012</code>, <code>RQ-TRN-014</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-CONTENT-TYPE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-PDU-LAYOUT</strong> — Encode Reply contents as status, combined Content-Type-plus-headers length, Content-Type, headers, then response data.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.3.3 (8.2.3.3 Reply)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-PDU-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-REPLY-STATUS-ASSIGNMENT</strong> — Map HTTP/1.1 response statuses to and from every assigned single-octet WSP status in Table 36.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-REPLY-STATUS-ASSIGNMENT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-SELECTED-PDU-ASSIGNMENTS</strong> — Use assigned PDU type 0x40 for GET, 0x60 for POST, and 0x04 for Reply.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §appendix-a (Appendix A Assigned Numbers)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-SELECTED-PDU-ASSIGNMENTS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-TID-PEER-CORRELATION</strong> — Pass the TID transparently through service primitives and use it to associate a reply with its connectionless request.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §8.2.1 (8.2.1 PDU Common Fields)</li>
+<li>Parents: <code>WSP-CL-C-004</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-006</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-TID-PEER-CORRELATION</code> (<code>state-machine</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WSP-CL-UNITDATA-RECEIVE-DISPATCH</strong> — Dispatch received method and reply PDUs to their corresponding method-invoke and method-result indication primitives.
+<ul>
+<li>Family: <code>wsp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-203-WSP</code> §7.2 (7.2 Connectionless WSP)</li>
+<li>Parents: <code>WSP-CL-C-001</code>, <code>WSP-CL-C-005</code>, <code>WSP-CL-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-010</code>, <code>RQ-TRN-012</code></li>
+<li>Fixture: <code>WSP-FX-UNITDATA-RECEIVE-DISPATCH</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 id="aggregate-regression-and-delegate-context">Aggregate regression and delegate context</h2>
+<ul>
+<li>None mapped for this selection.</li>
+</ul>
+<h2 id="explicit-mapping-gaps">Explicit mapping gaps</h2>
+<ul>
+<li><code>WSP-803</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+<li><code>WSP-806</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+</ul>
+<p>Declared-family gaps:</p>
+<ul>
+<li><code>WSP-803</code> declares <code>wsp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WSP-804</code> declares <code>wdp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WSP-805</code> declares <code>wae</code>, <code>wdp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>WSP-806</code> declares <code>wsp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+</ul>
+<h2 id="effective-source-order">Effective source order</h2>
+<ul>
+<li><code>wae</code>: <code>WAP-190-WAESpec</code> -&gt; <code>WAP-190_101-WAESpec</code> -&gt; <code>WAP-190_102-WAESpec</code> -&gt; <code>WAP-190_103-WAESpec</code> -&gt; <code>WAP-190_104-WAE-Spec</code></li>
+<li><code>wdp</code>: <code>WAP-200-WDP</code> -&gt; <code>WAP-200_001-WDP</code> -&gt; <code>WAP-200_002-WDP</code> -&gt; <code>WAP-200_003-WDP</code> -&gt; <code>WAP-200_004-WDP</code> -&gt; <code>WAP-200_005-WDP</code></li>
+<li><code>wml</code>: <code>WAP-191-WML</code> -&gt; <code>WAP-191_102-WML</code> -&gt; <code>WAP-191_104-WML</code> -&gt; <code>WAP-191_105-WML</code></li>
+<li><code>wsp</code>: <code>WAP-203-WSP</code> -&gt; <code>WAP-203_001-WSP</code> -&gt; <code>WAP-203_003-WSP</code> -&gt; <code>WAP-203_005-WSP</code></li>
+</ul>
+<h2 id="source-documents">Source documents</h2>
+<ul>
+<li><code>WAP-190_101-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_101-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_102-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_102-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_103-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_103-WAESpec-20001213-a.pdf</a></li>
+<li><code>WAP-190_104-WAE-Spec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_104-WAE-Spec-20010731-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190_104-WAE-Spec-20010731-a.pdf</a></li>
+<li><code>WAP-190-WAESpec</code>: Wireless Application Environment — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190-WAESpec-20000329-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-190-WAESpec-20000329-a.pdf</a></li>
+<li><code>WAP-191_102-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_102-WML-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_102-WML-20001213-a.pdf</a></li>
+<li><code>WAP-191_104-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_104-WML-20010718-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_104-WML-20010718-a.pdf</a></li>
+<li><code>WAP-191_105-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_105-WML-20020212-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191_105-WML-20020212-a.pdf</a></li>
+<li><code>WAP-191-WML</code>: Wireless Markup Language 1.3 — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191-WML-20000219-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-191-WML-20000219-a.pdf</a></li>
+<li><code>WAP-200_001-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_001-WDP-20001212-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_001-WDP-20001212-a.pdf</a></li>
+<li><code>WAP-200_002-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_002-WDP-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_002-WDP-20001213-a.pdf</a></li>
+<li><code>WAP-200_003-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_003-WDP-20010328-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_003-WDP-20010328-a.pdf</a></li>
+<li><code>WAP-200_004-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_004-WDP-20010517-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_004-WDP-20010517-a.pdf</a></li>
+<li><code>WAP-200_005-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_005-WDP-20010718-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_005-WDP-20010718-a.pdf</a></li>
+<li><code>WAP-200-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200-WDP-20000219-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200-WDP-20000219-a.pdf</a></li>
+<li><code>WAP-203_001-WSP</code>: Wireless Session Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_001-WSP-20000620-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_001-WSP-20000620-a.pdf</a></li>
+<li><code>WAP-203_003-WSP</code>: Wireless Session Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_003-WSP-20001218-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_003-WSP-20001218-a.pdf</a></li>
+<li><code>WAP-203_005-WSP</code>: Wireless Session Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_005-WSP-20010717-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203_005-WSP-20010717-a.pdf</a></li>
+<li><code>WAP-203-WSP</code>: Wireless Session Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203-WSP-20000504-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-203-WSP-20000504-a.pdf</a></li>
+<li><code>WAP-215-ClassConform-20001213-a</code>: Class Conformance Requirements — <a href="https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf">https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf</a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wsp-8-ai-context-pack">WSP-8 AI Context Pack</a></li><li class="depth-2"><a href="#retrieval-contract">Retrieval contract</a></li><li class="depth-2"><a href="#graph-summary">Graph summary</a></li><li class="depth-2"><a href="#execution-target">Execution target</a></li><li class="depth-3"><a href="#wsp-8-wsp-session-connectionless-headers-and-host-fetch">WSP-8: WSP session, connectionless, headers, and host fetch</a></li><li class="depth-2"><a href="#work-items">Work items</a></li><li class="depth-3"><a href="#wsp-801-effective-wsp-pdu-primitive-and-method-matrix">WSP-801: Effective WSP PDU, primitive, and method matrix</a></li><li class="depth-3"><a href="#wsp-802-wsp-headerassigned-numberencoding-version-closure">WSP-802: WSP header/assigned-number/encoding-version closure</a></li><li class="depth-3"><a href="#wsp-803-wsp-capability-negotiation-and-session-lifecycle">WSP-803: WSP capability negotiation and session lifecycle</a></li><li class="depth-3"><a href="#wsp-804-native-wap-transport-desktop-get-ingress">WSP-804: Native WAP transport desktop GET ingress</a></li><li class="depth-3"><a href="#wsp-805-native-wsp-form-post-ingress">WSP-805: Native WSP form POST ingress</a></li><li class="depth-3"><a href="#wsp-806-wap-121-to-wap-20-wsp-delta-register">WSP-806: WAP 1.2.1-to-WAP 2.0 WSP delta register</a></li><li class="depth-2"><a href="#direct-scr-evidence">Direct SCR evidence</a></li><li class="depth-2"><a href="#direct-normative-obligations">Direct normative obligations</a></li><li class="depth-3"><a href="#wsp-801">WSP-801</a></li><li class="depth-3"><a href="#wsp-802">WSP-802</a></li><li class="depth-3"><a href="#wsp-804">WSP-804</a></li><li class="depth-3"><a href="#wsp-805">WSP-805</a></li><li class="depth-2"><a href="#aggregate-regression-and-delegate-context">Aggregate regression and delegate context</a></li><li class="depth-2"><a href="#explicit-mapping-gaps">Explicit mapping gaps</a></li><li class="depth-2"><a href="#effective-source-order">Effective source order</a></li><li class="depth-2"><a href="#source-documents">Source documents</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/context-packs/wsp-8.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

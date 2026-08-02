@@ -1,0 +1,265 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Historical Compatibility Profile -- Design Notes (Not Implemented) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/compatibility_profile_design_notes"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/compatibility_profile_design_notes.md</p><div class="markdown-body"><h1 id="historical-compatibility-profile--design-notes-not-implemented">Historical Compatibility Profile – Design Notes (Not Implemented)</h1>
+<p>Status: <strong>design reference only</strong>. Nothing in this file is implemented, and per the promotion
+rule in <code>HISTORICAL_QUIRKS.md</code>, it should not be until a compatibility-profile feature is
+explicitly started – this document exists so that work doesn’t begin from a blank page or from
+guessing, given the underlying evidence in <code>historical-quirks.json</code> is now substantial (84
+entries as of 2026-07-25, including primary vendor developer guides for four distinct devices).</p>
+<p>Source: proposal from the external deep-research task (user-run, results supplied 2026-07-25,
+pass 2 of the historical-quirks research – see <code>historical-quirks.json</code>’s <code>researchPasses</code>
+field). Lightly edited for this doc’s format; the architectural reasoning is the research task’s,
+not independently re-derived here.</p>
+<h2 id="the-core-finding-one-legacy-wap-mode-is-the-wrong-shape">The core finding: one “legacy WAP mode” is the wrong shape</h2>
+<p>The strongest conclusion from both research passes is that historical WML compatibility should
+not be represented as a single toggle. WML deliberately left the physical representation of <code>do</code>
+actions and form fields to the user agent (<code>WAP-191-WML</code>), and the evidence collected shows
+independent variation along (at least) six axes:</p>
+<ol>
+<li>WML/WAP specification version</li>
+<li>Browser engine family (Nokia’s own engine, Ericsson’s own engine, Openwave/UP.Browser, …)</li>
+<li>Handset/OEM integration (the same UP.Browser version rendered <code>&lt;big&gt;</code> differently on a Siemens
+S35 vs. a Motorola V.2288 – see <code>openwave-oem-big-tag-divergence</code> in the data file)</li>
+<li>Firmware revision (Nokia 7110 firmware 4.94 materially changed browser behavior – see
+<code>nokia-7110-firmware-494-changes</code>)</li>
+<li>Gateway/operator behavior (UAProf caching and override, MIME strictness, WBXML compilation
+failure modes)</li>
+<li>Bearer and network conditions (GSM CSD timing)</li>
+</ol>
+<p>A single <code>LegacyMode::On</code> boolean cannot represent independent variation on all six axes.</p>
+<h2 id="proposed-structure-base-specification-plus-overlays">Proposed structure: base specification plus overlays</h2>
+<p>Rather than a full configuration duplicated per phone, compose a profile from a base spec target
+plus overlays:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="rust"><code><span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> CompatibilityProfile</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> wap_version</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WapVersion</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> wml_version</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WmlVersion</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> engine</span><span style="color:#F97583">:</span><span style="color:#B392F0"> BrowserEngineProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> handset</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HandsetProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> firmware</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">FirmwareProfile</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> gateway</span><span style="color:#F97583">:</span><span style="color:#B392F0"> GatewayProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> network</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NetworkProfile</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> layout</span><span style="color:#F97583">:</span><span style="color:#B392F0"> LayoutPolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> interaction</span><span style="color:#F97583">:</span><span style="color:#B392F0"> InteractionPolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> navigation</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NavigationPolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> state</span><span style="color:#F97583">:</span><span style="color:#B392F0"> StatePolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> resources</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ResourcePolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> scripting</span><span style="color:#F97583">:</span><span style="color:#B392F0"> WmlScriptCapabilities</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> extensions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> VendorExtensionSet</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> failures</span><span style="color:#F97583">:</span><span style="color:#B392F0"> HistoricalFailurePolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> LayoutPolicy</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> auto_break_after_anchor</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> auto_break_after_input</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> ignore_first_br_after_anchor</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> table_mode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> TableMode</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> image_overflow</span><span style="color:#F97583">:</span><span style="color:#B392F0"> ImageOverflow</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> linked_image_mode</span><span style="color:#F97583">:</span><span style="color:#B392F0"> LinkedImageMode</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> style_support</span><span style="color:#F97583">:</span><span style="color:#B392F0"> StyleSupport</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> pixel_aspect_ratio</span><span style="color:#F97583">:</span><span style="color:#B392F0"> f32</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> InteractionPolicy</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> do_mapping</span><span style="color:#F97583">:</span><span style="color:#B392F0"> DoMapping</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> input_presentation</span><span style="color:#F97583">:</span><span style="color:#B392F0"> InputPresentation</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> select_presentation</span><span style="color:#F97583">:</span><span style="color:#B392F0"> SelectPresentation</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> input_blocks_following_content</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> focused_link_claims_accept_key</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> native_actions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> NativeActionSet</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> StatePolicy</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> variable_scope</span><span style="color:#F97583">:</span><span style="color:#B392F0"> VariableScope</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> history_limit</span><span style="color:#F97583">:</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> history_replays_post</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> newcontext_clears_history</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> low_memory_eviction</span><span style="color:#F97583">:</span><span style="color:#B392F0"> EvictionPolicy</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> ResourcePolicy</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_compiled_deck_bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">usize</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_displayed_text_chars</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">usize</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_cache_bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">usize</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_cache_entry_bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">usize</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> cache_url_length_limit</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Option</span><span style="color:#E1E4E8">&lt;</span><span style="color:#B392F0">usize</span><span style="color:#E1E4E8">&gt;,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> oversize_deck_action</span><span style="color:#F97583">:</span><span style="color:#B392F0"> OversizeDeckAction</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">pub</span><span style="color:#F97583"> struct</span><span style="color:#B392F0"> WmlScriptCapabilities</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> bytecode_version</span><span style="color:#F97583">:</span><span style="color:#B392F0"> Version</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> compiler_available</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> interpreter_available</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> standard_libraries</span><span style="color:#F97583">:</span><span style="color:#B392F0"> LibrarySet</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> immediate_refresh</span><span style="color:#F97583">:</span><span style="color:#B392F0"> bool</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> wtai_functions</span><span style="color:#F97583">:</span><span style="color:#B392F0"> FunctionSet</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_stack_depth</span><span style="color:#F97583">:</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#F97583">    pub</span><span style="color:#E1E4E8"> max_compilation_unit_bytes</span><span style="color:#F97583">:</span><span style="color:#B392F0"> usize</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Composition example (not literal syntax – illustrates the overlay idea):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>wap_1_1</span></span>
+<span class="line"><span> + nokia_browser_engine</span></span>
+<span class="line"><span> + nokia_7110_hardware</span></span>
+<span class="line"><span> + firmware_pre_4_94</span></span>
+<span class="line"><span> + generic_wap_gateway</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>wap_1_1</span></span>
+<span class="line"><span> + openwave_up_4_1</span></span>
+<span class="line"><span> + motorola_a008_hardware</span></span>
+<span class="line"><span> + motorola_10_36_32</span></span>
+<span class="line"><span> + uplink_4_1_gateway</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>wap_1_1</span></span>
+<span class="line"><span> + ericsson_browser_engine</span></span>
+<span class="line"><span> + ericsson_r320_hardware</span></span>
+<span class="line"><span> + ericsson_wap_gateway</span></span></code></pre>
+<p>This composes odd real-world combinations (a given engine on an unexpected OEM handset) without
+an inheritance hierarchy per device.</p>
+<h2 id="every-entry-traces-to-a-specific-data-file-source">Every entry traces to a specific data-file source</h2>
+<p>Per <code>HISTORICAL_QUIRKS.md</code>’s promotion rule: any of the above fields, when actually implemented,
+should set its value from a specific <code>id</code> in <code>historical-quirks.json</code>, never an inlined,
+unattributed <code>if</code> branch. For example <code>LayoutPolicy::auto_break_after_anchor</code> for the
+<code>nokia_7110_pre_4_94</code> profile traces to <code>ericsson-r320-vs-nokia-implicit-break-policy</code> (medium
+confidence, contemporary trade press) and <code>nokia-7110-do-menu-integration</code>-adjacent primary
+evidence; <code>InteractionPolicy::input_blocks_following_content</code> for a Motorola A008 profile traces
+directly to <code>motorola-a008-input-blocks-following-content</code> (high confidence, primary vendor doc).</p>
+<h2 id="recommended-build-order-ifwhen-this-feature-starts">Recommended build order (if/when this feature starts)</h2>
+<p>Not a commitment – a suggested sequencing based on which profiles have the strongest evidence
+and which exercise the most distinct axes:</p>
+<ol>
+<li><code>strict_wap_1_1</code> – normative state, history, navigation, input masks, timers, XML/WBXML, and
+gateway errors. (This is closest to what WaveNav already implements; formalizing it as a named
+profile mostly means making today’s implicit defaults explicit.)</li>
+<li><code>nokia_7110_pre_4_94</code> – menu-hosted actions, roller navigation, modal editors, line-per-link
+layout, table flattening, linked-image fallback, Use Number, tiny cache/deck limits. Strongest
+evidence base of any device profile (primary Nokia service developer guide).</li>
+<li><code>nokia_7110_4_94_plus</code> – firmware-dependent improvements and browser settings.</li>
+<li><code>openwave_up_4_1_generic</code> – accept/options softkey arbitration, generated menus, Phone.com
+headers and MIME types.</li>
+<li><code>motorola_a008_up_4_1_23d</code> – four softbuttons, input-gated content, large touchscreen layout,
+persistent cache, character table, 175 <code>localsrc</code> icons. Second-strongest evidence base
+(primary Motorola WAP developer style guide).</li>
+<li><code>ericsson_r320</code> – explicit line breaks, unusual pixel geometry, display/input charset
+asymmetry, stricter URI handling.</li>
+<li><code>nokia_series40_7210</code> – real tables, picture viewer, GIF support, active-link menu behavior,
+the ignored-first-<code>&lt;br&gt;</code> quirk.</li>
+<li><code>siemens_s35i_up_4_1_16</code> – OEM variation, partial style support, deck truncation, optional CSD
+timing simulation. Weakest evidence base (contemporary field testing only, no primary vendor
+doc recovered) – lowest priority of the eight.</li>
+</ol>
+<p>Together these exercise softkeys, generated menus, modal forms, line breaking, tables, image
+behavior, state leakage, request history, compiled resource limits, WMLScript capability
+differences, device headers, gateway caching, and firmware evolution – without needing dozens of
+cosmetic device skins.</p>
+<h2 id="compatibility-test-corpus-ifwhen-this-feature-starts">Compatibility test corpus (if/when this feature starts)</h2>
+<p>Proposed shape: each fixture should assert more than pixels – parsed/tokenized deck, render
+tree, physical line map, focus order, softkey labels, generated menu order, active editor/list
+state, browser variables, history entries, cache mutations, emitted WSP/HTTP headers, gateway
+diagnostics, and resulting failure/reset state.</p>
+<p>Proposed initial fixture names (illustrative, not yet created):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>nokia7110_do_menu_order.wml</span></span>
+<span class="line"><span>nokia7110_back_empty_history.wml</span></span>
+<span class="line"><span>nokia7110_use_number_detection.wml</span></span>
+<span class="line"><span>nokia7110_table_linearization.wml</span></span>
+<span class="line"><span>nokia7110_linked_image_alt_fallback.wml</span></span>
+<span class="line"><span>nokia7110_fieldset_silent_split.wml</span></span>
+<span class="line"><span>nokia7110_cache_url_129_bytes.wml</span></span>
+<span class="line"><span>nokia7110_firmware_494_image_link.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ericsson_r320_explicit_break_after_link.wml</span></span>
+<span class="line"><span>ericsson_r320_displayable_but_not_inputtable_char.wml</span></span>
+<span class="line"><span>ericsson_r320_space_in_wmlscript_uri.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>openwave_accept_softkey_priority.wml</span></span>
+<span class="line"><span>openwave_multiple_options_generated_menu.wml</span></span>
+<span class="line"><span>openwave_phonecom_option_image.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>motorola_a008_four_softkeys.wml</span></span>
+<span class="line"><span>motorola_a008_input_gates_following_content.wml</span></span>
+<span class="line"><span>motorola_a008_soft_hyphen.wml</span></span>
+<span class="line"><span>motorola_a008_text_display_limit.wml</span></span>
+<span class="line"><span>motorola_a008_localsrc_001.wml</span></span>
+<span class="line"><span>motorola_a008_localsrc_175.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>series40_br_after_anchor.wml</span></span>
+<span class="line"><span>series40_two_br_blank_line.wml</span></span>
+<span class="line"><span>series40_selectable_table.wml</span></span>
+<span class="line"><span>series40_animated_gif_14_frames.wml</span></span>
+<span class="line"><span>series40_active_link_open_menu.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>browser_context_cross_service_collision.wml</span></span>
+<span class="line"><span>newcontext_wipes_variables_and_history.wml</span></span>
+<span class="line"><span>duplicate_navigation_pushes_history.wml</span></span>
+<span class="line"><span>prev_reissues_post.wml</span></span>
+<span class="line"><span>onenterbackward_card_overrides_template.wml</span></span>
+<span class="line"><span>history_lru_eviction.wml</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>invalid_dtd_gateway_rejection.wml</span></span>
+<span class="line"><span>wrong_mime_gateway_behavior.wml</span></span>
+<span class="line"><span>wbmp_mime_typefield_conflict.wbmp</span></span>
+<span class="line"><span>wbxml_external_charset_override.wmlc</span></span>
+<span class="line"><span>uaprof_gateway_override.session</span></span></code></pre>
+<p>For visual regressions: store both a logical screenshot and a physical-display screenshot, with
+the physical version applying pixel aspect ratio (notably the Ericsson R320’s non-square pixels),
+LCD scaling, clipping, and font metrics.</p>
+<h2 id="what-should-not-be-reproduced-literally">What should not be reproduced literally</h2>
+<ul>
+<li><strong>Do not intentionally freeze or crash.</strong> Reported device freezes (e.g. the Nokia 7110’s
+possible oversized-deck freeze), simulator lockups, and full-phone restarts should become
+deterministic outcomes (<code>HistoricalFailure::DeviceWouldLikelyFreeze</code>,
+<code>HistoricalFailure::BrowserContextReset</code>, <code>HistoricalFailure::DeckTruncated</code>), not an actual
+hang – the user should be able to see what would have happened without Waves itself becoming
+unstable.</li>
+<li><strong>Do not make historical privacy leaks the default.</strong> Global, persistent, non-origin-scoped WML
+variables (<code>wml-browser-context-not-origin-scoped</code>) are worth implementing for compatibility
+testing, but only behind an unmistakable legacy option, never the default <code>VariableScope</code>.</li>
+<li><strong>Do not recreate the WAP security gap as real insecurity.</strong> Classic WAP terminated WTLS at the
+gateway and established a separate TLS connection to the origin, leaving a plaintext boundary
+inside the gateway – represent that architecture in protocol traces and documentation, but keep
+the actual local implementation safely encrypted or in-process. This is the same principle
+already adopted for WTLS specifically in ADR 0002 and
+<code>docs/waves/RESEARCH_WTLS_WTP_HISTORICAL_QUIRKS_2026-07-25.md</code> Part 1 – this generalizes that
+principle to the whole compatibility-profile feature, not just WTLS.</li>
+<li><strong>Keep simulator bugs separate from handset behavior.</strong> Period Nokia/Openwave SDKs were
+themselves reported as buggy independent of real device behavior. A device profile should not
+inherit a toolkit-specific freeze or rendering error without separate evidence the real handset
+did the same thing. Suggested namespacing: <code>device/nokia_7110_pre494</code> vs.
+<code>simulator/nokia_toolkit_1_3_beta</code>, kept as genuinely separate profile categories.</li>
+</ul>
+<h2 id="cross-cutting-entries-worth-checking-against-current-behavior-independent-of-this-feature">Cross-cutting entries worth checking against current behavior independent of this feature</h2>
+<p>A few entries in <code>historical-quirks.json</code> are normative WML/WAP spec requirements (not vendor
+quirks) that may be worth checking against WaveNav’s <em>current</em> strict-conformance implementation
+regardless of whether a compatibility-profile feature is ever built, since a gap here would be a
+spec-fidelity issue in today’s default mode, not a historical-quirk question:</p>
+<ul>
+<li><code>wml-onenterbackward-card-overrides-deck</code> – card-level <code>onenterbackward</code> handler precedence
+over the deck/template-level handler.</li>
+<li><code>wml-timer-resolution-implementation-dependent</code> – relevant to WaveNav’s existing deterministic
+timer design goal.</li>
+<li><code>wbxml-charset-provenance</code> – charset precedence handling in <code>transport-rust</code>’s
+<code>wbxml_decoder.rs</code>, partially covered already per the 2026-07-25 architecture review’s Pass 4.</li>
+<li><code>wmlscript-capability-based-support</code> – specifically the claim that immediate
+<code>WMLBrowser.refresh</code> support is optional in the spec; worth a quick check against
+<code>engine-wasm/engine</code>’s current <code>wavescript</code> stdlib.</li>
+</ul>
+<p>These are flagged for awareness, not filed as issues here – verifying and acting on them is
+separate, smaller-scoped work from the compatibility-profile feature this document is otherwise
+about.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#historical-compatibility-profile--design-notes-not-implemented">Historical Compatibility Profile – Design Notes (Not Implemented)</a></li><li class="depth-2"><a href="#the-core-finding-one-legacy-wap-mode-is-the-wrong-shape">The core finding: one “legacy WAP mode” is the wrong shape</a></li><li class="depth-2"><a href="#proposed-structure-base-specification-plus-overlays">Proposed structure: base specification plus overlays</a></li><li class="depth-2"><a href="#every-entry-traces-to-a-specific-data-file-source">Every entry traces to a specific data-file source</a></li><li class="depth-2"><a href="#recommended-build-order-ifwhen-this-feature-starts">Recommended build order (if/when this feature starts)</a></li><li class="depth-2"><a href="#compatibility-test-corpus-ifwhen-this-feature-starts">Compatibility test corpus (if/when this feature starts)</a></li><li class="depth-2"><a href="#what-should-not-be-reproduced-literally">What should not be reproduced literally</a></li><li class="depth-2"><a href="#cross-cutting-entries-worth-checking-against-current-behavior-independent-of-this-feature">Cross-cutting entries worth checking against current behavior independent of this feature</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/compatibility_profile_design_notes.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,1261 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>PRD: Waves Desktop Application Completion · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/prd-waves-desktop-application-completion"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/prd-waves-desktop-application-completion.md</p><div class="markdown-body"><h1 id="prd-waves-desktop-application-completion">PRD: Waves Desktop Application Completion</h1>
+<p>Status: decision-ready discovery and implementation plan
+Last updated: 2026-07-30
+Implementation checkpoint: <code>origin/main</code> <code>6cf1682a</code>
+Owner lane: <code>browser</code>, with explicit dependencies on <code>engine-wasm</code>, <code>transport-rust</code>, and the
+public WAP lab program</p>
+<h2 id="1-summary">1. Summary</h2>
+<p>Waves has a credible WAP/WML runtime, bounded transport/frame path, native shell and commands,
+versioned application-state foundation, local examples, Favorites domain, safe diagnostic
+projection, and bounded engine/host debug-session foundation. It does not yet provide the
+integrated organization, phase-aware recovery, or WAP-specific Inspector expected from a complete
+desktop application.</p>
+<p>This plan turns Waves into a focused, single-session desktop WAP workbench. It prioritizes fast
+entry into useful WAP content, safe favorites and application state, truthful recovery, native
+desktop behavior, and a bounded WAP inspector without turning Waves into a modern HTML browser or
+moving WML/WBXML behavior into the wrong layer.</p>
+<p>This document is a product and implementation-planning authority. It does not activate proposed
+work-item IDs or replace status in:</p>
+<ul>
+<li><code>docs/waves/WORK_ITEMS.md</code>;</li>
+<li><code>docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md</code>;</li>
+<li><code>docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md</code>;</li>
+<li><code>docs/waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md</code>; or</li>
+<li><code>docs/waves/wap-1.2.1-compliance-program.json</code>.</li>
+</ul>
+<p>When a proposed slice is authorized, adopt it into the owning ledger rather than tracking its
+execution status here.</p>
+<h2 id="2-contacts">2. Contacts</h2>
+<table>
+<thead>
+<tr>
+<th>Contact</th>
+<th>Role</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dylan Steele</td>
+<td>Product owner and maintainer</td>
+<td>Product decisions, release scope, public-service authorization, supported platforms</td>
+</tr>
+<tr>
+<td>Browser product owner</td>
+<td>To assign per slice</td>
+<td>Shell, application state, favorites, settings, commands, accessibility</td>
+</tr>
+<tr>
+<td>WaveNav engine owner</td>
+<td>To assign per slice</td>
+<td>Frame/input semantics, debug recorder, runtime parity</td>
+</tr>
+<tr>
+<td>Lowband transport owner</td>
+<td>To assign per slice</td>
+<td>Request lifecycle, phase metadata, cancellation, WBXML/raw-payload boundaries</td>
+</tr>
+<tr>
+<td>Public WAP lab owner</td>
+<td>To assign before exposure</td>
+<td>Service availability, security notice, publication gate, rollback</td>
+</tr>
+<tr>
+<td>Release/QA owner</td>
+<td>To assign before pre-release</td>
+<td>Packaging, signing, end-to-end matrix, support artifacts</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-background">3. Background</h2>
+<h3 id="31-product-opportunity">3.1 Product opportunity</h3>
+<p>Waves should feel like a deliberate native WAP/WML application rather than an emulator harness or a
+website inside a Tauri window. The central emulation surface should preserve period-constrained WML
+behavior while the host chrome provides modern reliability, accessibility, organization, and
+diagnostics.</p>
+<p>The product opportunity is:</p>
+<blockquote>
+<p>Help WAP/WML implementers, evaluators, preservationists, and learners discover, revisit, test,
+and diagnose authentic WAP content from a dependable desktop application without making them
+reconstruct configuration or interpret raw engine state on every launch.</p>
+</blockquote>
+<h3 id="32-why-now">3.2 Why now</h3>
+<p>The foundations required for application-quality work now exist:</p>
+<ol>
+<li>The Rust transport owns HTTP/WAP fetch, connectionless WSP, WBXML decode, error mapping, and
+request bounds.</li>
+<li>The engine owns deterministic deck/card navigation, focus, form editing, timers, scripts, and
+the canonical frame/affordance contract.</li>
+<li>The browser has a responsive shell, native menus, accessibility evidence, local examples,
+hybrid history, stable navigation coordination, and a collapsed diagnostic drawer.</li>
+<li>A private first-party WAP preview deployment and deterministic origin exist, although public
+publication remains gated.</li>
+<li>The generated bounded debug connector, engine recorder, host lifecycle, and read-only Inspector
+capture workflow are implemented; external tools and mutable debugger capabilities remain later.</li>
+</ol>
+<p>These foundations make it possible to add application features without inventing parallel WML or
+transport behavior in the frontend.</p>
+<h3 id="33-current-state-inventory">3.3 Current-state inventory</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Implemented at the 2026-08-02 checkpoint</th>
+<th>Gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Desktop identity</td>
+<td>Tauri identity and native menus plus one shared application-command registry, versioned native application-state store, asynchronous window restore, and crash marker</td>
+<td>Production packaging/updater and user-facing import/export workflows</td>
+</tr>
+<tr>
+<td>Browsing shell</td>
+<td>Back, Reload, location, Go/Stop lifecycle, Local/Network, route/profile readouts, Canvas handset stage, status, Welcome/Help, and local examples</td>
+<td>Integrated Home/Favorites/Services Library, visible history, recent locations, and Preferences surface</td>
+</tr>
+<tr>
+<td>Runtime path</td>
+<td>Transport-first engine load, deterministic session state, bounded single-pass frame output, Canvas rendering, cancellable navigation, and atomic committed-frame publication</td>
+<td>F2 pointer/scroll/softkey cutover and final legacy-path removal</td>
+</tr>
+<tr>
+<td>History</td>
+<td>In-memory engine card history plus request-shaped host deck history</td>
+<td>Persistence, search, retention policy, and duplicate same-card preservation across deck replacement (<code>#450</code>)</td>
+</tr>
+<tr>
+<td>Diagnostics</td>
+<td>Safe timeline projection plus bounded, masked D0-02 events/snapshots, D0-03 host sessions, and the D0-04 read-only Inspector/capture workflow</td>
+<td>External tooling and any separately designed controlled replay</td>
+</tr>
+<tr>
+<td>Settings</td>
+<td>Versioned schema/store, native atomic backend, migration, reset/clear operations, memory test adapter, integrated Preferences, window restore, and safe-session recovery</td>
+<td>Broader diagnostic/accessibility controls</td>
+</tr>
+<tr>
+<td>Onboarding</td>
+<td>Welcome/Help, tutorial deck, and migration of the isolated launch preference into versioned application state</td>
+<td>Broader task progress and contextual onboarding remain later work</td>
+</tr>
+<tr>
+<td>Public services</td>
+<td>Live exact-host public deployment, deterministic first-party origin, bounded positive probes, safe Favorites/service-catalog domain, and publication-state model</td>
+<td>Publication-governance reconciliation, guided entry, negative/operations evidence, and desktop release gates remain open</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-current-overlap-and-blockers">3.4 Current overlap and blockers</h3>
+<p>At the synchronized <code>0028946e</code> baseline:</p>
+<ul>
+<li>PRs <code>#502</code>, <code>#517</code> through <code>#536</code>, and <code>#538</code> are merged. The redesigned shell, canonical Canvas/frame
+path, cancellation, bounded render/IPC surfaces, Favorites domain, application state, native
+command registry, safe diagnostic projection, truthful navigation errors, D0-03 debug host
+bridge, D0-04 Inspector, F2-01 click input, public-lab documentation, and selective CI/docs
+maintenance gates are the current integration baseline. The
+open/draft PR queue is empty at this checkpoint.</li>
+<li>Issue <code>#450</code> blocks persistent/searchable history because same-card entries can be lost across a
+deck boundary.</li>
+<li>Issue <code>#504</code> is resolved by bounded presenter/history state. The 32-entry host window does not
+fix <code>#450</code>; persistent/searchable history remains blocked on that separate identity correction.</li>
+</ul>
+<p>Independent streams retain their own responsibilities:</p>
+<ul>
+<li>the landed visual/shell baseline owns shell structure and presentation only;</li>
+<li>browser resilience owns lockup, failure containment, and current correctness issues;</li>
+<li>the WAP testing CLI owns batch execution, corpus traversal, scripting, and conformance reporting;</li>
+<li>the public-service stream owns deployment, service content, publication state, and rollback; and</li>
+<li>frame migration owns engine-rendered presentation, hit regions, and typed input semantics.</li>
+</ul>
+<h3 id="35-product-and-architecture-constraints">3.5 Product and architecture constraints</h3>
+<ol>
+<li>Waves is a WAP/WML browser and emulator, not a general modern browser.</li>
+<li>The browser must not parse WBXML, resolve WML tasks, or create a second WML DOM/runtime.</li>
+<li>The engine must not fetch network content.</li>
+<li>The transport must not own user-interface state or rendering.</li>
+<li>Browser-hosted WASM remains network-free.</li>
+<li>The first pre-release remains one browsing session in one primary application window.</li>
+<li>Public WAP service entry must remain disabled or clearly unavailable until publication gates
+authorize it.</li>
+<li>Credentials, authorization headers, cookies, sensitive form values, and POST bodies are not
+ordinary application state.</li>
+<li>Deterministic behavior and native/WASM parity outrank animation or decorative authenticity.</li>
+<li>New feature breadth must not displace active P0/P1 compliance work without an explicit priority
+decision in the canonical sprint plan.</li>
+</ol>
+<h2 id="4-objective">4. Objective</h2>
+<h3 id="41-objective-statement">4.1 Objective statement</h3>
+<p>Make the first Waves desktop pre-release useful as a daily WAP testing and exploration tool while
+preserving its protocol authenticity, retro-hybrid identity, deterministic runtime behavior, and
+strict layer ownership.</p>
+<h3 id="42-key-results">4.2 Key results</h3>
+<ol>
+<li>A new user can open a working bundled deck and identify the navigation controls in under 60
+seconds without external documentation.</li>
+<li>A returning user can reopen a favorite or recover a safe prior local/GET context within two
+actions after launch.</li>
+<li>A technical user can identify the failing layer and export a sanitized support artifact in under
+two minutes for the representative timeout, content/decode, invalid-deck, and script-trap cases.</li>
+<li>Every enabled browser-owned command is keyboard reachable, visibly focused, and produces the
+same application action as its menu/button equivalent.</li>
+<li>Slow or failed navigation always shows a truthful phase or layer, preserves the last committed
+frame when safe, and offers at least one valid recovery action.</li>
+<li>Corrupt, absent, or future-version application state never prevents the stable shell from
+appearing.</li>
+<li>Automated canary-secret tests find no credentials, sensitive headers, POST bodies, password/PIN
+values, or raw content in default persisted/exported artifacts.</li>
+<li>The browser continues to perform no WML parsing, navigation semantics, focus resolution, WBXML
+decode, or gateway protocol behavior.</li>
+</ol>
+<h3 id="43-non-goals-for-the-first-pre-release">4.3 Non-goals for the first pre-release</h3>
+<ul>
+<li>modern HTML browsing;</li>
+<li>tabs or multiple concurrent engine sessions;</li>
+<li>cloud accounts or synchronized state;</li>
+<li>a remote or mutable debugger;</li>
+<li>a general automation/conformance runner in the UI;</li>
+<li>arbitrary third-party archive browsing;</li>
+<li>full device-profile catalog;</li>
+<li>automatic POST replay; and</li>
+<li>automatic updates before signing and update-channel ownership are mature.</li>
+</ul>
+<h2 id="5-market-segments">5. Market segments</h2>
+<h3 id="51-wapwml-implementer-or-deck-author">5.1 WAP/WML implementer or deck author</h3>
+<p>Job: load representative decks, inspect exact behavior, test forms/navigation/scripts, and explain
+failures without switching between many ad hoc tools.</p>
+<p>Needs:</p>
+<ul>
+<li>quick access to examples and first-party services;</li>
+<li>route/profile visibility;</li>
+<li>trustworthy diagnostics;</li>
+<li>repeatable favorites and safe state; and</li>
+<li>no browser-host interpretation that hides engine or transport behavior.</li>
+</ul>
+<h3 id="52-emulator-evaluator-or-protocol-engineer">5.2 Emulator evaluator or protocol engineer</h3>
+<p>Job: compare native/WASM/runtime/transport outcomes and create actionable bug artifacts.</p>
+<p>Needs:</p>
+<ul>
+<li>correlated bounded events;</li>
+<li>raw transport metadata and optional bytes;</li>
+<li>decoded source and runtime state kept in distinct views;</li>
+<li>deterministic export; and</li>
+<li>clear compatibility-profile and network-route identity.</li>
+</ul>
+<h3 id="53-preservationist-or-researcher">5.3 Preservationist or researcher</h3>
+<p>Job: study period interaction patterns and evidence-backed handset behavior without confusing a
+reference profile with a specific historical device.</p>
+<p>Needs:</p>
+<ul>
+<li>authentic behavioral defaults;</li>
+<li>evidence-labeled device profiles later;</li>
+<li>safe first-party period-service demonstrations; and</li>
+<li>stable screenshots or diagnostic evidence.</li>
+</ul>
+<h3 id="54-curious-learner">5.4 Curious learner</h3>
+<p>Job: understand decks, cards, focus, forms, and the difference between Local and Network without
+reading repository documentation first.</p>
+<p>Needs:</p>
+<ul>
+<li>a clear Home experience;</li>
+<li>bundled tutorial decks;</li>
+<li>plain-language errors; and</li>
+<li>optional help that does not obstruct returning users.</li>
+</ul>
+<h3 id="55-preview-maintainer-or-support-tester">5.5 Preview maintainer or support tester</h3>
+<p>Job: reproduce a tester report, distinguish client/service/network failures, and collect useful
+evidence without receiving secrets.</p>
+<p>Needs:</p>
+<ul>
+<li>versioned sanitized bundles;</li>
+<li>build/profile/route metadata;</li>
+<li>bounded logs and retention; and</li>
+<li>reproducible first-party scenarios.</li>
+</ul>
+<h2 id="6-value-propositions">6. Value propositions</h2>
+<table>
+<thead>
+<tr>
+<th>User need</th>
+<th>Waves value</th>
+<th>Differentiation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reach authentic WAP content quickly</td>
+<td>One Home surface for bundled examples, authorized first-party services, favorites, and safe recents</td>
+<td>WAP-focused entry rather than a generic modern-browser new-tab page</td>
+</tr>
+<tr>
+<td>Return to work safely</td>
+<td>Versioned settings, window state, favorites, and policy-limited session recovery</td>
+<td>Desktop continuity without automatically replaying unsafe requests</td>
+</tr>
+<tr>
+<td>Explain WML/WBXML behavior</td>
+<td>Network, bytes, decoded source, deck/card/frame, variables, timers, scripts, and errors remain distinct but correlated</td>
+<td>A WAP-aware inspector rather than DOM-centric web DevTools</td>
+</tr>
+<tr>
+<td>Trust failures and recovery</td>
+<td>Stable phases, true cancellation, last-good-frame retention, layer-specific messages, safe next actions</td>
+<td>Product behavior mirrors the real transport/engine pipeline</td>
+</tr>
+<tr>
+<td>Use a native application</td>
+<td>Platform menus, shortcuts, Preferences, About/support actions, native import/export</td>
+<td>Native affordances backed by one command model, not web-only chrome</td>
+</tr>
+<tr>
+<td>Preserve historical purpose</td>
+<td>Reference-handset behavior remains engine-owned; later named profiles require evidence</td>
+<td>Behavioral authenticity without pretending one handset defines WAP</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-solution">7. Solution</h2>
+<h3 id="71-experience-model-and-surface-decision">7.1 Experience model and surface decision</h3>
+<p>Use one primary application shell:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Waves window</span></span>
+<span class="line"><span>|-- Native menu and shared application commands</span></span>
+<span class="line"><span>|-- Navigation/location controls</span></span>
+<span class="line"><span>|-- Main handset stage</span></span>
+<span class="line"><span>|-- Library surface</span></span>
+<span class="line"><span>|   |-- Home</span></span>
+<span class="line"><span>|   |-- Favorites</span></span>
+<span class="line"><span>|   |-- Recent safe locations (later, after history policy)</span></span>
+<span class="line"><span>|   `-- Bundled and authorized first-party services</span></span>
+<span class="line"><span>|-- Preferences sheet/panel</span></span>
+<span class="line"><span>|-- Status and recovery presentation</span></span>
+<span class="line"><span>`-- Separate Inspector drawer</span></span>
+<span class="line"><span>    |-- Network</span></span>
+<span class="line"><span>    |-- Bytes</span></span>
+<span class="line"><span>    |-- Source</span></span>
+<span class="line"><span>    |-- Deck/Runtime</span></span>
+<span class="line"><span>    |-- Events</span></span>
+<span class="line"><span>    `-- Errors/Export</span></span></code></pre>
+<p>Surface choices:</p>
+<ol>
+<li>Home, Favorites, bundled examples, and later safe recents belong in an integrated Library
+surface because they are ordinary browsing aids.</li>
+<li>Preferences belongs in an integrated sheet or panel opened from the native application menu.
+The current frontend has no router, so a web-style settings route adds state complexity without
+product value.</li>
+<li>Developer tools remain a separate top-level Inspector drawer so normal browsing never resembles
+a debug console. A detachable native Inspector window is a later option after host debug-session
+ownership is stable.</li>
+<li>Do not create several Tauri windows in the first release. The current application owns one
+in-process engine and one frontend lifecycle; multiple windows would require new synchronization,
+focus, session, and stale-state policy.</li>
+</ol>
+<h3 id="72-opportunity-solution-tree">7.2 Opportunity Solution Tree</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Outcome: Waves is a useful, trustworthy desktop WAP browser</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>|-- Opportunity: Reach meaningful content quickly</span></span>
+<span class="line"><span>|   |-- Bundled example and first-party service Home</span></span>
+<span class="line"><span>|   |-- Favorites with fragments and duplicate handling</span></span>
+<span class="line"><span>|   |-- Recent safe locations</span></span>
+<span class="line"><span>|   `-- Validate: first-deck and repeat-visit task timing</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>|-- Opportunity: Return without reconstructing the workspace</span></span>
+<span class="line"><span>|   |-- Versioned preferences</span></span>
+<span class="line"><span>|   |-- Window/display restoration</span></span>
+<span class="line"><span>|   |-- Safe local/GET session restore</span></span>
+<span class="line"><span>|   `-- Validate: restart, corrupted-state, and migration exercises</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>|-- Opportunity: Understand what a WAP deck and gateway did</span></span>
+<span class="line"><span>|   |-- Network/response/hex/decoded-source inspector</span></span>
+<span class="line"><span>|   |-- Deck/card/focus/variables/timers/script views</span></span>
+<span class="line"><span>|   |-- Correlated bounded timeline</span></span>
+<span class="line"><span>|   `-- Validate: diagnose seeded transport/runtime failures</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>|-- Opportunity: Recover confidently from failure</span></span>
+<span class="line"><span>|   |-- True cancellation and truthful phases</span></span>
+<span class="line"><span>|   |-- Last-good-frame retention</span></span>
+<span class="line"><span>|   |-- Layer-specific recovery actions</span></span>
+<span class="line"><span>|   `-- Validate: timeout/cancel/decode/trap fault injection</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>`-- Opportunity: Feel like a native desktop application</span></span>
+<span class="line"><span>    |-- Shared commands and platform menus/shortcuts</span></span>
+<span class="line"><span>    |-- Preferences and About/support actions</span></span>
+<span class="line"><span>    |-- Native open/save for import/export</span></span>
+<span class="line"><span>    `-- Validate: keyboard-only and platform-convention review</span></span></code></pre>
+<h3 id="73-product-trio-idea-set">7.3 Product-trio idea set</h3>
+<h4 id="product-manager-perspective">Product Manager perspective</h4>
+<ol>
+<li>Curated WAP Home combining bundled examples, authorized public-lab services, favorites, and safe
+recent locations.</li>
+<li>Safe favorites with fragments, duplicate resolution, versioned import/export, and explicit
+invalid-entry handling.</li>
+<li>Safe workspace continuity: settings, window state, and local/GET-only restore after exit or
+crash.</li>
+<li>WAP diagnostic bundles that make tester reports reproducible without manual log collection.</li>
+<li>Truthful navigation lifecycle with cancellation, phases, last-good-state retention, and
+actionable recovery.</li>
+<li>Profile-aware preferences that distinguish ordinary application choices from protocol-changing
+diagnostic overrides.</li>
+</ol>
+<h4 id="product-designer-perspective">Product Designer perspective</h4>
+<ol>
+<li>An integrated Library for Home, Favorites, safe Recents, and bundled examples that never appears
+inside the LCD.</li>
+<li>A separate Inspector with Network, Bytes, Source, Runtime, Events, and Errors views.</li>
+<li>A compact Preferences surface with Basic, Accessibility, Network, and Developer groups.</li>
+<li>Layer-specific recovery presentation that preserves the handset and offers Retry, Details,
+Change Route, or Return.</li>
+<li>A discoverable shortcut reference and native menu structure before a command palette.</li>
+<li>An optional accessible reading panel derived from the engine frame outside the emulation
+surface.</li>
+</ol>
+<h4 id="software-engineer-perspective">Software Engineer perspective</h4>
+<ol>
+<li>Versioned host-managed application state with migration, corruption recovery, atomic writes,
+and browser/test adapters.</li>
+<li>A safe persistence projection that excludes secrets, POST bodies, sensitive headers, and raw
+diagnostic content.</li>
+<li>The engine-owned bounded debug recorder already designed by <code>D0-01</code>.</li>
+<li>Stable request identity, phases, and cancellation across Rust, generated contracts, Tauri, and
+navigation state.</li>
+<li>Shared command IDs used by native menus, frontend controls, and keyboard shortcuts.</li>
+<li>A typed service catalog containing availability, safety notice, required profile, and
+publication state.</li>
+<li>A sanitized <code>.waves-session.json</code> format usable by the Inspector and future WAP testing CLI.</li>
+</ol>
+<h3 id="74-prioritized-feature-set">7.4 Prioritized feature set</h3>
+<p>Scoring uses strategic alignment 30 percent, expected impact 30 percent, feasibility 20 percent,
+and differentiation 20 percent. Each input is rated from 1 to 5.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Rank</th>
+<th>Idea</th>
+<th style="text-align: right">Alignment</th>
+<th style="text-align: right">Impact</th>
+<th style="text-align: right">Feasibility</th>
+<th style="text-align: right">Differentiation</th>
+<th style="text-align: right">Weighted score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">1</td>
+<td>WAP Home and safe Favorites</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4.6</td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td>WAP Inspector and safe diagnostic bundle</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">2</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">4.4</td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td>Truthful fetch lifecycle and recovery</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">3</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4.4</td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td>Durable settings and safe workspace recovery</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">5</td>
+<td style="text-align: right">3</td>
+<td style="text-align: right">3</td>
+<td style="text-align: right">4.2</td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td>Native command surface</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">4</td>
+<td style="text-align: right">3</td>
+<td style="text-align: right">3.8</td>
+</tr>
+</tbody>
+</table>
+<p>Implementation order differs from value rank because application state, transport, and debug
+contracts are prerequisites.</p>
+<h3 id="75-wap-home-and-safe-favorites">7.5 WAP Home and safe Favorites</h3>
+<h4 id="value">Value</h4>
+<p>Give Waves an immediately useful launch purpose and let users return to a precise card or deck
+without rebuilding context.</p>
+<h4 id="version-1-behavior">Version 1 behavior</h4>
+<ol>
+<li>Use a flat, searchable list. Defer folders and tags until real collections show a need.</li>
+<li>Store a user title and target. Network URLs retain meaningful fragments.</li>
+<li>Support <code>wap:</code>, <code>waps:</code>, <code>http:</code>, <code>https:</code>, and typed product-owned local-example targets.</li>
+<li>Detect duplicates by canonical target plus any future explicit profile binding. Offer Replace,
+Keep Both, or Cancel rather than silently discarding either record.</li>
+<li>Keep invalid or unsupported imported records in a quarantined state with an explanation. Never
+navigate them automatically.</li>
+<li>Use versioned JSON import/export first. Generic browser bookmark formats are later work because
+they cannot preserve WAP-specific metadata reliably.</li>
+<li>Store URL/title only by default. Reserve an optional <code>profileId</code> field for later evidence-backed
+device profiles, but do not expose it while only the Class C reference exists.</li>
+<li>Never store headers, cookies, authorization, POST context, gateway credentials, form values, or
+runtime variables in a favorite.</li>
+<li>First-party public services remain disabled/unavailable until the public-lab publication gate
+enables them.</li>
+</ol>
+<h4 id="assumptions">Assumptions</h4>
+<ul>
+<li>Target users revisit a small number of decks often enough for favorites to matter.</li>
+<li>Flat search is adequate for the first 20 to 50 records.</li>
+<li>Bundled and first-party entry provides more initial value than generic open-web discovery.</li>
+</ul>
+<h4 id="validation">Validation</h4>
+<p>Test three tasks with five to eight target users: open a bundled deck, save the active card, and
+return to it after restart. At least 80 percent should finish without external help.</p>
+<h3 id="76-wap-inspector-and-diagnostic-bundle">7.6 WAP Inspector and diagnostic bundle</h3>
+<h4 id="value-1">Value</h4>
+<p>Provide the product’s strongest differentiation: a WAP-aware explanation surface instead of a
+DOM-centric web inspector or a raw JSON dump.</p>
+<h4 id="inspector-views">Inspector views</h4>
+<ol>
+<li><code>Network</code>: URL, method, resource target, gateway/route, selected profile, attempts, stable phase
+timings, response metadata, byte size, and correlation ID.</li>
+<li><code>Bytes</code>: bounded hex view derived from raw bytes supplied by the transport. The frontend does not
+parse WBXML.</li>
+<li><code>Source</code>: read-only WML already decoded by the transport.</li>
+<li><code>Deck</code>: engine-provided deck/card/frame metadata, active card, focus, selection, logical
+affordances, and Back availability.</li>
+<li><code>Runtime</code>: engine-masked variables, pending external intent, timers, form edit state, and script
+status.</li>
+<li><code>Events</code>: correlated host, transport, engine, script, and render events with filters and bounded
+retention.</li>
+<li><code>Errors</code>: stable layer/category, related request/card, last completed phase, and safe recovery.</li>
+<li><code>Export</code>: versioned sanitized bundle. Raw bytes, decoded source, arbitrary response content, and
+form values are excluded by default.</li>
+</ol>
+<h4 id="retention-and-performance">Retention and performance</h4>
+<ul>
+<li>Engine debug collection remains disabled and inert until local policy and an attached Inspector
+session enable it.</li>
+<li>Poll only while the Inspector is open.</li>
+<li>Preserve the <code>D0-01</code> fixed-capacity, drop-oldest, cursor-based model.</li>
+<li>Bound host/transport evidence by event count and byte budget; never retain unlimited response
+bodies.</li>
+<li>Inspector open/close and poll cadence must not change runtime event order or state.</li>
+</ul>
+<h4 id="redaction">Redaction</h4>
+<ul>
+<li>Engine values are masked before entering debug DTOs.</li>
+<li>Transport/host headers and bodies are sanitized before entering an export DTO.</li>
+<li>Frontend masking is a defense-in-depth presentation step, not the primary security boundary.</li>
+<li>Raw/source inclusion requires an explicit per-export opt-in and warning because arbitrary content
+cannot be reliably made non-sensitive automatically.</li>
+</ul>
+<h4 id="replay">Replay</h4>
+<p>Replay is a later, fixture-backed feature. It must not send arbitrary network traffic, replay POST
+bodies, or bypass normal engine/transport contracts. The WAP testing CLI may consume the same
+capture schema but retains batch/conformance execution ownership.</p>
+<h4 id="validation-1">Validation</h4>
+<p>Seed timeout, unsupported content, WBXML decode, invalid WML, and script-trap cases. Target users
+should identify the correct failing layer in under two minutes without terminal access.</p>
+<h3 id="77-truthful-fetch-lifecycle-and-recovery">7.7 Truthful fetch lifecycle and recovery</h3>
+<p>Implement the existing <code>WBP-10</code> and <code>WBP-11</code> contracts rather than creating competing tickets.</p>
+<p>Required behavior:</p>
+<ol>
+<li>A stable request identity and deterministic cancel/completion race.</li>
+<li>Truthful Preparing, Connecting, Gateway, Decode, Deck, and Card phases where supported by the
+owning layer.</li>
+<li>Go changes to Stop only when the underlying request is actually cancellable.</li>
+<li>The previous committed frame remains visible during a new load and recoverable failure.</li>
+<li>Errors identify the failing layer and correlation ID without injecting a fake WML card.</li>
+<li>Every error offers a valid action such as Retry, Change Route, Details, or Return.</li>
+<li>A stale/cancelled response cannot alter engine, history, status, diagnostics, or persisted state.</li>
+</ol>
+<p>Validation uses fault injection at connect, gateway, WBXML decode, engine load, and script execution
+boundaries. Users should choose an accurate recovery action in at least 90 percent of cases.</p>
+<h3 id="78-durable-settings-and-safe-workspace-recovery">7.8 Durable settings and safe workspace recovery</h3>
+<h4 id="versioned-application-state">Versioned application state</h4>
+<p>Use one application-state envelope behind a host-capability interface:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>schemaVersion</span></span>
+<span class="line"><span>settings</span></span>
+<span class="line"><span>onboarding</span></span>
+<span class="line"><span>favorites</span></span>
+<span class="line"><span>windowState</span></span>
+<span class="line"><span>safeSession</span></span>
+<span class="line"><span>diagnosticPreferences</span></span></code></pre>
+<p>The frontend depends on an <code>ApplicationStateStore</code> interface. Native Tauri uses a host-managed
+application-data backend; ordinary-browser stories/tests use a memory adapter or a deliberately
+scoped browser adapter. Backend selection between an official Tauri store facility and a small
+repository-owned atomic host adapter remains an implementation decision, but the schema and safety
+contract must not depend on the backend.</p>
+<h4 id="persisted-settings">Persisted settings</h4>
+<ul>
+<li>display scale;</li>
+<li>host theme/high contrast/reduced motion;</li>
+<li>default Local/Network mode and Home/start behavior;</li>
+<li>developer mode and bounded retention preferences;</li>
+<li>safe-session restore preference;</li>
+<li>window bounds validated against available monitors;</li>
+<li>favorites; and</li>
+<li>onboarding state.</li>
+</ul>
+<h4 id="safe-session">Safe session</h4>
+<p>Safe automatic restoration is limited to:</p>
+<ul>
+<li>a product-owned local example plus fragment/card target; or</li>
+<li>a committed GET location without credentials or sensitive headers.</li>
+</ul>
+<p>Never persist/replay:</p>
+<ul>
+<li>POST bodies or POST history for automatic restoration;</li>
+<li>credentials, cookies, authorization, password/PIN values, or secret query values;</li>
+<li>an in-flight request;</li>
+<li>raw WML/WBXML diagnostic content; or</li>
+<li>arbitrary gateway credentials.</li>
+</ul>
+<p>A crash marker distinguishes ordinary startup from recovery. The shell paints before storage,
+decoder preflight, or network checks finish. Corrupt/unknown state offers a safe reset and preserves
+the bad artifact only when that can be done without exposing secrets.</p>
+<h4 id="diagnostic-overrides">Diagnostic overrides</h4>
+<p>Timeout, retry, size, route, and constrained-network controls belong in an Advanced/Diagnostic
+section with bounded values and a visible override indicator. They must not silently redefine the
+selected compatibility profile.</p>
+<h3 id="79-native-command-surface">7.9 Native command surface</h3>
+<p>Define stable command IDs and route native menu actions, browser controls, and keyboard shortcuts
+through the same application handlers.</p>
+<p>Recommended command groups:</p>
+<ul>
+<li><code>File</code>: Home/Library, Import Favorites, Export Favorites, Export Diagnostic Bundle, Close/Quit;</li>
+<li><code>Edit</code>: native text-editing roles;</li>
+<li><code>View</code>: Reload, Library, Inspector, display scale, Reset View;</li>
+<li><code>History</code>: Back, later safe Recents, Clear History;</li>
+<li><code>Preferences</code>: platform-appropriate Preferences/Settings command;</li>
+<li><code>Help</code>: Help, Shortcut Reference, Check for Updates placeholder, About.</li>
+</ul>
+<p>Recommended shortcuts include platform-appropriate forms of location focus, reload, add favorite,
+Preferences, Library, and Inspector. Shortcut routing must not steal text-entry or focused WML edit
+input.</p>
+<p>Do not add a command palette until the final command count or usability evidence shows that menus
+and shortcuts are insufficient.</p>
+<h3 id="710-privacy-and-security-requirements">7.10 Privacy and security requirements</h3>
+<ol>
+<li>Serialization uses allowlisted safe DTOs; it never serializes a live session object graph by
+default.</li>
+<li><code>Authorization</code>, <code>Proxy-Authorization</code>, <code>Cookie</code>, <code>Set-Cookie</code>, credential-bearing URL userinfo,
+and sensitive query keys are removed before persistence/export.</li>
+<li>POST payloads, request-intent postfields, form drafts, variables derived from masked inputs, and
+password/PIN values are excluded or masked at the owning boundary.</li>
+<li>History, favorites, diagnostics, settings, and safe session use separate schemas and retention
+controls. Clearing one does not ambiguously clear or preserve the others.</li>
+<li>Reset-to-defaults explains what it will clear and does not silently delete imported/exported
+files.</li>
+<li>Gateway resource URI and gateway endpoint remain distinct concepts.</li>
+<li>The public-lab UI states that the preview is unencrypted, WTLS is unsupported, and users must
+not enter real credentials or personal data.</li>
+<li>No feature broadens the transport destination policy or creates an arbitrary WAP-to-web proxy.</li>
+</ol>
+<p>The existing timeline export stores complete host session snapshots, while host history can contain
+headers and request policy including POST context. Sanitizing this path is a prerequisite for
+persisted history or expanded diagnostic export.</p>
+<h3 id="711-accessibility-requirements">7.11 Accessibility requirements</h3>
+<ul>
+<li>Preserve complete keyboard access and visible focus.</li>
+<li>Native menu, button, and shortcut forms of one command produce equivalent action results.</li>
+<li>Library, Preferences, recovery, and Inspector surfaces maintain WCAG 2.2 AA host-chrome goals.</li>
+<li>Status, failure, card change, recovery, import result, and reset result use the single live
+announcement path without duplicate announcements.</li>
+<li>Minimum target sizing, reduced motion, high contrast, default/minimum window evidence, and 200
+percent zoom/reflow remain covered.</li>
+<li>Display scale changes pixels only. Engine-owned viewport/layout remains authoritative.</li>
+<li>A future accessible reading panel derives from the canonical engine frame and stable actions; it
+does not independently interpret WML.</li>
+</ul>
+<h3 id="712-assumptions-to-validate">7.12 Assumptions to validate</h3>
+<ol>
+<li>Technical evaluators remain the primary launch segment.</li>
+<li>Users revisit enough locations to justify Favorites before full visible history.</li>
+<li>Flat Favorites search is sufficient for the first release.</li>
+<li>URL/title-only favorites are sufficient while only the Class C reference profile ships.</li>
+<li>Local automatic restore plus a network-restore prompt is safer and understandable.</li>
+<li>Users value an integrated Inspector more than an external debugger or richer CLI-only flow.</li>
+<li>Polling while open meets Inspector performance needs.</li>
+<li>Native menus and shortcuts provide enough command discovery without a palette.</li>
+<li>Public first-party services will be authorized and reachable in time for the desktop pre-release.</li>
+<li>A host-managed application-data store can satisfy atomicity, migration, and testability without
+introducing a broad framework.</li>
+</ol>
+<h2 id="8-release-and-implementation-plan">8. Release and implementation plan</h2>
+<h3 id="81-entry-gates">8.1 Entry gates</h3>
+<p>Before feature UI begins:</p>
+<ol>
+<li>Use the merged PR <code>#502</code> shell as the integration baseline; do not fork a competing root shell.</li>
+<li>Keep one shell integration owner for root template, controller, copy, and global-style edits.</li>
+<li>Sequence around <code>#450</code>, <code>#466</code>, and <code>#467</code>; <code>#434</code> is resolved by PR <code>#518</code>.</li>
+<li>Do not persist visible history until the request/history identity problem in <code>#450</code> is fixed.</li>
+<li>Do not expand diagnostic export until the safe projection/redaction boundary is implemented.</li>
+<li>Respect the canonical sprint plan’s P0/P1 WAP implementation priority and WIP limits.</li>
+</ol>
+<h3 id="82-phase-a-pre-release-essentials">8.2 Phase A: pre-release essentials</h3>
+<ol>
+<li>F1 primary frame rendering and deterministic navigation publication are complete in PRs
+<code>#519</code>, <code>#520</code>, and <code>#526</code>.</li>
+<li>Cancellable/admission-controlled navigation, <code>WBP-11</code> phase-aware recovery presentation, and
+<code>WBP-12</code> safe-session/crash recovery are complete; the packaged relaunch observation remains in
+the WBP-14 release matrix.</li>
+<li>Versioned application state is complete in PR <code>#522</code>; safe projection, integrated settings,
+window restore, and local/GET-safe recovery are integrated. User-facing import/export and the
+packaged crash-relaunch observation remain.</li>
+<li>The safe Favorites/service-catalog domain is complete in PR <code>#517</code>; WAP Home/Library UI remains.</li>
+<li>Safe timeline/export projection is complete in PR <code>#532</code>; the D0-04 Inspector consumer and its
+separately versioned bounded engine capture are complete in PR <code>#536</code>.</li>
+<li>Shared native commands and platform shortcuts are complete in PR <code>#523</code>.</li>
+<li>Reconcile the now-live public lab with its publication evidence, then complete desktop
+profile/resource separation and guided safety messaging.</li>
+<li>Complete the packaged desktop success/failure matrix, signing, checksums, and install guidance.</li>
+</ol>
+<h3 id="83-phase-b-next-application-quality-increment">8.3 Phase B: next application-quality increment</h3>
+<ul>
+<li>preserve the completed D0-02 through D0-04 read-only Inspector path while deferring external and
+mutable debugger capabilities;</li>
+<li>add visible searchable history with explicit retention after <code>#450</code>;</li>
+<li>complete Favorites import/export UX;</li>
+<li>add broader Developer/Diagnostic preferences and redaction controls;</li>
+<li>add the semantic frame accessibility adapter and optional reading view; and</li>
+<li>promote native frontend E2E only after the scorecard’s four-run/21-day gate passes.</li>
+</ul>
+<h3 id="84-phase-c-later-differentiators">8.4 Phase C: later differentiators</h3>
+<ul>
+<li>evidence-backed Nokia 7110 and one selected Openwave handset/browser profile;</li>
+<li>controlled fixture-backed diagnostic import/replay;</li>
+<li>screenshot/frame export with profile/build metadata;</li>
+<li>optional detachable Inspector window;</li>
+<li>constrained-network simulation presets;</li>
+<li>safe first-party synthetic period-service gallery; and</li>
+<li>narrowly justified per-site compatibility policy without credentials or general web permissions.</li>
+</ul>
+<h3 id="85-explicitly-deferred-or-rejected">8.5 Explicitly deferred or rejected</h3>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>Decision</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tabs/multiple sessions</td>
+<td>Defer</td>
+<td>Single-session lifecycle, persistence, and Inspector must stabilize first</td>
+</tr>
+<tr>
+<td>Modern HTML browsing</td>
+<td>Reject</td>
+<td>Conflicts with product purpose and architecture</td>
+</tr>
+<tr>
+<td>Favorites folders/tags</td>
+<td>Defer</td>
+<td>Flat search should be validated before adding organization cost</td>
+</tr>
+<tr>
+<td>Cloud sync/accounts</td>
+<td>Reject for pre-release</td>
+<td>Privacy, infrastructure, and product value are unproven</td>
+</tr>
+<tr>
+<td>Command palette</td>
+<td>Defer</td>
+<td>Native menus and shortcuts should be tested first</td>
+</tr>
+<tr>
+<td>Auto-update</td>
+<td>Defer</td>
+<td>Signing and update-channel ownership are not mature</td>
+</tr>
+<tr>
+<td>Remote/mutable debugger</td>
+<td>Reject for MVP</td>
+<td>Adds security and determinism risk; D0 is intentionally read-only/local</td>
+</tr>
+<tr>
+<td>Browser-side WBXML/WML semantics</td>
+<td>Reject</td>
+<td>Violates layer ownership</td>
+</tr>
+<tr>
+<td>UI conformance runner/crawler</td>
+<td>Reject</td>
+<td>Duplicates the WAP testing CLI</td>
+</tr>
+<tr>
+<td>Third-party archive browser/open proxy</td>
+<td>Reject without separate decision</td>
+<td>Rights, abuse, authenticity, and security risks</td>
+</tr>
+<tr>
+<td>Automatic POST/session replay</td>
+<td>Reject</td>
+<td>Unsafe and non-idempotent</td>
+</tr>
+<tr>
+<td>JSON-stored gateway credentials</td>
+<td>Reject</td>
+<td>Secrets require a separately designed OS credential boundary</td>
+</tr>
+</tbody>
+</table>
+<h3 id="86-first-parallel-safe-implementation-batch">8.6 First parallel-safe implementation batch</h3>
+<p>Checkpoint at <code>6cf1682a</code>: <code>APP-STATE-01</code> (<code>#522</code>), <code>APP-FAV-01</code> (<code>#517</code>), <code>APP-CMD-01</code>
+(<code>#523</code>), APP-PRIV-01/RSL-06 (<code>#532</code>), and D0-01 through D0-03 (<code>#524</code>, <code>#531</code>) are implemented.
+<code>APP-SHELL-01</code> is unblocked but remains sequenced around D0-04 because both integrate the shared
+shell. The table is retained as the ownership map for completed and remaining slices.</p>
+<table>
+<thead>
+<tr>
+<th>Slice</th>
+<th>Initial owner</th>
+<th>Sequence</th>
+<th>Main output</th>
+<th>High-conflict surfaces</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP-STATE-01</code> Versioned desktop state</td>
+<td>browser/Tauri state owner</td>
+<td>Wave A</td>
+<td>Schema, store interface/backend, migration, reset, test adapter</td>
+<td>Tauri command/capability files if host commands are used</td>
+</tr>
+<tr>
+<td><code>APP-PRIV-01</code> Safe-state/export projection</td>
+<td>browser security owner</td>
+<td>Wave A</td>
+<td>Allowlisted persistence/export DTOs and canary-secret tests</td>
+<td>Timeline/session integration; avoid active navigation error fixes</td>
+</tr>
+<tr>
+<td><code>APP-FAV-01</code> Favorites/service-catalog domain</td>
+<td>browser product-model owner</td>
+<td>Wave A</td>
+<td>Favorite model, target validation, duplicates, import/export, publication metadata</td>
+<td>New leaf modules; public catalog ownership</td>
+</tr>
+<tr>
+<td><code>APP-CMD-01</code> Shared application commands</td>
+<td>native-shell owner</td>
+<td>Wave A</td>
+<td>Stable command IDs, enabled state, menu/shortcut bridge</td>
+<td><code>bootstrap.rs</code>, menu constants, later shell handlers</td>
+</tr>
+<tr>
+<td>Existing <code>D0-02</code> debug recorder</td>
+<td>engine owner</td>
+<td>Wave A</td>
+<td>Bounded engine events/snapshots and source masking</td>
+<td>Sequence with <code>#434</code>; engine boundary/runtime files</td>
+</tr>
+<tr>
+<td><code>APP-SHELL-01</code> Library and Preferences integration</td>
+<td>one shell integrator</td>
+<td>Wave B</td>
+<td>User-facing Home/Favorites/Preferences and command integration</td>
+<td>Merged <code>#502</code> shell, copy, styles, and controller</td>
+</tr>
+</tbody>
+</table>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Merged #502 shell baseline ------------------------------------+</span></span>
+<span class="line"><span>APP-STATE-01 ------------------+                               |</span></span>
+<span class="line"><span>APP-PRIV-01 -------------------+--&gt; APP-SHELL-01 &lt;--------------+</span></span>
+<span class="line"><span>APP-FAV-01 --------------------+</span></span>
+<span class="line"><span>APP-CMD-01 --------------------+</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>D0-02 --&gt; D0-03 --&gt; D0-04 (Phase B Inspector)</span></span>
+<span class="line"><span>#450  --&gt; persisted/searchable history (Phase B)</span></span>
+<span class="line"><span>WBP-10 --&gt; WBP-11 --&gt; WBP-12 safe-session implementation --&gt; packaged release matrix</span></span></code></pre>
+<h3 id="87-ticket-ready-first-batch-slices">8.7 Ticket-ready first-batch slices</h3>
+<h4 id="app-state-01-versioned-desktop-application-state">APP-STATE-01 Versioned desktop application state</h4>
+<ol>
+<li><code>Owner</code>: <code>browser</code>, Tauri host boundary.</li>
+<li><code>Depends On</code>: the merged shell only for migration of its Welcome preference, not for core schema work.</li>
+<li><code>Build</code>:
+<ul>
+<li>define schema version 1 and <code>ApplicationStateStore</code>;</li>
+<li>implement a native app-data backend with atomic replacement and a memory/test adapter;</li>
+<li>persist settings, onboarding, favorites, window state, safe session, and diagnostic preferences
+only through typed safe DTOs;</li>
+<li>migrate the isolated <code>waves.showWelcomeOnLaunch</code> value when present;</li>
+<li>handle absent, corrupt, and future versions without delaying shell paint;</li>
+<li>provide reset-to-defaults and component-specific clear operations.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>clean install, restart, v1 migration, corrupt file, future version, interrupted write, and
+removed-monitor fixtures pass;</li>
+<li>no failed read prevents startup;</li>
+<li>safe state contains no history request headers, POST context, raw payload, or runtime values;</li>
+<li>browser stories remain deterministic through the test adapter.</li>
+</ul>
+</li>
+<li><code>Risk</code>: storage backend choice could leak into frontend types or introduce non-atomic writes.</li>
+<li><code>Validation</code>: migration/corruption matrix plus ten repeated write/restart cycles.</li>
+<li><code>Suggested branch</code>: <code>codex/app-state-v1</code>.</li>
+<li><code>Suggested PR title</code>: <code>feat(browser): add versioned safe application state</code>.</li>
+</ol>
+<h4 id="app-priv-01-safe-state-and-diagnostic-export-projection">APP-PRIV-01 Safe-state and diagnostic-export projection</h4>
+<ol>
+<li><code>Owner</code>: browser security/application-state boundary.</li>
+<li><code>Depends On</code>: none for serializer design; integration precedes persisted history or new export.</li>
+<li><code>Build</code>:
+<ul>
+<li>replace whole live-session serialization with allowlisted persistence/export DTOs;</li>
+<li>redact sensitive headers, URL userinfo, credential-like query fields, POST payloads/postfields,
+password/PIN values, and masked-variable derivations;</li>
+<li>exclude raw bytes, decoded WML, response bodies, and arbitrary error internals by default;</li>
+<li>define a versioned minimal support-bundle schema with build/profile/route/correlation metadata;</li>
+<li>keep optional raw/source inclusion behind explicit per-export consent and size bounds.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>canary secrets inserted into every relevant live structure are absent from serialized text;</li>
+<li>exports remain useful for at least timeout, decode, invalid-deck, and script-trap cases;</li>
+<li>existing timeline chronology validation remains green;</li>
+<li>frontend-only masking is not the sole boundary for engine or transport secrets.</li>
+</ul>
+</li>
+<li><code>Risk</code>: over-redaction can make reports useless; under-redaction exposes tester data.</li>
+<li><code>Validation</code>: automated secret-canary suite plus review of five representative bundles.</li>
+<li><code>Suggested branch</code>: <code>codex/browser-state-redaction</code>.</li>
+<li><code>Suggested PR title</code>: <code>fix(browser): sanitize persisted and exported state</code>.</li>
+<li><code>Implementation note</code>: <code>RSL-06</code> / issue <code>#506</code> supplies the versioned allowlisted projection
+for the existing session, transport, runtime, timeline, detached-diagnostic, and timeline-export
+surfaces. Raw/source opt-in support remains excluded until its separate consent and byte-bound
+decision is implemented.</li>
+</ol>
+<h4 id="app-fav-01-favorites-and-first-party-service-catalog-domain">APP-FAV-01 Favorites and first-party service-catalog domain</h4>
+<ol>
+<li><code>Owner</code>: browser product-model boundary.</li>
+<li><code>Depends On</code>: <code>APP-STATE-01</code> for persistence integration; domain work may start in parallel.</li>
+<li><code>Build</code>:
+<ul>
+<li>define favorite IDs, titles, typed targets, creation/update metadata, validation state, and a
+reserved optional profile identity;</li>
+<li>retain URL fragments and type local examples separately from network URLs;</li>
+<li>implement canonical duplicate detection and Replace/Keep Both/Cancel outcomes;</li>
+<li>implement versioned JSON import/export with invalid-record quarantine;</li>
+<li>define a typed first-party service catalog with publication state, security notice, required
+route/profile, and owner-provided availability;</li>
+<li>keep folders/tags and generic browser formats out of v1.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>valid WAP/HTTP targets round-trip without losing fragments;</li>
+<li>unsafe schemes, blank targets, credential-bearing URLs, malformed imports, and future schema
+versions fail safely;</li>
+<li>duplicates are never silently dropped;</li>
+<li>disabled/unpublished services cannot initiate navigation.</li>
+</ul>
+</li>
+<li><code>Risk</code>: URL normalization can change WAP resource identity or erase meaningful fragments.</li>
+<li><code>Validation</code>: property-style normalization/round-trip tests plus a 50-record import fixture.</li>
+<li><code>Suggested branch</code>: <code>codex/wap-favorites-model</code>.</li>
+<li><code>Suggested PR title</code>: <code>feat(browser): define safe WAP favorites and service catalog</code>.</li>
+</ol>
+<h4 id="app-cmd-01-shared-native-application-command-registry">APP-CMD-01 Shared native application command registry</h4>
+<ol>
+<li><code>Owner</code>: browser native-shell boundary.</li>
+<li><code>Depends On</code>: stable command names; visual integration uses the merged <code>#502</code> shell baseline.</li>
+<li><code>Build</code>:
+<ul>
+<li>define stable command IDs and enabled/disabled projection;</li>
+<li>route native menu events, keyboard shortcuts, and frontend controls to the same handlers;</li>
+<li>cover location focus, reload, add favorite, Library, Preferences, Inspector, Help, import, and
+export without advertising unavailable commands as functional;</li>
+<li>preserve native text-editing roles and focused WML/host input behavior;</li>
+<li>add a shortcut reference derived from the command registry.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>every enabled menu item and shortcut invokes the same observable action path as its button;</li>
+<li>disabled commands cannot execute and communicate their state accessibly;</li>
+<li>macOS and Linux mappings follow platform conventions;</li>
+<li>no shortcut intercepts focused input/select/textarea editing incorrectly.</li>
+</ul>
+</li>
+<li><code>Risk</code>: duplicated command logic or shortcut collisions create nondeterministic input behavior.</li>
+<li><code>Validation</code>: keyboard-only command matrix on macOS and Linux plus unit tests for enabled state.</li>
+<li><code>Suggested branch</code>: <code>codex/native-command-registry</code>.</li>
+<li><code>Suggested PR title</code>: <code>feat(browser): unify native menu and application commands</code>.</li>
+</ol>
+<h4 id="d0-02-engine-event-stream-and-snapshot-emitter">D0-02 Engine event stream and snapshot emitter</h4>
+<p>Use the existing ticket and contract unchanged.</p>
+<ol>
+<li><code>Owner</code>: <code>engine-wasm</code>.</li>
+<li><code>Depends On</code>: completed <code>D0-01</code>; sequence with issue <code>#434</code> where engine boundary files overlap.</li>
+<li><code>Build</code>: fixed-capacity drop-oldest ring buffer, deterministic sequence/cursor/drop accounting,
+declared event emission, bounded snapshot, and source-level masking.</li>
+<li><code>Accept</code>:
+<ul>
+<li>disabled/unattached execution is inert;</li>
+<li>native/WASM event/snapshot parity passes;</li>
+<li>consumer poll rate cannot affect runtime order;</li>
+<li>masked/omitted values never carry original or truncated secrets.</li>
+</ul>
+</li>
+<li><code>Validation</code>: ordering, overflow, cursor recovery, masking, and no-debug performance tests.</li>
+<li><code>Suggested branch</code>: <code>codex/d0-02-debug-recorder</code>.</li>
+<li><code>Suggested PR title</code>: <code>feat(engine): implement bounded debug recorder</code>.</li>
+</ol>
+<h4 id="app-shell-01-integrated-library-and-preferences">APP-SHELL-01 Integrated Library and Preferences</h4>
+<p><code>Status</code>: done. The integrated shell uses the existing typed favorites, service-catalog,
+application-state, and command contracts. Bundled examples and safe Favorites are actionable;
+unpublished Services remain disabled with an explicit evidence explanation. Preferences affect
+host presentation and future launch choices only, and the full reset requires an explicit second
+confirmation while preserving the currently rendered deck.</p>
+<ol>
+<li><code>Owner</code>: one browser shell integrator.</li>
+<li><code>Depends On</code>: merged shell baseline, <code>APP-STATE-01</code>, <code>APP-PRIV-01</code>, <code>APP-FAV-01</code>, and <code>APP-CMD-01</code>.</li>
+<li><code>Build</code>:
+<ul>
+<li>add the integrated Home/Favorites/Services Library;</li>
+<li>add Preferences for launch behavior, display scale, accessibility, safe restore, developer
+mode, and retention;</li>
+<li>wire add/remove/open/import/export/reset through shared commands;</li>
+<li>preserve normal navigation, route/profile truthfulness, and all existing shell landmarks;</li>
+<li>keep Inspector integration out of this slice.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>users can open a bundled example, add/open/remove a favorite, import/export favorites, change
+a preference, and reset safely using keyboard only;</li>
+<li>default/minimum windows and 200 percent zoom remain usable without overlap or horizontal
+scrolling;</li>
+<li>announcements occur once;</li>
+<li>no setting silently changes engine semantics or transport policy;</li>
+<li>unpublished public services remain disabled with accurate explanation.</li>
+</ul>
+</li>
+<li><code>Risk</code>: shared-shell edits collide with the merged shell/Developer Tools baseline or D0-04
+Inspector UI.</li>
+<li><code>Validation</code>: rendered accessibility audit, task-based usability check, and all Waves stories.</li>
+<li><code>Suggested branch</code>: <code>codex/wap-library-preferences</code>.</li>
+<li><code>Suggested PR title</code>: <code>feat(browser): add integrated favorites and preferences</code>.</li>
+</ol>
+<h3 id="88-parallel-ownership-and-conflict-controls">8.8 Parallel ownership and conflict controls</h3>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Owns</th>
+<th>Must not duplicate</th>
+<th>Main interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Visual refinement</td>
+<td>Shell layout, visual hierarchy, tokens, responsive treatment</td>
+<td>Bookmarks/settings models, engine behavior, transport behavior</td>
+<td>Stable shell insertion points and IDs</td>
+</tr>
+<tr>
+<td>Resilience/lockup</td>
+<td>Blocking paths, panic containment, state/error correctness</td>
+<td>Feature breadth or visual redesign</td>
+<td>Typed failure and lifecycle behavior</td>
+</tr>
+<tr>
+<td>WAP testing CLI</td>
+<td>Batch/corpus/conformance execution, scripting, report generation</td>
+<td>In-app interactive browsing/inspection UX</td>
+<td>Sanitized capture schema and stable case IDs</td>
+</tr>
+<tr>
+<td>Public services</td>
+<td>Deployment, routes, content, publication state, safety evidence</td>
+<td>Browser storage/navigation semantics</td>
+<td>Typed service catalog/availability manifest</td>
+</tr>
+<tr>
+<td>Frame migration</td>
+<td>Frame rendering, hit regions, typed input, semantic adapter</td>
+<td>Host bookmarks/settings/commands</td>
+<td>Generated engine frame/input contract</td>
+</tr>
+<tr>
+<td>Application completion</td>
+<td>Favorites, settings, commands, safe state, Library, Inspector presentation</td>
+<td>WML/WBXML/network semantics</td>
+<td>Host capabilities and generated contracts</td>
+</tr>
+</tbody>
+</table>
+<p>Rules:</p>
+<ol>
+<li>One owner integrates root shell, controller, copy, and global styles.</li>
+<li>Frame and debug contract changes are sequenced; generated artifacts have one owner per migration.</li>
+<li>Persistence never serializes live transport/engine structures directly.</li>
+<li>Distinct domain modules and engine recorder work may proceed against the stable merged shell baseline.</li>
+<li>The service catalog consumes deployment-owned status rather than inferring availability.</li>
+<li>CLI and Inspector share artifacts, not control flow or feature ownership.</li>
+</ol>
+<h3 id="89-release-exit-criteria">8.9 Release exit criteria</h3>
+<p>The desktop application-completion pre-release is ready when:</p>
+<ol>
+<li>The primary viewport uses the canonical engine frame path without deck-content HTML injection.</li>
+<li>Local and supported network navigation show truthful progress, real cancellation, and safe
+recovery.</li>
+<li>The shell paints and remains usable with absent, corrupt, or future-version application state.</li>
+<li>Settings, window state, onboarding, Favorites, and safe local/GET session recovery behave
+predictably.</li>
+<li>Public-service entries appear only under an authorized, tested publication state with explicit
+unencrypted/no-real-credentials messaging.</li>
+<li>Browser-owned commands work through native menus, keyboard, and visible controls without
+stealing WML edit input.</li>
+<li>Default support artifacts are bounded and pass the secret-canary suite.</li>
+<li>Host chrome remains keyboard accessible and passes the declared rendered accessibility checks.</li>
+<li>The packaged app passes representative bundled, public GET, supported POST, timeout, decode,
+invalid-deck, script-trap, cancellation, and recovery flows.</li>
+<li>No feature crosses engine, transport, browser, or public-service ownership boundaries.</li>
+</ol>
+<h3 id="810-decisions-to-resolve-with-the-product-owner">8.10 Decisions to resolve with the product owner</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Decision</th>
+<th>Recommended default</th>
+<th>Why it remains open</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEC-APP-01</code></td>
+<td>Native persistence backend</td>
+<td>Host-managed app-data store behind <code>ApplicationStateStore</code>; choose official Tauri store vs. small atomic host adapter in a bounded spike</td>
+<td>Atomicity, migration control, dependency policy, and browser-test parity need comparison</td>
+</tr>
+<tr>
+<td><code>DEC-APP-02</code></td>
+<td>Safe restore default</td>
+<td>Restore local content automatically; prompt before restoring a network GET after crash</td>
+<td>Balances continuity with unexpected network activity/privacy</td>
+</tr>
+<tr>
+<td><code>DEC-APP-03</code></td>
+<td>Persistent history in first pre-release</td>
+<td>Do not persist full history; ship Favorites plus safe last session first</td>
+<td><code>#450</code> remains open and history carries sensitive request identity</td>
+</tr>
+<tr>
+<td><code>DEC-APP-04</code></td>
+<td>Bookmark profile context</td>
+<td>Reserve optional <code>profileId</code> in schema but do not expose it until a second profile exists</td>
+<td>Avoids premature UI while preserving migration room</td>
+</tr>
+<tr>
+<td><code>DEC-APP-05</code></td>
+<td>Public service visibility before publication</td>
+<td>Show only bundled content by default; optionally show disabled “Preview unavailable” entries</td>
+<td>The public deployment is private and publication-gated</td>
+</tr>
+<tr>
+<td><code>DEC-APP-06</code></td>
+<td>Engine debug enablement</td>
+<td>Disabled by default; enable only while local Developer mode and Inspector session are active</td>
+<td>Preserves determinism, performance, and privacy</td>
+</tr>
+<tr>
+<td><code>DEC-APP-07</code></td>
+<td>Raw/source diagnostic export</td>
+<td>Excluded by default; explicit one-export opt-in with warning and byte bound</td>
+<td>Arbitrary content cannot be reliably sanitized</td>
+</tr>
+<tr>
+<td><code>DEC-APP-08</code></td>
+<td>First supported desktop platforms</td>
+<td>Owner must select before packaging work</td>
+<td>Signing, notarization, QA matrix, and menu conventions depend on it</td>
+</tr>
+<tr>
+<td><code>DEC-APP-09</code></td>
+<td>Command palette</td>
+<td>Do not build until menu/shortcut usability shows a gap</td>
+<td>Current command volume does not justify another interaction model</td>
+</tr>
+<tr>
+<td><code>DEC-APP-10</code></td>
+<td>Favorites folders/tags</td>
+<td>Flat list and search first</td>
+<td>Need evidence from real collections before adding organization complexity</td>
+</tr>
+</tbody>
+</table>
+<h3 id="811-evidence-reviewed">8.11 Evidence reviewed</h3>
+<p>Active documents:</p>
+<ul>
+<li><code>AGENTS.md</code>;</li>
+<li><code>docs/agents/AGENT_STANDARDS.md</code>;</li>
+<li><code>docs/waves/WAVES_DESKTOP_PRODUCT_DESIGN.md</code>;</li>
+<li><code>docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md</code>;</li>
+<li><code>docs/waves/WAVES_BROWSER_BASELINE.md</code>;</li>
+<li><code>docs/waves/PUBLIC_WAP_LAB_PRERELEASE_PLAN.md</code>;</li>
+<li><code>docs/waves/SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md</code>;</li>
+<li><code>docs/waves/WAP_1_2_1_PLANNING_BASELINE.md</code>;</li>
+<li><code>docs/waves/WORK_ITEMS.md</code>;</li>
+<li><code>docs/waves/USABILITY_RESILIENCE_BACKLOG.md</code>;</li>
+<li><code>docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md</code>;</li>
+<li><code>docs/waves/ENGINE_DEBUG_CONNECTOR_PLAN.md</code>;</li>
+<li><code>docs/waves/ENGINE_DEBUG_CONNECTOR_RESEARCH.md</code>;</li>
+<li><code>docs/waves/ENGINE_HOST_FRAME_MIGRATION_PLAN.md</code>;</li>
+<li><code>docs/waves/ENGINE_HOST_FRAME_WORK_ITEMS.md</code>;</li>
+<li><code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code>;</li>
+<li><code>docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md</code>;</li>
+<li><code>docs/waves/TECHNICAL_ARCHITECTURE.md</code>;</li>
+<li><code>docs/browser-emulator/TAURI_PROFESSIONAL_POLISH_EXPLORATION.md</code>; and</li>
+<li><code>browser/README.md</code>.</li>
+</ul>
+<p>Code and contracts:</p>
+<ul>
+<li>browser frontend bootstrap/application, shell and leaf templates, controller, presenter,
+navigation state, history, timeline, defaults/config, examples, keyboard routing, command/event
+bindings, scale control, styles/tokens, and package manifest;</li>
+<li>Tauri bootstrap, command adapters, configuration, Cargo manifest, capabilities, and generated
+command inventory;</li>
+<li>transport app/generated contracts, generated engine frame/debug DTOs, generated Tauri client,
+and <code>engine-wasm/contracts/wml-engine.ts</code>; and</li>
+<li>merged PR <code>#502</code> shell and Welcome-preference implementation.</li>
+</ul>
+<p>Archive folders and date-stamped historical snapshots were excluded as normative sources.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#prd-waves-desktop-application-completion">PRD: Waves Desktop Application Completion</a></li><li class="depth-2"><a href="#1-summary">1. Summary</a></li><li class="depth-2"><a href="#2-contacts">2. Contacts</a></li><li class="depth-2"><a href="#3-background">3. Background</a></li><li class="depth-3"><a href="#31-product-opportunity">3.1 Product opportunity</a></li><li class="depth-3"><a href="#32-why-now">3.2 Why now</a></li><li class="depth-3"><a href="#33-current-state-inventory">3.3 Current-state inventory</a></li><li class="depth-3"><a href="#34-current-overlap-and-blockers">3.4 Current overlap and blockers</a></li><li class="depth-3"><a href="#35-product-and-architecture-constraints">3.5 Product and architecture constraints</a></li><li class="depth-2"><a href="#4-objective">4. Objective</a></li><li class="depth-3"><a href="#41-objective-statement">4.1 Objective statement</a></li><li class="depth-3"><a href="#42-key-results">4.2 Key results</a></li><li class="depth-3"><a href="#43-non-goals-for-the-first-pre-release">4.3 Non-goals for the first pre-release</a></li><li class="depth-2"><a href="#5-market-segments">5. Market segments</a></li><li class="depth-3"><a href="#51-wapwml-implementer-or-deck-author">5.1 WAP/WML implementer or deck author</a></li><li class="depth-3"><a href="#52-emulator-evaluator-or-protocol-engineer">5.2 Emulator evaluator or protocol engineer</a></li><li class="depth-3"><a href="#53-preservationist-or-researcher">5.3 Preservationist or researcher</a></li><li class="depth-3"><a href="#54-curious-learner">5.4 Curious learner</a></li><li class="depth-3"><a href="#55-preview-maintainer-or-support-tester">5.5 Preview maintainer or support tester</a></li><li class="depth-2"><a href="#6-value-propositions">6. Value propositions</a></li><li class="depth-2"><a href="#7-solution">7. Solution</a></li><li class="depth-3"><a href="#71-experience-model-and-surface-decision">7.1 Experience model and surface decision</a></li><li class="depth-3"><a href="#72-opportunity-solution-tree">7.2 Opportunity Solution Tree</a></li><li class="depth-3"><a href="#73-product-trio-idea-set">7.3 Product-trio idea set</a></li><li class="depth-3"><a href="#74-prioritized-feature-set">7.4 Prioritized feature set</a></li><li class="depth-3"><a href="#75-wap-home-and-safe-favorites">7.5 WAP Home and safe Favorites</a></li><li class="depth-3"><a href="#76-wap-inspector-and-diagnostic-bundle">7.6 WAP Inspector and diagnostic bundle</a></li><li class="depth-3"><a href="#77-truthful-fetch-lifecycle-and-recovery">7.7 Truthful fetch lifecycle and recovery</a></li><li class="depth-3"><a href="#78-durable-settings-and-safe-workspace-recovery">7.8 Durable settings and safe workspace recovery</a></li><li class="depth-3"><a href="#79-native-command-surface">7.9 Native command surface</a></li><li class="depth-3"><a href="#710-privacy-and-security-requirements">7.10 Privacy and security requirements</a></li><li class="depth-3"><a href="#711-accessibility-requirements">7.11 Accessibility requirements</a></li><li class="depth-3"><a href="#712-assumptions-to-validate">7.12 Assumptions to validate</a></li><li class="depth-2"><a href="#8-release-and-implementation-plan">8. Release and implementation plan</a></li><li class="depth-3"><a href="#81-entry-gates">8.1 Entry gates</a></li><li class="depth-3"><a href="#82-phase-a-pre-release-essentials">8.2 Phase A: pre-release essentials</a></li><li class="depth-3"><a href="#83-phase-b-next-application-quality-increment">8.3 Phase B: next application-quality increment</a></li><li class="depth-3"><a href="#84-phase-c-later-differentiators">8.4 Phase C: later differentiators</a></li><li class="depth-3"><a href="#85-explicitly-deferred-or-rejected">8.5 Explicitly deferred or rejected</a></li><li class="depth-3"><a href="#86-first-parallel-safe-implementation-batch">8.6 First parallel-safe implementation batch</a></li><li class="depth-3"><a href="#87-ticket-ready-first-batch-slices">8.7 Ticket-ready first-batch slices</a></li><li class="depth-3"><a href="#88-parallel-ownership-and-conflict-controls">8.8 Parallel ownership and conflict controls</a></li><li class="depth-3"><a href="#89-release-exit-criteria">8.9 Release exit criteria</a></li><li class="depth-3"><a href="#810-decisions-to-resolve-with-the-product-owner">8.10 Decisions to resolve with the product owner</a></li><li class="depth-3"><a href="#811-evidence-reviewed">8.11 Evidence reviewed</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/prd-waves-desktop-application-completion.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Complete bytecode decoder and structural verifier · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/vault-wmls-5/work-items/wmls-501"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/vault-wmls-5/work-items/wmls-501.md</p><div class="markdown-body"><h1 id="complete-bytecode-decoder-and-structural-verifier">Complete bytecode decoder and structural verifier</h1>
+<blockquote>
+<p>Generated from canonical repository manifests. Do not edit this note directly.</p>
+</blockquote>
+<h2 id="relationships">Relationships</h2>
+<ul>
+<li><code>contains</code> ← [[sprints/WMLS-5|WMLS-5]]</li>
+<li><code>covers-family</code> → [[source-families/wmlscript-libraries|wmlscript-libraries]]</li>
+<li><code>covers-family</code> → [[source-families/wmlscript|wmlscript]]</li>
+<li><code>owned-by</code> → [[owner-layers/engine-wasm|engine-wasm]]</li>
+<li><code>owned-by</code> → [[owner-layers/qa|qa]]</li>
+<li><code>planned-by</code> ← [[clauses/WAE-CL-WML-LANGUAGE-DELEGATE|WAE-CL-WML-LANGUAGE-DELEGATE]]</li>
+<li><code>planned-by</code> ← [[clauses/WAE-CL-WML-USER-AGENT-COMPOSITION|WAE-CL-WML-USER-AGENT-COMPOSITION]]</li>
+<li><code>planned-by</code> ← [[clauses/WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE|WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX|WMLSCRIPT-CL-ARITHMETIC-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS|WMLSCRIPT-CL-ARITHMETIC-INVALID-RESULTS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY|WMLSCRIPT-CL-BINARY-DATA-TYPE-REGISTRY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BINARY-NETWORK-ORDER|WMLSCRIPT-CL-BINARY-NETWORK-ORDER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX|WMLSCRIPT-CL-BITWISE-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS|WMLSCRIPT-CL-BITWISE-INTEGER-RESULTS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT|WMLSCRIPT-CL-BYTECODE-COMPILATION-UNIT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BYTECODE-HEADER-CODE-SIZE|WMLSCRIPT-CL-BYTECODE-HEADER-CODE-SIZE]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BYTECODE-HEADER-VERSION|WMLSCRIPT-CL-BYTECODE-HEADER-VERSION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-BYTECODE-SECTION-ORDER|WMLSCRIPT-CL-BYTECODE-SECTION-ORDER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CHARACTER-SET-MIBENUM|WMLSCRIPT-CL-CHARACTER-SET-MIBENUM]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CHARACTER-SET-NATIVE-EXECUTION|WMLSCRIPT-CL-CHARACTER-SET-NATIVE-EXECUTION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CHARACTER-STRING-BYTE-LENGTHS|WMLSCRIPT-CL-CHARACTER-STRING-BYTE-LENGTHS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX|WMLSCRIPT-CL-COMPARISON-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-COMPARISON-INVALID-RESULT|WMLSCRIPT-CL-COMPARISON-INVALID-RESULT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-EMBEDDED-NULL|WMLSCRIPT-CL-CONSTANT-EMBEDDED-NULL]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS|WMLSCRIPT-CL-CONSTANT-INSTRUCTION-BOUNDS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX|WMLSCRIPT-CL-CONSTANT-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-INTEGER-WIDTHS|WMLSCRIPT-CL-CONSTANT-INTEGER-WIDTHS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-POOL-CHARSET|WMLSCRIPT-CL-CONSTANT-POOL-CHARSET]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-POOL-COUNT|WMLSCRIPT-CL-CONSTANT-POOL-COUNT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-STRING-LENGTHS|WMLSCRIPT-CL-CONSTANT-STRING-LENGTHS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONSTANT-TYPE-REGISTRY|WMLSCRIPT-CL-CONSTANT-TYPE-REGISTRY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX|WMLSCRIPT-CL-CONTROL-FLOW-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-CONTROL-FLOW-TARGETS|WMLSCRIPT-CL-CONTROL-FLOW-TARGETS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX|WMLSCRIPT-CL-DEBUG-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL|WMLSCRIPT-CL-FATAL-ABORT-AND-SIGNAL]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX|WMLSCRIPT-CL-FATAL-BYTECODE-ERROR-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX|WMLSCRIPT-CL-FATAL-RESOURCE-ERROR-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES|WMLSCRIPT-CL-FUNCTION-CALL-INDEX-TYPES]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX|WMLSCRIPT-CL-FUNCTION-CALL-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-NAME-TABLE|WMLSCRIPT-CL-FUNCTION-NAME-TABLE]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-POOL-COUNT|WMLSCRIPT-CL-FUNCTION-POOL-COUNT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-POOL-INDEXES|WMLSCRIPT-CL-FUNCTION-POOL-INDEXES]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES|WMLSCRIPT-CL-FUNCTION-RECORD-BOUNDARIES]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION|WMLSCRIPT-CL-INTEGRITY-BEFORE-EXECUTION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK|WMLSCRIPT-CL-INTEGRITY-CODE-SIZE-CHECK]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE|WMLSCRIPT-CL-INTEGRITY-FAILURE-QUARANTINE]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES|WMLSCRIPT-CL-INTEGRITY-FUNCTION-SIZES]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM|WMLSCRIPT-CL-INTEGRITY-INSTRUCTION-STREAM]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS|WMLSCRIPT-CL-INTEGRITY-POOL-COUNTS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK|WMLSCRIPT-CL-INTEGRITY-VERSION-CHECK]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTERPRETER-CALL-RESULT|WMLSCRIPT-CL-INTERPRETER-CALL-RESULT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-INTERPRETER-EXECUTION-STATE|WMLSCRIPT-CL-INTERPRETER-EXECUTION-STATE]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION|WMLSCRIPT-CL-LOGICAL-BOOLEAN-CONVERSION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX|WMLSCRIPT-CL-LOGICAL-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION|WMLSCRIPT-CL-MULTIBYTE-INTEGER-CONTINUATION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-MULTIBYTE-INTEGER-ORDER|WMLSCRIPT-CL-MULTIBYTE-INTEGER-ORDER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-MULTIBYTE-INTEGER-UNUSED-ZERO|WMLSCRIPT-CL-MULTIBYTE-INTEGER-UNUSED-ZERO]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX|WMLSCRIPT-CL-NONFATAL-COMPUTATION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX|WMLSCRIPT-CL-NONFATAL-CONSTANT-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX|WMLSCRIPT-CL-OPERAND-TYPE-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION|WMLSCRIPT-CL-OPERAND-TYPE-NO-CONVERSION]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS|WMLSCRIPT-CL-PRAGMA-ACCESS-UNIQUENESS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-PRAGMA-POOL-COUNT|WMLSCRIPT-CL-PRAGMA-POOL-COUNT]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-PRAGMA-STRING-INDEXES|WMLSCRIPT-CL-PRAGMA-STRING-INDEXES]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-PRAGMA-TYPE-REGISTRY|WMLSCRIPT-CL-PRAGMA-TYPE-REGISTRY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX|WMLSCRIPT-CL-RETURN-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY|WMLSCRIPT-CL-RETURN-TOP-LEVEL-BOUNDARY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY|WMLSCRIPT-CL-RUNTIME-CONSTANT-VALIDITY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY|WMLSCRIPT-CL-RUNTIME-FUNCTION-VALIDITY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY|WMLSCRIPT-CL-RUNTIME-JUMP-VALIDITY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY|WMLSCRIPT-CL-RUNTIME-STACK-VALIDITY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY|WMLSCRIPT-CL-RUNTIME-VARIABLE-VALIDITY]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX|WMLSCRIPT-CL-STACK-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL|WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS|WMLSCRIPT-CL-VARIABLE-INSTRUCTION-BOUNDS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX|WMLSCRIPT-CL-VARIABLE-INSTRUCTION-MATRIX]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-DIALOGS-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-DIALOGS-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-FLOAT-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-FLOAT-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-LANG-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-LANG-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-STRING-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-STRING-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-URL-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-URL-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS|WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-FUNCTION-IDENTIFIERS]]</li>
+<li><code>planned-by</code> ← [[clauses/WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER|WMLSCRIPT-LIBRARIES-CL-WMLBROWSER-LIBRARY-IDENTIFIER]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WAESpec-C-016|WAESpec-C-016]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WAESpec-C-017|WAESpec-C-017]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-069|WMLS-C-069]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-077|WMLS-C-077]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-079|WMLS-C-079]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-085|WMLS-C-085]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-087|WMLS-C-087]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-088|WMLS-C-088]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-089|WMLS-C-089]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-090|WMLS-C-090]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-091|WMLS-C-091]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-092|WMLS-C-092]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-093|WMLS-C-093]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-094|WMLS-C-094]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-095|WMLS-C-095]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-096|WMLS-C-096]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-097|WMLS-C-097]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-098|WMLS-C-098]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-099|WMLS-C-099]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-100|WMLS-C-100]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-101|WMLS-C-101]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-102|WMLS-C-102]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-103|WMLS-C-103]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-104|WMLS-C-104]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-105|WMLS-C-105]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-106|WMLS-C-106]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-107|WMLS-C-107]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-108|WMLS-C-108]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-110|WMLS-C-110]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLS-C-111|WMLS-C-111]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-024|WMLSSL-024]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-025|WMLSSL-025]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-026|WMLSSL-026]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-027|WMLSSL-027]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-028|WMLSSL-028]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-029|WMLSSL-029]]</li>
+<li><code>planned-by</code> ← [[scr-rows/WMLSSL-030|WMLSSL-030]]</li>
+<li><code>relates-to</code> → [[legacy-tickets/W1-02|W1-02]]</li>
+</ul>
+<h2 id="data">Data</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "status"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"done"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "ownerLayers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "engine-wasm"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "qa"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "sourceFamilies"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "wmlscript"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "wmlscript-libraries"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "notes"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "The B1 library-index/stack-dataflow tranche is an additive closure over the previously merged WMLS-501 decoder and verified-unit routing history; it does not reopen or replace that completed work."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "B2 completed bounded WMLS-502 operator/conversion execution on the verified control-flow and stack foundation. WMLS-503 URL/access behavior, WMLS-504 standard-library execution, and the remaining WMLS-505 fatal/non-fatal matrix stay open."</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "scrMatrix"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "family"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wmlscript"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "scope"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"selected-clause-parents"</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "existingTickets"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "W1-02"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "outputs"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "Complete bytecode decoder and structural verifier"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "Additive standard-library index and whole-function stack-dataflow verifier closure"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "acceptance"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "The 41 mandatory WMLScript:MCF rows remain exactly mapped while WAP header, constant/pragma/function pools, instruction families, indexes, jumps, stack/local bounds, and malformed input failure are fully verified before execution."</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "evidence"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap_dataflow_failures_preserve_error_trace_taxonomy_and_recovery"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "wasm-pack test --node engine-wasm/engine --features wasm-bindings"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "pnpm test:story WMLS-501"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "source"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"docs/waves/wap-1.2.1-compliance-program.json"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#complete-bytecode-decoder-and-structural-verifier">Complete bytecode decoder and structural verifier</a></li><li class="depth-2"><a href="#relationships">Relationships</a></li><li class="depth-2"><a href="#data">Data</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/vault-wmls-5/work-items/wmls-501.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

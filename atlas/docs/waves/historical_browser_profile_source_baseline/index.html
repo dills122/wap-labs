@@ -1,0 +1,324 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Historical Browser Profile Source Baseline · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/historical_browser_profile_source_baseline"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/historical_browser_profile_source_baseline.md</p><div class="markdown-body"><h1 id="historical-browser-profile-source-baseline">Historical Browser Profile Source Baseline</h1>
+<p>Status: active research baseline; no named profile authorized
+Last updated: 2026-07-26
+Scope: period WAP handset-browser interaction evidence for future Waves compatibility profiles</p>
+<h2 id="purpose-and-boundary">Purpose and Boundary</h2>
+<p>This baseline records recoverable primary historical evidence for future device/browser profiles. It
+does not define WAP requirements, alter the neutral <code>Class C Reference</code> runtime, or authorize a named
+profile. All sources here are <code>interop-reference</code> evidence under
+<a href="SOURCE_AUTHORITY_POLICY.md">Waves Source Authority Policy</a>; only the locked normative corpus may
+create or redefine <code>RQ-*</code> requirements.</p>
+<p>The research covers viewport metrics, typography, focus and roller behavior, softkeys and task
+placement, Options/menu ordering, editors and forms, history, timers, documented failures, and
+browser limitations. Archived folders and historical planning snapshots are outside this audit.</p>
+<h2 id="evidence-and-confidence-rules">Evidence and Confidence Rules</h2>
+<p>Evidence classes used below are:</p>
+<ul>
+<li><code>P1</code>: manufacturer/browser-vendor publication with internal publication identity and notices.</li>
+<li><code>P2</code>: contemporary operator or platform-owner guidance based on named devices and browser tests.</li>
+<li><code>S1</code>: third-party transcription, manual mirror, or contextual recollection without a recovered
+publisher artifact. This can locate or corroborate evidence, but cannot close a profile gate alone.</li>
+</ul>
+<p>Claim confidence is separate from source class:</p>
+<ul>
+<li><code>high</code>: the recovered publisher artifact states the behavior directly, or two independent primary
+publications agree.</li>
+<li><code>medium</code>: publisher-authored content is available only through a mirror/transcription, describes a
+browser family rather than one handset, or leaves an implementation detail implicit.</li>
+<li><code>low</code>: only partial service documentation, a secondary account, or an unresolved conflict exists.</li>
+</ul>
+<p>An archived or mirrored payload establishes research availability, not permission to republish it.
+The recovered PDFs and extracted text remain outside Git. Hashes, sizes, publication identities,
+source routes, and research conclusions may be recorded here. No access controls were bypassed.</p>
+<h2 id="recovered-source-index">Recovered Source Index</h2>
+<p>Retrieval and verification date for all rows is 2026-07-26.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Publisher source</th>
+<th>Retrieval and integrity</th>
+<th>Class / provenance</th>
+<th>Redistribution posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OW-2000</code></td>
+<td>Phone.com, <em>WML Application Style Guide: Designing and Developing WML Applications</em>, <code>WMLS-01-001</code>, August 2000</td>
+<td><a href="https://web.archive.org/web/20030313113811id_/http://demo.openwave.com:80/pdf/styleguides/wml_style.pdf">2003 archive capture of the original Openwave URL</a>; 398,527 bytes; SHA-256 <code>de13b6c11fd4033813b8ed3144f12e6eb41fc73d12c9b76f3b60a230ac5cda11</code>; PDF 1.2, 78 pages</td>
+<td><code>P1</code>; high content identity, medium byte lineage because no publisher checksum survives</td>
+<td>Copyright notice reserves rights and restricts reproduction, modification, and distribution; private research only</td>
+</tr>
+<tr>
+<td><code>OW-2001</code></td>
+<td>Openwave, <em>Graphical Browser Application Style Guide</em>, Mobile Browser WAP Edition 5.0, <code>MBWS-50-002</code>, August 2001</td>
+<td><a href="http://www1.lasalle.edu/~beatty/430/wireless/toolkit/client_tech_and_sdk/pdf/style_guide.pdf">public university SDK mirror</a>; 544,068 bytes; SHA-256 <code>d8a911ddb1a3de095fcdd7a387c2ad622153f47bd8f0f13a6db4cba3a3dda65b</code>; PDF 1.3, 86 pages</td>
+<td><code>P1</code>; high content identity, medium byte lineage</td>
+<td>Restricted copyright notice; private research only</td>
+</tr>
+<tr>
+<td><code>NK-7110</code></td>
+<td>Nokia, <em>Service Developer’s Guide for the Nokia 7110</em>, <code>9359203</code>, issue 3, November 1999</td>
+<td><a href="https://www.filibeto.org/mobile/files/sservice_dev_guide.pdf">public mirror</a>; 242,486 bytes; SHA-256 <code>9eb8a3a4d97266f31bd3806d53d60ea8661be656d647382d365b07bdc5e2fec4</code>; PDF 1.2, 34 pages</td>
+<td><code>P1</code>; high content identity, medium byte lineage</td>
+<td>Notice permits personal download/printing only; private research copy retained outside Git</td>
+</tr>
+<tr>
+<td><code>NK-2000</code></td>
+<td>Nokia, <em>WAP Service Designer’s Guide to Nokia Handsets</em>, 16 June 2000</td>
+<td><a href="http://stl.cs.queensu.ca/~graham/cisc836/lectures/readings/nokia-designers-guide.pdf">public university mirror</a>; 354,355 bytes; SHA-256 <code>7440173d99f7dbad2b08cc832d212bdeb53cf984fff87623e81a54462514241f</code>; PDF 1.3, 16 pages</td>
+<td><code>P1</code>; high content identity, medium byte lineage; corroborates <code>NK-7110</code></td>
+<td>Notice permits personal download/printing only; private research copy retained outside Git</td>
+</tr>
+<tr>
+<td><code>ER-R380</code></td>
+<td>Ericsson, <em>R380s Design Guidelines for WAP Services</em>, <code>LZT 108 3339</code>, first edition, November 1999</td>
+<td><a href="https://usermanual.wiki/Ericsson/EricssonR380UsersManual540796.930088381.pdf">public manual mirror</a>; 667,004 bytes; SHA-256 <code>904dd9511ecc5605dc2fbbb35fdb7fefd518af4ac23b19b2308f9540d49ef3b0</code>; PDF 1.3, 25 pages</td>
+<td><code>P1</code>; high content identity, medium byte lineage</td>
+<td>All-rights-reserved notice and no redistribution grant; private research only</td>
+</tr>
+<tr>
+<td><code>ER-R320-WP</code></td>
+<td>Ericsson, <em>R320s White Paper</em>, <code>LZT 108 3714 R1A</code>, first edition, March 2000</td>
+<td><a href="https://manualzz.com/doc/924263/ericsson-r320s-white-paper">full-text mirror</a>; publisher PDF not recovered</td>
+<td><code>S1</code> transcription of an identified <code>P1</code> publication; medium</td>
+<td>Mirror view only; no binary, checksum, or redistribution grant</td>
+</tr>
+<tr>
+<td><code>ER-WAPIDE</code></td>
+<td>Ericsson, <em>WapIDE 3.1 User’s Guide</em>, 9 April 2001</td>
+<td><a href="https://manualzilla.com/doc/6879776/user-s-guide">full-text mirror</a>; publisher PDF not recovered</td>
+<td><code>S1</code> transcription of an identified <code>P1</code> publication; medium</td>
+<td>Mirror view only; no binary, checksum, or redistribution grant</td>
+</tr>
+<tr>
+<td><code>MO-P7389</code></td>
+<td>Motorola, <em>Timeport P7382i/P7389i Level III Service Manual</em></td>
+<td><a href="https://manualzz.com/doc/1783019/motorola-timeport-p7389i-service-manual">full-text mirror</a>; publisher PDF not recovered</td>
+<td><code>S1</code> transcription of an identified <code>P1</code> service publication; low-to-medium for browser interaction</td>
+<td>Mirror view only; no binary, checksum, or redistribution grant</td>
+</tr>
+<tr>
+<td><code>GENIE-2001</code></td>
+<td>Genie, <em>Application Style Guide for Openwave, Nokia 7110/6210/6250, Mitsubishi Trium</em>, release 1.0, February 2001</td>
+<td><a href="https://manualsdump.com/en/manuals/genie-7110model/52158/5">page-by-page mirror</a>; original publication was linked from Openwave’s developer library; publisher PDF not recovered</td>
+<td><code>S1</code> mirror of an identified <code>P2</code> publication; medium corroboration only</td>
+<td>No verified redistribution grant; do not promote mirror content</td>
+</tr>
+</tbody>
+</table>
+<p>The Wayback CDX record for <code>OW-2000</code> reports a 240,928-byte capture record while the replayed PDF is
+398,527 bytes. The replayed file has a valid PDF structure, matching internal publication identity,
+period PDF metadata, and the original archived URL, but the size discrepancy prevents a high-confidence
+byte-lineage claim without a publisher checksum.</p>
+<p>For each recovered PDF, verification included file-signature and metadata inspection, page count,
+SHA-256, text extraction, and rendered-page review. The rendered Openwave softkey template, Nokia
+Options sequence, and Ericsson R380 browser layout were visually checked against the extracted text.
+Encrypted Nokia PDFs were inspected within their granted print permission; their copy restrictions
+were not removed.</p>
+<h2 id="interaction-evidence-matrix">Interaction Evidence Matrix</h2>
+<p><code>H</code>, <code>M</code>, and <code>L</code> are claim-confidence levels; <code>--</code> means the interaction does not apply to that form
+factor or no useful evidence was recovered.</p>
+<table>
+<thead>
+<tr>
+<th>Candidate</th>
+<th style="text-align: right">Viewport / type</th>
+<th style="text-align: right">Focus / controls</th>
+<th style="text-align: right">Softkeys / menu</th>
+<th style="text-align: right">Editors / forms</th>
+<th style="text-align: right">History</th>
+<th style="text-align: right">Timers</th>
+<th style="text-align: right">Failures / limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nokia 7110</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">H</td>
+</tr>
+<tr>
+<td>Phone.com/Openwave 4.x family</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">H logical / L physical</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">H</td>
+</tr>
+<tr>
+<td>Openwave Mobile Browser 5.0 graphical</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">H logical / L physical</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">H</td>
+</tr>
+<tr>
+<td>Ericsson R320s</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">M</td>
+</tr>
+<tr>
+<td>Ericsson R380s</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H touch</td>
+<td style="text-align: right">–</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">H</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">H</td>
+</tr>
+<tr>
+<td>Motorola P7382i/P7389i</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">M</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">L</td>
+<td style="text-align: right">M</td>
+</tr>
+</tbody>
+</table>
+<h2 id="profile-assessments">Profile Assessments</h2>
+<h3 id="nokia-7110-ready-for-profile-planning">Nokia 7110: ready for profile planning</h3>
+<p><code>NK-7110</code> and <code>NK-2000</code> agree on the profile-defining interaction model:</p>
+<ul>
+<li>96 by 65 pixels overall, with a 96 by 44-pixel content graphics area and four data lines;</li>
+<li>proportional 8-pixel normal and bold fonts, header truncation, word wrapping, and underlined links
+placed on their own lines;</li>
+<li>inverse-video focus, line-by-line scrolling, roller movement, and roller press to select;</li>
+<li>left <code>Options</code> and right <code>Back</code> during normal browsing;</li>
+<li>fixed Options ordering: Home, Bookmarks, current Select/Edit action, card <code>do</code> actions in source
+order, conditional Use Number, Empty Cache, then Exit with confirmation;</li>
+<li>number, text, and password editors, with the right softkey changing between Back and Clear and
+password characters becoming masked;</li>
+<li><code>prev</code>/Back history behavior and documented bookmark behavior;</li>
+<li>concrete rendering limitations, including flattened tables, ignored emphasis, images constrained or
+truncated to the 96 by 44 area, and no image-map links.</li>
+</ul>
+<p>This is sufficient to plan fixtures and profile-specific goldens. It is not authorization to begin
+implementation before the Class C, compatibility-registry, and frame/input gates. A 7110-specific
+timer cadence, firmware/version matrix, and reproducible failure corpus remain open and must be
+treated as explicit gaps rather than inferred from general WML behavior.</p>
+<h3 id="phonecomopenwave-browser-family-behavior-recovered-handset-identity-still-open">Phone.com/Openwave: browser-family behavior recovered, handset identity still open</h3>
+<p><code>OW-2000</code> is the missing primary browser-vendor guide and provides strong logical behavior:</p>
+<ul>
+<li>a typical four-line display, 12 to 15 characters per line, with deployed phones ranging from two
+to eight lines and using mostly variable-width fonts;</li>
+<li>two programmable actions: the primary <code>accept</code> action and secondary <code>options</code> access, plus a fixed
+Back/Back-Clear control;</li>
+<li>overflow actions placed in a numbered options menu, short labels, compact menus, and a preference
+for the common action on the primary binding;</li>
+<li>complete guidance for text, numeric, password, and formatted fields, validation before acceptance,
+selection lists, retained values, and clearing entry state;</li>
+<li>default Back/history and cache behavior, including activity/delete patterns that deliberately
+remove intermediate cards from history;</li>
+<li>timer/image-loading races, unsupported-character substitution, no horizontal image scrolling, and
+significant OEM variation in display and control characteristics.</li>
+</ul>
+<p>The guide’s display template says <code>accept</code> is on the left and <code>options</code> on the right, while adjacent
+prose describes the primary key as the right softkey. <code>OW-2001</code> contains a comparable left/right
+inconsistency. Both guides also say handset manufacturers can vary browser characteristics. Therefore
+the logical primary/secondary precedence is high-confidence evidence, but a physical left/right
+mapping is not safe at browser-family level. A future profile must name one shipped handset and
+browser release, then pair the Openwave guide with that handset’s manufacturer user/developer guide.</p>
+<p><code>OW-2001</code> is valuable successor evidence for the 5.0 graphical browser: it documents three to eight
+display lines, mostly variable-width text, link styling, pop-up menus, buttons, radio controls, and
+the rule that an activated editor or pop-up consumes the programmable-softkey surface. It must not be
+silently projected backward onto Phone.com 4.x or onto a handset whose OEM controls differ.</p>
+<h3 id="ericsson-r320-evidence-is-promising-r380-is-a-separate-touch-profile">Ericsson: R320 evidence is promising; R380 is a separate touch profile</h3>
+<p>The R320 white paper provides a 101 by 65-pixel display, five full-screen rows including the header,
+four selection/input rows including the header, proportional font capacity, inverse link focus, an
+image focus frame, a 4 KB cache, and up to 25 bookmarks. The WapIDE guide adds short <code>YES</code> to follow or
+confirm, held <code>YES</code> for Options, short <code>NO</code> for Back/history, vertical scrolling, horizontal movement
+among table cells or multiple links, and a mixed menu of card actions plus fixed browser actions.</p>
+<p>These are publisher-authored sources, but only third-party text views were recoverable. The exact R320
+design guide, byte-verified developer PDFs, editor details, timer behavior, precise fixed-menu ordering,
+and firmware-specific failures remain open. The consumer manual also distinguishes <code>Suspend</code> in the
+browser menu from <code>Resume</code> in the phone’s WAP Services menu; they must not be presented as one fixed
+Options sequence.</p>
+<p><code>ER-R380</code> is a strong primary source for a different device class: a 360 by 120 touchscreen with a
+310 by 100 browser area, breadcrumb-like title/history display, toolbar navigation, proportional
+9/10/14-pixel fonts, touch focus, list and button controls, and on-screen keyboard or handwriting
+entry. It should inform a later R380 touch profile, not fill R320 keypad/softkey gaps.</p>
+<h3 id="motorola-service-evidence-is-not-enough-for-a-named-profile">Motorola: service evidence is not enough for a named profile</h3>
+<p><code>MO-P7389</code> establishes a 96 by 54 display, WAP 1.1 support, simplified alphabetic entry, partial
+display of oversized bitmaps, browser entry through Quick Access/menu paths, and pause/resume around
+incoming calls. It does not establish focus traversal, exact softkey precedence, Options ordering,
+history semantics, timers, or a complete editor model. A manufacturer browser/application developer
+guide and a byte-verified consumer manual are still required before planning a Motorola profile.</p>
+<h2 id="conflicts-and-non-inferences">Conflicts and Non-Inferences</h2>
+<ol>
+<li>Openwave’s logical primary/secondary action model is supported; its physical left/right mapping is
+unresolved and may be OEM-specific.</li>
+<li>Openwave 5.0 graphical-browser behavior is successor/delta evidence, not proof of 4.x behavior.</li>
+<li>Nokia 7110 and Nokia 6210/6250 corroboration does not make handset metrics interchangeable; the
+comparative Nokia guide lists different display heights.</li>
+<li>Ericsson R320s keypad behavior and Ericsson R380s touchscreen behavior are separate profiles.</li>
+<li><code>Suspend</code> and <code>Resume</code> are different R320 state transitions in different menus, not adjacent fixed
+Options items.</li>
+<li>Service-manual facts and third-party recollections are candidate-fixture context, not a basis for
+profile requirements.</li>
+<li>None of these sources may redefine the neutral <code>Class C Reference</code>, WML task semantics, or a
+normative <code>RQ-*</code> item.</li>
+</ol>
+<h2 id="readiness-decision-and-future-work">Readiness Decision and Future Work</h2>
+<p>The Nokia 7110 is the first named profile ready to plan because two concordant Nokia publications
+cover every requested interaction domain except device-specific timer cadence and a reproducible
+failure/version matrix. Planning must preserve those gaps and the existing runtime gates.</p>
+<p>Openwave is next only as an evidence-lock task, not an implementation profile: select a representative
+shipping handset/browser version, recover its manufacturer interaction guide, resolve physical
+controls and editor modes, and establish device-specific viewport, timer, and failure fixtures. The
+browser-family guides alone do not justify a generic <code>Openwave</code> compatibility profile.</p>
+<p>Ericsson R320 and Motorola remain source-recovery candidates. R380 has adequate design-guide evidence
+but represents a materially different touch device and should follow, not substitute for, the keypad
+profiles prioritized by the current product direction.</p>
+<h2 id="unresolved-primary-source-queue">Unresolved Primary-Source Queue</h2>
+<ol>
+<li>A handset-specific Openwave/UP.Browser 4.x user or developer guide that names browser version,
+physical softkeys, viewport, editors, and known failures.</li>
+<li>The publisher PDF for the Ericsson R320 design/developer guide, plus byte-verified R320 user and
+WapIDE manuals.</li>
+<li>A Motorola application/browser developer guide for a representative WAP handset, plus a
+byte-verified consumer manual.</li>
+<li>Device/firmware release notes or test reports for timer cadence, cache faults, network failure
+presentation, and known browser defects across the selected profiles.</li>
+<li>Publisher checksums or authenticated archives for all mirrored PDFs, and explicit redistribution
+permission before any binary or extracted derivative is proposed for Git.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#historical-browser-profile-source-baseline">Historical Browser Profile Source Baseline</a></li><li class="depth-2"><a href="#purpose-and-boundary">Purpose and Boundary</a></li><li class="depth-2"><a href="#evidence-and-confidence-rules">Evidence and Confidence Rules</a></li><li class="depth-2"><a href="#recovered-source-index">Recovered Source Index</a></li><li class="depth-2"><a href="#interaction-evidence-matrix">Interaction Evidence Matrix</a></li><li class="depth-2"><a href="#profile-assessments">Profile Assessments</a></li><li class="depth-3"><a href="#nokia-7110-ready-for-profile-planning">Nokia 7110: ready for profile planning</a></li><li class="depth-3"><a href="#phonecomopenwave-browser-family-behavior-recovered-handset-identity-still-open">Phone.com/Openwave: browser-family behavior recovered, handset identity still open</a></li><li class="depth-3"><a href="#ericsson-r320-evidence-is-promising-r380-is-a-separate-touch-profile">Ericsson: R320 evidence is promising; R380 is a separate touch profile</a></li><li class="depth-3"><a href="#motorola-service-evidence-is-not-enough-for-a-named-profile">Motorola: service evidence is not enough for a named profile</a></li><li class="depth-2"><a href="#conflicts-and-non-inferences">Conflicts and Non-Inferences</a></li><li class="depth-2"><a href="#readiness-decision-and-future-work">Readiness Decision and Future Work</a></li><li class="depth-2"><a href="#unresolved-primary-source-queue">Unresolved Primary-Source Queue</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/historical_browser_profile_source_baseline.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Browser Product Implementation Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_browser_product_implementation_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_browser_product_implementation_plan.md</p><div class="markdown-body"><h1 id="waves-browser-product-implementation-plan">Waves Browser Product Implementation Plan</h1>
+<p>Status: planning-ready
+Last updated: 2026-07-30 (<code>origin/main</code> <code>6cf1682a</code>)
+Design source: <a href="WAVES_DESKTOP_PRODUCT_DESIGN.md">Waves Desktop Product and Interaction Design</a></p>
+<h2 id="purpose">Purpose</h2>
+<p>Turn the Waves desktop product direction into parallel-safe implementation slices while WAP/WML
+Class C core work continues.</p>
+<p>This plan coordinates existing authoritative plans. It does not duplicate their ticket state or
+permit browser work to infer unfinished engine or transport behavior.</p>
+<h2 id="program-outcomes">Program Outcomes</h2>
+<ol>
+<li>Make the current browser feel like a handset emulator rather than a document viewer.</li>
+<li>Preserve strict ownership of WML, rendering-layout, focus, navigation, and protocol behavior.</li>
+<li>Improve startup feedback, loading truthfulness, failure recovery, accessibility, and diagnostics.</li>
+<li>Build browser work in independently testable slices that do not block ongoing core work.</li>
+<li>Land contract-dependent behavior only after its owning engine or transport gate is ready.</li>
+</ol>
+<h2 id="source-plans-and-ownership">Source Plans and Ownership</h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Authoritative plan or backlog</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Class C sequence and adoption gates</td>
+<td><a href="WAP_1_2_1_PLANNING_BASELINE.md">WAP 1.2.1 planning baseline</a></td>
+</tr>
+<tr>
+<td>Frame, Canvas, hit regions, typed input</td>
+<td><a href="ENGINE_HOST_FRAME_MIGRATION_PLAN.md">engine-host frame plan</a> and <a href="ENGINE_HOST_FRAME_WORK_ITEMS.md">work items</a></td>
+</tr>
+<tr>
+<td>Welcome, help, tours, tutorials</td>
+<td><a href="USER_ONBOARDING_EXPERIENCE_PLAN.md">user onboarding plan</a></td>
+</tr>
+<tr>
+<td>Read-only runtime observation</td>
+<td><a href="ENGINE_DEBUG_CONNECTOR_PLAN.md">engine debug connector plan</a></td>
+</tr>
+<tr>
+<td>Existing host usability follow-ups</td>
+<td><a href="USABILITY_RESILIENCE_BACKLOG.md">usability and resilience backlog</a></td>
+</tr>
+<tr>
+<td>Historical profile evidence and provenance</td>
+<td><a href="HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md">historical browser profile source baseline</a></td>
+</tr>
+<tr>
+<td>Application completion discovery and slices</td>
+<td><a href="PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md">desktop application completion PRD</a></td>
+</tr>
+</tbody>
+</table>
+<p>When a slice starts, update the owning work-item ledger rather than creating a second status source in
+this document.</p>
+<h2 id="non-negotiable-guardrails">Non-Negotiable Guardrails</h2>
+<ol>
+<li>Browser code does not parse WML or WBXML, compute WML task precedence, lay out deck content, or
+perform engine history transitions.</li>
+<li>Rendering dimensions and hit regions come from the engine frame; hosts do not measure HTML to
+decide runtime layout.</li>
+<li>Transport cancellation, retry, timeout, and route metadata originate in <code>transport-rust</code> and flow
+through generated contracts.</li>
+<li>Rust-exported types remain the source of truth for cross-language transport contracts.</li>
+<li>Native and WASM engine behavior must remain equivalent.</li>
+<li>Each stable host-visible engine behavior receives an executable story when deterministic.</li>
+<li>Browser-only work must continue to function against the current adapter until its contract gate is
+available.</li>
+</ol>
+<h2 id="delivery-topology">Delivery Topology</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>                         Class C core work</span></span>
+<span class="line"><span>                     WML-2 -&gt; WML-3 -&gt; REN-4</span></span>
+<span class="line"><span>                              |</span></span>
+<span class="line"><span>                              v</span></span>
+<span class="line"><span>Browser foundation ----&gt; Frame/input contract ----&gt; Handset integration</span></span>
+<span class="line"><span>  |        |                       |                         |</span></span>
+<span class="line"><span>  |        `-&gt; onboarding          |                         `-&gt; UI E2E evidence</span></span>
+<span class="line"><span>  `-&gt; host accessibility           `-&gt; debug/persistence</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Transport lifecycle --------&gt; real cancel + phase metadata --^</span></span></code></pre>
+<p>Three execution lanes are intentional:</p>
+<ul>
+<li><strong>Lane A — start now:</strong> browser-owned structure, visual system, host accessibility, and onboarding.</li>
+<li><strong>Lane B — coordinate with core:</strong> engine frame, softkeys, Canvas, hit regions, and parity.</li>
+<li><strong>Lane C — coordinate with transport:</strong> cancellation, phase metadata, request identity, and recovery.</li>
+</ul>
+<h2 id="phase-0-adoption-and-baseline">Phase 0: Adoption and Baseline</h2>
+<h3 id="wbp-00-adopt-the-product-plan">WBP-00 Adopt the product plan</h3>
+<ul>
+<li><code>Lane</code>: coordination</li>
+<li><code>Depends On</code>: none</li>
+<li><code>Primary Files</code>: this plan, owning active ledgers</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>confirm product owner acceptance of <code>Authentic Core, Modern Console</code></li>
+<li>settle the initial reference-handset viewport and primary audience assumptions</li>
+<li>map adopted work into the current Class C graph before implementation begins</li>
+<li>capture current startup, navigation, and input latency on reference hardware</li>
+<li>preserve current screenshots as baseline evidence; do not treat them as target goldens</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>product direction and unresolved decisions have named owners</li>
+<li>each implementation slice points to its authoritative ledger and compliance dependencies</li>
+<li>baseline performance measurements are reproducible</li>
+</ul>
+<h2 id="phase-1-browser-foundation--can-start-while-core-continues">Phase 1: Browser Foundation — Can Start While Core Continues</h2>
+<p>These slices must preserve the existing engine and transport contracts. They may establish adapters
+and placeholders, but must not hard-code future softkey or frame semantics.</p>
+<h3 id="wbp-01-shell-component-and-layout-foundation">WBP-01 Shell component and layout foundation</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-00</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p><code>browser/frontend/src/app/browser-shell-template.ts</code></p>
+</li>
+<li>
+<p>new leaf components under <code>browser/frontend/src/components/</code></p>
+</li>
+<li>
+<p><code>browser/frontend/src/styles.css</code></p>
+</li>
+<li>
+<p>browser presenter/controller tests</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>decompose the shell into navigation toolbar, handset stage, utility rail, phase bar, and developer
+drawer components</li>
+<li>retain the current presenter and engine output inside the handset-stage adapter</li>
+<li>make the utility rail collapsible and move diagnostics out of the primary visual hierarchy</li>
+<li>support narrow-window rail collapse without changing engine viewport behavior</li>
+<li>add stable DOM landmarks and test selectors before visual migration</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>all existing navigation and story flows behave identically</li>
+<li>no WML semantics move into components</li>
+<li>current viewport presenter can be replaced later without another shell restructuring</li>
+<li>the window remains usable at the configured minimum size</li>
+</ul>
+<h3 id="wbp-02-host-visual-system-and-reference-handset-scaffold">WBP-02 Host visual system and reference-handset scaffold</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-01</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p><code>browser/frontend/src/styles.css</code></p>
+</li>
+<li>
+<p>shared component style modules</p>
+</li>
+<li>
+<p>theme and copy modules</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>expand semantic tokens for desktop stage, handset housing, LCD, focus, status, and diagnostics</li>
+<li>create the neutral reference-handset housing around the existing viewport adapter</li>
+<li>implement integer display scaling and reduced-motion handling</li>
+<li>retain existing focus and render behavior until the frame migration lands</li>
+<li>keep a potential Win95 host theme additive rather than authoritative</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>the current engine output is visually contained by a handset-stage boundary</li>
+<li>display scaling never changes engine rows, columns, focus, or line wrapping</li>
+<li>host high-contrast and reduced-motion modes remain legible</li>
+<li>colors and motion are defined through shared semantic tokens</li>
+</ul>
+<h3 id="wbp-02a-native-host-chrome-default">WBP-02A Native host-chrome default</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A, additive presentation follow-up</p>
+</li>
+<li>
+<p><code>Status</code>: done</p>
+</li>
+<li>
+<p><code>Depends On</code>: completed <code>WBP-01</code>, completed <code>WBP-02</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>browser shell leaf templates and shared host styles</p>
+</li>
+<li>
+<p>lightweight host panel primitives</p>
+</li>
+<li>
+<p>Tauri window background metadata</p>
+</li>
+<li>
+<p>shell and rendered-accessibility tests</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>make the native Tauri title bar the only application-window frame</li>
+<li>remove the vendored Win95 stylesheet and faux-window/control classes from the default cascade
+while retaining the vendor material for a possible later optional treatment</li>
+<li>use compact system typography and restrained platform-like surfaces for host chrome</li>
+<li>preserve the neutral Class C handset housing, deterministic LCD typography, inverse-video WML
+focus, IDs, bindings, tab order, and current adapter controls</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>address/source/route/profile chrome reads as desktop browser chrome, not as a second desktop
+window</li>
+<li>handset and LCD remain primary while utility, status, help, and developer surfaces are quieter</li>
+<li>default/minimum windows, 200 percent zoom, collapsed utility rail, focus visibility, 24 CSS-pixel
+targets, reduced motion, landmarks, live announcements, and horizontal reflow remain covered</li>
+<li>no frame/input, navigation, route, transport, or engine semantics change; dynamic affordances
+remain <code>WBP-06</code> scope</li>
+</ul>
+<h3 id="wbp-03-navigation-toolbar-information-architecture">WBP-03 Navigation-toolbar information architecture</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-01</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>shell and toolbar components</p>
+</li>
+<li>
+<p><code>browser/frontend/src/app/browser-controller.ts</code></p>
+</li>
+<li>
+<p><code>browser/frontend/src/app/waves-copy.ts</code></p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>consolidate Back, location, Go, Reload, source, and route into one compact toolbar</li>
+<li>preserve existing commands and navigation ordering</li>
+<li>expose route/profile labels as read-only when their runtime choices are not yet configurable</li>
+<li>reserve Go/Stop switching for the cancellable transport slice; do not label stale-result
+suppression as cancellation</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>Local and Network behavior remains unchanged</li>
+<li>keyboard focus order is stable and complete</li>
+<li>source, route, and compatibility profile are distinguishable concepts</li>
+<li>no unavailable feature is presented as functional</li>
+</ul>
+<h3 id="wbp-04-start-help-and-tutorial-minimum-slice">WBP-04 Start, help, and tutorial minimum slice</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-01</code>; owning onboarding tickets</p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>browser start/help components</p>
+</li>
+<li>
+<p><code>engine-wasm/examples/source/</code> for distinct new tutorial examples</p>
+</li>
+<li>
+<p>adjacent executable <code>*.flow.json</code> stories</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>implement the minimum Welcome Home surface</li>
+<li>link to bundled examples, network setup, control help, and troubleshooting</li>
+<li>ship one replayable keypad/softkey tutorial using product-owned local content</li>
+<li>keep product help outside the WML framebuffer except for intentional tutorial decks</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>a fresh user can reach a working local deck without network setup</li>
+<li>help is skippable and accessible after onboarding</li>
+<li>tutorial-deck behavior is covered by an executable story</li>
+<li>local content uses the ordinary engine path</li>
+</ul>
+<h3 id="wbp-05-host-accessibility-baseline">WBP-05 Host accessibility baseline</h3>
+<ul>
+<li>
+<p><code>Lane</code>: A</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-01</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>browser components and styles</p>
+</li>
+<li>
+<p>keyboard and controller tests</p>
+</li>
+<li>
+<p>accessibility test configuration</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>establish landmarks, names, descriptions, live regions, focus treatment, and target sizes for host
+chrome</li>
+<li>verify complete keyboard operation of toolbar, rail, help, recovery, and developer drawer</li>
+<li>add reduced-motion and 200 percent zoom coverage</li>
+<li>document the future semantic frame adapter without interpreting current draw commands as WML DOM</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>automated checks find no critical host-chrome accessibility violations</li>
+<li>all browser-owned actions are keyboard reachable with visible focus</li>
+<li>loading and error status changes are announced once</li>
+<li>the work does not create a second runtime representation of deck semantics</li>
+</ul>
+<h3 id="phase-1-integration-gate">Phase 1 integration gate</h3>
+<p>Run:</p>
+<ul>
+<li>browser frontend unit tests</li>
+<li>browser frontend build</li>
+<li>contract drift check</li>
+<li>all existing Waves-targeted executable stories</li>
+<li>keyboard-only smoke pass at minimum and default window sizes</li>
+</ul>
+<p>The Phase 1 result may still use the current renderer and fixed navigation controls internally. Its
+purpose is to make later engine integration localized, not to simulate unfinished semantics.</p>
+<h2 id="phase-2-contract-spine--coordinate-with-core">Phase 2: Contract Spine — Coordinate with Core</h2>
+<p>The <a href="ENGINE_HOST_FRAME_WORK_ITEMS.md">engine-host frame work items</a> remain authoritative. Extend their
+contract scope, if adopted, to carry the product data needed by the handset:</p>
+<ul>
+<li>logical viewport and compatibility-profile identity</li>
+<li>card/deck display metadata</li>
+<li>stable hit regions and action identifiers</li>
+<li>engine-owned input affordances and softkey labels</li>
+<li>Back/history availability needed for host presentation</li>
+<li>typed softkey, key, pointer, wheel, and editor input events</li>
+</ul>
+<h3 id="wbp-06-frame-and-affordance-contract-coordination">WBP-06 Frame and affordance contract coordination</h3>
+<ul>
+<li><code>Lane</code>: B</li>
+<li><code>Status</code>: done</li>
+<li><code>Depends On</code>: WML task/softkey semantics ready for exposure; frame F0 work</li>
+<li><code>Conflicts With</code>: debug connector contract edits</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>the contract contains no browser-specific layout fields</li>
+<li>Rust/native and WASM shapes remain aligned</li>
+<li>compatibility wrappers preserve current hosts</li>
+<li>golden parity tests cover frame commands, focus, affordances, and input traces</li>
+</ul>
+<p>Delivered boundary:</p>
+<ul>
+<li>engine-owned, versioned, content-identified presentation frames with ordered rows/segments,
+focus/selection state, logical affordances, and Back availability</li>
+<li>frame-bound typed key/action dispatch across native Rust, WASM, and Tauri adapters</li>
+<li>additive compatibility with <code>render()</code>/<code>handleKey()</code> and a separate unchanged <code>EngineDebug*</code>
+namespace</li>
+<li>no Canvas/CSS cutover, hit-region/pointer/scroll expansion, vendor-specific softkey placement, or
+WBP-02B Handheld Focus View</li>
+</ul>
+<h3 id="wbp-07-canvas-handset-renderer-integration">WBP-07 Canvas handset renderer integration</h3>
+<ul>
+<li>
+<p><code>Status</code>: in progress; F1 host cutover is complete, while the remaining WBP-07 performance gate
+and broader WBP-08/WBP-09 integration are not inferred complete</p>
+</li>
+<li>
+<p><code>Lane</code>: B</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-02</code>, <code>WBP-06</code>, frame F1</p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>handset-stage renderer component</p>
+</li>
+<li>
+<p>browser presenter and controller</p>
+</li>
+<li>
+<p>browser renderer tests</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>replace HTML line injection with the approved frame renderer</li>
+<li>render title, content, focus, and softkey regions from the frame</li>
+<li>preserve the previous committed frame during navigation</li>
+<li>coalesce redundant paints without changing engine event ordering</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>deck content is no longer rendered with <code>innerHTML</code></li>
+<li>native and WASM frame fixtures produce equivalent visible output</li>
+<li>host text measurement does not affect wrapping or hit targets</li>
+<li>closed diagnostics add less than five percent to p95 input/render latency</li>
+</ul>
+<h3 id="wbp-08-typed-input-and-pointer-assistance">WBP-08 Typed input and pointer assistance</h3>
+<ul>
+<li>
+<p><code>Lane</code>: B</p>
+</li>
+<li>
+<p><code>Depends On</code>: <code>WBP-06</code>, frame F2</p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>browser input adapter and keyboard routing</p>
+</li>
+<li>
+<p>handset controls</p>
+</li>
+<li>
+<p>engine hit-region and input tests owned by frame work items</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>route keyboard, handset buttons, wheel, and pointer through typed engine input</li>
+<li>render dynamic softkey labels and disabled state from engine output</li>
+<li>resolve pointer activation through stable engine hit regions</li>
+<li>add an explicit pointer-assistance preference if product validation requires it</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>all input paths for the same action produce equivalent runtime traces</li>
+<li>the browser never follows rendered links directly</li>
+<li>softkey labels and precedence come only from the engine</li>
+<li>rapid input and timer activity remain deterministically ordered</li>
+</ul>
+<h3 id="wbp-09-semantic-frame-accessibility-adapter">WBP-09 Semantic frame accessibility adapter</h3>
+<ul>
+<li><code>Lane</code>: B</li>
+<li><code>Depends On</code>: <code>WBP-06</code>, <code>WBP-07</code></li>
+<li><code>Conflicts With</code>: frame contract changes until WBP-06 stabilizes</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>expose the current card, text, focus, and actions to assistive technology from frame metadata</li>
+<li>return activation to the engine using stable action identifiers</li>
+<li>offer an optional external reading view without changing engine state</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>screen-reader and visual render derive from one engine frame</li>
+<li>activation through the semantic adapter matches physical-control traces</li>
+<li>no independent DOM navigation or task implementation exists</li>
+</ul>
+<h2 id="phase-3-transport-lifecycle-and-recovery--coordinate-with-transport">Phase 3: Transport Lifecycle and Recovery — Coordinate with Transport</h2>
+<h3 id="wbp-10-cancellable-fetch-lifecycle">WBP-10 Cancellable fetch lifecycle</h3>
+<ul>
+<li>
+<p><code>Status</code>: in progress; cancellation/admission is complete in PR <code>#521</code> and the WBP-11 browser
+presentation handoff is complete in PR <code>#544</code>, while exported transport attempt/phase metadata
+remains</p>
+</li>
+<li>
+<p><code>Lane</code>: C</p>
+</li>
+<li>
+<p><code>Depends On</code>: owning transport/WSP slice</p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>exported request/response types in <code>transport-rust/src/lib.rs</code></p>
+</li>
+<li>
+<p>transport runtime cancellation handling</p>
+</li>
+<li>
+<p>generated browser transport contracts</p>
+</li>
+<li>
+<p><code>browser/src-tauri/src/fetch_host.rs</code></p>
+</li>
+<li>
+<p><code>browser/frontend/src/app/navigation-state.ts</code></p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>return stable request identity plus attempt, route, and phase metadata</li>
+<li>add explicit cancellation keyed to request identity or an equivalent scoped token</li>
+<li>retain generation invalidation as a stale-result guard</li>
+<li>define deterministic completion-vs-cancel race behavior</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>Stop aborts the active operation rather than only hiding its result</li>
+<li>a stale or cancelled response cannot mutate engine, history, status, or persisted state</li>
+<li>cancel is acknowledged within 500 milliseconds on reference local test paths</li>
+<li>generated contracts pass drift checks</li>
+</ul>
+<h3 id="wbp-11-phase-aware-loading-and-recovery-presentation">WBP-11 Phase-aware loading and recovery presentation</h3>
+<ul>
+<li><code>Status</code>: done</li>
+<li><code>Lane</code>: C with browser integration</li>
+<li><code>Depends On</code>: <code>WBP-03</code>, <code>WBP-10</code></li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>show stable Preparing, Connecting, Gateway, Decode, Deck, and Card phases</li>
+<li>switch Go to Stop only when the request is cancellable</li>
+<li>keep the previous committed frame visible</li>
+<li>provide categorized Retry, Change route, Details, and Return actions</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>initial feedback appears within 100 milliseconds</li>
+<li>delayed visual progress appears by 200 milliseconds for slow operations</li>
+<li>every transport error includes a layer/category, correlation ID, and safe recovery action</li>
+<li>no browser-authored error card is injected into the engine</li>
+</ul>
+<p>Resolution:</p>
+<ul>
+<li>The browser navigation state machine publishes deterministic Preparing, Connecting,
+route-supported Gateway, Decode, Deck, and Card boundaries with the active request ID. Immediate
+visible feedback is synchronous and the existing non-destructive slow-navigation hint appears at
+180 milliseconds while the previous committed frame remains intact.</li>
+<li>Go changes to Stop only while a registered transport request can be cancelled. Completion,
+failure, cancellation, and supersession restore Go without allowing stale results to publish.</li>
+<li>The reserved phase-bar shell seam now presents the failing layer/category, safe correlation ID,
+and exact-request Retry, Change route, Details, and committed-frame Return actions. The surface is
+host-owned and never injects an error deck/card into the engine.</li>
+<li>Frontend integration coverage exercises phase order, WAP gateway routing, host-command rejection,
+correlated transport failure, Go/Stop cancellation, the 180-millisecond progress threshold,
+exact Retry, committed-frame preservation, and the single accessible announcement channel.</li>
+</ul>
+<h3 id="wbp-12-persistence-and-crash-recovery">WBP-12 Persistence and crash recovery</h3>
+<ul>
+<li>
+<p><code>Status</code>: done; packaged launch-after-crash evidence remains a WBP-14 release gate</p>
+</li>
+<li>
+<p><code>Lane</code>: C/browser</p>
+</li>
+<li>
+<p><code>Depends On</code>: stable host history identity; <code>WBP-11</code></p>
+</li>
+<li>
+<p><code>Likely Files</code>:</p>
+</li>
+<li>
+<p>new versioned persistence modules under <code>browser/</code></p>
+</li>
+<li>
+<p>Tauri setup and window-state integration</p>
+</li>
+<li>
+<p>browser session/history modules</p>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>persist settings, window state, bookmarks, and the last committed safe session</li>
+<li>write a crash marker and offer recovery on next launch</li>
+<li>restore local and safe GET sessions by policy</li>
+<li>require confirmation for any non-idempotent replay and never persist secrets in diagnostic exports</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>corrupted or unknown persistence versions degrade to a safe reset</li>
+<li>startup can display before persistence and network preflight complete</li>
+<li>POST bodies and credentials are never automatically replayed</li>
+<li>safe-session recovery is offered within two seconds after the shell appears</li>
+</ul>
+<p>Resolution:</p>
+<ul>
+<li>The existing Rust-owned v1 application-state envelope remains the sole persistence boundary.
+Serialized frontend component updates and the existing atomic native replacement prevent stale
+settings, Favorites, window, and recovery writers from replacing one another.</li>
+<li>Each bounded committed local example or sanitized credential-free GET sets the crash marker. Raw
+debug loads, POST/request-intent context, sensitive headers/query fields, URL credentials, and
+oversized targets clear or fail closed instead of becoming recovery candidates. The native
+event-loop exit path clears only the marker.</li>
+<li>The shell mounts before state, monitor, or network work. Marked local content restores
+automatically after engine readiness; network GET recovery is offered non-modally and waits for
+explicit confirmation. Corrupt/future state and window restore failures leave the shell usable.</li>
+<li>Deterministic frontend and Rust tests cover restart, the marker lifecycle, the two-second offer
+budget, GET confirmation, unsafe-session removal, migration/reset coexistence, removed monitors,
+serialized updates, and failed-replacement atomicity. The packaged relaunch observation remains
+explicit under WBP-14.</li>
+</ul>
+<h2 id="phase-4-diagnostics-and-deterministic-evidence">Phase 4: Diagnostics and Deterministic Evidence</h2>
+<h3 id="wbp-13-integrated-debug-timeline-and-sanitized-replay">WBP-13 Integrated debug timeline and sanitized replay</h3>
+<ul>
+<li><code>Lane</code>: B + C after contract stabilization</li>
+<li><code>Depends On</code>: debug connector plan, <code>WBP-06</code>, <code>WBP-10</code></li>
+<li><code>Conflicts With</code>: engine/Tauri contract edits</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>correlate host, transport, engine, script, and render events</li>
+<li>bound event storage and defer presentation while the drawer is closed</li>
+<li>export a versioned, sanitized <code>.waves-session.json</code> capture</li>
+<li>import captures into a controlled fixture-backed replay path</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>opening or closing tools does not change runtime ordering</li>
+<li>credentials and sensitive form values are redacted by default</li>
+<li>a capture can reproduce the same committed frames and input trace</li>
+<li>a 1,000-step replay completes without crash or unbounded memory growth</li>
+</ul>
+<h3 id="wbp-14-complete-desktop-path-evidence">WBP-14 Complete desktop-path evidence</h3>
+<ul>
+<li><code>Lane</code>: integration</li>
+<li><code>Depends On</code>: MVP slices above; relevant <code>INT-9</code> work</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>extend Waves browser stories for softkeys, pointer parity, loading, cancellation, history, failure,
+and recovery</li>
+<li>automate representative flows through Tauri, Kannel, transport, WASM engine, and renderer</li>
+<li>add startup, interaction-latency, memory-bound, keyboard, zoom, and screen-reader smoke evidence</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>local fixture stories and real-gateway UI runs are clearly distinguished</li>
+<li>native and WASM parity evidence is green for critical frame/input flows</li>
+<li>the complete path covers at least one success, timeout, cancellation, invalid deck, script trap, and
+crash-recovery case</li>
+<li>evidence is mapped back to the owning work item and compliance requirement</li>
+</ul>
+<h2 id="phase-5-device-profiles--later">Phase 5: Device Profiles — Later</h2>
+<h3 id="wbp-15-nokia-7110-profile">WBP-15 Nokia 7110 profile</h3>
+<ul>
+<li><code>Depends On</code>: stable Class C reference profile, compatibility registry, completed frame/input path</li>
+<li><code>Research status</code>: planning-ready from the locked historical evidence; implementation-blocked by
+the declared runtime dependencies</li>
+</ul>
+<p>Plan only from the two concordant Nokia publications locked in the historical source baseline. Cover
+viewport metrics, typography, focus, roller behavior, softkey mapping, exact Options ordering,
+editors, history, and documented limitations with profile-specific fixtures and goldens. Preserve
+device-specific timer cadence, firmware/version coverage, and reproducible failure behavior as
+explicit evidence gaps until primary material or physical-device traces close them.</p>
+<p>Accept planning readiness only when every behavior maps to a cited primary source or an explicit gap;
+do not infer missing behavior from neutral Class C or another Nokia handset. Implementation remains
+blocked on the declared runtime dependencies.</p>
+<h3 id="wbp-16-openwave-4x-handset-target-and-evidence-lock">WBP-16 Openwave 4.x handset target and evidence lock</h3>
+<ul>
+<li><code>Depends On</code>: <code>WBP-15</code> evidence method; no runtime dependency because this is research-only</li>
+<li><code>Research status</code>: ready to start as an evidence-lock task; no named Openwave profile is authorized</li>
+</ul>
+<p>Select one representative shipping handset and exact Phone.com/Openwave browser release. Pair the
+recovered browser-family style guide with that manufacturer’s user/developer guide, then resolve
+viewport and typography, focus controls, physical softkey placement, overflow-menu ordering,
+editor modes, Back/history, timers, and documented failures. Record hashes, provenance, conflicts,
+availability, and redistribution constraints while keeping restricted payloads outside Git.</p>
+<p>Accept only an evidence-locked planning candidate. Do not add a generic <code>Openwave</code> profile, implement
+runtime behavior, or use the 5.0 graphical guide to fill 4.x/OEM gaps. Ericsson and Motorola remain
+source-recovery candidates until comparable primary evidence exists.</p>
+<h2 id="proposed-delivery-order">Proposed Delivery Order</h2>
+<ol>
+<li>Product adoption and baseline measurement (<code>WBP-00</code>).</li>
+<li>Shell component foundation (<code>WBP-01</code>).</li>
+<li>Run visual system, navigation toolbar, onboarding, and host accessibility in parallel
+(<code>WBP-02</code> through <code>WBP-05</code>) with one shell-integration owner.</li>
+<li>Land the engine frame and affordance contract (<code>WBP-06</code>) through its existing F0 gate.</li>
+<li>Run Canvas/input/accessibility integration (<code>WBP-07</code> through <code>WBP-09</code>).</li>
+<li>Preserve merged transport cancellation and WBP-11 recovery presentation; finish WBP-10’s
+remaining exported transport metadata.</li>
+<li>Preserve WBP-12 persistence and crash-recovery implementation; record its remaining packaged
+launch-after-crash evidence on the merged WBP-11 presentation seam.</li>
+<li>Land diagnostics/replay after both contract surfaces stabilize (<code>WBP-13</code>).</li>
+<li>Close MVP with complete-path evidence (<code>WBP-14</code>).</li>
+<li>Begin named compatibility profiles only after Class C reference behavior is stable (<code>WBP-15</code>);
+conduct the additive Openwave target/source lock independently as research (<code>WBP-16</code>).</li>
+</ol>
+<h2 id="parallel-ownership-and-conflict-controls">Parallel Ownership and Conflict Controls</h2>
+<table>
+<thead>
+<tr>
+<th>Work</th>
+<th>Safe parallel owner</th>
+<th>High-conflict files or surfaces</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shell structure</td>
+<td>Browser UI integrator</td>
+<td>shell template, controller, global styles</td>
+</tr>
+<tr>
+<td>Theme and handset scaffold</td>
+<td>Browser visual owner after shell seams exist</td>
+<td>global tokens and handset component</td>
+</tr>
+<tr>
+<td>Onboarding content</td>
+<td>Browser/docs owner</td>
+<td>start-shell integration; example manifest generation</td>
+</tr>
+<tr>
+<td>Host accessibility</td>
+<td>Browser accessibility owner</td>
+<td>shared component templates and focus styles</td>
+</tr>
+<tr>
+<td>Frame contract</td>
+<td>Engine-contract owner</td>
+<td>engine contract, generated host types, Tauri engine adapter</td>
+</tr>
+<tr>
+<td>Canvas/input</td>
+<td>Renderer owner after frame contract</td>
+<td>presenter, controller, keyboard/input adapter</td>
+</tr>
+<tr>
+<td>Transport cancellation</td>
+<td>Transport-contract owner</td>
+<td>Rust exports, generated transport types, fetch host, navigation state</td>
+</tr>
+<tr>
+<td>Persistence</td>
+<td>Browser/Tauri owner after history identity</td>
+<td>bootstrap/session modules and settings UI</td>
+</tr>
+<tr>
+<td>Debug connector</td>
+<td>Diagnostics owner after contracts stabilize</td>
+<td>engine contract, Tauri adapter, developer drawer</td>
+</tr>
+<tr>
+<td>End-to-end evidence</td>
+<td>Test owner</td>
+<td>shared story manifest and test harness configuration</td>
+</tr>
+</tbody>
+</table>
+<p>Rules:</p>
+<ol>
+<li>One owner integrates edits to the shell template, root controller, copy, and global stylesheet.</li>
+<li>Frame and debug-connector contract changes are sequenced, not merged concurrently.</li>
+<li>Transport cancellation does not overlap another generated transport-contract migration.</li>
+<li>Distinct example and flow files are parallel-safe; manifest generation has one owner.</li>
+<li>Work rebases on core behavior rather than adding browser fallbacks for missing semantics.</li>
+</ol>
+<h2 id="mvp-exit-criteria">MVP Exit Criteria</h2>
+<p>The browser-side uplift is MVP-complete when:</p>
+<ol>
+<li>The main experience is recognizably a reference handset within restrained modern desktop chrome.</li>
+<li>Dynamic softkeys, focus, layout, and pointer targets are engine-owned.</li>
+<li>The Tauri viewport consumes the canonical frame path without HTML line injection.</li>
+<li>Local and network navigation show truthful phases and support real cancellation.</li>
+<li>The previous committed deck survives recoverable failure.</li>
+<li>Safe state, settings, bookmarks, and window position restore predictably.</li>
+<li>Browser chrome and the semantic frame adapter satisfy the accessibility acceptance checks.</li>
+<li>Diagnostics are correlated, bounded, sanitized, and replayable without controlling the runtime.</li>
+<li>Native/WASM parity, browser stories, and real Tauri/Kannel evidence are green.</li>
+<li>No browser code has assumed responsibility assigned to the engine or transport layers.</li>
+</ol>
+<h2 id="current-phase-1-checkpoint-and-next-authorization-gate">Current Phase 1 Checkpoint and Next Authorization Gate</h2>
+<p><code>WBP-00</code> through <code>WBP-05</code> are implemented on current <code>main</code>: <code>#348</code> carries the adoption/baseline
+and shell-integration evidence, while <code>#344</code>, <code>#346</code>, <code>#347</code>, and <code>#356</code> carry the visual,
+toolbar, onboarding, and host-accessibility slices. The original integration seams remain useful
+maintenance history, not an initial task batch.</p>
+<p>The additive <code>WBP-05A</code> checkpoint gap is closed. Navigation loading and failure changes now use one
+shell-owned live-announcement channel while visual status/recovery surfaces remain available.
+Production-built Chromium evidence covers full axe, 200 percent zoom/reflow, focus visibility,
+target geometry, and contrast at both configured window sizes. The accepted artifacts and explicit
+packaged macOS VoiceOver manual-only smoke are recorded in
+<code>WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md</code>; <code>WBP-05</code> remains completed history.</p>
+<p>The canonical compliance program records <code>WML-2</code>, engine-internal WML-302
+variable/substitution semantics, and engine-owned WML-303 task/BACK/softkey precedence as <code>done</code>;
+WML-302 made no host-contract edit, and D0-01 settled the additive <code>EngineDebug*</code> namespace and
+merge sequence. WBP-06 and F0-01 through F0-03 close the canonical frame/input contract, additive
+APIs, host projection, WML-309 presentation clauses, and CI drift gates without renaming or folding
+debug DTOs into frame/input types. F1-01 through F1-03 now complete the host-sample and Canvas
+renderer cutover plus deterministic committed-frame navigation publication. F2 pointer/scroll and
+softkey input remain dependency-ordered follow-ups.</p>
+<p><code>WBP-02A</code> is complete as the additive, browser-only native-host-chrome follow-up. It did not reopen
+the completed <code>WBP-01</code>/<code>WBP-02</code> history or itself activate <code>WBP-06</code>; the later F0 contract tranche
+closed WBP-06 independently.</p>
+<p>The July 28-30 hardening pass is also landed without changing the product-phase status. Focused-input
+Backspace, timer re-arming, gateway fallback, terminal external intents, failed frame commands,
+cancellable navigation, bounded single-pass render output, and bounded typed host ingress have
+direct regression coverage. Those fixes preserve completed Phase 1 tickets and do not by
+themselves claim WBP-07 through WBP-14 complete.</p>
+<p>The redesigned shell/Developer Tools workspace, pre-release marketing refresh, versioned
+application-state foundation, Favorites domain, native command registry, safe diagnostic
+projection, D0-02/D0-03 debug source/host bridge, D0-04 read-only Inspector, F2-01 through F2-03
+input/scrolling, issue <code>#450</code> shared-history correction, WBP-11 phase recovery, and APP-SHELL-01 are
+merged. WBP-10’s remaining exported transport metadata, the WBP-13 product slice, WBP-12 packaged
+validation, and WBP-14 native and packaged evidence remain explicit follow-ups.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-browser-product-implementation-plan">Waves Browser Product Implementation Plan</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#program-outcomes">Program Outcomes</a></li><li class="depth-2"><a href="#source-plans-and-ownership">Source Plans and Ownership</a></li><li class="depth-2"><a href="#non-negotiable-guardrails">Non-Negotiable Guardrails</a></li><li class="depth-2"><a href="#delivery-topology">Delivery Topology</a></li><li class="depth-2"><a href="#phase-0-adoption-and-baseline">Phase 0: Adoption and Baseline</a></li><li class="depth-3"><a href="#wbp-00-adopt-the-product-plan">WBP-00 Adopt the product plan</a></li><li class="depth-2"><a href="#phase-1-browser-foundation--can-start-while-core-continues">Phase 1: Browser Foundation — Can Start While Core Continues</a></li><li class="depth-3"><a href="#wbp-01-shell-component-and-layout-foundation">WBP-01 Shell component and layout foundation</a></li><li class="depth-3"><a href="#wbp-02-host-visual-system-and-reference-handset-scaffold">WBP-02 Host visual system and reference-handset scaffold</a></li><li class="depth-3"><a href="#wbp-02a-native-host-chrome-default">WBP-02A Native host-chrome default</a></li><li class="depth-3"><a href="#wbp-03-navigation-toolbar-information-architecture">WBP-03 Navigation-toolbar information architecture</a></li><li class="depth-3"><a href="#wbp-04-start-help-and-tutorial-minimum-slice">WBP-04 Start, help, and tutorial minimum slice</a></li><li class="depth-3"><a href="#wbp-05-host-accessibility-baseline">WBP-05 Host accessibility baseline</a></li><li class="depth-3"><a href="#phase-1-integration-gate">Phase 1 integration gate</a></li><li class="depth-2"><a href="#phase-2-contract-spine--coordinate-with-core">Phase 2: Contract Spine — Coordinate with Core</a></li><li class="depth-3"><a href="#wbp-06-frame-and-affordance-contract-coordination">WBP-06 Frame and affordance contract coordination</a></li><li class="depth-3"><a href="#wbp-07-canvas-handset-renderer-integration">WBP-07 Canvas handset renderer integration</a></li><li class="depth-3"><a href="#wbp-08-typed-input-and-pointer-assistance">WBP-08 Typed input and pointer assistance</a></li><li class="depth-3"><a href="#wbp-09-semantic-frame-accessibility-adapter">WBP-09 Semantic frame accessibility adapter</a></li><li class="depth-2"><a href="#phase-3-transport-lifecycle-and-recovery--coordinate-with-transport">Phase 3: Transport Lifecycle and Recovery — Coordinate with Transport</a></li><li class="depth-3"><a href="#wbp-10-cancellable-fetch-lifecycle">WBP-10 Cancellable fetch lifecycle</a></li><li class="depth-3"><a href="#wbp-11-phase-aware-loading-and-recovery-presentation">WBP-11 Phase-aware loading and recovery presentation</a></li><li class="depth-3"><a href="#wbp-12-persistence-and-crash-recovery">WBP-12 Persistence and crash recovery</a></li><li class="depth-2"><a href="#phase-4-diagnostics-and-deterministic-evidence">Phase 4: Diagnostics and Deterministic Evidence</a></li><li class="depth-3"><a href="#wbp-13-integrated-debug-timeline-and-sanitized-replay">WBP-13 Integrated debug timeline and sanitized replay</a></li><li class="depth-3"><a href="#wbp-14-complete-desktop-path-evidence">WBP-14 Complete desktop-path evidence</a></li><li class="depth-2"><a href="#phase-5-device-profiles--later">Phase 5: Device Profiles — Later</a></li><li class="depth-3"><a href="#wbp-15-nokia-7110-profile">WBP-15 Nokia 7110 profile</a></li><li class="depth-3"><a href="#wbp-16-openwave-4x-handset-target-and-evidence-lock">WBP-16 Openwave 4.x handset target and evidence lock</a></li><li class="depth-2"><a href="#proposed-delivery-order">Proposed Delivery Order</a></li><li class="depth-2"><a href="#parallel-ownership-and-conflict-controls">Parallel Ownership and Conflict Controls</a></li><li class="depth-2"><a href="#mvp-exit-criteria">MVP Exit Criteria</a></li><li class="depth-2"><a href="#current-phase-1-checkpoint-and-next-authorization-gate">Current Phase 1 Checkpoint and Next Authorization Gate</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_browser_product_implementation_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

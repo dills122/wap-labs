@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>select · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/vault/scr-rows/wml-c-43"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/vault/scr-rows/wml-c-43.md</p><div class="markdown-body"><h1 id="select">select</h1>
+<blockquote>
+<p>Generated from canonical repository manifests. Do not edit this note directly.</p>
+</blockquote>
+<h2 id="relationships">Relationships</h2>
+<ul>
+<li><code>belongs-to</code> → [[source-families/wml|wml]]</li>
+<li><code>planned-by</code> → [[work-items/WML-201|WML-201]]</li>
+<li><code>planned-by</code> → [[work-items/WML-204|WML-204]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-OPTION-VALUE-EVALUATION|WML-CL-OPTION-VALUE-EVALUATION]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-DEFAULT-PRECEDENCE|WML-CL-SELECT-DEFAULT-PRECEDENCE]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-INDEX-VALIDATION|WML-CL-SELECT-INDEX-VALIDATION]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-INIT-ORDER|WML-CL-SELECT-INIT-ORDER]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-MULTI-SERIALIZATION|WML-CL-SELECT-MULTI-SERIALIZATION]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-NO-IMPLICIT-REFRESH|WML-CL-SELECT-NO-IMPLICIT-REFRESH]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-PRESELECTION|WML-CL-SELECT-PRESELECTION]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-SINGLE-MULTI-MODE|WML-CL-SELECT-SINGLE-MULTI-MODE]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-STRUCTURE|WML-CL-SELECT-STRUCTURE]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-USER-UPDATE|WML-CL-SELECT-USER-UPDATE]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-SELECT-VARIABLE-INITIALIZATION|WML-CL-SELECT-VARIABLE-INITIALIZATION]]</li>
+<li><code>refines</code> ← [[clauses/WML-CL-VARIABLE-COMMIT-BEFORE-TASK|WML-CL-VARIABLE-COMMIT-BEFORE-TASK]]</li>
+<li><code>sourced-from</code> → [[source-documents/WAP-191_104-WML|WAP-191_104-WML]]</li>
+</ul>
+<h2 id="data">Data</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "family"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "ordinal"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">43</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "actor"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml-user-agent"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "referencedSection"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"11.6.2.1"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "specificationStatus"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"mandatory"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "dependencyExpression"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"none"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "scrIds"</span><span style="color:#E1E4E8">: []</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "sourceAnchor"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "documentId"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"WAP-191_104-WML"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "staticConformanceSection"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"15.1.5"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "changeSection"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">null</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "disposition"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "strict"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"required-for-claimed-actor"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "classCProfile"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"required-by-class-c-client-mcf"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "enhancementMayReplaceStrictBehavior"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "reviewState"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"source-extracted-class-c-applied-mapping-provisional"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "implementationStatus"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"partial"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "evidenceState"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"direct-test-linked"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "assessmentNote"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Select has deterministic DTD-derived syntax and control-reference validation, nested optgroup option ordering, source-order input/select initialization, complete iname/ivalue/name/value/fallback precedence, validated and deduplicated indices, single/multiple user selection, name/iname serialization, exact vdata option values, task-time variable synchronization, HREF-converted onpick dispatch, and direct proof that variable updates do not implicitly refresh other controls. The selected WML-204 tranche is complete; optional tabindex behavior and optgroup capability declaration remain assigned to additive WML-308 and keep this parent row partial."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "implementationEvidence"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/parser/wml_parser/nodes.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "symbol"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"parse_select_inline_node"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_runtime_internal/navigation.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "symbol"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"execute_card_task_action"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_runtime_internal.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "symbol"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"initial_select_indices"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_runtime_internal.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "symbol"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"sync_select_variables"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/runtime/variable.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "symbol"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"SubstitutionContext"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "testEvidence"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/navigation_metadata.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"focused_select_edit_cycle_commit_updates_render_and_runtime_var"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test focused_select_edit_cycle_commit_updates_render_and_runtime_var"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/parser/wml_parser/tests.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_select_structure_accepts_declared_control_grammar"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_select_structure_accepts_declared_control_grammar"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/actions_timers.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_variable_commit_before_task_commits_active_select_before_accept"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_variable_commit_before_task_commits_active_select_before_accept"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_select_default_precedence_covers_every_source_and_fallback"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_select_default_precedence_covers_every_source_and_fallback"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_select_init_order_precedence_validation_and_serialization"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_select_init_order_precedence_validation_and_serialization"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_select_variables_are_resynchronized_before_link_task_execution"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_select_variables_are_resynchronized_before_link_task_execution"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_fx_select_variable_updates_do_not_implicitly_refresh_other_controls"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_204_control_initialization_interleaves_selects_and_inputs_in_document_order"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "path"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"engine-wasm/engine/src/engine_tests/select_semantics.rs"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "test"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cd engine-wasm/engine &amp;&amp; cargo test wml_204_option_vdata_defaults_to_noesc_and_href_defaults_to_escape"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "ownerLayers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "engine-wasm"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "requirementIds"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "RQ-RMK-001"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "matrixWorkItems"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "WML-201"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "workItems"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "R0-01"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "R0-04"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "WML-201"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "WML-204"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "WML-308"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "source"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"spec-processing/source-manifests/wap-1.2.1-wml-scr.json"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#select">select</a></li><li class="depth-2"><a href="#relationships">Relationships</a></li><li class="depth-2"><a href="#data">Data</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/vault/scr-rows/wml-c-43.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

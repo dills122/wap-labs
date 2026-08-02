@@ -1,0 +1,457 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.1"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Failure Containment and Recovery Work Items · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/resilience_work_items"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/resilience_work_items.md</p><div class="markdown-body"><h1 id="waves-failure-containment-and-recovery-work-items">Waves Failure Containment and Recovery Work Items</h1>
+<p>Purpose: track the additive browser, Tauri-host, and engine resilience work found by the
+2026-07-29 current-main failure-containment audit.</p>
+<p>Audit base: <code>origin/main</code> <code>6cf1682a</code> (planning sync 2026-07-30).</p>
+<p>Status keys:</p>
+<ul>
+<li><code>todo</code></li>
+<li><code>in-progress</code></li>
+<li><code>blocked</code></li>
+<li><code>done</code></li>
+</ul>
+<h2 id="product-requirement">Product Requirement</h2>
+<p>One malformed request, response, deck, script, timer event, or host/engine failure must not freeze
+or crash Waves, create an uncontrolled network storm, corrupt navigation/history state, or prevent
+the user from loading a known-good deck. Failures must terminate predictably, expose a useful typed
+error, preserve usable state where appropriate, and leave an explicit recovery path.</p>
+<h2 id="scope-and-ownership">Scope and Ownership</h2>
+<ul>
+<li>Browser-owned containment stays in <code>browser/frontend</code>: navigation admission, failed-intent
+quarantine, recovery UI, history, and diagnostic projections.</li>
+<li>Host/IPC containment stays in <code>browser/src-tauri</code>: request validation, cancellation/concurrency,
+typed errors, and transactional engine command adaptation.</li>
+<li>Runtime work/output limits stay in <code>engine-wasm</code>: layout/render budgets and native/WASM parity.</li>
+<li>WBXML decoding, transport retry semantics, and network policy stay in <code>transport-rust</code>.</li>
+<li>The separately owned public service/deployment/examples work does not satisfy or replace these
+client-side containment items.</li>
+<li>Coordinate <code>browser-presenter.ts</code> work through one active presenter/history owner; these tickets
+change behavior and data handling, not styling.</li>
+</ul>
+<h2 id="immediate-containment-gate">Immediate Containment Gate</h2>
+<p>The P1 containment gate is closed: <code>RSL-01</code> quarantines terminal external-intent failures,
+<code>RSL-02</code> bounds and cancels navigation work, <code>RSL-03</code> makes mutating frame commands transactional,
+and <code>RSL-04</code> bounds single-pass render output. <code>RSL-05</code> closes malformed IPC admission and typed
+host failures, <code>RSL-06</code> closes diagnostic/export redaction, and <code>RSL-07</code> closes bounded
+presenter/history state.</p>
+<h2 id="lane-a-navigation-containment">Lane A: Navigation Containment</h2>
+<h3 id="rsl-01-terminal-external-intent-failure-quarantine">RSL-01 Terminal external-intent failure quarantine</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/510">#510</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code> release blocker; treat as <code>P0</code> for a distributed build exposed to uncontrolled
+public content</li>
+<li><code>Depends On</code>: none</li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/navigation-state.ts</code></li>
+<li><code>browser/frontend/src/app/engine-timer-runtime.ts</code></li>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+<li>focused tests for those modules</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Quarantine a terminally failed external intent by request identity plus engine/navigation
+generation.</li>
+<li>Preserve the invoking engine state and pending intent; do not weaken WML-205 rollback behavior by
+clearing engine state.</li>
+<li>Permit a new automatic follow only when intent identity changes, or one explicit attempt when the
+user chooses Reload/retry.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>A <code>WBXML_DECODE_FAILED</code> target followed by 50 timer ticks produces one automatic target fetch.</li>
+<li>Explicit Reload causes exactly one new attempt.</li>
+<li>A known-good URL or local deck loads afterward and stops the failed-intent loop.</li>
+<li>The invoking deck, card, history, focus, variables, and pending engine intent remain intact.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Terminal failure produces one bounded outcome and one useful error surface.</li>
+<li>No timer-driven automatic replay occurs without a changed intent or explicit user action.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Browser navigation now quarantines terminally failed external intents by resolved request identity
+and navigation generation without clearing engine state. Timer snapshots suppress the same
+quarantined intent, while explicit Reload/Go and changed intents receive one fresh attempt.</li>
+<li>Focused controller coverage proves one WBXML decode failure plus 50 timer ticks issues one target
+fetch, preserves the invoking state, deduplicates the failure notification, permits one explicit
+retry, and recovers through a changed known-good target.</li>
+</ul>
+<h3 id="rsl-02-cancellable-and-admission-controlled-navigation">RSL-02 Cancellable and admission-controlled navigation</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/509">#509</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code></li>
+<li><code>Depends On</code>: <code>RSL-01</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/navigation-state.ts</code></li>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+<li><code>browser/frontend/src/app/shell-event-bindings.ts</code></li>
+<li><code>browser/src-tauri/src/lib.rs</code></li>
+<li>fetch command/client contracts and focused tests</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Admit or coalesce one logical navigation operation instead of starting an independent fetch for
+every rapid action.</li>
+<li>Add a cancellable host fetch contract and stop superseded attempts/retries.</li>
+<li>Bound concurrent native fetch tasks while keeping generation checks as the final state-integrity
+guard.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Eight rapid identical actions produce at most one active fetch.</li>
+<li>Back or a new URL stops superseded work and cannot receive a stale toast, transport-panel update,
+or history mutation.</li>
+<li>A hung response can be cancelled and followed by a successful known-good load.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Both active work and committed state remain bounded under conflicting navigation.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Browser navigation now coalesces identical active request identities, assigns each admitted
+operation a cancellable request ID, and cancels superseded work for changed URLs, Back, Stop,
+mode changes, and disposal before admitting replacement transport work.</li>
+<li>The generated Tauri contract exposes <code>cancel_fetch</code>; the host admits at most two native fetch
+tasks so one cancelled request still blocked in kernel I/O cannot prevent its replacement. The
+shared transport cancellation token prevents cancelled responses, retries, and gateway fallback
+from continuing after the active blocking call returns.</li>
+<li>Focused frontend and host/transport tests cover eight-way coalescing, stale projection
+suppression, Back/Stop cancellation, hung-request recovery, bounded admission, and retry
+cancellation. Navigation generation checks remain the final frontend state-integrity guard.</li>
+</ul>
+<h2 id="lane-b-engine-and-frame-resource-safety">Lane B: Engine and Frame Resource Safety</h2>
+<h3 id="rsl-03-transactional-frame-commands-and-viewport-validation">RSL-03 Transactional frame commands and viewport validation</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/508">#508</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code></li>
+<li><code>Depends On</code>: none</li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-controller.ts</code></li>
+<li><code>browser/src-tauri/src/contract_types.rs</code></li>
+<li><code>browser/src-tauri/src/engine_bridge/engine_adapter.rs</code></li>
+<li><code>engine-wasm/engine/src/engine_public_api.rs</code></li>
+<li>native/WASM/Tauri boundary tests</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Define and validate one shared viewport range before engine mutation.</li>
+<li>Make every mutating frame command transactional: construct a valid candidate frame before commit
+or restore the exact previous engine state when frame construction fails.</li>
+<li>Return a typed invalid-input or resource error rather than a generic parse string.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li><code>u32::MAX + 1</code> fails before mutation.</li>
+<li>Forced frame failure after load, input/key, timer, Back, edit, and clear-intent preserves the
+complete previous state.</li>
+<li>A valid viewport and known-good deck succeed after each failure.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>No failed frame command leaves engine and frontend state out of sync.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Shared viewport bounds now reject out-of-range values with a typed error before mutation.</li>
+<li>Every mutating frame adapter builds the candidate result against a cloned engine and commits
+only after frame construction succeeds; focused tests cover load, key/input/action, timer, Back,
+external-intent, input-edit, and select-edit failure paths plus successful recovery.</li>
+</ul>
+<h3 id="rsl-04-bounded-single-pass-render-output">RSL-04 Bounded, single-pass render output</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/505">#505</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P1</code></li>
+<li><code>Depends On</code>: <code>RSL-03</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>engine-wasm/engine/src/layout/flow_layout.rs</code></li>
+<li><code>engine-wasm/engine/src/engine_public_api.rs</code></li>
+<li><code>browser/src-tauri/src/engine_bridge/engine_adapter.rs</code></li>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code></li>
+<li>native/WASM/Tauri/frontend tests</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Bound layout rows, segments, draw commands, and serialized frame bytes in the engine.</li>
+<li>Return a typed resource-limit failure with no partial state/presentation commit.</li>
+<li>Derive legacy render and presentation output from one layout pass during migration.</li>
+<li>Retain a defensive frontend output cap before HTML/DOM work.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>Native and WASM fixtures exactly at and one unit above each output limit.</li>
+<li>Rejected pathological output leaves the last good frame visible and a small deck renders next.</li>
+<li>Tauri frame construction proves one layout pass and native/WASM frame parity remains stable.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Any accepted deck has a deterministic upper bound on render work and host-visible output.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>The engine now stops layout at 4,096 rows, 4,096 segments, and 4,096 legacy draw commands, and
+caps the combined legacy/presentation JSON projection at 2 MiB. Rust-generated
+<code>EngineRenderError</code>/<code>ENGINE_RENDER_LIMITS</code> contracts keep native, WASM, Tauri, and frontend
+enforcement aligned.</li>
+<li>The Tauri compatibility frame consumes one engine <code>render_output()</code> result, so legacy and
+presentation projections share one instrumented layout pass. Candidate mutation still commits
+only after bounded frame construction succeeds; focused host tests preserve the last good frame
+and render a small replacement immediately after rejection.</li>
+<li>Exact-limit and one-over-limit native/WASM tests cover every budget, the presenter rejects
+oversized host output before cloning or canvas work, and the <code>RSL-04</code> wrapping story remains
+navigable through the generated example corpus.</li>
+</ul>
+<h2 id="lane-c-ipc-contract-hardening">Lane C: IPC Contract Hardening</h2>
+<h3 id="rsl-05-bounded-request-ingress-and-typed-host-errors">RSL-05 Bounded request ingress and typed host errors</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/507">#507</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P2</code></li>
+<li><code>Depends On</code>: none; the <code>wapcurl</code> stream is landed, but its CLI behavior remains out of scope</li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>transport-rust/src/lib.rs</code></li>
+<li><code>transport-rust/src/request_serialization.rs</code></li>
+<li><code>browser/src-tauri/src/lib.rs</code></li>
+<li><code>browser/src-tauri/src/contract_types.rs</code></li>
+<li>generated host contracts</li>
+<li><code>browser/frontend/src/app/tauri-invoke-guard.ts</code></li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Define aggregate limits for request headers, IDs, POST fields, encoded request bodies, card IDs,
+and edit drafts at their owning Rust boundaries.</li>
+<li>Reject before transport/spawn work and never echo sensitive payloads in error details.</li>
+<li>Generate a typed host error envelope and validate non-null IPC responses structurally without
+hand-copying contract schemas.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>One-over-limit tests for every bounded field and aggregate.</li>
+<li>Invalid request, cancellation, spawn/join, mutex, engine resource, and response-shape failures
+remain distinguishable and recoverable.</li>
+<li>Contract-generation and drift checks pass.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Malformed IPC terminates predictably before expensive work and all commands remain usable.</li>
+</ul>
+<ol start="9">
+<li><code>Coordination</code>:</li>
+</ol>
+<ul>
+<li>Do not change <code>transport-rust/src/request_meta.rs</code>, transport retry semantics, or <code>wapcurl</code> CLI
+exit diagnostics as part of this item.</li>
+</ul>
+<ol start="10">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Rust-owned request and host ingress budgets are generated into the TypeScript contracts. Every
+ticketed field and aggregate has a one-over test, with command-level coverage proving rejection
+precedes fetch registration, task admission, transport execution, and engine locking.</li>
+<li>RSL-05 transport and engine host commands return the generated <code>HostCommandError</code> taxonomy; the
+generated invoke client derives runtime validators from the same Rust-projected declarations.
+Invalid non-null response shapes fail closed, opaque failures are redacted, and recovery tests
+call commands successfully after boundary, mutex, and malformed-response failures.</li>
+<li>Evidence: <code>make lint-rust-transport</code>, <code>make test-rust-transport</code>, browser-host <code>cargo clippy</code> and
+serialized <code>cargo test</code>, frontend test/lint/typecheck/format checks, <code>contracts:check</code>,
+<code>tauri:schemas:check</code>, and <code>git diff --check</code> pass.</li>
+</ul>
+<h2 id="lane-d-diagnostic-and-ui-state-bounds">Lane D: Diagnostic and UI State Bounds</h2>
+<h3 id="rsl-06-redacted-developer-and-timeline-projections">RSL-06 Redacted developer and timeline projections</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/506">#506</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P2</code> security</li>
+<li><code>Depends On</code>: none</li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/session-history.ts</code></li>
+<li><code>browser/frontend/src/app/timeline.ts</code></li>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code></li>
+<li>associated history/timeline/presenter tests</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Keep exact internal request identity for WML history replay.</li>
+<li>Build explicit allowlisted/redacted developer-panel and export DTOs.</li>
+<li>Redact secret headers, legacy payloads, and typed form values while retaining safe method/count/
+content-type/length metadata.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>PIN/password, Authorization, Cookie, Proxy-Authorization, legacy payload, and typed post-field
+values never appear in panel/export JSON.</li>
+<li>Internal Back still replays the byte-exact original POST.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>Diagnostic artifacts are useful without disclosing replay credentials.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Timeline entries are projected into a fixed allowlisted DTO when produced, while host history
+continues to retain the exact request identity needed for standards-compatible Back replay.</li>
+<li>Drawer, detached diagnostic, and version 2 timeline-export serialization all consume the same
+projection. URL userinfo and credential-like query values are removed, request bodies and typed
+post-field values become count/length metadata, secret header values and arbitrary error details
+are omitted, and decoded/source payloads do not enter diagnostic state.</li>
+<li>Focused frontend coverage exercises secret canaries, near-miss query names, raw transport/runtime
+failures, producer-boundary projection, deterministic metadata, and byte-exact internal POST
+history preservation.</li>
+</ul>
+<h3 id="rsl-07-bounded-toast-and-host-history-state">RSL-07 Bounded toast and host-history state</h3>
+<ol>
+<li><code>Issue</code>: <a href="https://github.com/dills122/wap-labs/issues/504">#504</a></li>
+<li><code>Status</code>: <code>done</code></li>
+<li><code>Priority</code>: <code>P2</code></li>
+<li><code>Depends On</code>: <code>RSL-06</code></li>
+<li><code>Files</code>:</li>
+</ol>
+<ul>
+<li><code>browser/frontend/src/app/browser-presenter.ts</code></li>
+<li><code>browser/frontend/src/session-history.ts</code></li>
+<li><code>browser/frontend/src/app/timeline.ts</code></li>
+<li>associated tests</li>
+</ul>
+<ol start="6">
+<li><code>Build</code>:</li>
+</ol>
+<ul>
+<li>Deduplicate and cap identical queued toasts.</li>
+<li>Let successful recovery supersede stale failure notifications.</li>
+<li>Define deterministic oldest-entry history eviction with a documented retained WML back depth.</li>
+</ul>
+<ol start="7">
+<li><code>Tests</code>:</li>
+</ol>
+<ul>
+<li>97 identical failures remain within capacity and create one accessible failure announcement.</li>
+<li>A later successful load becomes visible immediately.</li>
+<li>A 10,000-navigation simulation keeps history and exported state bounded while Back/index/forward
+truncation remain deterministic within the retained window.</li>
+</ul>
+<ol start="8">
+<li><code>Accept</code>:</li>
+</ol>
+<ul>
+<li>UI and host-session collections remain bounded and preserve an obvious recovery signal.</li>
+</ul>
+<ol start="9">
+<li><code>Resolution</code>:</li>
+</ol>
+<ul>
+<li>Toast state retains at most four notifications (one visible plus three queued), coalesces
+identical message/tone pairs, and lets a successful recovery status or toast immediately remove
+stale failures. Repeated identical failures write the accessible live region once.</li>
+<li>Host history retains 32 entries: the current entry plus 31 deterministic WML Back steps. Forward
+history is truncated before a push, then overflow evicts the oldest entry and re-bases the index
+to the retained window. Retained POST request identities are independently cloned and remain
+byte-exact for replay.</li>
+<li>Timeline production and exported diagnostic state retain at most 200 already-redacted entries,
+even if a caller requests a larger window. A 10,000-navigation simulation covers history,
+timeline, toast, and export bounds.</li>
+<li>Issue <code>#450</code> remains a separate follow-up: this eviction policy preserves every entry it receives
+(including duplicates) but does not repair same-card history identity lost across deck
+replacement. Persistent/searchable history must continue to wait for that identity fix.</li>
+</ul>
+<h2 id="dispatch-order-and-conflict-map">Dispatch Order and Conflict Map</h2>
+<p>Completed containment and IPC batches:</p>
+<ol>
+<li><code>RSL-01</code> navigation quarantine</li>
+<li><code>RSL-02</code> cancellable/admission-controlled navigation</li>
+<li><code>RSL-03</code> transactional frame commands</li>
+<li><code>RSL-04</code> bounded single-pass render output</li>
+<li><code>RSL-05</code> bounded ingress and typed host errors</li>
+</ol>
+<p>Completed diagnostic/UI-state sequence:</p>
+<ol>
+<li><code>RSL-06</code> diagnostic and export redaction.</li>
+<li><code>RSL-07</code> bounded toast/history state on the completed RSL-06 projection boundary.</li>
+</ol>
+<p>Issue <code>#450</code> history identity/cross-deck correctness remains required before persisted or searchable
+history.</p>
+<p>Likely conflicts:</p>
+<ul>
+<li>issue <code>#450</code> / WBP-11 / merged shell presentation: host-history and presenter surfaces</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-failure-containment-and-recovery-work-items">Waves Failure Containment and Recovery Work Items</a></li><li class="depth-2"><a href="#product-requirement">Product Requirement</a></li><li class="depth-2"><a href="#scope-and-ownership">Scope and Ownership</a></li><li class="depth-2"><a href="#immediate-containment-gate">Immediate Containment Gate</a></li><li class="depth-2"><a href="#lane-a-navigation-containment">Lane A: Navigation Containment</a></li><li class="depth-3"><a href="#rsl-01-terminal-external-intent-failure-quarantine">RSL-01 Terminal external-intent failure quarantine</a></li><li class="depth-3"><a href="#rsl-02-cancellable-and-admission-controlled-navigation">RSL-02 Cancellable and admission-controlled navigation</a></li><li class="depth-2"><a href="#lane-b-engine-and-frame-resource-safety">Lane B: Engine and Frame Resource Safety</a></li><li class="depth-3"><a href="#rsl-03-transactional-frame-commands-and-viewport-validation">RSL-03 Transactional frame commands and viewport validation</a></li><li class="depth-3"><a href="#rsl-04-bounded-single-pass-render-output">RSL-04 Bounded, single-pass render output</a></li><li class="depth-2"><a href="#lane-c-ipc-contract-hardening">Lane C: IPC Contract Hardening</a></li><li class="depth-3"><a href="#rsl-05-bounded-request-ingress-and-typed-host-errors">RSL-05 Bounded request ingress and typed host errors</a></li><li class="depth-2"><a href="#lane-d-diagnostic-and-ui-state-bounds">Lane D: Diagnostic and UI State Bounds</a></li><li class="depth-3"><a href="#rsl-06-redacted-developer-and-timeline-projections">RSL-06 Redacted developer and timeline projections</a></li><li class="depth-3"><a href="#rsl-07-bounded-toast-and-host-history-state">RSL-07 Bounded toast and host-history state</a></li><li class="depth-2"><a href="#dispatch-order-and-conflict-map">Dispatch Order and Conflict Map</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/resilience_work_items.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>
