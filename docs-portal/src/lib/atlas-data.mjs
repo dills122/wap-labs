@@ -38,6 +38,11 @@ const schemaByInput = {
   clauseManifest: 'https://wap-labs.dev/schemas/selected-clauses.schema.json'
 };
 
+const knownCapabilityDispositions = new Set([
+  'capability-gated-non-ip-bearer',
+  'optional-class-c-client-capability'
+]);
+
 export class AtlasDataValidationError extends Error {
   constructor(failures) {
     super(
@@ -452,8 +457,8 @@ function validateReferencesAndOrder(input, failures) {
         `${family.family} capability clause`,
         failures
       );
-      if (family.capabilityDisposition !== 'capability-gated-non-ip-bearer') {
-        failures.push(`${family.family}.capabilityDisposition is not capability-gated`);
+      if (!knownCapabilityDispositions.has(family.capabilityDisposition)) {
+        failures.push(`${family.family}.capabilityDisposition is not a known capability category`);
       }
       if (family.capabilityParentCount !== capabilityParents.length) {
         failures.push(`${family.family}.capabilityParentCount does not match capabilityParents.length`);

@@ -31,6 +31,60 @@ test('current Atlas inputs pass schema, reference, and ordering validation', () 
   assert.equal(atlas.clauseManifest.schemaVersion, 1);
 });
 
+test('selected-clause capability categories are known and clauses match their family', () => {
+  const atlas = validateAtlasData(baseline());
+  const capabilityFamilies = atlas.clauseManifest.families.filter(
+    (family) => family.capabilityDisposition
+  );
+
+  assert.deepEqual(
+    [...new Set(capabilityFamilies.map((family) => family.capabilityDisposition))].sort(),
+    ['capability-gated-non-ip-bearer', 'optional-class-c-client-capability']
+  );
+  for (const family of capabilityFamilies) {
+    assert.ok(
+      family.capabilityClauses.every(
+        (clause) => clause.profileApplicability === family.capabilityDisposition
+      )
+    );
+  }
+});
+
+test('unknown selected-clause capability categories fail schema validation', () => {
+  const unknownFamily = clone(baseline());
+  const family = unknownFamily.clauseManifest.families.find(
+    (candidate) => candidate.capabilityDisposition
+  );
+  family.capabilityDisposition = 'unknown-capability-category';
+  assertValidationFailure(
+    unknownFamily,
+    /capabilityDisposition: must be equal to one of the allowed values/
+  );
+
+  const unknownClause = clone(baseline());
+  const clause = unknownClause.clauseManifest.families
+    .find((candidate) => candidate.capabilityClauses?.length)
+    .capabilityClauses[0];
+  clause.profileApplicability = 'unknown-capability-category';
+  assertValidationFailure(
+    unknownClause,
+    /profileApplicability: must be equal to one of the allowed values/
+  );
+});
+
+test('known clause capability category must equal its family disposition', () => {
+  const data = clone(baseline());
+  const family = data.clauseManifest.families.find(
+    (candidate) => candidate.capabilityDisposition === 'optional-class-c-client-capability'
+  );
+  family.capabilityClauses[0].profileApplicability = 'capability-gated-non-ip-bearer';
+
+  assertValidationFailure(
+    data,
+    /profileApplicability does not match capabilityDisposition/
+  );
+});
+
 test('unknown compliance-program schema versions fail before portal assembly', () => {
   const data = clone(baseline());
   data.program.schemaVersion = 2;

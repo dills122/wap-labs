@@ -177,7 +177,7 @@ export const EXAMPLES: HostExample[] = [
                 "activeCardId": "accept-broken",
                 "focusedLinkIndex": 0
               },
-              "statusIncludes": "Card id not found"
+              "statusIncludes": "The requested page action could not be completed."
             }
           },
           {
@@ -625,7 +625,7 @@ export const EXAMPLES: HostExample[] = [
                 "activeCardId": "home",
                 "focusedLinkIndex": 1
               },
-              "statusIncludes": "Card id not found"
+              "statusIncludes": "The requested page action could not be completed."
             }
           }
         ]
