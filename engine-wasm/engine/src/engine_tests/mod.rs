@@ -40,6 +40,8 @@ const WMLS_501_MINIMAL_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex");
 const WMLS_501_NAMED_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
+const WMLS_502_OPERATOR_CONVERSIONS_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex");
 const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
 const WMLS_501_STACK_UNDERFLOW_UNIT: &str =

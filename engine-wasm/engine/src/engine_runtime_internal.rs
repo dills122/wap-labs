@@ -190,19 +190,19 @@ impl WmlEngine {
                 ),
                 ScriptErrorCategoryLiteral::HostBinding,
             ),
-            Err(WapRuntimeError::UnsupportedImplicitReturn { function }) => {
-                ScriptExecutionOutcome::fatal(
-                    format!(
-                        "wap runtime: unsupported implicit return in function {function}"
-                    ),
-                    ScriptErrorCategoryLiteral::HostBinding,
-                )
-            }
             Err(WapRuntimeError::InvalidFunctionIndex { index }) => {
                 ScriptExecutionOutcome::fatal(
                     format!("wap runtime: invalid function index {index}"),
                     ScriptErrorCategoryLiteral::Integrity,
                 )
+            }
+            Err(error) => {
+                let category = if error.is_resource_exhaustion() {
+                    ScriptErrorCategoryLiteral::Resource
+                } else {
+                    ScriptErrorCategoryLiteral::Integrity
+                };
+                ScriptExecutionOutcome::fatal(format!("wap runtime: {error}"), category)
             }
         }
     }

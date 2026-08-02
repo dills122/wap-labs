@@ -2659,22 +2659,27 @@ export const EXAMPLES: HostExample[] = [
   {
     "key": "scriptLinkExecution",
     "label": "Script Link Execution",
-    "description": "Runs a registered, verified WAP-193 compilation unit through a script href and exposes execution outcome in runtime state.",
-    "goal": "Validate runtime routes a named WAP-193 function through verification and bounded execution.",
+    "description": "Runs a registered, verified WAP-193 operator/conversion unit through a script href and exposes execution outcome in runtime state.",
+    "goal": "Validate runtime routes a named WAP-193 function through verification and bounded language execution.",
     "workItems": [
       "W0-01",
       "W0-03",
       "W1-02",
-      "WMLS-501"
+      "W1-04",
+      "WMLS-501",
+      "WMLS-502"
     ],
     "specItems": [
       "RQ-WMLS-001",
+      "RQ-WMLS-004",
+      "RQ-WMLS-005",
+      "RQ-WMLS-006",
       "RQ-WMLS-008",
       "RQ-WMLS-009",
       "RQ-WMLS-010"
     ],
     "testingAc": [
-      "Load the example and press Enter on \"Run WAP-193 script\"; activeCardId should stay home.",
+      "Load the example and press Enter on \"Run WAP-193 operators\"; activeCardId should stay home.",
       "Confirm runtime-state lastScriptExecutionOk becomes true.",
       "Confirm runtime-state lastScriptExecutionTrap remains (none).",
       "Select \"Reject invalid WAP-193 script\", confirm the fatal/integrity stack-underflow outcome, then run the valid script again to prove host recovery."
@@ -2682,15 +2687,20 @@ export const EXAMPLES: HostExample[] = [
     "flows": [
       {
         "id": "script-link-success-and-navigation-continuity",
-        "title": "A script link succeeds without disrupting subsequent navigation",
+        "title": "A verified operator/conversion script succeeds without disrupting navigation",
         "target": "host-sample",
         "workItems": [
           "W0-01",
           "W0-03",
-          "WMLS-501"
+          "W1-04",
+          "WMLS-501",
+          "WMLS-502"
         ],
         "specItems": [
           "RQ-WMLS-001",
+          "RQ-WMLS-004",
+          "RQ-WMLS-005",
+          "RQ-WMLS-006",
           "RQ-WMLS-008",
           "RQ-WMLS-009"
         ],
@@ -2862,7 +2872,7 @@ export const EXAMPLES: HostExample[] = [
         ]
       }
     ],
-    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:wap-193-minimal-return-es.wmlsc#main\">Run WAP-193 script</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n      <br/>\n      <a href=\"script:wap-193-stack-underflow.wmlsc#main\">Reject invalid WAP-193 script</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Script action execution demo.\n      <a href=\"script:wap-193-operator-conversions.wmlsc#main\">Run WAP-193 operators</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n      <br/>\n      <a href=\"script:wap-193-stack-underflow.wmlsc#main\">Reject invalid WAP-193 script</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Script executed in previous card. <a href=\"#home\">Back</a></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "timerHostClockLifecycle",
