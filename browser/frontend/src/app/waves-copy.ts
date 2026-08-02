@@ -10,6 +10,7 @@ const locale = {
     back: 'Back',
     reload: 'Reload',
     go: 'Go',
+    stop: 'Stop',
     address: 'Address',
     addressPlaceholder: 'Enter a WAP or WML URL',
     historyControls: 'History controls',
@@ -193,6 +194,27 @@ const locale = {
     boundedSnapshot: 'Bounded snapshot',
     noSnapshot: 'No snapshot captured'
   },
+  navigation: {
+    lifecycle: 'Navigation lifecycle',
+    recoveryActions: 'Navigation recovery actions',
+    retry: 'Retry',
+    changeRoute: 'Change route',
+    details: 'Details',
+    returnToDeck: 'Return',
+    failed: 'Navigation failed',
+    correlation: (requestId: string) => `Request ${requestId}`,
+    phase: {
+      preparing: 'Preparing request',
+      connecting: 'Connecting',
+      gateway: 'Gateway exchange',
+      decode: 'Decoding response',
+      deck: 'Loading deck',
+      card: 'Preparing card'
+    },
+    failureTitle: (layer: string, category: string) => `${layer} · ${category}`,
+    returnedToDeck: 'Returned to the last committed deck.',
+    chooseAnotherRoute: 'Choose another address or route, then press Go.'
+  },
   statusPrefix: {
     error: 'Error:',
     fetchFailed: 'Fetch failed:',
@@ -250,6 +272,7 @@ const locale = {
     loading: (url: string) => `Loading ${url}...`,
     followingExternalIntent: (url: string) => `Following external intent: ${url}`,
     loadingPreviousPage: (url: string) => `Loading previous page: ${url}`,
+    navigationStopped: 'Navigation stopped.',
     fetchFailed: (message: string) => `Fetch failed: ${message}`,
     // Distinct from fetchFailed: the transport request itself succeeded, but the
     // payload it returned could not be parsed/used as a WML deck. Kept as

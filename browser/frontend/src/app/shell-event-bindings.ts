@@ -17,6 +17,10 @@ export interface ShellEventBindingActions {
   fetchUrlEnter(event: Event): Promise<void>;
   reload(): Promise<void>;
   stopNavigation(): Promise<void>;
+  retryNavigation(): Promise<void>;
+  changeNavigationRoute(): Promise<void>;
+  showNavigationDetails(): Promise<void>;
+  returnFromNavigationError(): Promise<void>;
   changeMode(): Promise<void>;
   selectLocalExample(): Promise<void>;
   loadLocalExample(): Promise<void>;
@@ -61,6 +65,22 @@ export class ShellEventBindings {
     this.bindButton('#btn-fetch-url', runAction('fetch-url', actions.fetchUrl));
     this.bindButton('#btn-reload', runAction('reload', actions.reload));
     this.bindButton('#btn-stop-navigation', runAction('stop-navigation', actions.stopNavigation));
+    this.bindButton(
+      '#btn-navigation-retry',
+      runAction('retry-navigation', actions.retryNavigation)
+    );
+    this.bindButton(
+      '#btn-navigation-change-route',
+      runAction('change-navigation-route', actions.changeNavigationRoute)
+    );
+    this.bindButton(
+      '#btn-navigation-details',
+      runAction('show-navigation-details', actions.showNavigationDetails)
+    );
+    this.bindButton(
+      '#btn-navigation-return',
+      runAction('return-from-navigation-error', actions.returnFromNavigationError)
+    );
 
     const fetchUrlEnter = runAction('fetch-url-enter', async (event) => {
       if (event) {

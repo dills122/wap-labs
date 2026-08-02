@@ -269,9 +269,9 @@ and lanes may run concurrently subject to the noted file ownership.
 Desktop dispatch checkpoint: F1-01 through F1-03, RSL-01 through RSL-07, APP-STATE-01,
 APP-FAV-01, APP-CMD-01, and D0-01 through D0-04 are complete. D0-04 implements read-only Inspector
 consumption in its exclusive consumer/component surfaces while F2-01 remains independent on
-engine-input ownership. WBP-11 and APP-SHELL-01 follow on shared presenter/shell surfaces. RSL-07
-bounds retained history but leaves issue `#450`'s cross-deck same-card identity correction to its
-separate follow-up.
+engine-input ownership. WBP-11 phase-aware loading/recovery is complete on the shared presenter
+seam; APP-SHELL-01 follows through one shell owner. RSL-07 bounds retained history, and issue `#450`
+has completed the cross-deck same-card identity correction.
 
 Preserve completed WML, WBXML, WDP, WCMP, and WSP evidence; do not activate
 connection-oriented WSP/WTP to manufacture completion. `REN-4` and full

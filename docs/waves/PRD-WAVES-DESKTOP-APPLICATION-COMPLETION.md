@@ -626,8 +626,8 @@ Before feature UI begins:
 
 1. F1 primary frame rendering and deterministic navigation publication are complete in PRs
    `#519`, `#520`, and `#526`.
-2. Cancellable/admission-controlled navigation is complete in PR `#521`; `WBP-11` phases and
-   recovery presentation remain.
+2. Cancellable/admission-controlled navigation and `WBP-11` phase-aware recovery presentation are
+   complete; `WBP-12` safe-session/crash recovery remains.
 3. Versioned application state is complete in PR `#522`; safe projection, integrated settings,
    window restore, and local/GET-safe recovery remain.
 4. The safe Favorites/service-catalog domain is complete in PR `#517`; WAP Home/Library UI remains.

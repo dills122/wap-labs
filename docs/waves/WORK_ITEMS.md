@@ -88,12 +88,14 @@ compliance closure or change the dependency order in the machine-readable compli
 Public release-readiness remains gated by the plan's access, threat-model, operations, and release
 evidence even though the bounded endpoint is now reachable.
 
-## Next In Line (Post-Merge Checkpoint Sync - 2026-08-02)
+## Next In Line (Desktop Evidence Checkpoint - 2026-08-02)
 
-Audit base: `origin/main` `0028946e`. The GitHub open/draft PR queue was empty at this checkpoint.
-The second-pass desktop visual refinement, redesigned shell/Developer Tools workspace, D0-04
-read-only Inspector, and F2-01 deterministic click input are now landed. They preserve `WBP-02A`,
-do not implement `WBP-02B`, and do not replace remaining frame/runtime evidence.
+Audit base: `origin/main` `dfe2c4c9`. PRs `#541`, `#542`, `#543`, and `#545` have merged typed POST
+history, F2-02 scrolling, F2-03 unified input, and APP-SHELL-01 Library/Preferences. PR `#544`
+still carries WBP-11 phase recovery and is not counted as merged behavior. The WBP-14 inventory in
+[`WBP_14_DESKTOP_PATH_EVIDENCE.md`](WBP_14_DESKTOP_PATH_EVIDENCE.md) records 3 complete, 7 partial,
+5 missing, and 4 blocked evidence scenarios and prevents release closure from being inferred from
+lower-level tests.
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -185,10 +187,11 @@ The resilience board is also synchronized to current main: `RSL-01` through `RSL
 The final pair adds allowlisted diagnostic redaction followed by bounded toast, timeline, and
 host-history state on the shared presenter/history surface.
 
-The desktop sequence through issue `#450`, F2-02/F2-03, `WBP-11`, and `APP-SHELL-01` is complete.
-The shell now exposes the integrated Library/Preferences surfaces through the shared application
-command registry while leaving Inspector ownership separate. `WBP-14` release evidence is the next
-browser release-readiness slice; `WMLS-502` remains parallel-safe in its separate script lane.
+Issue `#450`, typed POST replay, F2-02/F2-03, and APP-SHELL-01 are merged on the stabilized browser
+foundation. Land WBP-11 phase recovery in `#544`, then close WBP-14 in evidence order: native
+timeout/cancellation/invalid-deck/script-trap coverage; WBP-12 crash recovery; WBP-13 replay/memory;
+packaged screen-reader and latency evidence. `WMLS-502` remains a separate script lane and must not
+be inferred complete from WBP-14 evidence.
 
 ### WML-203A Legacy local-example standalone-document migration
 
@@ -208,16 +211,17 @@ browser release-readiness slice; `WMLS-502` remains parallel-safe in its separat
 
 The `Authentic Core, Modern Console` direction is adopted. Current status is:
 
-| Slice     | Status | Direct evidence / next gate                                                                                                                                                                                                                                                                                                                                                                                |
-| --------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `WBP-00`  | `done` | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`.                                                                                                                                                                                    |
-| `WBP-01`  | `done` | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced.                                                                                                                                                                                             |
-| `WBP-02`  | `done` | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics.                                                                                                                                                                                                                                                                     |
-| `WBP-02A` | `done` | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green.                                                                                                                                                                             |
-| `WBP-03`  | `done` | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                                                                                  |
-| `WBP-04`  | `done` | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                                                                                   |
-| `WBP-05`  | `done` | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history.                                                         |
-| `WBP-06`  | `done` | F0-01 through F0-03 add the engine-owned versioned presentation frame, logical affordances, frame-bound typed input, generated native/WASM/Tauri projections, WML-309 evidence, and CI drift coverage while retaining legacy render/key compatibility and the separate `EngineDebug*` namespace. Canvas/CSS, physical softkey placement, hit regions, pointer/scroll input, and WBP-02B remain later work. |
+| Slice     | Status        | Direct evidence / next gate                                                                                                                                                                                                                                                                                                                                                                                |
+| --------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WBP-00`  | `done`        | The neutral 20-column `Class C Reference`, technical-primary audience assumption, reference hardware, 20-run startup/navigation/input baseline, and non-golden screenshots are recorded in `WAVES_BROWSER_BASELINE.md`.                                                                                                                                                                                    |
+| `WBP-01`  | `done`        | `#343` shell seams plus minimum/default-window geometry, complete stable tab order, native disclosure activation, frontend tests/build, all 9 Waves stories, and contract/Tauri checks are directly evidenced.                                                                                                                                                                                             |
+| `WBP-02`  | `done`        | `#344` added the reference-handset visual scaffold and independent integer display scaling without changing engine viewport semantics.                                                                                                                                                                                                                                                                     |
+| `WBP-02A` | `done`        | Additive browser-only follow-up makes native Tauri chrome authoritative while preserving the neutral Class C handset/LCD, IDs, keyboard order, and existing semantics; rendered default/minimum/200-percent evidence is green.                                                                                                                                                                             |
+| `WBP-03`  | `done`        | `#346` separated source, derived route, and static compatibility profile while preserving navigation commands and transport truthfulness.                                                                                                                                                                                                                                                                  |
+| `WBP-04`  | `done`        | `#347` added the Welcome/Help leaf and first tutorial deck through the ordinary local-example/engine path with executable host and Waves story coverage.                                                                                                                                                                                                                                                   |
+| `WBP-05`  | `done`        | `#356` added the mounted-shell accessibility audit, keyboard-reachability coverage, visible focus treatment, 24 CSS-pixel button floor, and a deliberately minimal viewport name without creating a WML DOM model. The later additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap without reopening this history.                                                         |
+| `WBP-06`  | `done`        | F0-01 through F0-03 add the engine-owned versioned presentation frame, logical affordances, frame-bound typed input, generated native/WASM/Tauri projections, WML-309 evidence, and CI drift coverage while retaining legacy render/key compatibility and the separate `EngineDebug*` namespace. Canvas/CSS, physical softkey placement, hit regions, pointer/scroll input, and WBP-02B remain later work. |
+| `WBP-14`  | `in-progress` | The machine-checked desktop-path audit distinguishes fixture, native-gateway, and packaged-manual evidence. The native success/recovery pilot is real, but timeout, cancellation, invalid deck, script trap, WBP-12 crash recovery, WBP-13 replay/memory, latency, and packaged screen-reader closure remain explicit.                                                                                     |
 
 Phase 1 implementation is complete; the original seams remain documented in
 `WAVES_BROWSER_BASELINE.md` for maintenance history. WBP-06/F0 is now complete after the declared

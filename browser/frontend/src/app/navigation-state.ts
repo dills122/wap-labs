@@ -40,6 +40,23 @@ export type BackNavigationMode = 'engine' | 'host' | 'none';
 // content types and WBXML decode failures.
 export type NavigationErrorKind = 'network' | 'parse';
 
+export type NavigationPhase = 'preparing' | 'connecting' | 'gateway' | 'decode' | 'deck' | 'card';
+
+export type NavigationFailureLayer = 'request' | 'connection' | 'gateway' | 'decode' | 'deck';
+
+export interface NavigationPhaseContext {
+  phase: NavigationPhase;
+  requestId: string;
+  requestedUrl: string;
+}
+
+export interface NavigationFailureContext {
+  layer: NavigationFailureLayer;
+  category: string;
+  requestId: string;
+  requestedUrl: string;
+}
+
 const navigationErrorKindForFetchFailure = (response: FetchResponse): NavigationErrorKind =>
   response.error?.code === 'UNSUPPORTED_CONTENT_TYPE' ||
   response.error?.code === 'WBXML_DECODE_FAILED'
@@ -82,7 +99,13 @@ export interface NavigationHooks {
    * consistent, visible failure indicator (e.g. a toast) regardless of which
    * failure kind occurred, instead of only the quieter status-panel text.
    */
-  onNavigationError?(message: string, kind: NavigationErrorKind): void;
+  onNavigationError?(
+    message: string,
+    kind: NavigationErrorKind,
+    context: NavigationFailureContext
+  ): void;
+  onNavigationPhase?(context: NavigationPhaseContext): void;
+  onNavigationCancellableChange?(cancellable: boolean, requestId?: string): void;
   onStateEvent?(action: string, details?: Record<string, unknown>): void;
 }
 
@@ -111,6 +134,7 @@ export interface NavigationStateMachine {
   isExternalIntentQuarantined(intentUrl: string, requestPolicy?: FetchRequestPolicy): boolean;
   quarantineExternalIntent(intentUrl: string, requestPolicy?: FetchRequestPolicy): void;
   cancelPendingNavigation(): Promise<void> | undefined;
+  recoverToCommittedState(): void;
   getSessionState(): HostSessionState;
   getHistoryState(): HostHistoryState;
 }
@@ -208,6 +232,7 @@ export const createNavigationStateMachine = (
     const superseded = activeTransportOperation;
     activeTransportOperation = undefined;
     if (superseded) {
+      hooks.onNavigationCancellableChange?.(false);
       pendingHostCancellation = hostClient
         .cancelFetch(superseded.requestId)
         .then(() => undefined)
@@ -231,6 +256,34 @@ export const createNavigationStateMachine = (
     }
     if (activeTransportOperation?.generation === generation) {
       activeTransportOperation = undefined;
+      hooks.onNavigationCancellableChange?.(false);
+    }
+  };
+
+  const emitNavigationPhase = (
+    phase: NavigationPhase,
+    requestId: string,
+    requestedUrl: string
+  ): void => {
+    hooks.onNavigationPhase?.({ phase, requestId, requestedUrl });
+    hooks.onStateEvent?.('navigation-phase', { phase, requestId, requestedUrl });
+  };
+
+  const navigationFailureLayerForFetchFailure = (
+    response: FetchResponse
+  ): NavigationFailureLayer => {
+    switch (response.error?.code) {
+      case 'INVALID_REQUEST':
+      case 'PAYLOAD_TOO_LARGE':
+        return 'request';
+      case 'GATEWAY_TIMEOUT':
+      case 'PROTOCOL_ERROR':
+        return 'gateway';
+      case 'UNSUPPORTED_CONTENT_TYPE':
+      case 'WBXML_DECODE_FAILED':
+        return 'decode';
+      default:
+        return 'connection';
     }
   };
 
@@ -278,6 +331,16 @@ export const createNavigationStateMachine = (
       mergeSessionState({ navigationStatus: 'idle', lastError: undefined });
     }
     return pendingHostCancellation;
+  };
+
+  const recoverToCommittedState = (): void => {
+    if (hostSessionState.navigationStatus !== 'error') {
+      return;
+    }
+    mergeSessionState({
+      navigationStatus: hostSessionState.finalUrl ? 'loaded' : 'idle',
+      lastError: undefined
+    });
   };
 
   const externalIntentRequestIdentity = (
@@ -400,15 +463,37 @@ export const createNavigationStateMachine = (
       lastError: undefined
     });
 
-    const transport = await hostClient.fetchDeck({
-      url: requestedUrl,
-      method,
-      headers: options.headers,
-      timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
-      retries: WAVES_CONFIG.transportFetchRetries,
-      requestId,
-      requestPolicy
-    });
+    emitNavigationPhase('connecting', requestId, requestedUrl);
+    if (/^waps?:/i.test(requestedUrl)) {
+      emitNavigationPhase('gateway', requestId, requestedUrl);
+    }
+
+    let transport: FetchResponse;
+    try {
+      transport = await hostClient.fetchDeck({
+        url: requestedUrl,
+        method,
+        headers: options.headers,
+        timeoutMs: WAVES_CONFIG.transportFetchTimeoutMs,
+        retries: WAVES_CONFIG.transportFetchRetries,
+        requestId,
+        requestPolicy
+      });
+    } catch (error) {
+      if (!isCurrentNavigation(generation)) {
+        return null;
+      }
+      const message = error instanceof Error ? error.message : String(error);
+      const category = navigationFailureCategory(error);
+      mergeSessionState({ navigationStatus: 'error', lastError: message });
+      hooks.onNavigationError?.(message, 'network', {
+        layer: category === 'INVALID_REQUEST' ? 'request' : 'connection',
+        category,
+        requestId,
+        requestedUrl
+      });
+      return null;
+    }
     if (!isCurrentNavigation(generation)) {
       return null;
     }
@@ -432,9 +517,16 @@ export const createNavigationStateMachine = (
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(errorMessage, navigationErrorKindForFetchFailure(transport));
+      hooks.onNavigationError?.(errorMessage, navigationErrorKindForFetchFailure(transport), {
+        layer: navigationFailureLayerForFetchFailure(transport),
+        category: transport.error?.code ?? 'TRANSPORT_FAILURE',
+        requestId,
+        requestedUrl
+      });
       return null;
     }
+
+    emitNavigationPhase('decode', requestId, requestedUrl);
 
     const deckInput = transport.engineDeckInput ?? {
       wmlXml: transport.wml ?? '',
@@ -451,12 +543,18 @@ export const createNavigationStateMachine = (
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse');
+      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse', {
+        layer: 'decode',
+        category: 'MISSING_WML_PAYLOAD',
+        requestId,
+        requestedUrl
+      });
       return null;
     }
 
     let frame: EngineFrame;
     try {
+      emitNavigationPhase('deck', requestId, requestedUrl);
       frame = await hostClient.engineLoadDeckContextFrame({
         wmlXml: deckInput.wmlXml,
         baseUrl: deckInput.baseUrl,
@@ -478,7 +576,12 @@ export const createNavigationStateMachine = (
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(message, 'parse');
+      hooks.onNavigationError?.(message, 'parse', {
+        layer: 'deck',
+        category: 'ENGINE_LOAD_FAILED',
+        requestId,
+        requestedUrl
+      });
       return null;
     }
     if (!isCurrentNavigation(generation)) {
@@ -497,6 +600,7 @@ export const createNavigationStateMachine = (
       focusedLinkIndex: frame.snapshot.focusedLinkIndex,
       externalNavigationIntent: frame.snapshot.externalNavigationIntent
     });
+    emitNavigationPhase('card', requestId, requestedUrl);
     if (publishLoadedFrame) {
       publishFrame(frame);
     }
@@ -558,7 +662,12 @@ export const createNavigationStateMachine = (
         if (hop === maxExternalIntentHops) {
           const message = `External intent hop limit reached (${maxExternalIntentHops}).`;
           mergeSessionState({ navigationStatus: 'error', lastError: message });
-          hooks.onNavigationError?.(message, 'network');
+          hooks.onNavigationError?.(message, 'network', {
+            layer: 'deck',
+            category: 'EXTERNAL_INTENT_HOP_LIMIT',
+            requestId,
+            requestedUrl: nextUrl
+          });
         }
       }
     }
@@ -590,6 +699,8 @@ export const createNavigationStateMachine = (
       rejectOperation = reject;
     });
     activeTransportOperation = { generation, identity, requestId, promise: operationPromise };
+    emitNavigationPhase('preparing', requestId, identity.requestedUrl);
+    hooks.onNavigationCancellableChange?.(true, requestId);
     void (async () => {
       try {
         if (pendingHostCancellation) {
@@ -808,9 +919,18 @@ export const createNavigationStateMachine = (
     isExternalIntentQuarantined,
     quarantineExternalIntent,
     cancelPendingNavigation,
+    recoverToCommittedState,
     getSessionState: () => hostSessionState,
     getHistoryState: () => hostHistory
   };
+};
+
+const navigationFailureCategory = (error: unknown): string => {
+  if (typeof error !== 'object' || error === null || !('code' in error)) {
+    return 'HOST_FAILURE';
+  }
+  const code = (error as { code?: unknown }).code;
+  return typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,63}$/.test(code) ? code : 'HOST_FAILURE';
 };
 
 const historyNavigationUrl = (url: string, activeCardId?: string): string => {
