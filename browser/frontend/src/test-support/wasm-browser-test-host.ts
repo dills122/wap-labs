@@ -31,6 +31,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     baseUrl: engine.baseUrl(),
     contentType: engine.contentType(),
     browserContextEpoch: engine.browserContextEpoch(),
+    historyPushSequence: engine.historyPushSequence(),
     lastBackNavigationHandled: engine.lastBackNavigationHandled(),
     externalNavigationIntent: engine.externalNavigationIntent(),
     externalNavigationRequestPolicy: engine.externalNavigationRequestPolicy(),

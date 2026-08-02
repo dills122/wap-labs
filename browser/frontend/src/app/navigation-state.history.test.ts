@@ -442,6 +442,95 @@ describe('navigation-state history behavior', () => {
     ]);
   });
 
+  it('preserves a duplicate same-card access across a cross-deck round trip', async () => {
+    let loadCount = 0;
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) =>
+          fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml: '<wml><card id="a"><p>ok</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          }),
+        engineLoadDeckContextFrame: async (request) => {
+          loadCount += 1;
+          return frame({
+            activeCardId: request.baseUrl.includes('/b.wml') ? 'b' : 'a',
+            baseUrl: request.baseUrl,
+            browserContextEpoch: 1,
+            historyPushSequence: loadCount === 1 ? 0 : 3
+          });
+        },
+        engineHandleKeyFrame: async () =>
+          frame({
+            activeCardId: 'a',
+            baseUrl: 'http://example.test/a.wml',
+            browserContextEpoch: 1,
+            historyPushSequence: 1
+          }),
+        engineHandleInputFrame: async () =>
+          frame({
+            activeCardId: 'a',
+            baseUrl: 'http://example.test/a.wml',
+            browserContextEpoch: 1,
+            historyPushSequence: 2
+          }),
+        engineAdvanceTimeMsFrame: async () =>
+          frame({
+            activeCardId: 'a',
+            baseUrl: 'http://example.test/a.wml',
+            browserContextEpoch: 1,
+            historyPushSequence: 3
+          }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: machine.getSessionState().activeCardId,
+            baseUrl: machine.getSessionState().finalUrl,
+            browserContextEpoch: 1,
+            lastBackNavigationHandled: false
+          })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+    await machine.applyEngineInput({
+      type: 'activate-action',
+      frameId: 'frame-a',
+      actionId: 'do:repeat'
+    });
+    await machine.applyEngineTimerTick(100);
+    await machine.loadTransportUrl({
+      url: 'http://example.test/b.wml',
+      source: 'external-intent',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState().entries.map((entry) => entry.activeCardId)).toEqual([
+      'a',
+      'a',
+      'a',
+      'a',
+      'b'
+    ]);
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a');
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a');
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a');
+    expect(await machine.navigateBackWithFallback()).toBe('host');
+    expect(machine.getSessionState().activeCardId).toBe('a');
+  });
+
   it('keeps host history synchronized when engine back pops a same-deck card', async () => {
     const backCards = ['a-2', 'a-1'];
     const cardTransitions = ['a-2', 'a-3'];
@@ -476,6 +565,19 @@ describe('navigation-state history behavior', () => {
   });
 
   it('resets host history to the current card after same-deck newcontext', async () => {
+    const unchangedFreshFrame = frame({
+      activeCardId: 'fresh',
+      browserContextEpoch: 2,
+      historyPushSequence: 1
+    });
+    const contextFrames = [
+      frame({
+        activeCardId: 'fresh',
+        browserContextEpoch: 2,
+        historyPushSequence: 1
+      }),
+      unchangedFreshFrame
+    ];
     const machine = createNavigationStateMachine(
       createHostClientMock({
         fetchDeck: async (request) =>
@@ -488,8 +590,12 @@ describe('navigation-state history behavior', () => {
             }
           }),
         engineLoadDeckContextFrame: async () =>
-          frame({ activeCardId: 'home', browserContextEpoch: 1 }),
-        engineHandleKeyFrame: async () => frame({ activeCardId: 'fresh', browserContextEpoch: 2 })
+          frame({
+            activeCardId: 'home',
+            browserContextEpoch: 1,
+            historyPushSequence: 0
+          }),
+        engineHandleKeyFrame: async () => contextFrames.shift() ?? unchangedFreshFrame
       }),
       'http://seed.test'
     );
@@ -500,6 +606,7 @@ describe('navigation-state history behavior', () => {
       followExternalIntent: false
     });
     await machine.applyEngineKey('enter');
+    await machine.applyEngineKey('down');
 
     expect(machine.getHistoryState()).toEqual({
       entries: [

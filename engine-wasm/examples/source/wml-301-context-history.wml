@@ -1,12 +1,12 @@
 <!--
 label: WML-301 Context and History
-description: Crosses deck boundaries, repeats an explicit URL, restores history, and enters a newcontext destination.
+description: Repeats the active card, crosses a deck boundary, restores both duplicate entries, and enters a newcontext destination.
 goal: Verify browser-context preservation/reset, fragment selection, duplicate history pushes, and forward/back process order.
 work-items: WML-301
 spec-items: WML-CL-CARD-CONTEXT-ATTRIBUTE,WML-CL-CARD-ID-FRAGMENT,WML-CL-CONTEXT-SINGLE-SCOPE,WML-CL-CONTEXT-STATE-MEMBERS,WML-CL-EXTERNAL-NAVIGATION-NEW-CONTEXT,WML-CL-GO-FRAGMENT-FALLBACK,WML-CL-GO-HISTORY-PUSH,WML-CL-HISTORY-DUPLICATE-PUSH,WML-CL-HISTORY-STACK-MODEL,WML-CL-NAVIGATION-REFERENCE-MODEL
 testing-ac:
-- Follow the first link into a second deck and confirm the source context variable is visible after onenterforward processing.
-- Access the same target URL again, then press Back twice and confirm both duplicate target and source entries are restored in order.
+- Follow the same-card link, then enter a second deck and confirm the source context variable is visible after onenterforward processing.
+- Press Back twice and confirm both request-shaped source entries are restored in order across the deck boundary.
 - Follow the newcontext link and confirm the variable and previous history are cleared.
 -->
 <?xml version="1.0"?>
@@ -14,8 +14,11 @@ testing-ac:
   "http://www.wapforum.org/DTD/wml13.dtd">
 <wml>
   <card id="source">
+    <onevent type="onenterforward">
+      <refresh><setvar name="contextValue" value="kept"/></refresh>
+    </onevent>
     <p>
-      <input name="contextValue" value="kept"/>
+      <a href="#source">Repeat source card</a>
       <a href="wml301ContextHistoryTarget.wml#target">Open target</a>
       <a href="wml301ContextHistoryFresh.wml#fresh">Reset context</a>
     </p>

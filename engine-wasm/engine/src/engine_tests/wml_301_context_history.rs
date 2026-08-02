@@ -1,6 +1,6 @@
 use super::*;
 use crate::{
-    DeckNavigationContext, DeckNavigationKind, WmlLoadDiagnosticClassLiteral,
+    DeckNavigationContext, DeckNavigationKind, EngineInputEvent, WmlLoadDiagnosticClassLiteral,
     WmlLoadDiagnosticCodeLiteral, WmlLoadDiagnosticOutcomeLiteral,
 };
 
@@ -24,6 +24,47 @@ fn load_for_navigation(
             DeckNavigationContext::new(None, Some(navigation_url), kind),
         )
         .expect("navigation-shaped deck load should succeed");
+}
+
+#[test]
+fn wml_301_history_push_sequence_covers_key_action_and_timer_duplicate_accesses() {
+    let mut keyed = WmlEngine::new();
+    keyed
+        .load_deck(r##"<wml><card id="a"><p><a href="#a">Again</a></p></card></wml>"##)
+        .expect("key fixture should load");
+    keyed
+        .handle_key("enter".to_string())
+        .expect("same-card key access should succeed");
+    assert_eq!(keyed.active_card_id().as_deref(), Ok("a"));
+    assert_eq!(keyed.history_push_sequence(), 1);
+
+    let mut action = WmlEngine::new();
+    action
+        .load_deck(
+            r##"<wml><card id="a"><do name="repeat" type="accept"><go href="#a"/></do><p>A</p></card></wml>"##,
+        )
+        .expect("action fixture should load");
+    let action_frame = action.render_frame().expect("action frame should render");
+    action
+        .handle_input(EngineInputEvent::ActivateAction {
+            frame_id: action_frame.frame_id,
+            action_id: "do:repeat".to_string(),
+        })
+        .expect("same-card action access should succeed");
+    assert_eq!(action.active_card_id().as_deref(), Ok("a"));
+    assert_eq!(action.history_push_sequence(), 1);
+
+    let mut timer = WmlEngine::new();
+    timer
+        .load_deck(
+            r##"<wml><card id="a"><onevent type="ontimer"><go href="#a"/></onevent><timer value="1"/><p>A</p></card></wml>"##,
+        )
+        .expect("timer fixture should load");
+    timer
+        .advance_time_ms(100)
+        .expect("same-card timer access should succeed");
+    assert_eq!(timer.active_card_id().as_deref(), Ok("a"));
+    assert_eq!(timer.history_push_sequence(), 1);
 }
 
 #[test]
@@ -283,8 +324,12 @@ fn wml_301_independent_load_without_nonempty_fragment_selects_first_card() {
 fn wml_301_destination_newcontext_reinitializes_the_cross_deck_context() {
     let mut engine = WmlEngine::new();
     engine
-        .load_deck(r#"<wml><card id="source"><p>Source</p></card></wml>"#)
+        .load_deck(r##"<wml><card id="source"><p><a href="#source">Again</a></p></card></wml>"##)
         .unwrap();
+    engine
+        .handle_key("enter".to_string())
+        .expect("same-card history should be established before newcontext");
+    assert_eq!(engine.history_push_sequence(), 1);
     assert!(engine.set_var("secret".to_string(), "discard".to_string()));
     let previous_epoch = engine.browser_context_epoch();
 
@@ -299,6 +344,7 @@ fn wml_301_destination_newcontext_reinitializes_the_cross_deck_context() {
     assert_eq!(engine.get_var("secret".to_string()), None);
     assert!(engine.nav_stack.is_empty());
     assert_eq!(engine.browser_context_epoch(), previous_epoch + 1);
+    assert_eq!(engine.history_push_sequence(), 0);
 }
 
 #[test]

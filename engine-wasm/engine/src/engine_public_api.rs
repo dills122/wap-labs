@@ -30,6 +30,7 @@ impl WmlEngine {
             last_back_navigation_handled: false,
             last_wml_load_diagnostics: Vec::new(),
             browser_context_epoch: 0,
+            history_push_sequence: 0,
             debug_recorder: None,
         }
     }
@@ -232,6 +233,7 @@ impl WmlEngine {
             next.debug_clear_variable_marks();
         } else {
             next.browser_context_epoch = previous_context_epoch;
+            next.history_push_sequence = self.history_push_sequence;
             next.vars = self.vars.clone();
             next.script_units = self.script_units.clone();
             next.script_entrypoints = self.script_entrypoints.clone();
@@ -935,6 +937,13 @@ impl WmlEngine {
     /// independent-navigation resets.
     pub fn browser_context_epoch(&self) -> u32 {
         self.browser_context_epoch
+    }
+
+    /// Monotonic counter for committed same-deck forward history pushes.
+    /// Hosts compare snapshots to observe explicit duplicate-card accesses
+    /// without inferring navigation from a changed card identifier.
+    pub fn history_push_sequence(&self) -> u32 {
+        self.history_push_sequence
     }
 
     /// Get authored deck-level `xml:lang` metadata.

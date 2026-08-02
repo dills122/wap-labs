@@ -575,6 +575,21 @@ fn wasm_wml_301_forward_deck_load_preserves_context_and_selects_fragment() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_301_duplicate_same_card_access_advances_history_push_sequence() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(r##"<wml><card id="a"><p><a href="#a">Again</a></p></card></wml>"##)
+        .expect("same-card fixture should load through WASM");
+
+    assert_eq!(engine.history_push_sequence_wasm(), 0);
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("same-card access should succeed through WASM");
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("a"));
+    assert_eq!(engine.history_push_sequence_wasm(), 1);
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_301_card_table_boundaries_match_native_render_and_navigation() {
     let mut engine = WmlEngine::wasm_new();
     engine

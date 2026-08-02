@@ -34,6 +34,16 @@
       },
       "steps": [
         {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "source", "focusedLinkIndex": 0 },
+            "session": {
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
+            },
+            "traceKinds": ["ACTION_FRAGMENT"]
+          }
+        },
+        {
           "action": { "type": "key", "key": "down" },
           "expect": { "state": { "activeCardId": "source", "focusedLinkIndex": 1 } }
         },
@@ -53,20 +63,11 @@
           }
         },
         {
-          "action": { "type": "key", "key": "enter" },
-          "expect": {
-            "state": { "activeCardId": "target", "focusedLinkIndex": 0 },
-            "session": {
-              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
-            }
-          }
-        },
-        {
           "action": { "type": "back" },
           "expect": {
-            "state": { "activeCardId": "target", "focusedLinkIndex": 0 },
+            "state": { "activeCardId": "source", "focusedLinkIndex": 0 },
             "session": {
-              "finalUrl": "http://fixtures.test/examples/wml301ContextHistoryTarget.wml"
+              "finalUrl": "http://fixtures.test/examples/wml301ContextHistory.wml"
             }
           }
         },

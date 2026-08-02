@@ -1,7 +1,7 @@
 <!--
 label: WML-301 Context and History Target
 description: Supporting destination deck for the WML-301 executable network story.
-goal: Expose preserved context after forward entry and permit a duplicate explicit URL access.
+goal: Expose preserved context after forward entry across a deck boundary.
 work-items: WML-301
 spec-items: WML-CL-CONTEXT-STATE-MEMBERS,WML-CL-GO-HISTORY-PUSH,WML-CL-HISTORY-DUPLICATE-PUSH,WML-CL-NAVIGATION-REFERENCE-MODEL
 testing-ac:
@@ -20,7 +20,6 @@ testing-ac:
     </onevent>
     <p>
       Target context: $(contextValue). Entry: $(entryDirection).
-      <a href="wml301ContextHistoryTarget.wml#target">Repeat target URL</a>
     </p>
   </card>
 </wml>

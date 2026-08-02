@@ -222,6 +222,11 @@ impl WmlEngine {
         self.browser_context_epoch()
     }
 
+    #[wasm_bindgen(js_name = historyPushSequence)]
+    pub fn history_push_sequence_wasm(&self) -> u32 {
+        self.history_push_sequence()
+    }
+
     #[wasm_bindgen(js_name = deckLanguage)]
     pub fn deck_language_wasm(&self) -> Option<String> {
         self.deck_language()

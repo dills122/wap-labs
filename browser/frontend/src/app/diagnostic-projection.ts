@@ -139,6 +139,7 @@ export interface DiagnosticRuntimeSnapshot {
   baseUrl: string;
   contentType?: string;
   browserContextEpoch?: number;
+  historyPushSequence?: number;
   lastBackNavigationHandled: boolean;
   externalNavigationIntent?: string;
   externalNavigationRequestPolicy?: DiagnosticRequestPolicy;
@@ -371,6 +372,9 @@ export const projectRuntimeSnapshot = (
       : {}),
     ...(snapshot.browserContextEpoch !== undefined
       ? { browserContextEpoch: snapshot.browserContextEpoch }
+      : {}),
+    ...(snapshot.historyPushSequence !== undefined
+      ? { historyPushSequence: snapshot.historyPushSequence }
       : {}),
     lastBackNavigationHandled: snapshot.lastBackNavigationHandled,
     ...(snapshot.externalNavigationIntent

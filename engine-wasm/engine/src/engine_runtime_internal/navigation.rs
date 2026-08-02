@@ -127,10 +127,12 @@ impl WmlEngine {
         nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         nav.engine.initialize_controls_on_active_card()?;
         if nav.engine.run_onenterforward_for_active_card()? {
+            nav.engine.history_push_sequence = nav.engine.history_push_sequence.saturating_add(1);
             nav.commit();
             return Ok(());
         }
         nav.engine.start_timer_for_active_card()?;
+        nav.engine.history_push_sequence = nav.engine.history_push_sequence.saturating_add(1);
         nav.commit();
         Ok(())
     }
@@ -154,6 +156,7 @@ impl WmlEngine {
     /// would drop that call's own outputs before the host reads them.
     pub(crate) fn reset_browser_context_state(&mut self) {
         self.browser_context_epoch = self.browser_context_epoch.saturating_add(1);
+        self.history_push_sequence = 0;
         self.vars.clear();
         self.debug_clear_variable_marks();
         self.nav_stack.clear();
@@ -627,6 +630,7 @@ struct NavStateRollback {
     last_script_dialog_requests: Vec<ScriptDialogRequest>,
     last_script_timer_requests: Vec<ScriptTimerRequest>,
     browser_context_epoch: u32,
+    history_push_sequence: u32,
 }
 
 impl NavStateRollback {
@@ -646,6 +650,7 @@ impl NavStateRollback {
             last_script_dialog_requests: engine.last_script_dialog_requests.clone(),
             last_script_timer_requests: engine.last_script_timer_requests.clone(),
             browser_context_epoch: engine.browser_context_epoch,
+            history_push_sequence: engine.history_push_sequence,
         }
     }
 
@@ -664,6 +669,7 @@ impl NavStateRollback {
         engine.last_script_dialog_requests = self.last_script_dialog_requests;
         engine.last_script_timer_requests = self.last_script_timer_requests;
         engine.browser_context_epoch = self.browser_context_epoch;
+        engine.history_push_sequence = self.history_push_sequence;
     }
 }
 
