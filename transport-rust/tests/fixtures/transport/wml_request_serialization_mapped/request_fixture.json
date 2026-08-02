@@ -46,6 +46,29 @@
         "contentType": "application/x-www-form-urlencoded; charset=iso-8859-1",
         "referer": "login.wml"
       }
+    },
+    {
+      "name": "multipart-parts-have-explicit-content-types",
+      "url": "https://example.test/forms/submit",
+      "intent": {
+        "method": "post",
+        "enctype": "multipart/form-data",
+        "sendReferer": false,
+        "acceptCharset": "utf-8",
+        "sameDeck": false,
+        "postFields": [
+          { "name": "plain", "value": "answer" },
+          { "name": "city", "value": "Montréal" }
+        ]
+      },
+      "expected": {
+        "method": "POST",
+        "url": "https://example.test/forms/submit",
+        "bodyBytes": null,
+        "bodyText": "--waves-wml-304-0\r\nContent-Disposition: form-data; name=\"plain\"\r\nContent-Type: text/plain\r\n\r\nanswer\r\n--waves-wml-304-0\r\nContent-Disposition: form-data; name=\"city\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nMontréal\r\n--waves-wml-304-0--\r\n",
+        "contentType": "multipart/form-data; boundary=waves-wml-304-0",
+        "referer": null
+      }
     }
   ],
   "invalidCases": [

@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 14/15 complete)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 15/15 complete)
 
 ## Purpose
 
@@ -152,7 +152,7 @@ Legend:
   - [x] Same-deck postfield suppression is documented and fixture-scoped.
   - [x] Native transport serialization, charset/body construction, smallest-relative referer emission, and no-cache application have direct byte-exact fixture, browser adapter, Tauri HTTP handoff, and native WSP header evidence.
   - [x] Request A2 retains and replays semantic POST input without treating legacy `postContext` bytes as the authoritative identity.
-  - [ ] Multipart part Content-Type construction remains the final WML-304 gap.
+  - [x] Multipart POST uses deterministic collision-checked boundaries, gives every postfield part an explicit `text/plain` Content-Type, and adds the selected charset when the value contains non-US-ASCII characters. The source-derived mapped transport fixture and request-serialization tests cover byte-exact output, header-name escaping/injection rejection, boundary collision avoidance, and the existing encoded-body limit.
 
 ### RQ-RMK-009 WML2 reference-behavior compatibility guardrails
 

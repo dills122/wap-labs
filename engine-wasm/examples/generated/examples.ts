@@ -5194,7 +5194,7 @@ export const EXAMPLES: HostExample[] = [
     "testingAc": [
       "Activate Submit and inspect the ordered POST request intent emitted by the engine.",
       "Confirm sendreferer, no-cache, enctype, accept-charset, and same-deck values are serialized identically for native and WASM hosts.",
-      "Treat transport encoding, GET query merge, multipart construction, and POST history replay as explicit follow-up work."
+      "Confirm the transport fixture independently covers GET query merge, both POST encodings, and typed POST history replay without moving serialization into the engine."
     ],
     "flows": [
       {

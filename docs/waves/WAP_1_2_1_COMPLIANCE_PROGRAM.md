@@ -38,7 +38,7 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 45 implemented, 74 partial, and 79
+- the selected implementation audit is 47 implemented, 72 partial, and 79
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
@@ -56,8 +56,8 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 21 implemented, 12 partial, and
-  14 missing; the selected 39-row client subset is 21 implemented, 12 partial,
+- the source-wide mandatory code audit finds 23 implemented, 10 partial, and
+  14 missing; the selected 39-row client subset is 23 implemented, 10 partial,
   and 6 missing;
 - 34 rows have direct code symbols and runnable test evidence.
 - `WML-201` directly projects all 76 WML rows and all 175 selected WML
@@ -196,16 +196,19 @@ closes `SRC-004` without changing the redistribution boundary.
 ## Immediate execution order
 
 After the merged WSP-805 request work, WML-306 policy closure, WML-309 frame-contract closure, and
-additive WMLS-501 verifier tranche, the canonical program records 31 work items `done`, 11
-`in-progress`, 40 `todo`, and one `blocked`, with 45/198 selected parents implemented and 363/762
+additive WMLS-501 verifier tranche, the canonical program records 32 work items `done`, 10
+`in-progress`, 40 `todo`, and one `blocked`, with 47/198 selected parents implemented and 364/762
 clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.
 
-The dispatch baton is residual `WML-304`/`WSP-805` request application, residual `WML-301`
-aggregate card/WAE evidence, and the remaining WMLS-502 parent/unsupported-clause follow-through
-after its bounded operator/conversion executor. Completed-ticket history remains immutable; newly
-exposed gaps require additive follow-ups.
+The WML-304 request pipeline is complete at 15/15 direct clauses; WSP-805 remains independently
+in progress because its declared WAE/WDP family gaps are broader than multipart serialization. The
+dispatch baton is residual `WML-301` aggregate card/WAE evidence, additive `WML-307` character and
+generic-WBXML residual closure, additive `WML-308` form-presentation/capability residual closure,
+and the remaining WMLS-502 parent/unsupported-clause follow-through after its bounded
+operator/conversion executor. Completed-ticket history remains immutable; newly exposed gaps
+require additive follow-ups.
 
 1. Treat `SRC-005` external-dependency normalization as complete, including
    the selected `TIAEIA-732` metadata/license boundary. Keep `SRC-006`

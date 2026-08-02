@@ -29,6 +29,8 @@ struct ExpectedSerialization {
     method: String,
     url: String,
     body_bytes: Option<Vec<u8>>,
+    #[serde(default)]
+    body_text: Option<String>,
     content_type: Option<String>,
     referer: Option<String>,
 }
@@ -104,11 +106,12 @@ fn mapped_fixture_is_byte_exact_and_rejects_invalid_combinations() {
             case.name
         );
         assert_eq!(serialized.url, case.expected.url, "{} URL", case.name);
-        assert_eq!(
-            serialized.body, case.expected.body_bytes,
-            "{} body",
-            case.name
-        );
+        let expected_body = case
+            .expected
+            .body_text
+            .map(String::into_bytes)
+            .or(case.expected.body_bytes);
+        assert_eq!(serialized.body, expected_body, "{} body", case.name);
         assert_eq!(
             serialized.content_type, case.expected.content_type,
             "{} Content-Type",
@@ -284,7 +287,7 @@ fn malformed_or_unsupported_combinations_fail_without_partial_output() {
 }
 
 #[test]
-fn multipart_post_uses_the_permitted_form_urlencoded_fallback() {
+fn multipart_post_builds_deterministic_typed_parts() {
     let mut post = intent(FetchRequestMethod::Post);
     post.enctype = MULTIPART_FORM_DATA.to_string();
     let serialized = serialize_fetch_request(
@@ -293,11 +296,95 @@ fn multipart_post_uses_the_permitted_form_urlencoded_fallback() {
         HashMap::new(),
         Some(&policy(post)),
     )
-    .expect("multipart declaration may use the supported form-urlencoded fallback");
+    .expect("multipart declaration should build typed parts");
 
     assert_eq!(
         serialized.content_type.as_deref(),
-        Some("application/x-www-form-urlencoded; charset=utf-8")
+        Some("multipart/form-data; boundary=waves-wml-304-0")
+    );
+    assert_eq!(
+        serialized.body.as_deref(),
+        Some(
+            concat!(
+                "--waves-wml-304-0\r\n",
+                "Content-Disposition: form-data; name=\"first field\"\r\n",
+                "Content-Type: text/plain\r\n",
+                "\r\n",
+                "one&two\r\n",
+                "--waves-wml-304-0\r\n",
+                "Content-Disposition: form-data; name=\"city\"\r\n",
+                "Content-Type: text/plain; charset=utf-8\r\n",
+                "\r\n",
+                "Montréal\r\n",
+                "--waves-wml-304-0--\r\n"
+            )
+            .as_bytes()
+        )
+    );
+}
+
+#[test]
+fn multipart_names_are_escaped_and_boundaries_do_not_collide_with_content() {
+    let mut post = intent(FetchRequestMethod::Post);
+    post.enctype = MULTIPART_FORM_DATA.to_string();
+    post.post_fields = vec![FetchRequestPostField {
+        name: "quoted\"\\name".to_string(),
+        value: "contains waves-wml-304-0 safely".to_string(),
+    }];
+
+    let serialized = serialize_fetch_request(
+        "https://example.test/submit",
+        "GET".to_string(),
+        HashMap::new(),
+        Some(&policy(post)),
+    )
+    .expect("multipart headers and boundary should be safe");
+
+    assert_eq!(
+        serialized.content_type.as_deref(),
+        Some("multipart/form-data; boundary=waves-wml-304-1")
+    );
+    let body = String::from_utf8(serialized.body.expect("multipart body")).expect("UTF-8 body");
+    assert!(body.contains("name=\"quoted\\\"\\\\name\""));
+    assert!(body.ends_with("--waves-wml-304-1--\r\n"));
+}
+
+#[test]
+fn multipart_rejects_header_injection_and_counts_framing_toward_the_body_limit() {
+    let mut injected = intent(FetchRequestMethod::Post);
+    injected.enctype = MULTIPART_FORM_DATA.to_string();
+    injected.post_fields = vec![FetchRequestPostField {
+        name: "unsafe\r\nX-Injected: true".to_string(),
+        value: "value".to_string(),
+    }];
+    assert_eq!(
+        serialize_fetch_request(
+            "https://example.test/submit",
+            "GET".to_string(),
+            HashMap::new(),
+            Some(&policy(injected)),
+        ),
+        Err("Multipart field name contains an unsupported line break".to_string())
+    );
+
+    let mut oversized = intent(FetchRequestMethod::Post);
+    oversized.enctype = MULTIPART_FORM_DATA.to_string();
+    oversized.post_fields = (0..4)
+        .map(|index| FetchRequestPostField {
+            name: format!("field-{index}"),
+            value: "x".repeat(crate::MAX_POST_FIELD_VALUE_BYTES),
+        })
+        .collect();
+    let request_policy = policy(oversized);
+    assert!(encoded_request_body_exceeds_limit(Some(&request_policy)));
+    assert_eq!(
+        serialize_fetch_request(
+            "https://example.test/submit",
+            "GET".to_string(),
+            HashMap::new(),
+            Some(&request_policy),
+        ),
+        Err(encoded_body_limit_error())
     );
 }
 

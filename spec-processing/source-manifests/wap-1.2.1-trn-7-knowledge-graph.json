@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "1a77c346936f8e46c7cb04cc6a4c1d370305627620a1db254e78c17cc33f73e5"
+        "sha256": "9868c3012cd1d443c97a70aa3e27d10f517c432004b76775b71a568bca6e6294"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,10 +25,10 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "29670577a419d0c02fbdb5708b9673b7dc4115c690fa7118d46d792518f4f831"
+        "sha256": "23a1d8b6c72ffe1340a3ae1192bcaf1cd5d210019165690a7d18f84d5fdc255c"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "ad95d7b713511e6692f278468ad661adfd158563b91e6d0e53ecf53597402649"
+        "sha256": "f1753f7076b4f1b92a1812735f886e36d757a3486c946ca9409e333c64f6b1c8"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."

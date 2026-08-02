@@ -47,9 +47,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
+  "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent, then transcoded and serialized by the transport boundary as ordered form-urlencoded or multipart form data.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -58,6 +58,10 @@ tags:
     {
       "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
       "symbol": "resolve_post_fields"
+    },
+    {
+      "path": "transport-rust/src/request_serialization.rs",
+      "symbol": "serialize_fetch_request"
     }
   ],
   "testEvidence": [
@@ -65,6 +69,11 @@ tags:
       "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
       "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
       "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+    },
+    {
+      "path": "transport-rust/src/request_serialization/tests.rs",
+      "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+      "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
     }
   ],
   "ownerLayers": [

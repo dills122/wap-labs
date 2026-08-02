@@ -144,8 +144,8 @@ Planning assessment:
 Current implementation batch, ordered within each lane:
 
 1. **Request lane A1 (complete):** the merged `WML-304` intent is applied through `R0-06`/`WSP-805` for GET query,
-   form-urlencoded POST, charset/content-type, smallest-relative referer, and no-cache transport
-   behavior. This owns request serialization and the browser fetch handoff.
+   form-urlencoded and multipart POST, per-part charset/content-type, smallest-relative referer,
+   and no-cache transport behavior. This owns request serialization and the browser fetch handoff.
 2. **Request lane A2 (complete):** retained typed request intent is replayed when Back must refetch
    a prior POST deck. The browser does not retain legacy serialized `postContext` bytes when the
    semantic intent is available, and `WML-CL-HISTORY-POST-REPLAY` has direct browser-boundary evidence.
@@ -174,8 +174,10 @@ identity. A2 now retains and replays that semantic input without inventing an in
 serializer or treating the legacy pre-serialized `postContext` payload as the new identity.
 
 The dependency, overlap, and release-contribution matrix is canonical in
-`SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. With A2 complete, `WML-306` is the next compliance
-slice. `PERF-101`, `OPS-101`, and public release-gate closure
+`SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. WML-304 and WML-306 are complete; the next fresh WML-3
+residual slices are `WML-307` character/generic-WBXML closure and `WML-308` form-presentation and
+capability closure, while WML-301 retains its separate aggregate WAE-delegate follow-through.
+`PERF-101`, `OPS-101`, and public release-gate closure
 remain evidence-gated rather than ready implementation dispatches.
 
 The separately owned public-WAP-services lane may continue in parallel. Public DNS and UDP 9200
@@ -2955,8 +2957,9 @@ Reference:
   and Tauri serialization contracts. R0-06/WSP-805 now consumes that intent for deterministic
   GET query and form-urlencoded POST construction, charset-bearing Content-Type, smallest-relative
   Referer, no-cache headers, direct HTTP and native WSP handoff. Request A2 adds typed POST-history
-  replay, bringing WML-304 to 14 of 15 directly assessed clauses. Multipart part Content-Type
-  remains explicit.
+  replay. The additive multipart closure provides deterministic collision-checked boundaries,
+  explicit `text/plain` per-part types, and charset parameters for non-US-ASCII values, bringing
+  WML-304 to 15 of 15 directly assessed clauses without claiming the broader WSP-805 family gaps.
 
 ### R0-07 Browser policy path: access control, low-memory, unknown-DTD behavior
 

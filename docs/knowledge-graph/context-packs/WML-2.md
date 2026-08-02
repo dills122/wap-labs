@@ -441,11 +441,11 @@ Evidence commands:
 - **WML-C-29** — go
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.1 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#wml_go_request_policy`, `engine-wasm/engine/src/parser/wml_parser/actions.rs#parse_go_request_xml`, `transport-rust/src/request_serialization.rs#serialize_fetch_request`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_post_intent_carries_request_attributes_without_constructing_multipart` (`cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart`), `transport-rust/src/request_serialization/tests.rs::mapped_fixture_is_byte_exact_and_rejects_invalid_combinations` (`cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations`), `transport-rust/src/request_serialization/tests.rs::multipart_post_builds_deterministic_typed_parts` (`cd transport-rust && cargo test --lib multipart_post_builds_deterministic_typed_parts`)
   - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-201`
-  - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.
+  - Assessment note: The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification. The transport boundary completes query merge, form-urlencoded and multipart serialization, charset transcoding, origin reload policy, referer emission, and replayable typed POST bodies.
 - **WML-C-30** — head
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3 (SCR §15.1.5)
@@ -505,11 +505,11 @@ Evidence commands:
 - **WML-C-37** — postfield
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.3 (SCR §15.1.5)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#collect_post_fields_xml`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#resolve_post_fields`
-  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/actions.rs#collect_post_fields_xml`, `engine-wasm/engine/src/engine_runtime_internal/navigation.rs#resolve_post_fields`, `transport-rust/src/request_serialization.rs#serialize_fetch_request`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs::wml_304_get_intent_preserves_order_without_claiming_query_merge` (`cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge`), `transport-rust/src/request_serialization/tests.rs::mapped_fixture_is_byte_exact_and_rejects_invalid_combinations` (`cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations`)
   - Work items: `R0-01`, `R0-02`, `R0-06`, `WML-201`
-  - Assessment note: Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.
+  - Assessment note: Postfield name/value vdata is resolved in document order into the request intent, then transcoded and serialized by the transport boundary as ordered form-urlencoded or multipart form data.
 - **WML-C-38** — prev
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.5.2 (SCR §15.1.5)
@@ -1168,7 +1168,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)
   - Parents: `WML-C-29`
   - Requirements: `RQ-RMK-002`
-  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-GO-PART-CONTENT-TYPE` (`transport-boundary`, `implemented`)
 - **WML-CL-GO-POST-CONTENT-TYPE-CHARSET** — For form-urlencoded POST, send encoded fields in the body and include the submission charset in Content-Type.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.5.1 (9.5.1 The Go Element)

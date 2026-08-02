@@ -63,9 +63,9 @@
     },
     "testEvidenceLinkedCount": 34,
     "mandatoryImplementationStatus": {
-      "implemented": 21,
+      "implemented": 23,
       "missing": 14,
-      "partial": 12
+      "partial": 10
     }
   },
   "obligations": [
@@ -1642,8 +1642,8 @@
           "R0-02",
           "R0-06"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification. The transport boundary completes query merge, form-urlencoded and multipart serialization, charset transcoding, origin reload policy, referer emission, and replayable typed POST bodies.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -1652,6 +1652,10 @@
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
             "symbol": "parse_go_request_xml"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "serialize_fetch_request"
           }
         ],
         "testEvidence": [
@@ -1664,6 +1668,16 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
             "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "multipart_post_builds_deterministic_typed_parts",
+            "command": "cd transport-rust && cargo test --lib multipart_post_builds_deterministic_typed_parts"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -2132,8 +2146,8 @@
           "R0-02",
           "R0-06"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent, then transcoded and serialized by the transport boundary as ordered form-urlencoded or multipart form data.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -2142,6 +2156,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "resolve_post_fields"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "serialize_fetch_request"
           }
         ],
         "testEvidence": [
@@ -2149,6 +2167,11 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
             "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
           }
         ],
         "evidenceState": "direct-test-linked"

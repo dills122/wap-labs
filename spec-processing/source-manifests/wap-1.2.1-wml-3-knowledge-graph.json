@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "1a77c346936f8e46c7cb04cc6a4c1d370305627620a1db254e78c17cc33f73e5"
+        "sha256": "9868c3012cd1d443c97a70aa3e27d10f517c432004b76775b71a568bca6e6294"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "29670577a419d0c02fbdb5708b9673b7dc4115c690fa7118d46d792518f4f831"
+        "sha256": "23a1d8b6c72ffe1340a3ae1192bcaf1cd5d210019165690a7d18f84d5fdc255c"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "ad95d7b713511e6692f278468ad661adfd158563b91e6d0e53ecf53597402649"
+        "sha256": "f1753f7076b4f1b92a1812735f886e36d757a3486c946ca9409e333c64f6b1c8"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "1586f52e737736b1025d2933793b8a085d75e6f7e724256253bed9f8b45f47ee"
+        "sha256": "43d61781f30f25812f6453a2b3554716e2dc7b1c6dfe1107c6a2ed7281e0e136"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -2013,7 +2013,7 @@
         "requirementIds": [
           "RQ-RMK-002"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -5959,7 +5959,7 @@
       "title": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Provide a content type for each multipart part and a charset when its content is not US-ASCII.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -8176,9 +8176,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification; wire construction, origin reload, and replay remain open.",
+        "assessmentNote": "The parser and runtime publish a typed GET/POST request intent with ordered postfields, referer opt-in, no-cache, enctype, charset, and same-deck classification. The transport boundary completes query merge, form-urlencoded and multipart serialization, charset transcoding, origin reload policy, referer emission, and replayable typed POST bodies.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
@@ -8187,6 +8187,10 @@
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
             "symbol": "parse_go_request_xml"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "serialize_fetch_request"
           }
         ],
         "testEvidence": [
@@ -8199,6 +8203,16 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_post_intent_carries_request_attributes_without_constructing_multipart",
             "command": "cd engine-wasm/engine && cargo test wml_304_post_intent_carries_request_attributes_without_constructing_multipart"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "multipart_post_builds_deterministic_typed_parts",
+            "command": "cd transport-rust && cargo test --lib multipart_post_builds_deterministic_typed_parts"
           }
         ],
         "ownerLayers": [
@@ -8299,9 +8313,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent and the compatibility form payload; charset transcoding and final transport serialization remain open.",
+        "assessmentNote": "Postfield name/value vdata is resolved in document order into the request intent, then transcoded and serialized by the transport boundary as ordered form-urlencoded or multipart form data.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/actions.rs",
@@ -8310,6 +8324,10 @@
           {
             "path": "engine-wasm/engine/src/engine_runtime_internal/navigation.rs",
             "symbol": "resolve_post_fields"
+          },
+          {
+            "path": "transport-rust/src/request_serialization.rs",
+            "symbol": "serialize_fetch_request"
           }
         ],
         "testEvidence": [
@@ -8317,6 +8335,11 @@
             "path": "engine-wasm/engine/src/engine_tests/wml_304_request_intent.rs",
             "test": "wml_304_get_intent_preserves_order_without_claiming_query_merge",
             "command": "cd engine-wasm/engine && cargo test wml_304_get_intent_preserves_order_without_claiming_query_merge"
+          },
+          {
+            "path": "transport-rust/src/request_serialization/tests.rs",
+            "test": "mapped_fixture_is_byte_exact_and_rejects_invalid_combinations",
+            "command": "cd transport-rust && cargo test --lib mapped_fixture_is_byte_exact_and_rejects_invalid_combinations"
           }
         ],
         "ownerLayers": [
@@ -9123,7 +9146,7 @@
       "type": "work-item",
       "title": "GET/POST/postfield/form commit pipeline",
       "properties": {
-        "status": "in-progress",
+        "status": "done",
         "ownerLayers": [
           "engine-wasm",
           "transport-rust",
@@ -9135,7 +9158,7 @@
         ],
         "notes": [
           "The source-audited WML-304 graph boundary directly maps 15 WML clauses across WML-C-07, WML-C-14, WML-C-29, WML-C-37, and WML-C-38. The unrelated WAE family declaration and WML-C-21 access-control inheritance were removed; access/error policy remains WML-306.",
-          "This first slice defines the Rust-owned go request intent and its native/WASM/Tauri-host serialized contract. It does not claim native transport request application, GET query merge, multipart body construction, charset selection, origin reload behavior, or POST history replay completion.",
+          "The Rust-owned go request intent is applied through the transport boundary for deterministic GET query merge, form-urlencoded and multipart POST bodies, charset selection, origin reload/no-cache behavior, referer emission, and typed POST history replay. Multipart postfields use collision-checked deterministic boundaries, explicit text/plain part types, and charset parameters for non-US-ASCII content.",
           "WML-301 request-shaped history, WML-302 variable resolution, WML-303 task rollback, and WML-305 timer ordering remain preserved regression evidence."
         ],
         "scrMatrix": {

@@ -116,32 +116,29 @@ The source table contains one explicit SCR dependency:
 
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
-| `implemented` | 19 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
-| `partial` | 14 | Direct behavior exists, but the cited clause has known uncovered semantics |
+| `implemented` | 23 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
+| `partial` | 10 | Direct behavior exists, but the cited clause has known uncovered semantics |
 | `missing` | 14 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
-The nineteen implemented rows are `WML-C-07` (history), `WML-C-08` (card/deck task shadowing),
-`WML-C-09` (intrinsic events), `WML-C-10` (browser context), `WML-C-11`
-(newcontext initialization), `WML-C-12` (variables), `WML-C-13` (context restrictions),
-`WML-C-16` (error handling), `WML-C-24` (`br`), `WML-C-30` (`head`), `WML-C-35` (`noop`), `WML-C-47`
-(`template`), `WML-C-18` (inter-card navigation), `WML-C-25` (card/content boundaries), `WML-C-38` (`prev`), `WML-C-39` (`onevent`), `WML-C-42`
-(`refresh`), `WML-C-48` (`timer`), and `WML-C-53` (`wml` root). `WML-C-21` (`access`) remains partial:
-the element's `domain`/`path` defaults and component-aware policy are now enforced
-against the host-supplied referring URI before deck commit. WML-304 now preserves
-`sendreferer` opt-in at the engine boundary and the R0-06/WSP-805 transport path emits
-the smallest usable relative referring URI with byte-exact direct evidence. Across the 39 required Class C client rows, the audit
-currently records 21 implemented, 12 partial, and 6 missing. This is not a compliance percentage: nested normative
+The 23 implemented rows are `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`,
+`WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-18`,
+`WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-29`, `WML-C-30`, `WML-C-35`,
+`WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-42`, `WML-C-47`, `WML-C-48`,
+and `WML-C-53`. WML-304 closes the selected `go` and `postfield` request
+serialization behavior with byte-exact form-urlencoded and multipart transport
+evidence. Across the 39 required Class C client rows, the audit currently records
+23 implemented, 10 partial, and 6 missing. This is not a compliance percentage: nested normative
 clauses, optional capabilities, cross-target parity, and release evidence
 still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 142
+owner/work mapping and a direct fixture plan. The WML family now has 143
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
 slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
-assessed WML-304 request-serialization clauses, typed POST-history replay, and WML-309
-frame-affordance closure; shared clauses are deduplicated. The other 33 clauses stay
+assessed WML-304 request-serialization clauses including multipart per-part typing, typed POST-history replay, and WML-309
+frame-affordance closure; shared clauses are deduplicated. The other 32 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

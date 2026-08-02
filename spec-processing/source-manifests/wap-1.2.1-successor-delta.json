@@ -1039,7 +1039,7 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -1315,7 +1315,7 @@
         "staticConformanceSection": "15.1.5",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
