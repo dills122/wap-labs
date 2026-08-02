@@ -47,7 +47,7 @@ export const APPLICATION_COMMANDS = [
     "id": "app.add-favorite",
     "label": "Add Favorite",
     "group": "favorites",
-    "defaultEnabled": false,
+    "defaultEnabled": true,
     "shortcuts": {
       "macos": {
         "key": "d",
@@ -67,7 +67,7 @@ export const APPLICATION_COMMANDS = [
     "id": "app.library",
     "label": "Library",
     "group": "file",
-    "defaultEnabled": false,
+    "defaultEnabled": true,
     "shortcuts": {
       "macos": {
         "key": "b",
@@ -89,7 +89,7 @@ export const APPLICATION_COMMANDS = [
     "id": "app.preferences",
     "label": "Preferences…",
     "group": "preferences",
-    "defaultEnabled": false,
+    "defaultEnabled": true,
     "shortcuts": {
       "macos": {
         "key": ",",
@@ -150,7 +150,7 @@ export const APPLICATION_COMMANDS = [
     "id": "app.import-favorites",
     "label": "Import Favorites…",
     "group": "file",
-    "defaultEnabled": false,
+    "defaultEnabled": true,
     "shortcuts": {
       "macos": null,
       "linux": null
@@ -160,7 +160,7 @@ export const APPLICATION_COMMANDS = [
     "id": "app.export-favorites",
     "label": "Export Favorites…",
     "group": "file",
-    "defaultEnabled": false,
+    "defaultEnabled": true,
     "shortcuts": {
       "macos": null,
       "linux": null

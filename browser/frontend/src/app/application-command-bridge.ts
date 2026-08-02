@@ -10,6 +10,8 @@ import {
   isApplicationCommandId,
   resolveApplicationShortcut,
   type ApplicationCommandDispatchResult,
+  type ApplicationCommandEnablement,
+  type ApplicationCommandHandler,
   type ApplicationCommandSource
 } from './application-command-registry';
 
@@ -17,8 +19,13 @@ export { APPLICATION_COMMAND_EVENT as NATIVE_APPLICATION_COMMAND_EVENT };
 
 const CONTROL_COMMANDS = {
   'app.reload': '#btn-reload',
+  'app.add-favorite': '#btn-add-favorite',
+  'app.library': '#btn-library',
+  'app.preferences': '#btn-preferences',
   'app.inspector': '#btn-inspector',
-  'app.help': '#btn-welcome-toggle'
+  'app.help': '#btn-welcome-toggle',
+  'app.import-favorites': '#btn-import-favorites',
+  'app.export-favorites': '#btn-export-favorites'
 } as const satisfies Partial<Record<ApplicationCommandId, string>>;
 
 type ControlCommandId = keyof typeof CONTROL_COMMANDS;
@@ -34,6 +41,8 @@ export interface ApplicationCommandBridgeOptions {
   document?: Document;
   listenNative?: NativeCommandListen;
   isWmlEditing?: () => boolean;
+  handlers?: Partial<Record<ApplicationCommandId, ApplicationCommandHandler>>;
+  enablement?: ApplicationCommandEnablement;
 }
 
 const isTauriRuntime = (): boolean => Reflect.has(globalThis, '__TAURI_INTERNALS__');
@@ -101,6 +110,7 @@ export class ApplicationCommandBridge {
       this.document.querySelector<HTMLSelectElement>('#local-example')?.focus();
     };
     const handlers: Partial<Record<ApplicationCommandId, () => void>> = {
+      ...options.handlers,
       'app.focus-location': focusLocation
     };
     for (const [commandId, selector] of Object.entries(CONTROL_COMMANDS) as Array<
@@ -112,7 +122,11 @@ export class ApplicationCommandBridge {
         handlers[commandId] = () => undefined;
       }
     }
-    this.registry = new ApplicationCommandRegistry(handlers, {}, this.eventTarget);
+    this.registry = new ApplicationCommandRegistry(
+      handlers,
+      options.enablement ?? {},
+      this.eventTarget
+    );
   }
 
   async bind(): Promise<void> {

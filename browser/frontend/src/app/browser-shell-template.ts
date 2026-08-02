@@ -9,6 +9,7 @@ import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
 import { statusBarTemplate } from './shell/status-bar-template';
 import { utilityRailTemplate } from './shell/utility-rail-template';
 import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
+import { applicationSurfacesTemplate } from './shell/application-surfaces-template';
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
@@ -20,6 +21,8 @@ const browserShellTemplate = () => `
       ${handsetStageTemplate()}
       ${utilityRailTemplate()}
     </main>
+
+    ${applicationSurfacesTemplate()}
 
     <div class="phase-bar-slot" hidden aria-hidden="true"></div>
 

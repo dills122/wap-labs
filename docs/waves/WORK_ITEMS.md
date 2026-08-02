@@ -185,11 +185,10 @@ The resilience board is also synchronized to current main: `RSL-01` through `RSL
 The final pair adds allowlisted diagnostic redaction followed by bounded toast, timeline, and
 host-history state on the shared presenter/history surface.
 
-The next desktop slice is issue `#450` on the stabilized bounded-history foundation. It must remain
-ahead of persisted/searchable history because RSL-07's deterministic eviction does not repair its
-cross-deck same-card identity loss. After `#450`, continue F2-02/F2-03 and integrate `WBP-11`
-phase-aware recovery plus `APP-SHELL-01` Library/Preferences without sharing an active presenter or
-shell owner. `WMLS-502` remains parallel-safe in its separate script lane.
+The desktop sequence through issue `#450`, F2-02/F2-03, `WBP-11`, and `APP-SHELL-01` is complete.
+The shell now exposes the integrated Library/Preferences surfaces through the shared application
+command registry while leaving Inspector ownership separate. `WBP-14` release evidence is the next
+browser release-readiness slice; `WMLS-502` remains parallel-safe in its separate script lane.
 
 ### WML-203A Legacy local-example standalone-document migration
 

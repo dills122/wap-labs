@@ -30,4 +30,26 @@ describe('host-chrome accessibility baseline', () => {
 
     expect(summary).toEqual([]);
   });
+
+  it.each([
+    ['Library', '#library-surface'],
+    ['Preferences', '#preferences-surface']
+  ])('has no automatically-detectable violations with %s open', async (_name, selector) => {
+    document.body.innerHTML = '<div id="app"></div>';
+    registerBrowserComponents();
+    mountBrowserShell('wap://localhost/start.wml', 'local');
+    const surface = document.querySelector<HTMLElement>(selector);
+    expect(surface).not.toBeNull();
+    if (surface) surface.hidden = false;
+
+    const results = await axe.run(document.body, {
+      rules: Object.fromEntries(JSDOM_UNSUPPORTED_RULES.map((id) => [id, { enabled: false }]))
+    });
+    expect(
+      results.violations.map((violation) => ({
+        id: violation.id,
+        nodes: violation.nodes.map((node) => node.target.join(' '))
+      }))
+    ).toEqual([]);
+  });
 });

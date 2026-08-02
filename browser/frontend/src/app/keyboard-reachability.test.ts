@@ -33,12 +33,51 @@ describe('keyboard reachability of host-chrome actions', () => {
       '#btn-load-local',
       '#btn-mode-local',
       '#btn-mode-network',
+      '#btn-library',
+      '#btn-preferences',
       '#btn-inspector'
     ]) {
       expectFocusable(selector);
     }
 
     expect(document.querySelector<HTMLElement>('#run-mode')?.tabIndex).toBe(-1);
+  });
+
+  it('reaches Library and Preferences task controls when each surface is open', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    registerBrowserComponents();
+    mountBrowserShell('wap://localhost/start.wml', 'local');
+
+    const library = document.querySelector<HTMLElement>('#library-surface');
+    if (library) library.hidden = false;
+    for (const selector of [
+      '#btn-library-close',
+      '#btn-add-favorite',
+      '#btn-import-favorites',
+      '#btn-export-favorites'
+    ]) {
+      expectFocusable(selector);
+    }
+
+    if (library) library.hidden = true;
+    const preferences = document.querySelector<HTMLElement>('#preferences-surface');
+    if (preferences) preferences.hidden = false;
+    for (const selector of [
+      '#btn-preferences-close',
+      '#preference-default-mode',
+      '#preference-start-behavior',
+      '#preference-display-scale',
+      '#preference-high-contrast',
+      '#preference-reduced-motion',
+      '#preference-safe-restore',
+      '#preference-developer-mode',
+      '#preference-retention',
+      '#btn-save-preferences',
+      '#btn-reset-preferences',
+      '#btn-request-reset-all'
+    ]) {
+      expectFocusable(selector);
+    }
   });
 
   it('reaches the softkey row', () => {

@@ -161,14 +161,14 @@ pub const APPLICATION_COMMANDS: &[ApplicationCommandDescriptor] = &[
         id: COMMAND_ADD_FAVORITE,
         label: "Add Favorite",
         group: ApplicationCommandGroup::Favorites,
-        default_enabled: false,
+        default_enabled: true,
         shortcuts: platform_shortcuts(Some(shortcut("d", META)), Some(shortcut("d", CONTROL))),
     },
     ApplicationCommandDescriptor {
         id: COMMAND_LIBRARY,
         label: "Library",
         group: ApplicationCommandGroup::File,
-        default_enabled: false,
+        default_enabled: true,
         shortcuts: platform_shortcuts(
             Some(shortcut("b", META_SHIFT)),
             Some(shortcut("b", CONTROL_SHIFT)),
@@ -178,7 +178,7 @@ pub const APPLICATION_COMMANDS: &[ApplicationCommandDescriptor] = &[
         id: COMMAND_PREFERENCES,
         label: "Preferences…",
         group: ApplicationCommandGroup::Preferences,
-        default_enabled: false,
+        default_enabled: true,
         shortcuts: platform_shortcuts(Some(shortcut(",", META)), Some(shortcut(",", CONTROL))),
     },
     ApplicationCommandDescriptor {
@@ -205,14 +205,14 @@ pub const APPLICATION_COMMANDS: &[ApplicationCommandDescriptor] = &[
         id: COMMAND_IMPORT_FAVORITES,
         label: "Import Favorites…",
         group: ApplicationCommandGroup::File,
-        default_enabled: false,
+        default_enabled: true,
         shortcuts: platform_shortcuts(None, None),
     },
     ApplicationCommandDescriptor {
         id: COMMAND_EXPORT_FAVORITES,
         label: "Export Favorites…",
         group: ApplicationCommandGroup::File,
-        default_enabled: false,
+        default_enabled: true,
         shortcuts: platform_shortcuts(None, None),
     },
 ];
@@ -319,7 +319,7 @@ mod tests {
     }
 
     #[test]
-    fn unavailable_application_surfaces_are_disabled() {
+    fn application_surface_commands_are_enabled() {
         for id in [
             COMMAND_ADD_FAVORITE,
             COMMAND_LIBRARY,
@@ -328,7 +328,7 @@ mod tests {
             COMMAND_EXPORT_FAVORITES,
         ] {
             assert!(
-                !command_by_id(id)
+                command_by_id(id)
                     .expect("registered command")
                     .default_enabled
             );
@@ -336,7 +336,7 @@ mod tests {
     }
 
     #[test]
-    fn native_dispatch_rejects_disabled_and_unknown_commands() {
+    fn native_dispatch_accepts_enabled_and_rejects_unknown_commands() {
         assert_eq!(
             native_menu_request(COMMAND_RELOAD),
             Some(NativeApplicationCommandRequest {
@@ -344,7 +344,13 @@ mod tests {
                 source: "native-menu",
             })
         );
-        assert!(native_menu_request(COMMAND_LIBRARY).is_none());
+        assert_eq!(
+            native_menu_request(COMMAND_LIBRARY),
+            Some(NativeApplicationCommandRequest {
+                command_id: COMMAND_LIBRARY,
+                source: "native-menu",
+            })
+        );
         assert!(native_menu_request("app.unknown").is_none());
     }
 
@@ -376,7 +382,7 @@ mod tests {
                 .default_enabled
         );
         assert!(
-            !command_by_id(COMMAND_LIBRARY)
+            command_by_id(COMMAND_LIBRARY)
                 .expect("library descriptor")
                 .default_enabled
         );

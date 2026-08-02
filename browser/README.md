@@ -42,8 +42,12 @@ Implemented now:
 - Native app menu baseline with About metadata (`WAP/WML based browser 1.x`)
 - Rust-owned application command registry with generated TypeScript metadata, enabled-state
   projection, native menu routing, platform shortcuts, and registry-derived shortcut help
-- Truthful disabled native entries for Library, Favorites import/export, Preferences, add favorite,
-  and the unimplemented update placeholder until their owning application surfaces land
+- Integrated keyboard-accessible Library for bundled examples and safe Favorites, including
+  add/open/remove plus sanitized import/export; unpublished Services remain visibly disabled
+- Integrated Preferences for launch behavior, display scale, accessibility, safe restore,
+  developer mode, and bounded timeline retention, with explicit settings-only and full-data reset
+- Enabled native entries and shared frontend command routing for Library, Favorites import/export,
+  Preferences, and add favorite; the unrelated update placeholder remains disabled
 - Shared constants baseline:
   - frontend runtime + copy: `frontend/src/app/waves-config.ts`, `frontend/src/app/waves-copy.ts`
   - tauri app/menu/event constants: `src-tauri/src/waves_config.rs`
@@ -225,10 +229,10 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
    concurrency hardening; do not reopen completed tickets.
 2. Preserve completed WBP-06/F0 frame, input, drift, and WML-309 evidence. Keep `EngineDebug*`
    separate and retain the legacy render/key compatibility paths until the declared cutover gate.
-3. Preserve the completed issue `#450` history correction, F2-02 scrolling, and F2-03 unified input
-   routing on the frame-bound hit-region foundation, then continue the F3/F4 migration.
-4. Sequence `WBP-11` recovery presentation and `APP-SHELL-01` Library/Preferences around their
-   shared presenter and shell ownership.
+3. Preserve the completed issue `#450` history correction and F2-02 scrolling, then continue F2-03
+   unified softkey/input routing on the frame-bound hit-region foundation.
+4. Preserve the completed `WBP-11` recovery presentation and `APP-SHELL-01` Library/Preferences
+   integration; keep later Inspector work isolated from these stable shell insertion points.
 5. Keep the remaining `M1-09` (`F2-F4` frame migration) dependency-gated and `M1-03` as a
    non-priority generator follow-up.
 6. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;

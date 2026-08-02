@@ -13,7 +13,7 @@ describe('application command registry', () => {
   it('projects default and overridden enabled states without changing canonical metadata', () => {
     const defaults = projectApplicationCommands();
     expect(defaults.find(({ command }) => command.id === 'app.reload')?.enabled).toBe(true);
-    expect(defaults.find(({ command }) => command.id === 'app.library')?.enabled).toBe(false);
+    expect(defaults.find(({ command }) => command.id === 'app.library')?.enabled).toBe(true);
 
     const projected = projectApplicationCommands({
       'app.reload': false,
@@ -22,7 +22,7 @@ describe('application command registry', () => {
     expect(projected.find(({ command }) => command.id === 'app.reload')?.enabled).toBe(false);
     expect(projected.find(({ command }) => command.id === 'app.library')?.enabled).toBe(true);
     expect(APPLICATION_COMMANDS.find(({ id }) => id === 'app.reload')?.defaultEnabled).toBe(true);
-    expect(APPLICATION_COMMANDS.find(({ id }) => id === 'app.library')?.defaultEnabled).toBe(false);
+    expect(APPLICATION_COMMANDS.find(({ id }) => id === 'app.library')?.defaultEnabled).toBe(true);
   });
 
   it('executes enabled commands through one observable dispatch event', () => {
@@ -95,7 +95,7 @@ describe('application command registry', () => {
       expect(reference.map(({ commandId }) => commandId)).toEqual(
         commandsWithShortcuts.map(({ id }) => id)
       );
-      expect(reference.find(({ commandId }) => commandId === 'app.library')?.enabled).toBe(false);
+      expect(reference.find(({ commandId }) => commandId === 'app.library')?.enabled).toBe(true);
       expect(reference.every(({ shortcut }) => shortcut.length > 0)).toBe(true);
     }
   });
