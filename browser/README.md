@@ -232,13 +232,18 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
    concurrency hardening; do not reopen completed tickets.
 2. Preserve completed WBP-06/F0 frame, input, drift, and WML-309 evidence. Keep `EngineDebug*`
    separate and retain the legacy render/key compatibility paths until the declared cutover gate.
-3. Preserve the completed issue `#450` history correction and F2-02 scrolling, then continue F2-03
-   unified softkey/input routing on the frame-bound hit-region foundation.
-4. Preserve the completed `WBP-11` recovery presentation and `APP-SHELL-01` Library/Preferences
-   integration; keep later Inspector work isolated from these stable shell insertion points.
-5. Keep the remaining `M1-09` (`F2-F4` frame migration) dependency-gated and `M1-03` as a
+3. Preserve the merged typed POST history `#541`, F2-02 scrolling `#542`, F2-03 unified input
+   `#543`, and APP-SHELL-01 Library/Preferences `#545` slices; land WBP-11 phase recovery `#544`
+   without destabilizing their shared browser shell seams.
+4. Use the machine-checked
+   [`WBP-14` desktop-path evidence audit](../docs/waves/WBP_14_DESKTOP_PATH_EVIDENCE.md) to add
+   native timeout, cancellation, invalid-deck, and script-trap cases without treating component
+   tests as desktop-path evidence.
+5. Complete `WBP-12` crash recovery and `WBP-13` sanitized replay before claiming WBP-14 closure;
+   packaged screen-reader, latency, and memory evidence remain explicit release gaps.
+6. Keep the remaining `M1-09` (`F2-F4` frame migration) dependency-gated and `M1-03` as a
    non-priority generator follow-up.
-6. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;
+7. Treat `WBP-15` as ready for evidence-bounded Nokia 7110 profile planning, not implementation;
    `WBP-16` may run independently as an Openwave handset/browser evidence-lock research task.
 
 ## Planning + Traceability
@@ -248,6 +253,7 @@ group and Docker services. This pilot is scheduled/manual until the promotion cr
 - Desktop application completion PRD: `docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md`
 - WBP-00/WBP-01 decisions, measurements, and integration seams: `docs/waves/WAVES_BROWSER_BASELINE.md`
 - WBP-05A rendered accessibility evidence: `docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md`
+- WBP-14 desktop-path evidence audit: `docs/waves/WBP_14_DESKTOP_PATH_EVIDENCE.md`
 - Work board: `docs/waves/WORK_ITEMS.md` (Phases `B*`, `T*`, `W*`)
 - User onboarding/help plan: `docs/waves/USER_ONBOARDING_EXPERIENCE_PLAN.md`
 - Contract mapping: `docs/waves/CONTRACT_REQUIREMENTS_MAPPING.md`

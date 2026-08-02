@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "workItem": "WBP-14",
+  "auditedAt": "2026-08-02",
+  "auditBase": {
+    "ref": "origin/main",
+    "commit": "dfe2c4c9",
+    "pendingPullRequests": [544]
+  },
+  "releaseComplete": false,
+  "evidenceClasses": {
+    "fixture": "Deterministic local story, unit, or component evidence without the native desktop/gateway boundary.",
+    "native-gateway": "A real Tauri window driven through the Rust host, transport-rust, and the controlled Kannel stack.",
+    "packaged-manual": "A packaged application check that depends on platform integration or assistive technology."
+  },
+  "scenarios": [
+    {
+      "id": "startup",
+      "status": "complete",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-01", "WBP-14"],
+      "requirements": [],
+      "evidence": [
+        "browser/frontend/scripts/native-tauri-kannel-e2e.mjs",
+        ".github/workflows/native-tauri-kannel-e2e.yml"
+      ],
+      "note": "The production frontend reaches engine-ready in the native Tauri window. Startup timing is not yet budgeted."
+    },
+    {
+      "id": "success",
+      "status": "complete",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-14", "INT-9"],
+      "requirements": ["RQ-TRN-001", "RQ-TRN-002", "RQ-TRN-003"],
+      "evidence": [
+        "browser/frontend/scripts/native-tauri-kannel-e2e.mjs",
+        "scripts/native-tauri-kannel-e2e.sh"
+      ],
+      "note": "The controlled real-gateway lane renders and navigates multiple WML 1.3 decks through the complete native boundary."
+    },
+    {
+      "id": "softkeys-and-keyboard",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["WBP-05", "WBP-06", "WML-309", "F2-03", "WBP-14"],
+      "requirements": ["RQ-RMK-002"],
+      "evidence": [
+        "engine-wasm/examples/source/wml-309-frame-affordances.flow.json",
+        "browser/frontend/scripts/check-rendered-accessibility.mjs"
+      ],
+      "blocker": "Unified input routing is merged, but a native complete-path modifier/text-entry matrix is still absent."
+    },
+    {
+      "id": "pointer-parity",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["F2-01", "F2-03", "WBP-14"],
+      "requirements": ["RQ-RMK-002"],
+      "evidence": ["engine-wasm/examples/source/f2-01-deterministic-click-input.flow.json"],
+      "blocker": "Unified input routing is merged, but complete-path pointer-versus-keyboard equivalence is not automated."
+    },
+    {
+      "id": "scroll-and-viewport",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["F2-02", "WBP-14"],
+      "requirements": [],
+      "evidence": ["engine-wasm/examples/source/wrap-stress.flow.json"],
+      "blocker": "Deterministic scrolling is merged, but it has not been exercised through the native gateway lane."
+    },
+    {
+      "id": "loading-phases",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["WBP-11", "WBP-14"],
+      "requirements": [],
+      "evidence": ["browser/frontend/src/app/navigation-state.concurrency.test.ts"],
+      "blocker": "Phase-aware recovery is in PR #544; the 100/200 millisecond presentation budgets need native evidence."
+    },
+    {
+      "id": "timeout",
+      "status": "missing",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-10", "WBP-11", "WBP-14"],
+      "requirements": [],
+      "evidence": ["browser/src-tauri/src/tests/fetch_commands.rs"],
+      "blocker": "Timeout behavior has lower-level tests but no controlled complete desktop-path case and artifact."
+    },
+    {
+      "id": "cancellation",
+      "status": "missing",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-10", "WBP-11", "WBP-14"],
+      "requirements": [],
+      "evidence": ["browser/frontend/src/app/navigation-state.concurrency.test.ts"],
+      "blocker": "Cancellation/stale-response behavior has component evidence but no native request cancellation case or 500 millisecond measurement."
+    },
+    {
+      "id": "history",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["WML-301", "WML-304", "WBP-14"],
+      "requirements": ["RQ-RMK-002"],
+      "evidence": [
+        "engine-wasm/examples/source/wml-301-context-history.flow.json",
+        "browser/frontend/src/session-history.test.ts"
+      ],
+      "blocker": "Typed POST history replay is merged, but native GET/POST/back evidence is not yet part of the complete-path lane."
+    },
+    {
+      "id": "invalid-deck",
+      "status": "missing",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WML-205", "WBP-14"],
+      "requirements": ["RQ-RMK-002", "RQ-RMK-003", "RQ-RMK-012"],
+      "evidence": ["engine-wasm/examples/source/wml-205-error-recovery.flow.json"],
+      "blocker": "WML-205 proves deterministic engine failure and atomicity, but the native UI lane only injects an invalid address, not an invalid WML deck."
+    },
+    {
+      "id": "script-trap",
+      "status": "missing",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WMLS-501", "WBP-13", "WBP-14"],
+      "requirements": ["RQ-RMK-001", "RQ-WMLS-001", "RQ-WMLS-002"],
+      "evidence": ["engine-wasm/examples/source/wavescript-go-cancel.flow.json"],
+      "blocker": "Decoder/verifier and fixture evidence cannot substitute for a visible, recoverable native desktop-path script-trap case. WMLS-502 execution remains separate work."
+    },
+    {
+      "id": "failure-recovery",
+      "status": "partial",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-11", "WBP-14"],
+      "requirements": [],
+      "evidence": ["browser/frontend/scripts/native-tauri-kannel-e2e.mjs"],
+      "blocker": "The native lane recovers after invalid-address failure; categorized phase recovery from timeout, cancellation, invalid deck, and script trap remains unproved."
+    },
+    {
+      "id": "crash-recovery",
+      "status": "blocked",
+      "evidenceClass": "packaged-manual",
+      "workItems": ["WBP-12", "WBP-14"],
+      "requirements": [],
+      "evidence": ["docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md"],
+      "blocker": "WBP-12 has not implemented the crash marker and safe-session recovery offer."
+    },
+    {
+      "id": "native-wasm-parity",
+      "status": "partial",
+      "evidenceClass": "fixture",
+      "workItems": ["WBP-06", "WML-309", "WBP-14"],
+      "requirements": ["RQ-RMK-002"],
+      "evidence": [
+        "engine-wasm/engine/src/engine_wasm_bindings_tests.rs",
+        "engine-wasm/examples/source/wml-309-frame-affordances.flow.json"
+      ],
+      "blocker": "Critical frame parity is covered; merged scrolling and unified input still need explicit native/WASM parity evidence."
+    },
+    {
+      "id": "interaction-latency",
+      "status": "missing",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-14"],
+      "requirements": [],
+      "evidence": [],
+      "blocker": "No repeatable native interaction-latency budget or artifact is recorded."
+    },
+    {
+      "id": "memory-bound",
+      "status": "blocked",
+      "evidenceClass": "native-gateway",
+      "workItems": ["WBP-13", "WBP-14"],
+      "requirements": [],
+      "evidence": ["docs/waves/WAVES_BROWSER_PRODUCT_IMPLEMENTATION_PLAN.md"],
+      "blocker": "The WBP-13 1,000-step bounded replay needed for the memory gate is not implemented."
+    },
+    {
+      "id": "zoom-and-reflow",
+      "status": "complete",
+      "evidenceClass": "fixture",
+      "workItems": ["WBP-05A", "WBP-14"],
+      "requirements": [],
+      "evidence": [
+        "docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md",
+        "docs/waves/evidence/wbp-05a/rendered-accessibility.json"
+      ],
+      "note": "Production-built Chromium evidence covers the default/minimum windows at effective 200 percent zoom."
+    },
+    {
+      "id": "screen-reader",
+      "status": "blocked",
+      "evidenceClass": "packaged-manual",
+      "workItems": ["WBP-05A", "WBP-14"],
+      "requirements": [],
+      "evidence": ["docs/waves/WAVES_BROWSER_ACCESSIBILITY_EVIDENCE.md"],
+      "blocker": "Packaging is disabled, so the documented macOS VoiceOver smoke has no recorded result."
+    },
+    {
+      "id": "sanitized-replay",
+      "status": "blocked",
+      "evidenceClass": "fixture",
+      "workItems": ["WBP-13", "WBP-14"],
+      "requirements": [],
+      "evidence": ["docs/waves/PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md"],
+      "blocker": "The versioned .waves-session.json import and controlled fixture-backed replay path are not implemented."
+    }
+  ],
+  "explicitComplianceGaps": [
+    "TRN-704 has no direct clause mapping.",
+    "TRN-705 has no direct clause mapping.",
+    "TRN-706 declares WTP scope without direct WTP clause mapping.",
+    "TRN-707 declares WTP scope without direct WTP clause mapping.",
+    "WMLS-501 verifier completion does not close the remaining WMLScript execution and selected SCR gaps."
+  ]
+}
