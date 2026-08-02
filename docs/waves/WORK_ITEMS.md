@@ -85,14 +85,15 @@ Canonical sprint priority rule:
 The public network-preview plan is a separate product/release lane. Its `PRE-*`, `INF-*`,
 `GW-*`, `LAB-*`, `PERF-*`, `OPS-*`, `DESK-*`, `QA-*`, and `REL-*` identifiers do not assert WAP
 compliance closure or change the dependency order in the machine-readable compliance program.
-Public exposure remains blocked on the plan's access, threat-model, and release gates.
+Public release-readiness remains gated by the plan's access, threat-model, operations, and release
+evidence even though the bounded endpoint is now reachable.
 
-## Next In Line (Post-Merge Checkpoint Sync - 2026-07-30)
+## Next In Line (Post-Merge Checkpoint Sync - 2026-08-02)
 
-Audit base: `origin/main` `6cf1682a`. The GitHub open/draft PR queue was empty at this checkpoint.
-The second-pass desktop visual refinement and redesigned shell/Developer Tools workspace are now
-landed. They preserve `WBP-02A`, do not implement `WBP-02B`, and do not replace frame/runtime
-evidence.
+Audit base: `origin/main` `0028946e`. The GitHub open/draft PR queue was empty at this checkpoint.
+The second-pass desktop visual refinement, redesigned shell/Developer Tools workspace, D0-04
+read-only Inspector, and F2-01 deterministic click input are now landed. They preserve `WBP-02A`,
+do not implement `WBP-02B`, and do not replace remaining frame/runtime evidence.
 
 The selected-profile source and planning lanes are complete. The active queue
 must now turn the 198 selected parent rows and 762 planned clauses into direct
@@ -122,8 +123,8 @@ Current priority order is:
    context/history/card-table evidence, WML-304's merged request-intent and native request
    application boundary, and WMLS-501's completed decoder/verifier, verified-unit routing, and
    stack-dataflow closure. Advance replayable POST history and WMLS-502 execution as separate
-   implementation lanes. Preserve the completed D0-01 through D0-03 debug foundation and completed
-   F0/F1 frame migration; keep F2-F4, generators, and maintenance non-preemptive
+   implementation lanes. Preserve the completed D0-01 through D0-04 debug path and completed
+   F0/F1/F2-01 frame migration; keep F2-02 through F4, generators, and maintenance non-preemptive
    unless separately authorized or needed to unblock a strict obligation.
 
 The schema-v2 WDP delivery -> fetch/WBXML decode -> native engine parity path,
@@ -170,28 +171,24 @@ serializer or treat the legacy pre-serialized `postContext` payload as the new i
 
 The dependency, overlap, and release-contribution matrix is canonical in
 `SPRINT_PLAN_2026-03_MASTER_PRIORITIZED.md`. `WML-306` remains next after this batch because its
-browser policy files conflict with A1/A2. `PERF-101`, `OPS-101`, and public publication remain
-decision/access-gated rather than ready implementation dispatches.
+browser policy files conflict with A1/A2. `PERF-101`, `OPS-101`, and public release-gate closure
+remain evidence-gated rather than ready implementation dispatches.
 
-The separately owned public-WAP-services lane may continue in parallel. Current main plus the
-merged live checkpoint proves a healthy hardened application deployment on the restricted host,
-Tailnet WAP smoke, sealed-firewall reboot persistence, and retained rollback. Public DNS, the
-cloud UDP rule, public firewall mode, and external probes remain incomplete. That lane neither
+The separately owned public-WAP-services lane may continue in parallel. Public DNS and UDP 9200
+now serve bounded Home, Forms, and Interop probes through the hardened deployment. Publication
+governance, negative exposure evidence, measured abuse limits, operations evidence, and desktop
+release gates still require reconciliation in `PUBLIC_WAP_LAB_PRERELEASE_PLAN.md`. That lane neither
 blocks nor satisfies Class C evidence and is not dispatched from this board.
 
 The resilience board is also synchronized to current main: `RSL-01` through `RSL-07` are done.
 The final pair adds allowlisted diagnostic redaction followed by bounded toast, timeline, and
 host-history state on the shared presenter/history surface.
 
-The remaining parallel-safe desktop slices are:
-
-1. `F2-01` deterministic click/hit-region input through the engine-owned frame contract.
-2. `D0-04` read-only Inspector polling and safe capture in new debug-consumer modules/components.
-
-After those slices, fix `#450` on the stabilized bounded-history foundation, continue F2-02/F2-03
-after F2-01, and integrate `WBP-11` phase-aware recovery plus `APP-SHELL-01` Library/Preferences
-without sharing an active presenter owner. Keep `#450` ahead of persisted/searchable history;
-RSL-07's deterministic eviction does not repair its cross-deck same-card identity loss.
+The next desktop slice is issue `#450` on the stabilized bounded-history foundation. It must remain
+ahead of persisted/searchable history because RSL-07's deterministic eviction does not repair its
+cross-deck same-card identity loss. After `#450`, continue F2-02/F2-03 and integrate `WBP-11`
+phase-aware recovery plus `APP-SHELL-01` Library/Preferences without sharing an active presenter or
+shell owner. `WMLS-502` remains parallel-safe in its separate script lane.
 
 ### WML-203A Legacy local-example standalone-document migration
 

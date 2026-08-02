@@ -1,10 +1,10 @@
 # Waves Public WAP Lab and Pre-release Plan
 
-Planning status: Sprint 1 private-deployment checkpoint; LAB-101, the restricted INF-101/INF-102
-host path, and the hardened GW-101 deployment are live behind sealed Tailnet-only ingress, while
-public exposure remains blocked on Sprint 0 decisions and publication-specific evidence
+Planning status: operational public-endpoint checkpoint; Home, Forms, and Interop are reachable
+over public connectionless WSP/WDP through the hardened deployment, while publication governance,
+negative exposure checks, measured operations evidence, and desktop release gates remain open
 
-Research checkpoint: 2026-07-30; audited at `6cf1682a`
+Research checkpoint: 2026-08-02; audited at `0028946e`
 
 Historical service-pattern research, first-party fixture expansion, and the separately gated
 archive/museum lane are planned in `docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md`. That
@@ -229,11 +229,10 @@ resources and does not prove live R2 locking, provider planning, or recovery aga
 accounts. `PRE-001` and `PRE-003` remain required before those access-backed checks can run and
 complete the remaining `INF-101` acceptance gates; see `infra/network-preview/README.md`.
 
-The staged `INF-102` root may be authored and locally planned while shared/public `PRE-003` is
-open. Its default must fail closed: no DNS records, no public UDP ingress, no public SSH ingress,
-Tailscale-only administration, and no
-application deployment. Enabling public UDP/DNS still depends on the production gateway,
-`PRE-003`, `PRE-004`, and a separately reviewed plan.
+The staged `INF-102` root was authored with a fail-closed default: no DNS records, no public UDP
+ingress, no public SSH ingress, Tailscale-only administration, and no application deployment. The
+now-live public DNS/UDP state must be reconciled into an exact reviewed publication plan and the
+remaining `PRE-003`/`PRE-004` evidence; reachability alone does not prove that governance closure.
 
 PR #476 installed the production Compose stack and persistent `DOCKER-USER` policy on the existing
 restricted host. The exact release passed Tailnet GET/POST and unknown-origin denial, retained the
@@ -242,10 +241,11 @@ the Kannel health probe use the configured status credentials, and PRs #485/#495
 service supervision and the static-example smoke path. Cloud-init changes still apply only to
 future replacement hosts because Droplet user data is lifecycle-ignored.
 
-This is direct private-deployment evidence for the staged `INF-102`/`GW-101` path, not completion of
-their public acceptance. No public DNS record or cloud UDP rule was enabled, the host firewall was
-not switched to public mode, and the required external positive/negative probes and kill-switch
-rehearsal remain open.
+PR #538 documents bounded public Lowband probes against the Home, Forms, and Interop hosts. Public
+DNS and UDP 9200 are therefore operational, but reachability does not by itself close the release
+gates below. The exact publication plan/apply evidence, repeated negative exposure checks, measured
+abuse limits, independent kill-switch rehearsal, and operations evidence still require explicit
+reconciliation before the endpoint is treated as release-ready.
 
 ## Security, abuse, and operations
 
@@ -301,7 +301,8 @@ Target: 1-2 days before implementation.
 | `PRE-004` | Preview threat model/data policy |        3 | this plan          | Accept UDP abuse, open-proxy, logging, test-data, kill-switch, and incident ownership controls                                                         |
 | `PRE-005` | Release-scope decision           |        2 | current-main audit | Fix supported OS/architectures, preview label, WTLS warning, Class C claim language, and go/no-go owner                                                |
 
-`PRE-003` and `PRE-004` block public exposure.
+`PRE-003` and `PRE-004` remain governance gaps that block declaring the current public exposure
+release-ready; they no longer describe whether the endpoint is reachable.
 
 ## Sprint 1: Network Preview Foundation
 
@@ -321,14 +322,14 @@ Capacity assumption: three parallel implementation lanes, 36 points gross, 29 co
 |        5 | `PERF-101` | 512 MiB memory soak and resize gate            |      2 | `INF-102`, `GW-101`, `LAB-101` | Record RSS, swap, restarts, latency; allow 1 GiB only if the published threshold fails                                                                                                        |
 |        6 | `OPS-101`  | External WSP probe and disable runbook         |      4 | `INF-102`, `LAB-101`           | Exact external WSP/WBXML fixture; failure alert; tested rate-limit/firewall kill; redacted logs                                                                                               |
 
-Current landed evidence at the 2026-07-30 checkpoint:
+Current landed evidence at the 2026-08-02 checkpoint:
 
 | Work                   | Evidence on `main`                                                                                                                                                                                                                  | Remaining gate                                                                                                                                                           |
 | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `LAB-101`              | Bounded Go origin, deterministic route/session tests, and live private root/login/register/POST smoke are landed.                                                                                                                   | Keep fixture expansion separate from public exposure and the archival-content lane.                                                                                      |
-| `GW-101`               | Hardened non-root Kannel/Compose release, authenticated health, exact-host maps, unknown-origin denial, supervision tests, loopback-bound local ports, and retained rollback are landed; the deployed release is healthy privately. | `PRE-004`, public-mode review, external port/proxy negatives, and measured abuse limits remain open.                                                                     |
+| `LAB-101`              | Bounded Go origin, deterministic route/session tests, and public Home, Forms, and Interop Lowband probes are landed.                                                                                                                  | Keep fixture expansion separate from the archival-content lane and reconcile the public release evidence.                                                               |
+| `GW-101`               | Hardened non-root Kannel/Compose release, authenticated health, exact-host maps, unknown-origin denial, supervision tests, loopback-bound internal ports, retained rollback, and public positive probes are landed.                 | `PRE-004`, repeated external port/proxy negatives, measured abuse limits, and kill-switch evidence remain open.                                                          |
 | `INF-101`              | Pinned offline/protected workflow contracts plus encrypted owner-local R2 state, recovery copies, and a zero-change provider plan are evidenced.                                                                                    | Shared/public `PRE-003`, live protected-plan/apply, and two-maintainer recovery evidence remain open.                                                                    |
-| `INF-102`              | Restricted Droplet, Reserved IP, private administration, sealed firewall, monitoring, installed service, and reboot persistence are evidenced.                                                                                      | Exact publication plan/apply, DNS, public UDP 9200, and external verification remain open.                                                                               |
+| `INF-102`              | Droplet, Reserved IP, private administration, monitoring, installed service, reboot persistence, public DNS, and UDP 9200 reachability are evidenced.                                                                                | Exact publication plan/apply provenance, repeated negative verification, and release-gate reconciliation remain open.                                                    |
 | `PERF-101` / `OPS-101` | No completion claim. Existing private health and smoke are prerequisites only.                                                                                                                                                      | Memory soak, external synthetic probe, alerts, rate/amplification measurements, and independently tested kill switch remain to dispatch after the access/decision gates. |
 
 Stretch only after committed acceptance:

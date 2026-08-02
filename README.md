@@ -88,7 +88,9 @@ for the complete command surface.
 ![The current Waves Developer Tools workspace beside the handset view](marketing-site/public/waves-browser-inspector.webp)
 
 The implementation is substantial but deliberately does not claim full WAP Class C conformance.
-Current assessments, clause evidence, and remaining gaps live in
+At the current evidence checkpoint, 41/198 selected parent rows are implemented;
+317/762 clauses are directly assessed. Current assessments, clause evidence, and remaining gaps
+live in
 [Project Atlas](https://dills122.github.io/wap-labs/atlas/) and the
 [compliance program](docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md).
 
@@ -235,7 +237,7 @@ prerequisites, and checks that remain GitHub-hosted or environment-dependent.
 - [WAP 1.2.1 compliance program](docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md)
 - [Contributor guide](CONTRIBUTING.md)
 
-Last reviewed: 2026-08-01 against `origin/main` at `90db2e33`.
+Last reviewed: 2026-08-02 against `origin/main` at `0028946e`.
 
 ## Contributing and license
 
