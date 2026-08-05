@@ -11,7 +11,7 @@ name = "lowband_transport_rust"
 crate-type = ["rlib"]
 
 [dependencies]
-base64 = "0.22"
+base64 = "0.23"
 encoding_rs = "0.8"
 mime = "0.3"
 reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
