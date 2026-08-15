@@ -26,7 +26,7 @@ const familyDefinitions = [
     expectedRows: 76,
     expectedSelected: 39,
     expectedClauses: 175,
-    expectedStatus: { implemented: 23, partial: 10, missing: 6 },
+    expectedStatus: { implemented: 25, partial: 8, missing: 6 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -46,7 +46,7 @@ const familyDefinitions = [
     expectedRows: 15,
     expectedSelected: 3,
     expectedClauses: 47,
-    expectedStatus: { implemented: 0, partial: 3, missing: 0 },
+    expectedStatus: { implemented: 3, partial: 0, missing: 0 },
     activeDoc: 'docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 32, blocked: 1, 'in-progress': 10, todo: 40 })
+  JSON.stringify({ done: 33, blocked: 1, 'in-progress': 10, todo: 39 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -324,7 +324,7 @@ if (
   aggregateSelected !== 198 ||
   aggregateClauses !== 762 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 47, partial: 72, missing: 79 })
+  JSON.stringify({ implemented: 52, partial: 67, missing: 79 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }

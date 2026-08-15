@@ -1,7 +1,7 @@
 # Waves Runtime Markup Spec Traceability
 
 Version: v0.3
-Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 15/15 complete)
+Status: WML/WBXML feature and nested-clause ledgers complete; direct evidence in progress (WML-202 30/30 complete, WML-203 68/68 complete, WML-204 23/23 complete, WML-304 request path 15/15 complete, WML-307 10/10 complete)
 
 ## Purpose
 
@@ -21,6 +21,7 @@ Capture WML/WBXML runtime-markup requirements that govern deterministic deck/car
 - `spec-processing/source-material/spec-wml-19990616.pdf`
 - `spec-processing/source-material/WAP-192-WBXML-20010725-a.pdf`
 - `spec-processing/source-material/WAP-192_105-WBXML-20011015-a.pdf`
+- `spec-processing/source-material/WAP-167-ServiceInd-20010731-a.pdf`
 
 ## Normative precedence
 
@@ -31,6 +32,7 @@ Capture WML/WBXML runtime-markup requirements that govern deterministic deck/car
 5. `WAP-191_102` and `WAP-191` are legacy lineage references.
 6. `WAP-192` defines WBXML baseline structure.
 7. `WAP-192_105` applies SIN corrections/clarifications to WBXML conformance framing.
+8. `WAP-167-ServiceInd` supplies the source-pinned non-WML SI token table and default attributes used to prove generic WBXML routing.
 
 ## Requirements matrix
 
@@ -53,6 +55,7 @@ Legend:
   - Evidence: [x] Card collection and onevent/timer/content grammar plus language/context defaults: `wml_202_retains_root_and_card_language_context_metadata_with_defaults` and `wml_202_enforces_card_event_timer_content_order`.
   - [x] Parser accepts valid deck structure and rejects invalid root/card omissions.
   - [x] Runtime activation and source card-content order are deterministic: `wml_202_card_content_order_is_preserved_in_render_output`.
+  - Evidence: [x] WML-307 strictly transcodes supported textual/WBXML character encodings, rejects lossy or conflicting inputs, decodes all required named/decimal/hex entities to Unicode, preserves non-breaking spaces, and renders soft hyphens only at selected wrap points. Direct evidence is in `transport-rust/src/tests/fetch_mapping.rs`, `engine-wasm/engine/src/parser/wml_parser/tests.rs`, `engine-wasm/engine/src/layout/flow_layout.rs`, and `engine-wasm/examples/source/wml-307-character-processing.flow.json`; run the two `cargo test ... wml_307` commands and `pnpm test:story WML-307`.
 
 ### RQ-RMK-002 Task model support and execution
 
@@ -181,14 +184,12 @@ Legend:
   - `WAP-192_105-WBXML-20011015-a` section 3.3 and corrected section 9
   - `docs/waves/WAP_1_2_1_WBXML_SCR_LEDGER.md`
 - Status:
-  - `partial`: the pinned built-in decoder and direct source-derived corpus
-    establish direct evidence for all three selected rows. The bounded tranche
-    promotes all 47 client-applicable nested clauses. Carrying-protocol charset precedence,
-    WMLC MIME typing, and exhaustive WML page-zero token/literal equivalence
-    are direct-evidence-backed. Full-range code-page indices have deterministic
-    assigned, unassigned, and implementation-specific outcomes; non-WML token
-    tables and generic WBXML routing remain outside this tranche. The
-    unrepresentable-name tokenisation error is preserved in the unselected
+  - `implemented`: the pinned decoder and source-derived corpus establish
+    direct evidence for all three selected rows and all 47 client-applicable
+    nested clauses. WML-307 adds the source-pinned SI 1.0 non-WML token table,
+    implied `action` default, binary/literal equivalence, Shift_JIS decoding,
+    MIME/public-ID conflict handling, and generic WBXML public-ID routing. The
+    unrepresentable-name tokenisation error remains in the unselected
     server/encoder profile.
 - AC:
   - Evidence: [x] `transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json`
@@ -209,6 +210,7 @@ Legend:
     produces the same state and render list as the paired canonical text deck.
   - [x] Strict decode remains in `transport-rust`; `engine-wasm` receives
     normalized textual WML.
+  - [x] `transport-rust/src/wbxml.rs` WML-307 tests prove SI binary/literal equivalence, default reconstruction, generic routing, public-ID conflict rejection, and non-UTF-8 character mapping against the WAP-167 vocabulary.
 
 ### RQ-RMK-011 Deck access-control enforcement
 

@@ -1,9 +1,11 @@
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
+use encoding_rs::SHIFT_JIS;
+use mime::{Mime, CHARSET};
 use std::char::decode_utf16;
 use std::time::Instant;
 
 use crate::request_meta::details_with_request_id;
-use crate::wbxml::decode_wbxml_for_content_type;
+use crate::wbxml::decode_wml_wbxml_for_content_type;
 use crate::{
     EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming,
     FETCH_ERROR_CODE_CANCELLED, FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
@@ -221,9 +223,12 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
     }
 
     let raw_b64 = BASE64.encode(body);
-    if content_type == "application/vnd.wap.wmlc" {
+    if matches!(
+        content_type.as_str(),
+        "application/vnd.wap.wmlc" | "application/vnd.wap.wbxml"
+    ) {
         let decode_start = Instant::now();
-        return match decode_wbxml_for_content_type(body, &raw_content_type) {
+        return match decode_wml_wbxml_for_content_type(body, &raw_content_type) {
             Ok(wml) => FetchDeckResponse {
                 ok: true,
                 status,
@@ -277,7 +282,7 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
         );
     }
 
-    let wml = match decode_textual_wml_payload(body) {
+    let wml = match decode_textual_wml_payload(body, &raw_content_type) {
         Ok(wml) => wml,
         Err(message) => {
             return error_response(
@@ -317,14 +322,156 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
     }
 }
 
-fn decode_textual_wml_payload(body: &[u8]) -> Result<String, String> {
-    if body.starts_with(&[0xFF, 0xFE]) {
-        return decode_utf16_payload(&body[2..], true);
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum TextEncoding {
+    Ascii,
+    Latin1,
+    ShiftJis,
+    Utf8,
+    Utf16Le,
+    Utf16Be,
+}
+
+impl TextEncoding {
+    fn from_label(label: &str) -> Result<Self, String> {
+        match label.trim().to_ascii_lowercase().as_str() {
+            "us-ascii" | "ascii" => Ok(Self::Ascii),
+            "iso-8859-1" | "latin1" | "latin-1" => Ok(Self::Latin1),
+            "shift_jis" | "shift-jis" | "sjis" | "windows-31j" => Ok(Self::ShiftJis),
+            "utf-8" | "utf8" => Ok(Self::Utf8),
+            "utf-16le" => Ok(Self::Utf16Le),
+            "utf-16be" => Ok(Self::Utf16Be),
+            "utf-16" => Err(
+                "Unsupported textual WML charset \"utf-16\" without byte-order information"
+                    .to_string(),
+            ),
+            _ => Err(format!("Unsupported textual WML charset {label:?}")),
+        }
     }
-    if body.starts_with(&[0xFE, 0xFF]) {
-        return decode_utf16_payload(&body[2..], false);
+
+    fn decode(self, bytes: &[u8]) -> Result<String, String> {
+        match self {
+            Self::Ascii => {
+                if bytes.iter().any(|byte| !byte.is_ascii()) {
+                    return Err("Invalid US-ASCII textual WML payload".to_string());
+                }
+                String::from_utf8(bytes.to_vec())
+                    .map_err(|error| format!("Invalid US-ASCII textual WML payload: {error}"))
+            }
+            Self::Latin1 => Ok(bytes.iter().map(|byte| char::from(*byte)).collect()),
+            Self::ShiftJis => SHIFT_JIS
+                .decode_without_bom_handling_and_without_replacement(bytes)
+                .map(|decoded| decoded.into_owned())
+                .ok_or_else(|| "Invalid Shift_JIS textual WML payload".to_string()),
+            Self::Utf8 => std::str::from_utf8(bytes)
+                .map(str::to_string)
+                .map_err(|error| format!("Invalid UTF-8 textual WML payload: {error}")),
+            Self::Utf16Le => decode_utf16_payload(bytes, true),
+            Self::Utf16Be => decode_utf16_payload(bytes, false),
+        }
     }
-    Ok(String::from_utf8_lossy(body).to_string())
+}
+
+fn decode_textual_wml_payload(body: &[u8], content_type: &str) -> Result<String, String> {
+    let (bom_encoding, bom_length) = if body.starts_with(&[0xef, 0xbb, 0xbf]) {
+        (Some(TextEncoding::Utf8), 3)
+    } else if body.starts_with(&[0xff, 0xfe]) {
+        (Some(TextEncoding::Utf16Le), 2)
+    } else if body.starts_with(&[0xfe, 0xff]) {
+        (Some(TextEncoding::Utf16Be), 2)
+    } else {
+        (None, 0)
+    };
+
+    let sniffed_utf16 = if body.starts_with(&[0x00, b'<', 0x00, b'?']) {
+        Some(TextEncoding::Utf16Be)
+    } else if body.starts_with(&[b'<', 0x00, b'?', 0x00]) {
+        Some(TextEncoding::Utf16Le)
+    } else {
+        None
+    };
+    let byte_order = bom_encoding.or(sniffed_utf16);
+    let external_encoding = content_type
+        .parse::<Mime>()
+        .ok()
+        .and_then(|media_type| {
+            media_type
+                .get_param(CHARSET)
+                .map(|value| resolve_text_encoding(value.as_str(), byte_order))
+        })
+        .transpose()?;
+
+    if let (Some(external), Some(bom)) = (external_encoding, bom_encoding) {
+        if external != bom {
+            return Err(format!(
+                "Textual WML charset conflict: carrying protocol selects {external:?}, byte-order mark selects {bom:?}"
+            ));
+        }
+    }
+
+    let declared_encoding = xml_declared_encoding(body)
+        .map(|label| resolve_text_encoding(label, byte_order))
+        .transpose()?;
+    let encoding = bom_encoding
+        .or(external_encoding)
+        .or(sniffed_utf16)
+        .or(declared_encoding)
+        .unwrap_or(TextEncoding::Utf8);
+
+    encoding.decode(&body[bom_length..])
+}
+
+fn resolve_text_encoding(
+    label: &str,
+    byte_order: Option<TextEncoding>,
+) -> Result<TextEncoding, String> {
+    if label.trim().eq_ignore_ascii_case("utf-16") {
+        return byte_order.ok_or_else(|| {
+            "Unsupported textual WML charset \"utf-16\" without byte-order information".to_string()
+        });
+    }
+    TextEncoding::from_label(label)
+}
+
+fn xml_declared_encoding(body: &[u8]) -> Option<&str> {
+    if body.starts_with(&[0x00, b'<', 0x00, b'?'])
+        || body.starts_with(&[b'<', 0x00, b'?', 0x00])
+        || !body.starts_with(b"<?xml")
+    {
+        return None;
+    }
+    let end = body.windows(2).position(|window| window == b"?>")? + 2;
+    let declaration = std::str::from_utf8(&body[..end]).ok()?;
+    find_xml_declaration_attribute(declaration, "encoding")
+}
+
+fn find_xml_declaration_attribute<'a>(declaration: &'a str, name: &str) -> Option<&'a str> {
+    let mut remainder = declaration.strip_prefix("<?xml")?;
+    loop {
+        remainder = remainder.trim_start();
+        if remainder.starts_with("?>") {
+            return None;
+        }
+        let name_end = remainder
+            .find(|character: char| character.is_ascii_whitespace() || character == '=')?;
+        let candidate = &remainder[..name_end];
+        remainder = remainder[name_end..].trim_start();
+        if !remainder.starts_with('=') {
+            return None;
+        }
+        remainder = remainder[1..].trim_start();
+        let quote = remainder.chars().next()?;
+        if !matches!(quote, '\'' | '"') {
+            return None;
+        }
+        remainder = &remainder[quote.len_utf8()..];
+        let value_end = remainder.find(quote)?;
+        let value = &remainder[..value_end];
+        if candidate.eq_ignore_ascii_case(name) {
+            return Some(value);
+        }
+        remainder = &remainder[value_end + quote.len_utf8()..];
+    }
 }
 
 fn decode_utf16_payload(bytes: &[u8], little_endian: bool) -> Result<String, String> {

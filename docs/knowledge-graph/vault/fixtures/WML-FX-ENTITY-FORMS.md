@@ -4,7 +4,7 @@ key: "WML-FX-ENTITY-FORMS"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "parser",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

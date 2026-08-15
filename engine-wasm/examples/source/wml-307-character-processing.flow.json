@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "example": "wml307CharacterProcessing",
+  "flows": [
+    {
+      "id": "unicode-entities-and-line-break-characters",
+      "title": "Unicode entities, non-breaking space, and soft-hyphen rendering stay deterministic",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-307"],
+      "specItems": [
+        "WML-C-05",
+        "WML-C-06",
+        "WML-C-36",
+        "WML-CL-ENTITY-FORMS",
+        "WML-CL-ENTITY-REQUIRED-NAMES",
+        "WML-CL-PARAGRAPH-NONBREAKING-SPACE",
+        "WML-CL-PARAGRAPH-SOFT-HYPHEN"
+      ],
+      "initial": {
+        "state": { "activeCardId": "home", "focusedLinkIndex": 0 },
+        "render": {
+          "textIncludes": [
+            "\"&'<> | Į | Į",
+            "keep\u00a0together",
+            "1234567890123456789-",
+            "tail",
+            "Continue"
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "done", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["Character processing complete."] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

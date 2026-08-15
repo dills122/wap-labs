@@ -705,12 +705,31 @@ if (
 const wmlRuntimeSprint = program.sprints.find((sprint) => sprint.id === 'WML-3');
 const wml302 = wmlRuntimeSprint?.workItems.find((workItem) => workItem.id === 'WML-302');
 const wml303 = wmlRuntimeSprint?.workItems.find((workItem) => workItem.id === 'WML-303');
+const wml307 = wmlRuntimeSprint?.workItems.find((workItem) => workItem.id === 'WML-307');
 if (
   wmlRuntimeSprint?.status !== 'in-progress' ||
   wml302?.status !== 'done' ||
   wml303?.status !== 'done'
 ) {
   failures.push('WML-3 must remain in progress after the evidence-backed WML-302/WML-303 closures');
+}
+if (
+  JSON.stringify(wml307?.scrMatrices) !==
+    JSON.stringify([
+      { family: 'wml', scope: 'selected-clause-parents' },
+      { family: 'wbxml', scope: 'selected-clause-parents' }
+    ]) ||
+  JSON.stringify(wml307?.dependsOn) !== JSON.stringify(['WML-203']) ||
+  wml307?.status !== 'done' ||
+  !wml307?.evidence?.includes('pnpm test:story WML-307') ||
+  !wml307?.evidence?.includes('node scripts/wap-context-pack.mjs WML-307') ||
+  !wml307?.evidence?.includes('pnpm wap-graph:check') ||
+  !wml307?.specReferences?.includes('WAP-167-ServiceInd sections 5.2.1, 7.1, and 8.3') ||
+  !wml307?.notes?.some((note) => note.includes('All 10 directly mapped WML-307 clauses'))
+) {
+  failures.push(
+    'WML-307 must be done with focused WML/WBXML matrices, WML-203 dependency, SI authority, and direct graph/story evidence'
+  );
 }
 
 if (failures.length > 0) {

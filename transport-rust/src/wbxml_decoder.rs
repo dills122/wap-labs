@@ -6,6 +6,8 @@ pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.3.0";
 const WBXML_VERSION_1_3: u8 = 0x03;
 const WML_1_3_PUBLIC_ID: u32 = 0x0a;
 const WML_1_3_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD WML 1.3//EN";
+const SI_1_0_PUBLIC_ID: u32 = 0x05;
+const SI_1_0_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD SI 1.0//EN";
 const MAX_NESTING_DEPTH: usize = 128;
 
 const SWITCH_PAGE: u8 = 0x00;
@@ -34,6 +36,7 @@ const IMPLEMENTATION_SPECIFIC_CODE_PAGE: u8 = 0xff;
 enum Charset {
     Ascii,
     Latin1,
+    ShiftJis,
     Utf8,
 }
 
@@ -42,6 +45,7 @@ impl Charset {
         match value {
             3 => Ok(Self::Ascii),
             4 => Ok(Self::Latin1),
+            17 => Ok(Self::ShiftJis),
             106 => Ok(Self::Utf8),
             0 => Err("charset MIBenum 0 is unknown".to_string()),
             _ => Err(format!("unsupported charset MIBenum {value}")),
@@ -52,6 +56,7 @@ impl Charset {
         match value.trim().to_ascii_lowercase().as_str() {
             "us-ascii" | "ascii" => Ok(Self::Ascii),
             "iso-8859-1" | "latin1" => Ok(Self::Latin1),
+            "shift_jis" | "shift-jis" | "sjis" | "windows-31j" => Ok(Self::ShiftJis),
             "utf-8" | "utf8" => Ok(Self::Utf8),
             _ => Err(format!("unsupported carrying-protocol charset {value:?}")),
         }
@@ -67,6 +72,10 @@ impl Charset {
                     .map_err(|error| format!("invalid US-ASCII string: {error}"))
             }
             Self::Latin1 => Ok(bytes.iter().map(|byte| char::from(*byte)).collect()),
+            Self::ShiftJis => encoding_rs::SHIFT_JIS
+                .decode_without_bom_handling_and_without_replacement(bytes)
+                .map(|decoded| decoded.into_owned())
+                .ok_or_else(|| "invalid Shift_JIS string".to_string()),
             Self::Utf8 => String::from_utf8(bytes.to_vec())
                 .map_err(|error| format!("invalid UTF-8 string: {error}")),
         }
@@ -76,6 +85,56 @@ impl Charset {
 struct Header<'a> {
     charset: Charset,
     string_table: &'a [u8],
+    vocabulary: Vocabulary,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum Vocabulary {
+    Wml13,
+    ServiceIndication10,
+}
+
+impl Vocabulary {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Wml13 => "WML 1.3",
+            Self::ServiceIndication10 => "SI 1.0",
+        }
+    }
+
+    fn tag_name(self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
+        match self {
+            Self::Wml13 => WML13_TOKEN_REGISTRY.tag_name(page, token),
+            Self::ServiceIndication10 => {
+                token_table(self, CodeSpace::Tag, page, SI10_TAG_CODE_PAGES)
+                    .map(|table| table(token))
+            }
+        }
+    }
+
+    fn attribute_start(
+        self,
+        page: CodePage,
+        token: u8,
+    ) -> Result<Option<(&'static str, &'static str)>, String> {
+        match self {
+            Self::Wml13 => WML13_TOKEN_REGISTRY.attribute_start(page, token),
+            Self::ServiceIndication10 => {
+                token_table(self, CodeSpace::Attribute, page, SI10_ATTRIBUTE_CODE_PAGES)
+                    .map(|table| (table.start)(token))
+            }
+        }
+    }
+
+    fn attribute_value(self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
+        match self {
+            Self::Wml13 => WML13_TOKEN_REGISTRY.attribute_value(page, token),
+            Self::ServiceIndication10 => {
+                token_table(self, CodeSpace::Attribute, page, SI10_ATTRIBUTE_CODE_PAGES)
+                    .map(|table| (table.value)(token))
+            }
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -113,6 +172,18 @@ const WML13_ATTRIBUTE_CODE_PAGES: &[RegisteredCodePage<AttributeTokenTable>] =
         table: AttributeTokenTable {
             start: page_zero_attribute_start,
             value: page_zero_attribute_value,
+        },
+    }];
+const SI10_TAG_CODE_PAGES: &[RegisteredCodePage<TagTokenTable>] = &[RegisteredCodePage {
+    page: CodePage::ZERO,
+    table: si_page_zero_tag_name,
+}];
+const SI10_ATTRIBUTE_CODE_PAGES: &[RegisteredCodePage<AttributeTokenTable>] =
+    &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: si_page_zero_attribute_start,
+            value: si_page_zero_attribute_value,
         },
     }];
 
@@ -163,6 +234,30 @@ impl Wml13TokenRegistry {
     }
 }
 
+fn token_table<T>(
+    vocabulary: Vocabulary,
+    code_space: CodeSpace,
+    page: CodePage,
+    pages: &[RegisteredCodePage<T>],
+) -> Result<&T, String> {
+    if let Some(registered) = pages.iter().find(|registered| registered.page == page) {
+        return Ok(&registered.table);
+    }
+    if page.index() == IMPLEMENTATION_SPECIFIC_CODE_PAGE {
+        return Err(format!(
+            "implementation-specific {} {} code page 255 is not registered",
+            vocabulary.label(),
+            code_space.label()
+        ));
+    }
+    Err(format!(
+        "unassigned {} {} code page {}",
+        vocabulary.label(),
+        code_space.label(),
+        page.index()
+    ))
+}
+
 struct Decoder<'a> {
     bytes: &'a [u8],
     position: usize,
@@ -173,6 +268,8 @@ struct Decoder<'a> {
     output: String,
     max_output_bytes: usize,
     external_charset: Option<Charset>,
+    expected_vocabulary: Option<Vocabulary>,
+    vocabulary: Vocabulary,
 }
 
 #[cfg(test)]
@@ -180,10 +277,25 @@ pub(crate) fn decode_wml13(payload: &[u8], max_output_bytes: usize) -> Result<St
     decode_wml13_with_charset(payload, max_output_bytes, None)
 }
 
+#[cfg(test)]
 pub(crate) fn decode_wml13_with_charset(
     payload: &[u8],
     max_output_bytes: usize,
     external_charset: Option<&str>,
+) -> Result<String, String> {
+    decode_wbxml_with_charset(
+        payload,
+        max_output_bytes,
+        external_charset,
+        Some(Vocabulary::Wml13),
+    )
+}
+
+pub(crate) fn decode_wbxml_with_charset(
+    payload: &[u8],
+    max_output_bytes: usize,
+    external_charset: Option<&str>,
+    expected_vocabulary: Option<Vocabulary>,
 ) -> Result<String, String> {
     if payload.is_empty() {
         return Err(decode_error("empty payload"));
@@ -205,6 +317,8 @@ pub(crate) fn decode_wml13_with_charset(
             .map(Charset::from_mime_name)
             .transpose()
             .map_err(|error| decode_error(&error))?,
+        expected_vocabulary,
+        vocabulary: Vocabulary::Wml13,
     };
     decoder.decode_document().map_err(|error| {
         if error.starts_with("WBXML decode failed:") {
@@ -220,6 +334,7 @@ impl<'a> Decoder<'a> {
         let header = self.decode_header()?;
         self.charset = header.charset;
         self.string_table = header.string_table;
+        self.vocabulary = header.vocabulary;
 
         while self.peek() == Some(PI) {
             self.decode_processing_instruction()?;
@@ -279,22 +394,42 @@ impl<'a> Decoder<'a> {
         let string_table = &self.bytes[table_start..table_end];
         self.position = table_end;
 
-        if let Some(index) = public_id_index {
+        let vocabulary = if let Some(index) = public_id_index {
             let identifier = decode_table_string(charset, string_table, index)?;
-            if identifier != WML_1_3_PUBLIC_ID_TEXT {
+            match identifier.as_str() {
+                WML_1_3_PUBLIC_ID_TEXT => Vocabulary::Wml13,
+                SI_1_0_PUBLIC_ID_TEXT => Vocabulary::ServiceIndication10,
+                _ => {
+                    return Err(format!(
+                        "unsupported literal public identifier {identifier:?}"
+                    ))
+                }
+            }
+        } else {
+            match public_id {
+                WML_1_3_PUBLIC_ID => Vocabulary::Wml13,
+                SI_1_0_PUBLIC_ID => Vocabulary::ServiceIndication10,
+                _ => {
+                    return Err(format!(
+                        "unsupported numeric public identifier {public_id}; no registered token table"
+                    ));
+                }
+            }
+        };
+        if let Some(expected) = self.expected_vocabulary {
+            if expected != vocabulary {
                 return Err(format!(
-                    "unsupported literal public identifier {identifier:?}"
+                    "MIME media type selects {}, but WBXML public identifier selects {}",
+                    expected.label(),
+                    vocabulary.label()
                 ));
             }
-        } else if public_id != WML_1_3_PUBLIC_ID {
-            return Err(format!(
-                "unsupported numeric public identifier {public_id}; expected WML 1.3 identifier {WML_1_3_PUBLIC_ID}"
-            ));
         }
 
         Ok(Header {
             charset,
             string_table,
+            vocabulary,
         })
     }
 
@@ -324,11 +459,13 @@ impl<'a> Decoder<'a> {
                     ));
                 }
                 let identity = token & 0x3f;
-                let name = WML13_TOKEN_REGISTRY
+                let name = self
+                    .vocabulary
                     .tag_name(self.tag_page, identity)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML tag token 0x{identity:02x} on code page {}",
+                            "unknown {} tag token 0x{identity:02x} on code page {}",
+                            self.vocabulary.label(),
                             self.tag_page.index()
                         )
                     })?
@@ -356,7 +493,7 @@ impl<'a> Decoder<'a> {
                 self.write_attribute(&attribute_name, &value)?;
             }
         }
-        for (attribute_name, value) in default_attributes(&name) {
+        for (attribute_name, value) in default_attributes(self.vocabulary, &name) {
             if present_attributes.insert((*attribute_name).to_string()) {
                 self.write_attribute(attribute_name, value)?;
             }
@@ -397,11 +534,13 @@ impl<'a> Decoder<'a> {
                 if token >= 0x80 || is_global_token(token) {
                     return Err(format!("token 0x{token:02x} cannot begin a WML attribute"));
                 }
-                let (name, prefix) = WML13_TOKEN_REGISTRY
+                let (name, prefix) = self
+                    .vocabulary
                     .attribute_start(self.attribute_page, token)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML attribute-start token 0x{token:02x} on code page {}",
+                            "unknown {} attribute-start token 0x{token:02x} on code page {}",
+                            self.vocabulary.label(),
                             self.attribute_page.index()
                         )
                     })?;
@@ -468,11 +607,13 @@ impl<'a> Decoder<'a> {
                 ))
             }
             _ if token >= 0x80 => {
-                let fragment = WML13_TOKEN_REGISTRY
+                let fragment = self
+                    .vocabulary
                     .attribute_value(self.attribute_page, token)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML attribute-value token 0x{token:02x} on code page {}",
+                            "unknown {} attribute-value token 0x{token:02x} on code page {}",
+                            self.vocabulary.label(),
                             self.attribute_page.index()
                         )
                     })?;
@@ -945,21 +1086,65 @@ fn page_zero_attribute_value(token: u8) -> Option<&'static str> {
     }
 }
 
-fn default_attributes(tag: &str) -> &'static [(&'static str, &'static str)] {
-    match tag {
-        "card" => &[("newcontext", "false"), ("ordered", "true")],
-        "do" => &[("optional", "false")],
-        "meta" => &[("forua", "false")],
-        "go" => &[
+fn si_page_zero_tag_name(token: u8) -> Option<&'static str> {
+    match token {
+        0x05 => Some("si"),
+        0x06 => Some("indication"),
+        0x07 => Some("info"),
+        0x08 => Some("item"),
+        _ => None,
+    }
+}
+
+fn si_page_zero_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
+    match token {
+        0x05 => Some(("action", "signal-none")),
+        0x06 => Some(("action", "signal-low")),
+        0x07 => Some(("action", "signal-medium")),
+        0x08 => Some(("action", "signal-high")),
+        0x09 => Some(("action", "delete")),
+        0x0a => Some(("created", "")),
+        0x0b => Some(("href", "")),
+        0x0c => Some(("href", "http://")),
+        0x0d => Some(("href", "http://www.")),
+        0x0e => Some(("href", "https://")),
+        0x0f => Some(("href", "https://www.")),
+        0x10 => Some(("si-expires", "")),
+        0x11 => Some(("si-id", "")),
+        0x12 => Some(("class", "")),
+        _ => None,
+    }
+}
+
+fn si_page_zero_attribute_value(token: u8) -> Option<&'static str> {
+    match token {
+        0x85 => Some(".com/"),
+        0x86 => Some(".edu/"),
+        0x87 => Some(".net/"),
+        0x88 => Some(".org/"),
+        _ => None,
+    }
+}
+
+fn default_attributes(
+    vocabulary: Vocabulary,
+    tag: &str,
+) -> &'static [(&'static str, &'static str)] {
+    match (vocabulary, tag) {
+        (Vocabulary::Wml13, "card") => &[("newcontext", "false"), ("ordered", "true")],
+        (Vocabulary::Wml13, "do") => &[("optional", "false")],
+        (Vocabulary::Wml13, "meta") => &[("forua", "false")],
+        (Vocabulary::Wml13, "go") => &[
             ("sendreferer", "false"),
             ("method", "get"),
             ("enctype", "application/x-www-form-urlencoded"),
         ],
-        "select" => &[("multiple", "false")],
-        "input" => &[("type", "text")],
-        "img" => &[("vspace", "0"), ("hspace", "0"), ("align", "bottom")],
-        "p" => &[("align", "left")],
-        "pre" => &[("xml:space", "preserve")],
+        (Vocabulary::Wml13, "select") => &[("multiple", "false")],
+        (Vocabulary::Wml13, "input") => &[("type", "text")],
+        (Vocabulary::Wml13, "img") => &[("vspace", "0"), ("hspace", "0"), ("align", "bottom")],
+        (Vocabulary::Wml13, "p") => &[("align", "left")],
+        (Vocabulary::Wml13, "pre") => &[("xml:space", "preserve")],
+        (Vocabulary::ServiceIndication10, "indication") => &[("action", "signal-medium")],
         _ => &[],
     }
 }

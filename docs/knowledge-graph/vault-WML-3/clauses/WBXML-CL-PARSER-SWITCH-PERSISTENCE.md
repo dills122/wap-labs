@@ -1,0 +1,69 @@
+---
+id: "clause:WBXML-CL-PARSER-SWITCH-PERSISTENCE"
+key: "WBXML-CL-PARSER-SWITCH-PERSISTENCE"
+type: "clause"
+generated: true
+slice: "WML-3"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/clause"
+---
+
+# Keep a selected code page active for its parser state until another switch in that state or document end.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `context-for` → [[work-items/WML-307|WML-307]]
+- `maps-to` → [[requirements/RQ-RMK-007|RQ-RMK-007]]
+- `maps-to` → [[requirements/RQ-RMK-010|RQ-RMK-010]]
+- `refines` → [[scr-rows/WBXML-C-001|WBXML-C-001]]
+- `sourced-from` → [[source-documents/WAP-192-WBXML|WAP-192-WBXML]]
+- `verified-by` → [[fixtures/WBXML-FX-PARSER-SWITCH-PERSISTENCE|WBXML-FX-PARSER-SWITCH-PERSISTENCE]]
+
+## Data
+
+```json
+{
+  "family": "wbxml",
+  "parentRows": [
+    "WBXML-C-001"
+  ],
+  "sourceAnchor": {
+    "documentId": "WAP-192-WBXML",
+    "section": "5.8.1",
+    "heading": "5.8.1. Parser State Machine",
+    "normalizedTextSha256": "5eaacd757ba9168c2cfad663ffd313cdb43543cb7e9de176bdb9f0a5f26d3885"
+  },
+  "normativeForce": "implicit-must",
+  "obligationLevel": "required",
+  "obligationSynopsis": "Keep a selected code page active for its parser state until another switch in that state or document end.",
+  "workItems": [
+    "C5-06",
+    "R0-08",
+    "T0-07",
+    "WML-203",
+    "WML-307"
+  ],
+  "directWorkItems": [
+    "C5-06",
+    "R0-08",
+    "T0-07",
+    "WML-203"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-307"
+  ],
+  "ownerLayers": [
+    "transport-rust"
+  ],
+  "requirementIds": [
+    "RQ-RMK-007",
+    "RQ-RMK-010"
+  ],
+  "implementationStatus": "implemented",
+  "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

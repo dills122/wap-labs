@@ -743,6 +743,21 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-307',
+    new Set([
+      'WML-CL-REFERENCE-ENCODING-DETECTION',
+      'WML-CL-REFERENCE-TRANSCODING-LOSS',
+      'WML-CL-REFERENCE-UNICODE-MAPPING',
+      'WML-CL-REFERENCE-ENTITY-CHARSET',
+      'WML-CL-REFERENCE-WBXML-PRECEDENCE',
+      'WML-CL-ENTITY-FORMS',
+      'WML-CL-ENTITY-UNICODE-IDENTITY',
+      'WML-CL-ENTITY-REQUIRED-NAMES',
+      'WML-CL-PARAGRAPH-NONBREAKING-SPACE',
+      'WML-CL-PARAGRAPH-SOFT-HYPHEN'
+    ])
+  ],
+  [
     'WML-309',
     new Set([
       'WML-CL-DO-ACTIVE-VISIBILITY',
@@ -910,6 +925,7 @@ const implementedWml204ClauseIds = new Set(directWorkItemClauseIds.get('WML-204'
 const implementedWml205ClauseIds = new Set(directWorkItemClauseIds.get('WML-205'));
 const implementedWml301ClauseIds = new Set(directWorkItemClauseIds.get('WML-301'));
 const implementedWml303ClauseIds = new Set(directWorkItemClauseIds.get('WML-303'));
+const implementedWml307ClauseIds = new Set(directWorkItemClauseIds.get('WML-307'));
 const implementedWml309ClauseIds = new Set(directWorkItemClauseIds.get('WML-309'));
 const implementedWml304TransportClauseIds = new Set([
   'WML-CL-POSTFIELD-REQUEST-PAIR',
@@ -1263,6 +1279,42 @@ const wml303FixtureEvidence = {
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
 };
 
+const wml307TransportClauseIds = new Set([
+  'WML-CL-REFERENCE-ENCODING-DETECTION',
+  'WML-CL-REFERENCE-TRANSCODING-LOSS',
+  'WML-CL-REFERENCE-UNICODE-MAPPING',
+  'WML-CL-REFERENCE-ENTITY-CHARSET',
+  'WML-CL-REFERENCE-WBXML-PRECEDENCE'
+]);
+
+const wml307ParagraphClauseIds = new Set([
+  'WML-CL-PARAGRAPH-NONBREAKING-SPACE',
+  'WML-CL-PARAGRAPH-SOFT-HYPHEN'
+]);
+
+function wml307FixtureEvidence(clauseId) {
+  if (wml307TransportClauseIds.has(clauseId)) {
+    return {
+      path: 'transport-rust/src/tests/fetch_mapping.rs',
+      testPath: 'transport-rust/src/tests/fetch_mapping.rs',
+      command:
+        'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_map_success_payload_'
+    };
+  }
+  if (wml307ParagraphClauseIds.has(clauseId)) {
+    return {
+      path: 'engine-wasm/engine/src/layout/flow_layout.rs',
+      testPath: 'engine-wasm/engine/src/layout/flow_layout.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_307'
+    };
+  }
+  return {
+    path: 'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+    testPath: 'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+    command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_307'
+  };
+}
+
 const wml309FixtureEvidence = {
   path: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
   testPath: 'engine-wasm/examples/source/wml-309-frame-affordances.flow.json',
@@ -1351,10 +1403,13 @@ function directWorkItemsForClause(clauseId) {
 }
 
 function aggregateContextWorkItemsForClause(clauseId) {
-  return [...aggregateContextClauseIdsByWorkItem]
+  const mappedWorkItems = [...aggregateContextClauseIdsByWorkItem]
     .filter(([, clauseIds]) => clauseIds.has(clauseId))
-    .map(([workItem]) => workItem)
-    .sort();
+    .map(([workItem]) => workItem);
+  if (clauseId.startsWith('WBXML-CL-')) {
+    mappedWorkItems.push('WML-307');
+  }
+  return [...new Set(mappedWorkItems)].sort();
 }
 
 function refreshStrictWcmpFamily(manifest) {
@@ -1818,6 +1873,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (implementedWml307ClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml307FixtureEvidence(candidate.id);
       } else if (implementedWml309ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml309FixtureEvidence;
@@ -2633,6 +2691,7 @@ function clause(
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml301ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
+    implementedWml307ClauseIds.has(clauseId) ||
     implementedWml309ClauseIds.has(clauseId) ||
     implementedWml304ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
@@ -2660,8 +2719,10 @@ function clause(
             ? wml301FixtureEvidence(clauseId)
             : implementedWml303ClauseIds.has(clauseId)
               ? wml303FixtureEvidence
-              : implementedWml309ClauseIds.has(clauseId)
-                ? wml309FixtureEvidence
+              : implementedWml307ClauseIds.has(clauseId)
+                ? wml307FixtureEvidence(clauseId)
+                : implementedWml309ClauseIds.has(clauseId)
+                  ? wml309FixtureEvidence
                 : implementedWml304ClauseIds.has(clauseId)
                   ? wml304FixtureEvidence(clauseId)
                   : implementedWsp801ClauseIds.has(clauseId)

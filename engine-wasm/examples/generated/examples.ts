@@ -5664,6 +5664,90 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 POLICY//EN\"\n  \"http://vendor.test/wml13-policy.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Before vendor policy.\n      <vendor:policy mode=\"constrained\">\n        Recognized content remains available.\n        <a href=\"#failure\">Failure policy</a>\n      </vendor:policy>\n      After vendor policy.\n    </p>\n  </card>\n  <card id=\"failure\">\n    <do type=\"accept\">\n      <go href=\"#missing\">\n        <setvar name=\"PrivateState\" value=\"must-roll-back\"/>\n      </go>\n    </do>\n    <p>Failed actions keep this card active.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml307CharacterProcessing",
+    "label": "WML-307 Character Processing",
+    "description": "Exercises Unicode entity identity, non-breaking spaces, and discretionary soft-hyphen rendering.",
+    "goal": "Verify that WML character references reach the render boundary without byte-encoding loss and that special spacing characters retain their WML line-breaking behavior.",
+    "workItems": [
+      "WML-307"
+    ],
+    "specItems": [
+      "WML-C-05",
+      "WML-C-06",
+      "WML-C-36",
+      "WML-CL-ENTITY-FORMS",
+      "WML-CL-ENTITY-REQUIRED-NAMES",
+      "WML-CL-PARAGRAPH-NONBREAKING-SPACE",
+      "WML-CL-PARAGRAPH-SOFT-HYPHEN"
+    ],
+    "testingAc": [
+      "Named, decimal, and hexadecimal references resolve to their Unicode characters.",
+      "A non-breaking space remains attached instead of becoming an ordinary inter-word break.",
+      "A selected soft-hyphen break renders a real hyphen and the soft-hyphen itself is otherwise absent."
+    ],
+    "flows": [
+      {
+        "id": "unicode-entities-and-line-break-characters",
+        "title": "Unicode entities, non-breaking space, and soft-hyphen rendering stay deterministic",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-307"
+        ],
+        "specItems": [
+          "WML-C-05",
+          "WML-C-06",
+          "WML-C-36",
+          "WML-CL-ENTITY-FORMS",
+          "WML-CL-ENTITY-REQUIRED-NAMES",
+          "WML-CL-PARAGRAPH-NONBREAKING-SPACE",
+          "WML-CL-PARAGRAPH-SOFT-HYPHEN"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "\"&'<> | Į | Į",
+              "keep together",
+              "1234567890123456789-",
+              "tail",
+              "Continue"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "done",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Character processing complete."
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>&quot;&amp;&apos;&lt;&gt; | &#302; | &#x12E;</p>\n    <p>keep&nbsp;together</p>\n    <p>Soft: 1234567890123456789&shy;tail</p>\n    <p><a href=\"#done\">Continue</a></p>\n  </card>\n  <card id=\"done\"><p>Character processing complete.</p></card>\n</wml>\n"
+  },
+  {
     "key": "wml309FrameAffordances",
     "label": "WML-309 Frame Affordances",
     "description": "Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.",

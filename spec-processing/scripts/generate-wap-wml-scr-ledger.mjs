@@ -220,29 +220,51 @@ function transportTest(pathname, test) {
 const mandatoryImplementationAudit = new Map(
   Object.entries({
     'WML-C-05': {
-      status: 'partial',
-      note: 'The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.',
+      status: 'implemented',
+      note: 'The transport applies XML byte-order, declaration, and carrying-protocol charset evidence without consulting in-document meta fields; recognized US-ASCII, ISO-8859-1, Shift_JIS, UTF-8, and UTF-16 input maps strictly to Unicode without replacement-character transcoding. WBXML payloads remain governed by their header and carrying-protocol rules.',
       implementationEvidence: [
-        codeEvidence('transport-rust/src/responses.rs', 'decode_textual_wml_payload')
+        codeEvidence('transport-rust/src/responses.rs', 'decode_textual_wml_payload'),
+        codeEvidence('transport-rust/src/wbxml_decoder.rs', 'decode_wbxml_with_charset')
       ],
       testEvidence: [
         transportTest(
           'transport-rust/src/tests/fetch_mapping.rs',
           'transport_map_success_payload_utf16le_textual_wml_maps_ok'
+        ),
+        transportTest(
+          'transport-rust/src/tests/fetch_mapping.rs',
+          'transport_map_success_payload_declared_latin1_maps_every_character_to_unicode'
+        ),
+        transportTest(
+          'transport-rust/src/tests/fetch_mapping.rs',
+          'transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss'
+        ),
+        transportTest(
+          'transport-rust/src/tests/fetch_mapping.rs',
+          'transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset'
         )
       ]
     },
     'WML-C-06': {
-      status: 'partial',
-      note: 'Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.',
+      status: 'implemented',
+      note: 'The parser resolves all seven required WML named entities plus decimal and hexadecimal references against Unicode, rejects unknown or XML-invalid references, preserves non-breaking spaces, and exposes soft hyphens to deterministic layout semantics.',
       implementationEvidence: [
         codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'decode_general_entity')
       ],
       testEvidence: [
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'decodes_entities_and_uses_href_as_fallback_link_text'
-        )
+          'wml_307_decodes_named_decimal_and_hex_entities_as_unicode'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/layout/flow_layout.rs',
+          'wml_307_soft_hyphen_only_renders_when_selected_as_a_break'
+        ),
+        {
+          path: 'engine-wasm/examples/source/wml-307-character-processing.flow.json',
+          test: 'unicode-entities-and-line-break-characters',
+          command: 'pnpm test:story WML-307'
+        }
       ]
     },
     'WML-C-07': {
@@ -710,7 +732,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-36': {
       status: 'partial',
-      note: 'Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.',
+      note: 'Paragraph grouping, baseline wrapping, non-breaking-space preservation, and discretionary soft-hyphen rendering are implemented. Alignment, wrap/nowrap inheritance, and the horizontal-view mechanism for non-wrapped lines remain incomplete.',
       implementationEvidence: [
         codeEvidence('engine-wasm/engine/src/parser/wml_parser/nodes.rs', 'map_card_level_nodes')
       ],
@@ -718,7 +740,16 @@ const mandatoryImplementationAudit = new Map(
         engineTest(
           'engine-wasm/engine/src/parser/wml_parser/tests.rs',
           'preserves_inline_text_and_link_order_in_paragraph'
-        )
+        ),
+        engineTest(
+          'engine-wasm/engine/src/layout/flow_layout.rs',
+          'wml_307_nonbreaking_space_is_not_an_inter_word_break_point'
+        ),
+        {
+          path: 'engine-wasm/examples/source/wml-307-character-processing.flow.json',
+          test: 'unicode-entities-and-line-break-characters',
+          command: 'pnpm test:story WML-307'
+        }
       ]
     },
     'WML-C-37': {

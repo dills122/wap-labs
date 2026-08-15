@@ -406,6 +406,30 @@ if (
   );
 }
 
+const wml307Pack = renderContextPack(wml3Graph, 'WML-307');
+if (
+  !wml307Pack.startsWith('# WML-307 AI Context Pack') ||
+  !wml307Pack.includes('### WML-307:') ||
+  wml307Pack.includes('### WML-306:') ||
+  !wml307Pack.includes('- Selected work items: 1') ||
+  !wml307Pack.includes('- Direct SCR rows: 6') ||
+  !wml307Pack.includes('- Selected SCR parents: 3') ||
+  !wml307Pack.includes('- Direct normative clauses: 10') ||
+  !wml307Pack.includes('- Aggregate regression/delegate context clauses: 47') ||
+  !wml307Pack.includes('**WML-CL-REFERENCE-ENCODING-DETECTION**') ||
+  !wml307Pack.includes('**WML-CL-ENTITY-FORMS**') ||
+  !wml307Pack.includes('**WML-CL-PARAGRAPH-NONBREAKING-SPACE**') ||
+  !wml307Pack.includes('**WBXML-CL-CHARSET-MIBENUM**') ||
+  !wml307Pack.includes('**WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED**') ||
+  !wml307Pack.includes('**WBXML-CL-MIME-TOKEN-TYPING**') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-307') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-307']
+) {
+  failures.push(
+    'WML-307 context rendering must separate ten direct WML character obligations from 47 inherited WBXML clauses while exposing all six residual parent rows without a declared-family gap'
+  );
+}
+
 const wml309Pack = renderContextPack(wml3Graph, 'WML-309');
 if (
   !wml309Pack.startsWith('# WML-309 AI Context Pack') ||

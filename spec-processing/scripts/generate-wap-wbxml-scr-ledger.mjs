@@ -259,10 +259,10 @@ const selectedAudit = new Map([
   [
     'WBXML-C-001',
     {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'The pinned built-in WML 1.3 decoder and source-derived corpus directly implement all 42 client-applicable mapped section 5 clauses, including carrying-protocol charset precedence and bounded handling of all 256 tag and attribute code-page indices. The row remains partial because only the WML 1.3 page-zero tables are registered and non-WML document families remain unsupported.',
-      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
+        'The bounded decoder implements all 42 client-applicable mapped section 5 clauses, carrying-protocol charset precedence, source-pinned Shift_JIS, deterministic page-index handling, public-identifier routing, and registered WML 1.3 plus Service Indication 1.0 token tables.',
+      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06', 'WML-307'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',
@@ -280,21 +280,31 @@ const selectedAudit = new Map([
           command:
             'cd transport-rust && cargo test --lib transport_wbxml_c_001_binary_structure_fixtures',
           fixture:
-            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
-          limitation:
-            'The registry covers the full one-octet page-index space with deterministic unassigned and implementation-specific outcomes; only the WML 1.3 page-zero token tables are registered.'
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json'
+        },
+        {
+          path: 'transport-rust/src/wbxml.rs',
+          test: 'wml_307_generic_wbxml_routes_to_non_wml_si_token_table_and_defaults',
+          command:
+            'cd transport-rust && cargo test --lib wml_307_generic_wbxml_routes_to_non_wml_si_token_table_and_defaults'
+        },
+        {
+          path: 'transport-rust/src/wbxml.rs',
+          test: 'wml_307_wbxml_shift_jis_charset_maps_strings_to_unicode',
+          command:
+            'cd transport-rust && cargo test --lib wml_307_wbxml_shift_jis_charset_maps_strings_to_unicode'
         }
       ],
-      evidenceState: 'direct-normative-fixture-linked-partial'
+      evidenceState: 'direct-normative-test-linked'
     }
   ],
   [
     'WBXML-C-010',
     {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'The pinned decoder reconstructs the WML 1.3 DTD default and fixed attributes exercised by a source-derived omitted-attribute fixture. Additional version-dependent and externally supplied implied-value cases remain open.',
-      workItems: ['WML-203', 'R0-08', 'C5-06'],
+        'The decoder reconstructs every default and fixed attribute declared by the selected WML 1.3 DTD and the Service Indication 1.0 indication action default; implied attributes without declared values remain absent as required.',
+      workItems: ['WML-203', 'R0-08', 'C5-06', 'WML-307'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',
@@ -308,21 +318,25 @@ const selectedAudit = new Map([
           command:
             'cd transport-rust && cargo test --lib transport_wbxml_c_010_default_attribute_fixtures',
           fixture:
-            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
-          limitation:
-            'The baseline is pinned to WML 1.3 and does not yet model an external implied-value source.'
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json'
+        },
+        {
+          path: 'transport-rust/src/wbxml.rs',
+          test: 'wml_307_generic_wbxml_routes_to_non_wml_si_token_table_and_defaults',
+          command:
+            'cd transport-rust && cargo test --lib wml_307_generic_wbxml_routes_to_non_wml_si_token_table_and_defaults'
         }
       ],
-      evidenceState: 'direct-normative-fixture-linked-partial'
+      evidenceState: 'direct-normative-test-linked'
     }
   ],
   [
     'WBXML-C-011',
     {
-      status: 'partial',
+      status: 'implemented',
       note:
-        'The pinned decoder uses the WMLC MIME media type as its external token-table key and exhaustively pairs all 36 WML 1.3 page-zero tags, 85 attribute starts, and 27 attribute values with literal forms. The row remains partial for non-WML document families and generic WBXML routing.',
-      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
+        'The decoder exhaustively pairs WML 1.3 page-zero tokens with literal forms, adds binary/literal equivalence for the registered Service Indication 1.0 vocabulary, and routes generic application/vnd.wap.wbxml payloads by their internal public identifier while enforcing typed-MIME conflicts.',
+      workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06', 'WML-307'],
       implementationEvidence: [
         {
           path: 'transport-rust/src/wbxml_decoder.rs',
@@ -336,9 +350,7 @@ const selectedAudit = new Map([
           command:
             'cd transport-rust && cargo test --lib transport_wbxml_c_011_binary_literal_equivalence_fixtures',
           fixture:
-            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
-          limitation:
-            'The selected WML page-zero table is exhaustive; non-WML token tables and generic application/vnd.wap.wbxml routing remain outside this tranche.'
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json'
         },
         {
           path: 'transport-rust/src/tests/wbxml_conformance.rs',
@@ -347,12 +359,22 @@ const selectedAudit = new Map([
           command:
             'cd transport-rust && cargo test --lib transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive',
           fixture:
-            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
-          limitation:
-            'The matrix covers every assignment in the selected WML 1.3 page-zero token table only.'
+            'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json'
+        },
+        {
+          path: 'transport-rust/src/wbxml.rs',
+          test: 'wml_307_si_binary_and_literal_tokens_are_equivalent',
+          command:
+            'cd transport-rust && cargo test --lib wml_307_si_binary_and_literal_tokens_are_equivalent'
+        },
+        {
+          path: 'transport-rust/src/tests/fetch_mapping.rs',
+          test: 'transport_map_success_payload_generic_wbxml_routes_by_wml_public_identifier',
+          command:
+            'cd transport-rust && cargo test --lib transport_map_success_payload_generic_wbxml_routes_by_wml_public_identifier'
         }
       ],
-      evidenceState: 'direct-normative-fixture-linked-partial'
+      evidenceState: 'direct-normative-test-linked'
     }
   ]
 ]);

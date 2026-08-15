@@ -305,6 +305,51 @@ fn decodes_entities_and_uses_href_as_fallback_link_text() {
 }
 
 #[test]
+fn wml_307_decodes_named_decimal_and_hex_entities_as_unicode() {
+    let xml = r##"
+        <wml>
+          <card id="home">
+            <p>&quot;&amp;&apos;&lt;&gt;|&nbsp;|&shy;|&#302;|&#x12E;</p>
+            <a href="next.wml?left=&#60;&amp;right=&#x3E;">entity attribute</a>
+          </card>
+        </wml>
+        "##;
+
+    let deck = parse_wml(xml).expect("all WML entity forms should parse");
+    match &deck.cards[0].nodes[0] {
+        Node::Paragraph(items) => assert!(matches!(
+            &items[0],
+            InlineNode::Text(text)
+                if text == "\"&'<>|\u{00a0}|\u{00ad}|Į|Į"
+        )),
+        _ => panic!("expected entity paragraph"),
+    }
+    match &deck.cards[0].nodes[1] {
+        Node::Paragraph(items) => assert!(matches!(
+            &items[0],
+            InlineNode::Link { href, .. } if href == "next.wml?left=<&right=>"
+        )),
+        _ => panic!("expected entity link"),
+    }
+}
+
+#[test]
+fn wml_307_rejects_unknown_and_invalid_numeric_entities() {
+    for (entity, expected) in [
+        ("&copy;", "unsupported character entity"),
+        ("&#xZZ;", "invalid numeric character reference"),
+        ("&#0;", "not permitted in XML 1.0"),
+    ] {
+        let xml = format!("<wml><card id=\"home\"><p>{entity}</p></card></wml>");
+        let error = parse_wml(&xml).expect_err("invalid entity should fail deterministically");
+        assert!(
+            error.contains(expected),
+            "unexpected error for {entity}: {error}"
+        );
+    }
+}
+
+#[test]
 fn parses_text_and_password_inputs_into_inline_nodes() {
     let xml = r#"
         <wml>

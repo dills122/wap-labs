@@ -337,54 +337,118 @@ fn wrap_text(text: &str, width: usize, max_lines: usize) -> Result<Vec<String>, 
     let mut lines = Vec::new();
     let mut current = String::new();
 
-    {
-        let mut push_word = |word: &str| -> Result<(), ()> {
-            if !current.is_empty() {
-                let candidate_len = current.len() + 1 + word.len();
-                if candidate_len <= width {
-                    current.push(' ');
-                    current.push_str(word);
-                    return Ok(());
-                }
-                if lines.len() >= max_lines {
-                    return Err(());
-                }
-                lines.push(std::mem::take(&mut current));
+    for word in text.split(|character: char| character.is_whitespace() && character != '\u{00a0}') {
+        if word.is_empty() {
+            continue;
+        }
+        for (part_index, (part, break_after)) in wrap_word(word, width).into_iter().enumerate() {
+            let separator_width = usize::from(!current.is_empty() && part_index == 0);
+            let candidate_width = current.chars().count() + separator_width + part.chars().count();
+            if !current.is_empty() && candidate_width > width {
+                push_wrapped_line(&mut lines, &mut current, max_lines)?;
             }
-            current.push_str(word);
-            Ok(())
-        };
-
-        for word in text.split_whitespace() {
-            if word.chars().count() <= width {
-                push_word(word)?;
-            } else {
-                let mut chunk = String::new();
-                let mut count = 0usize;
-                for character in word.chars() {
-                    chunk.push(character);
-                    count += 1;
-                    if count == width {
-                        push_word(&chunk)?;
-                        chunk.clear();
-                        count = 0;
-                    }
-                }
-                if !chunk.is_empty() {
-                    push_word(&chunk)?;
-                }
+            if !current.is_empty() && part_index == 0 {
+                current.push(' ');
+            }
+            current.push_str(&part);
+            if break_after {
+                push_wrapped_line(&mut lines, &mut current, max_lines)?;
             }
         }
     }
 
     if !current.is_empty() {
-        if lines.len() >= max_lines {
-            return Err(());
-        }
-        lines.push(current);
+        push_wrapped_line(&mut lines, &mut current, max_lines)?;
     }
 
     Ok(lines)
+}
+
+fn push_wrapped_line(
+    lines: &mut Vec<String>,
+    current: &mut String,
+    max_lines: usize,
+) -> Result<(), ()> {
+    if lines.len() >= max_lines {
+        return Err(());
+    }
+    lines.push(std::mem::take(current));
+    Ok(())
+}
+
+fn wrap_word(word: &str, width: usize) -> Vec<(String, bool)> {
+    let mut remaining: Vec<char> = word.chars().collect();
+    let mut parts = Vec::new();
+
+    while visible_width(&remaining) > width {
+        let mut visible = 0usize;
+        let mut soft_break = None;
+        for (index, character) in remaining.iter().enumerate() {
+            if *character == '\u{00ad}' {
+                if visible > 0 && visible < width {
+                    soft_break = Some(index);
+                }
+            } else {
+                visible += 1;
+                if visible >= width {
+                    break;
+                }
+            }
+        }
+
+        if let Some(index) = soft_break {
+            let mut part = visible_text(&remaining[..index]);
+            part.push('-');
+            parts.push((part, true));
+            remaining.drain(..=index);
+            continue;
+        }
+
+        let mut visible = 0usize;
+        let mut boundary = remaining.len();
+        for (index, character) in remaining.iter().enumerate() {
+            if *character != '\u{00ad}' {
+                visible += 1;
+            }
+            if visible == width {
+                boundary = index + 1;
+                break;
+            }
+        }
+        let original_boundary = boundary;
+        while boundary > 1
+            && (remaining.get(boundary - 1) == Some(&'\u{00a0}')
+                || remaining.get(boundary) == Some(&'\u{00a0}'))
+        {
+            boundary -= 1;
+        }
+        if boundary == 0 {
+            boundary = original_boundary;
+        }
+        let part = visible_text(&remaining[..boundary]);
+        parts.push((part, true));
+        remaining.drain(..boundary);
+    }
+
+    let final_part = visible_text(&remaining);
+    if !final_part.is_empty() {
+        parts.push((final_part, false));
+    }
+    parts
+}
+
+fn visible_width(characters: &[char]) -> usize {
+    characters
+        .iter()
+        .filter(|character| **character != '\u{00ad}')
+        .count()
+}
+
+fn visible_text(characters: &[char]) -> String {
+    characters
+        .iter()
+        .filter(|character| **character != '\u{00ad}')
+        .collect()
 }
 
 #[cfg(feature = "render-test-instrumentation")]
@@ -594,6 +658,33 @@ mod tests {
             .collect();
 
         assert_eq!(lines, vec!["super", "calif", "ragil", "istic"]);
+    }
+
+    #[test]
+    fn wml_307_nonbreaking_space_is_not_an_inter_word_break_point() {
+        assert_eq!(
+            super::wrap_text("aa bb", 4, usize::MAX).expect("ordinary spaces should wrap"),
+            vec!["aa", "bb"]
+        );
+        assert_eq!(
+            super::wrap_text("aa\u{00a0}bb", 4, usize::MAX)
+                .expect("non-breaking spaces should remain attached"),
+            vec!["aa\u{00a0}b", "b"]
+        );
+    }
+
+    #[test]
+    fn wml_307_soft_hyphen_only_renders_when_selected_as_a_break() {
+        assert_eq!(
+            super::wrap_text("encyclo\u{00ad}pedia", 20, usize::MAX)
+                .expect("unbroken soft hyphen should be ignored"),
+            vec!["encyclopedia"]
+        );
+        assert_eq!(
+            super::wrap_text("encyclo\u{00ad}pedia", 8, usize::MAX)
+                .expect("soft hyphen should provide a discretionary break"),
+            vec!["encyclo-", "pedia"]
+        );
     }
 
     #[test]

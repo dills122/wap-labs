@@ -100,17 +100,25 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
                 attach_node(&mut stack, &mut root, XmlNode::Element(element))?;
             }
             Ok(Event::Text(text)) => {
-                let raw = String::from_utf8_lossy(text.as_ref()).to_string();
-                attach_node(&mut stack, &mut root, XmlNode::Text(decode_entities(&raw)))?;
+                let raw = std::str::from_utf8(text.as_ref()).map_err(|_| {
+                    WmlLoadDiagnostic::malformed("Malformed XML: text is not valid UTF-8")
+                })?;
+                attach_node(&mut stack, &mut root, XmlNode::Text(raw.to_string()))?;
             }
             Ok(Event::GeneralRef(reference)) => {
-                let raw = String::from_utf8_lossy(reference.as_ref()).to_string();
-                let decoded = decode_general_entity(&raw);
+                let raw = std::str::from_utf8(reference.as_ref()).map_err(|_| {
+                    WmlLoadDiagnostic::malformed(
+                        "Malformed XML: character reference is not valid UTF-8",
+                    )
+                })?;
+                let decoded = decode_general_entity(raw)?;
                 attach_node(&mut stack, &mut root, XmlNode::Text(decoded))?;
             }
             Ok(Event::CData(text)) => {
-                let raw = String::from_utf8_lossy(text.as_ref()).to_string();
-                attach_node(&mut stack, &mut root, XmlNode::Text(raw))?;
+                let raw = std::str::from_utf8(text.as_ref()).map_err(|_| {
+                    WmlLoadDiagnostic::malformed("Malformed XML: CDATA is not valid UTF-8")
+                })?;
+                attach_node(&mut stack, &mut root, XmlNode::Text(raw.to_string()))?;
             }
             Ok(Event::DocType(value)) => {
                 if document_type.is_some() {
@@ -246,20 +254,26 @@ fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnos
     // WML inherits XML's case sensitivity. Preserving authored spelling here
     // ensures the strict WML validator rejects case-folded guesses instead of
     // silently turning <CARD> or HREF into declared WML names.
-    let name = String::from_utf8_lossy(start.name().as_ref()).to_string();
+    let name = std::str::from_utf8(start.name().as_ref())
+        .map_err(|_| WmlLoadDiagnostic::malformed("Malformed XML: tag name is not valid UTF-8"))?
+        .to_string();
     let mut attrs = HashMap::new();
     for attr in start.attributes() {
         let attr = attr.map_err(|err| {
             WmlLoadDiagnostic::malformed(format!("Malformed XML attribute: {err}"))
         })?;
-        let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+        let key = std::str::from_utf8(attr.key.as_ref())
+            .map_err(|_| {
+                WmlLoadDiagnostic::malformed("Malformed XML: attribute name is not valid UTF-8")
+            })?
+            .to_string();
         let value = attr
             .normalized_value(XmlVersion::Implicit1_0)
             .map_err(|err| {
                 WmlLoadDiagnostic::malformed(format!("Malformed XML attribute value: {err}"))
             })?
             .into_owned();
-        attrs.insert(key, decode_entities(&value));
+        attrs.insert(key, decode_character_references(&value)?);
     }
     Ok(XmlElement {
         name,
@@ -309,8 +323,8 @@ pub(super) fn normalize_text(input: &str) -> String {
     let mut out = String::new();
     let mut saw_whitespace = false;
 
-    for ch in decode_entities(input).chars() {
-        if ch.is_whitespace() {
+    for ch in input.chars() {
+        if ch.is_whitespace() && ch != '\u{00a0}' {
             if !saw_whitespace {
                 out.push(' ');
                 saw_whitespace = true;
@@ -321,39 +335,78 @@ pub(super) fn normalize_text(input: &str) -> String {
         }
     }
 
-    out.trim().to_string()
+    out.trim_matches(|character: char| character.is_whitespace() && character != '\u{00a0}')
+        .to_string()
 }
 
-fn decode_entities(input: &str) -> String {
-    input
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&amp;", "&")
-        .replace("&quot;", "\"")
-        .replace("&#39;", "'")
+fn decode_character_references(input: &str) -> Result<String, WmlLoadDiagnostic> {
+    let mut output = String::with_capacity(input.len());
+    let mut remainder = input;
+    while let Some(start) = remainder.find('&') {
+        output.push_str(&remainder[..start]);
+        let reference = &remainder[start..];
+        let Some(end) = reference.find(';') else {
+            // `quick_xml` has already resolved XML's built-in references in
+            // normalized attribute values. Preserve a resulting literal `&`;
+            // malformed authored references are rejected by the reader before
+            // this post-normalization pass.
+            output.push_str(reference);
+            return Ok(output);
+        };
+        output.push_str(&decode_general_entity(&reference[..=end])?);
+        remainder = &reference[end + 1..];
+    }
+    output.push_str(remainder);
+    Ok(output)
 }
 
-fn decode_general_entity(raw: &str) -> String {
+fn decode_general_entity(raw: &str) -> Result<String, WmlLoadDiagnostic> {
     let token = raw.trim_start_matches('&').trim_end_matches(';');
-    let numeric = token
+    if let Some(value) = token
         .strip_prefix("#x")
         .or_else(|| token.strip_prefix("#X"))
-        .and_then(|value| u32::from_str_radix(value, 16).ok())
-        .or_else(|| {
-            token
-                .strip_prefix('#')
-                .and_then(|value| value.parse::<u32>().ok())
+    {
+        return decode_numeric_entity(value, 16, raw);
+    }
+    if let Some(value) = token.strip_prefix('#') {
+        return decode_numeric_entity(value, 10, raw);
+    }
+    let character = match token {
+        "quot" => '"',
+        "amp" => '&',
+        "apos" => '\'',
+        "lt" => '<',
+        "gt" => '>',
+        "nbsp" => '\u{00a0}',
+        "shy" => '\u{00ad}',
+        _ => {
+            return Err(WmlLoadDiagnostic::malformed(format!(
+                "Malformed XML: unsupported character entity {raw:?}"
+            )))
+        }
+    };
+    Ok(character.to_string())
+}
+
+fn decode_numeric_entity(digits: &str, radix: u32, raw: &str) -> Result<String, WmlLoadDiagnostic> {
+    let value = u32::from_str_radix(digits, radix).map_err(|_| {
+        WmlLoadDiagnostic::malformed(format!(
+            "Malformed XML: invalid numeric character reference {raw:?}"
+        ))
+    })?;
+    let character = char::from_u32(value).filter(|character| is_xml_character(*character));
+    character
+        .map(|character| character.to_string())
+        .ok_or_else(|| {
+            WmlLoadDiagnostic::malformed(format!(
+                "Malformed XML: character reference U+{value:04X} is not permitted in XML 1.0"
+            ))
         })
-        .and_then(char::from_u32);
-    if let Some(ch) = numeric {
-        return ch.to_string();
-    }
-    match token {
-        "lt" => "<".to_string(),
-        "gt" => ">".to_string(),
-        "amp" => "&".to_string(),
-        "quot" => "\"".to_string(),
-        "apos" | "#39" => "'".to_string(),
-        _ => raw.to_string(),
-    }
+}
+
+fn is_xml_character(character: char) -> bool {
+    matches!(character, '\u{9}' | '\u{a}' | '\u{d}')
+        || ('\u{20}'..='\u{d7ff}').contains(&character)
+        || ('\u{e000}'..='\u{fffd}').contains(&character)
+        || ('\u{10000}'..='\u{10ffff}').contains(&character)
 }

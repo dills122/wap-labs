@@ -208,6 +208,52 @@ const aggregateContextClauseIdsByWorkItem = new Map([
     ])
   ]
 ]);
+const wml307ClauseIds = new Set([
+  'WML-CL-REFERENCE-ENCODING-DETECTION',
+  'WML-CL-REFERENCE-TRANSCODING-LOSS',
+  'WML-CL-REFERENCE-UNICODE-MAPPING',
+  'WML-CL-REFERENCE-ENTITY-CHARSET',
+  'WML-CL-REFERENCE-WBXML-PRECEDENCE',
+  'WML-CL-ENTITY-FORMS',
+  'WML-CL-ENTITY-UNICODE-IDENTITY',
+  'WML-CL-ENTITY-REQUIRED-NAMES',
+  'WML-CL-PARAGRAPH-NONBREAKING-SPACE',
+  'WML-CL-PARAGRAPH-SOFT-HYPHEN'
+]);
+const wml307TransportClauseIds = new Set([
+  'WML-CL-REFERENCE-ENCODING-DETECTION',
+  'WML-CL-REFERENCE-TRANSCODING-LOSS',
+  'WML-CL-REFERENCE-UNICODE-MAPPING',
+  'WML-CL-REFERENCE-ENTITY-CHARSET',
+  'WML-CL-REFERENCE-WBXML-PRECEDENCE'
+]);
+const wml307ParagraphClauseIds = new Set([
+  'WML-CL-PARAGRAPH-NONBREAKING-SPACE',
+  'WML-CL-PARAGRAPH-SOFT-HYPHEN'
+]);
+
+function wml307FixtureEvidence(clauseId) {
+  if (wml307TransportClauseIds.has(clauseId)) {
+    return {
+      path: 'transport-rust/src/tests/fetch_mapping.rs',
+      testPath: 'transport-rust/src/tests/fetch_mapping.rs',
+      command:
+        'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_map_success_payload_'
+    };
+  }
+  if (wml307ParagraphClauseIds.has(clauseId)) {
+    return {
+      path: 'engine-wasm/engine/src/layout/flow_layout.rs',
+      testPath: 'engine-wasm/engine/src/layout/flow_layout.rs',
+      command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_307'
+    };
+  }
+  return {
+    path: 'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+    testPath: 'engine-wasm/engine/src/parser/wml_parser/tests.rs',
+    command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_307'
+  };
+}
 const wml301EvidenceByClauseId = new Map([
   [
     'WML-CL-CARD-TABLE-BOUNDARIES',
@@ -651,6 +697,7 @@ const implementedWmlClauseIds = new Set([
   ...wml302ClauseIds,
   ...wml303ClauseIds,
   ...wml305ClauseIds,
+  ...wml307ClauseIds,
   ...wml309ClauseIds,
   'WML-CL-DECK-ACCESS-REQUIRED',
   'WML-CL-BR-LINE-BREAK',
@@ -919,6 +966,7 @@ for (const family of ledger.families ?? []) {
         ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
+        ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
         ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -941,6 +989,7 @@ for (const family of ledger.families ?? []) {
       ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
+      ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
       ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -951,7 +1000,11 @@ for (const family of ledger.families ?? []) {
     ].sort();
     const expectedAggregateContextWorkItems = [...aggregateContextClauseIdsByWorkItem]
       .filter(([, clauseIds]) => clauseIds.has(candidate.id))
-      .map(([workItem]) => workItem)
+      .map(([workItem]) => workItem);
+    if (candidate.id.startsWith('WBXML-CL-')) {
+      expectedAggregateContextWorkItems.push('WML-307');
+    }
+    expectedAggregateContextWorkItems
       .sort();
     const expectedRequirements = [
       ...new Set(parents.flatMap((parent) => parent.mapping.requirementIds))
@@ -1026,6 +1079,15 @@ for (const family of ledger.families ?? []) {
               !fs.existsSync(path.join(root, wml304TransportFixturePath)) ||
               !fs.existsSync(path.join(root, wml304TransportTestPath)) ||
               candidate.fixturePlan.evidence?.command !== wml304TransportTestCommand
+            : wml307ClauseIds.has(candidate.id)
+              ? candidate.fixturePlan.evidence?.path !==
+                  wml307FixtureEvidence(candidate.id).path ||
+                candidate.fixturePlan.evidence?.testPath !==
+                  wml307FixtureEvidence(candidate.id).testPath ||
+                !fs.existsSync(path.join(root, wml307FixtureEvidence(candidate.id).path)) ||
+                !fs.existsSync(path.join(root, wml307FixtureEvidence(candidate.id).testPath)) ||
+                candidate.fixturePlan.evidence?.command !==
+                  wml307FixtureEvidence(candidate.id).command
             : candidate.fixturePlan.evidence?.path !== candidate.fixturePlan.evidence?.testPath ||
               !fs.existsSync(path.join(root, candidate.fixturePlan.evidence?.testPath ?? '')) ||
               (candidate.id === 'WML-CL-HISTORY-POST-REPLAY'

@@ -1,0 +1,30 @@
+---
+id: "fixture:WBXML-FX-ATTRIBUTE-START-RANGE"
+key: "WBXML-FX-ATTRIBUTE-START-RANGE"
+type: "fixture"
+generated: true
+slice: "WML-3"
+status: "implemented"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WBXML-CL-ATTRIBUTE-START-RANGE|WBXML-CL-ATTRIBUTE-START-RANGE]]
+
+## Data
+
+```json
+{
+  "kind": "binary-decoder",
+  "status": "implemented",
+  "assertion": "Interpret non-global attribute tokens below 128 as attribute starts that may include a value prefix.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

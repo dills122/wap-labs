@@ -48,13 +48,17 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.",
+  "assessmentNote": "The transport applies XML byte-order, declaration, and carrying-protocol charset evidence without consulting in-document meta fields; recognized US-ASCII, ISO-8859-1, Shift_JIS, UTF-8, and UTF-16 input maps strictly to Unicode without replacement-character transcoding. WBXML payloads remain governed by their header and carrying-protocol rules.",
   "implementationEvidence": [
     {
       "path": "transport-rust/src/responses.rs",
       "symbol": "decode_textual_wml_payload"
+    },
+    {
+      "path": "transport-rust/src/wbxml_decoder.rs",
+      "symbol": "decode_wbxml_with_charset"
     }
   ],
   "testEvidence": [
@@ -62,6 +66,21 @@ tags:
       "path": "transport-rust/src/tests/fetch_mapping.rs",
       "test": "transport_map_success_payload_utf16le_textual_wml_maps_ok",
       "command": "cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok"
+    },
+    {
+      "path": "transport-rust/src/tests/fetch_mapping.rs",
+      "test": "transport_map_success_payload_declared_latin1_maps_every_character_to_unicode",
+      "command": "cd transport-rust && cargo test --lib transport_map_success_payload_declared_latin1_maps_every_character_to_unicode"
+    },
+    {
+      "path": "transport-rust/src/tests/fetch_mapping.rs",
+      "test": "transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss",
+      "command": "cd transport-rust && cargo test --lib transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss"
+    },
+    {
+      "path": "transport-rust/src/tests/fetch_mapping.rs",
+      "test": "transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset",
+      "command": "cd transport-rust && cargo test --lib transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset"
     }
   ],
   "ownerLayers": [

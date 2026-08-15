@@ -1,0 +1,30 @@
+---
+id: "fixture:WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION"
+key: "WBXML-FX-ATTRIBUTE-LITERAL-VALUE-PROHIBITION"
+type: "fixture"
+generated: true
+slice: "WML-3"
+status: "implemented"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# Do not interpret LITERAL as encoding any portion of an attribute value.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION|WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION]]
+
+## Data
+
+```json
+{
+  "kind": "binary-decoder",
+  "status": "implemented",
+  "assertion": "Do not interpret LITERAL as encoding any portion of an attribute value.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

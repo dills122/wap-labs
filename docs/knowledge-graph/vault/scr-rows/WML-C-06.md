@@ -48,9 +48,9 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.",
+  "assessmentNote": "The parser resolves all seven required WML named entities plus decimal and hexadecimal references against Unicode, rejects unknown or XML-invalid references, preserves non-breaking spaces, and exposes soft hyphens to deterministic layout semantics.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
@@ -60,8 +60,18 @@ tags:
   "testEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "decodes_entities_and_uses_href_as_fallback_link_text",
-      "command": "cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text"
+      "test": "wml_307_decodes_named_decimal_and_hex_entities_as_unicode",
+      "command": "cd engine-wasm/engine && cargo test wml_307_decodes_named_decimal_and_hex_entities_as_unicode"
+    },
+    {
+      "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+      "test": "wml_307_soft_hyphen_only_renders_when_selected_as_a_break",
+      "command": "cd engine-wasm/engine && cargo test wml_307_soft_hyphen_only_renders_when_selected_as_a_break"
+    },
+    {
+      "path": "engine-wasm/examples/source/wml-307-character-processing.flow.json",
+      "test": "unicode-entities-and-line-break-characters",
+      "command": "pnpm test:story WML-307"
     }
   ],
   "ownerLayers": [
