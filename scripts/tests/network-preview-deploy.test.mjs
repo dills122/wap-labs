@@ -48,7 +48,7 @@ test('production image inputs and runtime identities are immutable and non-root'
     2
   );
   assert.match(kannelDockerfile, /FROM runtime-base AS production[\s\S]*USER 10001:10001/);
-  assert.match(wmlDockerfile, /FROM golang:1\.25-alpine@sha256:[0-9a-f]{64} AS build/);
+  assert.match(wmlDockerfile, /FROM golang:1\.25\.13-alpine@sha256:[0-9a-f]{64} AS build/);
   assert.match(wmlDockerfile, /FROM scratch[\s\S]*USER 65532:65532/);
 });
 
@@ -114,7 +114,10 @@ test('release installation verifies provenance and reseals before restarting ser
   assert.match(installer, /loaded \$label image is not Linux AMD64/);
   assert.match(installer, /chown 10001:10001 "\$secret_path"/);
   assert.match(installer, /chmod 0400 "\$secret_path"/);
-  assert.match(installer, /docker compose --project-name waves-network-preview --env-file manifest.env/);
+  assert.match(
+    installer,
+    /docker compose --project-name waves-network-preview --env-file manifest.env/
+  );
   const sealIndex = installer.indexOf('waves-docker-firewall set sealed');
   const restartIndex = installer.indexOf('systemctl restart waves-network-preview.service');
   assert.ok(sealIndex >= 0 && restartIndex > sealIndex);
