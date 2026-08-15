@@ -180,7 +180,7 @@ fn request_headers_are_supported_and_verbose_trace_redacts_secrets() {
 }
 
 #[test]
-fn public_identifier_four_has_specific_wml13_diagnostic_and_recovers_next_run() {
+fn unsupported_public_identifier_has_generic_wbxml_diagnostic_and_recovers_next_run() {
     let public_id_four = [0x03, 0x04, 0x6a, 0x00, 0x3f];
     let (gateway, _, handle) = serve_once(
         response("200 OK", "application/vnd.wap.wmlc", &public_id_four),
@@ -199,7 +199,8 @@ fn public_identifier_four_has_specific_wml13_diagnostic_and_recovers_next_run() 
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(stderr.contains("outcome: WBXML_DECODE_FAILED"));
     assert!(
-        stderr.contains("unsupported numeric public identifier 4; expected WML 1.3 identifier 10")
+        stderr.contains("unsupported numeric public identifier 4; no registered token table"),
+        "stderr: {stderr}"
     );
     assert!(stderr.contains("decode: wbxml-error"));
 
