@@ -15,7 +15,7 @@ concurrency:
 
 env:
   NODE_VERSION: '22'
-  GO_VERSION: '1.25'
+  GO_VERSION: '1.26.6'
   RUST_SHARED_KEY: wavenav-rust
   RUST_BROWSER_KEY: wavenav-browser-rust
   ENGINE_COV_LINES: '90'

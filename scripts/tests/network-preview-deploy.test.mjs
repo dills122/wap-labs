@@ -48,7 +48,7 @@ test('production image inputs and runtime identities are immutable and non-root'
     2
   );
   assert.match(kannelDockerfile, /FROM runtime-base AS production[\s\S]*USER 10001:10001/);
-  assert.match(wmlDockerfile, /FROM golang:1\.25\.13-alpine@sha256:[0-9a-f]{64} AS build/);
+  assert.match(wmlDockerfile, /FROM golang:1\.26\.6-alpine@sha256:[0-9a-f]{64} AS build/);
   assert.match(wmlDockerfile, /FROM scratch[\s\S]*USER 65532:65532/);
 });
 
