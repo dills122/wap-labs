@@ -142,7 +142,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.25'
+          go-version: '1.26.6'
           cache-dependency-path: wml-server/go.mod
 
       - name: Audit WML origin and Go standard library
@@ -164,7 +164,7 @@ jobs:
       - name: Setup Go for pinned image tools
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
-          go-version: '1.25'
+          go-version: '1.26.6'
           cache: false
 
       - name: Cache pinned image audit tools
