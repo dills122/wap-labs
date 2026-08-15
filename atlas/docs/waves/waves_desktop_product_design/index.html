@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Desktop Product and Interaction Design · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_desktop_product_design"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_desktop_product_design.md</p><div class="markdown-body"><h1 id="waves-desktop-product-and-interaction-design">Waves Desktop Product and Interaction Design</h1>
+<p>Status: planning-ready
+Last updated: 2026-07-26
+Owner lane: <code>browser</code> with contract dependencies on <code>engine-wasm</code> and <code>transport-rust</code></p>
+<h2 id="purpose">Purpose</h2>
+<p>Define the product and interaction direction for the Waves desktop browser while the WAP 1.2.1 /
+WML 1.3 Class C compliance program continues.</p>
+<p>This document describes the intended user experience and assigns ownership at layer boundaries. It
+does not replace the normative compliance manifests, the engine-host frame migration plan, the
+onboarding plan, or their work-item ledgers.</p>
+<h2 id="product-decision">Product Decision</h2>
+<p>Waves will use an <strong>Authentic Core, Modern Console</strong> model:</p>
+<ol>
+<li>The central emulation surface behaves like a constrained period WAP handset.</li>
+<li>The surrounding desktop chrome uses modern interaction patterns where they improve reliability,
+accessibility, discoverability, diagnostics, and recovery.</li>
+<li>WML behavior remains engine-owned. The browser host adapts input and presents output; it does not
+create a second DOM-based WML runtime.</li>
+<li>The initial handset is a neutral <code>Class C Reference</code> profile. Evidence-backed Nokia, Ericsson,
+Openwave, and other overlays are later profiles, not aliases for generic WAP behavior.</li>
+</ol>
+<p>This direction deliberately rejects two extremes:</p>
+<ul>
+<li>a large retro desktop document viewer in which handset interaction is incidental</li>
+<li>a visually exact replica of one handset presented as universal Class C behavior</li>
+</ul>
+<h2 id="relationship-to-active-programs">Relationship to Active Programs</h2>
+<p>Implementation remains subordinate to:</p>
+<ul>
+<li><a href="WAP_1_2_1_PLANNING_BASELINE.md">WAP 1.2.1 planning baseline</a></li>
+<li><a href="ENGINE_HOST_FRAME_MIGRATION_PLAN.md">engine-host frame migration plan</a></li>
+<li><a href="ENGINE_HOST_FRAME_WORK_ITEMS.md">engine-host frame work items</a></li>
+<li><a href="USER_ONBOARDING_EXPERIENCE_PLAN.md">user onboarding experience plan</a></li>
+<li><a href="ENGINE_DEBUG_CONNECTOR_PLAN.md">engine debug connector plan</a></li>
+<li><a href="USABILITY_RESILIENCE_BACKLOG.md">usability and resilience backlog</a></li>
+<li><a href="HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md">historical browser profile source baseline</a></li>
+<li><a href="PRD-WAVES-DESKTOP-APPLICATION-COMPLETION.md">desktop application completion PRD</a></li>
+</ul>
+<p>Browser-only presentation work may proceed while core work continues when it preserves the current
+contracts and does not infer or hard-code future WML semantics. Contract-dependent capabilities must
+wait for their owning engine or transport slice.</p>
+<h2 id="current-experience-assessment">Current Experience Assessment</h2>
+<h3 id="foundations-to-preserve">Foundations to preserve</h3>
+<p>The existing Waves browser already has useful product foundations:</p>
+<ul>
+<li>transport-first Local and Network loading</li>
+<li>deterministic engine-owned focus, editing, script invocation, and card navigation</li>
+<li>hybrid Back behavior across engine card history and host deck history</li>
+<li>serialized input processing to prevent timer/input reordering</li>
+<li>startup, loading, success, and categorized error presentation</li>
+<li>host request correlation and a collapsed developer drawer</li>
+<li>executable examples for navigation, forms, history, timers, scripts, and rollback</li>
+<li>centralized copy and a growing semantic design-token set</li>
+</ul>
+<h3 id="experience-gaps">Experience gaps</h3>
+<p>The current shell presents a large white, monospace <code>Deck View</code> with fixed <code>Up</code>, <code>Select</code>, and <code>Down</code>
+buttons. The result reads more like a retro desktop utility than a handset browser. The largest gaps
+are:</p>
+<ol>
+<li>The viewport does not communicate a constrained handset display or period interaction rhythm.</li>
+<li>Fixed controls do not expose WML task precedence or dynamic softkey labels.</li>
+<li>The Local/Network selector occupies a second address-like row instead of expressing source and
+route compactly.</li>
+<li>Diagnostics occupy substantial permanent space even during ordinary browsing.</li>
+<li>Pointer activation is not routed through engine-owned hit regions.</li>
+<li>History, bookmarks, settings, persistence, crash recovery, and complete help surfaces are not yet
+product-complete.</li>
+<li>Browser-side cancellation suppresses stale results but does not abort an in-flight transport
+request.</li>
+<li>Complete frontend automation through Tauri, Kannel, transport, and the engine is still a coverage
+gap.</li>
+</ol>
+<h2 id="historical-evidence-and-its-product-implications">Historical Evidence and Its Product Implications</h2>
+<p>The WML 1.3 specification defines decks, cards, tasks, history, and user-agent behavior while leaving
+substantial presentation flexibility. Cards can occupy one or several physical screens, and the
+representation of card-level actions is user-agent dependent. Strict WML behavior therefore does not
+imply one canonical handset skin. See the <a href="https://www.openmobilealliance.org/tech/affiliates/wap/wap-191-wml-20000219-a.pdf">OMA WML 1.3 specification</a>.</p>
+<p>The Nokia 7110 is a useful later profile: its 96 by 65 display, small proportional font, inverse-video
+focus, left <code>Options</code> and right <code>Back</code> softkeys, and roller-based movement create a recognizable WAP
+interaction model. Those are Nokia-specific observations rather than generic Class C requirements.
+Two recovered Nokia publications now support detailed profile planning; see the
+<a href="HISTORICAL_BROWSER_PROFILE_SOURCE_BASELINE.md">historical browser profile source baseline</a>.</p>
+<p>Phone.com/Openwave’s recovered browser-vendor guidance defines a logical primary action, secondary
+options access, and fixed Back behavior, but it also documents broad OEM variation and conflicts on
+physical left/right placement. A generic browser-family skin would therefore overstate the evidence;
+one shipped handset and browser release must be selected before an Openwave profile is named.</p>
+<p>Ericsson’s R320 exposed a different keypad and service-menu rhythm. Its browser Options menu includes
+content-dependent actions plus fixed actions such as Suspend, Reload, Add bookmark, and Exit, while
+Resume is reached later from the phone’s WAP Services menu. The distinction reinforces the need for
+base behavior plus explicit device overlays rather than an inferred cross-OEM menu.</p>
+<p>Kannel distinguishes operational states such as Running, Suspended, Isolated, Full, and Shutdown.
+These are useful host diagnostics but are not handset-content states and must remain outside the WML
+framebuffer. See the <a href="https://www.kannel.org/download/kannel-userguide-snapshot/userguide.html">Kannel User’s Guide</a>.</p>
+<h2 id="product-principles">Product Principles</h2>
+<ol>
+<li><strong>The deck is not a web page.</strong> Use deck, card, task, softkey, and gateway terminology where those
+concepts are accurate.</li>
+<li><strong>The LCD is an emulation boundary.</strong> Browser status, help, and diagnostics never masquerade as WML
+content.</li>
+<li><strong>Authenticity is behavioral first.</strong> Focus order, softkey precedence, editors, history, timing,
+wrapping, and failure behavior matter more than a decorative handset skin.</li>
+<li><strong>Modern assistance is explicit.</strong> Pointer acceleration, accessible reading, replay, and recovery
+are host facilities whose actions still route through engine contracts.</li>
+<li><strong>Strictness is visible.</strong> The active compatibility profile and network route are always
+identifiable without dominating the browsing surface.</li>
+<li><strong>Last good state is valuable.</strong> Loading and recoverable failure keep the last committed deck
+visible whenever possible.</li>
+<li><strong>Diagnostics observe rather than control.</strong> Inspection must not change runtime ordering or state.</li>
+<li><strong>Determinism outranks animation.</strong> Visual polish must not introduce host-timing-dependent layout
+or input behavior.</li>
+</ol>
+<h2 id="information-architecture">Information Architecture</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Waves window</span></span>
+<span class="line"><span>|-- Native menu and window controls</span></span>
+<span class="line"><span>|-- Navigation toolbar</span></span>
+<span class="line"><span>|   |-- Back</span></span>
+<span class="line"><span>|   |-- Location</span></span>
+<span class="line"><span>|   |-- Go / Stop</span></span>
+<span class="line"><span>|   |-- Reload</span></span>
+<span class="line"><span>|   |-- Compatibility profile</span></span>
+<span class="line"><span>|   `-- Source / route</span></span>
+<span class="line"><span>|-- Workspace</span></span>
+<span class="line"><span>|   |-- Handset stage</span></span>
+<span class="line"><span>|   |   |-- LCD header and content</span></span>
+<span class="line"><span>|   |   |-- Engine-owned softkey strip</span></span>
+<span class="line"><span>|   |   `-- Host input controls</span></span>
+<span class="line"><span>|   `-- Collapsible utility rail</span></span>
+<span class="line"><span>|       |-- Session</span></span>
+<span class="line"><span>|       |-- History</span></span>
+<span class="line"><span>|       |-- Bookmarks</span></span>
+<span class="line"><span>|       `-- Help</span></span>
+<span class="line"><span>|-- Navigation phase and recovery bar</span></span>
+<span class="line"><span>`-- Collapsible developer drawer</span></span>
+<span class="line"><span>    |-- Network</span></span>
+<span class="line"><span>    |-- Runtime</span></span>
+<span class="line"><span>    |-- Timeline</span></span>
+<span class="line"><span>    `-- Replay</span></span></code></pre>
+<p>On narrower windows, the utility rail becomes an overlay or drawer. The logical handset viewport does
+not reflow to arbitrary desktop width; the selected profile controls its rows, columns, and logical
+metrics. Hosts may scale the completed frame in deterministic integer steps.</p>
+<h2 id="visual-language">Visual Language</h2>
+<h3 id="handset-stage">Handset stage</h3>
+<ul>
+<li>restrained warm-silver or graphite housing</li>
+<li>low-saturation green, blue, or gray monochrome LCD palette</li>
+<li>deterministic engine-measured period typography</li>
+<li>inverse-video focus and limited underlining</li>
+<li>dedicated card-title and softkey regions when supplied by the active profile</li>
+<li>integer display scaling and generous desktop-stage breathing room</li>
+<li>optional pixel-grid or LCD-persistence effect, disabled by reduced-motion preferences</li>
+</ul>
+<h3 id="supporting-chrome">Supporting chrome</h3>
+<ul>
+<li>compact, contemporary spacing and typography</li>
+<li>one accent color for selection and connection progress</li>
+<li>semantic colors for success, warning, and failure</li>
+<li>subdued panels that do not compete with the handset</li>
+<li>platform-native menus and familiar Back, Reload, Go/Stop, disclosure, and search patterns</li>
+</ul>
+<p>The existing Win95 treatment may survive as a selectable host theme later, but it is not the product’s
+semantic model and must not determine engine behavior.</p>
+<h2 id="interaction-model">Interaction Model</h2>
+<h3 id="navigation-toolbar">Navigation toolbar</h3>
+<ul>
+<li><code>Back</code> consumes engine card history before host deck history.</li>
+<li><code>Location</code> accepts complete URLs, including card fragments.</li>
+<li><code>Go</code> becomes <code>Stop</code> only while work is genuinely cancellable.</li>
+<li><code>Reload</code> repeats the current request according to WML and transport policy.</li>
+<li><code>Profile</code> selects a documented engine compatibility profile.</li>
+<li><code>Source / route</code> distinguishes local fixtures from real transport and the configured transport
+route.</li>
+<li>Tabs and multiple concurrent browsing sessions are out of MVP scope.</li>
+</ul>
+<p>Address suggestions, history search, and bookmarks are host-owned conveniences. Selecting one starts
+a normal navigation request; it does not bypass transport or engine semantics.</p>
+<h3 id="handset-input">Handset input</h3>
+<p>The engine frame should eventually expose an input-affordance model containing at least:</p>
+<ul>
+<li>stable action identifier</li>
+<li>slot or physical control association</li>
+<li>label</li>
+<li>enabled state</li>
+<li>action source, such as focused link, card <code>do</code>, template action, editor, or profile-native action</li>
+</ul>
+<p>The host renders those affordances and returns typed input events. It does not derive softkey meaning
+from rendered text or HTML elements.</p>
+<p>Keyboard, on-screen controls, and pointer activation are alternative host inputs to the same engine
+action. Pointer clicks resolve through engine-owned hit regions. A click must not directly follow a
+DOM anchor.</p>
+<h3 id="forms-and-editors">Forms and editors</h3>
+<p>Profile-specific modal text and selection editors remain engine behavior. A host-native accessible
+editor may be used as an adapter only when it preserves engine-owned begin, edit, commit, and cancel
+semantics.</p>
+<h3 id="history-and-bookmarks">History and bookmarks</h3>
+<ul>
+<li>Engine history owns card-level WML semantics.</li>
+<li>Host history owns committed deck navigations and their request identity.</li>
+<li>Bookmark titles come from engine card/deck metadata; locations retain fragments.</li>
+<li>Restoring a session may offer local or GET navigation automatically.</li>
+<li>POST bodies, credentials, and security-sensitive headers are never replayed automatically.</li>
+</ul>
+<h2 id="state-model">State Model</h2>
+<h3 id="startup">Startup</h3>
+<ol>
+<li>Paint the native window and stable handset shell.</li>
+<li>Initialize local engine and settings.</li>
+<li>Run decoder and gateway preflight in the background.</li>
+<li>Enable network actions as their dependencies become ready.</li>
+</ol>
+<h3 id="navigation">Navigation</h3>
+<p>Use stable, truthful phases outside the LCD:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Preparing -&gt; Connecting -&gt; Gateway exchange -&gt; Decoding -&gt; Loading deck -&gt; Opening card</span></span></code></pre>
+<p>Keep the previous committed deck visible while a new deck loads. Delay transient progress treatment
+briefly so instant local loads do not flash, but show status text immediately.</p>
+<h3 id="failure-and-recovery">Failure and recovery</h3>
+<p>Errors use a short category and an actionable recovery:</p>
+<ul>
+<li>Gateway timeout: Retry, Change route, Details</li>
+<li>Unsupported content: Details, Open help</li>
+<li>Deck invalid: Details, Return to previous deck</li>
+<li>Script stopped: Return to card, Details</li>
+<li>Runtime reset: Restore safe session, Start fresh</li>
+</ul>
+<p>The host shows correlation ID, route, attempt, and last completed phase in Details. It does not inject
+an artificial WML error card into the emulation surface.</p>
+<h2 id="accessibility-model">Accessibility Model</h2>
+<p>The desktop chrome targets WCAG 2.2 AA. The rendered handset needs a synchronized semantic projection
+derived from the same engine frame and stable action identifiers as the visual renderer. It is an
+accessibility adapter, not an independent DOM interpretation of WML.</p>
+<p>Required behavior includes:</p>
+<ul>
+<li>complete keyboard operation</li>
+<li>visible, unobscured focus</li>
+<li>live announcements for navigation, card changes, failures, and recovery</li>
+<li>reduced-motion support</li>
+<li>minimum 24 by 24 CSS-pixel targets, with larger primary handset controls</li>
+<li>200 percent host zoom without loss of controls</li>
+<li>screen-reader access to the current card, focus, available actions, and navigation state</li>
+<li>optional accessible reading panel outside the emulation surface</li>
+</ul>
+<p>Reference: <a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a>.</p>
+<h2 id="diagnostics-and-replay">Diagnostics and Replay</h2>
+<p>The collapsed developer drawer should provide:</p>
+<ol>
+<li><code>Network</code>: URL, method, route, attempts, timings, content type, and payload size.</li>
+<li><code>Runtime</code>: deck/card identity, history depth, focus, editor, timer, and script state.</li>
+<li><code>Timeline</code>: correlated transport, engine, and host events.</li>
+<li><code>Replay</code>: export, import, and replay a bounded sanitized session against controlled fixtures.</li>
+</ol>
+<p>The connector remains read-only and non-blocking. Exports omit credentials, authorization headers,
+cookies, secrets, and sensitive form values by default. Chrome’s preserved request log and Recorder
+provide useful interaction references, provided their web-page assumptions are not copied into the
+WML surface: <a href="https://developer.chrome.com/docs/devtools/network/reference">Network panel reference</a>
+and <a href="https://developer.chrome.com/docs/devtools/recorder">Recorder</a>.</p>
+<h2 id="settings">Settings</h2>
+<h3 id="mvp">MVP</h3>
+<ul>
+<li>compatibility profile</li>
+<li>handset display scale</li>
+<li>source and network route</li>
+<li>gateway location where applicable</li>
+<li>reduced motion</li>
+<li>high-contrast host theme</li>
+<li>safe-session restore preference</li>
+</ul>
+<h3 id="next">Next</h3>
+<ul>
+<li>host text scale</li>
+<li>history and diagnostic retention</li>
+<li>capture redaction controls</li>
+<li>explicit constrained-network simulation presets</li>
+</ul>
+<p>Settings that alter protocol results or timeout policy must be marked as diagnostic overrides. They
+must not silently redefine the selected strict compatibility profile.</p>
+<h2 id="product-acceptance-targets">Product Acceptance Targets</h2>
+<p>The implementation plan owns delivery gates. Product-level targets are:</p>
+<ol>
+<li>A newcomer can load a bundled deck and identify Back, Select, and the two softkey regions in less
+than 60 seconds without external documentation.</li>
+<li>A technical user can identify the active route, copy a correlation ID, and export a sanitized
+replay in less than two minutes.</li>
+<li>Keyboard, on-screen button, and pointer activation of the same action produce equivalent engine
+traces.</li>
+<li>Failures preserve the last committed deck and always offer a safe next action.</li>
+<li>The browser never performs WML navigation, task resolution, focus movement, line wrapping, WBXML
+decoding, or gateway protocol behavior on behalf of the owning core layer.</li>
+</ol>
+<h2 id="adopted-initial-baseline-decisions">Adopted Initial Baseline Decisions</h2>
+<p>The <code>WBP-00</code> baseline adopts the following working decisions, with measurements and rationale in
+<a href="WAVES_BROWSER_BASELINE.md">Waves Browser WBP-00/WBP-01 Baseline</a>:</p>
+<ol>
+<li>Primary launch audience: WAP/WML implementers and emulator evaluators. Preservationists and
+learners are secondary audiences whose onboarding assumptions remain subject to <code>WBP-04</code>
+validation.</li>
+<li>Initial <code>Class C Reference</code> viewport: neutral, non-vendor, and 20 engine-owned logical columns.
+A fixed row count and device metrics wait for the <code>WBP-06</code> frame/profile contract rather than
+being inferred by the browser.</li>
+<li>Performance reference: the recorded Apple M1 Max/macOS browser-WASM local path. It is a
+reproducible comparison baseline, not a release budget or network-performance claim.</li>
+<li>Toolbar information architecture: source remains configurable, while route and compatibility
+profile remain visible, read-only facts until their runtime choices genuinely exist.</li>
+</ol>
+<h2 id="open-product-decisions">Open Product Decisions</h2>
+<ol>
+<li><code>WBP-08</code> owner: whether pointer assistance defaults on or is selected during first-run setup.</li>
+<li><code>WBP-12</code>/<code>WBP-13</code> owners: persistence and redaction policy for form fields and diagnostic
+captures.</li>
+<li><code>WBP-15</code> owner: apply the historical source baseline’s provenance and coverage thresholds before
+naming and shipping a device-specific profile.</li>
+<li><code>WBP-16</code> owner: select one shipped Openwave 4.x handset/browser pair and lock its manufacturer
+evidence before proposing any named profile.</li>
+</ol>
+<h2 id="evidence-gaps">Evidence Gaps</h2>
+<ul>
+<li>Primary Phone.com/Openwave browser guides and Nokia 7110 interaction guides are recovered for
+private research; device-specific Openwave physical controls, byte-verified Ericsson R320
+developer material, Motorola application guidance, firmware defects, and redistribution
+permissions remain open.</li>
+<li>Current stories do not provide broad automated coverage of the complete Tauri UI path.</li>
+<li>Dynamic softkey order, menu overflow, modal form editing, and pointer acceleration need focused
+prototypes and user testing.</li>
+<li>Network, gateway, startup-recovery, and packaged-Tauri budgets still need measurement; the
+deterministic local browser/WASM comparison baseline is established.</li>
+<li>The primary technical-audience assumption is adopted for launch planning; <code>WBP-04</code> still needs to
+validate newcomer and learner onboarding.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-desktop-product-and-interaction-design">Waves Desktop Product and Interaction Design</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#product-decision">Product Decision</a></li><li class="depth-2"><a href="#relationship-to-active-programs">Relationship to Active Programs</a></li><li class="depth-2"><a href="#current-experience-assessment">Current Experience Assessment</a></li><li class="depth-3"><a href="#foundations-to-preserve">Foundations to preserve</a></li><li class="depth-3"><a href="#experience-gaps">Experience gaps</a></li><li class="depth-2"><a href="#historical-evidence-and-its-product-implications">Historical Evidence and Its Product Implications</a></li><li class="depth-2"><a href="#product-principles">Product Principles</a></li><li class="depth-2"><a href="#information-architecture">Information Architecture</a></li><li class="depth-2"><a href="#visual-language">Visual Language</a></li><li class="depth-3"><a href="#handset-stage">Handset stage</a></li><li class="depth-3"><a href="#supporting-chrome">Supporting chrome</a></li><li class="depth-2"><a href="#interaction-model">Interaction Model</a></li><li class="depth-3"><a href="#navigation-toolbar">Navigation toolbar</a></li><li class="depth-3"><a href="#handset-input">Handset input</a></li><li class="depth-3"><a href="#forms-and-editors">Forms and editors</a></li><li class="depth-3"><a href="#history-and-bookmarks">History and bookmarks</a></li><li class="depth-2"><a href="#state-model">State Model</a></li><li class="depth-3"><a href="#startup">Startup</a></li><li class="depth-3"><a href="#navigation">Navigation</a></li><li class="depth-3"><a href="#failure-and-recovery">Failure and recovery</a></li><li class="depth-2"><a href="#accessibility-model">Accessibility Model</a></li><li class="depth-2"><a href="#diagnostics-and-replay">Diagnostics and Replay</a></li><li class="depth-2"><a href="#settings">Settings</a></li><li class="depth-3"><a href="#mvp">MVP</a></li><li class="depth-3"><a href="#next">Next</a></li><li class="depth-2"><a href="#product-acceptance-targets">Product Acceptance Targets</a></li><li class="depth-2"><a href="#adopted-initial-baseline-decisions">Adopted Initial Baseline Decisions</a></li><li class="depth-2"><a href="#open-product-decisions">Open Product Decisions</a></li><li class="depth-2"><a href="#evidence-gaps">Evidence Gaps</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_desktop_product_design.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

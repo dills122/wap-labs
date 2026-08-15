@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>SRC-006 Historical Authority Readiness Research · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/src_006_source_readiness_research"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/src_006_source_readiness_research.md</p><div class="markdown-body"><h1 id="src-006-historical-authority-readiness-research">SRC-006 Historical Authority Readiness Research</h1>
+<p>Status: bounded research complete; no protected payload promoted; OMA request
+unsent and approval-required</p>
+<p>Reviewed: 2026-07-26</p>
+<h2 id="scope-and-decision-rule">Scope and decision rule</h2>
+<p>This lane rechecked the historical character, numeric, markup, service-model,
+and CDPD authorities that can affect <code>WML-307</code>, <code>WMLS-5</code>, generic WBXML, or
+the selected CDPD path. It used only public authority records and the existing
+private-acquisition metadata. It did not bypass access controls, purchase
+standards, contact a third party, or place a protected source or derivative in
+Git.</p>
+<p>The canonical WAP specifications and manifests remain the source of
+requirements. An external artifact is implementation/test evidence only for
+the behavior it actually defines; metadata or lineage alone cannot close a
+normative behavior claim.</p>
+<h2 id="authority-and-acquisition-result">Authority and acquisition result</h2>
+<table>
+<thead>
+<tr>
+<th>Authority</th>
+<th>Current primary evidence</th>
+<th>Acquisition result</th>
+<th>Readiness disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IANA MIBenum registry</td>
+<td>The live <a href="https://www.iana.org/assignments/character-sets/character-sets.xhtml">Character Sets registry</a> defines the MIBenum namespace and current assignments. IANA’s <a href="https://data.iana.org/archive/ietf-charsets/msg00849.html">5 September 2000 registry update</a> confirms pre-WBXML-1.3 changes including UTF-16 registration, UTF-7 reassignment, ISO-8859-15/13/14, SCSU, and removal of duplicate MIBenum 1004.</td>
+<td><code>verified-private-partial-artifact</code>; current XML is hash-locked, but no complete registry image at or immediately before WAP-192’s 25 July 2001 approval date is held.</td>
+<td>Partial historical evidence, not a snapshot. Do not reconstruct the complete 2001 table from the current registry or mailing-list deltas.</td>
+</tr>
+<tr>
+<td>Unicode 2.0</td>
+<td>The official <a href="https://www.unicode.org/versions/components-2.0.0.html">Unicode 2.0.0 component catalog</a> identifies the July 1996 paper standard and its versioned UCD files. It also says <code>Unihan-1.txt</code> was inadvertently truncated and that the corrected <code>Unihan-2.txt</code> was formally released with Unicode 2.1.2.</td>
+<td><code>verified-private-partial-artifact</code>; the component page and versioned 2.0 files are hash-locked, while the paper core remains unavailable online.</td>
+<td>Fixture-grade for the code points and properties present in the archived files. Not a substitute for unrepresented core-spec definitions, algorithms, or prose. Keep the truncated 2.0 Unihan artifact explicit; do not silently replace it with 2.1.2 data in a 2.0 fixture.</td>
+</tr>
+<tr>
+<td>IEEE 754-1985</td>
+<td>The <a href="https://standards.ieee.org/ieee/754/993/">IEEE authority record</a> confirms the superseded 1985 binary floating-point standard, its scope, and purchase/subscription access.</td>
+<td><code>metadata-only-licensed-payload</code>; no standards payload acquired.</td>
+<td>Behavior-relevant only when floating-point capability is claimed. The WAP-193/WAP-194 rules remain the direct test source for the Class C interpreter boundary.</td>
+</tr>
+<tr>
+<td>ISO/IEC 10646-1:1993</td>
+<td>The <a href="https://www.iso.org/standard/18741.html">ISO authority record</a> confirms the 1993 first edition, 754 pages, withdrawal, and replacement by the 2000 edition.</td>
+<td><code>metadata-only-licensed-payload</code>; no standards payload acquired.</td>
+<td>Normative character-set lineage. WAP-191 and WAP-193 operationalize the target-era behavior and explicitly pair the cited UCS with Unicode 2.0; the official Unicode component set can support bounded repertoire/property fixtures, not replace the ISO text.</td>
+</tr>
+<tr>
+<td>ISO 8879:1986</td>
+<td>The <a href="https://www.iso.org/standard/16387.html">ISO authority record</a> confirms the SGML first edition and its current published status.</td>
+<td><code>metadata-only-licensed-payload</code>; no standards payload acquired.</td>
+<td>Definition-only historical markup context for this lane. XML and WML define the implemented grammar and character-processing rules directly.</td>
+</tr>
+<tr>
+<td>ISO/TR 8509:1987</td>
+<td>The <a href="https://www.iso.org/standard/15732.html">ISO authority record</a> confirms the nine-page service-conventions report, its withdrawal in 1994, and replacement by ISO/IEC 10731:1994.</td>
+<td><code>metadata-only-licensed-payload</code>; no standards payload acquired.</td>
+<td>Definition-only for the selected connectionless Class C path. It informs WTP service terminology, while WTP is not activated by that path.</td>
+</tr>
+<tr>
+<td>TIA/EIA/IS-732</td>
+<td>The authorized-distributor record already locked in the external-dependency manifest identifies the December 1997 <code>TIA/EIA/IS-732-100</code> lineage. <a href="https://standards.tiaonline.org/standards/committees/files/tr-45/tr45-aug00-28900123652.pdf">Public TIA committee minutes</a> corroborate that IS-732 is CDPD, but WAP-200 cites the series generically and does not select a part.</td>
+<td><code>metadata-only-licensed-payload</code>; no standards payload acquired.</td>
+<td>Capability/lineage evidence for the selected CDPD bearer. WAP-200 plus RFC 768/791/792 defines the emulator’s UDP/IPv4/WDP/WCMP boundary; IS-732 becomes implementation-blocking only if the project claims CDPD lower-layer or radio behavior.</td>
+</tr>
+</tbody>
+</table>
+<p>The acquisition states above remain correctly represented in
+<code>wap-1.2.1-external-ingestion-status.json</code>: two partial public source sets and
+five licensed-payload metadata-only records. No manifest state can be promoted
+from this review.</p>
+<h2 id="behavior-decisions">Behavior decisions</h2>
+<h3 id="wml-307-and-generic-wbxml">WML-307 and generic WBXML</h3>
+<p>Implementation and fixtures may rely directly on WAP-191 section 6 and
+WAP-192 sections 5.2 and 5.6 for:</p>
+<ul>
+<li>document character-set and encoding resolution;</li>
+<li>WBXML <code>charset</code> as an IANA MIBenum, with <code>0</code> meaning unknown;</li>
+<li>external-protocol metadata precedence being owned by the higher-level
+protocol;</li>
+<li>charset-dependent string termination and deterministic failure when names
+cannot be represented; and</li>
+<li>the source-demonstrated values US-ASCII <code>3</code>, ISO-8859-1 <code>4</code>, Shift_JIS <code>17</code>,
+and UTF-8 <code>106</code>.</li>
+</ul>
+<p>The historical IANA evidence is sufficient to test those source-pinned values
+and unknown-value handling. It is not sufficient to claim a complete
+WBXML-era MIBenum table. A generic decoder should therefore distinguish:
+recognized supported values, recognized-but-unsupported values, <code>0</code>, and
+unrecognized values without treating the current registry as the historical
+allow-list.</p>
+<p>The Unicode 2.0 component files are sufficient to derive bounded fixtures for
+numeric character references, names, categories, and properties actually
+present in those files. They do not justify rejecting later-assigned Unicode
+characters: WAP-191 says WML adopts future XML/ISO 10646 changes. They also do
+not replace the WML/XML rules for entity expansion, encoding detection, or
+error handling.</p>
+<h3 id="wmls-5">WMLS-5</h3>
+<p>IEEE 754-1985 is directly relevant to WAP-193’s 32-bit single-precision
+constant encoding and, when enabled, finite range, precision, overflow,
+underflow, zero, conversion, and operation behavior. However, floating-point
+interpreter support is optional for the selected Class C profile. The selected
+WAP-194 library rows still require the Float surface and the deterministic
+<code>invalid</code> fallback when floating point is unsupported.</p>
+<p>Therefore <code>WMLS-5</code> must make one explicit capability decision before its
+numeric fixtures are closed:</p>
+<ol>
+<li>integer-only strict profile: test rejection/<code>invalid</code> behavior and do not
+claim IEEE arithmetic support; or</li>
+<li>floating-point profile: acquire licensed IEEE evidence or formally accept
+WAP-193/WAP-194’s embedded operational rules as the bounded test authority,
+then test binary32 representation and every WAP-specific normalization.</li>
+</ol>
+<p>Unicode 2.0/ISO 10646 and the IANA registry are also behavior-relevant to
+WMLScript source characters, the interpreter’s single native character set,
+constant-pool MIBenum values, UTF-8 fixed names, string indexing/comparison,
+and <code>Lang.characterSet()</code>. The UCD can seed repertoire/property cases, while
+WAP-193/WAP-194 remains the direct source for string-operation semantics.</p>
+<h3 id="selected-cdpd-path">Selected CDPD path</h3>
+<p>TIA/EIA/IS-732 identifies the bearer but does not need to define the current
+emulator boundary. The selected path is adequately specified at that boundary
+by WAP-200’s CDPD mapping and the selected IPv4/UDP/ICMP authorities. The
+licensed TIA payload remains an exact-source gap, but it does not block Class C
+WDP/WCMP fixtures unless scope expands below the IP bearer abstraction.</p>
+<p>ISO/TR 8509 does not affect the selected connectionless path because its WTP
+service-convention context is not activated. ISO 8879 likewise supplies
+terminology rather than an independent parser or runtime rule.</p>
+<h2 id="class-c-impact">Class C impact</h2>
+<ul>
+<li><code>SRC-006</code> remains the sole source-program blocker and remains limited to
+public redistribution/promotion.</li>
+<li>The IANA snapshot gap prevents a complete historical MIBenum-table claim,
+not source-pinned WBXML fixtures for known values and unknown handling.</li>
+<li>Unicode 2.0 UCD components improve test readiness for bounded character
+data; the missing paper standard remains an access gap and does not prevent
+use of the operational WAP/XML clauses.</li>
+<li>IEEE 754-1985 is not a Class C blocker for an integer-only interpreter. It
+becomes a capability gate if floating-point support is claimed.</li>
+<li>ISO 8879 and ISO/TR 8509 are definition-only for the selected path.</li>
+<li>TIA/EIA/IS-732 is a selected-bearer provenance gap, not a blocker at the
+declared UDP/IPv4/WDP/WCMP boundary.</li>
+</ul>
+<h2 id="exact-remaining-access-gaps">Exact remaining access gaps</h2>
+<ol>
+<li>A complete IANA Character Sets registry snapshot from the WBXML 1.3 era,
+preferably at or immediately before 25 July 2001.</li>
+<li>The Unicode Standard, Version 2.0 paper core; the official component/UCD
+subset remains available and hash-locked.</li>
+<li>ANSI/IEEE Std 754-1985 full licensed text.</li>
+<li>ISO/IEC 10646-1:1993 full licensed text and any exact amendment set needed
+to independently reproduce the WAP statement that it matched Unicode 2.0.</li>
+<li>ISO 8879:1986 full licensed text.</li>
+<li>ISO/TR 8509:1987 full licensed text.</li>
+<li>The exact TIA/EIA/IS-732 part set applicable to WAP-200’s generic citation,
+plus licensed payload access if lower-layer CDPD behavior is ever claimed.</li>
+<li>Written OMA permission for public redistribution of the recovered WAP
+binaries, DTDs, parsed derivatives, excerpts, and fixtures.</li>
+</ol>
+<h2 id="additive-follow-ups">Additive follow-ups</h2>
+<ol>
+<li>Obtain maintainer approval and identity/commercial-use details, then send
+the prepared OMA request package. No message has been sent.</li>
+<li>When <code>WML-307</code> begins, add its minimum knowledge-graph support first and
+build source-pinned charset/entity fixtures without inventing a complete
+2001 registry.</li>
+<li>Before advancing the numeric portion of <code>WMLS-5</code>, record the integer-only
+versus floating-point capability decision and its evidence gate.</li>
+<li>Keep the CDPD claim boundary at UDP/IPv4/WDP/WCMP. Open a separately
+sourced profile only if lower-layer IS-732 behavior enters scope.</li>
+<li>Do not retry the same historical-registry searches without a new authority
+path, filename, or archive-timestamp hypothesis.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#src-006-historical-authority-readiness-research">SRC-006 Historical Authority Readiness Research</a></li><li class="depth-2"><a href="#scope-and-decision-rule">Scope and decision rule</a></li><li class="depth-2"><a href="#authority-and-acquisition-result">Authority and acquisition result</a></li><li class="depth-2"><a href="#behavior-decisions">Behavior decisions</a></li><li class="depth-3"><a href="#wml-307-and-generic-wbxml">WML-307 and generic WBXML</a></li><li class="depth-3"><a href="#wmls-5">WMLS-5</a></li><li class="depth-3"><a href="#selected-cdpd-path">Selected CDPD path</a></li><li class="depth-2"><a href="#class-c-impact">Class C impact</a></li><li class="depth-2"><a href="#exact-remaining-access-gaps">Exact remaining access gaps</a></li><li class="depth-2"><a href="#additive-follow-ups">Additive follow-ups</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/src_006_source_readiness_research.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

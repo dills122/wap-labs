@@ -1,0 +1,653 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Spec Test Coverage Matrix · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/spec_test_coverage"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/spec_test_coverage.md</p><div class="markdown-body"><h1 id="waves-spec-test-coverage-matrix">Waves Spec Test Coverage Matrix</h1>
+<p>Version: v0.2
+Status: active coverage ledger</p>
+<h2 id="purpose">Purpose</h2>
+<p>Map requirement groups to current or planned test assets so acceptance criteria stay executable and visible across projects.</p>
+<p>Legend:</p>
+<ul>
+<li><code>covered</code>: implemented and test path exists</li>
+<li><code>partial</code>: some checks exist; more coverage required</li>
+<li><code>planned</code>: no test yet, ticketed/planned</li>
+</ul>
+<h2 id="engine-engine-wasm">Engine (<code>engine-wasm</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement Group</th>
+<th>Status</th>
+<th>Current/Planned Test Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RQ-RMK-001</code> deck/card parse baseline</td>
+<td><code>covered</code></td>
+<td>WML-202 covers deck metadata/context; WML-203 adds mandatory text prologue enforcement and source-derived validation for every selected WML 1.3 DTD element family in native Rust, WASM, and <code>wml-203-dtd-family.wml</code>; commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_203</code>, <code>wasm-pack test --node engine-wasm/engine</code>, and <code>pnpm test:story WML-203</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-002</code> task model and template/card shadowing</td>
+<td><code>covered</code></td>
+<td>WML-303 closes its 27 directly mapped action/event clauses; WML-302 closes its 20 variable/setvar clauses; WML-309 closes active-do visibility, authored-label best effort, and unique frame-bound activation through <code>wml_309_frame.rs</code>, native/WASM serialization parity, Tauri command tests, and <code>wml-309-frame-affordances.flow.json</code>. Commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_309</code>, <code>wasm-pack test --node engine-wasm/engine</code>, <code>cargo test --manifest-path browser/src-tauri/Cargo.toml</code>, and <code>pnpm test:story WML-309</code>. Broader form presentation belongs to WML-308 rather than this task-model group.</td>
+</tr>
+<tr>
+<td><code>RQ-RMK-003</code> fragment/history nav basics</td>
+<td><code>covered</code></td>
+<td>Rust engine tests cover fragment transitions + <code>navigateBack</code> and WML-202 go-only <code>newcontext</code> variable/history/private-state reset; <code>wml-202-template-shadowing.flow.json</code> proves empty history after newcontext; host samples also include <code>basic.wml</code>, <code>missing-fragment.wml</code>, and <code>history-back-stack.wml</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-005</code> variable substitution and setvar ordering</td>
+<td><code>covered</code></td>
+<td>WML-302 closes 20/20 directly mapped clauses for post-XML substitution, text/vdata/HREF locations, conversion/default/undefined/<code>$$</code> behavior, validation, control commit, task snapshots, go/prev/refresh order, and resolved history/navigation boundaries. Evidence: <code>engine-wasm/engine/src/engine_tests/wml_302_variables.rs</code>, <code>wasm_wml_302_variable_render_and_task_snapshot_match_native</code>, and <code>wml-302-variable-substitution.flow.json</code>; commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_302</code>, <code>wasm-pack test --node engine-wasm/engine</code>, and <code>pnpm test:story WML-302</code>. Request serialization/postfields remain WML-304.</td>
+</tr>
+<tr>
+<td><code>RQ-RMK-006</code> anchor shorthand behavior</td>
+<td><code>partial</code></td>
+<td>host sample <code>external-navigation-intent.wml</code>; deeper parser fixture coverage planned</td>
+</tr>
+<tr>
+<td><code>RQ-RMK-007</code> WBXML decode boundary ownership</td>
+<td><code>covered</code></td>
+<td>contract behavior via <code>loadDeckContext</code> metadata and docs, including native <code>m1_02_load_deck_context_public_api_sets_metadata_and_state</code>, wasm wrapper checks in <code>engine-wasm/engine/src/engine_wasm_bindings_tests.rs</code>, and direct schema-v2 WDP SDU -&gt; fetch/WBXML decode -&gt; native engine state/render parity in <code>wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior</code></td>
+</tr>
+<tr>
+<td><code>RQ-RMK-009</code> compatibility/robustness behavior</td>
+<td><code>covered</code></td>
+<td>WML-203 tests classify canonical versus alternate external DTDs, reject malformed identity combinations, preserve recognized content inside unknown alternate-DTD wrappers, require the canonical text prologue, and validate selected DTD models deterministically through native and WASM boundaries</td>
+</tr>
+<tr>
+<td><code>RQ-RMK-012</code> WML user-agent error handling</td>
+<td><code>covered</code></td>
+<td>WML-205 native tests reject an invalid form of every declared WML element and enforce case, literal, length, table, task, event, variable, prologue, and structural errors atomically; browser tests and the production-WASM <code>wml-205-error-recovery</code> story prove fetch/access denial notification with invoking deck/card/focus/context/pending-intent/session/history preservation; commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_205</code>, <code>pnpm --dir browser/frontend test</code>, and <code>pnpm test:story WML-205</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-016</code>, <code>RQ-WAE-017</code> history and back semantics</td>
+<td><code>covered</code></td>
+<td>WML-303 adds first-active <code>do type="prev"</code> override precedence, noop/template masking, empty-history behavior, unchanged-card handled reporting, and failure rollback in <code>engine-wasm/engine/src/engine_tests/wml_303_actions.rs</code>; native/WASM/host snapshot parity is covered by the engine WASM and Tauri wrapper suites. Browser tests prove BACK remains reachable and uses explicit <code>lastBackNavigationHandled</code> rather than snapshot-difference inference before host fallback. Four host/Waves flows in <code>wml-303-actions-softkeys.flow.json</code> provide stable cross-layer evidence.</td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-001..003</code> external-call/pragma/url invocation model</td>
+<td><code>partial</code></td>
+<td>Phase W fixtures + engine tests for <code>script:</code> link resolution and deferred invocation boundaries; access-control/pragma conformance follow-up tracked in <code>W0-08</code> + <code>W1-03</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-004..006</code> function/local/conversion semantics</td>
+<td><code>partial</code></td>
+<td>Bounded mandatory WMLS-502 semantics are directly covered by <code>wavescript/wap_runtime.rs</code>, <code>value.rs</code>, the source-derived <code>wap-193-operator-conversions.wmlsc.hex</code> fixture, native/WASM parity tests, and <code>script-link-execution.flow.json</code>. The executor covers local calls, argument order, empty-initialized locals, implicit/explicit returns, automatic conversions, operator precedence, all local language opcode variants, deterministic invalid operations, and step/stack/call/allocation bounds. Optional integer-only behavior remains under <code>RQ-WMLS-007</code>, so this grouped requirement row stays partial. Commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime</code>, <code>wasm-pack test --node engine-wasm/engine --features wasm-bindings</code>, and <code>pnpm test:story WMLS-502</code>.</td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-008..010</code> bytecode format/verification/error model</td>
+<td><code>partial</code></td>
+<td><code>wavescript/wap_decoder.rs</code>, <code>wavescript/wap_runtime.rs</code>, and source-pinned WAP-193 fixtures cover framing, pools, every instruction encoding, references, WAP-194 Appendix A library/function indexes and arities, reachable whole-function stack dataflow, bounded language execution, malformed input, deterministic fatal resource/integrity outcomes, non-fatal invalid-operation results, recovery, and native/WASM parity. Manual PCs explicitly select the isolated non-normative nine-opcode fixture VM. WMLS-501/W1-02 and the bounded WMLS-502 execution tranche are closed; access/URL behavior, standard-library execution, integer-only constant behavior, and the remaining chapter 12 matrix stay in WMLS-503..505. Commands: <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_decoder</code>, <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime</code>, <code>cargo test --manifest-path engine-wasm/engine/Cargo.toml registered_wap</code>, and <code>wasm-pack test --node engine-wasm/engine --features wasm-bindings</code>.</td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-011</code> WMLScript content-type routing</td>
+<td><code>planned</code></td>
+<td>Target files: <code>transport-rust/src/responses.rs</code>, <code>transport-rust/tests/fixtures/transport/</code>, <code>browser/src-tauri/src/lib.rs</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code> then <code>cd browser/src-tauri &amp;&amp; cargo test</code>; tracked in <code>W1-01</code></td>
+</tr>
+<tr>
+<td><code>RQ-WMLS-017..022</code> WMLBrowser/dialog/timer/refresh semantics</td>
+<td><code>partial</code></td>
+<td><code>engine-wasm/engine/src/wavescript/stdlib/wmlbrowser.rs</code> + <code>wmlbrowser_tests.rs</code> and runtime effect tests in <code>engine-wasm/engine/src/engine_tests.rs</code>, including <code>m1_02_script_invocation_public_outcome_regression</code>, <code>wmlbrowser_get_current_card_returns_fragment_when_context_exists</code>, <code>wmlbrowser_get_current_card_returns_invalid_without_context</code>, <code>wmlbrowser_new_context_clears_vars_and_history_and_prev_has_no_effect</code>, and <code>timer_expiry_invokes_script_and_publishes_dialog_in_order</code>; <code>engine-wasm/examples/source/timer-script-dialog.wml</code> + <code>.flow.json</code> provide executable <code>pnpm test:story W0-05</code> evidence for runtime timer expiry invoking a script and publishing <code>DIALOG_ALERT</code> in deterministic order. Strict Dialogs IDs/conversions, interactive results, refresh optionality, and full WMLS-5 remain open.</td>
+</tr>
+<tr>
+<td>WAP-191 section <code>11</code> text/layout semantics (<code>p</code>, <code>br</code>, <code>table</code>, <code>pre</code>, <code>img</code>)</td>
+<td><code>planned</code></td>
+<td>Target files: <code>engine-wasm/engine/src/render/flow_layout.rs</code>, <code>engine-wasm/engine/tests/fixtures/phase-a/</code>; command: <code>cd engine-wasm/engine &amp;&amp; cargo test</code>; tickets <code>B5-02</code>, <code>B5-03</code>, <code>C5-01</code>, <code>C5-02</code></td>
+</tr>
+<tr>
+<td>WAP-191 section <code>12.5</code> inter-card process ordering (<code>go/prev/refresh/noop</code>)</td>
+<td><code>covered</code></td>
+<td>engine runtime + parser coverage in <code>engine-wasm/engine/src/engine_tests.rs</code> (<code>fixture_accept_*_trace_order_is_deterministic</code>, <code>enter_accept_noop_binding_is_inactive_and_keeps_current_card_and_history</code>, <code>onenterforward_noop_binding_is_inactive_and_keeps_navigation_state</code>) and parser action tests in <code>engine-wasm/engine/src/parser/wml_parser/tests.rs</code>; browser host-flow assertions in <code>browser/frontend/src/app/navigation-state.test.ts</code> (<code>emits deterministic state-event order for host-history back fallback</code>, <code>keeps host history pointer stable when history-back transport load fails</code>, <code>replays host back using stored request method and request policy</code>, header-aware host history replay) plus Tauri host integration path <code>browser/src-tauri/src/lib.rs</code> (<code>tauri_apply_accept_noop_refresh_prev_and_error_paths_are_deterministic</code>) confirm deterministic forward/back/refresh/noop/error behavior and request-policy handoff evidence</td>
+</tr>
+<tr>
+<td>Effective WAP-191 section <code>15</code> + SIN 105 conformance ID closure (76 actor-specific IDs)</td>
+<td><code>partial</code></td>
+<td>SCR ledger: <code>spec-processing/source-manifests/wap-1.2.1-wml-scr.json</code>; clause ledger: <code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>; graph: <code>spec-processing/source-manifests/wap-1.2.1-wml-2-knowledge-graph.json</code>; commands: <code>node scripts/check-wap-conformance-ledger.mjs</code>, <code>node scripts/check-wap-selected-normative-clauses.mjs</code>, and <code>node scripts/check-active-compliance-facts.mjs</code>. Selected-family, direct-graph, and evidence totals are derived from those artifacts rather than copied into this table; optional capability and remaining parent rows stay open.</td>
+</tr>
+<tr>
+<td>Effective WAP-190 + SIN WAE SCR closure (86 active IDs)</td>
+<td><code>partial</code></td>
+<td>SCR ledger: <code>spec-processing/source-manifests/wap-1.2.1-wae-scr.json</code>; clause ledger: <code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>; <code>WAESpec:MCF</code> selects 11 client rows expanded into 39 clauses, with 5 implemented / 3 partial / 3 missing and direct tests linked to 8; Basic auth, generic WBXML media type, script bytecode media routing, and direct fixture execution remain open</td>
+</tr>
+<tr>
+<td>Effective WAP-192 + SIN 105 WBXML SCR closure (15 actor-specific IDs)</td>
+<td><code>partial</code></td>
+<td>SCR ledger: <code>spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json</code>; clause ledger: <code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>; <code>WBXML:MCF</code> selects 3 rows expanded into 47 client-applicable anchored clauses; 42 fixed-outcome fixtures cite and implement all 47, the encoder-only unrepresentable-name clause remains outside the selected profile, and the parent-row audit stays 0 implemented / 3 partial / 0 missing</td>
+</tr>
+<tr>
+<td>Effective WAP-193_101 WMLScript SCR closure (112 actor-specific IDs)</td>
+<td><code>partial</code></td>
+<td>SCR ledger: <code>spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json</code>; clause ledger: <code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>; <code>WMLScript:MCF</code> selects 41 mandatory interpreter rows expanded into 107 clauses with 3 narrow clauses implemented while parent rows remain 0 implemented / 32 partial / 9 missing. Direct normative links cover 22 rows, including B1 stack/reference verification and fatal stack classification. Opcode execution, access control, and remaining chapter 12 closure stay open.</td>
+</tr>
+<tr>
+<td>Effective WAP-194 + SIN 103 Libraries SCR closure (95 IDs)</td>
+<td><code>partial</code></td>
+<td>SCR ledger: <code>spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json</code>; clause ledger: <code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code>; <code>WMLScriptLibs:MCF</code> selects 80 mandatory interpreter rows expanded into 211 clauses with 12 Appendix A identifier clauses implemented while parent rows remain 0 implemented / 21 partial / 59 missing. Direct normative links cover the 7 identifier rows; library execution remains open and source-exact <code>WMLSSL048</code> is preserved.</td>
+</tr>
+<tr>
+<td>WAP-120 caching SCR closure (11 actor-specific IDs)</td>
+<td><code>partial</code></td>
+<td>Ledger: <code>spec-processing/source-manifests/wap-1.2.1-caching-scr.json</code>; <code>WAPCachingMod:MCF</code> selects 5 mandatory user-agent rows with 0 implemented / 3 partial / 2 missing; direct normative coverage remains 0/5; the current no-storage behavior is only a provisional zero-byte-cache profile; command: <code>node scripts/check-wap-caching-conformance-ledger.mjs</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="host-sample-engine-wasmhost-sample">Host sample (<code>engine-wasm/host-sample</code>)</h2>
+<h3 id="executable-story-accounting">Executable-story accounting</h3>
+<p>The canonical corpus now contains 43 WML examples. Its 41 adjacent companions contain 52
+executable stories: 33 <code>host-sample</code> and 19 <code>waves-browser</code>. Therefore 41 examples have executable
+evidence and 2 remain intentionally without a companion. A WML metadata <code>testing-ac</code> checklist is prose acceptance guidance only and
+is never counted as an executable story.</p>
+<p>The regression priorities follow the QA test-planner convention:</p>
+<ul>
+<li><code>P0</code>: deterministic navigation, history/context, task ordering, rollback, and state-integrity
+paths that must pass on every story run.</li>
+<li><code>P1</code>: major form, script, timer, and browser-integration paths that should run with the full
+simulator regression lane.</li>
+<li><code>P2</code>: useful but duplicated or lower-risk host-visible demonstrations. These remain explicit
+gaps when a companion would add more maintenance than boundary evidence.</li>
+</ul>
+<p>Story preconditions are Node <code>22.22.1</code>, pnpm <code>10.23.0</code>, a current web-target WASM package, and
+Playwright Chromium. Each flow declares its initial state and setup, then pairs every action with
+the expected runtime state, trace subsequence, semantic render, status, or Waves session result.
+The pass condition is exact mapping validation plus all selected expectations passing with no
+unexpected browser diagnostics.</p>
+<h3 id="example-and-flow-inventory">Example and flow inventory</h3>
+<p>Classification values for examples without flows are the required audit classes: <code>direct</code> means
+stable and directly automatable with the current DSL; <code>capability</code> means stable but blocked on a
+small reusable harness capability; <code>manual</code> means intentionally exploratory/manual-only; and
+<code>superseded</code> records the executable scenario that already proves the valuable boundary.</p>
+<table>
+<thead>
+<tr>
+<th>Example ID</th>
+<th>Work-item / spec mappings</th>
+<th>Priority and host visibility</th>
+<th>Executable evidence / target</th>
+<th>Classification or honest gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>acceptErrorRollback</code></td>
+<td><code>R0-02</code> / <code>WML-18</code>, <code>WML-R-017</code></td>
+<td>P0, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: rollback and post-error Back recovery are exercised by <code>actionsTaskOrderRollback/accept-go-prev-refresh-and-rollback</code>.</td>
+</tr>
+<tr>
+<td><code>acceptNoopOrdering</code></td>
+<td><code>R0-02</code> / <code>WML-18</code>, <code>WML-R-012</code>, <code>WML-R-015</code>, <code>WML-R-017</code></td>
+<td>P0, stable host-visible</td>
+<td><code>accept-noop-preserves-navigation-state</code> (<code>host-sample</code>)</td>
+<td>Automated noop state preservation and Back recovery; broader accept ordering is intentionally split to the task-order flow.</td>
+</tr>
+<tr>
+<td><code>actionsDoOnevent</code></td>
+<td><code>W0-01</code> / <code>RQ-WMLS-018</code></td>
+<td>P1, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: accept dispatch is covered by the task-order story and chained forward entry by the card-entry story.</td>
+</tr>
+<tr>
+<td><code>actionsPrevTaskModel</code></td>
+<td><code>A5-02</code> / <code>WML-R-012</code>, <code>WML-R-015</code></td>
+<td>P1, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: accept <code>prev</code> is covered by the task-order story; backward-entry dispatch is covered by the card-entry story.</td>
+</tr>
+<tr>
+<td><code>actionsRefreshRollback</code></td>
+<td><code>A5-02</code> / <code>WML-R-012</code>, <code>WML-R-015</code>, <code>WML-R-017</code></td>
+<td>P0, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: refresh stability and failed-entry rollback are covered by the task-order story.</td>
+</tr>
+<tr>
+<td><code>actionsTaskOrderRollback</code></td>
+<td><code>A5-02</code> / <code>WML-R-012</code>, <code>WML-R-015</code>, <code>WML-R-017</code></td>
+<td>P0, stable host-visible</td>
+<td><code>accept-go-prev-refresh-and-rollback</code> (<code>host-sample</code>)</td>
+<td>Automated go, prev, refresh, failure rollback, trace ordering, and post-error Back recovery.</td>
+</tr>
+<tr>
+<td><code>basic</code></td>
+<td><code>A2-01</code>, <code>A2-02</code> / <code>WML-R-006</code>, <code>WML-R-007</code></td>
+<td>P0, stable host-visible</td>
+<td><code>fragment-and-external-intent</code> (<code>host-sample</code>); <code>waves-fragment-and-external-intent</code> (<code>waves-browser</code>)</td>
+<td>Automated engine boundary plus real Waves keyboard/render integration.</td>
+</tr>
+<tr>
+<td><code>cardEntryForwardBackward</code></td>
+<td><code>A2-03</code> / <code>WML-R-008</code></td>
+<td>P0, stable host-visible</td>
+<td><code>forward-entry-and-backward-reentry</code> (<code>host-sample</code>)</td>
+<td>Automated forward-entry transit and backward re-entry redirect with ordered traces.</td>
+</tr>
+<tr>
+<td><code>externalNavigationIntent</code></td>
+<td><code>A2-02</code> / <code>WML-R-007</code></td>
+<td>P2, stable host-visible</td>
+<td>manual only</td>
+<td><code>direct</code>: current DSL can automate the relative/absolute/fragment matrix, but the P0 external-intent boundary is already proven by <code>basic</code>; retain as focused manual diagnosis.</td>
+</tr>
+<tr>
+<td><code>fieldOpenwave2011Navigation</code></td>
+<td><code>A1-03</code>, <code>A2-01</code> / <code>WML-R-002</code>, <code>WML-R-006</code></td>
+<td>P2, stable host-visible</td>
+<td>manual only</td>
+<td><code>direct</code>: legacy-style source ordering and navigation are automatable, but fragment/external outcomes duplicate <code>basic</code>; retain as realism/exploration corpus.</td>
+</tr>
+<tr>
+<td><code>formsSelectLocal</code></td>
+<td><code>A5-05</code>, <code>A5-06</code> / <code>WML-R-019</code>, <code>RQ-RMK-003</code>, <code>RQ-RMK-008</code></td>
+<td>P1, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: select cycling/commit is executable in <code>wml204SelectSemantics</code>; Waves focus integration and exact POST capture are executable in <code>formsSelectNavigationLocal</code>.</td>
+</tr>
+<tr>
+<td><code>formsSelectNavigationLocal</code></td>
+<td><code>A5-05</code>, <code>A5-06</code> / <code>WML-R-019</code>, <code>RQ-RMK-003</code>, <code>RQ-RMK-008</code></td>
+<td>P1, browser-session visible</td>
+<td><code>waves-merged-select-and-input-edit</code> (<code>waves-browser</code>)</td>
+<td>Automated real keyboard select/input editing, exact form payload, local intent capture, and no-fetch status.</td>
+</tr>
+<tr>
+<td><code>formsTextSubmitLocal</code></td>
+<td><code>A5-04</code>, <code>A5-06</code> / <code>WML-R-019</code>, <code>RQ-RMK-008</code></td>
+<td>P1, browser-session visible</td>
+<td><code>waves-text-edit-and-local-submit-intent</code> (<code>waves-browser</code>)</td>
+<td>Automated text/password editing, masking, commit, exact POST payload, and local intent capture.</td>
+</tr>
+<tr>
+<td><code>historyBackProcessOrder</code></td>
+<td><code>R0-02</code>, <code>R0-03</code> / <code>WML-18</code>, <code>WML-07</code>, <code>WML-R-008</code></td>
+<td>P0, stable host-visible</td>
+<td><code>multi-card-back-process-order</code> (<code>host-sample</code>)</td>
+<td>Automated two-level unwind and empty-history terminal result.</td>
+</tr>
+<tr>
+<td><code>historyBackStack</code></td>
+<td><code>A2-03</code> / <code>WML-R-008</code></td>
+<td>P0, stable host-visible</td>
+<td><code>fragment-back-and-empty-history</code> (<code>host-sample</code>); <code>waves-fragment-back-and-empty-history</code> (<code>waves-browser</code>)</td>
+<td>Automated engine boundary plus real Waves Backspace/session status.</td>
+</tr>
+<tr>
+<td><code>missingFragment</code></td>
+<td><code>A2-01</code> / <code>WML-R-006</code></td>
+<td>P0, browser-session visible</td>
+<td><code>waves-network-missing-fragment-error</code> (<code>waves-browser</code>)</td>
+<td>Automated network-fixture load, stable error state, render continuity, and session error reporting.</td>
+</tr>
+<tr>
+<td><code>onenterbackwardReentry</code></td>
+<td><code>A2-03</code> / <code>WML-R-008</code></td>
+<td>P1, stable host-visible</td>
+<td>manual only</td>
+<td><code>superseded</code>: <code>cardEntryForwardBackward/forward-entry-and-backward-reentry</code> proves the same backward-entry redirect and trace boundary.</td>
+</tr>
+<tr>
+<td><code>parserRobustness</code></td>
+<td><code>A1-01</code>, <code>A1-03</code> / <code>WML-R-001</code>, <code>WML-R-020</code></td>
+<td>P2, stable host-visible</td>
+<td>manual only</td>
+<td><code>direct</code>: load/navigation is expressible, but unsupported-markup classification is parser-internal and remains better proven by lower-level fixtures; do not infer executable coverage from successful rendering.</td>
+</tr>
+<tr>
+<td><code>scriptLinkExecution</code></td>
+<td><code>W0-01</code>, <code>W0-03</code>, <code>WMLS-501</code> / <code>RQ-WMLS-001</code>, <code>RQ-WMLS-008</code>, <code>RQ-WMLS-009</code></td>
+<td>P1, stable host-visible</td>
+<td><code>script-link-success-and-navigation-continuity</code> (<code>host-sample</code>)</td>
+<td>Automated verified WAP-193 named-function success, ordered trace, and subsequent fragment navigation using the pinned <code>RETURN_ES</code> fixture.</td>
+</tr>
+<tr>
+<td><code>timerHostClockLifecycle</code></td>
+<td><code>A5-03</code> / <code>WML-R-014</code></td>
+<td>P1, stable host-visible</td>
+<td><code>nonzero-timer-host-clock-expiry</code> (<code>host-sample</code>)</td>
+<td>Automated nonzero start, pre-expiry host ticks, single expiry, ontimer dispatch, and final navigation.</td>
+</tr>
+<tr>
+<td><code>timerOntimerImmediate</code></td>
+<td><code>A5-03</code>, <code>WML-305</code> / <code>WML-R-014</code>, <code>WML-CL-TIMER-INVALID-VALUE</code></td>
+<td>P1, stable host-visible</td>
+<td><code>zero-timer-disabled</code> (<code>host-sample</code>)</td>
+<td>Automated proof that a zero-value timer is disabled and does not dispatch <code>ontimer</code>.</td>
+</tr>
+<tr>
+<td><code>wml305TimerLifecycle</code></td>
+<td><code>A5-03</code>, <code>WML-305</code> / ten directly mapped WML timer clauses</td>
+<td>P0, stable host-visible</td>
+<td><code>host-refresh-resume-and-expire</code> (<code>host-sample</code>); <code>waves-refresh-resume-and-expire</code>, <code>waves-exit-persists-current-value</code> (<code>waves-browser</code>)</td>
+<td>Automated named-value precedence, tenths, refresh stop-update-resume, exact host wakeups, one-to-zero dispatch, exit persistence, and native/WASM/Waves parity.</td>
+</tr>
+<tr>
+<td><code>wml309FrameAffordances</code></td>
+<td><code>WML-309</code>, <code>WBP-06</code>, <code>F0-01</code> / three WML 1.3 <code>do</code> presentation clauses</td>
+<td>P0, stable host-visible contract</td>
+<td><code>host-frame-affordance-contract</code> (<code>host-sample</code>)</td>
+<td>Automated exact ordered affordance projection, label fallback, optional/noop exclusion, logical control association, and frame-bound action activation.</td>
+</tr>
+<tr>
+<td><code>timerScriptDialog</code></td>
+<td><code>W0-05</code> / <code>RQ-WMLS-022</code></td>
+<td>P1, stable host-visible</td>
+<td><code>timer-expiry-script-dialog-order</code> (<code>host-sample</code>)</td>
+<td>Automated timer-to-script-to-dialog publication order; distinct from navigation timers.</td>
+</tr>
+<tr>
+<td><code>wavescriptGoCancel</code></td>
+<td><code>W0-04</code> / <code>RQ-WMLS-018</code></td>
+<td>P1, stable host-visible</td>
+<td><code>script-go-cancel-clears-pending-navigation</code> (<code>host-sample</code>)</td>
+<td>Automated canceled pending navigation, successful script outcome, and unchanged card/intent.</td>
+</tr>
+<tr>
+<td><code>wavescriptNavOrder</code></td>
+<td><code>W0-04</code> / <code>RQ-WMLS-018</code></td>
+<td>P1, stable host-visible</td>
+<td><code>script-navigation-order-and-external-outcome</code> (<code>host-sample</code>)</td>
+<td>Automated go/prev last-call-wins fragment and external outcomes.</td>
+</tr>
+<tr>
+<td><code>wavescriptRefreshPolicy</code></td>
+<td><code>W0-04</code> / <code>RQ-WMLS-017</code>, <code>RQ-WMLS-021</code></td>
+<td>P1, stable host-visible</td>
+<td><code>script-refresh-without-navigation</code> (<code>host-sample</code>)</td>
+<td>Automated variable mutation, refresh request, successful script result, and stable card/focus.</td>
+</tr>
+<tr>
+<td><code>wml202TemplateShadowing</code></td>
+<td><code>R0-04</code>, <code>R0-12</code>, <code>C5-03</code>, <code>WML-202</code> / <code>RQ-RMK-001</code>, <code>RQ-RMK-002</code>, <code>RQ-RMK-003</code></td>
+<td>P0, stable host-visible</td>
+<td><code>template-inherit-override-and-noop-mask</code> (<code>host-sample</code>)</td>
+<td>Automated valid head/access/meta/language load, deck-template inheritance, same-name card override, noop masking, and newcontext history clearing.</td>
+</tr>
+<tr>
+<td><code>wml203DtdFamily</code></td>
+<td><code>WML-203</code> / selected WML 1.3 DTD structure clauses</td>
+<td>P0, stable host-visible text-deck boundary</td>
+<td><code>strict-selected-dtd-family-render</code> (<code>waves-browser</code>)</td>
+<td>Automated production-WASM proof for mandatory prologue handling and representative render/focus behavior from a deck covering every selected WML element family.</td>
+</tr>
+<tr>
+<td><code>wml203WbxmlParity</code></td>
+<td><code>WML-203</code> / <code>WBXML-C-001</code>, <code>WBXML-C-010</code>, <code>WBXML-C-011</code>, <code>WML-C-17</code></td>
+<td>P1, stable host-visible text-deck boundary</td>
+<td><code>canonical-doctype-deck-render</code> (<code>waves-browser</code>)</td>
+<td>Automated paired text-deck state/render proof through the WASM engine; the direct schema-v2 WDP SDU -&gt; transport decode -&gt; native engine comparison remains in the Rust integration test.</td>
+</tr>
+<tr>
+<td><code>wml204ControlValidation</code></td>
+<td><code>B5-01</code>, <code>R0-04</code>, <code>WML-204</code> / <code>WML-C-33</code>, <code>WML-C-41</code>, <code>WML-C-43</code></td>
+<td>P1, browser-session visible</td>
+<td><code>waves-input-rejection-retry-and-password-state</code> (<code>waves-browser</code>)</td>
+<td>Automated transparent fieldset-child processing, rejection atomicity, retry draft, password masking, commit, exact vdata/literal-dollar/undefined-variable conversion proof, and native/WASM invalid-reference atomicity. Optional fieldset capability status remains not assessed.</td>
+</tr>
+<tr>
+<td><code>wml204SelectSemantics</code></td>
+<td><code>R0-04</code>, <code>C5-05</code>, <code>WML-204</code> / <code>WML-C-41</code>, <code>WML-C-43</code></td>
+<td>P1, stable host-visible</td>
+<td><code>initialization-and-user-commit</code> (<code>host-sample</code>)</td>
+<td>Automated nested-optgroup option ordering, input/select document-order initialization, empty option-value serialization, vdata conversion, HREF-default escaping, draft isolation, commit, and variable result. Optional optgroup capability status remains not assessed.</td>
+</tr>
+<tr>
+<td><code>wmlbrowserContextFidelity</code></td>
+<td><code>R0-03</code>, <code>W0-07</code> / <code>RQ-WMLS-019</code>, <code>RQ-WMLS-020</code></td>
+<td>P0, stable host-visible</td>
+<td><code>current-card-and-context-reset</code> (<code>host-sample</code>)</td>
+<td>Automated current-card lookup before/after navigation plus newContext variable/history reset and prev suppression.</td>
+</tr>
+<tr>
+<td><code>wmlbrowserVarNav</code></td>
+<td><code>W0-04</code> / <code>RQ-WMLS-017</code>, <code>RQ-WMLS-018</code></td>
+<td>P1, stable host-visible</td>
+<td><code>variable-fragment-and-prev-effects</code> (<code>host-sample</code>)</td>
+<td>Automated setVar/getVar-visible state, deferred fragment go, and script prev outcome.</td>
+</tr>
+<tr>
+<td><code>wrapStress</code></td>
+<td><code>A3-01</code> / <code>WML-R-004</code></td>
+<td>P2, visual host-visible</td>
+<td>manual only</td>
+<td><code>manual</code>: the unique acceptance is visual wrap consistency across reloads; card navigation is redundant with <code>basic</code>, and text-presence assertions would not prove wrapping.</td>
+</tr>
+</tbody>
+</table>
+<p>No unpaired P0/P1 path remains blocked on a small story capability. The harness now supports exact
+script boolean/trap expectations, structured external request-policy assertions, normalized
+optional object fields, and explicitly expected host error statuses. No generic E2E framework or
+runtime semantic change was introduced.</p>
+<h3 id="commands">Commands</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">wasm-pack</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> web</span><span style="color:#79B8FF"> --out-dir</span><span style="color:#9ECBFF"> ../pkg</span><span style="color:#6A737D">  # from engine-wasm/engine</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> test:story</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> test:story:unit</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> examples:check</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> test:story</span><span style="color:#9ECBFF"> host-sample</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> test:story:waves</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> build</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> typecheck</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> lint</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> engine-wasm/host-sample</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> format:check</span></span></code></pre>
+<p>The story runner still does not claim transport-native or Tauri-native replay. Transport/WBXML
+packet fidelity, parser-internal validation, network timing, and visual-only layout judgment remain
+in their lower-level or manual evidence lanes.</p>
+<h2 id="transport-transport-rust">Transport (<code>transport-rust</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement Group</th>
+<th>Status</th>
+<th>Current/Planned Test Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exact WAP-200 WDP ledger: 146 rows / 9 selected</td>
+<td><code>9 implemented / 0 partial / 0 missing</code>; <code>9/9</code> direct normative tests and 49/49 mapped clauses</td>
+<td><code>spec-processing/source-manifests/wap-1.2.1-wdp-scr.json</code>; fixture: <code>transport-rust/tests/fixtures/transport/wdp_cdpd_ipv4_mapped/wdp_fixture.json</code>; validate with <code>cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp</code> and <code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></td>
+</tr>
+<tr>
+<td>Exact WAP-202 WCMP ledger: 62 rows / 2 selected</td>
+<td><code>2 implemented / 0 partial / 0 missing</code>; <code>2/2</code> direct normative tests and 9/9 mapped clauses</td>
+<td><code>spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json</code>; strict fixture: <code>transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json</code>; validate with <code>cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile</code> and <code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></td>
+</tr>
+<tr>
+<td>Exact WAP-203 WSP ledger: 109 rows / 8 selected</td>
+<td><code>8 implemented / 0 partial / 0 missing</code>; <code>8/8</code> direct normative tests and 57/57 implemented clauses</td>
+<td><code>spec-processing/source-manifests/wap-1.2.1-wsp-scr.json</code>; WSP-801 byte fixture: <code>transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json</code>; WSP-802 header fixture: <code>transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json</code>; validate with <code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix</code>, <code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar</code>, and <code>node scripts/check-wap-transport-conformance-ledgers.mjs</code>; detailed WML media/charset ownership remains WML-304</td>
+</tr>
+<tr>
+<td><code>RQ-TRN-001..004</code> WDP service + UDP + addressing + error policy</td>
+<td><code>partial</code></td>
+<td>transport-rust unit tests + fixture harness scenarios under <code>transport-rust/tests/fixtures/transport/</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-005..009</code> WTP semantics and SIN overlays</td>
+<td><code>partial/conditional</code></td>
+<td>WTP is not activated by the selected connectionless Class C path. Existing WTP policy/state unit coverage is in <code>transport-rust/src/network/wtp/</code>; replay promotion baseline includes schema-versioned retransmission and duplicate-TID seed corpus coverage in <code>transport-rust/tests/interop_replay.rs</code> with corpus files under <code>transport-rust/tests/network/interop/</code> (<code>retransmission_seed.json</code>, <code>duplicate_tid_seed.json</code>); command: <code>cd transport-rust &amp;&amp; cargo test --lib &amp;&amp; cargo test --test interop_replay</code>; exact target-era WAP-201 closure is required only before claiming connection-oriented WSP/WTP</td>
+</tr>
+<tr>
+<td><code>RQ-TRN-010..015</code> WSP/session/method/capability behavior</td>
+<td><code>partial</code></td>
+<td>transport-rust request validation/gateway mapping tests plus pure WSP header-block/PDU/session coverage in <code>transport-rust/src/network/wsp/header_block.rs</code>, <code>transport-rust/src/network/wsp/pdu.rs</code>, and <code>transport-rust/src/network/wsp/session.rs</code> with fixture corpora <code>transport-rust/tests/fixtures/transport/wsp_pdu_baseline_mapped/pdu_fixture.json</code> and <code>transport-rust/tests/fixtures/transport/wsp_session_method_baseline_mapped/session_fixture.json</code>; replay promotion baseline now includes schema-versioned <code>Connect</code>/<code>ConnectReply</code> and <code>GET</code>/<code>REPLY</code> seed corpus replay in <code>transport-rust/tests/interop_replay.rs</code> + <code>transport-rust/tests/network/interop/connect_session_seed.json</code> and <code>transport-rust/tests/network/interop/get_reply_seed.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib &amp;&amp; cargo test --test interop_replay</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-018..019</code> WSP assigned-number + capability-bound behavior (new alignment pass)</td>
+<td><code>partial</code></td>
+<td>Assigned-number, code-page, and encoding-version policy coverage is in <code>transport-rust/src/network/wsp/header_registry.rs</code>, <code>transport-rust/src/network/wsp/decoder.rs</code>, <code>transport-rust/src/network/wsp/encoder.rs</code>, <code>transport-rust/src/network/wsp/encoding_version.rs</code>, and compatibility wrapper <code>transport-rust/src/wsp_registry.rs</code> with fixture corpus <code>transport-rust/tests/fixtures/transport/wsp_assigned_number_registry_mapped/registry_fixture.json</code>; capability-bound enforcement remains pending in <code>T0-11</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-016</code> WTP TID window/MPL discipline</td>
+<td><code>partial</code></td>
+<td>Target files: <code>transport-rust/src/wtp_replay_window.rs</code>, <code>transport-rust/tests/fixtures/transport/wtp_tid_replay_window_mapped/</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib wtp_tid_replay_window_fixture_matrix</code>; ticket <code>T0-08</code>, <code>T0-18</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-017</code> WSP connectionless primitive profile</td>
+<td><code>covered</code></td>
+<td>Stateless endpoint-role and direct Unitdata mapping is in <code>transport-rust/src/wsp_connectionless_primitive_profile.rs</code>; source-linked matrix: <code>transport-rust/tests/fixtures/transport/wsp_connectionless_matrix/matrix_fixture.json</code>; command: <code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix</code>; work item <code>WSP-801</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-018</code> WSP assigned-number registry fidelity</td>
+<td><code>implemented</code></td>
+<td>The complete effective default-page registry, unknown policy, and code-page ranges are directly exercised by <code>transport-rust/tests/wsp_header_grammar.rs</code> and <code>transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json</code>; command: <code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-014</code> WSP encoding-version and header encoding rules</td>
+<td><code>implemented</code></td>
+<td>Direct WSP-802 evidence covers negotiation defaults/caps/cache, text fallback/retry, hop-by-hop and extension-page values, SIN 001 Expect, generic framing, registry, and PDU/session round trips; command: <code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRN-019</code> WSP capability-bounds enforcement</td>
+<td><code>planned</code></td>
+<td>Target files: <code>transport-rust/src/network/wsp/</code>, <code>transport-rust/tests/network/interop/</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib</code>; ticket <code>T0-11</code></td>
+</tr>
+<tr>
+<td><code>RQ-SEC-004</code>, <code>RQ-SEC-005</code> WTLS posture and certificate behavior</td>
+<td><code>planned</code></td>
+<td><code>T0-21</code> proves a deterministic disabled-vs-active-minimal prototype boundary only. Its record, alert, and handshake envelopes are not WAP-261 wire encodings, do not implement certificate/SIN behavior, and are not called by live <code>waps://</code>; existing unit fixtures remain prototype regression evidence, not requirement coverage. Exact replacement and evidence gates are <code>WTLS-00..WTLS-10</code> in <code>docs/architecture/wtls-modernization-research.md</code></td>
+</tr>
+<tr>
+<td><code>RQ-WAE-010</code> URI handling baseline</td>
+<td><code>partial</code></td>
+<td><code>transport-rust</code> request-validation tests in <code>src/lib.rs</code> plus fixture <code>tests/fixtures/transport/uri_too_long_1025</code> (1024-octet boundary coverage landed; transport-profile routing assertions pending)</td>
+</tr>
+<tr>
+<td><code>RQ-WAE-012</code> i18n baseline (UTF-8/UTF-16 + deterministic decode errors)</td>
+<td><code>partial</code></td>
+<td>textual payload decode tests in <code>transport-rust/src/responses.rs</code> plus mapped fixtures <code>utf16le_textual_wml_mapped</code> and <code>utf16_odd_length_protocol_error_mapped</code>; script-path parity remains pending</td>
+</tr>
+<tr>
+<td><code>RQ-RMK-010</code> WBXML 1.3 client decoder conformance</td>
+<td><code>partial</code></td>
+<td>Pinned decoder: <code>transport-rust/src/wbxml_decoder.rs</code>; 42 fixed-outcome direct corpus and exhaustive WML page-zero equivalence matrix: <code>transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json</code>; exact parent/matrix tests; direct cross-layer parity: <code>wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior</code>; strict normalized-WBXML DTD parity in native/WASM WML-203 tests; paired stories: <code>pnpm test:story WML-203</code>. WML-203’s mandatory prologue and document-family gates are complete; generic non-WML WBXML routing and release evidence remain broader parent-row work.</td>
+</tr>
+<tr>
+<td><code>RQ-TRX-006..008</code> WCMP handling</td>
+<td><code>covered</code></td>
+<td>The strict CDPD/IPv4 path uses ICMPv4 generation/handling and WDP-boundary error mapping in <code>transport-rust/src/network/wcmp/</code> with direct fixture evidence in <code>transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/</code>; the preserved general-WCMP codec and <code>wcmp_core_mapped</code> vectors are capability-gated to explicitly selected non-IP bearers</td>
+</tr>
+<tr>
+<td><code>RQ-TRX-009</code> Wireless Profiled TCP optimization baseline</td>
+<td><code>partial</code></td>
+<td>Policy declaration + drift check landed in <code>transport-rust/src/tcp_profile.rs</code> with fixture <code>transport-rust/tests/fixtures/transport/wireless_profiled_tcp_policy_mapped/policy_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib tcp_profile::tests::wireless_profiled_tcp_posture_matches_declared_policy_fixture</code>; ticket <code>T0-12</code></td>
+</tr>
+<tr>
+<td><code>RQ-TRX-010</code> WDP/WCMP over SMPP adaptation profile</td>
+<td><code>partial</code></td>
+<td>Deferred scope declaration + guardrail fixture landed in <code>transport-rust/src/smpp_profile.rs</code> and <code>transport-rust/tests/fixtures/transport/smpp_adaptation_scope_mapped/scope_fixture.json</code>; command: <code>cd transport-rust &amp;&amp; cargo test --lib smpp_profile::tests::smpp_adaptation_scope_matches_declared_fixture</code>; ticket <code>T0-13</code></td>
+</tr>
+<tr>
+<td>WAP networking profile decision and migration gates</td>
+<td><code>covered</code></td>
+<td>Canonical profile decision record at <code>docs/waves/NETWORK_PROFILE_DECISION_RECORD.md</code> with machine-checkable gate assertions in <code>scripts/check-networking-profile-gates.mjs</code> and config <code>docs/waves/network-profile-gates.json</code>; command: <code>node scripts/check-networking-profile-gates.mjs</code>; ticket <code>T0-14</code></td>
+</tr>
+<tr>
+<td>WAP-191 request-policy + post metadata plumbing (<code>go/postfield/cache-control</code>)</td>
+<td><code>covered</code></td>
+<td>request-policy mapping tests in <code>transport-rust/src/lib.rs</code> + browser host external-intent request-policy propagation tests (<code>T0-04</code>, <code>R0-06</code>)</td>
+</tr>
+<tr>
+<td>WAP-191 encoder/validation fixture lane (<code>14.x</code>, <code>15.2-15.4</code>)</td>
+<td><code>planned</code></td>
+<td><code>T0-07</code>, <code>R0-08</code></td>
+</tr>
+</tbody>
+</table>
+<p>External vector adoption register:</p>
+<ul>
+<li>Ranked <code>adopt-now</code> vs <code>defer</code> guidance now lives in:
+<ul>
+<li><code>docs/waves/NETWORKING_VECTOR_ADOPTION_SWEEP.md</code></li>
+<li><code>docs/waves/networking-vector-adoption.json</code></li>
+</ul>
+</li>
+<li>Validation command:
+<ul>
+<li><code>node scripts/check-networking-vector-adoption.mjs</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="browser-host-browser">Browser host (<code>browser</code>)</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement Group</th>
+<th>Status</th>
+<th>Current/Planned Test Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transport contract integration (<code>fetchDeck</code>)</td>
+<td><code>partial</code></td>
+<td>browser host Rust tests in <code>browser/src-tauri/src/lib.rs</code> + transport-rust unit/integration tests + explicit normalization guarantees in <code>transport-rust/README.md</code></td>
+</tr>
+<tr>
+<td>URL load state transitions</td>
+<td><code>partial</code></td>
+<td>browser frontend transport-first URL flow + session-state transitions in <code>browser/frontend/src/main.ts</code> and host-session stack helpers in <code>browser/frontend/src/session-history.ts</code></td>
+</tr>
+<tr>
+<td>Engine render handoff</td>
+<td><code>partial</code></td>
+<td>browser host integration-style tests <code>browser_e2e_fetch_load_render_sequence_renders_expected_content</code> and <code>browser_fixture_load_navigate_and_external_intent_flow_is_deterministic</code></td>
+</tr>
+<tr>
+<td>Input model determinism</td>
+<td><code>partial</code></td>
+<td>host key-sequence checks in <code>browser/src-tauri/src/lib.rs</code> (<code>smoke_key_navigation_and_back_stack</code>) + browser global key handling in <code>browser/frontend/src/main.ts</code></td>
+</tr>
+<tr>
+<td>External intent handoff loop</td>
+<td><code>partial</code></td>
+<td>runtime intent emission/clear tests in host Rust + fixture flow <code>browser_fixture_load_navigate_and_external_intent_flow_is_deterministic</code> + frontend follow-loop implementation in <code>browser/frontend/src/main.ts</code></td>
+</tr>
+<tr>
+<td>Event timeline/export artifacts</td>
+<td><code>partial</code></td>
+<td>frontend timeline/export implementation + export-time chronology validation in <code>browser/frontend/src/main.ts</code>; automated regression checks still pending</td>
+</tr>
+<tr>
+<td>Access-control, low-memory, unknown-DTD host policy paths (<code>12.1</code>-<code>12.4</code>)</td>
+<td><code>implemented</code></td>
+<td>Source-derived fixtures in <code>engine-wasm/engine/tests/fixtures/wml-306/</code>; direct native policy tests in <code>engine-wasm/engine/src/engine_tests/wml_306_policy.rs</code>; Tauri parity in <code>browser/src-tauri/src/tests/engine_wrappers.rs</code>; bounded host history and safe-copy tests in <code>browser/frontend/src/session-history.test.ts</code>, <code>browser/frontend/src/app/navigation-state.load.test.ts</code>, and <code>browser/frontend/src/app/browser-presenter.test.ts</code>; executable story <code>pnpm test:story WML-306</code>; ticket <code>R0-07</code> / <code>WML-306</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Transport error taxonomy progress:</p>
+<ul>
+<li>table-driven deterministic trigger checks in <code>transport-rust/src/lib.rs</code> (<code>transport_error_code_trigger_matrix_is_deterministic</code>)</li>
+<li>documented trigger matrix in <code>transport-rust/README.md</code></li>
+</ul>
+<h2 id="cross-project-checklist-current">Cross-project checklist (current)</h2>
+<ol class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" checked disabled> Create a minimal contract parity check between:
+<ul>
+<li><code>transport-rust</code> request/response model tests</li>
+<li><code>browser/contracts/transport.ts</code></li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Add a CI check that verifies example metadata (<code>work-items</code>, <code>spec-items</code>, <code>testing-ac</code>) and optional executable-flow schema/mappings for each shared host-sample fixture.</li>
+<li class="task-list-item"><input type="checkbox" checked disabled> Add engine fixture test harness expansion (<code>A4-02</code>) and map fixture IDs back to <code>RQ-RMK-*</code> groups.</li>
+<li class="task-list-item"><input type="checkbox" disabled> Extend the 25-row direct evidence set through nested clause, optional-capability, parity, and strict release gates (<code>R0-01</code>; source and mandatory first-pass audit complete).</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-spec-test-coverage-matrix">Waves Spec Test Coverage Matrix</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#engine-engine-wasm">Engine (engine-wasm)</a></li><li class="depth-2"><a href="#host-sample-engine-wasmhost-sample">Host sample (engine-wasm/host-sample)</a></li><li class="depth-3"><a href="#executable-story-accounting">Executable-story accounting</a></li><li class="depth-3"><a href="#example-and-flow-inventory">Example and flow inventory</a></li><li class="depth-3"><a href="#commands">Commands</a></li><li class="depth-2"><a href="#transport-transport-rust">Transport (transport-rust)</a></li><li class="depth-2"><a href="#browser-host-browser">Browser host (browser)</a></li><li class="depth-2"><a href="#cross-project-checklist-current">Cross-project checklist (current)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/spec_test_coverage.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

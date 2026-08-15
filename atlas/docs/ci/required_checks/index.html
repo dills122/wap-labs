@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>CI Required Checks Policy · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="ci/required_checks"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>ci</span></nav><p class="doc-path">docs/ci/required_checks.md</p><div class="markdown-body"><h1 id="ci-required-checks-policy">CI Required Checks Policy</h1>
+<p>This document defines the intended GitHub ruleset checks for <code>main</code>.</p>
+<p>For workflow details, see <code>docs/ci/CI_SETUP.md</code>. For immutable release-branch governance, see
+<code>docs/ci/RELEASE_BRANCH_RULESET.md</code>.</p>
+<h2 id="required-check-contexts">Required check contexts</h2>
+<p>Configure the active <code>main</code> ruleset to require these exact GitHub Actions check names:</p>
+<ul>
+<li><code>CI Required Gate</code></li>
+<li><code>Extended Quality Required Gate</code></li>
+<li><code>Dependency Review</code></li>
+<li><code>Rust Advisory Audit</code></li>
+<li><code>Node Dependency Audit</code></li>
+<li><code>Go Vulnerability Audit</code></li>
+<li><code>Analyze (javascript-typescript)</code></li>
+<li><code>Analyze (rust)</code></li>
+<li><code>Analyze (go)</code></li>
+</ul>
+<p><code>CI Required Gate</code> is the stable aggregate from <code>.github/workflows/ci.yml</code>. It evaluates:</p>
+<ul>
+<li><code>Detect Changed Areas</code></li>
+<li><code>Repo Hygiene</code></li>
+<li><code>WAP Compliance and Status Drift</code></li>
+<li><code>Rust Engine</code></li>
+<li><code>Rust Transport</code></li>
+<li><code>WaveNav Host Sample Build</code></li>
+<li><code>Marketing Site Build</code></li>
+<li><code>Project Atlas Build</code></li>
+<li><code>Browser Shell Skeleton Checks</code></li>
+<li><code>WML Server Sanity</code></li>
+<li><code>Browser Frontend Unit Tests</code></li>
+</ul>
+<p>For ordinary pull requests, path-filtered jobs may conclude <code>skipped</code>; the gate accepts those skips
+while failing if an intended job fails or is cancelled. For Dependabot-authored pull requests,
+pushes to <code>main</code>, and manual CI runs, <code>full_ci</code> is true and the gate requires every validation job
+to conclude <code>success</code>.</p>
+<p>The security checks come from <code>.github/workflows/security.yml</code>. The CodeQL checks come from the
+repository-controlled advanced setup in <code>.github/workflows/codeql.yml</code>.</p>
+<p><code>Network Preview Image Audit</code> is intentionally not a required context. It runs for image-affecting
+pull requests and for every push to <code>main</code>, weekly schedule, and manual Security run; unrelated PRs
+skip it at job level while the four required dependency/security contexts continue to report.</p>
+<p><code>Extended Quality Required Gate</code> is the stable aggregate from
+<code>.github/workflows/extended-quality.yml</code>. For pull requests and pushes to <code>main</code>, it selects:</p>
+<ul>
+<li><code>Required - Engine Clippy (path-scoped)</code> for engine and extended-quality workflow changes.</li>
+<li><code>Required - Rendered Accessibility (path-scoped)</code> for browser frontend and its
+engine/contract/build inputs.</li>
+</ul>
+<p>The aggregate accepts intentional path-filter skips and fails if any selected gate fails or is
+cancelled. The scheduled/manual <code>Advisory - Browser Stability Baseline (scheduled/manual)</code> is not
+part of this aggregate and must not be configured as a required check.</p>
+<h2 id="ruleset-configuration">Ruleset configuration</h2>
+<p>In <strong>Settings &gt; Rules &gt; Rulesets &gt; main</strong>:</p>
+<ol>
+<li>Keep the ruleset active and targeted at the default branch.</li>
+<li>Keep pull requests required and squash as the allowed merge method.</li>
+<li>Keep bypass actors empty.</li>
+<li>Under required status checks, require the nine exact contexts above and select the GitHub
+Actions app as the expected source.</li>
+<li>Enable the strict/up-to-date option if every pull request must be tested against the latest
+<code>main</code> before merge.</li>
+</ol>
+<p>The existing required contexts (<code>Repo Hygiene</code>, <code>Rust Engine</code>, <code>Rust Transport</code>, and
+<code>WaveNav Host Sample Build</code>) are not renamed by this change. Migrate without a deadlock:</p>
+<ol>
+<li>Let this workflow run once on a pull request so <code>CI Required Gate</code> and all three <code>Analyze (...)</code>
+contexts exist.</li>
+<li>Add the current required contexts.</li>
+<li>Confirm the aggregate and security/CodeQL checks pass on that pull request.</li>
+<li>Remove the four legacy individual CI contexts from the ruleset. They are redundant once
+<code>CI Required Gate</code> is required and would make future path-filter changes harder to manage.</li>
+</ol>
+<p>Do not require <code>Detect Changed Areas</code> or the individual conditional CI jobs in addition to the
+aggregate gate.</p>
+<h2 id="repository-settings-required-by-dependabot-automation">Repository settings required by Dependabot automation</h2>
+<p>In <strong>Settings &gt; General &gt; Pull Requests</strong>:</p>
+<ul>
+<li>Enable <strong>Allow auto-merge</strong>.</li>
+<li>Keep <strong>Allow squash merging</strong> enabled.</li>
+</ul>
+<p>In <strong>Settings &gt; Actions &gt; General &gt; Workflow permissions</strong>:</p>
+<ul>
+<li>Keep the default <code>GITHUB_TOKEN</code> permission read-only.</li>
+<li>Do not enable <strong>Send write tokens to workflows from pull requests</strong>.</li>
+<li>PR validation workflows explicitly use read-only permissions and disable persisted checkout
+credentials. Dependency Review does not receive PR write permission because comment summaries
+are not enabled.</li>
+<li>The auto-merge workflow defaults to no permissions, reads Dependabot metadata in a read-only
+job, and requests <code>contents: write</code> plus <code>pull-requests: write</code> only in the final gated job.
+That final job does not check out or execute pull-request code.</li>
+<li>The setting that lets Actions create and approve pull requests is not required; this workflow
+neither creates nor approves pull requests.</li>
+</ul>
+<p>In <strong>Settings &gt; Advanced Security</strong>:</p>
+<ul>
+<li>Enable the dependency graph and Dependabot alerts.</li>
+<li>Enable <strong>Dependabot security updates</strong> if security-fix pull requests are desired. Security
+updates are currently repository-setting controlled; <code>.github/dependabot.yml</code> controls version
+updates.</li>
+<li>Use the checked-in <code>.github/workflows/codeql.yml</code> advanced setup. Do not enable CodeQL default
+setup for the same languages at the same time.</li>
+</ul>
+<p>Auto-merge only queues an eligible pull request. It does not override the ruleset: GitHub merges
+only after every required status check and any other ruleset requirement succeeds.</p>
+<h2 id="manual-and-deployment-workflows">Manual and deployment workflows</h2>
+<ul>
+<li><code>Transport WAP Smoke (Kannel)</code> is a path-scoped PR/manual signal. Do not configure it as a
+global required context because it intentionally does not run on unrelated pull requests.</li>
+<li><code>Native Tauri UI through Kannel (pilot)</code> only self-validates pilot implementation changes in PRs
+and otherwise runs scheduled/manual. It must not be required until the promotion criteria in
+<code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code> are satisfied and the follow-up widens its
+stable PR paths to relevant product changes.</li>
+<li><code>OpenTofu Static Validation</code> validates only network-preview infrastructure changes. It is
+intentionally path-scoped and must not be a global required context. Its pinned actionlint gate
+proves offline semantic validity for the static and protected workflow definitions; it does not
+configure their protected environments or prove provider/R2 access. The owner-local plan path is
+documented separately and is not a required check. Manual OpenTofu protected plan/apply
+workflows remain access-backed operational gates rather than merge-required checks and must not
+run until protected <code>PRE-003</code> access is configured and the exact operation is authorized.</li>
+<li><code>Build and Deploy to gh-pages</code> is deployment-focused and must not be required for code merges.</li>
+<li>Scheduled/manual fuzzing, browser baseline, and release workflows must not be required
+pull-request checks.</li>
+</ul>
+<h2 id="maintenance-notes">Maintenance notes</h2>
+<ul>
+<li>Treat the check names above as contract surfaces. Update this document and the ruleset whenever
+a required job name changes.</li>
+<li>Validate changes in a live pull request before removing an old required context.</li>
+<li>Do not configure a required workflow that can be skipped at the trigger level by branch or path
+filters; GitHub leaves such checks pending. This repository uses job-level conditions plus the
+always-running aggregate gate instead.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ci-required-checks-policy">CI Required Checks Policy</a></li><li class="depth-2"><a href="#required-check-contexts">Required check contexts</a></li><li class="depth-2"><a href="#ruleset-configuration">Ruleset configuration</a></li><li class="depth-2"><a href="#repository-settings-required-by-dependabot-automation">Repository settings required by Dependabot automation</a></li><li class="depth-2"><a href="#manual-and-deployment-workflows">Manual and deployment workflows</a></li><li class="depth-2"><a href="#maintenance-notes">Maintenance notes</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/ci/required_checks.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

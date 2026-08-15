@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Browser WBP-00/WBP-01 Baseline · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_browser_baseline"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_browser_baseline.md</p><div class="markdown-body"><h1 id="waves-browser-wbp-00wbp-01-baseline">Waves Browser WBP-00/WBP-01 Baseline</h1>
+<p>Status: accepted baseline
+Captured: 2026-07-25 (evidence artifact timestamp is UTC)
+Owner lane: <code>browser</code></p>
+<h2 id="scope-and-decisions">Scope and Decisions</h2>
+<p>This baseline closes the adoption and shell-integration gates for the adopted
+<strong>Authentic Core, Modern Console</strong> direction. It is evidence for the current shell, not a visual
+golden and not a device-specific compatibility claim.</p>
+<p>The initial <code>Class C Reference</code> profile uses:</p>
+<ul>
+<li>a neutral, non-vendor identity;</li>
+<li>20 engine-owned logical columns, matching the existing WaveNav/browser default;</li>
+<li>no browser-authored fixed row count, font metric, softkey precedence, or hit-region model before
+the <code>WBP-06</code> frame/input contract;</li>
+<li>a 1024 by 768 CSS-pixel default test viewport and an 880 by 640 CSS-pixel minimum test viewport,
+matching <code>browser/src-tauri/tauri.conf.json</code>;</li>
+<li>the existing Up, Select, and Down controls only as the current adapter. They do not imply future
+softkey slots or task precedence.</li>
+</ul>
+<p>The primary launch audience assumption is <strong>WAP/WML implementers and emulator evaluators</strong>.
+Current evidence is the product’s transport-route inspection, correlation/timeline surfaces,
+canonical conformance examples, raw debug path, and executable story workflow. Preservationists and
+learners remain important secondary audiences; <code>WBP-04</code> owns validation and onboarding for them.</p>
+<h2 id="reference-environment">Reference Environment</h2>
+<ul>
+<li>MacBook Pro <code>MacBookPro18,4</code></li>
+<li>Apple M1 Max, 10 logical cores</li>
+<li>64 GB memory</li>
+<li>macOS 26.5.2 (<code>Darwin 25.5.0</code>), arm64</li>
+<li>Node.js 22.22.1</li>
+<li>headless Chromium 151.0.7922.34</li>
+<li>production-built <code>browser-story.html</code> using the real WaveNav WASM engine and deterministic local
+fixture fetch adapter</li>
+</ul>
+<p>The checked-in machine-readable result is
+<a href="evidence/wbp-00-01/baseline.json"><code>evidence/wbp-00-01/baseline.json</code></a>. It contains every sample,
+environment details, window geometry, tab order, and keyboard activations.</p>
+<h2 id="baseline-measurements">Baseline Measurements</h2>
+<p>Twenty samples were captured for each metric:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Boundary</th>
+<th style="text-align: right">p50</th>
+<th style="text-align: right">p95</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Startup</td>
+<td>navigation start to initial local deck committed and rendered</td>
+<td style="text-align: right">53.8 ms</td>
+<td style="text-align: right">57.9 ms</td>
+</tr>
+<tr>
+<td>Local navigation</td>
+<td>local-example change to selected deck committed and rendered</td>
+<td style="text-align: right">7.3 ms</td>
+<td style="text-align: right">7.5 ms</td>
+</tr>
+<tr>
+<td>Input/render</td>
+<td>browser <code>ArrowUp</code>/<code>ArrowDown</code> event to engine focus plus focused DOM render</td>
+<td style="text-align: right">7.3 ms</td>
+<td style="text-align: right">7.5 ms</td>
+</tr>
+</tbody>
+</table>
+<p>These numbers describe this reference machine and deterministic local path. They are comparison
+baselines, not release budgets and not evidence for native network or gateway latency.</p>
+<h2 id="reproduce">Reproduce</h2>
+<p>From the repository root with the pinned Node/pnpm toolchain active:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> engine-wasm/engine</span></span>
+<span class="line"><span style="color:#B392F0">wasm-pack</span><span style="color:#9ECBFF"> build</span><span style="color:#79B8FF"> --target</span><span style="color:#9ECBFF"> web</span><span style="color:#79B8FF"> --out-dir</span><span style="color:#9ECBFF"> ../pkg</span></span>
+<span class="line"><span style="color:#79B8FF">cd</span><span style="color:#9ECBFF"> ../..</span></span>
+<span class="line"><span style="color:#E1E4E8">WAVES_BASELINE_RUNS</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">20</span><span style="color:#B392F0"> pnpm</span><span style="color:#9ECBFF"> test:baseline:waves</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> test:story:waves</span></span></code></pre>
+<p>Set <code>WAVES_BASELINE_OUTPUT_DIR</code> to preserve a particular run outside the default ignored
+<code>engine-wasm/host-sample/test-results/waves-baseline</code> directory. Relative output paths resolve from
+the repository root.</p>
+<h2 id="window-and-keyboard-evidence">Window and Keyboard Evidence</h2>
+<p>Both automated window runs assert:</p>
+<ul>
+<li>no horizontal overflow or clipped shell landmark;</li>
+<li>the handset input controls are inside the initial viewport;</li>
+<li>the same shell/controller/WASM path reaches a committed local deck;</li>
+<li>every enabled native control and disclosure is reachable in a stable 28-control tab sequence (29
+after Back enables);</li>
+<li>Utility Rail, Welcome/Help, Local Example Notes, Developer Tools, and Raw WML disclosures open
+with <code>Enter</code>;</li>
+<li>Back enters the first toolbar tab stop when engine history enables it;</li>
+<li>Back, Reload, and Health activate from the keyboard.</li>
+</ul>
+<p>At 1024 by 768 the utility rail starts open. At 880 by 640 it starts collapsed, the handset stage
+uses the full available width, and Up/Select/Down remain visible without initial vertical scrolling.</p>
+<p><a href="evidence/wbp-00-01/default-window-1024x768.png">Default 1024 by 768 shell baseline screenshot</a></p>
+<p><a href="evidence/wbp-00-01/minimum-window-880x640.png">Minimum 880 by 640 shell baseline screenshot</a></p>
+<p>The screenshots are historical baseline evidence only. <code>WBP-02</code> must not treat them as target
+goldens.</p>
+<p>The unavoidable manual gap is native macOS decoration/menu appearance and platform-drawn focus
+styling inside the packaged Tauri window. The webview layout, disclosure behavior, input routing,
+and configured window dimensions are automated; native menu wiring remains covered by Tauri Rust
+checks.</p>
+<h2 id="closure-verification">Closure Verification</h2>
+<p>The accepted run completed:</p>
+<ul>
+<li>browser frontend: 181 unit tests, ESLint, TypeScript typecheck, Prettier check, and production Vite
+build;</li>
+<li>executable behavior: all 9 Waves-targeted stories;</li>
+<li>baseline: 20 runs per metric plus default/minimum layout and keyboard audits;</li>
+<li>contracts: Rust/AST regeneration with zero drift;</li>
+<li>Tauri: Rust formatting, Clippy with warnings denied, and 56 non-ignored tests across the host
+library and contract generator (the five external-Kannel smokes remain intentionally ignored);</li>
+<li>documentation: changed-document local-link check, worklist drift, requirement/status drift, Astro
+check, Astro production build, and Git whitespace check.</li>
+</ul>
+<p>The first browser keyboard pass directly exposed global <code>Enter</code> interception on native controls.
+The routing fix now leaves buttons, inputs, selects, summaries, links, and editable host content to
+their native behavior while the focused handset viewport continues to route engine keys.</p>
+<h2 id="phase-1-integration-seams-historical">Phase 1 Integration Seams (Historical)</h2>
+<p>The <code>#343</code> decomposition remains authoritative. <code>WBP-02</code> through <code>WBP-04</code> landed in <code>#344</code>, <code>#346</code>,
+and <code>#347</code> while this integration gate was in progress; <code>WBP-05</code> then landed in <code>#356</code> before the
+final <code>#348</code> integration merge. These rows preserve the maintenance seams used by the completed
+Phase 1 slices; they are no longer next-work pointers:</p>
+<table>
+<thead>
+<tr>
+<th>Slice</th>
+<th>Safe leaf seam</th>
+<th>Integration constraint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WBP-02</code></td>
+<td><code>app/shell/handset-stage-template.ts</code> plus scoped component styles/tokens</td>
+<td>Do not change 20 logical columns or infer frame, softkey, or hit-region semantics. Root <code>styles.css</code> integration remains single-owner.</td>
+</tr>
+<tr>
+<td><code>WBP-03</code></td>
+<td><code>app/shell/navigation-toolbar-template.ts</code> and browser-owned controller callbacks</td>
+<td>Preserve <code>ShellEventBindingActions</code>, current navigation ordering, Local/Network behavior, and transport truthfulness.</td>
+</tr>
+<tr>
+<td><code>WBP-04</code></td>
+<td>new start/help leaf templates and distinct <code>engine-wasm/examples/source/*</code> story files</td>
+<td>Root-shell insertion, <code>waves-copy.ts</code>, and generated example-manifest updates require the integration owner. Tutorial decks use the ordinary engine path.</td>
+</tr>
+<tr>
+<td><code>WBP-05</code></td>
+<td>landmark/ARIA/focus changes within existing leaf templates and scoped tests</td>
+<td>Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics. The now-completed additive <code>WBP-05A</code> follow-up closed the single-announcement and rendered-evidence gap found at the Phase 1 checkpoint.</td>
+</tr>
+</tbody>
+</table>
+<p>The root <code>browser-shell-template.ts</code>, global <code>styles.css</code>, <code>waves-copy.ts</code>, and generated example
+manifest are high-conflict integration surfaces. The phase slot remains the reserved browser-owned
+insertion point; the handset stage retains the current presenter adapter; the developer drawer
+remains a top-level sibling rather than utility-rail content.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-browser-wbp-00wbp-01-baseline">Waves Browser WBP-00/WBP-01 Baseline</a></li><li class="depth-2"><a href="#scope-and-decisions">Scope and Decisions</a></li><li class="depth-2"><a href="#reference-environment">Reference Environment</a></li><li class="depth-2"><a href="#baseline-measurements">Baseline Measurements</a></li><li class="depth-2"><a href="#reproduce">Reproduce</a></li><li class="depth-2"><a href="#window-and-keyboard-evidence">Window and Keyboard Evidence</a></li><li class="depth-2"><a href="#closure-verification">Closure Verification</a></li><li class="depth-2"><a href="#phase-1-integration-seams-historical">Phase 1 Integration Seams (Historical)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_browser_baseline.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

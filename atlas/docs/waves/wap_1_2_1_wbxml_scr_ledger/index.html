@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP 1.2.1 WBXML SCR Ledger · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wap_1_2_1_wbxml_scr_ledger"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wap_1_2_1_wbxml_scr_ledger.md</p><div class="markdown-body"><h1 id="wap-121-wbxml-scr-ledger">WAP 1.2.1 WBXML SCR Ledger</h1>
+<p>Version: v0.4
+Status: effective SCR extracted; Class C applied; direct decoder evidence
+partially closed</p>
+<h2 id="purpose">Purpose</h2>
+<p>Define the exact WBXML 1.3 feature-level obligations for the selected WAP
+1.2.1 Class C data client and distinguish a WBXML-capable browser from a host
+that merely invokes an unverified decoder executable.</p>
+<p>The machine-readable authority is:</p>
+<ul>
+<li><code>spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json</code></li>
+<li><code>spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json</code></li>
+</ul>
+<p>Validate it with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-wbxml-conformance-ledger.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-selected-normative-clauses.mjs</span></span>
+<span class="line"><span style="color:#B392F0">node</span><span style="color:#9ECBFF"> scripts/check-wap-conformance-ledger.mjs</span></span></code></pre>
+<h2 id="effective-authority">Effective authority</h2>
+<p>The normative target is:</p>
+<ol>
+<li><code>WAP-192-WBXML-20010725-a</code>, WBXML 1.3</li>
+<li><code>WAP-192_105-WBXML-20011015-a</code>, applied afterward</li>
+</ol>
+<p>The approved SIN says the July 2001 SCR was not in the appropriate format and
+that part of <code>WAP-192.101</code> had not been rolled into the updated specification.
+Its corrected section 9 table supplies the effective actor-specific
+<code>WBXML-S-*</code> and <code>WBXML-C-*</code> rows. Tracked-change inspection also resolves the
+effective wording for processor instructions and removed XML metadata.</p>
+<p>The profile selection is:</p>
+<ul>
+<li>WAP-215 target: <code>CCR-CLASSC-C-001</code></li>
+<li>selected feature group: <code>WBXML:MCF</code></li>
+<li>WAP-221 meaning: all mandatory client features in the specification SCR</li>
+</ul>
+<h2 id="effective-totals">Effective totals</h2>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th style="text-align: right">Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active WBXML SCR rows</td>
+<td style="text-align: right">15</td>
+</tr>
+<tr>
+<td>Mandatory rows, all actors</td>
+<td style="text-align: right">11</td>
+</tr>
+<tr>
+<td>Optional rows, all actors</td>
+<td style="text-align: right">4</td>
+</tr>
+<tr>
+<td>Client/decoder rows</td>
+<td style="text-align: right">3</td>
+</tr>
+<tr>
+<td>Server/document/encoder rows</td>
+<td style="text-align: right">12</td>
+</tr>
+<tr>
+<td>Class C-required client rows</td>
+<td style="text-align: right">3</td>
+</tr>
+<tr>
+<td>Rows outside the selected client profile</td>
+<td style="text-align: right">12</td>
+</tr>
+</tbody>
+</table>
+<p>There are no optional client rows in the corrected table.</p>
+<h2 id="selected-class-c-client-rows">Selected Class C client rows</h2>
+<table>
+<thead>
+<tr>
+<th>SCR</th>
+<th>Effective feature</th>
+<th>Code status</th>
+<th>Primary work lane</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WBXML-C-001</code></td>
+<td>Binary XML Structure</td>
+<td>partial</td>
+<td><code>WML-203</code>, <code>R0-08</code>, historical <code>T0-07</code> linkage</td>
+</tr>
+<tr>
+<td><code>WBXML-C-010</code></td>
+<td>Encoding default attribute values</td>
+<td>partial</td>
+<td><code>WML-203</code>, <code>R0-08</code></td>
+</tr>
+<tr>
+<td><code>WBXML-C-011</code></td>
+<td>Binary/literal token equivalence for tags and attributes</td>
+<td>partial</td>
+<td><code>WML-203</code>, <code>R0-08</code>, historical <code>T0-07</code> linkage</td>
+</tr>
+</tbody>
+</table>
+<p>The selected-row audit is:</p>
+<ul>
+<li>implemented: 0</li>
+<li>partial: 3</li>
+<li>missing: 0</li>
+<li>direct normative WBXML tests: 3</li>
+<li>boundary-only tests: 0</li>
+</ul>
+<p>These are feature-level evidence counts, not a WBXML compliance percentage.
+The three rows expand into 47 client-applicable deduplicated clauses covering
+section 5 and its subsections plus sections 6.3 and 6.4. The WML-203
+direct-evidence tranche records 42 fixed-outcome fixtures citing all 47
+selected clauses and promotes all 47 to <code>implemented</code>. All three feature-level
+parent rows stay <code>partial</code> because their broader document-family limitations
+remain.</p>
+<h2 id="current-implementation-evidence">Current implementation evidence</h2>
+<p><code>transport-rust</code> owns the boundary, consistent with the repository
+architecture:</p>
+<ul>
+<li><code>map_success_payload_response</code> recognizes
+<code>application/vnd.wap.wmlc</code>;</li>
+<li><code>decode_wmlc</code> invokes the built-in, pinned
+<code>lowband-wml13-wbxml/0.3.0</code> decoder;</li>
+<li>WML token-table selection is keyed by the carrying MIME media type, and
+carrying-protocol charset metadata takes precedence over the WBXML header;</li>
+<li>decoder output and element nesting are bounded;</li>
+<li>header order, WBXML 1.3 version and WML 1.3 public identifiers, multi-byte
+integers (including legal leading zero-valued groups), supported charset
+termination, string tables, tag/attribute parser states, page-zero WML
+tokens, global strings/entities/extensions across unassigned pages, literal
+flags, PI and opaque structure, and malformed input have deterministic
+outcomes;</li>
+<li>the typed token registry accepts the full one-octet page index independently
+for tag and attribute spaces, resolves assigned page zero, rejects
+unassigned pages 1 through 254, and rejects unregistered
+implementation-specific page 255 deterministically;</li>
+<li>every default and fixed attribute in the selected WML 1.3 DTD is
+reconstructed before textual handoff;</li>
+<li>every assigned WML page-zero tag, attribute-start, and attribute-value token
+has a generated binary/literal equivalence pair;</li>
+<li>original WBXML bytes and the WMLC media type are preserved on success;</li>
+<li>failures use the structured <code>WBXML_DECODE_FAILED</code> path.</li>
+</ul>
+<p>Direct source-derived evidence is in
+<code>transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json</code> and
+<code>transport-rust/src/tests/wbxml_conformance.rs</code>. The former permissive sample
+corpus now has fixed failure expectations under the pinned decoder and remains
+robustness-only evidence.</p>
+<p>Cross-layer evidence is in the schema-v2
+<code>transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json</code> case
+<code>selected_cdpd_wbxml_unitdata_round_trip</code> and
+<code>wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior</code>. The test
+reconstructs the opaque WDP delivery payload, assigns the WMLC media type only
+at the fetch boundary, and compares native engine state/rendering with the
+paired canonical text deck. <code>pnpm test:story WML-203</code> exercises that paired
+text deck through the WASM engine boundary; it does not move WBXML decoding
+into the simulator.</p>
+<p>There are no unpromoted selected client clauses. The source sentence tracked as
+<code>WBXML-CL-CHARSET-UNREPRESENTABLE-NAME</code> explicitly terminates tokenisation and
+therefore belongs to the unselected server/encoder profile under
+<code>WBXML-S-001</code>; it is preserved there as <code>not-assessed</code>, not counted as decoder
+evidence. <code>WBXML-CL-TOKEN-CODE-PAGES</code> is direct-evidence-backed by the bounded
+registry and fixed outcomes; this does not claim token tables that WML 1.3
+does not assign.</p>
+<p>The parent rows also retain broader limitations: externally supplied implied
+attribute values and non-WML document families. Generic
+<code>application/vnd.wap.wbxml</code> routing remains a separate WAE
+gap.</p>
+<h2 id="server-and-encoder-rows">Server and encoder rows</h2>
+<p>The 12 <code>WBXML-S-*</code> rows cover binary-document structure, tokenisation,
+processing instructions, comments/declarations, parsed and unparsed entities,
+well-formedness, validation, default attributes, and literal attribute-name
+encoding.</p>
+<p>They are retained for source completeness and for a future independently
+shippable encoder/gateway module. They are not selected by the current Class C
+client claim and have not been implementation-audited in this pass.</p>
+<h2 id="remaining-wbxml-work">Remaining WBXML work</h2>
+<ol>
+<li>Extend engine structural parity beyond the focused canonical deck fixture.</li>
+<li>Add generic <code>application/vnd.wap.wbxml</code> routing and non-WML token-table
+registries only if those document-family profiles enter selected scope.</li>
+<li>Extend default-attribute reconstruction beyond WML 1.3 only if another
+version or document-type profile is selected.</li>
+<li>Audit the 12 server/encoder rows, including unrepresentable-name
+tokenisation, only when that independently shippable profile is claimed.</li>
+</ol>
+<p>Modern safety, streaming, performance, and diagnostics may improve the
+implementation. They cannot replace these strict decode outcomes or turn an
+unsupported token path into a silent success.</p>
+<h2 id="source-handling">Source handling</h2>
+<p>The WAP-192 PDFs, private text extractions, and temporary page images remain
+outside Git pending redistribution approval. The repository stores only
+source identities, hashes, normalized requirement mappings, and audit
+evidence.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wap-121-wbxml-scr-ledger">WAP 1.2.1 WBXML SCR Ledger</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#effective-authority">Effective authority</a></li><li class="depth-2"><a href="#effective-totals">Effective totals</a></li><li class="depth-2"><a href="#selected-class-c-client-rows">Selected Class C client rows</a></li><li class="depth-2"><a href="#current-implementation-evidence">Current implementation evidence</a></li><li class="depth-2"><a href="#server-and-encoder-rows">Server and encoder rows</a></li><li class="depth-2"><a href="#remaining-wbxml-work">Remaining WBXML work</a></li><li class="depth-2"><a href="#source-handling">Source handling</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wap_1_2_1_wbxml_scr_ledger.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

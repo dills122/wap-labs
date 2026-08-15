@@ -1,0 +1,669 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Public WAP Lab and Pre-release Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/public_wap_lab_prerelease_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/public_wap_lab_prerelease_plan.md</p><div class="markdown-body"><h1 id="waves-public-wap-lab-and-pre-release-plan">Waves Public WAP Lab and Pre-release Plan</h1>
+<p>Planning status: operational public-endpoint checkpoint; Home, Forms, and Interop are reachable
+over public connectionless WSP/WDP through the hardened deployment, while publication governance,
+negative exposure checks, measured operations evidence, and desktop release gates remain open</p>
+<p>Research checkpoint: 2026-08-02; audited at <code>0028946e</code></p>
+<p>Historical service-pattern research, first-party fixture expansion, and the separately gated
+archive/museum lane are planned in <code>docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md</code>. That
+plan does not authorize third-party content import or change this document’s public-exposure
+gates.</p>
+<h2 id="outcome">Outcome</h2>
+<p>Give early Waves desktop testers a real, controlled network target:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Waves desktop</span></span>
+<span class="line"><span>  -&gt; connectionless WSP over WDP/UDP 9200</span></span>
+<span class="line"><span>  -&gt; public Kannel gateway</span></span>
+<span class="line"><span>  -&gt; private first-party WML origin</span></span>
+<span class="line"><span>  -&gt; deterministic WML/WBXML test decks</span></span></code></pre>
+<p>The browser-hosted WASM simulator remains network-free and continues to use bundled/local
+examples. The public lab is only for the native desktop transport. This milestone is a network
+preview, not a Class C compliance claim; release notes must name the exact supported profile and
+known limitations.</p>
+<h2 id="hosting-and-cost-decision">Hosting and cost decision</h2>
+<p>Start with one DigitalOcean Basic Droplet in a Northeast-US New York region: 1 shared vCPU,
+512 MiB RAM, x86_64, and a bounded 1 GiB swap file. Prefer <code>nyc3</code>, then <code>nyc1</code>, but accept the
+exact region only after the account’s authenticated size catalog confirms that the
+<code>s-1vcpu-512mb-10gb</code> size is available there. Provision it with OpenTofu and attach a free
+assigned Reserved IP, Cloud Firewall, DNS records, and provider monitoring.</p>
+<p>The expected infrastructure cost is <strong>US$4/month</strong>, plus domain registration and tax. Resize to
+the <strong>US$6/month</strong> 1 GiB size only when the 512 MiB size is unavailable in the accepted New York
+regions or the required memory soak test demonstrates sustained pressure, restart, latency, or
+swap-budget failure. If the size is unavailable, the documented fallback is 1 GiB in <code>nyc3</code>;
+retaining <code>tor1</code> instead would reopen <code>PRE-001</code> and require a new owner decision. Automation must
+not silently substitute either location or size. Do not add a paid backup, load balancer, database,
+edge proxy, object store, or monitoring product for the first preview. Build images in CI, keep the
+host disposable, and recover by rebuilding and moving the Reserved IP.</p>
+<p>DigitalOcean is the initial recommendation because New York is close to the first Northeast-US
+operator/tester, the low-end plan is pay-as-you-go, and the provider exposes mature
+OpenTofu/Terraform, firewall, Reserved IP, and monitoring surfaces. DigitalOcean publishes region
+and size availability through its authenticated <code>/v2/regions</code> and <code>/v2/sizes</code> APIs, so account
+evidence, not this planning assumption, decides the exact region. Hetzner is the leading
+alternative for a Europe-hosted lab: its EU CX23 offers materially more memory for roughly EUR
+5.49/month plus IPv4 and tax, but its low-cost CX line is not available in North America.
+IONOS and OVHcloud remain account or regional fallbacks rather than the default. AWS services are
+excluded by owner decision.</p>
+<p>DigitalOcean also provides free, always-on network and transport-layer DDoS protection for
+Droplets and assigned Reserved IPs, including UDP floods and reflection attacks. Keep Cloudflare
+records DNS-only: Cloudflare Spectrum is not required for the initial preview. This protection is
+baseline volumetric mitigation, not application-level WAP abuse protection or an availability
+guarantee; DigitalOcean may blackhole the target IP if an attack exceeds mitigation capacity.
+The response-size, amplification, rate-limit, monitoring, and kill-switch controls below therefore
+remain mandatory.</p>
+<p>Keep the first Kannel image on x86_64. Multi-architecture images should be a deliberate later
+slice backed by image and end-to-end tests, not a launch-time variable.</p>
+<h2 id="modern-wap-service-boundary">Modern WAP service boundary</h2>
+<p>The public edge must accept WDP/UDP traffic, decode connectionless WSP, fetch only approved
+first-party content over a private HTTP path, and return WSP/WBXML. Kannel already owns that role
+in this repository; it remains an external interoperability service and is not embedded in the
+desktop application.</p>
+<p>The current local assets prove the topology but are not production configuration:</p>
+<ul>
+<li><code>docker-compose.yml</code> launches Kannel and the WML origin.</li>
+<li><code>docker/kannel/kannel.conf</code> enables WDP and maps selected URLs to the origin.</li>
+<li><code>wml-server/internal/origin</code> supplies the tested route, state, and response parity baseline.</li>
+<li><code>scripts/transport-wap-smoke.sh</code> and native Kannel tests exercise the transport path.</li>
+</ul>
+<p>Production work must remove public Kannel administration/internal ports, placeholder secrets,
+source bind mounts, and package installation at container startup. It must also account for
+Docker’s published-port rules, which can bypass ordinary UFW input policy unless forwarding is
+filtered through <code>DOCKER-USER</code> or an equivalent supported firewall integration.</p>
+<h2 id="wml-origin-decision-go">WML origin decision: Go</h2>
+<p>The Node/Express <code>wml-server</code> has been replaced with a small standard-library Go service. The origin does
+not own WAP, WSP, WBXML, engine behavior, or a shared Rust contract, so a Rust async framework
+would add complexity without improving the protocol boundary. Go provides a compact static
+binary, simple cross-compilation, deterministic HTTP tests, and a much smaller runtime/container
+footprint than the current Node container.</p>
+<p>The implementation should use only the standard library where practical, including <code>net/http</code>,
+<code>embed</code>, <code>encoding/xml</code>, <code>sync</code>, and <code>crypto/rand</code>, and must provide:</p>
+<ul>
+<li>exact method/path routing with unknown routes failing closed;</li>
+<li>bounded bodies, headers, sessions, and user records;</li>
+<li>read-header, read, write, and idle timeouts;</li>
+<li>mutex-protected in-memory state with bounded TTL and count;</li>
+<li>injectable clock and identifier generation for deterministic tests;</li>
+<li>structured logs with form, query, and session redaction;</li>
+<li>internal/restricted <code>/health</code> and minimal text <code>/metrics</code> endpoints;</li>
+<li><code>CGO_ENABLED=0</code>, reproducible build flags, a non-root runtime, and read-only filesystem.</li>
+</ul>
+<p>Preserve the current root, login, register, portal, profile, messages, logout, and example
+behavior through golden-response and smoke parity tests. Do not carry the current <code>/gateway</code>
+proxy into the public binary. Keep <code>/viewer</code> and <code>/emulator</code> as separate local-development tools;
+the web simulator must not gain network access.</p>
+<p>Suggested layout:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>wml-server/</span></span>
+<span class="line"><span>  cmd/wml-server/main.go</span></span>
+<span class="line"><span>  internal/origin/</span></span>
+<span class="line"><span>  internal/origin/testdata/</span></span>
+<span class="line"><span>  routes/</span></span>
+<span class="line"><span>  go.mod</span></span>
+<span class="line"><span>  Dockerfile</span></span></code></pre>
+<p>The Node package and lockfile are removed only with the Compose, bootstrap, CI, release-version,
+dependency-automation, smoke, and documentation migration. Go parity is enforced through golden,
+state-lifecycle, concurrency, host-profile, route-denial, and internal-observability tests.</p>
+<p><code>LAB-101</code> merged in PR #427. This does not complete <code>GW-101</code>, <code>INF-101</code>, <code>INF-102</code>, or any public
+exposure gate. The owner selected the Cloudflare-managed <code>shrimpworks.dev</code> zone for <code>PRE-002</code>:
+<code>home.wap.shrimpworks.dev</code>, <code>forms.wap.shrimpworks.dev</code>, and
+<code>interop.wap.shrimpworks.dev</code>. Use exact DNS-only records rather than a wildcard record, and defer
+a second apex until a cross-registrable-domain test proves subdomains insufficient. The staged
+OpenTofu root defines these exact names, but its sealed default does not create any of them.</p>
+<h2 id="public-topology">Public topology</h2>
+<h3 id="ingress">Ingress</h3>
+<ul>
+<li>Public UDP 9200 is the only WAP protocol ingress.</li>
+<li>TCP 22 is restricted to a maintainer CIDR or replaced by a private administration overlay.</li>
+<li>TCP 80/443 is not required on the gateway host; instructions and status belong on the existing
+marketing/Atlas static site.</li>
+<li>TCP 13000/13002 and UDP 9201-9208 remain private.</li>
+<li>The preview does not advertise <code>waps://</code> or WTLS. It is explicitly an unencrypted test service.</li>
+</ul>
+<h3 id="runtime">Runtime</h3>
+<ul>
+<li><code>wap-gateway</code>: pinned Kannel image with supervised bearerbox/wapbox and health checks.</li>
+<li><code>wml-origin</code>: static Go binary in a minimal non-root image, without a shell, package manager,
+bind mount, or runtime dependency installation.</li>
+<li>A private Compose network connects gateway and origin.</li>
+<li>Root filesystems are read-only and processes non-root where Kannel permits; any exception is
+documented and capability-constrained.</li>
+<li>Host bootstrap installs idempotent, source-controlled Docker/UFW forwarding policy in the
+<code>DOCKER-USER</code> path before application containers start. The policy permits only the reviewed
+public UDP 9200 mapping, preserves required private container traffic, and denies every other
+externally initiated published-port flow.</li>
+<li>Do not download and execute an unpinned <code>ufw-docker</code> default-branch script as root. If the
+<code>ufw-docker</code> utility is selected, pin an immutable release or commit, verify its checksum, and
+test its generated rules across UFW reload, Docker restart, and host reboot. A small
+repository-owned rules installer is acceptable when it is easier to audit and verify.</li>
+<li>Images are pinned by digest and recorded in a rollbackable release manifest.</li>
+</ul>
+<h3 id="first-party-test-hosts">First-party test hosts</h3>
+<p>Use three hostnames under one owned domain:</p>
+<ol>
+<li><code>home.&lt;domain&gt;</code>: cards, links, softkeys, history, navigation, and small images.</li>
+<li><code>forms.&lt;domain&gt;</code>: inputs, selects, GET/POST, variables, redirects, validation, and disposable
+session state using obviously fake data.</li>
+<li><code>interop.&lt;domain&gt;</code>: deterministic status, header, content-type, cache, boundary, WBXML, and
+malformed-response cases with versioned identifiers.</li>
+</ol>
+<p>Kannel maps only those exact hosts to private origin routes. Unknown hosts fail closed so the lab
+cannot become an arbitrary HTTP proxy. The desktop’s gateway endpoint stays separate from its
+resource URI. A second owned apex domain is deferred until a cross-registrable-domain test proves
+subdomains insufficient.</p>
+<h2 id="infrastructure-and-state">Infrastructure and state</h2>
+<p>Use a private Cloudflare R2 Standard bucket for encrypted OpenTofu state. Its free tier is ample
+for this workload. Before adoption, a bootstrap integration test must prove lock acquisition,
+contention failure, release, and stale-lock recovery with the S3 backend’s native lock-file mode.</p>
+<p>For the initial single-owner infrastructure test, a local exact-plan/apply path is acceptable. It
+uses the existing default DigitalOcean project, a mode-<code>0600</code> local environment file, scoped
+provider credentials, encrypted R2 state, and an explicit owner approval between plan and apply.
+The first stage keeps Cloudflare DNS absent and closes public SSH and UDP 9200. Routine OpenSSH
+administration uses the existing owner Tailscale network and the host’s <code>tailscale0</code> interface. A
+temporary reviewed public SSH <code>/32</code> rule remains break-glass only.
+This restricted host does not close <code>PRE-003</code>, authorize public exposure, or replace the protected
+workflow before a shared operating model exists.</p>
+<p>The apply workflow must:</p>
+<ul>
+<li>serialize all applies;</li>
+<li>encrypt plans and state with a separately protected key;</li>
+<li>copy the encrypted pre-apply state to a timestamped recovery key and retain a small history,
+because R2 does not provide useful ordinary S3 bucket versioning;</li>
+<li>store backend/provider credentials in protected CI environments, never HCL, committed
+<code>.tfvars</code>, plans, cloud-init, or images;</li>
+<li>pin OpenTofu and provider versions and commit <code>.terraform.lock.hcl</code>;</li>
+<li>separate infrastructure apply from application deployment;</li>
+<li>require a reviewed plan and manually approved apply environment.</li>
+</ul>
+<p>Suggested authored layout:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>infra/network-preview/</span></span>
+<span class="line"><span>  bootstrap/</span></span>
+<span class="line"><span>  environments/preview/</span></span>
+<span class="line"><span>  cloud-init/</span></span>
+<span class="line"><span>  README.md</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>deploy/network-preview/</span></span>
+<span class="line"><span>  compose.yaml</span></span>
+<span class="line"><span>  kannel/</span></span>
+<span class="line"><span>  runbooks/</span></span></code></pre>
+<p>Create shared OpenTofu modules only after actual repetition justifies them.</p>
+<p>The <code>INF-101</code> access-independent work merged in PRs #432 and #441. It pins OpenTofu 1.12.5 and
+<code>digitalocean/digitalocean</code> 2.96.0, defines the partial encrypted R2 backend, commits
+multi-platform provider checksums, adds secret-free static validation and an isolated lock-test
+driver, and codifies the protected reviewed-plan/apply/recovery workflow contract. It creates no
+resources and does not prove live R2 locking, provider planning, or recovery against the selected
+accounts. <code>PRE-001</code> and <code>PRE-003</code> remain required before those access-backed checks can run and
+complete the remaining <code>INF-101</code> acceptance gates; see <code>infra/network-preview/README.md</code>.</p>
+<p>The staged <code>INF-102</code> root was authored with a fail-closed default: no DNS records, no public UDP
+ingress, no public SSH ingress, Tailscale-only administration, and no application deployment. The
+now-live public DNS/UDP state must be reconciled into an exact reviewed publication plan and the
+remaining <code>PRE-003</code>/<code>PRE-004</code> evidence; reachability alone does not prove that governance closure.</p>
+<p>PR #476 installed the production Compose stack and persistent <code>DOCKER-USER</code> policy on the existing
+restricted host. The exact release passed Tailnet GET/POST and unknown-origin denial, retained the
+prior release for rollback, and remained healthy and sealed after a host reboot. PR #478 then made
+the Kannel health probe use the configured status credentials, and PRs #485/#495 strengthened
+service supervision and the static-example smoke path. Cloud-init changes still apply only to
+future replacement hosts because Droplet user data is lifecycle-ignored.</p>
+<p>PR #538 documents bounded public Lowband probes against the Home, Forms, and Interop hosts. Public
+DNS and UDP 9200 are therefore operational, but reachability does not by itself close the release
+gates below. The exact publication plan/apply evidence, repeated negative exposure checks, measured
+abuse limits, independent kill-switch rehearsal, and operations evidence still require explicit
+reconciliation before the endpoint is treated as release-ready.</p>
+<h2 id="security-abuse-and-operations">Security, abuse, and operations</h2>
+<p>Public UDP is spoofable and can become an amplification surface. DigitalOcean’s included
+network-layer DDoS protection and Cloud Firewall reduce volumetric and reachability risk, but do
+not provide WAP-aware protocol safety. Public exposure requires all of the following:</p>
+<ul>
+<li>exact-host allowlisting and no arbitrary URL fetch;</li>
+<li>strict request/response byte ceilings and a measured amplification ratio;</li>
+<li>global and per-source host-level rate limits where feasible;</li>
+<li>bounded Kannel-to-origin concurrency and timeouts;</li>
+<li>no real credentials or personal data in scenarios;</li>
+<li>redaction of form bodies, session values, and sensitive query values;</li>
+<li>random Kannel administration/status credentials stored outside images;</li>
+<li>administration bound to loopback/private networking;</li>
+<li>enforced <code>DOCKER-USER</code>/UFW forwarding policy so a Compose port publication cannot bypass the
+host deny-by-default policy;</li>
+<li>SSH keys only, non-root administration, and automatic security updates;</li>
+<li>CI image/dependency scanning and an SBOM;</li>
+<li>a tested firewall kill switch, disable runbook, abuse contact, and acceptable-use notice.</li>
+</ul>
+<p>HTTP health alone is insufficient. Operate both internal process/container health and an external
+synthetic UDP probe that sends a known WSP request and verifies the exact deck/result. Alert on
+probe failure, restart loops, sustained CPU/memory or disk pressure, and abnormal UDP traffic.
+Rotate bounded logs with short retention. Rehearse a stateless OpenTofu rebuild and Reserved IP
+move rather than purchasing a VM backup.</p>
+<p>Kubernetes, a managed load balancer, a database, and multi-node availability are out of scope for
+the first preview.</p>
+<h2 id="definition-of-ready">Definition of ready</h2>
+<p>An implementation item enters a sprint only when:</p>
+<ul>
+<li>its owner and reviewer are named;</li>
+<li>the provider account, project, billing-alert owner, and DNS zone exist;</li>
+<li>required secrets can use protected CI environments;</li>
+<li>acceptance checks are executable and identify the expected endpoint;</li>
+<li>desktop transport work is refreshed from current <code>origin/main</code> and reconciled with the current
+WSP-801/802/804/805 evidence rather than planning prose;</li>
+<li>a security-affecting change names its rollback/disable action;</li>
+<li>generated contracts are changed only from their Rust source of truth.</li>
+</ul>
+<h2 id="sprint-0-access-and-decisions">Sprint 0: access and decisions</h2>
+<p>Target: 1-2 days before implementation.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Work item</th>
+<th style="text-align: right">Estimate</th>
+<th>Depends on</th>
+<th>Acceptance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PRE-001</code></td>
+<td>Provider/location decision</td>
+<td style="text-align: right">2</td>
+<td>none</td>
+<td>Accept an account-verified DigitalOcean New York region/size and cost fallback, or record an alternative’s cost, latency, state, and support tradeoffs</td>
+</tr>
+<tr>
+<td><code>PRE-002</code></td>
+<td>Domain/hostname decision</td>
+<td style="text-align: right">1</td>
+<td>none</td>
+<td>Approve the owned zone and three hosts; explicitly defer or justify cross-apex testing</td>
+</tr>
+<tr>
+<td><code>PRE-003</code></td>
+<td>Cloud/GitHub access bootstrap</td>
+<td style="text-align: right">2</td>
+<td><code>PRE-001</code></td>
+<td>Create project, least-privilege provider/R2 credentials, protected environments, billing alert, and two-maintainer recovery access</td>
+</tr>
+<tr>
+<td><code>PRE-004</code></td>
+<td>Preview threat model/data policy</td>
+<td style="text-align: right">3</td>
+<td>this plan</td>
+<td>Accept UDP abuse, open-proxy, logging, test-data, kill-switch, and incident ownership controls</td>
+</tr>
+<tr>
+<td><code>PRE-005</code></td>
+<td>Release-scope decision</td>
+<td style="text-align: right">2</td>
+<td>current-main audit</td>
+<td>Fix supported OS/architectures, preview label, WTLS warning, Class C claim language, and go/no-go owner</td>
+</tr>
+</tbody>
+</table>
+<p><code>PRE-003</code> and <code>PRE-004</code> remain governance gaps that block declaring the current public exposure
+release-ready; they no longer describe whether the endpoint is reachable.</p>
+<h2 id="sprint-1-network-preview-foundation">Sprint 1: Network Preview Foundation</h2>
+<p>Target: two weeks. Goal: from outside the cloud account, an automated client fetches
+deterministic first-party content over connectionless WSP/UDP 9200 from infrastructure that can
+be destroyed and rebuilt from OpenTofu.</p>
+<p>Capacity assumption: three parallel implementation lanes, 36 points gross, 29 committed, and a
+7-point (about 19 percent) buffer for Kannel/cloud/network unknowns.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Priority</th>
+<th>ID</th>
+<th>Work item</th>
+<th style="text-align: right">Points</th>
+<th>Dependencies</th>
+<th>Acceptance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">1</td>
+<td><code>INF-101</code></td>
+<td>OpenTofu bootstrap and CI</td>
+<td style="text-align: right">5</td>
+<td><code>PRE-001</code>, <code>PRE-003</code></td>
+<td>Pinned provider; encrypted R2 state; tested lock contention/recovery; serialized apply and state copies; fmt/init/validate/speculative-plan CI; no committed secrets</td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td><code>GW-101</code></td>
+<td>Production Kannel/container baseline</td>
+<td style="text-align: right">5</td>
+<td><code>PRE-004</code></td>
+<td>Immutable image; generated config; non-default secrets; private admin/box ports; exact-host maps; health checks; local GET/POST smoke</td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td><code>LAB-101</code></td>
+<td>Go WML origin and deterministic multi-host lab</td>
+<td style="text-align: right">8</td>
+<td><code>PRE-002</code></td>
+<td>Standard-library service; current route/session/example golden parity; three-host matrix; public binary excludes gateway/viewer/emulator; <code>gofmt</code>, <code>go vet ./...</code>, and <code>go test ./...</code> pass</td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td><code>INF-102</code></td>
+<td>Compute, IP, firewall, DNS, bootstrap</td>
+<td style="text-align: right">5</td>
+<td><code>INF-101</code>, <code>GW-101</code> interface</td>
+<td>Rebuildable 512 MiB x86 host with bounded swap/limits; only UDP 9200 plus restricted administration public; idempotent cloud-init and Docker/UFW forwarding policy without long-lived secrets</td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td><code>PERF-101</code></td>
+<td>512 MiB memory soak and resize gate</td>
+<td style="text-align: right">2</td>
+<td><code>INF-102</code>, <code>GW-101</code>, <code>LAB-101</code></td>
+<td>Record RSS, swap, restarts, latency; allow 1 GiB only if the published threshold fails</td>
+</tr>
+<tr>
+<td style="text-align: right">6</td>
+<td><code>OPS-101</code></td>
+<td>External WSP probe and disable runbook</td>
+<td style="text-align: right">4</td>
+<td><code>INF-102</code>, <code>LAB-101</code></td>
+<td>Exact external WSP/WBXML fixture; failure alert; tested rate-limit/firewall kill; redacted logs</td>
+</tr>
+</tbody>
+</table>
+<p>Current landed evidence at the 2026-08-02 checkpoint:</p>
+<table>
+<thead>
+<tr>
+<th>Work</th>
+<th>Evidence on <code>main</code></th>
+<th>Remaining gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LAB-101</code></td>
+<td>Bounded Go origin, deterministic route/session tests, and public Home, Forms, and Interop Lowband probes are landed.</td>
+<td>Keep fixture expansion separate from the archival-content lane and reconcile the public release evidence.</td>
+</tr>
+<tr>
+<td><code>GW-101</code></td>
+<td>Hardened non-root Kannel/Compose release, authenticated health, exact-host maps, unknown-origin denial, supervision tests, loopback-bound internal ports, retained rollback, and public positive probes are landed.</td>
+<td><code>PRE-004</code>, repeated external port/proxy negatives, measured abuse limits, and kill-switch evidence remain open.</td>
+</tr>
+<tr>
+<td><code>INF-101</code></td>
+<td>Pinned offline/protected workflow contracts plus encrypted owner-local R2 state, recovery copies, and a zero-change provider plan are evidenced.</td>
+<td>Shared/public <code>PRE-003</code>, live protected-plan/apply, and two-maintainer recovery evidence remain open.</td>
+</tr>
+<tr>
+<td><code>INF-102</code></td>
+<td>Droplet, Reserved IP, private administration, monitoring, installed service, reboot persistence, public DNS, and UDP 9200 reachability are evidenced.</td>
+<td>Exact publication plan/apply provenance, repeated negative verification, and release-gate reconciliation remain open.</td>
+</tr>
+<tr>
+<td><code>PERF-101</code> / <code>OPS-101</code></td>
+<td>No completion claim. Existing private health and smoke are prerequisites only.</td>
+<td>Memory soak, external synthetic probe, alerts, rate/amplification measurements, and independently tested kill switch remain to dispatch after the access/decision gates.</td>
+</tr>
+</tbody>
+</table>
+<p>Stretch only after committed acceptance:</p>
+<ul>
+<li><code>OPS-102</code> (3): rebuild and Reserved IP recovery drill.</li>
+<li><code>LAB-102</code> (3): redirect, cache, error, and boundary-case expansion. The proposed <code>LAB-102A</code>
+historical interoperability matrix in <code>docs/waves/ARCHIVAL_WAP_SERVICE_INCORPORATION_PLAN.md</code>
+refines this stretch scope without activating it.</li>
+</ul>
+<h3 id="parallel-lanes">Parallel lanes</h3>
+<table>
+<thead>
+<tr>
+<th>Lane</th>
+<th>Work</th>
+<th>Start</th>
+<th>Overlap risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A - IaC</td>
+<td><code>INF-101</code> -&gt; <code>INF-102</code></td>
+<td>after Sprint 0</td>
+<td>New <code>infra/</code> and CI; moderate deployment-doc overlap</td>
+</tr>
+<tr>
+<td>B - gateway</td>
+<td><code>GW-101</code></td>
+<td>after <code>PRE-004</code></td>
+<td>Kannel, Compose, deployment, and smoke files; conflicts with concurrent Kannel work</td>
+</tr>
+<tr>
+<td>C - origin</td>
+<td><code>LAB-101</code></td>
+<td>after <code>PRE-002</code></td>
+<td><code>wml-server</code>, Compose, bootstrap, CI, Dependabot, release metadata, setup docs, fixtures</td>
+</tr>
+<tr>
+<td>D - operations</td>
+<td><code>OPS-101</code></td>
+<td>design early; integrate after endpoint</td>
+<td>Smoke/workflow/runbook overlap with lanes A/B at health interfaces</td>
+</tr>
+</tbody>
+</table>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>PRE-001/003 -&gt; INF-101 -&gt; INF-102 -&gt; OPS-101</span></span>
+<span class="line"><span>PRE-004     -&gt; GW-101 ------^          ^</span></span>
+<span class="line"><span>PRE-002     -&gt; LAB-101 ----------------|</span></span></code></pre>
+<h2 id="sprint-2-desktop-alpha-and-release-candidate">Sprint 2: Desktop Alpha and Release Candidate</h2>
+<p>Target: two weeks, re-estimated at kickoff from merged evidence. Goal: a signed/notarized preview
+build guides testers to the public lab, completes supported GET/POST scenarios, produces useful
+diagnostics, and can roll back without changing the web simulator.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right">Priority</th>
+<th>ID</th>
+<th>Work item</th>
+<th style="text-align: right">Initial points</th>
+<th>Dependencies</th>
+<th>Acceptance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right">1</td>
+<td><code>DESK-201</code></td>
+<td>Public gateway profile/resource separation</td>
+<td style="text-align: right">5</td>
+<td>Sprint 1, relevant WSP slices</td>
+<td>Named desktop preview profile; gateway endpoint remains separate from resource URI; generated contract is clean</td>
+</tr>
+<tr>
+<td style="text-align: right">2</td>
+<td><code>DESK-202</code></td>
+<td>Guided lab entry/safety messaging</td>
+<td style="text-align: right">5</td>
+<td><code>DESK-201</code>, <code>LAB-101</code></td>
+<td>Bookmarks/onboarding cover all hosts; UI labels unencrypted WAP/no WTLS and forbids real credentials</td>
+</tr>
+<tr>
+<td style="text-align: right">3</td>
+<td><code>QA-201</code></td>
+<td>Public end-to-end release matrix</td>
+<td style="text-align: right">5</td>
+<td><code>DESK-201</code>, <code>OPS-101</code></td>
+<td>Packaged app passes GET/navigation/supported POST; failures identify DNS, UDP, gateway, decode, or engine stage</td>
+</tr>
+<tr>
+<td style="text-align: right">4</td>
+<td><code>REL-201</code></td>
+<td>Packaging/signing/notarization</td>
+<td style="text-align: right">5</td>
+<td><code>PRE-005</code></td>
+<td>Selected targets produce artifacts, checksums, SBOM, signatures, and install/uninstall guidance</td>
+</tr>
+<tr>
+<td style="text-align: right">5</td>
+<td><code>REL-202</code></td>
+<td>Preview runbook/release page</td>
+<td style="text-align: right">3</td>
+<td><code>QA-201</code>, <code>REL-201</code></td>
+<td>Public limitations, profile, status, feedback, rollback, and disable process</td>
+</tr>
+<tr>
+<td style="text-align: right">6</td>
+<td><code>OPS-202</code></td>
+<td>Replacement/rollback rehearsal</td>
+<td style="text-align: right">3</td>
+<td><code>INF-102</code>, <code>REL-201</code></td>
+<td>Replacement receives Reserved IP and passes probe; previous desktop and server versions restore</td>
+</tr>
+</tbody>
+</table>
+<p>Keep auto-update out of the first preview unless signing and update-channel ownership are already
+mature. A manual pre-release with checksums is acceptable.</p>
+<h2 id="release-gates">Release gates</h2>
+<p>The first public pre-release is allowed only when:</p>
+<ol>
+<li>The lab is exact-host allowlisted, not an open WAP-to-web proxy.</li>
+<li>Only UDP 9200 is public for WAP; Kannel administration/internal ports are unreachable.</li>
+<li>An external scan against the Reserved IP proves Docker-published ports cannot bypass the host
+firewall before and after UFW reload, Docker restart, and host reboot.</li>
+<li>Repeated external synthetic GET and packaged-desktop supported POST both pass.</li>
+<li>Size, timeout, concurrency, amplification, and rate-limit behavior are tested.</li>
+<li>Someone other than the author tests the emergency firewall disable action.</li>
+<li>Infrastructure rebuild and Reserved IP reassignment are demonstrated.</li>
+<li>Remote state is private, encrypted, lock-tested, serialized, and recoverable.</li>
+<li>UI/release notes say the transport is unencrypted and WTLS is unsupported.</li>
+<li>Claims do not exceed current executable Class C evidence.</li>
+<li>Repository fast/change/full verification and public network E2E checks pass from current main.</li>
+</ol>
+<h2 id="verification-to-add-or-standardize">Verification to add or standardize</h2>
+<ul>
+<li><code>tofu fmt -check -recursive infra/network-preview</code> (implemented by the static workflow)</li>
+<li><code>tofu init -backend=false -lockfile=readonly</code> and <code>tofu validate</code> (implemented)</li>
+<li>provider-lock drift for Linux x86_64 and macOS Arm/x86_64 (implemented)</li>
+<li>R2 lock contention/release/stale recovery (driver implemented; protected execution pending)</li>
+<li>provider-backed speculative plan in a protected CI environment (pending <code>PRE-001</code>/<code>PRE-003</code>)</li>
+<li>image build, vulnerability scan, and SBOM</li>
+<li>production Compose configuration validation</li>
+<li>Docker/UFW forwarding-policy lint plus idempotent install/check tests against the rendered
+cloud-init configuration</li>
+<li><code>gofmt -l</code>, <code>go vet ./...</code>, and <code>go test ./...</code></li>
+<li>HTTP/WML golden tests for content type, cache, status, escaping, forms, session expiry,
+examples, health, and metrics</li>
+<li>local and external <code>scripts/transport-wap-smoke.sh</code> equivalents</li>
+<li>browser/Tauri Kannel tests and generated-contract drift checks</li>
+<li>link, format, and documentation validation</li>
+<li>external negative port scan for TCP 80/443/13000/13002 and UDP 9201-9208, repeated after UFW
+reload, Docker restart, and host reboot</li>
+<li>positive external UDP 9200 probe only after the publication gate is approved</li>
+<li>negative proxy test proving an unknown resource host is rejected</li>
+</ul>
+<h2 id="key-risks">Key risks</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Required response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UDP spoofing/reflection</td>
+<td>high</td>
+<td>allowlist, response cap, rate limit, traffic alert, firewall kill switch</td>
+</tr>
+<tr>
+<td>Old Kannel exposure</td>
+<td>high</td>
+<td>distro-patched/pinned build, isolation, minimal ports, scanning, no admin exposure</td>
+</tr>
+<tr>
+<td>Docker bypasses host UFW policy</td>
+<td>high</td>
+<td>verified <code>DOCKER-USER</code> forwarding policy plus external negative scans across reload/restart</td>
+</tr>
+<tr>
+<td>Client networks block UDP 9200</td>
+<td>medium</td>
+<td>stage-specific diagnostics and explicit supported-network guidance; no silent protocol fallback</td>
+</tr>
+<tr>
+<td>R2 backend lock mismatch</td>
+<td>high</td>
+<td>lock integration test, serialized apply, encrypted state copies, forced-unlock runbook</td>
+</tr>
+<tr>
+<td>Desktop seam changes</td>
+<td>high</td>
+<td>start from refreshed main; audit WSP evidence; contract-first native/Tauri tests</td>
+</tr>
+<tr>
+<td>Nondeterministic/personal test data</td>
+<td>medium</td>
+<td>disposable bounded state, synthetic users, deterministic fixtures, redaction</td>
+</tr>
+<tr>
+<td>512 MiB is too small</td>
+<td>medium</td>
+<td>off-host builds, service limits, swap, soak gate, measured resize to US$6 tier</td>
+</tr>
+<tr>
+<td>Single host outage</td>
+<td>low-medium</td>
+<td>movable IP, stateless rebuild, status page; no premature HA</td>
+</tr>
+<tr>
+<td>Scope expands to public browsing</td>
+<td>high</td>
+<td>exact first-party hosts; external destinations require a separate product/threat decision</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sources">Sources</h2>
+<p>WAP and Kannel:</p>
+<ul>
+<li><a href="https://kannel.org/download.shtml">Kannel status and downloads</a></li>
+<li><a href="https://www.kannel.org/download/1.4.5/userguide-1.4.5/userguide.pdf">Kannel 1.4.5 User Guide</a></li>
+<li><a href="https://packages.ubuntu.com/noble/kannel">Ubuntu 24.04 Kannel package</a></li>
+</ul>
+<p>OpenTofu and state:</p>
+<ul>
+<li><a href="https://opentofu.org/docs/language/state/remote/">OpenTofu remote state</a></li>
+<li><a href="https://opentofu.org/docs/language/state/backends/">OpenTofu state storage and locking</a></li>
+<li><a href="https://opentofu.org/docs/language/state/encryption/">OpenTofu state and plan encryption</a></li>
+<li><a href="https://opentofu.org/docs/language/settings/backends/s3/">OpenTofu S3 backend</a></li>
+<li><a href="https://developers.cloudflare.com/terraform/advanced-topics/remote-backend/">Cloudflare R2 remote backend</a></li>
+<li><a href="https://developers.cloudflare.com/r2/pricing/">Cloudflare R2 pricing</a></li>
+<li><a href="https://developers.cloudflare.com/r2/api/s3/api/">Cloudflare R2 S3 API</a></li>
+<li><a href="https://developers.cloudflare.com/r2/reference/consistency/">Cloudflare R2 consistency</a></li>
+<li><a href="https://developers.cloudflare.com/spectrum/protocols-per-plan/">Cloudflare Spectrum protocols by plan</a></li>
+</ul>
+<p>Provider comparison:</p>
+<ul>
+<li><a href="https://www.digitalocean.com/pricing/droplets">DigitalOcean Droplet pricing</a></li>
+<li><a href="https://docs.digitalocean.com/platform/ddos-protection/">DigitalOcean DDoS protection</a></li>
+<li><a href="https://docs.digitalocean.com/products/droplets/how-to/provide-user-data/">DigitalOcean cloud-init</a></li>
+<li><a href="https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/">DigitalOcean Cloud Firewall rules</a></li>
+<li><a href="https://docs.digitalocean.com/products/networking/reserved-ips/details/pricing/">DigitalOcean Reserved IP pricing</a></li>
+<li><a href="https://docs.docker.com/engine/network/packet-filtering-firewalls/">Docker packet filtering and firewalls</a></li>
+<li><a href="https://github.com/chaifeng/ufw-docker"><code>ufw-docker</code> reference implementation</a></li>
+<li><a href="https://github.com/hetznercloud/terraform-provider-hcloud">Hetzner Cloud OpenTofu provider</a></li>
+<li><a href="https://docs.hetzner.com/cloud/general/locations/">Hetzner locations</a></li>
+<li><a href="https://docs.hetzner.com/general/infrastructure-and-availability/price-adjustment/">Hetzner price adjustment</a></li>
+<li><a href="https://www.ionos.com/servers/vps">IONOS VPS pricing</a></li>
+<li><a href="https://www.ovhcloud.com/en-ca/vps/vps-canada/">OVHcloud Canada VPS pricing</a></li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-public-wap-lab-and-pre-release-plan">Waves Public WAP Lab and Pre-release Plan</a></li><li class="depth-2"><a href="#outcome">Outcome</a></li><li class="depth-2"><a href="#hosting-and-cost-decision">Hosting and cost decision</a></li><li class="depth-2"><a href="#modern-wap-service-boundary">Modern WAP service boundary</a></li><li class="depth-2"><a href="#wml-origin-decision-go">WML origin decision: Go</a></li><li class="depth-2"><a href="#public-topology">Public topology</a></li><li class="depth-3"><a href="#ingress">Ingress</a></li><li class="depth-3"><a href="#runtime">Runtime</a></li><li class="depth-3"><a href="#first-party-test-hosts">First-party test hosts</a></li><li class="depth-2"><a href="#infrastructure-and-state">Infrastructure and state</a></li><li class="depth-2"><a href="#security-abuse-and-operations">Security, abuse, and operations</a></li><li class="depth-2"><a href="#definition-of-ready">Definition of ready</a></li><li class="depth-2"><a href="#sprint-0-access-and-decisions">Sprint 0: access and decisions</a></li><li class="depth-2"><a href="#sprint-1-network-preview-foundation">Sprint 1: Network Preview Foundation</a></li><li class="depth-3"><a href="#parallel-lanes">Parallel lanes</a></li><li class="depth-2"><a href="#sprint-2-desktop-alpha-and-release-candidate">Sprint 2: Desktop Alpha and Release Candidate</a></li><li class="depth-2"><a href="#release-gates">Release gates</a></li><li class="depth-2"><a href="#verification-to-add-or-standardize">Verification to add or standardize</a></li><li class="depth-2"><a href="#key-risks">Key risks</a></li><li class="depth-2"><a href="#sources">Sources</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/public_wap_lab_prerelease_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>
