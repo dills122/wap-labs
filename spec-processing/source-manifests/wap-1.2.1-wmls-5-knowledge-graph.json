@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "9868c3012cd1d443c97a70aa3e27d10f517c432004b76775b71a568bca6e6294"
+        "sha256": "bfcae24c0213e75aa120b91e441e20b009e138de1cdd5ee59ae2e9c48cee24a7"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,10 +25,10 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "23a1d8b6c72ffe1340a3ae1192bcaf1cd5d210019165690a7d18f84d5fdc255c"
+        "sha256": "f8ee9541b5ee31b080bb79909f0f9d297953dbddd111ff16f1a9778343bb2512"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f1753f7076b4f1b92a1812735f886e36d757a3486c946ca9409e333c64f6b1c8"
+        "sha256": "f394545e6835054c0a87bceead562cea19890d9d94c6eee36f168e0e3b6da5cc"
       },
       "spec-processing/source-manifests/wap-1.2.1-wmlscript-scr.json": {
         "sha256": "c7974dc4adf53825edd1ddaa263021757e1898f78b924f1a6527670d94ab6881"

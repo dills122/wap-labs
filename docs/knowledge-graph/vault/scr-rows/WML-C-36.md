@@ -52,7 +52,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.",
+  "assessmentNote": "Paragraph grouping, baseline wrapping, non-breaking-space preservation, and discretionary soft-hyphen rendering are implemented. Alignment, wrap/nowrap inheritance, and the horizontal-view mechanism for non-wrapped lines remain incomplete.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -64,6 +64,16 @@ tags:
       "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
       "test": "preserves_inline_text_and_link_order_in_paragraph",
       "command": "cd engine-wasm/engine && cargo test preserves_inline_text_and_link_order_in_paragraph"
+    },
+    {
+      "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+      "test": "wml_307_nonbreaking_space_is_not_an_inter_word_break_point",
+      "command": "cd engine-wasm/engine && cargo test wml_307_nonbreaking_space_is_not_an_inter_word_break_point"
+    },
+    {
+      "path": "engine-wasm/examples/source/wml-307-character-processing.flow.json",
+      "test": "unicode-entities-and-line-break-characters",
+      "command": "pnpm test:story WML-307"
     }
   ],
   "ownerLayers": [

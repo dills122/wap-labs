@@ -1,0 +1,69 @@
+---
+id: "clause:WBXML-CL-TAG-CONTENT-BIT"
+key: "WBXML-CL-TAG-CONTENT-BIT"
+type: "clause"
+generated: true
+slice: "WML-3"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/clause"
+---
+
+# Use tag bit six to determine whether content and its terminating END follow.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `context-for` → [[work-items/WML-307|WML-307]]
+- `maps-to` → [[requirements/RQ-RMK-007|RQ-RMK-007]]
+- `maps-to` → [[requirements/RQ-RMK-010|RQ-RMK-010]]
+- `refines` → [[scr-rows/WBXML-C-001|WBXML-C-001]]
+- `sourced-from` → [[source-documents/WAP-192-WBXML|WAP-192-WBXML]]
+- `verified-by` → [[fixtures/WBXML-FX-TAG-CONTENT-BIT|WBXML-FX-TAG-CONTENT-BIT]]
+
+## Data
+
+```json
+{
+  "family": "wbxml",
+  "parentRows": [
+    "WBXML-C-001"
+  ],
+  "sourceAnchor": {
+    "documentId": "WAP-192-WBXML",
+    "section": "5.8.2",
+    "heading": "5.8.2. Tag Code Space",
+    "normalizedTextSha256": "9434085e3142c7a6cf44dec55c143152f69236d9f93979ef62d4fe25682d95ca"
+  },
+  "normativeForce": "table",
+  "obligationLevel": "required",
+  "obligationSynopsis": "Use tag bit six to determine whether content and its terminating END follow.",
+  "workItems": [
+    "C5-06",
+    "R0-08",
+    "T0-07",
+    "WML-203",
+    "WML-307"
+  ],
+  "directWorkItems": [
+    "C5-06",
+    "R0-08",
+    "T0-07",
+    "WML-203"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-307"
+  ],
+  "ownerLayers": [
+    "transport-rust"
+  ],
+  "requirementIds": [
+    "RQ-RMK-007",
+    "RQ-RMK-010"
+  ],
+  "implementationStatus": "implemented",
+  "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

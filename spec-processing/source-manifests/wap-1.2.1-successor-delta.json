@@ -3,7 +3,7 @@
   "releaseId": "wap-1.2.1",
   "generatedFrom": {
     "programWorkItem": "CONF-007",
-    "recordedOn": "2026-08-02",
+    "recordedOn": "2026-08-15",
     "generator": "spec-processing/scripts/generate-wap-delta-register.mjs"
   },
   "target": {
@@ -205,7 +205,7 @@
         "staticConformanceSection": "15.1.1",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -249,7 +249,7 @@
         "staticConformanceSection": "15.1.1",
         "changeSection": null
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -2456,7 +2456,7 @@
         "staticConformanceSection": "9.1",
         "changeSection": "3.3"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -2476,7 +2476,8 @@
         "WML-203",
         "R0-08",
         "T0-07",
-        "C5-06"
+        "C5-06",
+        "WML-307"
       ],
       "clauseIds": [
         "WBXML-CL-ATTRIBUTE-LITERAL-VALUE-PROHIBITION",
@@ -2532,7 +2533,7 @@
         "staticConformanceSection": "9.2",
         "changeSection": "3.3"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -2551,7 +2552,8 @@
       "workItems": [
         "WML-203",
         "R0-08",
-        "C5-06"
+        "C5-06",
+        "WML-307"
       ],
       "clauseIds": [
         "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
@@ -2567,7 +2569,7 @@
         "staticConformanceSection": "9.3",
         "changeSection": "3.3"
       },
-      "selectedImplementationStatus": "partial",
+      "selectedImplementationStatus": "implemented",
       "assessmentState": "planning-classification-not-conformance-evidence",
       "successorDerivedImplementation": false,
       "implementationBasis": "target-era-or-version-neutral",
@@ -2587,7 +2589,8 @@
         "WML-203",
         "R0-08",
         "T0-07",
-        "C5-06"
+        "C5-06",
+        "WML-307"
       ],
       "clauseIds": [
         "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",

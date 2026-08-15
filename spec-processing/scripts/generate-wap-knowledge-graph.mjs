@@ -38,9 +38,11 @@ export const TARGET_CONFIGS = {
     vaultOutput: 'docs/knowledge-graph/vault-WML-3',
     title: 'WAP 1.2.1 WML-3 Knowledge Graph Slice',
     familyLedgerInputs: {
+      wbxml: 'wbxmlScr',
       wml: 'wmlScr'
     },
     inputPaths: {
+      wbxmlScr: 'spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json',
       wmlScr: 'spec-processing/source-manifests/wap-1.2.1-wml-scr.json'
     }
   },
@@ -213,10 +215,9 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
         targetWorkItemIds.has(workItem)
       )
   );
-  const scrMatrices = targetSprint.workItems
-    .filter((workItem) => workItem.scrMatrix)
-    .map((workItem) => {
-      const { family, scope } = workItem.scrMatrix;
+  const scrMatrices = targetSprint.workItems.flatMap((workItem) => {
+    const matrixConfigs = workItem.scrMatrices ?? (workItem.scrMatrix ? [workItem.scrMatrix] : []);
+    return matrixConfigs.map(({ family, scope }) => {
       const inputKey = targetConfig.familyLedgerInputs?.[family];
       const ledgerInput = inputKey ? inputs[inputKey] : undefined;
       if (!ledgerInput || ledgerInput.data.family !== family) {
@@ -242,6 +243,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
         rows
       };
     });
+  });
   const selectedParentIds = new Set(selectedClauses.flatMap((clause) => clause.parentRows));
   const selectedParents = clauseManifest.families.flatMap((family) =>
     [...family.parents, ...(family.capabilityParents ?? [])]
@@ -473,6 +475,7 @@ export function buildKnowledgeGraph(root = process.cwd(), targetId = 'WML-2') {
       dependsOn: workItem.dependsOn,
       notes: workItem.notes,
       scrMatrix: workItem.scrMatrix,
+      scrMatrices: workItem.scrMatrices,
       specReferences: workItem.specReferences,
       existingTickets: workItem.existingTickets,
       outputs: workItem.outputs,
@@ -1159,7 +1162,7 @@ ${codeList(workItem.properties.evidence)}
   });
   const scrEvidenceSections = workItems
     .map((workItem) => {
-      if (!workItem.properties.scrMatrix) {
+      if (!workItem.properties.scrMatrix && !workItem.properties.scrMatrices?.length) {
         return '';
       }
       const rows = directScrRowsForWorkItem(graph, workItem.key);

@@ -1,0 +1,23 @@
+<!--
+label: WML-307 Character Processing
+work-items: WML-307
+spec-items: WML-C-05,WML-C-06,WML-C-36,WML-CL-ENTITY-FORMS,WML-CL-ENTITY-REQUIRED-NAMES,WML-CL-PARAGRAPH-NONBREAKING-SPACE,WML-CL-PARAGRAPH-SOFT-HYPHEN
+description: Exercises Unicode entity identity, non-breaking spaces, and discretionary soft-hyphen rendering.
+goal: Verify that WML character references reach the render boundary without byte-encoding loss and that special spacing characters retain their WML line-breaking behavior.
+testing-ac:
+- Named, decimal, and hexadecimal references resolve to their Unicode characters.
+- A non-breaking space remains attached instead of becoming an ordinary inter-word break.
+- A selected soft-hyphen break renders a real hyphen and the soft-hyphen itself is otherwise absent.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <p>&quot;&amp;&apos;&lt;&gt; | &#302; | &#x12E;</p>
+    <p>keep&nbsp;together</p>
+    <p>Soft: 1234567890123456789&shy;tail</p>
+    <p><a href="#done">Continue</a></p>
+  </card>
+  <card id="done"><p>Character processing complete.</p></card>
+</wml>

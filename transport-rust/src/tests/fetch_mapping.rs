@@ -223,7 +223,7 @@ fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
         request_url: &base,
         upstream_url: &base,
         final_url: base.clone(),
-        content_type: "text/vnd.wap.wml".to_string(),
+        content_type: "text/vnd.wap.wml; charset=utf-16".to_string(),
         body: &utf16le_body,
         attempt: 1,
         elapsed_ms: 3.5,
@@ -258,6 +258,92 @@ fn transport_map_success_payload_utf16_odd_length_maps_protocol_error() {
         response.error.as_ref().map(|err| err.message.as_str()),
         Some("Invalid UTF-16 payload: odd byte length")
     );
+}
+
+#[test]
+fn transport_map_success_payload_declared_latin1_maps_every_character_to_unicode() {
+    let base = "http://example.test/index.wml".to_string();
+    let mut body = br#"<?xml version="1.0" encoding="ISO-8859-1"?><wml><card><p>caf"#.to_vec();
+    body.extend_from_slice(&[0xe9]);
+    body.extend_from_slice(b"</p></card></wml>");
+
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: &body,
+        attempt: 1,
+        elapsed_ms: 1.0,
+        request_id: None,
+    });
+
+    assert!(response.ok, "declared Latin-1 should decode: {response:?}");
+    assert!(response
+        .wml
+        .as_deref()
+        .is_some_and(|wml| wml.contains("café")));
+}
+
+#[test]
+fn transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss() {
+    let base = "http://example.test/index.wml".to_string();
+    let (body, _, had_errors) = encoding_rs::SHIFT_JIS
+        .encode("<?xml version=\"1.0\"?><wml><card><p>テスト</p></card></wml>");
+    assert!(!had_errors);
+
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml; charset=Shift_JIS".to_string(),
+        body: body.as_ref(),
+        attempt: 1,
+        elapsed_ms: 1.0,
+        request_id: None,
+    });
+
+    assert!(response.ok, "Shift_JIS should decode: {response:?}");
+    assert!(response
+        .wml
+        .as_deref()
+        .is_some_and(|wml| wml.contains("テスト")));
+}
+
+#[test]
+fn transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset() {
+    let base = "http://example.test/index.wml".to_string();
+    let mut body = br#"<wml><head><meta http-equiv="Content-Type" content="text/vnd.wap.wml;charset=ISO-8859-1"/></head><card><p>caf"#
+        .to_vec();
+    body.extend_from_slice(&[0xe9]);
+    body.extend_from_slice(b"</p></card></wml>");
+
+    let response = map_success_payload_response(SuccessPayloadParams {
+        status: 200,
+        is_wap_scheme: false,
+        request_url: &base,
+        upstream_url: &base,
+        final_url: base.clone(),
+        content_type: "text/vnd.wap.wml".to_string(),
+        body: &body,
+        attempt: 1,
+        elapsed_ms: 1.0,
+        request_id: None,
+    });
+
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|error| error.code.as_str()),
+        Some("PROTOCOL_ERROR")
+    );
+    assert!(response
+        .error
+        .as_ref()
+        .is_some_and(|error| error.message.contains("Invalid UTF-8")));
 }
 
 #[test]
@@ -463,7 +549,7 @@ fn transport_map_success_payload_external_charset_conflict_is_deterministic() {
 }
 
 #[test]
-fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
+fn transport_map_success_payload_generic_wbxml_routes_by_wml_public_identifier() {
     let response = map_success_payload_response(SuccessPayloadParams {
         status: 200,
         is_wap_scheme: false,
@@ -477,11 +563,12 @@ fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
         request_id: None,
     });
 
-    assert!(!response.ok);
-    assert_eq!(
-        response.error.as_ref().map(|error| error.code.as_str()),
-        Some("UNSUPPORTED_CONTENT_TYPE")
+    assert!(
+        response.ok,
+        "generic WBXML should route by public identifier"
     );
+    assert_eq!(response.wml.as_deref(), Some("<wml/>"));
+    assert_eq!(response.content_type, "application/vnd.wap.wbxml");
 }
 
 #[test]

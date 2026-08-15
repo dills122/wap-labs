@@ -29,6 +29,13 @@ test('current Atlas inputs pass schema, reference, and ordering validation', () 
   assert.equal(atlas.releaseManifest.schemaVersion, 1);
   assert.equal(atlas.effectiveSpec.schemaVersion, 2);
   assert.equal(atlas.clauseManifest.schemaVersion, 1);
+  const wml307 = atlas.program.sprints
+    .flatMap((sprint) => sprint.workItems)
+    .find((workItem) => workItem.id === 'WML-307');
+  assert.deepEqual(wml307.scrMatrices, [
+    { family: 'wml', scope: 'selected-clause-parents' },
+    { family: 'wbxml', scope: 'selected-clause-parents' }
+  ]);
 });
 
 test('selected-clause capability categories are known and clauses match their family', () => {

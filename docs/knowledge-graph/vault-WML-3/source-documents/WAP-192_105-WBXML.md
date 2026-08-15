@@ -18,6 +18,9 @@ tags:
 - `amended-by` ← [[source-documents/WAP-192-WBXML|WAP-192-WBXML]]
 - `applied-before` ← [[source-documents/WAP-192-WBXML|WAP-192-WBXML]]
 - `effective-document` ← [[source-families/wbxml|wbxml]]
+- `sourced-from` ← [[scr-rows/WBXML-C-001|WBXML-C-001]]
+- `sourced-from` ← [[scr-rows/WBXML-C-010|WBXML-C-010]]
+- `sourced-from` ← [[scr-rows/WBXML-C-011|WBXML-C-011]]
 
 ## Data
 

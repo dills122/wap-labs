@@ -9,6 +9,8 @@ export interface WorkItem {
   outputs: string[];
   acceptance: string[];
   evidence: string[];
+  scrMatrix?: { family: string; scope: string };
+  scrMatrices?: Array<{ family: string; scope: string }>;
   sprintId?: string;
   sprintTitle?: string;
 }

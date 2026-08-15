@@ -355,9 +355,9 @@ const statusById = new Map(
   ])
 );
 if (
-  statusById.get('WBXML-C-001') !== 'partial' ||
-  statusById.get('WBXML-C-010') !== 'partial' ||
-  statusById.get('WBXML-C-011') !== 'partial'
+  statusById.get('WBXML-C-001') !== 'implemented' ||
+  statusById.get('WBXML-C-010') !== 'implemented' ||
+  statusById.get('WBXML-C-011') !== 'implemented'
 ) {
   failures.push('selected WBXML implementation audit drift');
 }
@@ -580,7 +580,7 @@ if (failures.length > 0) {
 console.log('==> WAP 1.2.1 WBXML SCR ledger');
 console.log('PASS 15 effective rows (11 mandatory / 4 optional)');
 console.log('PASS WBXML:MCF selects 3 mandatory client rows');
-console.log('PASS selected implementation audit: 0 implemented / 3 partial / 0 missing');
+console.log('PASS selected implementation audit: 3 implemented / 0 partial / 0 missing');
 console.log('PASS 42 fixed-outcome fixtures cite 47 canonical nested clauses');
 console.log('PASS all 47 selected client clauses have direct evidence');
 console.log('PASS encoder-only unrepresentable-name clause remains outside the selected client profile');

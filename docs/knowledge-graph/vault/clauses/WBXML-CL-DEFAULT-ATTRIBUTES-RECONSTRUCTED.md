@@ -42,7 +42,16 @@ tags:
   "workItems": [
     "C5-06",
     "R0-08",
+    "WML-203",
+    "WML-307"
+  ],
+  "directWorkItems": [
+    "C5-06",
+    "R0-08",
     "WML-203"
+  ],
+  "aggregateContextWorkItems": [
+    "WML-307"
   ],
   "ownerLayers": [
     "transport-rust"

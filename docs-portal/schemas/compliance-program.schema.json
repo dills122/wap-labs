@@ -222,6 +222,23 @@
             }
           }
         },
+        "scrMatrices": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["family", "scope"],
+            "properties": {
+              "family": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/identifier"
+              },
+              "scope": {
+                "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/nonEmptyString"
+              }
+            }
+          }
+        },
         "specReferences": {
           "$ref": "https://wap-labs.dev/schemas/atlas-common.schema.json#/$defs/stringArray"
         }

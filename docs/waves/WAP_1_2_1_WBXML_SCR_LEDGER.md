@@ -60,14 +60,14 @@ There are no optional client rows in the corrected table.
 
 | SCR | Effective feature | Code status | Primary work lane |
 |---|---|---|---|
-| `WBXML-C-001` | Binary XML Structure | partial | `WML-203`, `R0-08`, historical `T0-07` linkage |
-| `WBXML-C-010` | Encoding default attribute values | partial | `WML-203`, `R0-08` |
-| `WBXML-C-011` | Binary/literal token equivalence for tags and attributes | partial | `WML-203`, `R0-08`, historical `T0-07` linkage |
+| `WBXML-C-001` | Binary XML Structure | implemented | `WML-203`, `WML-307`, `R0-08`, historical `T0-07` linkage |
+| `WBXML-C-010` | Encoding default attribute values | implemented | `WML-203`, `WML-307`, `R0-08` |
+| `WBXML-C-011` | Binary/literal token equivalence for tags and attributes | implemented | `WML-203`, `WML-307`, `R0-08`, historical `T0-07` linkage |
 
 The selected-row audit is:
 
-- implemented: 0
-- partial: 3
+- implemented: 3
+- partial: 0
 - missing: 0
 - direct normative WBXML tests: 3
 - boundary-only tests: 0
@@ -76,9 +76,10 @@ These are feature-level evidence counts, not a WBXML compliance percentage.
 The three rows expand into 47 client-applicable deduplicated clauses covering
 section 5 and its subsections plus sections 6.3 and 6.4. The WML-203
 direct-evidence tranche records 42 fixed-outcome fixtures citing all 47
-selected clauses and promotes all 47 to `implemented`. All three feature-level
-parent rows stay `partial` because their broader document-family limitations
-remain.
+selected clauses and promotes all 47 to `implemented`. WML-307 closes the
+remaining selected parent gaps with a source-pinned Service Indication token
+table, implied-default reconstruction, binary/literal equivalence, charset
+mapping, MIME/public-ID conflict handling, and generic public-ID routing.
 
 ## Current implementation evidence
 

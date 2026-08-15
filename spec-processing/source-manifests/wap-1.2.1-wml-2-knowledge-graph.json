@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "9868c3012cd1d443c97a70aa3e27d10f517c432004b76775b71a568bca6e6294"
+        "sha256": "bfcae24c0213e75aa120b91e441e20b009e138de1cdd5ee59ae2e9c48cee24a7"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "23a1d8b6c72ffe1340a3ae1192bcaf1cd5d210019165690a7d18f84d5fdc255c"
+        "sha256": "f8ee9541b5ee31b080bb79909f0f9d297953dbddd111ff16f1a9778343bb2512"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f1753f7076b4f1b92a1812735f886e36d757a3486c946ca9409e333c64f6b1c8"
+        "sha256": "f394545e6835054c0a87bceead562cea19890d9d94c6eee36f168e0e3b6da5cc"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "43d61781f30f25812f6453a2b3554716e2dc7b1c6dfe1107c6a2ed7281e0e136"
+        "sha256": "5bb3869afa713baa84ec0641fc73ea788278f2607cc7fdec0f7e3f06a0ef83f0"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
@@ -310,7 +310,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -347,7 +357,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -384,7 +404,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -421,7 +451,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -458,7 +498,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -495,7 +545,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -532,7 +592,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -569,7 +639,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -606,7 +686,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -642,7 +732,16 @@
         "workItems": [
           "C5-06",
           "R0-08",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -678,7 +777,16 @@
         "workItems": [
           "C5-06",
           "R0-08",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -715,7 +823,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -752,7 +870,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -789,7 +917,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -826,7 +964,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -863,7 +1011,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -900,7 +1058,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -937,7 +1105,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -974,7 +1152,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1011,7 +1199,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1048,7 +1246,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1086,7 +1294,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1124,7 +1342,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1161,7 +1389,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1198,7 +1436,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1235,7 +1483,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1272,7 +1530,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1309,7 +1577,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1346,7 +1624,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1383,7 +1671,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1420,7 +1718,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1457,7 +1765,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1494,7 +1812,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1531,7 +1859,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1568,7 +1906,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1605,7 +1953,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1642,7 +2000,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1679,7 +2047,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1716,7 +2094,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1753,7 +2141,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1790,7 +2188,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1827,7 +2235,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1864,7 +2282,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1901,7 +2329,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1938,7 +2376,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -1975,7 +2423,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -2012,7 +2470,17 @@
           "C5-06",
           "R0-08",
           "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "directWorkItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
           "WML-203"
+        ],
+        "aggregateContextWorkItems": [
+          "WML-307"
         ],
         "ownerLayers": [
           "transport-rust"
@@ -3385,7 +3853,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -3395,7 +3864,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3423,7 +3892,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -3433,7 +3903,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -3461,7 +3931,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -3471,7 +3942,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6071,7 +6542,8 @@
           "R0-01",
           "R0-05",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "browser",
@@ -6082,7 +6554,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6148,7 +6620,8 @@
           "R0-01",
           "R0-05",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "browser",
@@ -6159,7 +6632,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6459,7 +6932,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -6469,7 +6943,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6497,7 +6971,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -6507,7 +6982,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6535,7 +7010,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -6545,7 +7021,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6573,7 +7049,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -6583,7 +7060,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6611,7 +7088,8 @@
           "C5-06",
           "R0-01",
           "R0-08",
-          "WML-201"
+          "WML-201",
+          "WML-307"
         ],
         "ownerLayers": [
           "engine-wasm",
@@ -6621,7 +7099,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9823,7 +10301,7 @@
       "title": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9835,7 +10313,7 @@
       "title": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9847,7 +10325,7 @@
       "title": "Resolve numeric character references against Unicode independently of the document byte encoding.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Resolve numeric character references against Unicode independently of the document byte encoding.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10651,7 +11129,7 @@
       "title": "Do not treat non-breaking space as a legal inter-word line-break point.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not treat non-breaking space as a legal inter-word line-break point.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10675,7 +11153,7 @@
       "title": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10771,7 +11249,7 @@
       "title": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10783,7 +11261,7 @@
       "title": "Process character entities in the document character set.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Process character entities in the document character set.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10795,7 +11273,7 @@
       "title": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10807,7 +11285,7 @@
       "title": "Map every character in each recognized source encoding to its Unicode character.",
       "properties": {
         "kind": "parser",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Map every character in each recognized source encoding to its Unicode character.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10819,7 +11297,7 @@
       "title": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
       "properties": {
         "kind": "transport-boundary",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11927,7 +12405,7 @@
           "staticConformanceSection": "9.1",
           "changeSection": "3.3"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -11935,7 +12413,8 @@
           "WML-203",
           "R0-08",
           "T0-07",
-          "C5-06"
+          "C5-06",
+          "WML-307"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11953,14 +12432,15 @@
           "staticConformanceSection": "9.2",
           "changeSection": "3.3"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
         "workItems": [
           "WML-203",
           "R0-08",
-          "C5-06"
+          "C5-06",
+          "WML-307"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -11978,7 +12458,7 @@
           "staticConformanceSection": "9.3",
           "changeSection": "3.3"
         },
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "ownerLayers": [
           "transport-rust"
         ],
@@ -11986,7 +12466,8 @@
           "WML-203",
           "R0-08",
           "T0-07",
-          "C5-06"
+          "C5-06",
+          "WML-307"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -12217,13 +12698,17 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.",
+        "assessmentNote": "The transport applies XML byte-order, declaration, and carrying-protocol charset evidence without consulting in-document meta fields; recognized US-ASCII, ISO-8859-1, Shift_JIS, UTF-8, and UTF-16 input maps strictly to Unicode without replacement-character transcoding. WBXML payloads remain governed by their header and carrying-protocol rules.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/responses.rs",
             "symbol": "decode_textual_wml_payload"
+          },
+          {
+            "path": "transport-rust/src/wbxml_decoder.rs",
+            "symbol": "decode_wbxml_with_charset"
           }
         ],
         "testEvidence": [
@@ -12231,6 +12716,21 @@
             "path": "transport-rust/src/tests/fetch_mapping.rs",
             "test": "transport_map_success_payload_utf16le_textual_wml_maps_ok",
             "command": "cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok"
+          },
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_map_success_payload_declared_latin1_maps_every_character_to_unicode",
+            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_declared_latin1_maps_every_character_to_unicode"
+          },
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss",
+            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_external_shift_jis_maps_to_unicode_without_loss"
+          },
+          {
+            "path": "transport-rust/src/tests/fetch_mapping.rs",
+            "test": "transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset",
+            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_rejects_lossy_utf8_and_ignores_meta_charset"
           }
         ],
         "ownerLayers": [
@@ -12279,9 +12779,9 @@
           "enhancementMayReplaceStrictBehavior": false
         },
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-        "implementationStatus": "partial",
+        "implementationStatus": "implemented",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.",
+        "assessmentNote": "The parser resolves all seven required WML named entities plus decimal and hexadecimal references against Unicode, rejects unknown or XML-invalid references, preserves non-breaking spaces, and exposes soft hyphens to deterministic layout semantics.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
@@ -12291,8 +12791,18 @@
         "testEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "decodes_entities_and_uses_href_as_fallback_link_text",
-            "command": "cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text"
+            "test": "wml_307_decodes_named_decimal_and_hex_entities_as_unicode",
+            "command": "cd engine-wasm/engine && cargo test wml_307_decodes_named_decimal_and_hex_entities_as_unicode"
+          },
+          {
+            "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+            "test": "wml_307_soft_hyphen_only_renders_when_selected_as_a_break",
+            "command": "cd engine-wasm/engine && cargo test wml_307_soft_hyphen_only_renders_when_selected_as_a_break"
+          },
+          {
+            "path": "engine-wasm/examples/source/wml-307-character-processing.flow.json",
+            "test": "unicode-entities-and-line-break-characters",
+            "command": "pnpm test:story WML-307"
           }
         ],
         "ownerLayers": [
@@ -14252,7 +14762,7 @@
         "reviewState": "source-extracted-class-c-applied-mapping-provisional",
         "implementationStatus": "partial",
         "evidenceState": "direct-test-linked",
-        "assessmentNote": "Paragraph grouping and baseline wrapping exist, but align, wrap/nowrap inheritance, nbsp, shy, and horizontal-view behavior are incomplete.",
+        "assessmentNote": "Paragraph grouping, baseline wrapping, non-breaking-space preservation, and discretionary soft-hyphen rendering are implemented. Alignment, wrap/nowrap inheritance, and the horizontal-view mechanism for non-wrapped lines remain incomplete.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",
@@ -14264,6 +14774,16 @@
             "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
             "test": "preserves_inline_text_and_link_order_in_paragraph",
             "command": "cd engine-wasm/engine && cargo test preserves_inline_text_and_link_order_in_paragraph"
+          },
+          {
+            "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+            "test": "wml_307_nonbreaking_space_is_not_an_inter_word_break_point",
+            "command": "cd engine-wasm/engine && cargo test wml_307_nonbreaking_space_is_not_an_inter_word_break_point"
+          },
+          {
+            "path": "engine-wasm/examples/source/wml-307-character-processing.flow.json",
+            "test": "unicode-entities-and-line-break-characters",
+            "command": "pnpm test:story WML-307"
           }
         ],
         "ownerLayers": [

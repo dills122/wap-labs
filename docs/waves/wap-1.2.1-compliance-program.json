@@ -748,9 +748,19 @@
         },
         {
           "id": "WML-307",
-          "status": "todo",
+          "status": "done",
           "ownerLayers": ["engine-wasm", "transport-rust", "qa"],
           "sourceFamilies": ["wml", "wbxml"],
+          "scrMatrices": [
+            {
+              "family": "wml",
+              "scope": "selected-clause-parents"
+            },
+            {
+              "family": "wbxml",
+              "scope": "selected-clause-parents"
+            }
+          ],
           "existingTickets": ["C5-06"],
           "outputs": [
             "Additive WML character-processing and generic WBXML residual closure"
@@ -761,10 +771,24 @@
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
             "cargo test --manifest-path transport-rust/Cargo.toml",
-            "node scripts/check-wap-conformance-ledger.mjs"
+            "pnpm test:story WML-307",
+            "node scripts/check-wap-conformance-ledger.mjs",
+            "node scripts/wap-context-pack.mjs WML-307",
+            "pnpm wap-compliance:check",
+            "pnpm wap-graph:check"
+          ],
+          "dependsOn": [
+            "WML-203"
+          ],
+          "specReferences": [
+            "WAP-191_104-WML sections 6.1, 6.2, and 11.8.3",
+            "WAP-192-WBXML sections 5.2, 5.6, 6.3, and 6.4 as corrected by WAP-192_105-WBXML",
+            "WAP-167-ServiceInd sections 5.2.1, 7.1, and 8.3"
           ],
           "notes": [
-            "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203/WML-302/WML-303 or preempt the WML-305 baton."
+            "All 10 directly mapped WML-307 clauses are fixture-backed. WML-C-05 and WML-C-06 advance to implemented; the character-processing portion of WML-C-36 is closed while its align, nowrap, and horizontal-view residuals remain partial.",
+            "WBXML-C-001, WBXML-C-010, and WBXML-C-011 now have source-pinned non-WML SI token-table, implied-default, binary/literal equivalence, charset, MIME/public-ID conflict, and generic-routing evidence.",
+            "This additive follow-up closes residuals exposed when WML-2 completed without reopening WML-203/WML-302/WML-303."
           ]
         },
         {

@@ -31,14 +31,15 @@ tags:
     "staticConformanceSection": "9.2",
     "changeSection": "3.3"
   },
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "ownerLayers": [
     "transport-rust"
   ],
   "workItems": [
     "WML-203",
     "R0-08",
-    "C5-06"
+    "C5-06",
+    "WML-307"
   ],
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

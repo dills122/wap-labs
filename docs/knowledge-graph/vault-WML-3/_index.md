@@ -14,16 +14,16 @@ Target: [[sprints/WML-3|WML-3]]
 
 ## Graph summary
 
-- Nodes: 362
-- Edges: 963
+- Nodes: 485
+- Edges: 1327
 
-- `clause`: 133
-- `fixture`: 133
+- `clause`: 190
+- `fixture`: 190
 - `legacy-ticket`: 16
 - `owner-layer`: 4
 - `profile`: 1
-- `requirement`: 13
-- `scr-row`: 31
+- `requirement`: 16
+- `scr-row`: 37
 - `source-document`: 13
 - `source-family`: 3
 - `sprint`: 6
@@ -31,9 +31,8 @@ Target: [[sprints/WML-3|WML-3]]
 
 ## Work items without direct normative-clause mappings
 
-- [[work-items/WML-307|WML-307]]
+- None
 
 ## Declared normative families without direct clause mappings
 
-- [[work-items/WML-307|WML-307]]: `wbxml`, `wml`
 - [[work-items/WML-308|WML-308]]: `wae`
