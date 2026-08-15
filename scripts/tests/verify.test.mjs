@@ -124,6 +124,14 @@ test('root verification surfaces select every ordinary change lane', () => {
   assert.equal(byId(plan, 'live-kannel').selected, false);
 });
 
+test('marketing verification checks its standalone lockfile before building', () => {
+  const marketing = byId(buildPlan('change', ['marketing-site/package.json']), 'marketing-site');
+  const labels = marketing.commands.map((command) => command.label);
+  assert.ok(
+    labels.indexOf('marketing frozen lockfile') < labels.indexOf('marketing production build')
+  );
+});
+
 test('full intentionally excludes live external gates', () => {
   const plan = buildPlan('full', []);
   assert.equal(byId(plan, 'compliance').selected, true);
