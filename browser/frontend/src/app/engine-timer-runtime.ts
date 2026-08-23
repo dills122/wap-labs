@@ -18,6 +18,8 @@ export interface EngineTimerRuntimeDependencies {
 export class EngineTimerRuntime {
   private timerLoopHandle: ReturnType<typeof setTimeout> | null = null;
   private timerTickInFlight = false;
+  private timerIdle: Promise<void> = Promise.resolve();
+  private resolveTimerIdle: (() => void) | undefined;
   private running = false;
   private nativeTimerWakeupMs: number | undefined;
   private readonly scriptTimerRegistry = new ScriptTimerRegistry();
@@ -42,6 +44,10 @@ export class EngineTimerRuntime {
 
   resetScriptTimers(): void {
     this.scriptTimerRegistry.reset();
+  }
+
+  whenIdle(): Promise<void> {
+    return this.timerIdle;
   }
 
   applySnapshot(snapshot: EngineRuntimeSnapshot): void {
@@ -76,6 +82,9 @@ export class EngineTimerRuntime {
       return;
     }
     this.timerTickInFlight = true;
+    this.timerIdle = new Promise((resolve) => {
+      this.resolveTimerIdle = resolve;
+    });
     try {
       const before = this.deps.getSessionState().activeCardId;
       const snapshot =
@@ -115,6 +124,8 @@ export class EngineTimerRuntime {
       this.deps.recordTimeline('engine-timer-tick', 'error', { message });
     } finally {
       this.timerTickInFlight = false;
+      this.resolveTimerIdle?.();
+      this.resolveTimerIdle = undefined;
       this.scheduleNextWakeup();
     }
   }

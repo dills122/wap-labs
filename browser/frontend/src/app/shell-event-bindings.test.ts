@@ -105,9 +105,58 @@ const createDeps = (
     // Mirrors BrowserController's real `withAction`: run the action
     // directly, ignoring the action name and forwarding the event.
     runAction: (_actionName, action) => (event?: Event) => action(event),
+    serializeEngineAction: (action) => action(),
     onWindowKeydown
   };
 };
+
+type ShellControlTarget =
+  | { selector: string; eventType: 'click' }
+  | {
+      ref: 'runModeSelectEl' | 'localExampleSelectEl' | 'loadLocalBtnEl';
+      eventType: 'click' | 'change';
+    };
+
+const triggerShellControl = (refs: BrowserShellRefs, target: ShellControlTarget): void => {
+  const element = 'selector' in target ? document.querySelector(target.selector) : refs[target.ref];
+  element?.dispatchEvent(new Event(target.eventType));
+};
+
+const SERIALIZED_SHELL_ACTIONS = [
+  ['raw WML load', { selector: '#btn-load-context', eventType: 'click' }, 'loadRawWml'],
+  ['reload', { selector: '#btn-reload', eventType: 'click' }, 'reload'],
+  [
+    'navigation retry',
+    { selector: '#btn-navigation-retry', eventType: 'click' },
+    'retryNavigation'
+  ],
+  ['render', { selector: '#btn-render', eventType: 'click' }, 'render'],
+  ['Back', { selector: '#btn-back', eventType: 'click' }, 'navigateBack'],
+  ['snapshot', { selector: '#btn-snapshot', eventType: 'click' }, 'snapshot'],
+  [
+    'external-intent clear',
+    { selector: '#btn-clear-intent', eventType: 'click' },
+    'clearExternalIntent'
+  ],
+  ['mode change', { ref: 'runModeSelectEl', eventType: 'change' }, 'changeMode'],
+  [
+    'local-example selection',
+    { ref: 'localExampleSelectEl', eventType: 'change' },
+    'selectLocalExample'
+  ],
+  ['local-example load', { ref: 'loadLocalBtnEl', eventType: 'click' }, 'loadLocalExample']
+] as const satisfies ReadonlyArray<readonly [string, ShellControlTarget, string]>;
+
+const IMMEDIATE_SHELL_ACTIONS = [
+  ['health', '#btn-health', 'health'],
+  ['Stop', '#btn-stop-navigation', 'stopNavigation'],
+  ['change route', '#btn-navigation-change-route', 'changeNavigationRoute'],
+  ['navigation details', '#btn-navigation-details', 'showNavigationDetails'],
+  ['return from error', '#btn-navigation-return', 'returnFromNavigationError'],
+  ['Go/Stop dispatch', '#btn-fetch-url', 'fetchUrl'],
+  ['timeline export', '#btn-export-timeline', 'exportTimeline'],
+  ['timeline clear', '#btn-clear-timeline', 'clearTimeline']
+] as const;
 
 describe('ShellEventBindings', () => {
   beforeEach(() => {
@@ -182,6 +231,88 @@ describe('ShellEventBindings', () => {
     expect(actions.handleKey).toHaveBeenNthCalledWith(2, 'down');
     expect(actions.handleKey).toHaveBeenNthCalledWith(3, 'enter');
   });
+
+  it('serializes engine-affecting shell actions while leaving Stop immediate', async () => {
+    const refs = createRefs();
+    const actions = createActions();
+    const deps = createDeps(actions, refs);
+    let releaseReload: (() => Promise<void>) | undefined;
+    deps.serializeEngineAction = vi.fn(async (action) => {
+      releaseReload = action;
+    });
+    const bindings = new ShellEventBindings(deps);
+    bindings.bind();
+
+    document.querySelector<HTMLButtonElement>('#btn-reload')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-stop-navigation')?.click();
+    await Promise.resolve();
+
+    expect(deps.serializeEngineAction).toHaveBeenCalledTimes(1);
+    expect(actions.reload).not.toHaveBeenCalled();
+    expect(actions.stopNavigation).toHaveBeenCalledTimes(1);
+
+    await releaseReload?.();
+
+    expect(actions.reload).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(SERIALIZED_SHELL_ACTIONS)(
+    'routes %s through the shared engine serializer',
+    async (_label, target, actionName) => {
+      const refs = createRefs();
+      const actions = createActions();
+      const deps = createDeps(actions, refs);
+      deps.serializeEngineAction = vi.fn(async (action) => action());
+      const bindings = new ShellEventBindings(deps);
+      bindings.bind();
+
+      triggerShellControl(refs, target);
+      await Promise.resolve();
+
+      expect(deps.serializeEngineAction).toHaveBeenCalledOnce();
+      expect(actions[actionName]).toHaveBeenCalledOnce();
+    }
+  );
+
+  it.each(IMMEDIATE_SHELL_ACTIONS)(
+    'keeps %s outside the shell serializer',
+    async (_label, selector, actionName) => {
+      const refs = createRefs();
+      const actions = createActions();
+      const deps = createDeps(actions, refs);
+      deps.serializeEngineAction = vi.fn(async (action) => action());
+      const bindings = new ShellEventBindings(deps);
+      bindings.bind();
+
+      document.querySelector(selector)?.dispatchEvent(new Event('click'));
+      await Promise.resolve();
+
+      expect(deps.serializeEngineAction).not.toHaveBeenCalled();
+      expect(actions[actionName]).toHaveBeenCalledOnce();
+    }
+  );
+
+  it.each([
+    ['#btn-up', 'up'],
+    ['#btn-down', 'down'],
+    ['#btn-enter', 'enter']
+  ] as const)(
+    'delegates the %s softkey without double-serializing it in the shell',
+    async (selector, key) => {
+      const refs = createRefs();
+      const actions = createActions();
+      const deps = createDeps(actions, refs);
+      deps.serializeEngineAction = vi.fn(async (action) => action());
+      const bindings = new ShellEventBindings(deps);
+      bindings.bind();
+
+      document.querySelector(selector)?.dispatchEvent(new Event('click'));
+      await Promise.resolve();
+
+      expect(deps.serializeEngineAction).not.toHaveBeenCalled();
+      expect(actions.handleKey).toHaveBeenCalledWith(key);
+    }
+  );
 
   it('only calls fetchUrlEnter when Enter is pressed in the fetch URL input', async () => {
     const refs = createRefs();

@@ -202,6 +202,47 @@ const createHostClient = () => {
   };
 };
 
+const beginPendingInputDraft = async (
+  hostClient: ReturnType<typeof createHostClient>,
+  key = '1'
+): Promise<() => void> => {
+  vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+    frame({
+      activeCardId: 'login',
+      focusedLinkIndex: 1,
+      focusedInputEditName: 'pin',
+      focusedInputEditValue: ''
+    })
+  );
+
+  let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+  vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveDraft = resolve;
+      })
+  );
+
+  window.dispatchEvent(new KeyboardEvent('keydown', { key, cancelable: true }));
+  await vi.waitFor(() => {
+    expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: key });
+  });
+
+  return () => {
+    if (!resolveDraft) {
+      throw new Error('pending input draft was not started');
+    }
+    resolveDraft(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: key
+      })
+    );
+  };
+};
+
 afterEach(() => {
   vi.unstubAllGlobals();
   document.body.innerHTML = '';
@@ -346,6 +387,7 @@ describe('BrowserController behavior coverage', () => {
 
     await controller.init('<wml><card id="seed"/></wml>');
     vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    vi.mocked(hostClient.engineSetViewportCols).mockClear();
 
     refs.wmlInput.value = '<wml><card id="debug"><p>debug</p></card></wml>';
     refs.baseUrlInput.value = 'http://debug.local/raw.wml';
@@ -436,6 +478,560 @@ describe('BrowserController behavior coverage', () => {
     // back to a redundant engineRenderFrame call.
     expect(hostClient.engineRenderFrame).not.toHaveBeenCalled();
     expect(presenter.getSessionState()).toMatchObject({ activeCardId: 'key-home' });
+  });
+
+  it('waits for a pending input draft before a Select button submits the form', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+
+    let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveDraft = resolve;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '1' });
+    });
+
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineHandleInputFrame).not.toHaveBeenCalled();
+
+    resolveDraft?.(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: '1'
+      })
+    );
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: { type: 'key', key: 'enter' }
+    });
+  });
+
+  it('waits for a pending input draft before a Canvas click mutates the engine', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const canvas = refs.viewportEl.querySelector<HTMLCanvasElement>('.viewport-canvas');
+    expect(canvas).not.toBeNull();
+    if (!canvas) {
+      return;
+    }
+    vi.stubGlobal('CanvasRenderingContext2D', class {});
+    vi.spyOn(canvas, 'getContext').mockReturnValue({
+      font: '',
+      measureText: () => ({ width: 8 })
+    } as unknown as CanvasRenderingContext2D);
+    vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 300,
+      height: 150,
+      right: 300,
+      bottom: 150,
+      x: 0,
+      y: 0,
+      toJSON: () => ({})
+    });
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+
+    let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveDraft = resolve;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '1' });
+    });
+
+    canvas.dispatchEvent(
+      new MouseEvent('click', { bubbles: true, button: 0, clientX: 11, clientY: 1 })
+    );
+    await Promise.resolve();
+
+    expect(hostClient.engineHandleInputFrame).not.toHaveBeenCalled();
+
+    resolveDraft?.(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: '1'
+      })
+    );
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: {
+        type: 'click',
+        frameId: 'test-frame',
+        x: 1,
+        y: 0
+      }
+    });
+  });
+
+  it('waits for a pending input draft before Back navigates', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineNavigateBackFrame).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+
+    let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveDraft = resolve;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '1' });
+    });
+
+    document.querySelector<HTMLButtonElement>('#btn-back')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineNavigateBackFrame).not.toHaveBeenCalled();
+
+    resolveDraft?.(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: '1'
+      })
+    );
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+    await flushAsyncWork();
+
+    expect(hostClient.engineNavigateBackFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for a pending input draft before replacing the current deck', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    vi.mocked(hostClient.engineSetViewportCols).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+
+    let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveDraft = resolve;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '1' });
+    });
+
+    document.querySelector<HTMLButtonElement>('#btn-reload')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineSetViewportCols).not.toHaveBeenCalled();
+    expect(hostClient.engineLoadDeckContextFrame).not.toHaveBeenCalled();
+
+    resolveDraft?.(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: '1'
+      })
+    );
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+    await flushAsyncWork();
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for a pending input draft before opening a Library favorite', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const favorite = controller.currentFavoriteTarget();
+    expect(favorite).toBeDefined();
+    if (!favorite) {
+      return;
+    }
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    vi.mocked(hostClient.engineSetViewportCols).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+
+    let resolveDraft: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveDraft = resolve;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledWith({ value: '1' });
+    });
+
+    const opening = controller.openFavoriteTarget(favorite.target);
+    await flushAsyncWork();
+
+    expect(hostClient.engineSetViewportCols).not.toHaveBeenCalled();
+    expect(hostClient.engineLoadDeckContextFrame).not.toHaveBeenCalled();
+
+    resolveDraft?.(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: '1'
+      })
+    );
+    await opening;
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('preserves every character when rapid typing overlaps a slow first draft update', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockClear();
+    const releaseFirstDraft = await beginPendingInputDraft(hostClient, '1');
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '2', cancelable: true }));
+    await flushAsyncWork();
+
+    expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledTimes(1);
+
+    releaseFirstDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenNthCalledWith(2, {
+      value: '12'
+    });
+  });
+
+  it('waits for a pending input draft before a Canvas wheel mutation', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    const canvas = refs.viewportEl.querySelector<HTMLCanvasElement>('.viewport-canvas');
+    expect(canvas).not.toBeNull();
+    if (!canvas) {
+      return;
+    }
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    const wheel = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 120
+    });
+    canvas.dispatchEvent(wheel);
+    await Promise.resolve();
+
+    expect(wheel.defaultPrevented).toBe(true);
+    expect(hostClient.engineHandleInputFrame).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: {
+        type: 'scroll',
+        frameId: 'test-frame',
+        deltaRows: 1
+      }
+    });
+  });
+
+  it('waits for a pending input draft before loading raw WML', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineSetViewportCols).mockClear();
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineSetViewportCols).not.toHaveBeenCalled();
+    expect(hostClient.engineLoadDeckContextFrame).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    ['Render', '#btn-render'],
+    ['Snapshot', '#btn-snapshot']
+  ] as const)('waits for a pending input draft before %s', async (_label, selector) => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineRenderFrame).mockClear();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    document.querySelector<HTMLButtonElement>(selector)?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineRenderFrame).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineRenderFrame).toHaveBeenCalledOnce();
+  });
+
+  it('waits for a pending input draft before clearing external navigation intent', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineClearExternalNavigationIntentFrame).mockClear();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    document.querySelector<HTMLButtonElement>('#btn-clear-intent')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineClearExternalNavigationIntentFrame).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineClearExternalNavigationIntentFrame).toHaveBeenCalledOnce();
+  });
+
+  it('waits for a pending input draft before changing run mode', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    refs.runModeSelectEl.value = 'network';
+    refs.runModeSelectEl.dispatchEvent(new Event('change'));
+    await Promise.resolve();
+
+    expect(presenter.getSessionState().runMode).toBe('local');
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(presenter.getSessionState().runMode).toBe('network');
+  });
+
+  it('waits for a pending input draft before starting a network Go action', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+    vi.mocked(hostClient.fetchDeck).mockClear();
+    refs.fetchUrlInput.value = 'http://example.test/login.wml';
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+    await Promise.resolve();
+
+    expect(hostClient.fetchDeck).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.fetchDeck).toHaveBeenCalledWith(
+      expect.objectContaining({ url: 'http://example.test/login.wml' })
+    );
+  });
+
+  it('continues to Select after a queued draft update fails', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+    vi.mocked(hostClient.engineBeginFocusedInputEditFrame).mockResolvedValueOnce(
+      frame({
+        activeCardId: 'login',
+        focusedLinkIndex: 1,
+        focusedInputEditName: 'pin',
+        focusedInputEditValue: ''
+      })
+    );
+    let rejectDraft: ((error: Error) => void) | undefined;
+    vi.mocked(hostClient.engineSetFocusedInputEditDraftFrame).mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectDraft = reject;
+        })
+    );
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: '1', cancelable: true }));
+    await vi.waitFor(() => {
+      expect(hostClient.engineSetFocusedInputEditDraftFrame).toHaveBeenCalledOnce();
+    });
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    expect(hostClient.engineHandleInputFrame).not.toHaveBeenCalled();
+
+    rejectDraft?.(new Error('draft IPC failed'));
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: { type: 'key', key: 'enter' }
+    });
+    expect(refs.statusMessages).toContain('Error: draft IPC failed');
+  });
+
+  it('serializes rapid repeated Select presses without overlapping engine calls', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    let releaseFirstSelect: (() => void) | undefined;
+    vi.mocked(hostClient.engineHandleInputFrame)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            releaseFirstSelect = () => resolve(frame({ activeCardId: 'submitted' }));
+          })
+      )
+      .mockResolvedValue(frame({ activeCardId: 'submitted-again' }));
+
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    document.querySelector<HTMLButtonElement>('#btn-enter')?.click();
+    await vi.waitFor(() => {
+      expect(hostClient.engineHandleInputFrame).toHaveBeenCalledTimes(1);
+    });
+
+    releaseFirstSelect?.();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledTimes(2);
+  });
+
+  it('waits for a pending input draft before explicitly loading a local example', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    vi.mocked(hostClient.engineSetViewportCols).mockClear();
+    vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
+    const releaseDraft = await beginPendingInputDraft(hostClient);
+
+    refs.loadLocalBtnEl.click();
+    await Promise.resolve();
+
+    expect(hostClient.engineSetViewportCols).not.toHaveBeenCalled();
+    expect(hostClient.engineLoadDeckContextFrame).not.toHaveBeenCalled();
+
+    releaseDraft();
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineLoadDeckContextFrame).toHaveBeenCalledOnce();
   });
 
   it('routes a Canvas click as frame-bound logical coordinates without host target lookup', async () => {
@@ -620,6 +1216,44 @@ describe('BrowserController behavior coverage', () => {
       controller as unknown as { tickEngineTimerRuntime(): Promise<void> }
     ).tickEngineTimerRuntime();
     expect(hostClient.engineAdvanceTimeMsFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('waits for an in-flight timer tick before applying later user input', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    controllerPrivates(controller).timerRuntime.stop();
+    vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockClear();
+    vi.mocked(hostClient.engineHandleInputFrame).mockClear();
+
+    let resolveTimer: ((value: ReturnType<typeof frame>) => void) | undefined;
+    vi.mocked(hostClient.engineAdvanceTimeMsFrame).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveTimer = resolve;
+        })
+    );
+
+    const ticking = controllerPrivates(controller).tickEngineTimerRuntime();
+    await vi.waitFor(() => {
+      expect(hostClient.engineAdvanceTimeMsFrame).toHaveBeenCalledTimes(1);
+    });
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+    await flushAsyncWork();
+
+    expect(hostClient.engineHandleInputFrame).not.toHaveBeenCalled();
+
+    resolveTimer?.(frame({ activeCardId: 'timer-home' }));
+    await ticking;
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
+
+    expect(hostClient.engineHandleInputFrame).toHaveBeenCalledWith({
+      event: { type: 'key', key: 'up' }
+    });
   });
 
   it('does not tick the network engine while a transport navigation is in flight', async () => {
@@ -953,7 +1587,7 @@ describe('BrowserController behavior coverage', () => {
     controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'Enter' })
     );
-    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
 
     expect(hostClient.fetchDeck).toHaveBeenCalledWith(
       expect.objectContaining({ method: 'POST', url: 'http://example.test/login' })
@@ -985,7 +1619,7 @@ describe('BrowserController behavior coverage', () => {
 
     const backspace = new KeyboardEvent('keydown', { key: 'Backspace', cancelable: true });
     controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(backspace);
-    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
 
     expect(backspace.defaultPrevented).toBe(true);
     expect(hostClient.engineBeginFocusedInputEditFrame).toHaveBeenCalledTimes(1);

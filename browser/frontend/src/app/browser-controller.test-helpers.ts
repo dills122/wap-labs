@@ -14,9 +14,7 @@ interface BrowserControllerPrivates {
   applyEngineKey(key: EngineKey): Promise<void>;
   tickEngineTimerRuntime(): Promise<void>;
   readonly timerRuntime: EngineTimerRuntime;
-  readonly keyboardIntentRouter: Omit<KeyboardIntentRouter, 'actionQueue'> & {
-    actionQueue: Promise<void>;
-  };
+  readonly keyboardIntentRouter: KeyboardIntentRouter;
 }
 
 export function controllerPrivates(controller: BrowserController): BrowserControllerPrivates {

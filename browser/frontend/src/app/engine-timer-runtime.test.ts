@@ -80,6 +80,69 @@ describe('EngineTimerRuntime', () => {
     expect(advanceLocal).toHaveBeenCalledWith(275);
   });
 
+  it('keeps whenIdle pending until an active tick completes', async () => {
+    let releaseTick: (() => void) | undefined;
+    const advanceLocal = vi.fn(
+      async () =>
+        new Promise<ReturnType<typeof snapshot>>((resolve) => {
+          releaseTick = () => resolve(snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
+        })
+    );
+    const runtime = new EngineTimerRuntime(createDeps({ advanceLocal }));
+
+    const ticking = runtime.tick();
+    let idleResolved = false;
+    const idle = runtime.whenIdle().then(() => {
+      idleResolved = true;
+    });
+    await Promise.resolve();
+
+    expect(idleResolved).toBe(false);
+
+    releaseTick?.();
+    await ticking;
+    await idle;
+
+    expect(idleResolved).toBe(true);
+  });
+
+  it('resolves whenIdle after a failing tick is recorded', async () => {
+    let rejectTick: ((error: Error) => void) | undefined;
+    const advanceLocal = vi.fn(
+      async () =>
+        new Promise<ReturnType<typeof snapshot>>((_resolve, reject) => {
+          rejectTick = reject;
+        })
+    );
+    const deps = createDeps({ advanceLocal });
+    const runtime = new EngineTimerRuntime(deps);
+
+    const ticking = runtime.tick();
+    const idle = runtime.whenIdle();
+    rejectTick?.(new Error('timer failed'));
+    await ticking;
+    await expect(idle).resolves.toBeUndefined();
+
+    expect(deps.recordTimeline).toHaveBeenCalledWith('engine-timer-tick', 'error', {
+      message: 'timer failed'
+    });
+  });
+
+  it('leaves whenIdle already resolved when a blocked tick never starts', async () => {
+    const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done' }));
+    const runtime = new EngineTimerRuntime(
+      createDeps({
+        canTick: () => false,
+        advanceLocal
+      })
+    );
+
+    await runtime.tick();
+    await expect(runtime.whenIdle()).resolves.toBeUndefined();
+
+    expect(advanceLocal).not.toHaveBeenCalled();
+  });
+
   it('re-arms a native timer wakeup skipped while an action is in flight', async () => {
     let actionInFlight = true;
     const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
@@ -248,6 +311,23 @@ describe('EngineTimerRuntime', () => {
       from: 'home',
       to: 'next'
     });
+  });
+
+  it('does not render or follow navigation when advancement returns no snapshot', async () => {
+    const deps = createDeps({
+      advanceLocal: vi.fn(async () => null)
+    });
+    const runtime = new EngineTimerRuntime(deps);
+
+    await runtime.tick();
+
+    expect(deps.renderLocalSnapshot).not.toHaveBeenCalled();
+    expect(deps.handleExternalIntent).not.toHaveBeenCalled();
+    expect(deps.recordTimeline).not.toHaveBeenCalledWith(
+      'engine-timer-transition',
+      'state',
+      expect.anything()
+    );
   });
 
   it('does not render during network ticks and follows external intents', async () => {
