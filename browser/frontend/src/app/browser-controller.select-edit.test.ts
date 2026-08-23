@@ -151,7 +151,7 @@ describe('BrowserController select edit keyboard routing', () => {
     controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'Enter' })
     );
-    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
 
     expect(engineBeginFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineCommitFocusedSelectEdit).not.toHaveBeenCalled();
@@ -235,7 +235,7 @@ describe('BrowserController select edit keyboard routing', () => {
     controllerPrivates(controller).keyboardIntentRouter.handleWindowKeydown(
       new KeyboardEvent('keydown', { key: 'Enter' })
     );
-    await controllerPrivates(controller).keyboardIntentRouter.actionQueue;
+    await controllerPrivates(controller).keyboardIntentRouter.whenIdle();
 
     expect(engineCommitFocusedSelectEditFrame).toHaveBeenCalledTimes(1);
     expect(engineHandleKey).not.toHaveBeenCalled();

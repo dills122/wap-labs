@@ -295,11 +295,13 @@ export class BrowserController {
       applyFocusedControlEditKey: (key) => this.focusedControlEdit.applyKey(key),
       applyEngineKey: (key) => this.applyEngineKey(key),
       navigateBackWithFallback: () => this.navigateBackWithFallback(),
+      waitForEngineTimerIdle: () => this.timerRuntime.whenIdle(),
       setStatus: (message) => this.presenter.setStatus(message)
     });
     this.shellEventBindings = new ShellEventBindings({
       refs: this.refs,
       runAction: this.withAction,
+      serializeEngineAction: (action) => this.keyboardIntentRouter.serializeEngineAction(action),
       onWindowKeydown: this.keyboardIntentRouter.handleWindowKeydown,
       actions: {
         health: this.handleHealthClick,
@@ -369,6 +371,10 @@ export class BrowserController {
   }
 
   async openFavoriteTarget(target: FavoriteTarget): Promise<void> {
+    await this.keyboardIntentRouter.serializeEngineAction(() => this.openFavoriteTargetNow(target));
+  }
+
+  private async openFavoriteTargetNow(target: FavoriteTarget): Promise<void> {
     if (target.kind === 'network') {
       await this.setRunMode('network', { loadLocalOnEnter: false });
       this.refs.fetchUrlInput.value = target.url;
@@ -401,27 +407,29 @@ export class BrowserController {
   }
 
   async restoreSafeSession(session: SafeSessionV1): Promise<void> {
-    if (session.kind === 'local-example') {
-      const target = parseLocalExampleFavoriteTarget(session.exampleId, session.fragment);
+    await this.keyboardIntentRouter.serializeEngineAction(async () => {
+      if (session.kind === 'local-example') {
+        const target = parseLocalExampleFavoriteTarget(session.exampleId, session.fragment);
+        if (!target.ok) throw new Error(target.issue.message);
+        await this.openFavoriteTargetNow(target.value);
+        return;
+      }
+      const target = parseNetworkFavoriteTarget(session.url);
       if (!target.ok) throw new Error(target.issue.message);
-      await this.openFavoriteTarget(target.value);
-      return;
-    }
-    const target = parseNetworkFavoriteTarget(session.url);
-    if (!target.ok) throw new Error(target.issue.message);
-    await this.setRunMode('network', { loadLocalOnEnter: false });
-    this.refs.fetchUrlInput.value = target.value.url;
-    await this.loadTransportUrl(
-      target.value.url,
-      'user',
-      true,
-      true,
-      undefined,
-      this.defaultNavigationHeaders()
-    );
-    if (this.presenter.getSessionState().navigationStatus !== 'loaded') {
-      throw new Error('safe-session-network-restore-failed');
-    }
+      await this.setRunMode('network', { loadLocalOnEnter: false });
+      this.refs.fetchUrlInput.value = target.value.url;
+      await this.loadTransportUrl(
+        target.value.url,
+        'user',
+        true,
+        true,
+        undefined,
+        this.defaultNavigationHeaders()
+      );
+      if (this.presenter.getSessionState().navigationStatus !== 'loaded') {
+        throw new Error('safe-session-network-restore-failed');
+      }
+    });
   }
 
   dispose(): void {
@@ -479,18 +487,26 @@ export class BrowserController {
       await this.handleStopNavigationClick();
       return;
     }
-    if (this.runMode === 'local') {
-      await this.loadSelectedLocalDeck();
-      return;
-    }
-    await this.loadTransportUrl(
-      this.refs.fetchUrlInput.value,
-      'user',
-      true,
-      true,
-      undefined,
-      this.defaultNavigationHeaders()
-    );
+    await this.keyboardIntentRouter.serializeEngineAction(async () => {
+      // Re-check after waiting for any preceding input edit. A navigation may
+      // have started from another entry point while this action was queued.
+      if (this.networkNavigationCancellable) {
+        await this.handleStopNavigationClick();
+        return;
+      }
+      if (this.runMode === 'local') {
+        await this.loadSelectedLocalDeck();
+        return;
+      }
+      await this.loadTransportUrl(
+        this.refs.fetchUrlInput.value,
+        'user',
+        true,
+        true,
+        undefined,
+        this.defaultNavigationHeaders()
+      );
+    });
   };
 
   private readonly handleReloadClick = async (): Promise<void> => {
@@ -649,37 +665,44 @@ export class BrowserController {
   };
 
   private readonly handleKeyButtonPress = async (key: EngineKey): Promise<void> => {
-    this.presenter.setStatus(WAVES_COPY.status.handledKey(key));
-    await this.applyEngineKey(key);
+    await this.keyboardIntentRouter.handleButtonKey(key);
   };
 
   private readonly handleViewportClick = (event: MouseEvent): void => {
     if (event.button !== 0) {
       return;
     }
-    void this.withAction('viewport-click', async () => this.applyEngineClick(event))();
+    void this.keyboardIntentRouter.serializeEngineAction(() =>
+      this.withAction('viewport-click', async () => this.applyEngineClick(event))()
+    );
   };
 
   private readonly handleViewportWheel = (event: WheelEvent): void => {
     if (event.ctrlKey || !Number.isFinite(event.deltaY) || event.deltaY === 0) {
       return;
     }
-    const committedFrame = this.committedFrame;
-    if (!committedFrame) {
+    if (!this.committedFrame) {
       return;
     }
     event.preventDefault();
-    const input: EngineInputEvent = {
-      type: 'scroll',
-      frameId: committedFrame.presentation.frameId,
-      deltaRows: event.deltaY > 0 ? 1 : -1
-    };
-    void this.withAction('viewport-scroll', async () => {
-      await this.applyEngineMutation(
-        () => this.hostClient.engineHandleInputFrame({ event: input }),
-        () => this.navigation.applyEngineInput(input)
-      );
-    })();
+    const deltaRows = event.deltaY > 0 ? 1 : -1;
+    void this.keyboardIntentRouter.serializeEngineAction(() =>
+      this.withAction('viewport-scroll', async () => {
+        const committedFrame = this.committedFrame;
+        if (!committedFrame) {
+          return;
+        }
+        const input: EngineInputEvent = {
+          type: 'scroll',
+          frameId: committedFrame.presentation.frameId,
+          deltaRows
+        };
+        await this.applyEngineMutation(
+          () => this.hostClient.engineHandleInputFrame({ event: input }),
+          () => this.navigation.applyEngineInput(input)
+        );
+      })()
+    );
   };
 
   // ---------------------------------------------------------------------

@@ -973,6 +973,102 @@ fn tauri_command_wrappers_submit_two_input_post_payload_after_edit_flow() {
 }
 
 #[test]
+fn tauri_frame_submit_commits_active_pin_before_building_post_payload() {
+    let state = AppState::default();
+    let wml = r##"
+    <wml>
+      <card id="login">
+        <do type="accept">
+          <go method="post" href="/login">
+            <postfield name="username" value="$(username)"/>
+            <postfield name="pin" value="$(pin)"/>
+          </go>
+        </do>
+        <p>User: <input name="username" value="" type="text"/></p>
+        <p>PIN: <input name="pin" value="" type="password"/></p>
+      </card>
+    </wml>
+    "##;
+
+    super::super::engine_load_deck_context_frame(
+        borrowed_state(&state),
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(wml),
+            base_url: "wap://localhost/login".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("frame load should succeed");
+
+    super::super::engine_begin_focused_input_edit_frame(borrowed_state(&state))
+        .expect("begin username edit should succeed");
+    super::super::engine_set_focused_input_edit_draft_frame(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "dills122".to_string(),
+        },
+    )
+    .expect("username draft should succeed");
+    super::super::engine_handle_input_frame(
+        borrowed_state(&state),
+        HandleInputRequest {
+            event: EngineInputEvent::Key {
+                key: wavenav_engine::EngineInputKey::Down,
+            },
+        },
+    )
+    .expect("Down should commit username and focus PIN");
+
+    super::super::engine_begin_focused_input_edit_frame(borrowed_state(&state))
+        .expect("begin PIN edit should succeed");
+    let pin_draft = super::super::engine_set_focused_input_edit_draft_frame(
+        borrowed_state(&state),
+        SetFocusedInputEditDraftRequest {
+            value: "1220".to_string(),
+        },
+    )
+    .expect("PIN draft should succeed");
+    assert_eq!(
+        pin_draft.snapshot.focused_input_edit_value.as_deref(),
+        Some("1220")
+    );
+    assert!(pin_draft.render.draw.iter().any(|command| match command {
+        DrawCmd::Text { text, .. } | DrawCmd::Link { text, .. } => text.contains("****"),
+    }));
+
+    // This is the browser's actual Select path: the active PIN draft and the
+    // accept task are committed by one typed Enter input, with no separate
+    // commit-focused-input IPC in between.
+    let submitted = super::super::engine_handle_input_frame(
+        borrowed_state(&state),
+        HandleInputRequest {
+            event: EngineInputEvent::Key {
+                key: wavenav_engine::EngineInputKey::Enter,
+            },
+        },
+    )
+    .expect("Select should commit PIN and execute accept");
+
+    assert_eq!(submitted.snapshot.focused_input_edit_name, None);
+    assert_eq!(submitted.snapshot.focused_input_edit_value, None);
+    let policy = submitted
+        .snapshot
+        .external_navigation_request_policy
+        .expect("submit should emit request policy");
+    let post_context = policy
+        .post_context
+        .expect("submit should include POST context");
+    assert_eq!(
+        post_context.payload.as_deref(),
+        Some("username=dills122&pin=1220")
+    );
+}
+
+#[test]
 fn tauri_command_wrappers_submit_uses_name_fallback_for_empty_templates() {
     let state = AppState::default();
     let wml = r##"

@@ -67,6 +67,25 @@ const createHost = (
 };
 
 describe('FocusedControlEditController', () => {
+  it('loads a snapshot when the presenter has not received one yet', async () => {
+    const loaded = snapshot({
+      activeCardId: 'login',
+      focusedLinkIndex: 0,
+      focusedInputEditName: 'username',
+      focusedInputEditValue: 'dill'
+    });
+    const { host } = createHost({
+      getSnapshot: vi.fn(() => null),
+      loadSnapshot: vi.fn(async () => loaded)
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey('s')).toBe('handled');
+
+    expect(host.loadSnapshot).toHaveBeenCalledOnce();
+    expect(host.setFocusedInputEditDraft).toHaveBeenCalledWith('dills');
+  });
+
   it('begins input edit for printable keys and appends the key to the draft', async () => {
     const { host, applyFrame, syncSnapshot } = createHost();
     const controller = new FocusedControlEditController(host);
@@ -83,6 +102,43 @@ describe('FocusedControlEditController', () => {
         focusedInputEditValue: 'AB'
       })
     );
+  });
+
+  it('appends to an active input draft without beginning a second edit session', async () => {
+    const { host } = createHost({
+      getSnapshot: vi.fn(() =>
+        snapshot({
+          activeCardId: 'login',
+          focusedLinkIndex: 0,
+          focusedInputEditName: 'username',
+          focusedInputEditValue: 'user'
+        })
+      )
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey('1')).toBe('handled');
+
+    expect(host.beginFocusedInputEdit).not.toHaveBeenCalled();
+    expect(host.setFocusedInputEditDraft).toHaveBeenCalledWith('user1');
+  });
+
+  it('starts an empty input and preserves a printable space in its draft', async () => {
+    const { host } = createHost({
+      beginFocusedInputEdit: vi.fn(async () =>
+        frame({
+          activeCardId: 'login',
+          focusedLinkIndex: 0,
+          focusedInputEditName: 'username',
+          focusedInputEditValue: ''
+        })
+      )
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey(' ')).toBe('handled');
+
+    expect(host.setFocusedInputEditDraft).toHaveBeenCalledWith(' ');
   });
 
   it('returns unhandled for non-editing non-printable keys', async () => {
@@ -160,6 +216,69 @@ describe('FocusedControlEditController', () => {
     );
   });
 
+  it('applies the engine frame returned when input editing is cancelled', async () => {
+    const cancelled = frame({
+      activeCardId: 'login',
+      focusedLinkIndex: 0,
+      focusedInputEditName: undefined,
+      focusedInputEditValue: undefined
+    });
+    const { host, applyFrame, syncSnapshot } = createHost({
+      getSnapshot: vi.fn(() =>
+        snapshot({
+          activeCardId: 'login',
+          focusedLinkIndex: 0,
+          focusedInputEditName: 'username',
+          focusedInputEditValue: 'temporary'
+        })
+      ),
+      cancelFocusedInputEdit: vi.fn(async () => cancelled)
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey('Escape')).toBe('handled');
+
+    expect(applyFrame).toHaveBeenCalledWith(cancelled);
+    expect(syncSnapshot).toHaveBeenCalledWith(cancelled.snapshot);
+  });
+
+  it('does not publish a frame when a draft update is rejected', async () => {
+    const { host, applyFrame, syncSnapshot } = createHost({
+      getSnapshot: vi.fn(() =>
+        snapshot({
+          activeCardId: 'login',
+          focusedLinkIndex: 0,
+          focusedInputEditName: 'pin',
+          focusedInputEditValue: '12'
+        })
+      ),
+      setFocusedInputEditDraft: vi.fn(async () => {
+        throw new Error('draft rejected');
+      })
+    });
+    const controller = new FocusedControlEditController(host);
+
+    await expect(controller.applyKey('3')).rejects.toThrow('draft rejected');
+
+    expect(applyFrame).not.toHaveBeenCalled();
+    expect(syncSnapshot).not.toHaveBeenCalled();
+  });
+
+  it('falls back to normal Enter handling when no select editor can be engaged', async () => {
+    const { host } = createHost({
+      beginFocusedSelectEdit: vi.fn(async () =>
+        frame({ activeCardId: 'login', focusedLinkIndex: 0 })
+      )
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey('Enter')).toBe('unhandled');
+
+    expect(host.beginFocusedSelectEdit).toHaveBeenCalledOnce();
+    expect(host.commitFocusedSelectEdit).not.toHaveBeenCalled();
+    expect(host.beginFocusedInputEdit).not.toHaveBeenCalled();
+  });
+
   it('engages select edit on enter and handles movement plus exit keys', async () => {
     const { host, applyFrame, syncSnapshot } = createHost();
     const controller = new FocusedControlEditController(host);
@@ -185,6 +304,46 @@ describe('FocusedControlEditController', () => {
     expect(host.commitFocusedSelectEdit).toHaveBeenCalledTimes(1);
     expect(applyFrame).toHaveBeenCalled();
     expect(syncSnapshot).toHaveBeenCalled();
+  });
+
+  it('moves an active select upward with a negative delta', async () => {
+    const { host } = createHost({
+      getSnapshot: vi.fn(() =>
+        snapshot({
+          activeCardId: 'profile',
+          focusedLinkIndex: 1,
+          focusedSelectEditName: 'country',
+          focusedSelectEditValue: 'Japan'
+        })
+      )
+    });
+    const controller = new FocusedControlEditController(host);
+
+    expect(await controller.applyKey('ArrowUp')).toBe('handled-stop');
+
+    expect(host.moveFocusedSelectEdit).toHaveBeenCalledWith(-1);
+  });
+
+  it('does not publish a select frame when committing the edit fails', async () => {
+    const { host, applyFrame, syncSnapshot } = createHost({
+      getSnapshot: vi.fn(() =>
+        snapshot({
+          activeCardId: 'profile',
+          focusedLinkIndex: 1,
+          focusedSelectEditName: 'country',
+          focusedSelectEditValue: 'France'
+        })
+      ),
+      commitFocusedSelectEdit: vi.fn(async () => {
+        throw new Error('select commit failed');
+      })
+    });
+    const controller = new FocusedControlEditController(host);
+
+    await expect(controller.applyKey('Enter')).rejects.toThrow('select commit failed');
+
+    expect(applyFrame).not.toHaveBeenCalled();
+    expect(syncSnapshot).not.toHaveBeenCalled();
   });
 
   it('records unhandled keys while a select edit is active', async () => {

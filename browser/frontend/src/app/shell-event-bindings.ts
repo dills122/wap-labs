@@ -42,6 +42,7 @@ export interface ShellEventBindingsDependencies {
     actionName: string,
     action: (event?: Event) => Promise<void>
   ) => (event?: Event) => Promise<void>;
+  serializeEngineAction(action: () => Promise<void>): Promise<void>;
   onWindowKeydown: (event: Event) => void;
 }
 
@@ -59,15 +60,25 @@ export class ShellEventBindings {
       this.unbind();
     }
     const { refs, runAction, actions } = this.deps;
+    const runEngineAction = (
+      actionName: string,
+      action: (event?: Event) => Promise<void>
+    ): ((event?: Event) => Promise<void>) => {
+      const wrapped = runAction(actionName, action);
+      return (event?: Event) => this.deps.serializeEngineAction(() => wrapped(event));
+    };
 
     this.bindButton('#btn-health', runAction('health', actions.health));
-    this.bindButton('#btn-load-context', runAction('load-raw-wml', actions.loadRawWml));
+    this.bindButton('#btn-load-context', runEngineAction('load-raw-wml', actions.loadRawWml));
+    // Fetch owns a dual Go/Stop state. Its controller action serializes the
+    // Go branch, while Stop must remain able to cancel an in-flight request
+    // immediately instead of waiting behind that same request in this queue.
     this.bindButton('#btn-fetch-url', runAction('fetch-url', actions.fetchUrl));
-    this.bindButton('#btn-reload', runAction('reload', actions.reload));
+    this.bindButton('#btn-reload', runEngineAction('reload', actions.reload));
     this.bindButton('#btn-stop-navigation', runAction('stop-navigation', actions.stopNavigation));
     this.bindButton(
       '#btn-navigation-retry',
-      runAction('retry-navigation', actions.retryNavigation)
+      runEngineAction('retry-navigation', actions.retryNavigation)
     );
     this.bindButton(
       '#btn-navigation-change-route',
@@ -101,19 +112,23 @@ export class ShellEventBindings {
       }
     });
 
-    this.bindEvent(refs.runModeSelectEl, 'change', runAction('change-mode', actions.changeMode));
+    this.bindEvent(
+      refs.runModeSelectEl,
+      'change',
+      runEngineAction('change-mode', actions.changeMode)
+    );
     this.bindEvent(
       refs.localExampleSelectEl,
       'change',
-      runAction('select-local-example', actions.selectLocalExample)
+      runEngineAction('select-local-example', actions.selectLocalExample)
     );
     this.bindEvent(
       refs.loadLocalBtnEl,
       'click',
-      runAction('load-local-example', actions.loadLocalExample)
+      runEngineAction('load-local-example', actions.loadLocalExample)
     );
 
-    this.bindButton('#btn-render', runAction('render', actions.render));
+    this.bindButton('#btn-render', runEngineAction('render', actions.render));
     this.bindKeyButton('#btn-up', 'up');
     this.bindKeyButton('#btn-down', 'down');
     this.bindKeyButton('#btn-enter', 'enter');
@@ -121,13 +136,13 @@ export class ShellEventBindings {
     const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
     if (backBtn) {
       this.backBtnEl = backBtn;
-      this.bindEvent(backBtn, 'click', runAction('navigate-back', actions.navigateBack));
+      this.bindEvent(backBtn, 'click', runEngineAction('navigate-back', actions.navigateBack));
     }
 
-    this.bindButton('#btn-snapshot', runAction('snapshot', actions.snapshot));
+    this.bindButton('#btn-snapshot', runEngineAction('snapshot', actions.snapshot));
     this.bindButton(
       '#btn-clear-intent',
-      runAction('clear-external-intent', actions.clearExternalIntent)
+      runEngineAction('clear-external-intent', actions.clearExternalIntent)
     );
     this.bindButton('#btn-export-timeline', runAction('export-timeline', actions.exportTimeline));
     this.bindButton('#btn-clear-timeline', runAction('clear-timeline', actions.clearTimeline));
