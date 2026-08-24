@@ -124,8 +124,9 @@ only after every required status check and any other ruleset requirement succeed
   native job was skipped, accepts a selected run only when the native job succeeded, and fails
   closed for invalid event, classifier, selection, or job-result states. Only after the scorecard's
   independent 20-run and four-run/21-day promotion samples pass may a repository administrator
-  acting as CI owner add the exact `native-waves-e2e-gate` context to the live ruleset and read back
-  the resulting required-context list.
+  acting as CI owner add the exact published `Native Waves E2E Gate` check context to the live
+  ruleset and read back the resulting required-context list. The workflow's YAML job ID is
+  `native-waves-e2e-gate`; it is not the published check name used by the ruleset.
   Authentication scenarios must not land before the advisory matrix, exact-manifest safe artifact
   publisher, whole-lifecycle secret/console policy, and isolation prerequisites are in place.
 - `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is

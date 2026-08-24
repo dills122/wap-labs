@@ -410,8 +410,8 @@ Purpose:
 
 Triggers:
 
-- `pull_request` when the engine, shared contracts, transport, Tauri host, native UI pilot,
-  Kannel/WML services, Compose topology, or workspace lockfiles traversed by the pilot change
+- every `pull_request` targeting `main`; the relevance classifier decides whether the expensive
+  native job runs
 - weekly schedule (`17 5 * * 1`)
 - `workflow_dispatch`
 

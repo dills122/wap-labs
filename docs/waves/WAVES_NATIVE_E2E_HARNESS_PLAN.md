@@ -898,8 +898,8 @@ Workflow shape:
    - scheduled and manual events always classify as relevant and force native execution
 3. a final `native-waves-e2e-gate` job uses `if: always()` and checks classifier/native outcomes
 4. irrelevant changes produce a successful final gate with an explicit skip reason
-5. only `native-waves-e2e-gate` is configured as required; the workflow itself has no top-level path
-   filter
+5. only the published `Native Waves E2E Gate` check from the `native-waves-e2e-gate` YAML job is
+   configured as required; the workflow itself has no top-level path filter
 
 Before the context becomes required, the same final job runs as an advisory signal. Its tested truth
 table is:
@@ -1035,8 +1035,9 @@ After `NE2E-14`:
   - preserve and revalidate PR 1's classifier/native/final-gate result matrix
   - confirm scheduled and manual events still force native execution
   - update `docs/ci/REQUIRED_CHECKS.md`, `docs/ci/CI_SETUP.md`, this plan, and the readiness scorecard
-  - add `native-waves-e2e-gate` to the repository ruleset/branch-protection required contexts only
-    after the workflow is present on the default branch
+  - add the published `Native Waves E2E Gate` check from the `native-waves-e2e-gate` YAML job to the
+    repository ruleset/branch-protection required contexts only after the workflow is present on the
+    default branch
   - validate the live migration on one relevant and one irrelevant PR so neither can be stranded in
     Pending and relevant native failures remain blocking
 
