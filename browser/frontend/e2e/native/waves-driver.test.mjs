@@ -18,9 +18,11 @@ function element(overrides = {}) {
   };
 }
 
-function fixture() {
+function fixture({ initialNavigationAction = 'go' } = {}) {
   const calls = [];
   const waits = [];
+  let navigationAction = initialNavigationAction;
+  let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
     ['#run-mode', element({ getAttribute: async () => 'network' })],
@@ -32,7 +34,16 @@ function fixture() {
       sendKeys: async (value) => calls.push(['sendKeys', 'address', value]),
       getAttribute: async () => 'wap://localhost/path?token=secret#card'
     })],
-    ['#btn-fetch-url', element({ click: async () => calls.push(['click', 'go']) })],
+    ['#btn-fetch-url', element({
+      click: async () => {
+        calls.push(['click', navigationAction]);
+        if (navigationAction === 'stop') {
+          navigationAction = 'go';
+          statusText = 'Navigation stopped.';
+        }
+      },
+      getAttribute: async (name) => (name === 'data-navigation-action' ? navigationAction : '')
+    })],
     ['#btn-back', element({ click: async () => calls.push(['click', 'back']) })],
     ['#btn-reload', element({ click: async () => calls.push(['click', 'reload']) })],
     ['#viewport', element({
@@ -53,7 +64,7 @@ function fixture() {
     },
     async executeScript(script, ...arguments_) {
       calls.push(['script', script, ...arguments_]);
-      if (script.includes('shadowRoot')) return 'Ready. WAP gateway responded at wap://localhost/';
+      if (script.includes('shadowRoot')) return statusText;
       if (script.includes('textContent')) return 'Rendered deck text';
       return '';
     }
@@ -136,6 +147,21 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
       ['click', 'reload']
     ]
   );
+});
+
+test('Stop waits for an active navigation, cancels it, and waits for the idle state', async () => {
+  const { calls, page, waits } = fixture({ initialNavigationAction: 'stop' });
+
+  assert.equal(await page.stopNavigation(), 'Navigation stopped.');
+  assert.deepEqual(
+    calls.filter(([kind]) => kind === 'click'),
+    [['click', 'stop']]
+  );
+  assert.deepEqual(waits, [
+    'navigation action "stop"',
+    'navigation action "go"',
+    'status text "Navigation stopped."'
+  ]);
 });
 
 for (const submitWith of ['enter', 'select']) {

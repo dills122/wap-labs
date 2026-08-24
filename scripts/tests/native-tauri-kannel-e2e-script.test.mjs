@@ -193,6 +193,8 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'NAV-NATIVE-003\tsmoke\tReload fetches once without duplicating host history',
       'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
       'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
+      'RACE-NATIVE-001\tsmoke\tCancelled slow navigation cannot overwrite a newer deck',
+      'RACE-NATIVE-002\tsmoke\tStop preserves the current deck and permits recovery',
       ''
     ].join('\n')
   );

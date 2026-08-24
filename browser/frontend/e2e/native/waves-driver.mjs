@@ -75,6 +75,16 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       return text.includes(expected) ? text : false;
     }, { description: `status text ${JSON.stringify(expected)}` });
   };
+  const waitForNavigationAction = async (expected) => {
+    if (expected !== 'go' && expected !== 'stop') {
+      throw new Error('navigation action must be go or stop');
+    }
+    const button = await find(SELECTORS.go);
+    return waitUntil(async () => {
+      const action = await button.getAttribute('data-navigation-action');
+      return action === expected ? action : false;
+    }, { description: `navigation action ${JSON.stringify(expected)}` });
+  };
   const submitAddress = async (address) => {
     if (typeof address !== 'string' || address.length === 0 || address.length > 2_048) {
       throw new Error('Waves address must be a bounded non-empty string');
@@ -149,6 +159,13 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async reload() {
       await (await find(SELECTORS.reload)).click();
+    },
+
+    async stopNavigation() {
+      await waitForNavigationAction('stop');
+      await (await find(SELECTORS.go)).click();
+      await waitForNavigationAction('go');
+      return waitForStatusText('Navigation stopped.');
     },
 
     async typeText(value) {

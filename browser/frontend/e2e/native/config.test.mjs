@@ -23,7 +23,9 @@ test('native E2E defaults to the smoke suite for compatibility', () => {
       'NAV-NATIVE-002',
       'NAV-NATIVE-003',
       'ERR-NATIVE-001',
-      'REQ-NATIVE-001'
+      'REQ-NATIVE-001',
+      'RACE-NATIVE-001',
+      'RACE-NATIVE-002'
     ]
   );
 });
@@ -47,7 +49,9 @@ test('native E2E lists stable scenario metadata without running a provider', () 
       'NAV-NATIVE-002',
       'NAV-NATIVE-003',
       'ERR-NATIVE-001',
-      'REQ-NATIVE-001'
+      'REQ-NATIVE-001',
+      'RACE-NATIVE-001',
+      'RACE-NATIVE-002'
     ]
   );
 });
@@ -67,7 +71,9 @@ test('native E2E selects a named suite', () => {
       'NAV-NATIVE-002',
       'NAV-NATIVE-003',
       'ERR-NATIVE-001',
-      'REQ-NATIVE-001'
+      'REQ-NATIVE-001',
+      'RACE-NATIVE-001',
+      'RACE-NATIVE-002'
     ]
   );
 });
