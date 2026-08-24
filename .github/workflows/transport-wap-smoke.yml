@@ -166,7 +166,7 @@ jobs:
             exit 1
           fi
           cd transport-rust
-          cargo test --test kannel_smoke -- --ignored --test-threads=1
+          cargo test --test kannel_smoke -- --ignored --skip kannel_wap_owned_origin_identity_smoke --test-threads=1
           cd ..
           docker compose -f deploy/network-preview/compose.yaml logs --no-color >"${RUNNER_TEMP}/waves-production.log"
           if grep -Eq '[0-9a-f]{64}' "${RUNNER_TEMP}/waves-production.log"; then

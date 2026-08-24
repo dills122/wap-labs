@@ -9,6 +9,11 @@ const source = fs.readFileSync(scriptPath, 'utf8');
 const runnerSource = fs.readFileSync(runnerPath, 'utf8');
 const composeOverlaySource = fs.readFileSync('docker-compose.native-e2e.yml', 'utf8');
 const workflowSource = fs.readFileSync('.github/workflows/native-tauri-kannel-e2e.yml', 'utf8');
+const transportSmokeSource = fs.readFileSync('scripts/transport-wap-smoke.sh', 'utf8');
+const transportSmokeWorkflowSource = fs.readFileSync(
+  '.github/workflows/transport-wap-smoke.yml',
+  'utf8'
+);
 
 test('native E2E rejects an invalid prebuilt-image mode before platform setup', () => {
   const result = spawnSync('sh', [scriptPath], {
@@ -89,6 +94,20 @@ test('native E2E discovers runtime ports and writes the immutable host routing m
   assert.match(source, /\[ "\$\{#KANNEL_ADMIN_PASSWORD\}" -lt 4 \]/);
   assert.doesNotMatch(source, /echo .*KANNEL_ADMIN_PASSWORD/);
   assert.doesNotMatch(source, /export GATEWAY_HTTP_BASE/);
+});
+
+test('owned-origin transport smoke runs only in the isolated native harness', () => {
+  assert.match(
+    source,
+    /cargo test --test kannel_smoke kannel_wap_owned_origin_identity_smoke -- --ignored --exact --test-threads=1/
+  );
+  assert.match(source, /WAP_GATEWAY_ENDPOINT="\$\{GATEWAY_UDP_BINDING\}"/);
+  for (const legacySource of [transportSmokeSource, transportSmokeWorkflowSource]) {
+    assert.match(
+      legacySource,
+      /--ignored --skip kannel_wap_owned_origin_identity_smoke --test-threads=1/
+    );
+  }
 });
 
 test('native E2E always creates a unique run child and isolated XDG roots', () => {
