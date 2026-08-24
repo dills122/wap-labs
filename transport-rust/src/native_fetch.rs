@@ -8,7 +8,8 @@ use crate::network::wsp::connectionless::{
     WspConnectionlessMethod, WspConnectionlessRequest,
 };
 use crate::network::wsp::header_block::{
-    prepare_connectionless_header_block, WspHeaderBlock, WspHeaderField, WspHeaderNameEncoding,
+    decode_header_block, prepare_connectionless_header_block, WspHeaderBlock,
+    WspHeaderBlockDecodePolicy, WspHeaderField, WspHeaderNameEncoding,
 };
 use crate::network::wsp::header_registry::DEFAULT_HEADER_CODE_PAGE;
 use crate::network::wsp::WspEncodingVersion;
@@ -28,6 +29,7 @@ pub const TRANSPORT_PROFILE_ENV: &str = "LOWBAND_TRANSPORT_PROFILE";
 pub const TRANSPORT_PROFILE_GATEWAY_BRIDGED: &str = "gateway-bridged";
 pub const TRANSPORT_PROFILE_WAP_NET_CORE: &str = "wap-net-core";
 const CONNECTIONLESS_INITIAL_TRANSACTION_ID: u8 = 1;
+const ORIGIN_INSTANCE_HEADER: &str = "X-Waves-Origin-Instance";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum TransportProfile {
@@ -38,6 +40,7 @@ pub(crate) enum TransportProfile {
 pub(crate) struct NativeFetchPlan {
     pub(crate) request_url: String,
     pub(crate) gateway_endpoint: Option<String>,
+    pub(crate) expected_origin_instance_id: Option<String>,
     pub(crate) method: String,
     pub(crate) outbound_headers: HashMap<String, String>,
     pub(crate) post_body: Option<Vec<u8>>,
@@ -175,6 +178,27 @@ fn parse_native_gateway_endpoint(endpoint: &str) -> Result<Url, String> {
     Ok(parsed)
 }
 
+fn validate_origin_instance_headers(headers: &[u8], expected: Option<&str>) -> Result<(), String> {
+    let Some(expected) = expected else {
+        return Ok(());
+    };
+    let decoded = decode_header_block(headers, WspHeaderBlockDecodePolicy::STRICT)
+        .map_err(|_| "origin instance response header was malformed".to_string())?;
+    let values: Vec<&str> = decoded
+        .headers
+        .iter()
+        .filter(|header| header.name.eq_ignore_ascii_case(ORIGIN_INSTANCE_HEADER))
+        .map(|header| header.value.as_str())
+        .collect();
+    if values.len() != 1 {
+        return Err("origin instance response header must occur exactly once".to_string());
+    }
+    if values[0] != expected {
+        return Err("origin instance response header did not match the owned stack".to_string());
+    }
+    Ok(())
+}
+
 pub(crate) fn execute_native_wap_request_with_transport(
     transport: &mut impl DatagramTransport,
     peer: SocketAddr,
@@ -301,6 +325,21 @@ pub(crate) fn execute_native_wap_request_with_transport(
                             );
                         }
                     };
+
+                if let Err(error) = validate_origin_instance_headers(
+                    &reply.headers,
+                    plan.expected_origin_instance_id.as_deref(),
+                ) {
+                    return map_terminal_send_error(
+                        plan.request_url,
+                        error,
+                        plan.attempts,
+                        attempt,
+                        false,
+                        elapsed_ms,
+                        plan.request_id.as_deref(),
+                    );
+                }
 
                 return map_success_payload_response(SuccessPayloadParams {
                     status: reply.status_code,
@@ -604,10 +643,27 @@ mod tests {
         content_type: u8,
         body: &[u8],
     ) -> Vec<u8> {
-        let headers_len = encode_uintvar(1).expect("single-octet content type should encode");
+        build_connectionless_reply_wire_with_headers(
+            transaction_id,
+            status,
+            content_type,
+            &[],
+            body,
+        )
+    }
+
+    fn build_connectionless_reply_wire_with_headers(
+        transaction_id: u8,
+        status: u8,
+        content_type: u8,
+        headers: &[u8],
+        body: &[u8],
+    ) -> Vec<u8> {
+        let headers_len = encode_uintvar(1 + headers.len()).expect("header length should encode");
         let mut wire = vec![transaction_id, 0x04, status];
         wire.extend_from_slice(&headers_len);
         wire.push(content_type | 0x80);
+        wire.extend_from_slice(headers);
         wire.extend_from_slice(body);
         wire
     }
@@ -667,13 +723,32 @@ mod tests {
     }
 
     #[test]
+    fn native_origin_instance_header_must_match_exactly_once_when_expected() {
+        let matching = b"X-Waves-Origin-Instance\0origin-run-7\0";
+        assert!(validate_origin_instance_headers(matching, Some("origin-run-7")).is_ok());
+        assert!(validate_origin_instance_headers(b"", Some("origin-run-7")).is_err());
+        assert!(validate_origin_instance_headers(
+            b"X-Waves-Origin-Instance\0origin-run-8\0",
+            Some("origin-run-7")
+        )
+        .is_err());
+
+        let duplicate =
+            b"X-Waves-Origin-Instance\0origin-run-7\0X-Waves-Origin-Instance\0origin-run-7\0";
+        assert!(validate_origin_instance_headers(duplicate, Some("origin-run-7")).is_err());
+        assert!(validate_origin_instance_headers(b"\xff", Some("origin-run-7")).is_err());
+        assert!(validate_origin_instance_headers(b"\xff", None).is_ok());
+    }
+
+    #[test]
     fn native_fetch_roundtrip_maps_reply_to_normalized_response() {
         let request_url = "wap://127.0.0.1/login".to_string();
         let peer: SocketAddr = "127.0.0.1:9200".parse().expect("literal should parse");
-        let encoded_reply = build_connectionless_reply_wire(
+        let encoded_reply = build_connectionless_reply_wire_with_headers(
             CONNECTIONLESS_INITIAL_TRANSACTION_ID,
             0x20,
             0x08,
+            b"X-Waves-Origin-Instance\0origin-run-7\0",
             br#"<?xml version="1.0"?><wml><card id="login"/></wml>"#,
         );
         let reply_datagram = WdpDatagram {
@@ -695,6 +770,7 @@ mod tests {
             NativeFetchPlan {
                 request_url: request_url.clone(),
                 gateway_endpoint: None,
+                expected_origin_instance_id: Some("origin-run-7".to_string()),
                 method: "GET".to_string(),
                 outbound_headers: HashMap::from([(
                     "Accept".to_string(),
@@ -746,6 +822,7 @@ mod tests {
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
                 gateway_endpoint: None,
+                expected_origin_instance_id: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,
@@ -783,6 +860,7 @@ mod tests {
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
                 gateway_endpoint: None,
+                expected_origin_instance_id: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,
@@ -833,6 +911,7 @@ mod tests {
             NativeFetchPlan {
                 request_url: request_url.clone(),
                 gateway_endpoint: None,
+                expected_origin_instance_id: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,
@@ -1180,6 +1259,7 @@ mod tests {
             NativeFetchPlan {
                 request_url: "wap://127.0.0.1/".to_string(),
                 gateway_endpoint: None,
+                expected_origin_instance_id: None,
                 method: "GET".to_string(),
                 outbound_headers: HashMap::new(),
                 post_body: None,

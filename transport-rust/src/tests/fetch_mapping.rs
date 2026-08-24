@@ -63,6 +63,7 @@ fn transport_fetch_with_options_preserves_cancellation_and_physical_gateway_rout
         FetchTransportOptions {
             profile: FetchTransportProfile::WapNetCore,
             gateway_endpoint: Some("wap://127.0.0.1:49152".to_string()),
+            expected_origin_instance_id: Some("origin-run-7".to_string()),
         },
         cancellation,
     );

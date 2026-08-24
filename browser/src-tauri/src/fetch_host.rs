@@ -59,6 +59,8 @@ fn transport_options(profile: FetchTransportProfile) -> FetchTransportOptions {
     FetchTransportOptions {
         profile,
         gateway_endpoint,
+        expected_origin_instance_id: crate::fetch_routing_manifest::configured_origin_instance_id()
+            .map(str::to_string),
     }
 }
 
