@@ -336,8 +336,15 @@ export function createSeleniumProvider({
         driver = await buildDriver({ application, driverUrl });
       } catch (error) {
         const cleanup = await terminateProcess(child);
-        const suffix = cleanup === 'cleanup-failed' ? '; process cleanup also failed' : '';
-        throw new Error(`failed to construct the WebDriver session${suffix}`, { cause: error });
+        if (cleanup === 'cleanup-failed') {
+          throw new Error('failed to construct the WebDriver session; process cleanup also failed', {
+            cause: error
+          });
+        }
+        if (attempt < maxStartupAttempts) {
+          continue;
+        }
+        throw new Error('failed to construct the WebDriver session', { cause: error });
       }
 
       const session = {

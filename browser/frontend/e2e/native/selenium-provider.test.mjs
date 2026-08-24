@@ -279,10 +279,46 @@ test('provider cleans the spawned process when WebDriver session construction fa
   });
 
   await assert.rejects(
-    provider.startSession({ application: '/tmp/wavenav_host' }),
+    provider.startSession({ application: '/tmp/wavenav_host', maxStartupAttempts: 1 }),
     /failed to construct the WebDriver session/
   );
   assert.deepEqual(terminated, [301]);
+});
+
+test('provider retries fresh ports when the native driver race breaks session construction', async () => {
+  const leases = [
+    { host: '127.0.0.1', ports: [44101, 44102], release: async () => undefined },
+    { host: '127.0.0.1', ports: [44201, 44202], release: async () => undefined }
+  ];
+  const children = [createChild(311), createChild(312)];
+  const terminated = [];
+  let builds = 0;
+  const driver = { quit: async () => undefined };
+  const provider = createSeleniumProvider({
+    reservePorts: async () => leases.shift(),
+    spawnProcess: () => children.shift(),
+    waitUntilReady: async () => undefined,
+    buildDriver: async () => {
+      builds += 1;
+      if (builds === 1) {
+        throw new Error('native WebDriver port was claimed');
+      }
+      return driver;
+    },
+    terminateProcess: async (child) => {
+      terminated.push(child.pid);
+      return 'terminated';
+    }
+  });
+
+  const session = await provider.startSession({
+    application: '/tmp/wavenav_host',
+    maxStartupAttempts: 2
+  });
+
+  assert.equal(session.driver, driver);
+  assert.deepEqual(session.ports, { intermediary: 44201, native: 44202 });
+  assert.deepEqual(terminated, [311]);
 });
 
 test('provider detects an early tauri-driver exit without waiting for readiness timeout', async () => {
