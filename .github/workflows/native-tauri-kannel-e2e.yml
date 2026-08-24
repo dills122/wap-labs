@@ -193,6 +193,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup Node for gate evaluation
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Verify advisory native E2E result
         env:
           NATIVE_E2E_SELECTED: ${{ needs.classify-native-e2e.outputs.selected }}
