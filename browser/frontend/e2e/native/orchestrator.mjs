@@ -81,6 +81,7 @@ export async function executeNativeE2EScenarios({
     try {
       session = await createSession(definition, { signal });
       await definition.run({
+        ...session,
         session,
         signal,
         observe(observation) {

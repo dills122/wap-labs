@@ -104,10 +104,14 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
   const result = spawnSync('node', [runnerPath, '--list'], { encoding: 'utf8' });
 
   assert.equal(result.status, 0);
-  assert.equal(
-    result.stdout,
-    'PILOT-NATIVE-001\tsmoke\tExisting native Tauri/Kannel pilot journey\n'
-  );
+  assert.equal(result.stdout, [
+    'BOOT-NATIVE-001\tsmoke\tCold native launch reaches network-ready state',
+    'TRN-NATIVE-001\tsmoke\tGateway home deck renders through the native transport',
+    'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
+    'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
+    'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
+    ''
+  ].join('\n'));
   assert.equal(result.stderr, '');
 });
 

@@ -37,6 +37,7 @@ RUN_NONCE="${NATIVE_E2E_RUN_NONCE:-$(basename "${ARTIFACT_DIR}")}"
 COMPOSE_PROJECT="$(node "${ENVIRONMENT_CLI}" run-id "${RUN_NONCE}" "$$")"
 WML_ORIGIN_INSTANCE_ID="${COMPOSE_PROJECT}"
 export WML_ORIGIN_INSTANCE_ID
+export NATIVE_E2E_RUN_ID="${COMPOSE_PROJECT}"
 
 compose_e2e() {
   docker compose \
