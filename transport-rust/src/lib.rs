@@ -351,11 +351,13 @@ pub enum FetchTransportProfile {
 /// `gateway_endpoint` is deliberately separate from [`FetchDeckRequest::url`]: the request URL
 /// identifies the WAP resource, while the endpoint identifies the selected proxy/gateway peer.
 /// Native WAP endpoints use `wap://host[:port]`; gateway-bridged endpoints use an absolute
-/// `http://` or `https://` base URL.
+/// `http://` or `https://` base URL. When `expected_origin_instance_id` is present, native WAP
+/// replies must carry exactly one matching `X-Waves-Origin-Instance` response header.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FetchTransportOptions {
     pub profile: FetchTransportProfile,
     pub gateway_endpoint: Option<String>,
+    pub expected_origin_instance_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, TS)]
@@ -428,6 +430,7 @@ pub fn fetch_deck_in_process_with_profile(
         Some(FetchTransportOptions {
             profile,
             gateway_endpoint: None,
+            expected_origin_instance_id: None,
         }),
         None,
     )
@@ -443,6 +446,7 @@ pub fn fetch_deck_in_process_with_profile_cancellable(
         Some(FetchTransportOptions {
             profile,
             gateway_endpoint: None,
+            expected_origin_instance_id: None,
         }),
         Some(cancellation),
     )

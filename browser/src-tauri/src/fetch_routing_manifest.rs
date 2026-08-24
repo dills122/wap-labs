@@ -55,6 +55,13 @@ pub(crate) fn configured_gateway_endpoint() -> Option<&'static str> {
         .map(|manifest| manifest.gateway_endpoint.as_str())
 }
 
+pub(crate) fn configured_origin_instance_id() -> Option<&'static str> {
+    FETCH_ROUTING_MANIFEST
+        .get()
+        .and_then(Option::as_ref)
+        .map(|manifest| manifest.expected_origin_instance_id.as_str())
+}
+
 pub(crate) fn load_fetch_routing_manifest(path: &Path) -> Result<FetchRoutingManifest, String> {
     if !path.is_absolute() {
         return Err("fetch routing manifest path must be absolute".to_string());

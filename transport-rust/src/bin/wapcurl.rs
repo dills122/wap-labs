@@ -328,6 +328,7 @@ fn run(config: Config) -> i32 {
         FetchTransportOptions {
             profile,
             gateway_endpoint: gateway_endpoint.clone(),
+            expected_origin_instance_id: None,
         },
     );
     let wall_elapsed_ms = wall_start.elapsed().as_secs_f64() * 1000.0;
