@@ -18,7 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "test:accessibility:rendered": "node ./scripts/check-rendered-accessibility.mjs",
     "test:native-kannel:ui": "node ./scripts/native-tauri-kannel-e2e.mjs",
-    "test:native-kannel:unit": "node --test ./e2e/native/*.test.mjs",
+    "test:native-kannel:unit": "node --test ./e2e/native/*.test.mjs ./e2e/native/scenarios/*.test.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\"",

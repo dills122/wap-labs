@@ -74,6 +74,7 @@ if (cliOptions?.mode === 'list') {
         provider: createSeleniumProvider(),
         selector: By.css,
         keys: { Enter: Key.ENTER },
+        infrastructureSecrets: [requiredEnvironment('KANNEL_ADMIN_PASSWORD')],
         timeoutMs,
         signal: abortController.signal
       });

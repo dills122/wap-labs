@@ -55,6 +55,38 @@ test('native runtime starts one isolated provider session and safe result per sc
   }
 });
 
+test('native runtime turns a raw secret canary into only a static failed bundle', async () => {
+  const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
+  try {
+    const results = await runNativeE2E({
+      scenarios: [{ id: 'CANARY', suite: 'smoke', name: 'canary', secretBearing: true, async run() {} }],
+      application: '/tmp/waves-app', artifactRoot, runId: 'run-canary', origin: {},
+      selector: (value) => value,
+      testDataFactory: () => ({ pin: '4927' }),
+      provider: { async startSession(options) {
+        const { Readable } = await import('node:stream');
+        options.onProcessStarted({
+          stdout: Readable.from(['unexpected 4927']), stderr: Readable.from([])
+        });
+        return {
+          driver: { findElement() {}, executeScript() {} },
+          async stop() { return { webdriverSession: 'closed', processGroup: 'terminated' }; }
+        };
+      } },
+      createWaves: () => ({})
+    });
+    assert.equal(results[0].result, 'fail');
+    const safeDirectory = path.join(artifactRoot, 'run-canary', 'canary', 'safe-upload');
+    assert.deepEqual(await (await import('node:fs/promises')).readdir(safeDirectory), [
+      'sanitizer-failure.json'
+    ]);
+    const retained = await readFile(path.join(safeDirectory, 'sanitizer-failure.json'), 'utf8');
+    assert.doesNotMatch(retained, /4927/);
+  } finally {
+    await rm(artifactRoot, { recursive: true, force: true });
+  }
+});
+
 test('native runtime safe result omits arbitrary thrown error text', async () => {
   const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
   try {
