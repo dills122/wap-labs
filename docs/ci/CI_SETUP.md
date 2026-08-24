@@ -432,7 +432,9 @@ Behavior:
   resource URL ports remain rejected by the WDP service-port policy
 - pins `wap-net-core` and disables gateway fallback
 - serves WML 1.3 through the same explicit WML-server test boundary and requires Kannel to emit
-  the negotiated WBXML 1.3 envelope accepted by the pinned decoder
+  the negotiated WBXML 1.3 envelope accepted by the pinned decoder; reply-header validation
+  discovers Kannel's trailing hop-local `Encoding-Version` and then re-decodes the complete block
+  strictly at that advertised version before accepting the run-scoped origin identity
 - runs each selected scenario in a fresh dynamically allocated WebDriver session and isolated XDG
   application profile; driver readiness polls the WebDriver `/status` contract
 - covers cold boot, native gateway rendering, navigation, exactly-once stability through the
