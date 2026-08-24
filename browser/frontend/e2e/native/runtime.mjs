@@ -2,11 +2,8 @@ import { createWriteStream } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
-import {
-  cleanupRestrictedEvidence,
-  initializeScenarioEvidence,
-} from './evidence.mjs';
-import { constructSafeEvidenceBundle } from './evidence-publisher.mjs';
+import { cleanupRestrictedEvidence, initializeScenarioEvidence } from './evidence.mjs';
+import { constructSafeEvidenceBundle, isSafeAssertionName } from './evidence-publisher.mjs';
 import { executeNativeE2EScenarios } from './orchestrator.mjs';
 import { waitForCondition } from './waits.mjs';
 import { createWavesDriver } from './waves-driver.mjs';
@@ -58,9 +55,17 @@ function safeResult(result, assertions) {
     result: result.result,
     durationMs: result.durationMs,
     lastObservation: result.lastObservation,
+    checkpoints: result.checkpoints,
+    failureClass: result.failureClass,
     cleanup: result.cleanup,
     assertions
   };
+}
+
+function abortError(signal) {
+  const error = new Error('native E2E runtime startup aborted', { cause: signal?.reason });
+  error.name = 'AbortError';
+  return error;
 }
 
 export async function runNativeE2E({
@@ -74,6 +79,7 @@ export async function runNativeE2E({
   keys,
   environment = process.env,
   timeoutMs = 20_000,
+  scenarioTimeoutMs = 90_000,
   createWaves = createWavesDriver,
   testDataFactory = createAuthenticationTestData,
   infrastructureSecrets = ['changeme'],
@@ -83,7 +89,8 @@ export async function runNativeE2E({
   return executeNativeE2EScenarios({
     scenarios,
     signal,
-    async createSession(definition) {
+    scenarioTimeoutMs,
+    async createSession(definition, { signal: scenarioSignal }) {
       const layout = await initializeScenarioEvidence({
         artifactRoot,
         runId,
@@ -93,24 +100,35 @@ export async function runNativeE2E({
       const assertions = [];
       const testData = definition.secretBearing ? testDataFactory(definition.id) : undefined;
       const stdout = createWriteStream(path.join(layout.restrictedDir, 'tauri-driver.stdout.log'), {
-        flags: 'wx', mode: 0o600
+        flags: 'wx',
+        mode: 0o600
       });
       const stderr = createWriteStream(path.join(layout.restrictedDir, 'tauri-driver.stderr.log'), {
-        flags: 'wx', mode: 0o600
+        flags: 'wx',
+        mode: 0o600
       });
       const secrets = [...infrastructureSecrets, ...(testData ? [testData.pin] : [])];
-      const state = { layout, assertions, stdout, stderr, secrets, secretBearing: definition.secretBearing };
+      const state = {
+        layout,
+        assertions,
+        stdout,
+        stderr,
+        secrets,
+        secretBearing: definition.secretBearing
+      };
       scenarioState.set(definition.id, state);
 
       let providerSession;
       let abortCleanup;
       let stdoutSource;
       let stderrSource;
+      let waves;
       try {
         providerSession = await provider.startSession({
           application,
           environment: { ...environment, ...runtimeEnvironment },
           startupTimeoutMs: timeoutMs,
+          signal: scenarioSignal,
           onProcessStarted(child) {
             stdoutSource = child.stdout;
             stderrSource = child.stderr;
@@ -119,35 +137,73 @@ export async function runNativeE2E({
           }
         });
         abortCleanup = () => {
-          void providerSession.stop();
+          void providerSession.stop().catch(() => undefined);
         };
-        signal?.addEventListener('abort', abortCleanup, { once: true });
+        scenarioSignal.addEventListener('abort', abortCleanup, { once: true });
+        if (scenarioSignal.aborted) {
+          scenarioSignal.removeEventListener('abort', abortCleanup);
+          abortCleanup = undefined;
+          throw abortError(scenarioSignal);
+        }
+        waves = createWaves({
+          driver: providerSession.driver,
+          selector,
+          keys,
+          waitUntil: (condition, { description }) =>
+            waitForCondition({
+              description,
+              observe: condition,
+              timeoutMs,
+              pollIntervalMs: 100,
+              signal: scenarioSignal
+            })
+        });
       } catch (error) {
-        await Promise.all([closeStream(stdout), closeStream(stderr)]);
+        if (abortCleanup) scenarioSignal.removeEventListener('abort', abortCleanup);
+        let cleanupFailed = false;
+        try {
+          const cleanup = await providerSession?.stop();
+          if (
+            providerSession &&
+            (cleanup?.webdriverSession !== 'closed' || cleanup?.processGroup !== 'terminated')
+          ) {
+            cleanupFailed = true;
+          }
+        } catch {
+          cleanupFailed = true;
+        }
+        try {
+          await Promise.all([
+            waitForReadableCompletion(stdoutSource, stdout),
+            waitForReadableCompletion(stderrSource, stderr)
+          ]);
+          await Promise.all([closeStream(stdout), closeStream(stderr)]);
+        } catch {
+          cleanupFailed = true;
+        }
+        if (cleanupFailed) {
+          const ownershipError = new Error(
+            'native E2E provider ownership was not released during session initialization',
+            { cause: error }
+          );
+          ownershipError.name = 'NativeE2EOwnershipError';
+          ownershipError.ownershipReleased = false;
+          throw ownershipError;
+        }
         throw error;
       }
-
-      const waves = createWaves({
-        driver: providerSession.driver,
-        selector,
-        keys,
-        waitUntil: (condition, { description }) =>
-          waitForCondition({
-            description,
-            observe: condition,
-            timeoutMs,
-            pollIntervalMs: 100
-          })
-      });
       return {
         waves,
         origin,
         testData,
         recordAssertion(name, details) {
-          assertions.push({ name, result: 'pass', details });
+          if (!isSafeAssertionName(name) || typeof details !== 'string' || details.length > 256) {
+            throw new Error('native E2E assertion is outside the safe schema');
+          }
+          assertions.push({ name, result: 'pass' });
         },
         async cleanup() {
-          if (abortCleanup) signal?.removeEventListener('abort', abortCleanup);
+          if (abortCleanup) scenarioSignal.removeEventListener('abort', abortCleanup);
           const cleanup = await providerSession.stop();
           await Promise.all([
             waitForReadableCompletion(stdoutSource, stdout),
@@ -171,10 +227,17 @@ export async function runNativeE2E({
         await cleanupRestrictedEvidence(state.layout);
       }
     }
-  }).then((results) => results.map((result) => {
-    if (scenarioState.get(result.scenarioId)?.publication?.ok !== false) return result;
-    return Object.freeze({ ...result, result: 'fail', error: {
-      name: 'EvidenceSanitizerError', message: 'safe evidence construction failed'
-    } });
-  }));
+  }).then((results) =>
+    results.map((result) => {
+      if (scenarioState.get(result.scenarioId)?.publication?.ok !== false) return result;
+      return Object.freeze({
+        ...result,
+        result: 'fail',
+        error: {
+          name: 'EvidenceSanitizerError',
+          message: 'safe evidence construction failed'
+        }
+      });
+    })
+  );
 }

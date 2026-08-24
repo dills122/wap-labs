@@ -112,6 +112,13 @@
     "securityImages": false
   },
   {
+    "path": "docker-compose.native-e2e.yml",
+    "ciFilters": [],
+    "transportSmoke": false,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
     "path": "deploy/network-preview/compose.yaml",
     "ciFilters": [],
     "transportSmoke": true,

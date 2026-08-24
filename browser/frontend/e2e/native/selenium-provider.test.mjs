@@ -140,28 +140,14 @@ test('provider releases each port lease before spawn and retries fresh ports aft
   assert.deepEqual(events, [
     'release-1',
     {
-      arguments: [
-        '--port',
-        '41001',
-        '--native-port',
-        '41002',
-        '--native-host',
-        '127.0.0.1'
-      ],
+      arguments: ['--port', '41001', '--native-port', '41002', '--native-host', '127.0.0.1'],
       detached: true
     },
     'ready-http://127.0.0.1:41001/',
     'terminate-101',
     'release-2',
     {
-      arguments: [
-        '--port',
-        '42001',
-        '--native-port',
-        '42002',
-        '--native-host',
-        '127.0.0.1'
-      ],
+      arguments: ['--port', '42001', '--native-port', '42002', '--native-host', '127.0.0.1'],
       detached: true
     },
     'ready-http://127.0.0.1:42001/',
@@ -386,6 +372,84 @@ test('provider detects an early tauri-driver exit without waiting for readiness 
     }),
     /tauri-driver exited before WebDriver readiness \(code 2\)/
   );
+});
+
+test('provider aborts a pending startup, terminates its process, and does not retry', async () => {
+  const controller = new AbortController();
+  const terminated = [];
+  let reservations = 0;
+  let readinessSignal;
+  const provider = createSeleniumProvider({
+    reservePorts: async () => {
+      reservations += 1;
+      return {
+        host: '127.0.0.1',
+        ports: [45011, 45012],
+        release: async () => undefined
+      };
+    },
+    spawnProcess: () => createChild(411),
+    waitUntilReady: async ({ signal }) => {
+      readinessSignal = signal;
+      controller.abort(new Error('stop requested'));
+      return new Promise(() => undefined);
+    },
+    terminateProcess: async (child) => {
+      terminated.push(child.pid);
+      return 'terminated';
+    }
+  });
+
+  await assert.rejects(
+    provider.startSession({
+      application: '/tmp/wavenav_host',
+      maxStartupAttempts: 3,
+      signal: controller.signal
+    }),
+    (error) => error?.name === 'AbortError'
+  );
+
+  assert.equal(readinessSignal, controller.signal);
+  assert.equal(reservations, 1);
+  assert.deepEqual(terminated, [411]);
+});
+
+test('provider aborts pending WebDriver session construction and cleans the ready process', async () => {
+  const controller = new AbortController();
+  const terminated = [];
+  let reservations = 0;
+  const provider = createSeleniumProvider({
+    reservePorts: async () => {
+      reservations += 1;
+      return {
+        host: '127.0.0.1',
+        ports: [45021, 45022],
+        release: async () => undefined
+      };
+    },
+    spawnProcess: () => createChild(421),
+    waitUntilReady: async () => undefined,
+    buildDriver: async () => {
+      controller.abort(new Error('stop requested'));
+      return new Promise(() => undefined);
+    },
+    terminateProcess: async (child) => {
+      terminated.push(child.pid);
+      return 'terminated';
+    }
+  });
+
+  await assert.rejects(
+    provider.startSession({
+      application: '/tmp/wavenav_host',
+      maxStartupAttempts: 3,
+      signal: controller.signal
+    }),
+    (error) => error?.name === 'AbortError'
+  );
+
+  assert.equal(reservations, 1);
+  assert.deepEqual(terminated, [421]);
 });
 
 test('provider detects a process that exited synchronously during spawn', async () => {

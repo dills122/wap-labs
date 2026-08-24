@@ -52,7 +52,16 @@ test('native E2E scopes every Compose operation to one project and overlay', () 
   assert.doesNotMatch(source, /docker compose down/);
   assert.match(source, /compose_e2e down/);
   assert.match(source, /compose_e2e ps --all/);
-  assert.match(source, /compose_e2e logs --no-color kannel wml-server/);
+  assert.doesNotMatch(source, /compose_e2e logs/);
+});
+
+test('native E2E tears down Compose only after this run establishes ownership', () => {
+  assert.match(source, /COMPOSE_OWNED=0/);
+  assert.match(source, /if \[ "\$\{COMPOSE_OWNED\}" -eq 1 \]; then/);
+  const collisionCheck = source.indexOf('native E2E Compose project was not empty before startup');
+  const ownership = source.indexOf('COMPOSE_OWNED=1');
+  const startup = source.indexOf('compose_e2e up -d');
+  assert.ok(collisionCheck > 0 && ownership > collisionCheck && startup > ownership);
 });
 
 test('native E2E Compose resolution removes fixed names and uses dynamic loopback ports', () => {
@@ -94,6 +103,11 @@ test('native E2E always creates a unique run child and isolated XDG roots', () =
   }
 });
 
+test('native E2E cleanup guarantees a static safe bundle for pre-scenario failures', () => {
+  assert.match(source, /evidence-cli\.mjs/);
+  assert.match(source, /ensure-run-failure/);
+});
+
 test('native E2E cache records exact Tauri crate provenance without unsupported driver flags', () => {
   assert.match(workflowSource, /tauri-tools-root-v1-/);
   assert.match(workflowSource, /cargo install --list --root .*tauri-cli v\$\{TAURI_CLI_VERSION\}:/);
@@ -114,10 +128,21 @@ test('native E2E publishes an always-present advisory gate', () => {
 });
 
 test('native E2E validates and uploads only exact safe evidence bundles', () => {
+  assert.match(workflowSource, /id: validate-safe-evidence/);
   assert.match(workflowSource, /evidence-cli\.mjs validate-root/);
-  assert.match(workflowSource, /path: browser\/frontend\/test-results\/native-tauri-kannel\/\*\*\/safe-upload\/\*\*/);
+  assert.match(
+    workflowSource,
+    /if: \$\{\{ always\(\) && steps\.validate-safe-evidence\.outcome == 'success' \}\}/
+  );
+  assert.match(
+    workflowSource,
+    /path: browser\/frontend\/test-results\/native-tauri-kannel\/run\.\*\/waves-e2e-\*\/\*\/safe-upload\/\*/
+  );
   assert.match(workflowSource, /if-no-files-found: error/);
-  assert.doesNotMatch(workflowSource, /path: browser\/frontend\/test-results\/native-tauri-kannel\s*$/m);
+  assert.doesNotMatch(
+    workflowSource,
+    /path: browser\/frontend\/test-results\/native-tauri-kannel\s*$/m
+  );
 });
 
 test('native E2E forces scheduled and manually dispatched runs through the classifier', () => {
@@ -130,18 +155,21 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
   const result = spawnSync('node', [runnerPath, '--list'], { encoding: 'utf8' });
 
   assert.equal(result.status, 0);
-  assert.equal(result.stdout, [
-    'BOOT-NATIVE-001\tsmoke\tCold native launch reaches network-ready state',
-    'TRN-NATIVE-001\tsmoke\tGateway home deck renders through the native transport',
-    'AUTH-NATIVE-001A\tsmoke\tRegistration preserves same-task final character before Enter',
-    'AUTH-NATIVE-001B\tsmoke\tRegistration submits through ordinary WebDriver Enter',
-    'AUTH-NATIVE-002A\tsmoke\tLogin preserves same-task final character before Select',
-    'AUTH-NATIVE-002B\tsmoke\tLogin submits through the physical Select control',
-    'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
-    'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
-    'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
-    ''
-  ].join('\n'));
+  assert.equal(
+    result.stdout,
+    [
+      'BOOT-NATIVE-001\tsmoke\tCold native launch reaches network-ready state',
+      'TRN-NATIVE-001\tsmoke\tGateway home deck renders through the native transport',
+      'AUTH-NATIVE-001A\tsmoke\tRegistration preserves same-task final character before Enter',
+      'AUTH-NATIVE-001B\tsmoke\tRegistration submits through ordinary WebDriver Enter',
+      'AUTH-NATIVE-002A\tsmoke\tLogin preserves same-task final character before Select',
+      'AUTH-NATIVE-002B\tsmoke\tLogin submits through the physical Select control',
+      'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
+      'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
+      'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
+      ''
+    ].join('\n')
+  );
   assert.equal(result.stderr, '');
 });
 
@@ -150,5 +178,8 @@ test('native E2E entrypoint reports unknown scenarios as configuration errors', 
 
   assert.equal(result.status, 2);
   assert.equal(result.stdout, '');
-  assert.equal(result.stderr, 'native-tauri-kannel-e2e: CONFIG ERROR: unknown native E2E scenario: MISSING\n');
+  assert.equal(
+    result.stderr,
+    'native-tauri-kannel-e2e: CONFIG ERROR: unknown native E2E scenario: MISSING\n'
+  );
 });

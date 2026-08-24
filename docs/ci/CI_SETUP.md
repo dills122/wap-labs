@@ -433,12 +433,21 @@ Behavior:
   the negotiated WBXML 1.3 envelope accepted by the pinned decoder
 - runs each selected scenario in a fresh dynamically allocated WebDriver session and isolated XDG
   application profile; driver readiness polls the WebDriver `/status` contract
-- covers cold boot, native gateway rendering, navigation, measured exactly-once quiescence, visible
-  error recovery, and four independent registration/login Enter/Select regressions
+- covers cold boot, native gateway rendering, navigation, exactly-once stability through the
+  production retry-horizon quiescence window, visible error recovery, and four independent
+  registration/login Enter/Select regressions
 - binds each form attempt to a bounded test-only origin action oracle and keeps PIN/session values
   out of retained structured evidence
-- validates exact filename/digest manifests and uploads only `**/safe-upload/**`; missing, extra,
-  symlinked, escaping, digest-mismatched, or secret-canary-bearing bundles fail closed
+- validates exact filename/digest manifests and uploads only the workflow-owned
+  `run.*/waves-e2e-*/*/safe-upload/*` layout; missing, extra, symlinked, escaping,
+  digest-mismatched, non-canonical JSON, or secret-canary-bearing bundles fail closed, and upload
+  runs only after that validator succeeds; normal manifest, entry, and result payload schemas are
+  exact and a synthesized infrastructure-failure bundle forces a nonzero run outcome
+- after artifact handling is initialized, emits a static schema-only infrastructure failure bundle
+  if startup fails before any scenario can publish evidence; prerequisite failures before that point
+  fail without an artifact, and raw Compose logs are neither retained nor uploaded
+- retains only fixed-enum scenario checkpoints and failure classes, never arbitrary exception text,
+  in safe result evidence
 - closes every WebDriver session, terminates its isolated GUI process group, and always tears down
   only the exact owned Docker project
 

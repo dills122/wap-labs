@@ -8,10 +8,7 @@ import {
   parseNativeE2EArguments,
   selectNativeE2EScenarios
 } from '../e2e/native/config.mjs';
-import {
-  createOriginObserver,
-  measureOriginTiming
-} from '../e2e/native/origin-observer.mjs';
+import { createOriginObserver, deriveQuiescenceWindow } from '../e2e/native/origin-observer.mjs';
 import { runNativeE2E } from '../e2e/native/runtime.mjs';
 import { createSeleniumProvider } from '../e2e/native/selenium-provider.mjs';
 
@@ -50,15 +47,26 @@ if (cliOptions?.mode === 'list') {
       'NATIVE_E2E_TIMEOUT_MS',
       20_000
     );
+    const scenarioTimeoutMs = positiveInteger(
+      process.env.NATIVE_E2E_SCENARIO_TIMEOUT_MS,
+      'NATIVE_E2E_SCENARIO_TIMEOUT_MS',
+      90_000
+    );
     const metricsUrl = requiredEnvironment('WML_METRICS_URL');
-    const timing = await measureOriginTiming({ metricsUrl });
+    const timing = deriveQuiescenceWindow({
+      transportTimeoutMs: 5_000,
+      transportRetries: 1,
+      schedulingMarginMs: 500
+    });
+    const abortController = new AbortController();
     const origin = createOriginObserver({
       metricsUrl,
       publicBase: requiredEnvironment('WML_PUBLIC_BASE'),
+      expectedOriginInstanceId: requiredEnvironment('NATIVE_E2E_RUN_ID'),
       quiescenceMs: timing.quiescenceMs,
-      timeoutMs
+      timeoutMs,
+      signal: abortController.signal
     });
-    const abortController = new AbortController();
     const interrupt = () => abortController.abort();
     process.once('SIGINT', interrupt);
     process.once('SIGTERM', interrupt);
@@ -76,6 +84,7 @@ if (cliOptions?.mode === 'list') {
         keys: { Enter: Key.ENTER },
         infrastructureSecrets: [requiredEnvironment('KANNEL_ADMIN_PASSWORD')],
         timeoutMs,
+        scenarioTimeoutMs,
         signal: abortController.signal
       });
     } finally {
@@ -84,7 +93,11 @@ if (cliOptions?.mode === 'list') {
     }
 
     const failed = results.filter(({ result }) => result !== 'pass');
-    if (abortController.signal.aborted || failed.length > 0 || results.length !== scenarios.length) {
+    if (
+      abortController.signal.aborted ||
+      failed.length > 0 ||
+      results.length !== scenarios.length
+    ) {
       process.stderr.write('native-tauri-kannel-e2e: FAIL (see safe structured evidence)\n');
       process.exitCode = 1;
     } else {

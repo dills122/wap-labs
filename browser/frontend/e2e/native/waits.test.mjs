@@ -71,6 +71,57 @@ test('condition wait timeouts identify the expectation and last observation', as
   assert.equal(observationCount, 3, 'the condition is not observed again after its deadline');
 });
 
+test('condition waits reject an otherwise accepted observation that completes after the deadline', async () => {
+  let current = 0;
+  let acceptanceChecks = 0;
+
+  await assert.rejects(
+    waitForCondition({
+      description: 'an on-time observation',
+      observe: async ({ remainingMs, signal }) => {
+        assert.equal(remainingMs, 10);
+        assert.equal(signal.aborted, false);
+        current = 11;
+        return 'ready-too-late';
+      },
+      accept: () => {
+        acceptanceChecks += 1;
+        return true;
+      },
+      timeoutMs: 10,
+      pollIntervalMs: 5,
+      now: () => current,
+      sleep: async (milliseconds) => {
+        current += milliseconds;
+      }
+    }),
+    /timed out after 10ms waiting for an on-time observation/
+  );
+
+  assert.equal(acceptanceChecks, 0, 'late observations are never evaluated for acceptance');
+});
+
+test('condition waits hard-bound a never-settling observation and cancel its signal', async () => {
+  let observationSignal;
+  const startedAt = Date.now();
+
+  await assert.rejects(
+    waitForCondition({
+      description: 'a settling observation',
+      observe: ({ signal }) => {
+        observationSignal = signal;
+        return new Promise(() => undefined);
+      },
+      timeoutMs: 20,
+      pollIntervalMs: 5
+    }),
+    /timed out after 20ms waiting for a settling observation/
+  );
+
+  assert.equal(observationSignal.aborted, true);
+  assert.ok(Date.now() - startedAt < 1_000, 'the wait remains wall-clock bounded');
+});
+
 test('WebDriver readiness polls GET /status until the endpoint reports ready', async () => {
   const time = createFakeTime();
   const requests = [];

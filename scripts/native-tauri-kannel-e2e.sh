@@ -3,6 +3,7 @@ set -eu
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 ENVIRONMENT_CLI="${ROOT_DIR}/browser/frontend/e2e/native/environment-cli.mjs"
+EVIDENCE_CLI="${ROOT_DIR}/browser/frontend/e2e/native/evidence-cli.mjs"
 NATIVE_E2E_PREBUILT_IMAGES="${NATIVE_E2E_PREBUILT_IMAGES:-0}"
 
 case "${NATIVE_E2E_PREBUILT_IMAGES}" in
@@ -41,6 +42,7 @@ mkdir -p "${ARTIFACT_ROOT}"
 ARTIFACT_DIR="$(mktemp -d "${ARTIFACT_ROOT}/run.XXXXXX")"
 RUN_NONCE="${NATIVE_E2E_RUN_NONCE:-$(basename "${ARTIFACT_DIR}")}"
 COMPOSE_PROJECT="$(node "${ENVIRONMENT_CLI}" run-id "${RUN_NONCE}" "$$")"
+COMPOSE_OWNED=0
 WML_ORIGIN_INSTANCE_ID="${COMPOSE_PROJECT}"
 export WML_ORIGIN_INSTANCE_ID
 export NATIVE_E2E_RUN_ID="${COMPOSE_PROJECT}"
@@ -71,20 +73,23 @@ cleanup() {
   exit_code="$?"
   cleanup_failed=0
   trap - EXIT
-  (
-    compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps.txt" 2>&1 || cleanup_failed=1
-    compose_e2e logs --no-color kannel wml-server >"${ARTIFACT_DIR}/docker-compose.log" 2>&1 || cleanup_failed=1
-    compose_e2e down >"${ARTIFACT_DIR}/docker-compose-down.log" 2>&1 || cleanup_failed=1
-    compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps-after-down.txt" 2>&1 || cleanup_failed=1
-    remaining="$(compose_e2e ps --all --quiet 2>/dev/null || true)"
-    if [ -n "${remaining}" ]; then
-      cleanup_failed=1
-    fi
-    exit "${cleanup_failed}"
-  ) || cleanup_failed=1
+  if [ "${COMPOSE_OWNED}" -eq 1 ]; then
+    (
+      compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps.txt" 2>&1 || cleanup_failed=1
+      compose_e2e down >"${ARTIFACT_DIR}/docker-compose-down.log" 2>&1 || cleanup_failed=1
+      compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps-after-down.txt" 2>&1 || cleanup_failed=1
+      remaining="$(compose_e2e ps --all --quiet 2>/dev/null || true)"
+      if [ -n "${remaining}" ]; then
+        cleanup_failed=1
+      fi
+      exit "${cleanup_failed}"
+    ) || cleanup_failed=1
+  fi
   if [ "${cleanup_failed}" -ne 0 ]; then
     exit_code=1
   fi
+  node "${EVIDENCE_CLI}" ensure-run-failure \
+    "${ARTIFACT_DIR}" "${COMPOSE_PROJECT}" >/dev/null 2>&1 || exit_code=1
   printf '%s\n' "${exit_code}" >"${ARTIFACT_DIR}/exit-code.txt"
   echo "native Tauri/Kannel artifacts: ${ARTIFACT_DIR}"
   exit "${exit_code}"
@@ -118,6 +123,7 @@ if [ -n "$(compose_e2e ps --all --quiet)" ]; then
   echo "native E2E Compose project was not empty before startup" >&2
   exit 1
 fi
+COMPOSE_OWNED=1
 if [ "${NATIVE_E2E_PREBUILT_IMAGES}" = 1 ]; then
   compose_e2e up -d --no-build kannel wml-server
 else

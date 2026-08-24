@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 async function prepare(context) {
   await context.waves.launchWaves();
   await context.waves.dismissWelcome();
+  context.observe({ phase: 'engine-ready' });
 }
 
 function pass(context, name, details) {
@@ -16,8 +17,11 @@ const boot = Object.freeze({
   secretBearing: false,
   async run(context) {
     await prepare(context);
-    context.observe({ phase: 'engine-ready' });
-    pass(context, 'native startup', 'production frontend reached a ready boot phase in Network mode');
+    pass(
+      context,
+      'native startup',
+      'production frontend reached a ready boot phase in Network mode'
+    );
   }
 });
 
@@ -30,10 +34,14 @@ const transport = Object.freeze({
     await prepare(context);
     await context.waves.openWapUrl('wap://localhost/');
     const text = await context.waves.waitForDeckText('Local WAP training environment.');
+    context.observe({ phase: 'deck-ready', address: await context.waves.readSanitizedAddress() });
     assert.match(text, /Open Menu/);
-    const address = await context.waves.waitForAddress('wap://localhost/');
-    context.observe({ phase: 'deck-ready', address });
-    pass(context, 'gateway deck render', 'canonical gateway home rendered through native WSP/WBXML');
+    await context.waves.waitForAddress('wap://localhost/');
+    pass(
+      context,
+      'gateway deck render',
+      'canonical gateway home rendered through native WSP/WBXML'
+    );
   }
 });
 
@@ -46,7 +54,9 @@ const navigation = Object.freeze({
     await prepare(context);
     await context.waves.openWapUrl('wap://localhost/');
     await context.waves.waitForDeckText('Open Menu');
+    context.observe({ phase: 'deck-ready', address: await context.waves.readSanitizedAddress() });
     await context.waves.pressSoftkey('select');
+    context.observe({ phase: 'ui-dispatched' });
     const menu = await context.waves.waitForDeckText('1. Login');
     assert.match(menu, /2\. Register/);
     for (let index = 0; index < 3; index += 1) {
@@ -56,8 +66,12 @@ const navigation = Object.freeze({
     const example = await context.waves.waitForDeckText('This is a static WML');
     assert.match(example, /sample deck\./);
     const address = await context.waves.waitForAddress('wap://localhost/examples/index.wml');
-    context.observe({ phase: 'deck-ready', address });
-    pass(context, 'visible navigation', 'card navigation and external deck load completed through softkeys');
+    context.observe({ phase: 'response-rendered', address });
+    pass(
+      context,
+      'visible navigation',
+      'card navigation and external deck load completed through softkeys'
+    );
   }
 });
 
@@ -70,17 +84,26 @@ const errorRecovery = Object.freeze({
     await prepare(context);
     await context.waves.openWapUrl('wap://localhost/');
     await context.waves.waitForDeckText('Local WAP training environment.');
+    context.observe({ phase: 'deck-ready', address: await context.waves.readSanitizedAddress() });
     await context.waves.submitAddress('not a url');
+    context.observe({ phase: 'ui-dispatched' });
     const status = await context.waves.waitForStatus('Fetch failed:');
     assert.equal(status.displayed, true, 'invalid request status must be visible');
     assert.equal(status.tone, 'error', 'invalid request status must use the visible error tone');
     assert.match(status.text, /INVALID_REQUEST|invalid|URL/i);
+    context.observe({ phase: 'response-rendered' });
     pass(context, 'deterministic failure', 'invalid address surfaced a bounded visible error');
+    context.observe({ phase: 'recovery-ready' });
     await context.waves.openWapUrl('wap://localhost/');
+    context.observe({ phase: 'recovery-dispatched' });
     await context.waves.waitForDeckText('Local WAP training environment.');
     const address = await context.waves.waitForAddress('wap://localhost/');
     context.observe({ phase: 'recovered', address });
-    pass(context, 'failure recovery', 'a later native gateway load restored the canonical home deck');
+    pass(
+      context,
+      'failure recovery',
+      'a later native gateway load restored the canonical home deck'
+    );
   }
 });
 
@@ -93,15 +116,27 @@ const requestBound = Object.freeze({
     await prepare(context);
     await context.waves.openWapUrl('wap://localhost/examples/interop-check.wml');
     await context.waves.waitForDeckText('W13-A');
-    const before = await context.origin.readCounter('requests_total');
+    context.observe({ phase: 'deck-ready', address: await context.waves.readSanitizedAddress() });
+    const before = await context.origin.readCounter('requests_total', { signal: context.signal });
     await context.waves.pressSoftkey('select');
+    context.observe({ phase: 'ui-dispatched' });
     await context.waves.waitForAddress('wap://localhost/examples/interop-check.wml');
     await context.waves.waitForDeckText('W13-A');
-    const result = await context.origin.waitForExactlyOne('requests_total', before);
+    context.observe({
+      phase: 'response-rendered',
+      address: await context.waves.readSanitizedAddress()
+    });
+    const result = await context.origin.waitForExactlyOne('requests_total', before, {
+      signal: context.signal
+    });
+    context.observe({
+      phase: 'origin-confirmed',
+      address: await context.waves.readSanitizedAddress()
+    });
     pass(
       context,
       'successful navigation request bound',
-      `one navigation produced one origin request through ${result.quiescenceMs}ms measured quiescence`
+      `one navigation produced one origin request through ${result.quiescenceMs}ms derived retry-horizon quiescence`
     );
   }
 });
