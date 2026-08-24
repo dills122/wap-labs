@@ -456,5 +456,14 @@ pub fn fetch_deck_in_process_with_options(
     fetch_deck_in_process_impl(request, Some(options), None)
 }
 
+/// Fetches a deck with explicit routing options and cooperative cancellation.
+pub fn fetch_deck_in_process_with_options_cancellable(
+    request: FetchDeckRequest,
+    options: FetchTransportOptions,
+    cancellation: FetchCancellationToken,
+) -> FetchDeckResponse {
+    fetch_deck_in_process_impl(request, Some(options), Some(cancellation))
+}
+
 #[cfg(test)]
 mod tests;

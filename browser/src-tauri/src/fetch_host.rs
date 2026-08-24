@@ -1,8 +1,9 @@
 use crate::waves_config;
 use lowband_transport_rust::{
-    fetch_deck_in_process, fetch_deck_in_process_cancellable, fetch_deck_in_process_with_profile,
-    fetch_deck_in_process_with_profile_cancellable, FetchCancellationToken, FetchDeckRequest,
-    FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy, FetchTransportProfile,
+    fetch_deck_in_process, fetch_deck_in_process_cancellable, fetch_deck_in_process_with_options,
+    fetch_deck_in_process_with_options_cancellable, FetchCancellationToken, FetchDeckRequest,
+    FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy, FetchTransportOptions,
+    FetchTransportProfile,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -24,7 +25,7 @@ pub fn fetch_deck(mut request: FetchDeckRequest) -> FetchDeckResponse {
     ensure_request_id(&mut request);
     apply_default_destination_policy(&mut request);
     fetch_deck_with_transport_executor(request, |request, profile| match profile {
-        Some(profile) => fetch_deck_in_process_with_profile(request, profile),
+        Some(profile) => fetch_deck_in_process_with_options(request, transport_options(profile)),
         None => fetch_deck_in_process(request),
     })
 }
@@ -40,14 +41,25 @@ pub fn fetch_deck_cancellable(
         request,
         Some(&cancellation),
         move |request, profile| match profile {
-            Some(profile) => fetch_deck_in_process_with_profile_cancellable(
+            Some(profile) => fetch_deck_in_process_with_options_cancellable(
                 request,
-                profile,
+                transport_options(profile),
                 fetch_cancellation.clone(),
             ),
             None => fetch_deck_in_process_cancellable(request, fetch_cancellation.clone()),
         },
     )
+}
+
+fn transport_options(profile: FetchTransportProfile) -> FetchTransportOptions {
+    let gateway_endpoint = (profile == FetchTransportProfile::WapNetCore)
+        .then(crate::fetch_routing_manifest::configured_gateway_endpoint)
+        .flatten()
+        .map(str::to_string);
+    FetchTransportOptions {
+        profile,
+        gateway_endpoint,
+    }
 }
 
 pub(crate) fn next_request_id() -> String {

@@ -234,4 +234,5 @@ mod engine_debug_sessions;
 mod engine_flow;
 mod engine_wrappers;
 mod fetch_commands;
+mod fetch_routing_manifest;
 mod tauri_commands;

@@ -1,4 +1,7 @@
 use super::*;
+use crate::{
+    fetch_deck_in_process_with_options_cancellable, FetchCancellationToken, FetchTransportOptions,
+};
 
 #[test]
 fn transport_supported_content_type_matrix() {
@@ -46,6 +49,30 @@ fn transport_fetch_with_profile_invalid_method_maps_invalid_request_for_each_pro
             Some("INVALID_REQUEST")
         );
     }
+}
+
+#[test]
+fn transport_fetch_with_options_preserves_cancellation_and_physical_gateway_routing() {
+    let cancellation = FetchCancellationToken::default();
+    cancellation.cancel();
+    let response = fetch_deck_in_process_with_options_cancellable(
+        FetchDeckRequest {
+            request_id: Some("req-options-cancelled".to_string()),
+            ..basic_request("wap://logical.example/deck.wml".to_string())
+        },
+        FetchTransportOptions {
+            profile: FetchTransportProfile::WapNetCore,
+            gateway_endpoint: Some("wap://127.0.0.1:49152".to_string()),
+        },
+        cancellation,
+    );
+
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.as_ref().map(|error| error.code.as_str()),
+        Some("CANCELLED")
+    );
+    assert_eq!(response.final_url, "wap://logical.example/deck.wml");
 }
 
 #[test]
