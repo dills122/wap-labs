@@ -1,0 +1,19 @@
+services:
+  wml-server:
+    container_name: !reset null
+    environment:
+      WML_ORIGIN_INSTANCE_ID: "${WML_ORIGIN_INSTANCE_ID:?WML_ORIGIN_INSTANCE_ID is required}"
+    ports: !override
+      - target: 3001
+        host_ip: 127.0.0.1
+        protocol: tcp
+
+  kannel:
+    container_name: !reset null
+    ports: !override
+      - target: 13000
+        host_ip: 127.0.0.1
+        protocol: tcp
+      - target: 9200
+        host_ip: 127.0.0.1
+        protocol: udp
