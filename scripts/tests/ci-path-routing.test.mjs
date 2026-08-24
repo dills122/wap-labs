@@ -113,9 +113,7 @@ for (const fixture of fixtures) {
       fixture.transportSmoke
     );
     assert.equal(
-      nativeFilters
-        .get('native_e2e')
-        .some((pattern) => globMatches(pattern, fixture.path)),
+      nativeFilters.get('native_e2e').some((pattern) => globMatches(pattern, fixture.path)),
       fixture.nativeE2e
     );
     assert.equal(
