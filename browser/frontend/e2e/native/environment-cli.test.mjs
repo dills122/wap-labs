@@ -4,8 +4,9 @@ import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-const cli = 'browser/frontend/e2e/native/environment-cli.mjs';
+const cli = fileURLToPath(new URL('./environment-cli.mjs', import.meta.url));
 
 test('environment CLI emits one validated run identity', () => {
   const result = spawnSync('node', [cli, 'run-id', 'ABC_123', '42'], { encoding: 'utf8' });
