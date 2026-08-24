@@ -75,3 +75,50 @@ test('origin observer accepts only explicit loopback internal endpoints', () => 
     );
   }
 });
+
+test('origin observer seeds accounts without exposing bodies and reads exact action schema', async () => {
+  const requests = [];
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics',
+    publicBase: 'http://127.0.0.1:49153/',
+    quiescenceMs: 100,
+    fetchImpl: async (url, options = {}) => {
+      requests.push({ url: String(url), options });
+      if (String(url).includes('/e2e/actions/')) {
+        return { ok: true, json: async () => ({
+          actionId: 'register-case-a1', kind: 'register', count: 1, phase: 'success'
+        }) };
+      }
+      return { ok: true, arrayBuffer: async () => new ArrayBuffer(0) };
+    }
+  });
+  await observer.seedAccount({
+    username: 'user-a', pin: '4927', actionID: 'seed-case-a1'
+  });
+  assert.equal(requests[0].url, 'http://127.0.0.1:49153/register?e2e_action=seed-case-a1');
+  assert.equal(requests[0].options.method, 'POST');
+  assert.deepEqual(await observer.readAction('register-case-a1'), {
+    actionId: 'register-case-a1', kind: 'register', count: 1, phase: 'success'
+  });
+});
+
+test('correlated action oracle proves exactly one stable receipt', async () => {
+  let clock = 0;
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics',
+    quiescenceMs: 200,
+    timeoutMs: 1_000,
+    pollIntervalMs: 100,
+    now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+    fetchImpl: async () => ({ ok: true, json: async () => ({
+      actionId: 'login-case-a1', kind: 'login', count: 1, phase: 'success'
+    }) })
+  });
+  assert.deepEqual(
+    await observer.waitForActionExactlyOnce('login-case-a1', { kind: 'login' }),
+    {
+      actionID: 'login-case-a1', kind: 'login', count: 1, phase: 'success', quiescenceMs: 200
+    }
+  );
+});

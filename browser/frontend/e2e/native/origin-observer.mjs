@@ -4,6 +4,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { waitForCondition } from './waits.mjs';
 
 const METRIC_NAME = /^[a-z][a-z0-9_]{0,63}$/;
+const ACTION_ID = /^[a-z0-9][a-z0-9-]{0,55}-a(?:[1-9][0-9]{0,3})$/;
 const MAX_METRICS_BYTES = 16 * 1024;
 
 export function parseOriginMetrics(body) {
@@ -46,6 +47,29 @@ function validateMetricsUrl(value) {
   return url;
 }
 
+function validatePublicBase(value) {
+  if (value === undefined) return null;
+  const url = new URL(value);
+  if (
+    url.protocol !== 'http:' ||
+    url.hostname !== '127.0.0.1' ||
+    url.port === '' ||
+    url.pathname !== '/' ||
+    url.search !== '' ||
+    url.hash !== '' ||
+    url.username !== '' ||
+    url.password !== ''
+  ) {
+    throw new Error('origin public base must be an uncredentialed IPv4 loopback HTTP origin');
+  }
+  return url;
+}
+
+function requireActionID(value) {
+  if (!ACTION_ID.test(value)) throw new Error('invalid native E2E action identifier');
+  return value;
+}
+
 export function deriveQuiescenceWindow(samples) {
   assert.ok(Array.isArray(samples) && samples.length >= 3, 'at least three timing samples are required');
   assert.ok(
@@ -78,6 +102,7 @@ export async function measureOriginTiming({ metricsUrl, samples = 7, fetchImpl =
 
 export function createOriginObserver({
   metricsUrl,
+  publicBase,
   quiescenceMs,
   timeoutMs = 20_000,
   pollIntervalMs = 100,
@@ -86,6 +111,8 @@ export function createOriginObserver({
   sleep = delay
 }) {
   const url = validateMetricsUrl(metricsUrl);
+  const publicOrigin = validatePublicBase(publicBase);
+  const internalOrigin = new URL(url.origin);
   assert.ok(Number.isSafeInteger(quiescenceMs) && quiescenceMs > 0, 'quiescenceMs must be positive');
   assert.ok(Number.isSafeInteger(timeoutMs) && timeoutMs > 0, 'timeoutMs must be positive');
 
@@ -100,10 +127,92 @@ export function createOriginObserver({
     if (!Number.isSafeInteger(value)) throw new Error(`origin metric is unavailable: ${name}`);
     return value;
   };
+  const readAction = async (actionID) => {
+    requireActionID(actionID);
+    const response = await fetchImpl(new URL(`/e2e/actions/${actionID}`, internalOrigin), {
+      redirect: 'error', headers: { accept: 'application/json' }
+    });
+    if (!response.ok) throw new Error(`origin action oracle failed with status ${response.status}`);
+    const value = await response.json();
+    const keys = Object.keys(value ?? {}).sort();
+    if (
+      keys.join(',') !== 'actionId,count,kind,phase' ||
+      value.actionId !== actionID ||
+      !['register', 'login'].includes(value.kind) ||
+      !Number.isSafeInteger(value.count) ||
+      value.count < 0 ||
+      typeof value.phase !== 'string' ||
+      value.phase.length > 32
+    ) {
+      throw new Error('origin action oracle returned an invalid schema');
+    }
+    return value;
+  };
 
   return Object.freeze({
     readMetrics,
     readCounter,
+    readAction,
+    async seedAccount({ username, pin, actionID }) {
+      if (!publicOrigin) throw new Error('origin account setup requires the controlled public base');
+      requireActionID(actionID);
+      if (typeof username !== 'string' || typeof pin !== 'string') {
+        throw new Error('origin account setup requires in-memory credentials');
+      }
+      const target = new URL('/register', publicOrigin);
+      target.searchParams.set('e2e_action', actionID);
+      const response = await fetchImpl(target, {
+        method: 'POST',
+        redirect: 'error',
+        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ username, pin })
+      });
+      if (!response.ok) throw new Error('controlled origin account setup failed');
+      await response.arrayBuffer();
+    },
+    async verifySessionInvalidated(logicalAddress) {
+      if (!publicOrigin) throw new Error('session invalidation proof requires the controlled public base');
+      const logical = new URL(logicalAddress);
+      if (
+        !['wap:', 'waps:'].includes(logical.protocol) ||
+        logical.hostname !== 'localhost' ||
+        logical.pathname !== '/portal' ||
+        !logical.searchParams.has('sid')
+      ) {
+        throw new Error('session invalidation proof requires an ephemeral logical portal address');
+      }
+      const target = new URL(logical.pathname + logical.search, publicOrigin);
+      const response = await fetchImpl(target, { redirect: 'error' });
+      const body = await response.text();
+      if (!response.ok || !body.includes('invalid or expired')) {
+        throw new Error('controlled origin did not reject the invalidated session');
+      }
+    },
+    async waitForActionExactlyOnce(actionID, { kind, phase = 'success' }) {
+      requireActionID(actionID);
+      const reached = await waitForCondition({
+        description: 'correlated origin action to reach one receipt',
+        observe: () => readAction(actionID),
+        accept: (action) => action.count >= 1 && action.phase === phase,
+        timeoutMs,
+        pollIntervalMs,
+        now,
+        sleep,
+        formatObservation: (action) => `${action.kind}:${action.count}:${action.phase}`
+      });
+      if (reached.kind !== kind || reached.count !== 1) {
+        throw new Error('correlated origin action did not have exactly one matching receipt');
+      }
+      const stableStarted = now();
+      while (now() - stableStarted < quiescenceMs) {
+        const current = await readAction(actionID);
+        if (current.kind !== kind || current.count !== 1 || current.phase !== phase) {
+          throw new Error('correlated origin action changed during measured quiescence');
+        }
+        await sleep(Math.min(pollIntervalMs, quiescenceMs - (now() - stableStarted)));
+      }
+      return { actionID, kind, count: 1, phase, quiescenceMs };
+    },
     async waitForExactlyOne(name, before) {
       assert.ok(Number.isSafeInteger(before) && before >= 0, 'counter baseline must be non-negative');
       const expected = before + 1;
