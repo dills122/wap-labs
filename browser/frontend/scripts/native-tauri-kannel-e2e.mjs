@@ -8,6 +8,12 @@ import process from 'node:process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { Builder, By, Capabilities, until } from 'selenium-webdriver';
 
+import {
+  formatNativeE2EScenarioList,
+  parseNativeE2EArguments,
+  selectNativeE2EScenarios
+} from '../e2e/native/config.mjs';
+
 const timeoutMs = Number.parseInt(process.env.NATIVE_E2E_TIMEOUT_MS ?? '20000', 10);
 const driverUrl = new URL(process.env.TAURI_DRIVER_URL ?? 'http://127.0.0.1:4444/');
 const appBinary = path.resolve(
@@ -309,38 +315,58 @@ const run = async () => {
   process.stdout.write(`native-tauri-kannel-e2e: PASS (artifacts: ${artifactDir})\n`);
 };
 
+let cliOptions;
+let selectedScenario;
 try {
-  await run();
+  cliOptions = parseNativeE2EArguments(process.argv.slice(2));
+  if (cliOptions.mode === 'run') {
+    [selectedScenario] = selectNativeE2EScenarios(cliOptions);
+  }
 } catch (error) {
-  const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
-  process.stderr.write(`native-tauri-kannel-e2e: FAIL\n${message}\n`);
-  if (driver) {
-    await capture('failure').catch(() => undefined);
-    await writeFile(path.join(artifactDir, 'page-source.html'), await driver.getPageSource()).catch(
-      () => undefined
-    );
-  }
-  await writeFile(
-    path.join(artifactDir, 'evidence.json'),
-    `${JSON.stringify({ ...evidence, result: 'fail', error: message }, null, 2)}\n`
-  ).catch(() => undefined);
-  process.exitCode = 1;
-} finally {
-  let webdriverSession = 'not-started';
-  if (driver) {
-    webdriverSession = await driver.quit().then(
-      () => 'closed',
-      () => 'close-failed'
-    );
-  }
-  const processGroup = await terminateProcessGroup();
-  await writeFile(
-    path.join(artifactDir, 'gui-cleanup.json'),
-    `${JSON.stringify({ webdriverSession, processGroup }, null, 2)}\n`
-  ).catch(() => undefined);
-  if (webdriverSession === 'close-failed' || processGroup === 'cleanup-failed') {
+  process.stderr.write(`native-tauri-kannel-e2e: CONFIG ERROR: ${error.message}\n`);
+  process.exitCode = 2;
+}
+
+if (cliOptions?.mode === 'list') {
+  process.stdout.write(formatNativeE2EScenarioList());
+} else if (selectedScenario) {
+  evidence.scenarioId = selectedScenario.id;
+  evidence.suite = selectedScenario.suite;
+
+  try {
+    await run();
+  } catch (error) {
+    const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
+    process.stderr.write(`native-tauri-kannel-e2e: FAIL\n${message}\n`);
+    if (driver) {
+      await capture('failure').catch(() => undefined);
+      await writeFile(
+        path.join(artifactDir, 'page-source.html'),
+        await driver.getPageSource()
+      ).catch(() => undefined);
+    }
+    await writeFile(
+      path.join(artifactDir, 'evidence.json'),
+      `${JSON.stringify({ ...evidence, result: 'fail', error: message }, null, 2)}\n`
+    ).catch(() => undefined);
     process.exitCode = 1;
+  } finally {
+    let webdriverSession = 'not-started';
+    if (driver) {
+      webdriverSession = await driver.quit().then(
+        () => 'closed',
+        () => 'close-failed'
+      );
+    }
+    const processGroup = await terminateProcessGroup();
+    await writeFile(
+      path.join(artifactDir, 'gui-cleanup.json'),
+      `${JSON.stringify({ webdriverSession, processGroup }, null, 2)}\n`
+    ).catch(() => undefined);
+    if (webdriverSession === 'close-failed' || processGroup === 'cleanup-failed') {
+      process.exitCode = 1;
+    }
+    driverStdout?.end();
+    driverStderr?.end();
   }
-  driverStdout?.end();
-  driverStderr?.end();
 }
