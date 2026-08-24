@@ -200,6 +200,7 @@ jobs:
 
       - name: Verify advisory native E2E result
         env:
+          NATIVE_E2E_EVENT_NAME: ${{ github.event_name }}
           NATIVE_E2E_SELECTED: ${{ needs.classify-native-e2e.outputs.selected }}
           NATIVE_E2E_CLASSIFIER_RESULT: ${{ needs.classify-native-e2e.result }}
           NATIVE_E2E_JOB_RESULT: ${{ needs.native-tauri-kannel-e2e.result }}

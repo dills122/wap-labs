@@ -1,6 +1,14 @@
+const VALID_EVENTS = new Set(['pull_request', 'schedule', 'workflow_dispatch']);
 const VALID_SELECTIONS = new Set(['true', 'false']);
 
-export function evaluateNativeE2EGate({ selected, classifierResult, nativeResult }) {
+export function evaluateNativeE2EGate({ eventName, selected, classifierResult, nativeResult }) {
+  if (!VALID_EVENTS.has(eventName)) {
+    return {
+      ok: false,
+      message: `Native E2E gate received an invalid event (${eventName || 'missing'}).`
+    };
+  }
+
   if (classifierResult !== 'success') {
     return {
       ok: false,
@@ -13,6 +21,9 @@ export function evaluateNativeE2EGate({ selected, classifierResult, nativeResult
   }
 
   if (selected === 'false') {
+    if (eventName !== 'pull_request') {
+      return { ok: false, message: `Native E2E must be selected for ${eventName}.` };
+    }
     if (nativeResult === 'skipped') {
       return { ok: true, message: 'Native E2E not selected for this change.' };
     }
@@ -34,6 +45,7 @@ export function evaluateNativeE2EGate({ selected, classifierResult, nativeResult
 
 if (import.meta.url === new URL(process.argv[1], 'file:').href) {
   const result = evaluateNativeE2EGate({
+    eventName: process.env.NATIVE_E2E_EVENT_NAME ?? '',
     selected: process.env.NATIVE_E2E_SELECTED ?? '',
     classifierResult: process.env.NATIVE_E2E_CLASSIFIER_RESULT ?? '',
     nativeResult: process.env.NATIVE_E2E_JOB_RESULT ?? ''

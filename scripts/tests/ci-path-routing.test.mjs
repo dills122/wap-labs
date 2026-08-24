@@ -99,6 +99,7 @@ test('CI path filters are parseable and cover every declared output family', () 
 test('native E2E uses an always-present workflow with an explicit relevance classifier', () => {
   assert.doesNotMatch(nativeWorkflow, /^ {4}paths:/m);
   assert.deepEqual([...nativeFilters.keys()], ['native_e2e']);
+  assert.match(nativeWorkflow, /NATIVE_E2E_EVENT_NAME: \$\{\{ github\.event_name \}\}/);
 });
 
 for (const fixture of fixtures) {
