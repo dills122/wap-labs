@@ -103,6 +103,38 @@ func TestNewValidatesDTDVersion(t *testing.T) {
 	}
 }
 
+func TestNewValidatesOptionalOriginInstanceID(t *testing.T) {
+	for _, valid := range []string{"", "origin-run-7", strings.Repeat("a", 63)} {
+		if _, err := New(Config{OriginInstanceID: valid}); err != nil {
+			t.Fatalf("New() rejected origin instance %q: %v", valid, err)
+		}
+	}
+	for _, invalid := range []string{"UPPER", "../escape", "has_underscore", strings.Repeat("a", 64)} {
+		if _, err := New(Config{OriginInstanceID: invalid}); err == nil {
+			t.Fatalf("New() accepted invalid origin instance %q", invalid)
+		}
+	}
+}
+
+func TestOriginInstanceIdentityIsPresentOnPublicAndInternalSurfaces(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	public := perform(app.Handler(), http.MethodGet, "/", "", "")
+	if got := public.Header().Get("X-Waves-Origin-Instance"); got != "origin-run-7" {
+		t.Fatalf("origin response header = %q", got)
+	}
+	health := perform(app.InternalHandler(), http.MethodGet, "/health", "", "")
+	if !strings.Contains(health.Body.String(), `"originInstanceId":"origin-run-7"`) {
+		t.Fatalf("health omits origin instance: %s", health.Body.String())
+	}
+	metrics := perform(app.InternalHandler(), http.MethodGet, "/metrics", "", "")
+	if !strings.Contains(metrics.Body.String(), `origin_instance_info{id="origin-run-7"} 1`) {
+		t.Fatalf("metrics omit origin instance: %s", metrics.Body.String())
+	}
+}
+
 func TestHomeGoldenAndHeaders(t *testing.T) {
 	app, _ := newTestApp(t, nil)
 	response := perform(app.Handler(), http.MethodGet, "/", "", "")

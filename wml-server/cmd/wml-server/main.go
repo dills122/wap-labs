@@ -40,12 +40,13 @@ func main() {
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	app, err := origin.New(origin.Config{
-		DTDVersion:   strings.TrimSpace(envOrDefault("WML_DTD_VERSION", "1.1")),
-		Logger:       logger,
-		AllowedHosts: splitCSV(os.Getenv("WML_ALLOWED_HOSTS")),
-		HomeHosts:    splitCSV(envOrDefault("WML_HOME_HOSTS", "home.wap.test")),
-		FormsHosts:   splitCSV(envOrDefault("WML_FORMS_HOSTS", "forms.wap.test")),
-		InteropHosts: splitCSV(envOrDefault("WML_INTEROP_HOSTS", "interop.wap.test")),
+		DTDVersion:       strings.TrimSpace(envOrDefault("WML_DTD_VERSION", "1.1")),
+		OriginInstanceID: strings.TrimSpace(os.Getenv("WML_ORIGIN_INSTANCE_ID")),
+		Logger:           logger,
+		AllowedHosts:     splitCSV(os.Getenv("WML_ALLOWED_HOSTS")),
+		HomeHosts:        splitCSV(envOrDefault("WML_HOME_HOSTS", "home.wap.test")),
+		FormsHosts:       splitCSV(envOrDefault("WML_FORMS_HOSTS", "forms.wap.test")),
+		InteropHosts:     splitCSV(envOrDefault("WML_INTEROP_HOSTS", "interop.wap.test")),
 	})
 	if err != nil {
 		logger.Error("invalid configuration", "error", err)

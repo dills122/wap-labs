@@ -49,18 +49,19 @@ var (
 var exampleFiles embed.FS
 
 type Config struct {
-	DTDVersion   string
-	Clock        func() time.Time
-	NewID        func() (string, error)
-	Logger       *slog.Logger
-	SessionTTL   time.Duration
-	MaxUsers     int
-	MaxSessions  int
-	MaxBody      int64
-	AllowedHosts []string
-	HomeHosts    []string
-	FormsHosts   []string
-	InteropHosts []string
+	DTDVersion       string
+	OriginInstanceID string
+	Clock            func() time.Time
+	NewID            func() (string, error)
+	Logger           *slog.Logger
+	SessionTTL       time.Duration
+	MaxUsers         int
+	MaxSessions      int
+	MaxBody          int64
+	AllowedHosts     []string
+	HomeHosts        []string
+	FormsHosts       []string
+	InteropHosts     []string
 }
 
 type user struct {
@@ -83,16 +84,17 @@ type counters struct {
 }
 
 type App struct {
-	dtdVersion   string
-	clock        func() time.Time
-	newID        func() (string, error)
-	logger       *slog.Logger
-	sessionTTL   time.Duration
-	maxUsers     int
-	maxSessions  int
-	maxBody      int64
-	allowedHosts map[string]bool
-	hostProfiles map[string]string
+	dtdVersion       string
+	originInstanceID string
+	clock            func() time.Time
+	newID            func() (string, error)
+	logger           *slog.Logger
+	sessionTTL       time.Duration
+	maxUsers         int
+	maxSessions      int
+	maxBody          int64
+	allowedHosts     map[string]bool
+	hostProfiles     map[string]string
 
 	mu       sync.Mutex
 	users    map[string]user
@@ -114,6 +116,9 @@ func New(config Config) (*App, error) {
 	}
 	if !validDTDs[config.DTDVersion] {
 		return nil, fmt.Errorf("unsupported WML_DTD_VERSION %q; expected 1.1, 1.2, or 1.3", config.DTDVersion)
+	}
+	if config.OriginInstanceID != "" && !validBoundedID(config.OriginInstanceID) {
+		return nil, errors.New("invalid WML_ORIGIN_INSTANCE_ID; expected a bounded lowercase ASCII identifier")
 	}
 	if config.Clock == nil {
 		config.Clock = time.Now
@@ -152,18 +157,19 @@ func New(config Config) (*App, error) {
 	addHostProfiles(hostProfiles, config.InteropHosts, "interop")
 
 	return &App{
-		dtdVersion:   config.DTDVersion,
-		clock:        config.Clock,
-		newID:        config.NewID,
-		logger:       config.Logger,
-		sessionTTL:   config.SessionTTL,
-		maxUsers:     config.MaxUsers,
-		maxSessions:  config.MaxSessions,
-		maxBody:      config.MaxBody,
-		allowedHosts: allowedHosts,
-		hostProfiles: hostProfiles,
-		users:        make(map[string]user),
-		sessions:     make(map[string]session),
+		dtdVersion:       config.DTDVersion,
+		originInstanceID: config.OriginInstanceID,
+		clock:            config.Clock,
+		newID:            config.NewID,
+		logger:           config.Logger,
+		sessionTTL:       config.SessionTTL,
+		maxUsers:         config.MaxUsers,
+		maxSessions:      config.MaxSessions,
+		maxBody:          config.MaxBody,
+		allowedHosts:     allowedHosts,
+		hostProfiles:     hostProfiles,
+		users:            make(map[string]user),
+		sessions:         make(map[string]session),
 	}, nil
 }
 
@@ -488,6 +494,10 @@ func configureExampleDTD(body []byte, version string) ([]byte, error) {
 func (a *App) health(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-Control", "no-store")
+	if a.originInstanceID != "" {
+		_, _ = fmt.Fprintf(w, `{"status":"ok","service":"wml-server","originInstanceId":%q,"timestamp":%q}`+"\n", a.originInstanceID, a.clock().Format(time.RFC3339Nano))
+		return
+	}
 	_, _ = fmt.Fprintf(w, `{"status":"ok","service":"wml-server","timestamp":%q}`+"\n", a.clock().Format(time.RFC3339Nano))
 }
 
@@ -506,6 +516,9 @@ func (a *App) metrics(w http.ResponseWriter, _ *http.Request) {
 		a.counts.requests.Load(), users, sessions, a.counts.registered.Load(),
 		a.counts.loginSuccess.Load(), a.counts.loginFailure.Load(),
 	)
+	if a.originInstanceID != "" {
+		_, _ = fmt.Fprintf(w, "origin_instance_info{id=%q} 1\n", a.originInstanceID)
+	}
 }
 
 func (a *App) parseForm(w http.ResponseWriter, r *http.Request) (url.Values, bool) {
@@ -625,6 +638,9 @@ func (a *App) evictOldestSessionLocked() {
 
 func (a *App) sendWML(w http.ResponseWriter, cards string, status int) {
 	setWMLHeaders(w.Header())
+	if a.originInstanceID != "" {
+		w.Header().Set("X-Waves-Origin-Instance", a.originInstanceID)
+	}
 	w.WriteHeader(status)
 	_, _ = fmt.Fprintf(w,
 		"<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML %s//EN\" \"http://www.wapforum.org/DTD/wml_%s.xml\">\n<wml>\n%s\n</wml>\n",
@@ -654,6 +670,18 @@ func validUsername(username string) bool {
 	}
 	for _, character := range username {
 		if unicode.IsControl(character) {
+			return false
+		}
+	}
+	return true
+}
+
+func validBoundedID(value string) bool {
+	if value == "" || len(value) > 63 || value[0] == '-' || value[len(value)-1] == '-' {
+		return false
+	}
+	for _, character := range value {
+		if (character < 'a' || character > 'z') && (character < '0' || character > '9') && character != '-' {
 			return false
 		}
 	}
