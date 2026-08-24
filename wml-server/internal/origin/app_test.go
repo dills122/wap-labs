@@ -2,7 +2,9 @@ package origin
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -113,6 +115,243 @@ func TestNewValidatesOptionalOriginInstanceID(t *testing.T) {
 		if _, err := New(Config{OriginInstanceID: invalid}); err == nil {
 			t.Fatalf("New() accepted invalid origin instance %q", invalid)
 		}
+	}
+}
+
+func TestNewRequiresRunIdentityForE2EFixtureMode(t *testing.T) {
+	if _, err := New(Config{E2EFixtureMode: true}); err == nil || !strings.Contains(err.Error(), "WML_ORIGIN_INSTANCE_ID") {
+		t.Fatalf("New() fixture mode error = %v, want missing run identity", err)
+	}
+	if _, err := New(Config{E2EFixtureMode: true, OriginInstanceID: "origin-run-7"}); err != nil {
+		t.Fatalf("New() rejected fixture mode with run identity: %v", err)
+	}
+}
+
+func TestE2EActionCorrelationIsDisabledByDefault(t *testing.T) {
+	app, _ := newTestApp(t, nil)
+
+	form := perform(app.Handler(), http.MethodGet, "/register?e2e_action=bad!", "", "")
+	if form.Code != http.StatusOK {
+		t.Fatalf("ordinary GET /register status = %d", form.Code)
+	}
+	if strings.Contains(form.Body.String(), "e2e_action") {
+		t.Fatalf("ordinary origin exposed fixture correlation: %s", form.Body.String())
+	}
+	oracle := perform(app.InternalHandler(), http.MethodGet, "/e2e/actions/register-flow-a1", "", "")
+	if oracle.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin oracle status = %d, want 404", oracle.Code)
+	}
+}
+
+func TestE2EFormGETPreservesStrictActionIDIntoPOST(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	for _, test := range []struct {
+		path string
+		id   string
+	}{
+		{path: "/register", id: "register-flow-a1"},
+		{path: "/login", id: "login-flow-a1"},
+	} {
+		t.Run(test.path, func(t *testing.T) {
+			response := perform(app.Handler(), http.MethodGet, test.path+"?e2e_action="+test.id, "", "")
+			if response.Code != http.StatusOK {
+				t.Fatalf("GET %s status = %d", test.path, response.Code)
+			}
+			want := `method="post" href="` + test.path + `?e2e_action=` + test.id + `"`
+			if !strings.Contains(response.Body.String(), want) {
+				t.Fatalf("GET %s did not preserve action ID: %s", test.path, response.Body.String())
+			}
+		})
+	}
+}
+
+func TestE2EActionCorrelationRejectsInvalidAndOversizedIDs(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	invalid := []string{
+		"UPPER-a1",
+		"escape/route-a1",
+		"underscore_a1",
+		"missing-attempt",
+		"leading-zero-a01",
+		"zero-a0",
+		"too-many-a10000",
+		strings.Repeat("a", 58) + "-a1234",
+	}
+	for _, actionID := range invalid {
+		t.Run(actionID, func(t *testing.T) {
+			get := perform(app.Handler(), http.MethodGet, "/register?e2e_action="+actionID, "", "")
+			if get.Code != http.StatusBadRequest {
+				t.Fatalf("invalid action GET status = %d, want 400", get.Code)
+			}
+			post := perform(app.Handler(), http.MethodPost, "/register?e2e_action="+actionID, "username=demo&pin=1234", "application/x-www-form-urlencoded")
+			if post.Code != http.StatusBadRequest {
+				t.Fatalf("invalid action POST status = %d, want 400", post.Code)
+			}
+		})
+	}
+	ambiguous := perform(app.Handler(), http.MethodGet, "/register?e2e_action=valid-a1&e2e_action=valid-a1", "", "")
+	if ambiguous.Code != http.StatusBadRequest {
+		t.Fatalf("ambiguous action GET status = %d, want 400", ambiguous.Code)
+	}
+}
+
+func TestE2EValidationAdvancesToFreshAttemptAndCountsEachPOST(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	handler := app.Handler()
+
+	firstID := "register-flow-a1"
+	_ = perform(handler, http.MethodGet, "/register?e2e_action="+firstID, "", "")
+	failed := perform(handler, http.MethodPost, "/register?e2e_action="+firstID, "username=canary-user", "application/x-www-form-urlencoded")
+	if failed.Code != http.StatusOK || !strings.Contains(failed.Body.String(), `href="/register?e2e_action=register-flow-a2"`) {
+		t.Fatalf("validation response did not advance attempt: %d %s", failed.Code, failed.Body.String())
+	}
+	assertActionOracle(t, app, firstID, "register", 1, "validation")
+	assertActionOracle(t, app, "register-flow-a2", "register", 0, "form")
+
+	succeeded := perform(handler, http.MethodPost, "/register?e2e_action=register-flow-a2", "username=canary-user&pin=9876", "application/x-www-form-urlencoded")
+	if succeeded.Code != http.StatusOK || !strings.Contains(succeeded.Body.String(), `id="register-ok"`) {
+		t.Fatalf("corrected registration response = %d %s", succeeded.Code, succeeded.Body.String())
+	}
+	assertActionOracle(t, app, firstID, "register", 1, "validation")
+	assertActionOracle(t, app, "register-flow-a2", "register", 1, "success")
+
+	duplicate := perform(handler, http.MethodPost, "/register?e2e_action=register-flow-a2", "username=canary-user&pin=9876", "application/x-www-form-urlencoded")
+	if duplicate.Code != http.StatusOK {
+		t.Fatalf("duplicate POST status = %d", duplicate.Code)
+	}
+	assertActionOracle(t, app, "register-flow-a2", "register", 2, "validation")
+
+	oracle := perform(app.InternalHandler(), http.MethodGet, "/e2e/actions/register-flow-a2", "", "")
+	for _, secret := range []string{"canary-user", "9876", "username", "pin"} {
+		if strings.Contains(strings.ToLower(oracle.Body.String()), secret) {
+			t.Fatalf("action oracle leaked %q: %s", secret, oracle.Body.String())
+		}
+	}
+}
+
+func TestE2ELoginValidationAdvancesAttempt(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	failed := perform(app.Handler(), http.MethodPost, "/login?e2e_action=login-flow-a1", "username=unknown&pin=9876", "application/x-www-form-urlencoded")
+	if failed.Code != http.StatusOK || !strings.Contains(failed.Body.String(), `href="/login?e2e_action=login-flow-a2"`) {
+		t.Fatalf("login validation response did not advance attempt: %d %s", failed.Code, failed.Body.String())
+	}
+	assertActionOracle(t, app, "login-flow-a1", "login", 1, "validation")
+	assertActionOracle(t, app, "login-flow-a2", "login", 0, "form")
+}
+
+func TestE2EActionCorrelationCountsRejectedPOSTAttempts(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	response := perform(app.Handler(), http.MethodPost, "/register?e2e_action=register-rejected-a1", `{}`, "application/json")
+	if response.Code != http.StatusUnsupportedMediaType {
+		t.Fatalf("rejected POST status = %d", response.Code)
+	}
+	assertActionOracle(t, app, "register-rejected-a1", "register", 1, "request-rejected")
+}
+
+func TestE2EActionCorrelationIsBoundedAndExpires(t *testing.T) {
+	app, clock := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+		config.MaxE2EActions = 2
+		config.E2EActionTTL = time.Minute
+	})
+
+	for _, id := range []string{"first-a1", "second-a1"} {
+		response := perform(app.Handler(), http.MethodGet, "/register?e2e_action="+id, "", "")
+		if response.Code != http.StatusOK {
+			t.Fatalf("GET action %s status = %d", id, response.Code)
+		}
+	}
+	full := perform(app.Handler(), http.MethodGet, "/register?e2e_action=third-a1", "", "")
+	if full.Code != http.StatusServiceUnavailable {
+		t.Fatalf("over-cap action status = %d, want 503", full.Code)
+	}
+
+	clock.Advance(time.Minute + time.Nanosecond)
+	expired := perform(app.InternalHandler(), http.MethodGet, "/e2e/actions/first-a1", "", "")
+	if expired.Code != http.StatusNotFound {
+		t.Fatalf("expired action status = %d, want 404", expired.Code)
+	}
+	newAction := perform(app.Handler(), http.MethodGet, "/register?e2e_action=third-a1", "", "")
+	if newAction.Code != http.StatusOK {
+		t.Fatalf("new action after expiry status = %d", newAction.Code)
+	}
+}
+
+func TestE2EConcurrentActionsHaveIndependentCounts(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	handler := app.Handler()
+	ids := []string{"parallel-one-a1", "parallel-two-a1"}
+	for _, id := range ids {
+		_ = perform(handler, http.MethodGet, "/register?e2e_action="+id, "", "")
+	}
+
+	var wait sync.WaitGroup
+	for index, id := range ids {
+		wait.Add(1)
+		go func(index int, id string) {
+			defer wait.Done()
+			body := fmt.Sprintf("username=parallel-%d&pin=1234", index)
+			_ = perform(handler, http.MethodPost, "/register?e2e_action="+id, body, "application/x-www-form-urlencoded")
+		}(index, id)
+	}
+	wait.Wait()
+	for _, id := range ids {
+		assertActionOracle(t, app, id, "register", 1, "success")
+	}
+}
+
+func assertActionOracle(t *testing.T, app *App, actionID, kind string, count int, phase string) {
+	t.Helper()
+	response := perform(app.InternalHandler(), http.MethodGet, "/e2e/actions/"+actionID, "", "")
+	if response.Code != http.StatusOK {
+		t.Fatalf("action oracle %s status = %d: %s", actionID, response.Code, response.Body.String())
+	}
+	var got struct {
+		ActionID string `json:"actionId"`
+		Kind     string `json:"kind"`
+		Count    int    `json:"count"`
+		Phase    string `json:"phase"`
+	}
+	if err := json.Unmarshal(response.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode action oracle %s: %v", actionID, err)
+	}
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(response.Body.Bytes(), &fields); err != nil {
+		t.Fatalf("decode action oracle fields %s: %v", actionID, err)
+	}
+	if len(fields) != 4 {
+		t.Fatalf("action oracle %s exposed fields %v, want exactly four bounded fields", actionID, fields)
+	}
+	for _, name := range []string{"actionId", "kind", "count", "phase"} {
+		if _, exists := fields[name]; !exists {
+			t.Fatalf("action oracle %s omitted %q: %v", actionID, name, fields)
+		}
+	}
+	if got.ActionID != actionID || got.Kind != kind || got.Count != count || got.Phase != phase {
+		t.Fatalf("action oracle %s = %#v, want kind=%q count=%d phase=%q", actionID, got, kind, count, phase)
 	}
 }
 

@@ -55,7 +55,7 @@ func renderInteropHomeDeck() string {
 		`</card>`
 }
 
-func renderLoginDeck(prefillUser, errorMessage string) string {
+func renderLoginDeck(prefillUser, errorMessage, actionID string) string {
 	message := `<p>Enter username and PIN.</p>`
 	if errorMessage != "" {
 		message = `<p>Login error: ` + xmlEscape(errorMessage) + `</p>`
@@ -64,7 +64,7 @@ func renderLoginDeck(prefillUser, errorMessage string) string {
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
 		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
-		`<do type="accept" label="Submit"><go method="post" href="/login">` +
+		`<do type="accept" label="Submit"><go method="post" href="` + formAction("/login", actionID) + `">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +
 		`</go></do>` +
@@ -73,7 +73,7 @@ func renderLoginDeck(prefillUser, errorMessage string) string {
 		`</card>`
 }
 
-func renderRegisterDeck(prefillUser, errorMessage string) string {
+func renderRegisterDeck(prefillUser, errorMessage, actionID string) string {
 	message := `<p>Create account for demo login.</p>`
 	if errorMessage != "" {
 		message = `<p>Registration error: ` + xmlEscape(errorMessage) + `</p>`
@@ -82,13 +82,20 @@ func renderRegisterDeck(prefillUser, errorMessage string) string {
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
 		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
-		`<do type="accept" label="Create"><go method="post" href="/register">` +
+		`<do type="accept" label="Create"><go method="post" href="` + formAction("/register", actionID) + `">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +
 		`</go></do>` +
 		`<do type="options" label="Login"><go href="/login"/></do>` +
 		`<do type="prev" label="Home"><go href="/"/></do>` +
 		`</card>`
+}
+
+func formAction(path, actionID string) string {
+	if actionID == "" {
+		return path
+	}
+	return path + "?e2e_action=" + xmlEscape(actionID)
 }
 
 func renderLoginSuccess(username, sid string, _ time.Time) string {
