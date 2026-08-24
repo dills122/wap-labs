@@ -20,6 +20,7 @@ function element(overrides = {}) {
 
 function fixture() {
   const calls = [];
+  const waits = [];
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
     ['#run-mode', element({ getAttribute: async () => 'network' })],
@@ -52,6 +53,7 @@ function fixture() {
     },
     async executeScript(script, ...arguments_) {
       calls.push(['script', script, ...arguments_]);
+      if (script.includes('shadowRoot')) return 'Ready. WAP gateway responded at wap://localhost/';
       if (script.includes('textContent')) return 'Rendered deck text';
       return '';
     }
@@ -59,14 +61,26 @@ function fixture() {
   const page = createWavesDriver({
     driver,
     selector: (value) => value,
-    waitUntil: async (condition) => {
+    waitUntil: async (condition, options) => {
+      waits.push(options?.description);
       const observed = await condition();
       if (!observed) throw new Error('condition did not pass');
       return observed;
     }
   });
-  return { calls, page };
+  return { calls, page, waits };
 }
+
+test('native launch waits for the startup gateway probe before scenarios may navigate', async () => {
+  const { page, waits } = fixture();
+
+  await page.launchWaves();
+
+  assert.deepEqual(waits, [
+    'Waves engine-ready or deck-ready boot phase',
+    'status text "Ready. WAP gateway responded at "'
+  ]);
+});
 
 test('Waves interaction API drives address, viewport, keyboard, and softkeys by intent', async () => {
   const { calls, page } = fixture();

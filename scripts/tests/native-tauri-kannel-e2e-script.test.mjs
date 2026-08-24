@@ -6,6 +6,7 @@ import test from 'node:test';
 const scriptPath = 'scripts/native-tauri-kannel-e2e.sh';
 const runnerPath = 'browser/frontend/scripts/native-tauri-kannel-e2e.mjs';
 const source = fs.readFileSync(scriptPath, 'utf8');
+const runnerSource = fs.readFileSync(runnerPath, 'utf8');
 const composeOverlaySource = fs.readFileSync('docker-compose.native-e2e.yml', 'utf8');
 const workflowSource = fs.readFileSync('.github/workflows/native-tauri-kannel-e2e.yml', 'utf8');
 
@@ -117,6 +118,10 @@ test('native E2E cache records exact Tauri crate provenance without unsupported 
   );
   assert.match(workflowSource, /test -x "\$\(command -v tauri-driver\)"/);
   assert.doesNotMatch(workflowSource, /^\s*tauri-driver --version/m);
+});
+
+test('native E2E maps semantic keyboard names to WebDriver key codes', () => {
+  assert.match(runnerSource, /keys: \{ Enter: Key\.ENTER, ArrowDown: Key\.ARROW_DOWN \}/);
 });
 
 test('native E2E publishes an always-present advisory gate', () => {

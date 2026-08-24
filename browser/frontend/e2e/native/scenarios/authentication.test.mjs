@@ -34,6 +34,10 @@ function fixture() {
     async pressKeyboardKey(value) {
       calls.push(['key', value]);
     },
+    async waitForStatus(value) {
+      calls.push(['status', value]);
+      return { text: value, tone: 'neutral', displayed: true };
+    },
     async pressSoftkey(value) {
       calls.push(['softkey', value]);
     },
@@ -111,6 +115,17 @@ test('deterministic registration submits the final PIN digit and Enter in one ta
   assert.ok(
     calls.some((entry) => entry[0] === 'burst' && entry[1] === '7' && entry[2] === 'enter')
   );
+  assert.ok(
+    calls.some((entry) => entry[0] === 'status' && entry[1] === 'Keyboard: down')
+  );
+  const focusMove = calls.findIndex(
+    (entry) => entry[0] === 'key' && entry[1] === 'ArrowDown'
+  );
+  const focusSettled = calls.findIndex(
+    (entry) => entry[0] === 'status' && entry[1] === 'Keyboard: down'
+  );
+  const pinPrefix = calls.findIndex((entry) => entry[0] === 'type' && entry[1] === '492');
+  assert.ok(focusMove < focusSettled && focusSettled < pinPrefix);
   assert.ok(calls.some((entry) => entry[0] === 'receipt' && entry[2] === 'register'));
   assert.ok(
     calls.some((entry) => entry[0] === 'increment' && entry[1] === 'register_success_total')

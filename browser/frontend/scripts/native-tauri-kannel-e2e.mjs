@@ -81,7 +81,7 @@ if (cliOptions?.mode === 'list') {
         origin,
         provider: createSeleniumProvider(),
         selector: By.css,
-        keys: { Enter: Key.ENTER },
+        keys: { Enter: Key.ENTER, ArrowDown: Key.ARROW_DOWN },
         infrastructureSecrets: [requiredEnvironment('KANNEL_ADMIN_PASSWORD')],
         timeoutMs,
         scenarioTimeoutMs,

@@ -67,6 +67,13 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
       element
     );
+  const waitForStatusText = async (expected) => {
+    const status = await find(SELECTORS.status);
+    return waitUntil(async () => {
+      const text = await readStatusText(status);
+      return text.includes(expected) ? text : false;
+    }, { description: `status text ${JSON.stringify(expected)}` });
+  };
   const submitAddress = async (address) => {
     if (typeof address !== 'string' || address.length === 0 || address.length > 2_048) {
       throw new Error('Waves address must be a bounded non-empty string');
@@ -93,6 +100,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       if (mode !== 'network') {
         throw new Error(`Waves launched in unexpected run mode: ${mode}`);
       }
+      await waitForStatusText('Ready. WAP gateway responded at ');
     },
 
     async dismissWelcome() {
@@ -169,12 +177,9 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async waitForStatus(expected) {
       const status = await find(SELECTORS.status);
-      await waitUntil(async () => {
-        const text = await readStatusText(status);
-        return text.includes(expected) ? text : false;
-      }, { description: `status text ${JSON.stringify(expected)}` });
+      const text = await waitForStatusText(expected);
       return {
-        text: await readStatusText(status),
+        text,
         tone: await status.getAttribute('tone'),
         displayed: await status.isDisplayed()
       };

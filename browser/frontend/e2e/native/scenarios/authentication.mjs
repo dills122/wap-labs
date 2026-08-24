@@ -12,6 +12,7 @@ async function prepareForm(context, kind) {
   await context.waves.typeText(username);
   await context.waves.waitForDeckText(username);
   await context.waves.pressKeyboardKey('ArrowDown');
+  await context.waves.waitForStatus('Keyboard: down');
   context.observe({ phase: 'form-ready', address: await context.waves.readSanitizedAddress() });
   return { actionID, username, pin };
 }
