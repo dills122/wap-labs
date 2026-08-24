@@ -1,5 +1,18 @@
 import assert from 'node:assert/strict';
 
+const compactVisibleText = (value) => value.replace(/\s+/g, '');
+
+function assertVisibleResponse(response, expected, rejected) {
+  assert.ok(
+    compactVisibleText(response).includes(compactVisibleText(expected)),
+    'the expected authentication response must be visible across layout wraps'
+  );
+  assert.ok(
+    !compactVisibleText(response).includes(compactVisibleText(rejected)),
+    'the required-fields error must not be visible on a successful response'
+  );
+}
+
 async function prepareForm(context, kind) {
   const { actionID, username, pin } = context.testData;
   await context.waves.launchWaves();
@@ -46,8 +59,11 @@ function registration({ id, name, deterministic }) {
       });
       await typePIN(context, pin, { deterministic, submitWith: 'enter' });
       const response = await context.waves.waitForDeckText(`User ${username} created.`);
-      assert.match(response, new RegExp(`User ${username} created\\.`));
-      assert.doesNotMatch(response, /Username and PIN are required/);
+      assertVisibleResponse(
+        response,
+        `User ${username} created.`,
+        'Username and PIN are required'
+      );
       context.observe({
         phase: 'response-rendered',
         address: await context.waves.readSanitizedAddress()
@@ -106,8 +122,11 @@ function login({ id, name, deterministic }) {
       });
       await typePIN(context, pin, { deterministic, submitWith: 'select' });
       const response = await context.waves.waitForDeckText(`Authenticated as ${username}.`);
-      assert.match(response, new RegExp(`Authenticated as ${username}\\.`));
-      assert.doesNotMatch(response, /Username and PIN are required/);
+      assertVisibleResponse(
+        response,
+        `Authenticated as ${username}.`,
+        'Username and PIN are required'
+      );
       context.observe({
         phase: 'response-rendered',
         address: await context.waves.readSanitizedAddress()

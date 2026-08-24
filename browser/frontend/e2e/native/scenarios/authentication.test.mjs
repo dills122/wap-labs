@@ -101,6 +101,18 @@ function fixture() {
   };
 }
 
+test('authentication success assertions tolerate visual hard wraps but reject error decks', async () => {
+  const { context } = fixture();
+  const originalWait = context.waves.waitForDeckText;
+  context.waves.waitForDeckText = async (value) => {
+    if (value === 'User e2e_auth_case created.') {
+      return 'User e2e_auth_\ncase created.';
+    }
+    return originalWait(value);
+  };
+  await AUTHENTICATION_SCENARIOS[0].run(context);
+});
+
 test('authentication registry contains the four independent P0 regressions', () => {
   assert.deepEqual(
     AUTHENTICATION_SCENARIOS.map(({ id }) => id),
