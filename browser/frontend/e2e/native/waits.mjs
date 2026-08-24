@@ -17,7 +17,71 @@ const defaultFormatObservation = (value) => {
 
 const requireDuration = (value, name, { allowZero = false } = {}) => {
   assert.ok(Number.isSafeInteger(value), `${name} must be an integer`);
-  assert.ok(allowZero ? value >= 0 : value > 0, `${name} must be ${allowZero ? 'non-negative' : 'positive'}`);
+  assert.ok(
+    allowZero ? value >= 0 : value > 0,
+    `${name} must be ${allowZero ? 'non-negative' : 'positive'}`
+  );
+};
+
+const timeoutError = (timeoutMs, description, lastObservation) =>
+  new Error(
+    `timed out after ${timeoutMs}ms waiting for ${description}; last observation: ${lastObservation}`
+  );
+
+const abortError = (signal) => {
+  const error = new Error('native E2E wait aborted', { cause: signal?.reason });
+  error.name = 'AbortError';
+  return error;
+};
+
+const throwIfAborted = (signal) => {
+  if (signal?.aborted) throw abortError(signal);
+};
+
+const runBeforeDeadline = async ({
+  operation,
+  remainingMs,
+  timeoutMs,
+  description,
+  lastObservation,
+  signal,
+  AbortControllerImpl,
+  setTimer,
+  clearTimer
+}) => {
+  throwIfAborted(signal);
+  const controller = new AbortControllerImpl();
+  let timer;
+  let onAbort;
+  const deadline = new Promise((_, reject) => {
+    timer = setTimer(() => {
+      const deadlineError = timeoutError(timeoutMs, description, lastObservation());
+      controller.abort(deadlineError);
+      reject(deadlineError);
+    }, remainingMs);
+  });
+  const aborted = signal
+    ? new Promise((_, reject) => {
+        onAbort = () => {
+          const error = abortError(signal);
+          controller.abort(error);
+          reject(error);
+        };
+        signal.addEventListener('abort', onAbort, { once: true });
+        if (signal.aborted) onAbort();
+      })
+    : new Promise(() => undefined);
+
+  try {
+    return await Promise.race([
+      Promise.resolve().then(() => operation(controller.signal)),
+      deadline,
+      aborted
+    ]);
+  } finally {
+    clearTimer(timer);
+    if (onAbort) signal.removeEventListener('abort', onAbort);
+  }
 };
 
 export async function waitForCondition({
@@ -28,7 +92,11 @@ export async function waitForCondition({
   pollIntervalMs = 100,
   now = Date.now,
   sleep = delay,
-  formatObservation = defaultFormatObservation
+  formatObservation = defaultFormatObservation,
+  signal,
+  AbortControllerImpl = globalThis.AbortController,
+  setTimer = globalThis.setTimeout,
+  clearTimer = globalThis.clearTimeout
 }) {
   assert.equal(typeof description, 'string', 'wait description must be a string');
   assert.notEqual(description, '', 'wait description must not be empty');
@@ -36,9 +104,17 @@ export async function waitForCondition({
   assert.equal(typeof accept, 'function', 'wait acceptance check must be a function');
   assert.equal(typeof now, 'function', 'wait clock must be a function');
   assert.equal(typeof sleep, 'function', 'wait sleep must be a function');
-  assert.equal(typeof formatObservation, 'function', 'wait observation formatter must be a function');
+  assert.equal(
+    typeof formatObservation,
+    'function',
+    'wait observation formatter must be a function'
+  );
+  assert.equal(typeof AbortControllerImpl, 'function', 'AbortController must be available');
+  assert.equal(typeof setTimer, 'function', 'wait timer must be a function');
+  assert.equal(typeof clearTimer, 'function', 'wait timer cleanup must be a function');
   requireDuration(timeoutMs, 'timeoutMs');
   requireDuration(pollIntervalMs, 'pollIntervalMs');
+  throwIfAborted(signal);
 
   const startedAt = now();
   const deadline = startedAt + timeoutMs;
@@ -47,35 +123,71 @@ export async function waitForCondition({
 
   while (true) {
     if (hasObserved && now() >= deadline) {
-      throw new Error(
-        `timed out after ${timeoutMs}ms waiting for ${description}; last observation: ${lastObservation}`
-      );
+      throw timeoutError(timeoutMs, description, lastObservation);
     }
     hasObserved = true;
     let observation;
     let observationSucceeded = false;
-    try {
-      observation = await observe({ remainingMs: Math.max(0, deadline - now()) });
-      observationSucceeded = true;
-    } catch (error) {
-      const errorName = error instanceof Error ? error.name : typeof error;
-      lastObservation = `observation failed (${errorName})`;
-      observation = undefined;
+    const remainingForObservation = deadline - now();
+    if (remainingForObservation <= 0) {
+      throw timeoutError(timeoutMs, description, lastObservation);
     }
-    if (observationSucceeded) {
-      lastObservation = formatObservation(observation);
-      if (await accept(observation)) {
-        return observation;
+    const outcome = await runBeforeDeadline({
+      remainingMs: remainingForObservation,
+      timeoutMs,
+      description,
+      lastObservation: () => lastObservation,
+      signal,
+      AbortControllerImpl,
+      setTimer,
+      clearTimer,
+      async operation(observationSignal) {
+        try {
+          observation = await observe({
+            remainingMs: Math.max(0, deadline - now()),
+            signal: observationSignal
+          });
+          observationSucceeded = true;
+        } catch (error) {
+          if (signal?.aborted) throw abortError(signal);
+          if (now() >= deadline) {
+            throw timeoutError(timeoutMs, description, lastObservation);
+          }
+          const errorName = error instanceof Error ? error.name : typeof error;
+          lastObservation = `observation failed (${errorName})`;
+          return { accepted: false };
+        }
+        if (now() >= deadline) {
+          throw timeoutError(timeoutMs, description, lastObservation);
+        }
+        lastObservation = formatObservation(observation);
+        const accepted = await accept(observation);
+        if (now() >= deadline) {
+          throw timeoutError(timeoutMs, description, lastObservation);
+        }
+        return { accepted };
       }
+    });
+    if (observationSucceeded && outcome.accepted) {
+      return observation;
     }
 
     const remainingMs = deadline - now();
     if (remainingMs <= 0) {
-      throw new Error(
-        `timed out after ${timeoutMs}ms waiting for ${description}; last observation: ${lastObservation}`
-      );
+      throw timeoutError(timeoutMs, description, lastObservation);
     }
-    await sleep(Math.min(pollIntervalMs, remainingMs));
+    await runBeforeDeadline({
+      remainingMs,
+      timeoutMs,
+      description,
+      lastObservation: () => lastObservation,
+      signal,
+      AbortControllerImpl,
+      setTimer,
+      clearTimer,
+      operation: (sleepSignal) =>
+        sleep(Math.min(pollIntervalMs, remainingMs), undefined, { signal: sleepSignal })
+    });
   }
 }
 
@@ -95,9 +207,13 @@ const readWebDriverStatus = async ({
   requestTimeoutMs,
   AbortControllerImpl,
   setTimer,
-  clearTimer
+  clearTimer,
+  signal
 }) => {
   const controller = new AbortControllerImpl();
+  const abortFromWait = () => controller.abort(signal.reason);
+  if (signal.aborted) controller.abort(signal.reason);
+  else signal.addEventListener('abort', abortFromWait, { once: true });
   const timer = setTimer(() => controller.abort(), requestTimeoutMs);
   timer?.unref?.();
   try {
@@ -123,6 +239,7 @@ const readWebDriverStatus = async ({
     return { ready: false, observation: `request failed (${errorName})` };
   } finally {
     clearTimer(timer);
+    signal.removeEventListener('abort', abortFromWait);
   }
 };
 
@@ -136,7 +253,8 @@ export async function waitForWebDriverReady({
   setTimer = globalThis.setTimeout,
   clearTimer = globalThis.clearTimeout,
   now = Date.now,
-  sleep = delay
+  sleep = delay,
+  signal
 }) {
   const parsedDriverUrl = parseLoopbackDriverUrl(driverUrl);
   const statusUrl = new URL('/status', parsedDriverUrl);
@@ -145,20 +263,22 @@ export async function waitForWebDriverReady({
 
   await waitForCondition({
     description: 'WebDriver GET /status to report ready=true',
-    observe: ({ remainingMs }) =>
+    observe: ({ remainingMs, signal: observationSignal }) =>
       readWebDriverStatus({
         statusUrl,
         fetchImpl,
         requestTimeoutMs: Math.max(1, Math.min(requestTimeoutMs, remainingMs)),
         AbortControllerImpl,
         setTimer,
-        clearTimer
+        clearTimer,
+        signal: observationSignal
       }),
     accept: ({ ready }) => ready,
     timeoutMs,
     pollIntervalMs,
     now,
     sleep,
+    signal,
     formatObservation: ({ observation }) => observation
   });
 

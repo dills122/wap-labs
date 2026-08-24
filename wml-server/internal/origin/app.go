@@ -221,7 +221,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /messages", a.messages)
 	mux.HandleFunc("GET /logout", a.logout)
 	mux.HandleFunc("GET /examples/{file}", a.example)
-	return a.logRequests(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux))))
+	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
 }
 
 func (a *App) InternalHandler() http.Handler {
@@ -231,7 +231,7 @@ func (a *App) InternalHandler() http.Handler {
 	if a.e2eFixtureMode {
 		mux.HandleFunc("GET /e2e/actions/{actionID}", a.e2eActionStatus)
 	}
-	return mux
+	return a.markOriginResponses(mux)
 }
 
 func (a *App) logRequests(next http.Handler) http.Handler {
@@ -248,6 +248,16 @@ func (a *App) logRequests(next http.Handler) http.Handler {
 			"status", capture.status,
 			"bytes", capture.bytes,
 		)
+	})
+}
+
+func (a *App) markOriginResponses(next http.Handler) http.Handler {
+	if a.originInstanceID == "" {
+		return next
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Waves-Origin-Instance", a.originInstanceID)
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -914,9 +924,6 @@ func (a *App) evictOldestSessionLocked() {
 
 func (a *App) sendWML(w http.ResponseWriter, cards string, status int) {
 	setWMLHeaders(w.Header())
-	if a.originInstanceID != "" {
-		w.Header().Set("X-Waves-Origin-Instance", a.originInstanceID)
-	}
 	w.WriteHeader(status)
 	_, _ = fmt.Fprintf(w,
 		"<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML %s//EN\" \"http://www.wapforum.org/DTD/wml_%s.xml\">\n<wml>\n%s\n</wml>\n",

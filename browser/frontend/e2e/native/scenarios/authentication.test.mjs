@@ -8,9 +8,15 @@ function fixture() {
   const username = 'e2e_auth_case';
   const pin = '4927';
   const waves = {
-    async launchWaves() { calls.push(['launch']); },
-    async dismissWelcome() { calls.push(['dismiss']); },
-    async openWapUrl(value) { calls.push(['open', value]); },
+    async launchWaves() {
+      calls.push(['launch']);
+    },
+    async dismissWelcome() {
+      calls.push(['dismiss']);
+    },
+    async openWapUrl(value) {
+      calls.push(['open', value]);
+    },
     async waitForDeckText(value) {
       calls.push(['deck', value]);
       if (value === 'Registration OK') return `Registration OK User ${username} created.`;
@@ -19,15 +25,27 @@ function fixture() {
       if (/^\*+$/.test(value)) return `PIN: ${value}`;
       return value;
     },
-    async focusViewport() { calls.push(['focus']); },
-    async typeText(value) { calls.push(['type', value]); },
-    async pressKeyboardKey(value) { calls.push(['key', value]); },
-    async pressSoftkey(value) { calls.push(['softkey', value]); },
+    async focusViewport() {
+      calls.push(['focus']);
+    },
+    async typeText(value) {
+      calls.push(['type', value]);
+    },
+    async pressKeyboardKey(value) {
+      calls.push(['key', value]);
+    },
+    async pressSoftkey(value) {
+      calls.push(['softkey', value]);
+    },
     async typeFinalCharacterAndSubmitInOneTask(value, mode) {
       calls.push(['burst', value, mode]);
     },
-    async readSanitizedAddress() { return 'wap://localhost/register'; },
-    async waitForAddress(value) { return value; },
+    async readSanitizedAddress() {
+      return 'wap://localhost/register';
+    },
+    async waitForAddress(value) {
+      return value;
+    },
     async withEphemeralAddress(callback) {
       return callback('wap://localhost/portal?sid=ephemeral-secret');
     }
@@ -38,6 +56,7 @@ function fixture() {
     assertions,
     context: {
       waves,
+      signal: new AbortController().signal,
       testData: {
         username,
         pin,
@@ -45,34 +64,68 @@ function fixture() {
         seedActionID: 'seed-case-a1'
       },
       origin: {
-        async seedAccount(value) { calls.push(['seed', value.actionID]); },
+        async readCounter(name) {
+          calls.push(['counter', name]);
+          return name === 'login_failure_total' ? 2 : 5;
+        },
+        async seedAccount(value) {
+          calls.push(['seed', value.actionID]);
+        },
         async waitForActionExactlyOnce(id, value) {
           calls.push(['receipt', id, value.kind]);
           return { quiescenceMs: 500 };
         },
-        async verifySessionInvalidated(value) { calls.push(['invalidated', value]); }
+        async waitForExactlyOne(name, before) {
+          calls.push(['increment', name, before]);
+          return { quiescenceMs: 500 };
+        },
+        async waitForUnchanged(name, before) {
+          calls.push(['unchanged', name, before]);
+          return { quiescenceMs: 500 };
+        },
+        async verifySessionInvalidated(value) {
+          calls.push(['invalidated', value]);
+        }
       },
-      recordAssertion(name, details) { assertions.push({ name, details }); },
-      observe(value) { calls.push(['observe', value]); }
+      recordAssertion(name, details) {
+        assertions.push({ name, details });
+      },
+      observe(value) {
+        calls.push(['observe', value]);
+      }
     }
   };
 }
 
 test('authentication registry contains the four independent P0 regressions', () => {
-  assert.deepEqual(AUTHENTICATION_SCENARIOS.map(({ id }) => id), [
-    'AUTH-NATIVE-001A',
-    'AUTH-NATIVE-001B',
-    'AUTH-NATIVE-002A',
-    'AUTH-NATIVE-002B'
-  ]);
+  assert.deepEqual(
+    AUTHENTICATION_SCENARIOS.map(({ id }) => id),
+    ['AUTH-NATIVE-001A', 'AUTH-NATIVE-001B', 'AUTH-NATIVE-002A', 'AUTH-NATIVE-002B']
+  );
   assert.ok(AUTHENTICATION_SCENARIOS.every(({ secretBearing }) => secretBearing));
 });
 
 test('deterministic registration submits the final PIN digit and Enter in one task', async () => {
   const { calls, context } = fixture();
   await AUTHENTICATION_SCENARIOS[0].run(context);
-  assert.ok(calls.some((entry) => entry[0] === 'burst' && entry[1] === '7' && entry[2] === 'enter'));
+  assert.ok(
+    calls.some((entry) => entry[0] === 'burst' && entry[1] === '7' && entry[2] === 'enter')
+  );
   assert.ok(calls.some((entry) => entry[0] === 'receipt' && entry[2] === 'register'));
+  assert.ok(
+    calls.some((entry) => entry[0] === 'increment' && entry[1] === 'register_success_total')
+  );
+  assert.deepEqual(
+    calls.filter(([kind]) => kind === 'observe').map(([, value]) => value.phase),
+    [
+      'engine-ready',
+      'deck-ready',
+      'form-ready',
+      'ui-dispatched',
+      'response-rendered',
+      'origin-confirmed'
+    ]
+  );
 });
 
 test('ordinary registration uses WebDriver Enter after the full masked PIN', async () => {
@@ -88,6 +141,8 @@ test('deterministic login seeds independently and submits final PIN digit with S
   await AUTHENTICATION_SCENARIOS[2].run(context);
   assert.ok(calls.some((entry) => entry[0] === 'seed' && entry[1] === 'seed-case-a1'));
   assert.ok(calls.some((entry) => entry[0] === 'burst' && entry[2] === 'select'));
+  assert.ok(calls.some((entry) => entry[0] === 'increment' && entry[1] === 'login_success_total'));
+  assert.ok(calls.some((entry) => entry[0] === 'unchanged' && entry[1] === 'login_failure_total'));
   assert.ok(calls.some((entry) => entry[0] === 'invalidated'));
 });
 
@@ -96,4 +151,17 @@ test('ordinary login submits with physical Select and invalidates its live sessi
   await AUTHENTICATION_SCENARIOS[3].run(context);
   assert.ok(calls.some((entry) => entry[0] === 'softkey' && entry[1] === 'select'));
   assert.ok(assertions.some(({ name }) => name === 'session invalidation'));
+  assert.ok(assertions.some(({ name }) => name === 'login aggregate metrics'));
+  assert.deepEqual(
+    calls.filter(([kind]) => kind === 'observe').map(([, value]) => value.phase),
+    [
+      'engine-ready',
+      'deck-ready',
+      'form-ready',
+      'ui-dispatched',
+      'response-rendered',
+      'origin-confirmed',
+      'session-invalidated'
+    ]
+  );
 });

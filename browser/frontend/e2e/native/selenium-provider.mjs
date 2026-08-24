@@ -109,16 +109,19 @@ const waitUntilProcessStops = async ({
   return !isProcessAlive(child, platform);
 };
 
-export async function terminateSpawnedProcess(child, {
-  platform = process.platform,
-  signalProcess = defaultSignalProcess,
-  isProcessAlive = defaultIsProcessAlive,
-  now = Date.now,
-  sleep = delay,
-  terminateTimeoutMs = 5_000,
-  killTimeoutMs = 2_000,
-  pollIntervalMs = 100
-} = {}) {
+export async function terminateSpawnedProcess(
+  child,
+  {
+    platform = process.platform,
+    signalProcess = defaultSignalProcess,
+    isProcessAlive = defaultIsProcessAlive,
+    now = Date.now,
+    sleep = delay,
+    terminateTimeoutMs = 5_000,
+    killTimeoutMs = 2_000,
+    pollIntervalMs = 100
+  } = {}
+) {
   if (!child?.pid) {
     return 'not-started';
   }
@@ -131,15 +134,17 @@ export async function terminateSpawnedProcess(child, {
   } catch {
     return isProcessAlive(child, platform) ? 'cleanup-failed' : 'already-exited';
   }
-  if (await waitUntilProcessStops({
-    child,
-    timeoutMs: terminateTimeoutMs,
-    pollIntervalMs,
-    isProcessAlive,
-    platform,
-    now,
-    sleep
-  })) {
+  if (
+    await waitUntilProcessStops({
+      child,
+      timeoutMs: terminateTimeoutMs,
+      pollIntervalMs,
+      isProcessAlive,
+      platform,
+      now,
+      sleep
+    })
+  ) {
     return 'terminated';
   }
 
@@ -148,15 +153,17 @@ export async function terminateSpawnedProcess(child, {
   } catch {
     return isProcessAlive(child, platform) ? 'cleanup-failed' : 'killed';
   }
-  if (await waitUntilProcessStops({
-    child,
-    timeoutMs: killTimeoutMs,
-    pollIntervalMs,
-    isProcessAlive,
-    platform,
-    now,
-    sleep
-  })) {
+  if (
+    await waitUntilProcessStops({
+      child,
+      timeoutMs: killTimeoutMs,
+      pollIntervalMs,
+      isProcessAlive,
+      platform,
+      now,
+      sleep
+    })
+  ) {
     return 'killed';
   }
   return 'cleanup-failed';
@@ -170,36 +177,57 @@ const buildSeleniumDriver = async ({ application, driverUrl }) => {
   return new Builder().withCapabilities(capabilities).usingServer(driverUrl).build();
 };
 
-const settleWithin = async (operation, timeoutMs, description) => {
+const abortError = (signal) => {
+  const error = new Error('native E2E provider startup aborted', { cause: signal?.reason });
+  error.name = 'AbortError';
+  return error;
+};
+
+const throwIfAborted = (signal) => {
+  if (signal?.aborted) throw abortError(signal);
+};
+
+const settleWithin = async (operation, timeoutMs, description, { signal } = {}) => {
+  throwIfAborted(signal);
   let timer;
+  let onAbort;
   const timeout = new Promise((_, reject) => {
     timer = setTimeout(
       () => reject(new Error(`${description} timed out after ${timeoutMs}ms`)),
       timeoutMs
     );
   });
+  const aborted = signal
+    ? new Promise((_, reject) => {
+        onAbort = () => reject(abortError(signal));
+        signal.addEventListener('abort', onAbort, { once: true });
+        if (signal.aborted) onAbort();
+      })
+    : new Promise(() => undefined);
   try {
-    return await Promise.race([Promise.resolve(operation), timeout]);
+    return await Promise.race([Promise.resolve(operation), timeout, aborted]);
   } finally {
     clearTimeout(timer);
+    if (onAbort) signal.removeEventListener('abort', onAbort);
   }
 };
 
 const processExitError = (child) => {
-  const outcome = child.exitCode === null
-    ? `signal ${child.signalCode ?? 'unknown'}`
-    : `code ${child.exitCode}`;
+  const outcome =
+    child.exitCode === null ? `signal ${child.signalCode ?? 'unknown'}` : `code ${child.exitCode}`;
   return new Error(`tauri-driver exited before WebDriver readiness (${outcome})`);
 };
 
-const waitForReadyOrExit = async (child, readiness) => {
+const waitForReadyOrExit = async (child, readiness, signal) => {
+  const readinessPromise = Promise.resolve(readiness);
   if (child.exitCode !== null || child.signalCode !== null) {
-    Promise.resolve(readiness).catch(() => undefined);
+    readinessPromise.catch(() => undefined);
     throw processExitError(child);
   }
 
   let onError;
   let onExit;
+  let onAbort;
   const earlyExit = new Promise((_, reject) => {
     onError = (error) => {
       const name = error instanceof Error ? error.name : typeof error;
@@ -212,12 +240,20 @@ const waitForReadyOrExit = async (child, readiness) => {
     child.once('error', onError);
     child.once('exit', onExit);
   });
+  const aborted = signal
+    ? new Promise((_, reject) => {
+        onAbort = () => reject(abortError(signal));
+        signal.addEventListener('abort', onAbort, { once: true });
+        if (signal.aborted) onAbort();
+      })
+    : new Promise(() => undefined);
 
   try {
-    await Promise.race([readiness, earlyExit]);
+    await Promise.race([readinessPromise, earlyExit, aborted]);
   } finally {
     child.off('error', onError);
     child.off('exit', onExit);
+    if (onAbort) signal.removeEventListener('abort', onAbort);
   }
 };
 
@@ -225,7 +261,10 @@ const validateLease = (lease) => {
   assert.equal(lease?.host, '127.0.0.1', 'port lease must use explicit IPv4 loopback');
   assert.equal(lease?.ports?.length, 2, 'provider requires intermediary and native driver ports');
   for (const port of lease.ports) {
-    assert.ok(Number.isSafeInteger(port) && port > 0 && port <= 65_535, 'port lease contains an invalid port');
+    assert.ok(
+      Number.isSafeInteger(port) && port > 0 && port <= 65_535,
+      'port lease contains an invalid port'
+    );
   }
   assert.notEqual(lease.ports[0], lease.ports[1], 'provider ports must be distinct');
   assert.equal(typeof lease.release, 'function', 'port lease must expose release()');
@@ -269,7 +308,8 @@ export function createSeleniumProvider({
     pollIntervalMs = 100,
     maxStartupAttempts = 3,
     stdio = ['ignore', 'pipe', 'pipe'],
-    onProcessStarted
+    onProcessStarted,
+    signal
   }) => {
     assert.equal(typeof application, 'string', 'application must be a string');
     assert.notEqual(application, '', 'application must not be empty');
@@ -293,9 +333,11 @@ export function createSeleniumProvider({
       Number.isSafeInteger(maxStartupAttempts) && maxStartupAttempts > 0,
       'maxStartupAttempts must be positive'
     );
+    throwIfAborted(signal);
 
     let lastStartupError;
     for (let attempt = 1; attempt <= maxStartupAttempts; attempt += 1) {
+      throwIfAborted(signal);
       const lease = await reservePorts({ count: 2, host: '127.0.0.1' });
       try {
         validateLease(lease);
@@ -306,6 +348,7 @@ export function createSeleniumProvider({
       const [intermediary, native] = lease.ports;
       const driverUrl = `http://127.0.0.1:${intermediary}/`;
       await lease.release();
+      throwIfAborted(signal);
 
       let child;
       try {
@@ -331,6 +374,7 @@ export function createSeleniumProvider({
           child.stdout?.resume?.();
           child.stderr?.resume?.();
         }
+        throwIfAborted(signal);
         if (child.exitCode !== null || child.signalCode !== null) {
           throw processExitError(child);
         }
@@ -339,9 +383,12 @@ export function createSeleniumProvider({
           waitUntilReady({
             driverUrl,
             timeoutMs: startupTimeoutMs,
-            pollIntervalMs
-          })
+            pollIntervalMs,
+            signal
+          }),
+          signal
         );
+        throwIfAborted(signal);
       } catch (error) {
         lastStartupError = error;
         const cleanup = await terminateProcess(child);
@@ -349,6 +396,9 @@ export function createSeleniumProvider({
           throw new Error(`tauri-driver cleanup failed after startup attempt ${attempt}`, {
             cause: error
           });
+        }
+        if (signal?.aborted || error?.name === 'AbortError') {
+          throw abortError(signal);
         }
         if (attempt < maxStartupAttempts) {
           continue;
@@ -365,14 +415,29 @@ export function createSeleniumProvider({
         driver = await settleWithin(
           buildDriver({ application, driverUrl }),
           sessionBuildTimeoutMs,
-          'WebDriver session construction'
+          'WebDriver session construction',
+          { signal }
         );
+        throwIfAborted(signal);
       } catch (error) {
+        if (driver) {
+          await settleWithin(
+            driver.quit(),
+            sessionCloseTimeoutMs,
+            'WebDriver session close after startup failure'
+          ).catch(() => undefined);
+        }
         const cleanup = await terminateProcess(child);
         if (cleanup === 'cleanup-failed') {
-          throw new Error('failed to construct the WebDriver session; process cleanup also failed', {
-            cause: error
-          });
+          throw new Error(
+            'failed to construct the WebDriver session; process cleanup also failed',
+            {
+              cause: error
+            }
+          );
+        }
+        if (signal?.aborted || error?.name === 'AbortError') {
+          throw abortError(signal);
         }
         if (attempt < maxStartupAttempts) {
           continue;

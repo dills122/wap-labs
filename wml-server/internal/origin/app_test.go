@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -360,17 +361,29 @@ func TestOriginInstanceIdentityIsPresentOnPublicAndInternalSurfaces(t *testing.T
 		config.OriginInstanceID = "origin-run-7"
 	})
 
-	public := perform(app.Handler(), http.MethodGet, "/", "", "")
-	if got := public.Header().Get("X-Waves-Origin-Instance"); got != "origin-run-7" {
-		t.Fatalf("origin response header = %q", got)
+	for _, path := range []string{"/", "/examples/interop-check.wml", "/gateway"} {
+		public := perform(app.Handler(), http.MethodGet, path, "", "")
+		if got := public.Header().Values("X-Waves-Origin-Instance"); !slices.Equal(got, []string{"origin-run-7"}) {
+			t.Fatalf("origin response header for %s = %q", path, got)
+		}
 	}
 	health := perform(app.InternalHandler(), http.MethodGet, "/health", "", "")
+	if got := health.Header().Values("X-Waves-Origin-Instance"); !slices.Equal(got, []string{"origin-run-7"}) {
+		t.Fatalf("internal health origin response header = %q", got)
+	}
 	if !strings.Contains(health.Body.String(), `"originInstanceId":"origin-run-7"`) {
 		t.Fatalf("health omits origin instance: %s", health.Body.String())
 	}
 	metrics := perform(app.InternalHandler(), http.MethodGet, "/metrics", "", "")
+	if got := metrics.Header().Values("X-Waves-Origin-Instance"); !slices.Equal(got, []string{"origin-run-7"}) {
+		t.Fatalf("internal metrics origin response header = %q", got)
+	}
 	if !strings.Contains(metrics.Body.String(), `origin_instance_info{id="origin-run-7"} 1`) {
 		t.Fatalf("metrics omit origin instance: %s", metrics.Body.String())
+	}
+	oracle := perform(app.InternalHandler(), http.MethodGet, "/e2e/actions/missing-action", "", "")
+	if got := oracle.Header().Values("X-Waves-Origin-Instance"); !slices.Equal(got, []string{"origin-run-7"}) {
+		t.Fatalf("internal action oracle origin response header = %q", got)
 	}
 }
 
