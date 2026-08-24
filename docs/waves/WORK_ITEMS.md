@@ -1862,7 +1862,7 @@ Completed `B0` through `B3` tickets are archived in:
 
 ### A5-08 Native Tauri/Kannel E2E harness and PR-signal promotion
 
-1. `Status`: `todo`
+1. `Status`: `in_progress`
 2. `Depends On`: `T0-26`, `T0-29`, `A5-07`
 3. `Owner`: `browser`, `transport-rust`, `WML origin`, `CI`; live ruleset changes require the
    repository administrator acting as CI owner
@@ -1919,6 +1919,19 @@ Completed `B0` through `B3` tickets are archived in:
 - additive follow-up to completed `T0-26`; do not reopen or rewrite its historical acceptance.
 - governing detail lives in `WAVES_NATIVE_E2E_HARNESS_PLAN.md` and its retained research artifact;
   this item must be synchronized if those active decisions change.
+- implementation destination: stacked branch `codex/native-waves-e2e-harness-milestone`, based on
+  the advisory-gate foundation from PR `#578`
+- execution index:
+  - `NE2E-00`: foundation baseline and advisory routing — done in PR `#578`; unchanged-revision
+    runtime observation remains an evidence-collection follow-up
+  - `NE2E-01`: isolated environment and manifest-bound physical gateway routing — in progress
+  - `NE2E-02` through `NE2E-04`: modular runner, Waves interaction API, and observable waits — queued
+    after the isolation seam is verified
+  - `NE2E-05`: fail-closed evidence and correlated origin oracle — queued after runner extraction
+  - `NE2E-06` and `NE2E-07`: independent registration/login race regressions — blocked on `NE2E-05`
+- integration verification: native Node tests, browser typecheck/unit tests, host and transport Rust
+  tests, contract generation check when the exported Rust surface changes, shell static checks, and
+  the Linux native smoke through the existing Make target
 
 ## WAE Selected-Profile Gap Queue
 
