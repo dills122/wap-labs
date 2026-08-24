@@ -44,6 +44,13 @@ export function parseComposePublishedPort(value, protocol) {
   return { host, port, protocol };
 }
 
+export function formatPublishedEndpoint(value, { scheme, protocol }) {
+  assert.ok(scheme === 'http' || scheme === 'wap', 'scheme must be http or wap');
+  const binding = parseComposePublishedPort(value, protocol);
+  const host = binding.host === '::1' ? '[::1]' : binding.host;
+  return `${scheme}://${host}:${binding.port}`;
+}
+
 export function buildNativeE2EManifest({
   runId,
   composeProject,
