@@ -9,6 +9,9 @@ use std::time::Duration;
 pub struct UdpDatagramTransportConfig {
     pub bind_address: String,
     pub read_timeout_ms: Option<u64>,
+    /// Exact operator-configured peer that may use a host-side port outside the WDP service
+    /// registry (for example, a loopback Docker port mapping).
+    pub allowed_peer: Option<SocketAddr>,
 }
 
 impl Default for UdpDatagramTransportConfig {
@@ -16,12 +19,14 @@ impl Default for UdpDatagramTransportConfig {
         Self {
             bind_address: "127.0.0.1:0".to_string(),
             read_timeout_ms: Some(100),
+            allowed_peer: None,
         }
     }
 }
 
 pub struct UdpDatagramTransport {
     socket: UdpSocket,
+    allowed_peer: Option<SocketAddr>,
 }
 
 impl UdpDatagramTransport {
@@ -33,7 +38,10 @@ impl UdpDatagramTransport {
                 .set_read_timeout(Some(Duration::from_millis(timeout_ms)))
                 .map_err(|error| WdpError::TransportUnavailable(error.to_string()))?;
         }
-        Ok(Self { socket })
+        Ok(Self {
+            socket,
+            allowed_peer: config.allowed_peer,
+        })
     }
 
     pub fn local_addr(&self) -> SocketAddr {
@@ -43,13 +51,19 @@ impl UdpDatagramTransport {
     }
 }
 
-fn socket_addr_from_wdp(address: &WdpAddress, port: u16) -> WdpResult<SocketAddr> {
-    if WdpServicePort::from_u16(port).is_none() {
-        return Err(WdpError::DestinationPortUnsupported(port));
-    }
-    address
+fn socket_addr_from_wdp(
+    address: &WdpAddress,
+    port: u16,
+    allowed_peer: Option<SocketAddr>,
+) -> WdpResult<SocketAddr> {
+    let destination = address
         .as_socket_addr(port)
-        .ok_or(WdpError::AddressTypeUnsupported)
+        .ok_or(WdpError::AddressTypeUnsupported)?;
+    if WdpServicePort::from_u16(port).is_some() || allowed_peer == Some(destination) {
+        Ok(destination)
+    } else {
+        Err(WdpError::DestinationPortUnsupported(port))
+    }
 }
 
 fn map_udp_error(error: std::io::Error) -> WdpError {
@@ -71,7 +85,8 @@ impl DatagramTransport for UdpDatagramTransport {
             });
         }
 
-        let destination = socket_addr_from_wdp(&datagram.dst_addr, datagram.dst_port)?;
+        let destination =
+            socket_addr_from_wdp(&datagram.dst_addr, datagram.dst_port, self.allowed_peer)?;
         self.socket
             .send_to(&datagram.payload, destination)
             .map(|_| ())
@@ -115,6 +130,7 @@ mod tests {
         let mut transport = match bind_or_return(UdpDatagramTransportConfig {
             bind_address: "127.0.0.1:0".to_string(),
             read_timeout_ms: None,
+            allowed_peer: None,
         }) {
             Some(transport) => transport,
             None => return,
@@ -135,10 +151,31 @@ mod tests {
     }
 
     #[test]
+    fn udp_adapter_allows_only_the_exact_operator_configured_peer_port() {
+        let peer: SocketAddr = "127.0.0.1:49000".parse().expect("literal should parse");
+        let address = WdpAddress::from_socket_addr(peer);
+
+        assert_eq!(
+            socket_addr_from_wdp(&address, peer.port(), Some(peer))
+                .expect("the exact configured peer should be accepted"),
+            peer
+        );
+        assert!(matches!(
+            socket_addr_from_wdp(&address, peer.port() + 1, Some(peer)),
+            Err(WdpError::DestinationPortUnsupported(49001))
+        ));
+        assert!(matches!(
+            socket_addr_from_wdp(&address, peer.port(), None),
+            Err(WdpError::DestinationPortUnsupported(49000))
+        ));
+    }
+
+    #[test]
     fn udp_adapter_rejects_oversize_payloads() {
         let mut transport = match bind_or_return(UdpDatagramTransportConfig {
             bind_address: "127.0.0.1:0".to_string(),
             read_timeout_ms: None,
+            allowed_peer: None,
         }) {
             Some(transport) => transport,
             None => return,
@@ -169,6 +206,7 @@ mod tests {
         let mut receiver = match bind_or_return(UdpDatagramTransportConfig {
             bind_address: "127.0.0.1:9200".to_string(),
             read_timeout_ms: Some(1000),
+            allowed_peer: None,
         }) {
             Some(receiver) => receiver,
             None => return,
@@ -181,6 +219,7 @@ mod tests {
         let mut sender = match bind_or_return(UdpDatagramTransportConfig {
             bind_address: "127.0.0.1:0".to_string(),
             read_timeout_ms: None,
+            allowed_peer: None,
         }) {
             Some(sender) => sender,
             None => return,
@@ -200,5 +239,50 @@ mod tests {
         assert_eq!(observed.src_port, sender.local_addr().port());
         assert_eq!(observed.dst_port, recv_port);
         assert_eq!(observed.dst_addr, make_loopback_ipv4_address(recv_port));
+    }
+
+    #[test]
+    fn udp_send_and_receive_roundtrip_with_exact_dynamic_peer_override() {
+        let mut receiver = match bind_or_return(UdpDatagramTransportConfig {
+            bind_address: "127.0.0.1:0".to_string(),
+            read_timeout_ms: Some(1000),
+            allowed_peer: None,
+        }) {
+            Some(receiver) => receiver,
+            None => return,
+        };
+        let peer = receiver.local_addr();
+        assert!(
+            WdpServicePort::from_u16(peer.port()).is_none(),
+            "ephemeral test peer unexpectedly used a registered WDP port"
+        );
+        let mut sender = match bind_or_return(UdpDatagramTransportConfig {
+            bind_address: "127.0.0.1:0".to_string(),
+            read_timeout_ms: Some(1000),
+            allowed_peer: Some(peer),
+        }) {
+            Some(sender) => sender,
+            None => return,
+        };
+        let sender_address = sender.local_addr();
+        let outbound = WdpDatagram {
+            src_addr: WdpAddress::from_socket_addr(sender_address),
+            dst_addr: WdpAddress::from_socket_addr(peer),
+            src_port: sender_address.port(),
+            dst_port: peer.port(),
+            payload: b"mapped-gateway".to_vec(),
+        };
+
+        sender
+            .send(&outbound)
+            .expect("the exact dynamic peer should be reachable");
+        let observed = receiver
+            .receive()
+            .expect("receiver should get the datagram");
+        assert_eq!(observed.payload, b"mapped-gateway");
+        assert_eq!(
+            observed.src_addr,
+            WdpAddress::from_socket_addr(sender_address)
+        );
     }
 }

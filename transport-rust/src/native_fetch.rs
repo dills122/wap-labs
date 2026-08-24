@@ -139,6 +139,7 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
     let mut transport = match UdpDatagramTransport::new(UdpDatagramTransportConfig {
         bind_address,
         read_timeout_ms: Some(plan.timeout_ms),
+        allowed_peer: plan.gateway_endpoint.as_ref().map(|_| peer),
     }) {
         Ok(transport) => transport,
         Err(error) => {

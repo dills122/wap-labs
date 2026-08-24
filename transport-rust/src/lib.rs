@@ -351,8 +351,11 @@ pub enum FetchTransportProfile {
 /// `gateway_endpoint` is deliberately separate from [`FetchDeckRequest::url`]: the request URL
 /// identifies the WAP resource, while the endpoint identifies the selected proxy/gateway peer.
 /// Native WAP endpoints use `wap://host[:port]`; gateway-bridged endpoints use an absolute
-/// `http://` or `https://` base URL. When `expected_origin_instance_id` is present, native WAP
-/// replies must carry exactly one matching `X-Waves-Origin-Instance` response header.
+/// `http://` or `https://` base URL. An explicit native endpoint may use a non-standard host-side
+/// port (for example, an exact loopback container mapping); the UDP adapter permits only that
+/// resolved peer, while resource URLs without an override remain restricted to WDP service ports.
+/// When `expected_origin_instance_id` is present, native WAP replies must carry exactly one matching
+/// `X-Waves-Origin-Instance` response header.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FetchTransportOptions {
     pub profile: FetchTransportProfile,

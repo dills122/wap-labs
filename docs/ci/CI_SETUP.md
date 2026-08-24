@@ -428,6 +428,8 @@ Behavior:
 - starts run-scoped Kannel and WML-server services on dynamic loopback ports, then opts into
   local/private access only with the existing
   `WAVES_FETCH_DESTINATION_POLICY=allow-private` host boundary
+- routes the dynamic Kannel UDP mapping as one exact operator-configured Lowband peer; arbitrary
+  resource URL ports remain rejected by the WDP service-port policy
 - pins `wap-net-core` and disables gateway fallback
 - serves WML 1.3 through the same explicit WML-server test boundary and requires Kannel to emit
   the negotiated WBXML 1.3 envelope accepted by the pinned decoder
