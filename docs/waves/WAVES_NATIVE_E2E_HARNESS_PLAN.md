@@ -694,9 +694,14 @@ Accept:
 | `AUTH-NATIVE-001B` | Registration with ordinary WebDriver Enter            | physical keyboard routing -> correlated POST   |
 | `AUTH-NATIVE-002A` | Login with same-task final character + Select handler | UI -> controller/IPC/engine -> correlated POST |
 | `AUTH-NATIVE-002B` | Login with ordinary WebDriver Select click            | physical interaction -> session                |
-| `NAV-NATIVE-001`   | Card/link/back/reload flow                            | UI -> engine history                           |
+| `NAV-NATIVE-001`   | Card and external-deck navigation                     | UI -> engine history                           |
+| `NAV-NATIVE-002`   | Back crosses host-deck then same-deck history          | host history -> engine card history            |
+| `NAV-NATIVE-003`   | Reload fetches once without duplicating history        | UI -> transport -> host history                |
 | `ERR-NATIVE-001`   | Invalid URL shows an error and recovers               | adapter error propagation                      |
 | `REQ-NATIVE-001`   | One navigation action produces one origin request     | duplicate-request prevention                   |
+| `RACE-NATIVE-001`  | Cancelled slow response cannot replace a newer deck   | cancellation -> stale-response exclusion       |
+| `RACE-NATIVE-002`  | Stop preserves the current deck and permits recovery  | UI -> controller cancellation -> recovery      |
+| `ERR-NATIVE-002`   | Owned Kannel outage is visible and restart recovers   | transport failure -> infrastructure recovery   |
 
 ### Nightly P1 suite
 
@@ -708,8 +713,6 @@ Accept:
 - keyboard/softkey parity
 - transport failure with fallback disabled
 - malformed or unsupported WML response
-- navigation cancellation
-- gateway unavailable and subsequent recovery
 - application restart with isolated state
 - repeated immediate-submit stress sequence
 
@@ -734,6 +737,17 @@ Accept:
 - no fetch behavior or fault simulation enters the engine
 - each failure produces a visible error and a proven recovery action
 - fixtures are bounded, deterministic, and unit-tested
+
+Implementation status:
+
+- the fixture-mode-only delayed navigation route records one bounded `navigation` action as
+  `received`, then `success` or `cancelled`; production origin mode does not register the route
+- `RACE-NATIVE-001` and `RACE-NATIVE-002` prove stale-response exclusion, explicit Stop behavior,
+  prior-deck preservation, and recovery through the real native UI/transport assembly
+- `ERR-NATIVE-002` stops only the run-owned Kannel Compose service, proves the visible transport
+  error, restores Kannel in a mandatory recovery path, waits for admin health, and then proves a
+  real deck load in the same browser session
+- malformed and unsupported-response fixtures remain follow-up scope
 
 ## Phase 4: Evidence, Flake, and Maintenance Discipline
 

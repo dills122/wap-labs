@@ -98,4 +98,47 @@ const explicitStop = Object.freeze({
   }
 });
 
-export const RESILIENCE_SCENARIOS = Object.freeze([staleNavigation, explicitStop]);
+const gatewayOutage = Object.freeze({
+  id: 'ERR-NATIVE-002',
+  suite: 'smoke',
+  name: 'Real gateway outage is visible and restart recovers',
+  secretBearing: false,
+  async run(context) {
+    await prepare(context);
+    await loadHome(context);
+
+    await context.infrastructure.withGatewayStopped(async () => {
+      await context.waves.openWapUrl(
+        'wap://localhost/examples/index.wml?gateway-outage=err-native-002'
+      );
+      context.observe({ phase: 'ui-dispatched' });
+      const status = await context.waves.waitForStatus('Fetch failed:');
+      assert.equal(status.displayed, true, 'gateway outage status must be visible');
+      assert.equal(status.tone, 'error', 'gateway outage status must use the visible error tone');
+      await context.waves.waitForDeckText('Local WAP training environment.');
+      context.observe({ phase: 'response-rendered' });
+      context.recordAssertion(
+        'visible gateway outage',
+        'the production transport surfaced the stopped owned gateway as a visible error'
+      );
+    }, { signal: context.signal });
+
+    const recoveryAddress = 'wap://localhost/examples/interop-check.wml';
+    context.observe({ phase: 'recovery-ready' });
+    await context.waves.openWapUrl(recoveryAddress);
+    context.observe({ phase: 'recovery-dispatched', address: recoveryAddress });
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recoveryAddress);
+    context.observe({ phase: 'recovered', address: recoveryAddress });
+    context.recordAssertion(
+      'gateway restart recovery',
+      'the same native browser session loaded a real deck after owned Kannel restarted'
+    );
+  }
+});
+
+export const RESILIENCE_SCENARIOS = Object.freeze([
+  staleNavigation,
+  explicitStop,
+  gatewayOutage
+]);

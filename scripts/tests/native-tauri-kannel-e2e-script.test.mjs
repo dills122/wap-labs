@@ -91,6 +91,9 @@ test('native E2E discovers runtime ports and writes the immutable host routing m
   assert.match(source, /export WML_ORIGIN_INSTANCE_ID/);
   assert.match(source, /export WML_PUBLIC_BASE/);
   assert.match(source, /export KANNEL_ADMIN_PASSWORD/);
+  assert.match(source, /export KANNEL_ADMIN_BASE/);
+  assert.match(source, /export NATIVE_E2E_ROOT_DIR/);
+  assert.match(source, /export NATIVE_E2E_COMPOSE_PROJECT/);
   assert.match(source, /\[ "\$\{#KANNEL_ADMIN_PASSWORD\}" -lt 4 \]/);
   assert.doesNotMatch(source, /echo .*KANNEL_ADMIN_PASSWORD/);
   assert.doesNotMatch(source, /export GATEWAY_HTTP_BASE/);
@@ -195,6 +198,7 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
       'RACE-NATIVE-001\tsmoke\tCancelled slow navigation cannot overwrite a newer deck',
       'RACE-NATIVE-002\tsmoke\tStop preserves the current deck and permits recovery',
+      'ERR-NATIVE-002\tsmoke\tReal gateway outage is visible and restart recovers',
       ''
     ].join('\n')
   );

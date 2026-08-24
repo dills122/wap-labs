@@ -36,6 +36,16 @@ function fixture() {
           };
         }
       },
+      infrastructure: {
+        async withGatewayStopped(callback) {
+          calls.push(['gateway', 'stopped']);
+          try {
+            return await callback();
+          } finally {
+            calls.push(['gateway', 'restored']);
+          }
+        }
+      },
       observe(value) { calls.push(['observe', value]); },
       recordAssertion(name, details) { assertions.push({ name, details }); }
     }
@@ -45,11 +55,35 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
   );
+});
+
+test('real gateway outage is visible and the restarted gateway recovers', async () => {
+  const { calls, assertions, context } = fixture();
+  context.waves.waitForStatus = async (text) => {
+    calls.push(['status', text]);
+    return { text: 'Fetch failed: gateway unavailable', tone: 'error', displayed: true };
+  };
+
+  await RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-002').run(context);
+
+  assert.deepEqual(calls.filter(([kind]) => kind === 'gateway'), [
+    ['gateway', 'stopped'],
+    ['gateway', 'restored']
+  ]);
+  assert.ok(calls.some((entry) => entry[0] === 'status' && entry[1] === 'Fetch failed:'));
+  assert.equal(
+    calls.filter(
+      ([kind, text]) => kind === 'deck' && text === 'Local WAP training environment.'
+    ).length,
+    2,
+    'the prior deck must be checked again after the outage error'
+  );
+  assert.equal(assertions.at(-1).name, 'gateway restart recovery');
 });
 
 test('superseded slow navigation cannot overwrite a newer successful deck', async () => {
