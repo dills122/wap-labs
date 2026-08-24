@@ -13,6 +13,12 @@ case "${NATIVE_E2E_PREBUILT_IMAGES}" in
     ;;
 esac
 
+KANNEL_ADMIN_PASSWORD="${KANNEL_ADMIN_PASSWORD:-changeme}"
+if [ "${#KANNEL_ADMIN_PASSWORD}" -lt 4 ]; then
+  echo "native E2E infrastructure secret must contain at least 4 characters" >&2
+  exit 2
+fi
+
 if [ "$(uname -s)" != "Linux" ]; then
   echo "native Tauri WebDriver smoke requires Linux (tauri-driver does not support macOS)" >&2
   exit 1
@@ -125,7 +131,6 @@ GATEWAY_UDP_BINDING="$(compose_e2e port kannel 9200 --protocol udp)"
 KANNEL_ADMIN_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${KANNEL_ADMIN_BINDING}")"
 WML_INTERNAL_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_INTERNAL_BINDING}")"
 WML_PUBLIC_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_PUBLIC_BINDING}")"
-KANNEL_ADMIN_PASSWORD="${KANNEL_ADMIN_PASSWORD:-changeme}"
 export KANNEL_ADMIN_PASSWORD
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_BASE}/status?password=${KANNEL_ADMIN_PASSWORD}"
 WML_HEALTH_URL="${WML_INTERNAL_BASE}/health"

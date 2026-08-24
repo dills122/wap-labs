@@ -1924,11 +1924,13 @@ Completed `B0` through `B3` tickets are archived in:
 - execution index:
   - `NE2E-00`: foundation baseline and advisory routing — done in PR `#578`; unchanged-revision
     runtime observation remains an evidence-collection follow-up
-  - `NE2E-01`: isolated environment and manifest-bound physical gateway routing — in progress
-  - `NE2E-02` through `NE2E-04`: modular runner, Waves interaction API, and observable waits — queued
-    after the isolation seam is verified
-  - `NE2E-05`: fail-closed evidence and correlated origin oracle — queued after runner extraction
-  - `NE2E-06` and `NE2E-07`: independent registration/login race regressions — blocked on `NE2E-05`
+  - `NE2E-01`: isolated environment and manifest-bound physical gateway routing — implemented;
+    local two-origin coexistence/teardown proof passed, full Kannel/native Linux proof pending CI
+  - `NE2E-02` through `NE2E-04`: modular runner, fresh scenario sessions, Waves interaction API,
+    WebDriver status readiness, and measured observable waits — implemented
+  - `NE2E-05`: fail-closed exact safe-upload evidence and bounded correlated origin oracle — implemented
+  - `NE2E-06` and `NE2E-07`: four independent registration/login race and ordinary-input
+    regressions — implemented; authoritative Linux execution and mutation proof pending
 - integration verification: native Node tests, browser typecheck/unit tests, host and transport Rust
   tests, contract generation check when the exported Rust surface changes, shell static checks, and
   the Linux native smoke through the existing Make target

@@ -19,6 +19,19 @@ test('native E2E rejects an invalid prebuilt-image mode before platform setup', 
   assert.match(result.stderr, /NATIVE_E2E_PREBUILT_IMAGES must be 0 or 1/);
 });
 
+test('native E2E rejects secrets the evidence scanner cannot safely identify', () => {
+  const result = spawnSync('sh', [scriptPath], {
+    encoding: 'utf8',
+    env: { ...process.env, KANNEL_ADMIN_PASSWORD: '123' }
+  });
+
+  assert.equal(result.status, 2);
+  assert.equal(
+    result.stderr,
+    'native E2E infrastructure secret must contain at least 4 characters\n'
+  );
+});
+
 test('native E2E keeps local builds as the default and CI prebuilt startup explicit', () => {
   assert.match(source, /NATIVE_E2E_PREBUILT_IMAGES="\$\{NATIVE_E2E_PREBUILT_IMAGES:-0\}"/);
   assert.match(
@@ -63,6 +76,7 @@ test('native E2E discovers runtime ports and writes the immutable host routing m
   assert.match(source, /export WML_ORIGIN_INSTANCE_ID/);
   assert.match(source, /export WML_PUBLIC_BASE/);
   assert.match(source, /export KANNEL_ADMIN_PASSWORD/);
+  assert.match(source, /\[ "\$\{#KANNEL_ADMIN_PASSWORD\}" -lt 4 \]/);
   assert.doesNotMatch(source, /echo .*KANNEL_ADMIN_PASSWORD/);
   assert.doesNotMatch(source, /export GATEWAY_HTTP_BASE/);
 });

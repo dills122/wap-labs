@@ -58,7 +58,7 @@ Score: `8.5 / 9.0` (`94%`)
 | `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](../../scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
 | `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
 | `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](../../browser/src-tauri/tests/kannel_smoke.rs) |
-| `G9` | Production Tauri frontend is driven through native IPC/transport to visible Kannel results | `n/a` | `0.5` | executable Linux pilot in [scripts/native-tauri-kannel-e2e.sh](../../scripts/native-tauri-kannel-e2e.sh) and [browser/frontend/scripts/native-tauri-kannel-e2e.mjs](../../browser/frontend/scripts/native-tauri-kannel-e2e.mjs); pull-request paths already include browser frontend/host, engine, transport, Kannel, and origin changes, plus scheduled/manual execution, but the pilot is not a required gate and does not yet have fail-closed auth-safe artifacts, concurrent isolation proof, or native auth submission coverage |
+| `G9` | Production Tauri frontend is driven through native IPC/transport to visible Kannel results | `n/a` | `0.5` | the Linux suite now implements run/scenario isolation, dynamic driver and Compose ports, manifest-bound gateway routing with origin identity, exact safe-upload bundles, and four independent native authentication regressions. Local origin-only concurrency/action-oracle evidence passed; `G9` remains `0.5` until the authoritative Linux native runs, mutation sensitivity, both stability samples, and ruleset promotion complete |
 
 ## Interpretation
 
@@ -117,7 +117,7 @@ Required moves:
 
 ### Threshold C: promotable native frontend E2E (`G9 = 1.0`)
 
-Current status: `pilot`
+Current status: `implemented advisory suite; promotion evidence pending`
 
 Promote the native workflow additively to an always-present required pull-request signal only when:
 
@@ -153,8 +153,7 @@ Suggested ticket:
 
 Suggested scope:
 
-1. implement the safe, isolated authentication harness described by the native E2E plan
-   and land its always-present result matrix in advisory mode before authentication scenario PRs
+1. run the implemented Linux P0 suite and complete the same-task Select mutation-sensitivity proof
 2. evaluate both the 20-run concentrated sample and four-run/21-day scheduled sample without
    weakening any transport or artifact-safety policy
 3. revalidate the foundation's always-present classifier/native/final-gate truth table, then promote
