@@ -183,8 +183,38 @@ fn validate_origin_instance_headers(headers: &[u8], expected: Option<&str>) -> R
     let Some(expected) = expected else {
         return Ok(());
     };
-    let decoded = decode_header_block(headers, WspHeaderBlockDecodePolicy::STRICT)
-        .map_err(|_| "origin instance response header was malformed".to_string())?;
+    // Encoding-Version is hop-local and may appear after fields that require the advertised
+    // version. Discover it under our implementation ceiling, then decode the complete block
+    // again under the peer's actual claim. Connectionless replies require exactly one default-page
+    // declaration; the strict second pass rejects fields that overrun that peer claim.
+    let discovery = decode_header_block(
+        headers,
+        WspHeaderBlockDecodePolicy {
+            negotiated_version: Some(WspEncodingVersion::V1_4),
+            ..WspHeaderBlockDecodePolicy::STRICT
+        },
+    )
+    .map_err(|_| "origin instance response header was malformed".to_string())?;
+    let default_versions: Vec<_> = discovery
+        .encoding_version_headers
+        .iter()
+        .filter(|header| header.code_page.is_none())
+        .collect();
+    if default_versions.len() != 1 {
+        return Err("origin instance response header was malformed".to_string());
+    }
+    let negotiated_version = default_versions.first().and_then(|header| header.version);
+    if negotiated_version.is_some_and(|version| version > WspEncodingVersion::V1_4) {
+        return Err("origin instance response header was malformed".to_string());
+    }
+    let decoded = decode_header_block(
+        headers,
+        WspHeaderBlockDecodePolicy {
+            negotiated_version,
+            ..WspHeaderBlockDecodePolicy::STRICT
+        },
+    )
+    .map_err(|_| "origin instance response header was malformed".to_string())?;
     let values: Vec<&str> = decoded
         .headers
         .iter()
@@ -725,20 +755,58 @@ mod tests {
 
     #[test]
     fn native_origin_instance_header_must_match_exactly_once_when_expected() {
-        let matching = b"X-Waves-Origin-Instance\0origin-run-7\0";
+        let matching = b"X-Waves-Origin-Instance\0origin-run-7\0Encoding-Version\x001.3\0";
         assert!(validate_origin_instance_headers(matching, Some("origin-run-7")).is_ok());
         assert!(validate_origin_instance_headers(b"", Some("origin-run-7")).is_err());
         assert!(validate_origin_instance_headers(
-            b"X-Waves-Origin-Instance\0origin-run-8\0",
+            b"X-Waves-Origin-Instance\0origin-run-8\0Encoding-Version\x001.3\0",
             Some("origin-run-7")
         )
         .is_err());
 
-        let duplicate =
-            b"X-Waves-Origin-Instance\0origin-run-7\0X-Waves-Origin-Instance\0origin-run-7\0";
+        let duplicate = b"X-Waves-Origin-Instance\0origin-run-7\0X-Waves-Origin-Instance\0origin-run-7\0Encoding-Version\x001.3\0";
         assert!(validate_origin_instance_headers(duplicate, Some("origin-run-7")).is_err());
         assert!(validate_origin_instance_headers(b"\xff", Some("origin-run-7")).is_err());
         assert!(validate_origin_instance_headers(b"\xff", None).is_ok());
+    }
+
+    #[test]
+    fn native_origin_instance_header_accepts_trailing_peer_encoding_version() {
+        // Kannel emits the WSP 1.3 Cache-Control token before the hop-local
+        // Encoding-Version declaration at the end of the reply header block.
+        let kannel_headers = [
+            0xbd, 0x81, b'X', b'-', b'W', b'a', b'v', b'e', b's', b'-', b'O', b'r', b'i', b'g',
+            b'i', b'n', b'-', b'I', b'n', b's', b't', b'a', b'n', b'c', b'e', 0x00, b'o', b'r',
+            b'i', b'g', b'i', b'n', b'-', b'r', b'u', b'n', b'-', b'7', 0x00, 0xc3, 0x93,
+        ];
+
+        assert!(validate_origin_instance_headers(&kannel_headers, Some("origin-run-7")).is_ok());
+
+        let without_version = &kannel_headers[..kannel_headers.len() - 2];
+        assert!(validate_origin_instance_headers(without_version, Some("origin-run-7")).is_err());
+
+        let mut underclaimed = kannel_headers;
+        *underclaimed.last_mut().expect("version octet") = 0x92;
+        assert!(validate_origin_instance_headers(&underclaimed, Some("origin-run-7")).is_err());
+
+        let mut above_implementation_ceiling = kannel_headers;
+        *above_implementation_ceiling
+            .last_mut()
+            .expect("version octet") = 0x95;
+        assert!(validate_origin_instance_headers(
+            &above_implementation_ceiling,
+            Some("origin-run-7")
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn native_origin_instance_header_rejects_duplicate_default_encoding_versions() {
+        let duplicate_versions =
+            b"X-Waves-Origin-Instance\0origin-run-7\0Encoding-Version\x001.3\0Encoding-Version\x001.3\0";
+        assert!(
+            validate_origin_instance_headers(duplicate_versions, Some("origin-run-7")).is_err()
+        );
     }
 
     #[test]
@@ -749,7 +817,7 @@ mod tests {
             CONNECTIONLESS_INITIAL_TRANSACTION_ID,
             0x20,
             0x08,
-            b"X-Waves-Origin-Instance\0origin-run-7\0",
+            b"X-Waves-Origin-Instance\0origin-run-7\0Encoding-Version\x001.3\0",
             br#"<?xml version="1.0"?><wml><card id="login"/></wml>"#,
         );
         let reply_datagram = WdpDatagram {
