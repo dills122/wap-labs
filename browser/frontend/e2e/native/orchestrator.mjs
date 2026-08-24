@@ -132,6 +132,7 @@ export async function executeNativeE2EScenarios({
   scenarios,
   createSession,
   onResult = async () => {},
+  onTerminalResult = async () => {},
   now = Date.now,
   signal,
   scenarioTimeoutMs = 90_000,
@@ -167,6 +168,7 @@ export async function executeNativeE2EScenarios({
     let checkpoints = [];
     let failureClass = null;
     let scenarioOperation;
+    let cleanupOperation;
     let scenarioSettled = true;
     let ownershipReleased = true;
     const scenarioController = new AbortController();
@@ -217,7 +219,8 @@ export async function executeNativeE2EScenarios({
           cleanupTimeoutMs
         );
         try {
-          cleanup = await raceWithAbort(() => session.cleanup(), cleanupController.signal);
+          cleanupOperation = Promise.resolve().then(() => session.cleanup());
+          cleanup = await raceWithAbort(() => cleanupOperation, cleanupController.signal);
           if (!cleanupSucceeded(cleanup) && !failure) {
             failure = errorRecord(new Error('native E2E scenario cleanup failed'));
             failureClass = 'scenario-cleanup';
@@ -252,7 +255,23 @@ export async function executeNativeE2EScenarios({
       ...(failure ? { error: failure } : {})
     });
     results.push(result);
-    if (scenarioSettled && ownershipReleased) await onResult(result);
+    if (scenarioSettled && ownershipReleased) {
+      await onResult(result);
+    } else {
+      const scenarioSettlement = scenarioOperation
+        ? scenarioOperation.then(
+            () => true,
+            () => true
+          )
+        : Promise.resolve(true);
+      const cleanupSettlement = cleanupOperation
+        ? cleanupOperation.then(cleanupSucceeded, () => false)
+        : Promise.resolve(ownershipReleased);
+      const ownershipSettlement = Promise.all([scenarioSettlement, cleanupSettlement]).then(
+        ([scenarioComplete, cleanupComplete]) => scenarioComplete && cleanupComplete
+      );
+      await onTerminalResult(result, { ownershipSettlement });
+    }
     if (scenarioSignal.aborted || !scenarioSettled || !ownershipReleased) break;
   }
   return results;

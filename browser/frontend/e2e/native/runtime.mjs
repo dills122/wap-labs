@@ -3,7 +3,11 @@ import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import { cleanupRestrictedEvidence, initializeScenarioEvidence } from './evidence.mjs';
-import { constructSafeEvidenceBundle, isSafeAssertionName } from './evidence-publisher.mjs';
+import {
+  constructSafeEvidenceBundle,
+  constructStaticOwnershipFailureBundle,
+  isSafeAssertionName
+} from './evidence-publisher.mjs';
 import { executeNativeE2EScenarios } from './orchestrator.mjs';
 import { waitForCondition } from './waits.mjs';
 import { createWavesDriver } from './waves-driver.mjs';
@@ -80,8 +84,11 @@ export async function runNativeE2E({
   environment = process.env,
   timeoutMs = 20_000,
   scenarioTimeoutMs = 90_000,
+  scenarioDrainTimeoutMs = 5_000,
+  cleanupTimeoutMs = 20_000,
   createWaves = createWavesDriver,
   testDataFactory = createAuthenticationTestData,
+  cleanupRestricted = cleanupRestrictedEvidence,
   infrastructureSecrets = ['changeme'],
   signal
 }) {
@@ -90,6 +97,8 @@ export async function runNativeE2E({
     scenarios,
     signal,
     scenarioTimeoutMs,
+    scenarioDrainTimeoutMs,
+    cleanupTimeoutMs,
     async createSession(definition, { signal: scenarioSignal }) {
       const layout = await initializeScenarioEvidence({
         artifactRoot,
@@ -224,8 +233,22 @@ export async function runNativeE2E({
       });
       state.publication = publication;
       if (publication.ok && state.secretBearing) {
-        await cleanupRestrictedEvidence(state.layout);
+        await cleanupRestricted(state.layout);
       }
+    },
+    async onTerminalResult(result, { ownershipSettlement }) {
+      const state = scenarioState.get(result.scenarioId);
+      if (!state) return;
+      if (state.secretBearing) {
+        void ownershipSettlement
+          .then(async (released) => {
+            if (released) await cleanupRestricted(state.layout);
+          })
+          .catch(() => undefined);
+      }
+      state.terminalPublication = await constructStaticOwnershipFailureBundle({
+        layout: state.layout
+      });
     }
   }).then((results) =>
     results.map((result) => {

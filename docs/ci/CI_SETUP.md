@@ -448,6 +448,10 @@ Behavior:
   fail without an artifact, and raw Compose logs are neither retained nor uploaded
 - retains only fixed-enum scenario checkpoints and failure classes, never arbitrary exception text,
   in safe result evidence
+- when scenario or cleanup ownership remains unresolved, stops the suite and publishes a static
+  schema-only ownership failure without reading or deleting active restricted files; secret-bearing
+  restricted evidence is removed asynchronously only if the underlying operation later proves
+  settlement and process cleanup
 - closes every WebDriver session, terminates its isolated GUI process group, and always tears down
   only the exact owned Docker project
 

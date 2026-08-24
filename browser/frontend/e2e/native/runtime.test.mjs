@@ -73,7 +73,13 @@ test('native runtime preserves driver output across failed startup attempts', as
   try {
     await runNativeE2E({
       scenarios: [
-        { id: 'RETRY-OUTPUT', suite: 'smoke', name: 'retry output', secretBearing: false, async run() {} }
+        {
+          id: 'RETRY-OUTPUT',
+          suite: 'smoke',
+          name: 'retry output',
+          secretBearing: false,
+          async run() {}
+        }
       ],
       application: '/tmp/waves-app',
       artifactRoot,
@@ -109,13 +115,7 @@ test('native runtime preserves driver output across failed startup attempts', as
     });
 
     const retained = await readFile(
-      path.join(
-        artifactRoot,
-        'run-retry-output',
-        'retry-output',
-        'raw',
-        'tauri-driver.stdout.log'
-      ),
+      path.join(artifactRoot, 'run-retry-output', 'retry-output', 'raw', 'tauri-driver.stdout.log'),
       'utf8'
     );
     assert.equal(retained, 'attempt-one\nattempt-two\n');
@@ -455,6 +455,120 @@ test('native runtime stops the suite when driver construction cleanup reports an
     assert.equal(starts, 1);
     assert.equal(results.length, 1);
     assert.equal(results[0].error.name, 'NativeE2EOwnershipError');
+  } finally {
+    await rm(artifactRoot, { recursive: true, force: true });
+  }
+});
+
+test('native runtime publishes a static safe result when scenario ownership is unresolved', async () => {
+  const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
+  try {
+    const [result] = await runNativeE2E({
+      scenarios: [
+        {
+          id: 'OWNERSHIP-FAIL',
+          suite: 'smoke',
+          name: 'ownership failure',
+          secretBearing: true,
+          async run() {}
+        }
+      ],
+      application: '/tmp/waves-app',
+      artifactRoot,
+      runId: 'run-ownership-fail',
+      origin: {},
+      selector: (value) => value,
+      testDataFactory: () => ({ pin: '4927' }),
+      provider: {
+        async startSession() {
+          return {
+            driver: { findElement() {}, executeScript() {} },
+            async stop() {
+              return { webdriverSession: 'closed', processGroup: 'cleanup-failed' };
+            }
+          };
+        }
+      },
+      createWaves: () => ({})
+    });
+
+    assert.equal(result.result, 'fail');
+    const scenarioRoot = path.join(artifactRoot, 'run-ownership-fail', 'ownership-fail');
+    const safeFiles = await (
+      await import('node:fs/promises')
+    ).readdir(path.join(scenarioRoot, 'safe-upload'));
+    assert.deepEqual(safeFiles, ['run-failure.json']);
+    assert.deepEqual(
+      JSON.parse(
+        await readFile(path.join(scenarioRoot, 'safe-upload', 'run-failure.json'), 'utf8')
+      ),
+      { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase: 'ownership' }
+    );
+    assert.equal((await stat(path.join(scenarioRoot, 'raw'))).isDirectory(), true);
+  } finally {
+    await rm(artifactRoot, { recursive: true, force: true });
+  }
+});
+
+test('native runtime removes restricted authentication evidence after delayed ownership release', async () => {
+  const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
+  let releaseStop;
+  const stopSettlement = new Promise((resolve) => {
+    releaseStop = resolve;
+  });
+  let confirmRestrictedCleanup;
+  const restrictedCleanup = new Promise((resolve) => {
+    confirmRestrictedCleanup = resolve;
+  });
+  try {
+    const [result] = await runNativeE2E({
+      scenarios: [
+        {
+          id: 'DELAYED-OWNERSHIP',
+          suite: 'smoke',
+          name: 'delayed ownership',
+          secretBearing: true,
+          async run() {}
+        }
+      ],
+      application: '/tmp/waves-app',
+      artifactRoot,
+      runId: 'run-delayed-ownership',
+      origin: {},
+      selector: (value) => value,
+      cleanupTimeoutMs: 10,
+      testDataFactory: () => ({ pin: '4927' }),
+      async cleanupRestricted(layout) {
+        const { cleanupRestrictedEvidence } = await import('./evidence.mjs');
+        await cleanupRestrictedEvidence(layout);
+        confirmRestrictedCleanup();
+      },
+      provider: {
+        async startSession() {
+          return {
+            driver: { findElement() {}, executeScript() {} },
+            async stop() {
+              return stopSettlement;
+            }
+          };
+        }
+      },
+      createWaves: () => ({})
+    });
+
+    assert.equal(result.result, 'fail');
+    const scenarioRoot = path.join(artifactRoot, 'run-delayed-ownership', 'delayed-ownership');
+    assert.deepEqual(
+      JSON.parse(
+        await readFile(path.join(scenarioRoot, 'safe-upload', 'run-failure.json'), 'utf8')
+      ),
+      { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase: 'ownership' }
+    );
+    assert.equal((await stat(path.join(scenarioRoot, 'raw'))).isDirectory(), true);
+
+    releaseStop({ webdriverSession: 'closed', processGroup: 'terminated' });
+    await restrictedCleanup;
+    await assert.rejects(stat(path.join(scenarioRoot, 'raw')), { code: 'ENOENT' });
   } finally {
     await rm(artifactRoot, { recursive: true, force: true });
   }
