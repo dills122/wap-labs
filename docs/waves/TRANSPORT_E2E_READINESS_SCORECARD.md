@@ -1,7 +1,7 @@
 # Transport E2E Readiness Scorecard
 
 Status: active tracking metric  
-Date: 2026-07-26
+Date: 2026-08-24
 
 Owner: transport-rust + browser + gateway docs
 
@@ -58,7 +58,7 @@ Score: `8.5 / 9.0` (`94%`)
 | `G6` | Failure diagnostics are preserved automatically (gateway/server/test logs) | `1.0` | `1.0` | [scripts/transport-wap-smoke.sh](../../scripts/transport-wap-smoke.sh) now writes status/log artifacts into a temp directory and prints the path on success/failure |
 | `G7` | Browser path runs against real Kannel via host transport rather than mocks | `n/a` | `1.0` | ignored host-native smoke in [browser/src-tauri/src/tests/fetch_commands.rs](../../browser/src-tauri/src/tests/fetch_commands.rs) forces `wap-net-core` and disabled fallback |
 | `G8` | Browser/render assertions validate visible WML outcome from real gateway-served deck | `n/a` | `1.0` | browser host smokes validate real Kannel-backed render output for the root deck and the navigated menu card via native fetch in [browser/src-tauri/tests/kannel_smoke.rs](../../browser/src-tauri/tests/kannel_smoke.rs) |
-| `G9` | Production Tauri frontend is driven through native IPC/transport to visible Kannel results | `n/a` | `0.5` | executable Linux pilot in [scripts/native-tauri-kannel-e2e.sh](../../scripts/native-tauri-kannel-e2e.sh) and [browser/frontend/scripts/native-tauri-kannel-e2e.mjs](../../browser/frontend/scripts/native-tauri-kannel-e2e.mjs); the workflow self-validates pilot changes and otherwise runs scheduled/manual, capturing home/menu, invalid-URL, recovery, and teardown evidence, but it does not yet cover product-change PR paths |
+| `G9` | Production Tauri frontend is driven through native IPC/transport to visible Kannel results | `n/a` | `0.5` | executable Linux pilot in [scripts/native-tauri-kannel-e2e.sh](../../scripts/native-tauri-kannel-e2e.sh) and [browser/frontend/scripts/native-tauri-kannel-e2e.mjs](../../browser/frontend/scripts/native-tauri-kannel-e2e.mjs); pull-request paths already include browser frontend/host, engine, transport, Kannel, and origin changes, plus scheduled/manual execution, but the pilot is not a required gate and does not yet have fail-closed auth-safe artifacts, concurrent isolation proof, or native auth submission coverage |
 
 ## Interpretation
 
@@ -94,8 +94,9 @@ Score: `8.5 / 9.0` (`94%`)
 ### Main gaps
 
 1. the underlying live Kannel Rust tests remain ignored outside the provisioned smoke workflows
-2. native frontend UI automation covers pilot implementation PRs plus scheduled/manual runs while
-   Linux runner stability is measured; product-change PR paths remain deferred
+2. native frontend UI automation runs for relevant product paths plus scheduled/manual runs while
+   Linux runner stability is measured; required-check promotion and authentication coverage remain
+   deferred
 3. non-ASCII charset-sensitive form submission is still not a proven smoke path
 
 ## Recommended next threshold targets
@@ -118,27 +119,49 @@ Required moves:
 
 Current status: `pilot`
 
-Promote the native workflow additively to a path-scoped pull-request signal only when:
+Promote the native workflow additively to an always-present required pull-request signal only when:
 
-1. four consecutive scheduled runs succeed on `ubuntu-latest` over at least 21 days
-2. every qualifying run uploads `evidence.json` with `result: pass`, all five named screenshots,
-   page source, driver/service logs, `gui-cleanup.json`, and empty post-down Compose state
-3. none of the qualifying runs requires a rerun and the slowest completes within 30 minutes
-4. the follow-up preserves the scheduled/manual triggers, read-only permissions, explicit
+1. 20 consecutive no-rerun P0 executions succeed on one unchanged revision
+2. independently, four consecutive scheduled runs succeed on `ubuntu-latest` without reruns over at
+   least 21 elapsed days
+3. each qualifying run publishes only a constructed allowlisted safe artifact directory; raw
+   runtime evidence is never an upload target, and sanitizer failure publishes no credential-bearing
+   screenshot, page source, trace, or log excerpt; an exact filename/digest manifest rejects partial
+   or extra bundles; PINs, setup bodies, issued session IDs, Kannel admin/status credentials,
+   WebDriver handles, and workflow console output are covered by the secret policy
+4. concurrent-isolation evidence proves two E2E stacks can coexist with the developer stack and tear
+   down independently, with run-scoped WebDriver ports and manifest-bound physical gateway routing
+   while the logical WAP URL remains unchanged; a swapped endpoint fails through origin-instance
+   mismatch detection
+5. deterministic native registration and login race scenarios pass, while the recorded
+   Select-serialization mutant makes the exact regression scenario fail
+6. the required workflow has no top-level path filter: an always-present classifier conditionally
+   runs native E2E and a final `if: always()` gate reports success for verified irrelevant changes or
+   the native result for relevant changes; scheduled/manual events force native execution
+7. the follow-up preserves scheduled/manual triggers, read-only permissions, explicit
    `allow-private` test-boundary opt-in, `wap-net-core`, and disabled fallback
+
+The implementation and evidence design are specified in
+[Waves Native End-to-End Harness Plan](WAVES_NATIVE_E2E_HARNESS_PLAN.md) and the retained
+[decision research](WAVES_NATIVE_E2E_HARNESS_RESEARCH.md).
 
 ## Suggested follow-up ticket
 
 Suggested ticket:
 
-- `A5-08` native Tauri/Kannel PR-signal promotion
+- `A5-08` native Tauri/Kannel E2E harness and PR-signal promotion
 
 Suggested scope:
 
-1. evaluate the four-run pilot record against Threshold C without weakening any transport policy
-2. widen path-scoped `pull_request` coverage from pilot files to relevant product changes while
-   preserving schedule/manual
-3. raise `G9` to `1.0` only after the promoted workflow itself succeeds on a qualifying PR
+1. implement the safe, isolated authentication harness described by the native E2E plan
+   and land its always-present result matrix in advisory mode before authentication scenario PRs
+2. evaluate both the 20-run concentrated sample and four-run/21-day scheduled sample without
+   weakening any transport or artifact-safety policy
+3. revalidate the foundation's always-present classifier/native/final-gate truth table, then promote
+   only its stable final context to required status
+4. synchronize `docs/ci/REQUIRED_CHECKS.md`, `docs/ci/CI_SETUP.md`, and the repository ruleset in a
+   dedicated owner-approved promotion step
+5. raise `G9` to `1.0` only after the promoted workflow itself succeeds on a qualifying relevant PR
 
 ## Update policy
 
