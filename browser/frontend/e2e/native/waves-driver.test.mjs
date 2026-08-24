@@ -71,8 +71,7 @@ function fixture() {
   return { calls, page, waits };
 }
 
-function wrappedDeckFixture() {
-  const value = 'Local WAP training\nenvironment.';
+function wrappedDeckFixture(value) {
   const driver = {
     async findElement() {
       return element();
@@ -174,10 +173,18 @@ test('deck waits report the expected text through the semantic viewport text', a
 });
 
 test('deck waits normalize visual row boundaries without joining words', async () => {
-  const page = wrappedDeckFixture();
+  const page = wrappedDeckFixture('Local WAP training\nenvironment.');
   assert.equal(
     await page.waitForDeckText('Local WAP training environment.'),
-    'Local WAP training environment.'
+    'Local WAP training\nenvironment.'
+  );
+});
+
+test('deck waits recognize identifiers hard-wrapped across visual rows', async () => {
+  const page = wrappedDeckFixture('User: e2e_auth_native_\n001a_nonce');
+  assert.equal(
+    await page.waitForDeckText('e2e_auth_native_001a_nonce'),
+    'User: e2e_auth_native_\n001a_nonce'
   );
 });
 
