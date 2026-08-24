@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   buildNativeE2EManifest,
   createNativeE2ERunIdentity,
+  formatPublishedEndpoint,
   parseComposePublishedPort,
   validateNativeE2EManifest
 } from './environment.mjs';
@@ -41,6 +42,17 @@ test('Compose port parsing accepts a bracketed IPv6 loopback binding', () => {
     port: 49153,
     protocol: 'tcp'
   });
+});
+
+test('published bindings become protocol-specific loopback URLs', () => {
+  assert.equal(
+    formatPublishedEndpoint('127.0.0.1:49152', { scheme: 'http', protocol: 'tcp' }),
+    'http://127.0.0.1:49152'
+  );
+  assert.equal(
+    formatPublishedEndpoint('[::1]:49153', { scheme: 'wap', protocol: 'udp' }),
+    'wap://[::1]:49153'
+  );
 });
 
 for (const published of ['0.0.0.0:49152', '[::]:49152', '127.0.0.1:0', 'localhost:49152']) {
