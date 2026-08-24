@@ -19,8 +19,8 @@ function fixture() {
     },
     async waitForDeckText(value) {
       calls.push(['deck', value]);
-      if (value === 'Registration OK') return `Registration OK User ${username} created.`;
-      if (value === 'Login OK') return `Login OK Authenticated as ${username}. Open Portal`;
+      if (value === `User ${username} created.`) return value;
+      if (value === `Authenticated as ${username}.`) return `${value} Open Portal`;
       if (value.startsWith('Welcome')) return `${value} Session: ephemeral`;
       if (/^\*+$/.test(value)) return `PIN: ${value}`;
       return value;
@@ -128,6 +128,9 @@ test('deterministic registration submits the final PIN digit and Enter in one ta
   assert.ok(focusMove < focusSettled && focusSettled < pinPrefix);
   assert.ok(calls.some((entry) => entry[0] === 'receipt' && entry[2] === 'register'));
   assert.ok(
+    calls.some((entry) => entry[0] === 'deck' && entry[1] === 'User e2e_auth_case created.')
+  );
+  assert.ok(
     calls.some((entry) => entry[0] === 'increment' && entry[1] === 'register_success_total')
   );
   assert.deepEqual(
@@ -156,6 +159,11 @@ test('deterministic login seeds independently and submits final PIN digit with S
   await AUTHENTICATION_SCENARIOS[2].run(context);
   assert.ok(calls.some((entry) => entry[0] === 'seed' && entry[1] === 'seed-case-a1'));
   assert.ok(calls.some((entry) => entry[0] === 'burst' && entry[2] === 'select'));
+  assert.ok(
+    calls.some(
+      (entry) => entry[0] === 'deck' && entry[1] === 'Authenticated as e2e_auth_case.'
+    )
+  );
   assert.ok(calls.some((entry) => entry[0] === 'increment' && entry[1] === 'login_success_total'));
   assert.ok(calls.some((entry) => entry[0] === 'unchanged' && entry[1] === 'login_failure_total'));
   assert.ok(calls.some((entry) => entry[0] === 'invalidated'));

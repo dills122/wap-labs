@@ -62,6 +62,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
   const find = (name) => driver.findElement(selector(name));
   const readText = async (element) =>
     driver.executeScript('return arguments[0].textContent ?? "";', element);
+  const normalizeVisibleText = (value) => value.replace(/\s+/g, ' ').trim();
   const readStatusText = async (element) =>
     driver.executeScript(
       'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
@@ -170,7 +171,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     async waitForDeckText(expected) {
       const viewport = await find(SELECTORS.viewport);
       return waitUntil(async () => {
-        const text = await readText(viewport);
+        const text = normalizeVisibleText(await readText(viewport));
         return text.includes(expected) ? text : false;
       }, { description: `deck text ${JSON.stringify(expected)}` });
     },

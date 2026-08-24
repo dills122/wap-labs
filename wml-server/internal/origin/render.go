@@ -64,7 +64,7 @@ func renderLoginDeck(prefillUser, errorMessage, actionID string) string {
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
 		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
-		`<do type="accept" label="Submit"><go method="post" href="` + formAction("/login", actionID) + `">` +
+		`<do type="accept" label="Submit"><go method="post" cache-control="no-cache" href="` + formAction("/login", actionID) + `">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +
 		`</go></do>` +
@@ -82,7 +82,7 @@ func renderRegisterDeck(prefillUser, errorMessage, actionID string) string {
 		message +
 		`<p>User: <input name="username" value="` + xmlEscape(prefillUser) + `" title="User" format="*M" emptyok="false"/></p>` +
 		`<p>PIN: <input name="pin" type="password" title="PIN" format="*N" maxlength="6" emptyok="false"/></p>` +
-		`<do type="accept" label="Create"><go method="post" href="` + formAction("/register", actionID) + `">` +
+		`<do type="accept" label="Create"><go method="post" cache-control="no-cache" href="` + formAction("/register", actionID) + `">` +
 		`<postfield name="username" value="$(username)"/>` +
 		`<postfield name="pin" value="$(pin)"/>` +
 		`</go></do>` +

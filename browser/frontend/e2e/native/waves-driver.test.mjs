@@ -71,6 +71,27 @@ function fixture() {
   return { calls, page, waits };
 }
 
+function wrappedDeckFixture() {
+  const value = 'Local WAP training\nenvironment.';
+  const driver = {
+    async findElement() {
+      return element();
+    },
+    async executeScript(script) {
+      return script.includes('textContent') ? value : '';
+    }
+  };
+  return createWavesDriver({
+    driver,
+    selector: (selector) => selector,
+    waitUntil: async (condition) => {
+      const observed = await condition();
+      if (!observed) throw new Error('condition did not pass');
+      return observed;
+    }
+  });
+}
+
 test('native launch waits for the startup gateway probe before scenarios may navigate', async () => {
   const { page, waits } = fixture();
 
@@ -150,6 +171,14 @@ test('deck waits report the expected text through the semantic viewport text', a
   const { page } = fixture();
   const text = await page.waitForDeckText('Rendered deck');
   assert.equal(text, 'Rendered deck text');
+});
+
+test('deck waits normalize visual row boundaries without joining words', async () => {
+  const page = wrappedDeckFixture();
+  assert.equal(
+    await page.waitForDeckText('Local WAP training environment.'),
+    'Local WAP training environment.'
+  );
 });
 
 test('waitForAddress compares only sanitized origin and path', async () => {

@@ -148,7 +148,7 @@ export class CanvasViewportRenderer {
     this.lastFrame = { rows };
     this.elements.accessibleText.textContent = rows
       .map((row) => row.segments.map((segment) => segment.text).join(''))
-      .join('');
+      .join('\n');
 
     const context = this.context;
     if (!context) {
