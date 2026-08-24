@@ -3,12 +3,10 @@ import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
 import {
-  EVIDENCE_CLASSIFICATION,
-  buildEvidenceManifest,
+  cleanupRestrictedEvidence,
   initializeScenarioEvidence,
-  resolveEvidenceArtifact,
-  writePrivateJsonManifest
 } from './evidence.mjs';
+import { constructSafeEvidenceBundle } from './evidence-publisher.mjs';
 import { executeNativeE2EScenarios } from './orchestrator.mjs';
 import { waitForCondition } from './waits.mjs';
 import { createWavesDriver } from './waves-driver.mjs';
@@ -17,6 +15,25 @@ import { createAuthenticationTestData } from './test-data.mjs';
 function closeStream(stream) {
   if (!stream) return Promise.resolve();
   return new Promise((resolve) => stream.end(resolve));
+}
+
+function waitForReadableCompletion(source, destination, timeoutMs = 1_000) {
+  if (!source || source.readableEnded || source.destroyed) return Promise.resolve();
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(timer);
+      source.unpipe(destination);
+      source.off('end', done);
+      source.off('close', done);
+      source.off('error', done);
+      resolve();
+    };
+    const timer = setTimeout(done, timeoutMs);
+    timer.unref?.();
+    source.once('end', done);
+    source.once('close', done);
+    source.once('error', done);
+  });
 }
 
 async function createPrivateRuntime(layout) {
@@ -60,6 +77,7 @@ export async function runNativeE2E({
   timeoutMs = 20_000,
   createWaves = createWavesDriver,
   testDataFactory = createAuthenticationTestData,
+  infrastructureSecrets = ['changeme'],
   signal
 }) {
   const scenarioState = new Map();
@@ -81,17 +99,22 @@ export async function runNativeE2E({
       const stderr = createWriteStream(path.join(layout.restrictedDir, 'tauri-driver.stderr.log'), {
         flags: 'wx', mode: 0o600
       });
-      const state = { layout, assertions, stdout, stderr };
+      const secrets = [...infrastructureSecrets, ...(testData ? [testData.pin] : [])];
+      const state = { layout, assertions, stdout, stderr, secrets, secretBearing: definition.secretBearing };
       scenarioState.set(definition.id, state);
 
       let providerSession;
       let abortCleanup;
+      let stdoutSource;
+      let stderrSource;
       try {
         providerSession = await provider.startSession({
           application,
           environment: { ...environment, ...runtimeEnvironment },
           startupTimeoutMs: timeoutMs,
           onProcessStarted(child) {
+            stdoutSource = child.stdout;
+            stderrSource = child.stderr;
             child.stdout?.pipe(stdout);
             child.stderr?.pipe(stderr);
           }
@@ -127,6 +150,10 @@ export async function runNativeE2E({
         async cleanup() {
           if (abortCleanup) signal?.removeEventListener('abort', abortCleanup);
           const cleanup = await providerSession.stop();
+          await Promise.all([
+            waitForReadableCompletion(stdoutSource, stdout),
+            waitForReadableCompletion(stderrSource, stderr)
+          ]);
           await Promise.all([closeStream(stdout), closeStream(stderr)]);
           return cleanup;
         }
@@ -135,22 +162,20 @@ export async function runNativeE2E({
     async onResult(result) {
       const state = scenarioState.get(result.scenarioId);
       if (!state) return;
-      const artifact = resolveEvidenceArtifact(state.layout, {
-        classification: EVIDENCE_CLASSIFICATION.SAFE_UPLOAD,
-        fileName: 'result.json',
-        sanitized: true
+      const publication = await constructSafeEvidenceBundle({
+        layout: state.layout,
+        secrets: state.secrets,
+        payloads: [{ fileName: 'result.json', value: safeResult(result, state.assertions) }]
       });
-      await writePrivateJsonManifest({
-        filePath: artifact.path,
-        value: safeResult(result, state.assertions)
-      });
-      const manifest = buildEvidenceManifest(state.layout, [artifact]);
-      const manifestArtifact = resolveEvidenceArtifact(state.layout, {
-        classification: EVIDENCE_CLASSIFICATION.SAFE_UPLOAD,
-        fileName: 'manifest.json',
-        sanitized: true
-      });
-      await writePrivateJsonManifest({ filePath: manifestArtifact.path, value: manifest });
+      state.publication = publication;
+      if (publication.ok && state.secretBearing) {
+        await cleanupRestrictedEvidence(state.layout);
+      }
     }
-  });
+  }).then((results) => results.map((result) => {
+    if (scenarioState.get(result.scenarioId)?.publication?.ok !== false) return result;
+    return Object.freeze({ ...result, result: 'fail', error: {
+      name: 'EvidenceSanitizerError', message: 'safe evidence construction failed'
+    } });
+  }));
 }

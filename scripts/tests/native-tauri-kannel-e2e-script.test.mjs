@@ -62,6 +62,8 @@ test('native E2E discovers runtime ports and writes the immutable host routing m
   assert.match(source, /export WAVES_FETCH_ROUTING_MANIFEST/);
   assert.match(source, /export WML_ORIGIN_INSTANCE_ID/);
   assert.match(source, /export WML_PUBLIC_BASE/);
+  assert.match(source, /export KANNEL_ADMIN_PASSWORD/);
+  assert.doesNotMatch(source, /echo .*KANNEL_ADMIN_PASSWORD/);
   assert.doesNotMatch(source, /export GATEWAY_HTTP_BASE/);
 });
 
@@ -95,6 +97,13 @@ test('native E2E publishes an always-present advisory gate', () => {
   assert.match(workflowSource, /^  native-waves-e2e-gate:$/m);
   assert.match(workflowSource, /if: \$\{\{ always\(\) \}\}/);
   assert.match(workflowSource, /run: node scripts\/ci\/native-e2e-gate\.mjs/);
+});
+
+test('native E2E validates and uploads only exact safe evidence bundles', () => {
+  assert.match(workflowSource, /evidence-cli\.mjs validate-root/);
+  assert.match(workflowSource, /path: browser\/frontend\/test-results\/native-tauri-kannel\/\*\*\/safe-upload\/\*\*/);
+  assert.match(workflowSource, /if-no-files-found: error/);
+  assert.doesNotMatch(workflowSource, /path: browser\/frontend\/test-results\/native-tauri-kannel\s*$/m);
 });
 
 test('native E2E forces scheduled and manually dispatched runs through the classifier', () => {
