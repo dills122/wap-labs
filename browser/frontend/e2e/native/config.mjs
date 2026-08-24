@@ -1,9 +1,10 @@
+import { CORE_SCENARIOS } from './scenarios/core.mjs';
+import { AUTHENTICATION_SCENARIOS } from './scenarios/authentication.mjs';
+
 const SCENARIOS = Object.freeze([
-  Object.freeze({
-    id: 'PILOT-NATIVE-001',
-    suite: 'smoke',
-    name: 'Existing native Tauri/Kannel pilot journey'
-  })
+  ...CORE_SCENARIOS.slice(0, 2),
+  ...AUTHENTICATION_SCENARIOS,
+  ...CORE_SCENARIOS.slice(2)
 ]);
 
 const requireOptionValue = (arguments_, index, option) => {

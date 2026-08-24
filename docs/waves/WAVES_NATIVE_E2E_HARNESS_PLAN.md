@@ -130,11 +130,11 @@ plugin set rather than enabling both by assumption.
 
 ### Three testing rings
 
-| Ring | Real boundaries | Intended frequency |
-| --- | --- | --- |
-| Ordinary-browser stories | Production Waves shell/controller plus real WASM engine and deterministic host fixtures | Every relevant PR |
-| Native runtime E2E | Actual Tauri binary, native engine, Lowband transport, Kannel, and WML origin | Relevant PRs and nightly |
-| Packaged artifact smoke | Platform application bundle/installer, first launch, and essential navigation | Scheduled and release |
+| Ring                     | Real boundaries                                                                         | Intended frequency       |
+| ------------------------ | --------------------------------------------------------------------------------------- | ------------------------ |
+| Ordinary-browser stories | Production Waves shell/controller plus real WASM engine and deterministic host fixtures | Every relevant PR        |
+| Native runtime E2E       | Actual Tauri binary, native engine, Lowband transport, Kannel, and WML origin           | Relevant PRs and nightly |
+| Packaged artifact smoke  | Platform application bundle/installer, first launch, and essential navigation           | Scheduled and release    |
 
 Native E2E remains a deliberately small critical suite. Broad permutations stay in faster engine,
 controller, adapter, contract, and story tests.
@@ -425,7 +425,7 @@ Build:
 - remove the fixed two-second request-count observation delay
 - wait for boot phase, deck text, sanitized address origin/path, status, or metric changes
 - for exactly-once actions, wait until the correlated count reaches one and stays one through a
-  measured bounded quiescence window
+  configured retry-horizon quiescence window
 - define separate startup, navigation, interaction, and shutdown timeout classes
 - retain short polling only inside explicit condition waits and bounded process cleanup
 
@@ -434,8 +434,8 @@ Accept:
 - no fixed behavioral sleep remains
 - implicit and explicit WebDriver waits are not mixed
 - timeout errors identify the expected and last observed states
-- the quiescence window is derived from a recorded request/response timing spike, not copied from
-  the pilot's fixed two-second delay
+- the quiescence window covers the production transport's complete timeout/retry horizon plus a
+  bounded scheduling margin; a test locks the E2E constants to the production configuration
 
 ### Foundation checkpoint
 
@@ -472,11 +472,17 @@ Build:
 - write all runtime output to a non-uploaded owned `raw/` directory
 - after sanitization succeeds, copy only explicit safe filenames into a separate `safe-upload/`
   directory; reject symlinks and paths that resolve outside `raw/`
-- configure the always-running CI upload step to target only `safe-upload/` with
-  `if-no-files-found: error`
-- before upload, validate one exact mode-specific manifest: either the complete normal safe bundle
-  or the single static sanitizer-failure bundle; reject missing, extra, symlinked, path-escaping, or
-  digest-mismatched entries
+- configure the always-running CI upload step to target only the exact
+  `run.*/waves-e2e-*/*/safe-upload/*` layout with `if-no-files-found: error`
+- before upload, validate one exact mode-specific manifest: the complete normal safe bundle, the
+  single static sanitizer-failure bundle, or the single static pre-scenario infrastructure-failure
+  bundle; reject missing, extra, symlinked, path-escaping, or digest-mismatched entries
+- if operation or process ownership remains unresolved, publish only a fixed static ownership
+  failure, stop the suite, retain active restricted files outside the upload tree, and delete
+  secret-bearing restricted evidence only after later settlement proves ownership release
+- validate the normal manifest, its entries, and `result.json` against exact bounded schemas and
+  fixed assertion/checkpoint/failure-class allowlists; require canonical JSON bytes and never trust
+  self-described manifest fields
 - on a scan failure, delete raw evidence and emit only a static failure manifest that never includes
   the matched value, an excerpt, a request body, or page source
 - prohibit screenshots, page source, DOM snapshots, video, traces, and unstructured runtime logs
@@ -505,7 +511,7 @@ Accept:
 - accounts never collide between scenarios
 - registration/login outcomes are proven by visible response decks and metric deltas
 - exactly-once outcomes are proven by a correlated POST count of one that remains stable through the
-  measured quiescence window
+  configured retry-horizon quiescence window
 - the PIN does not appear in JSON, HTML, driver output, Tauri output, Compose logs, or environment
   reports
 - no issued session ID or address query/fragment appears in retained files or workflow console output
@@ -516,10 +522,12 @@ Accept:
 - an authentication failure produces no retained visual or DOM artifact from the credential-entry
   interval
 - authentication failure evidence is limited to a schema-only allowlist of assertions, counters,
-  four boundary checkpoints, environment metadata, and cleanup outcome; “sanitized logs” are not an
-  allowed evidence class
-- evidence distinguishes these observable groups: UI dispatch, controller/IPC/engine acceptance,
-  correlated origin receipt through transport/gateway, and response render
+  a maximum of 16 fixed-enum boundary checkpoints, a fixed failure class, environment metadata,
+  and cleanup outcome; “sanitized logs” are not an allowed evidence class
+- authentication scenarios emit the ordered checkpoints `engine-ready`, `deck-ready`,
+  `form-ready`, `ui-dispatched`, `response-rendered`, `origin-confirmed`, and (for login)
+  `session-invalidated`; the runner maps the last completed checkpoint to a fixed class for the next
+  boundary that failed
 
 Verify:
 
@@ -564,7 +572,8 @@ Accept:
 - PIN is rendered as masked text
 - `Registration OK` renders with the expected username
 - `register_success_total` increases by exactly one as a secondary aggregate check
-- the scenario's correlated POST count reaches one and remains one through the measured quiescence
+- the scenario's correlated POST count reaches one and remains one through the configured
+  retry-horizon quiescence
   window
 - no missing-fields error appears
 - the secret canary scan passes
@@ -677,17 +686,17 @@ Accept:
 
 ### Required P0 suite
 
-| ID | Scenario | Primary boundary |
-| --- | --- | --- |
-| `BOOT-NATIVE-001` | Cold launch reaches network-ready state | package/runtime -> frontend -> native engine |
-| `TRN-NATIVE-001` | Gateway home deck renders | transport -> Kannel -> WML origin |
-| `AUTH-NATIVE-001A` | Registration with same-task final character + Enter | UI -> controller/IPC/engine -> correlated POST |
-| `AUTH-NATIVE-001B` | Registration with ordinary WebDriver Enter | physical keyboard routing -> correlated POST |
+| ID                 | Scenario                                              | Primary boundary                               |
+| ------------------ | ----------------------------------------------------- | ---------------------------------------------- |
+| `BOOT-NATIVE-001`  | Cold launch reaches network-ready state               | package/runtime -> frontend -> native engine   |
+| `TRN-NATIVE-001`   | Gateway home deck renders                             | transport -> Kannel -> WML origin              |
+| `AUTH-NATIVE-001A` | Registration with same-task final character + Enter   | UI -> controller/IPC/engine -> correlated POST |
+| `AUTH-NATIVE-001B` | Registration with ordinary WebDriver Enter            | physical keyboard routing -> correlated POST   |
 | `AUTH-NATIVE-002A` | Login with same-task final character + Select handler | UI -> controller/IPC/engine -> correlated POST |
-| `AUTH-NATIVE-002B` | Login with ordinary WebDriver Select click | physical interaction -> session |
-| `NAV-NATIVE-001` | Card/link/back/reload flow | UI -> engine history |
-| `ERR-NATIVE-001` | Invalid URL shows an error and recovers | adapter error propagation |
-| `REQ-NATIVE-001` | One navigation action produces one origin request | duplicate-request prevention |
+| `AUTH-NATIVE-002B` | Login with ordinary WebDriver Select click            | physical interaction -> session                |
+| `NAV-NATIVE-001`   | Card/link/back/reload flow                            | UI -> engine history                           |
+| `ERR-NATIVE-001`   | Invalid URL shows an error and recovers               | adapter error propagation                      |
+| `REQ-NATIVE-001`   | One navigation action produces one origin request     | duplicate-request prevention                   |
 
 ### Nightly P1 suite
 
@@ -751,8 +760,11 @@ Artifact policy:
 - runtime tools write only to a non-uploaded owned `raw/` directory
 - after sanitization, construct `safe-upload/` from an explicit filename allowlist
 - validate the exact expected mode-specific filename/digest manifest before upload: complete normal
-  bundle or single static sanitizer-failure bundle, with no missing, extra, symlinked, escaping, or
-  digest-mismatched entry
+  bundle, single static sanitizer-failure bundle, or single static pre-scenario
+  infrastructure-failure bundle, with no missing, extra, symlinked, escaping, or digest-mismatched
+  entry
+- treat synthesis of the infrastructure-failure bundle as a nonzero run outcome; a failure-only
+  bundle can never satisfy the native job
 - always retain safe environment metadata, assertion manifest, duration, boundary checkpoints, and
   cleanup report
 - retain one final screenshot on success only after any issued session is invalidated and the
@@ -904,12 +916,12 @@ Workflow shape:
 Before the context becomes required, the same final job runs as an advisory signal. Its tested truth
 table is:
 
-| Event/classification | Native job | Final gate |
-| --- | --- | --- |
-| relevant pull request | must run | mirrors pass/fail/cancel/missing |
+| Event/classification    | Native job               | Final gate                              |
+| ----------------------- | ------------------------ | --------------------------------------- |
+| relevant pull request   | must run                 | mirrors pass/fail/cancel/missing        |
 | irrelevant pull request | skipped by job condition | success with explicit irrelevant reason |
-| schedule or manual | must run | mirrors pass/fail/cancel/missing |
-| classifier failure | does not run | failure |
+| schedule or manual      | must run                 | mirrors pass/fail/cancel/missing        |
+| classifier failure      | does not run             | failure                                 |
 
 ### Stage 3: Nightly Linux regression
 
@@ -959,27 +971,27 @@ After `NE2E-14`:
 - a stale/missing-form-value mutation causes the suite to fail
 - Linux P0 exposes an always-present required gate that conditionally runs the expensive suite for
   relevant paths and succeeds explicitly for verified irrelevant changes
-- failure evidence identifies the last successful observable group: UI dispatch,
-  controller/IPC/engine acceptance, correlated origin receipt through transport/gateway, or response
-  rendering
+- failure evidence retains the bounded fixed-enum checkpoint trail and identifies the next failed
+  boundary as startup, UI dispatch, response rendering, origin confirmation, session lifecycle,
+  scenario finalization, or cleanup without retaining exception text
 
 ## Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-| --- | --- | --- |
-| Native UI tests become slow or flaky | High | short independent scenarios, fresh driver/app session, explicit waits, no behavioral retries |
-| Harness cleanup stops developer services | High | unique Compose project, owned-resource manifest, cleanup guardrail tests |
-| Authentication/session secrets leak into files or workflow console | High | PIN/SID canaries, captured-not-echoed child output, schema-only interval evidence, invalidation before visuals, fail-closed safe upload |
-| Test-only WebDriver plugin ships | High | optional Cargo feature, separate capability/config, dependency and release-binary absence checks |
-| Framework migration delays critical auth coverage | High | harden existing Selenium lane first; evaluate WDIO separately |
-| Driver-specific details leak into scenarios | Medium | narrow Waves-facing driver API and centralized selectors |
-| One long journey masks multiple failures | Medium | one reason per scenario; long journey remains supplemental P1 |
-| Fixed names, WebDriver ports, or gateway endpoints collide | High | no E2E `container_name`, unique project, both driver ports and TCP/UDP bindings per run, manifest-bound routing plus origin-instance mismatch detection |
-| Required check remains pending on irrelevant PRs | High | no workflow-level path filter; always-present classifier and final gate job |
-| Global metrics hide delayed duplicates | High | bounded action correlation plus measured stable quiescence window |
-| Screenshots become brittle assertions | Medium | semantic visible-text/status/metric oracles; screenshots are supporting evidence |
-| Native suite duplicates engine conformance tests | Medium | native suite proves assembly and critical journeys only |
-| Cross-platform WebViews differ | Medium | shared scenario intent, platform-specific provider mechanics, weekly matrix before release gating |
+| Risk                                                               | Impact | Mitigation                                                                                                                                              |
+| ------------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Native UI tests become slow or flaky                               | High   | short independent scenarios, fresh driver/app session, explicit waits, no behavioral retries                                                            |
+| Harness cleanup stops developer services                           | High   | unique Compose project, owned-resource manifest, cleanup guardrail tests                                                                                |
+| Authentication/session secrets leak into files or workflow console | High   | PIN/SID canaries, captured-not-echoed child output, schema-only interval evidence, invalidation before visuals, fail-closed safe upload                 |
+| Test-only WebDriver plugin ships                                   | High   | optional Cargo feature, separate capability/config, dependency and release-binary absence checks                                                        |
+| Framework migration delays critical auth coverage                  | High   | harden existing Selenium lane first; evaluate WDIO separately                                                                                           |
+| Driver-specific details leak into scenarios                        | Medium | narrow Waves-facing driver API and centralized selectors                                                                                                |
+| One long journey masks multiple failures                           | Medium | one reason per scenario; long journey remains supplemental P1                                                                                           |
+| Fixed names, WebDriver ports, or gateway endpoints collide         | High   | no E2E `container_name`, unique project, both driver ports and TCP/UDP bindings per run, manifest-bound routing plus origin-instance mismatch detection |
+| Required check remains pending on irrelevant PRs                   | High   | no workflow-level path filter; always-present classifier and final gate job                                                                             |
+| Global metrics hide delayed duplicates                             | High   | bounded action correlation plus configured retry-horizon stability window                                                                               |
+| Screenshots become brittle assertions                              | Medium | semantic visible-text/status/metric oracles; screenshots are supporting evidence                                                                        |
+| Native suite duplicates engine conformance tests                   | Medium | native suite proves assembly and critical journeys only                                                                                                 |
+| Cross-platform WebViews differ                                     | Medium | shared scenario intent, platform-specific provider mechanics, weekly matrix before release gating                                                       |
 
 ## Delivery and PR Slices
 
@@ -1049,14 +1061,14 @@ observation gates close; it does not depend on the later cross-platform or packa
 
 These are engineering-order estimates, not calendar commitments:
 
-| Milestone | Estimated focused effort |
-| --- | --- |
-| Safe modular Linux harness, correlation, and artifact controls | 3-5 days |
-| Native registration/login critical path | 2-3 days |
-| Failure/recovery expansion and evidence hardening | 3-5 days |
-| Cross-platform embedded-driver spike | 3-5 days |
-| Package smoke | several days per selected platform after bundling is active |
-| Required-check promotion | 1-2 days after the minimum 21-day observation window |
+| Milestone                                                      | Estimated focused effort                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------- |
+| Safe modular Linux harness, correlation, and artifact controls | 3-5 days                                                    |
+| Native registration/login critical path                        | 2-3 days                                                    |
+| Failure/recovery expansion and evidence hardening              | 3-5 days                                                    |
+| Cross-platform embedded-driver spike                           | 3-5 days                                                    |
+| Package smoke                                                  | several days per selected platform after bundling is active |
+| Required-check promotion                                       | 1-2 days after the minimum 21-day observation window        |
 
 The foundation and authentication implementation is roughly one to two focused engineering weeks.
 Required-check promotion has a separate minimum 21-day observation window and cannot be promised in

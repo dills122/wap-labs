@@ -203,6 +203,7 @@ pub fn run() {
             emit_application_command(app, event.id().as_ref());
         })
         .setup(|_| {
+            crate::fetch_routing_manifest::initialize_fetch_routing_manifest()?;
             preflight_wbxml_decoder_available()?;
             Ok(())
         })

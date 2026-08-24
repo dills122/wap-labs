@@ -34,6 +34,11 @@ connectionless Content-Type framing and does not claim WML-304 media/charset own
 - Binary Encoding-Version supports default and application-page identities, version defaults,
   sender/peer version caps, hop-local caching, hop-by-hop removal, per-extension-page
   advertisements, and compatible textual retry selection.
+- Native reply validation performs a bounded discovery pass at the implementation ceiling and a
+  second strict pass at the peer's advertised default-page version. This accepts Kannel's valid
+  ordering where WSP 1.3 fields precede a trailing `Encoding-Version: 1.3`, while an absent,
+  duplicate, under-claimed, malformed, or implementation-exceeding declaration still fails
+  closed under the WAP 1.2 default/version rules.
 - Corrective issue `#449` closes a residual in the completed WSP-802 text-form evidence:
   malformed one- or two-token textual values are rejected instead of being normalized into a
   different valid binary advertisement. This correction does not reopen WSP-802 or `T0-20`.
@@ -50,6 +55,11 @@ connectionless Content-Type framing and does not claim WML-304 media/charset own
   exact `InvalidVersion` failures for malformed one- and two-token values.
 - Native WSP header, Encoding-Version, Expect, peer-cache, retry, list-expansion, and hop-boundary
   unit tests under `transport-rust/src/network/wsp/`
+- Native origin-identity tests under `transport-rust/src/native_fetch.rs` include the exact Kannel
+  header ordering, absent/under-claimed version rejection, and duplicate-version rejection.
+- `transport-rust/tests/kannel_smoke.rs::kannel_wap_owned_origin_identity_smoke` proves the same
+  strict response-identity contract against an isolated live Kannel/WML stack and a dynamic UDP
+  mapping.
 - `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar`
 - `cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix`
 - `cargo test --manifest-path transport-rust/Cargo.toml`

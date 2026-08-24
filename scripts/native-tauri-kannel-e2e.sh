@@ -2,9 +2,8 @@
 set -eu
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-KANNEL_ADMIN_URL="${KANNEL_ADMIN_URL:-http://localhost:13000/status?password=changeme}"
-WML_HEALTH_URL="${WML_HEALTH_URL:-http://localhost:3001/health}"
-WML_METRICS_URL="${WML_METRICS_URL:-http://localhost:3001/metrics}"
+ENVIRONMENT_CLI="${ROOT_DIR}/browser/frontend/e2e/native/environment-cli.mjs"
+EVIDENCE_CLI="${ROOT_DIR}/browser/frontend/e2e/native/evidence-cli.mjs"
 NATIVE_E2E_PREBUILT_IMAGES="${NATIVE_E2E_PREBUILT_IMAGES:-0}"
 
 case "${NATIVE_E2E_PREBUILT_IMAGES}" in
@@ -14,6 +13,12 @@ case "${NATIVE_E2E_PREBUILT_IMAGES}" in
     exit 2
     ;;
 esac
+
+KANNEL_ADMIN_PASSWORD="${KANNEL_ADMIN_PASSWORD:-changeme}"
+if [ "${#KANNEL_ADMIN_PASSWORD}" -lt 4 ]; then
+  echo "native E2E infrastructure secret must contain at least 4 characters" >&2
+  exit 2
+fi
 
 if [ "$(uname -s)" != "Linux" ]; then
   echo "native Tauri WebDriver smoke requires Linux (tauri-driver does not support macOS)" >&2
@@ -32,24 +37,59 @@ if [ -z "${DISPLAY:-}" ]; then
   exit 1
 fi
 
-if [ -n "${NATIVE_E2E_ARTIFACT_DIR:-}" ]; then
-  ARTIFACT_DIR="${NATIVE_E2E_ARTIFACT_DIR}"
-  mkdir -p "${ARTIFACT_DIR}"
-else
-  mkdir -p "${ROOT_DIR}/browser/frontend/test-results"
-  ARTIFACT_DIR="$(mktemp -d "${ROOT_DIR}/browser/frontend/test-results/native-tauri-kannel.XXXXXX")"
-fi
+ARTIFACT_ROOT="${NATIVE_E2E_ARTIFACT_DIR:-${ROOT_DIR}/browser/frontend/test-results/native-tauri-kannel}"
+mkdir -p "${ARTIFACT_ROOT}"
+ARTIFACT_DIR="$(mktemp -d "${ARTIFACT_ROOT}/run.XXXXXX")"
+RUN_NONCE="${NATIVE_E2E_RUN_NONCE:-$(basename "${ARTIFACT_DIR}")}"
+COMPOSE_PROJECT="$(node "${ENVIRONMENT_CLI}" run-id "${RUN_NONCE}" "$$")"
+COMPOSE_OWNED=0
+WML_ORIGIN_INSTANCE_ID="${COMPOSE_PROJECT}"
+export WML_ORIGIN_INSTANCE_ID
+export NATIVE_E2E_RUN_ID="${COMPOSE_PROJECT}"
+
+compose_e2e() {
+  docker compose \
+    --project-name "${COMPOSE_PROJECT}" \
+    --file "${ROOT_DIR}/docker-compose.yml" \
+    --file "${ROOT_DIR}/docker-compose.native-e2e.yml" \
+    "$@"
+}
+
+RUNTIME_ROOT="${ARTIFACT_DIR}/runtime"
+export XDG_DATA_HOME="${RUNTIME_ROOT}/xdg-data"
+export XDG_CONFIG_HOME="${RUNTIME_ROOT}/xdg-config"
+export XDG_CACHE_HOME="${RUNTIME_ROOT}/xdg-cache"
+export XDG_STATE_HOME="${RUNTIME_ROOT}/xdg-state"
+export XDG_RUNTIME_DIR="${RUNTIME_ROOT}/xdg-runtime"
+mkdir -p \
+  "${XDG_DATA_HOME}" \
+  "${XDG_CONFIG_HOME}" \
+  "${XDG_CACHE_HOME}" \
+  "${XDG_STATE_HOME}" \
+  "${XDG_RUNTIME_DIR}"
+chmod 700 "${XDG_RUNTIME_DIR}"
 
 cleanup() {
   exit_code="$?"
+  cleanup_failed=0
   trap - EXIT
-  (
-    cd "${ROOT_DIR}"
-    docker compose ps --all >"${ARTIFACT_DIR}/docker-compose-ps.txt" 2>&1 || true
-    docker compose logs --no-color kannel wml-server >"${ARTIFACT_DIR}/docker-compose.log" 2>&1 || true
-    docker compose down >"${ARTIFACT_DIR}/docker-compose-down.log" 2>&1 || true
-    docker compose ps --all >"${ARTIFACT_DIR}/docker-compose-ps-after-down.txt" 2>&1 || true
-  )
+  if [ "${COMPOSE_OWNED}" -eq 1 ]; then
+    (
+      compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps.txt" 2>&1 || cleanup_failed=1
+      compose_e2e down >"${ARTIFACT_DIR}/docker-compose-down.log" 2>&1 || cleanup_failed=1
+      compose_e2e ps --all >"${ARTIFACT_DIR}/docker-compose-ps-after-down.txt" 2>&1 || cleanup_failed=1
+      remaining="$(compose_e2e ps --all --quiet 2>/dev/null || true)"
+      if [ -n "${remaining}" ]; then
+        cleanup_failed=1
+      fi
+      exit "${cleanup_failed}"
+    ) || cleanup_failed=1
+  fi
+  if [ "${cleanup_failed}" -ne 0 ]; then
+    exit_code=1
+  fi
+  node "${EVIDENCE_CLI}" ensure-run-failure \
+    "${ARTIFACT_DIR}" "${COMPOSE_PROJECT}" >/dev/null 2>&1 || exit_code=1
   printf '%s\n' "${exit_code}" >"${ARTIFACT_DIR}/exit-code.txt"
   echo "native Tauri/Kannel artifacts: ${ARTIFACT_DIR}"
   exit "${exit_code}"
@@ -60,8 +100,9 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 wait_for_http() {
-  url="$1"
-  retries="${2:-60}"
+  label="$1"
+  url="$2"
+  retries="${3:-60}"
   i=1
   while [ "${i}" -le "${retries}" ]; do
     if curl -fsS --connect-timeout 2 --max-time 5 "${url}" >/dev/null 2>&1; then
@@ -70,7 +111,7 @@ wait_for_http() {
     sleep 1
     i=$((i + 1))
   done
-  echo "timeout waiting for ${url}" >&2
+  echo "timeout waiting for ${label}" >&2
   return 1
 }
 
@@ -78,14 +119,49 @@ cd "${ROOT_DIR}"
 
 echo "==> Starting isolated Kannel + WML services"
 export WML_DTD_VERSION=1.3
-if [ "${NATIVE_E2E_PREBUILT_IMAGES}" = 1 ]; then
-  docker compose up -d --no-build kannel wml-server
-else
-  docker compose up -d --build kannel wml-server
+if [ -n "$(compose_e2e ps --all --quiet)" ]; then
+  echo "native E2E Compose project was not empty before startup" >&2
+  exit 1
 fi
-wait_for_http "${KANNEL_ADMIN_URL}"
+COMPOSE_OWNED=1
+if [ "${NATIVE_E2E_PREBUILT_IMAGES}" = 1 ]; then
+  compose_e2e up -d --no-build kannel wml-server
+else
+  compose_e2e up -d --build kannel wml-server
+fi
+
+KANNEL_ADMIN_BINDING="$(compose_e2e port kannel 13000 --protocol tcp)"
+WML_INTERNAL_BINDING="$(compose_e2e port wml-server 3001 --protocol tcp)"
+WML_PUBLIC_BINDING="$(compose_e2e port wml-server 3000 --protocol tcp)"
+GATEWAY_UDP_BINDING="$(compose_e2e port kannel 9200 --protocol udp)"
+KANNEL_ADMIN_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${KANNEL_ADMIN_BINDING}")"
+WML_INTERNAL_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_INTERNAL_BINDING}")"
+WML_PUBLIC_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_PUBLIC_BINDING}")"
+export KANNEL_ADMIN_PASSWORD
+KANNEL_ADMIN_URL="${KANNEL_ADMIN_BASE}/status?password=${KANNEL_ADMIN_PASSWORD}"
+WML_HEALTH_URL="${WML_INTERNAL_BASE}/health"
+WML_METRICS_URL="${WML_INTERNAL_BASE}/metrics"
+WAVES_FETCH_ROUTING_MANIFEST="${ARTIFACT_DIR}/fetch-routing.json"
+node "${ENVIRONMENT_CLI}" write-manifest \
+  "${WAVES_FETCH_ROUTING_MANIFEST}" \
+  "${COMPOSE_PROJECT}" \
+  "${COMPOSE_PROJECT}" \
+  "${GATEWAY_UDP_BINDING}" \
+  "${WML_ORIGIN_INSTANCE_ID}"
+export WAVES_FETCH_ROUTING_MANIFEST
+
+wait_for_http "Kannel admin status" "${KANNEL_ADMIN_URL}"
 curl -fsS --connect-timeout 2 --max-time 5 "${KANNEL_ADMIN_URL}" | grep -q 'Status: running'
-wait_for_http "${WML_HEALTH_URL}"
+wait_for_http "WML origin health" "${WML_HEALTH_URL}"
+curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" |
+  grep -Fq "\"originInstanceId\":\"${WML_ORIGIN_INSTANCE_ID}\""
+
+echo "==> Verifying owned native WAP routing before launching the browser"
+(
+  cd "${ROOT_DIR}/transport-rust"
+  export WAP_GATEWAY_ENDPOINT="wap://${GATEWAY_UDP_BINDING}"
+  cargo test --test kannel_smoke kannel_wap_owned_origin_identity_smoke -- --ignored --exact --test-threads=1
+)
 
 # The app remains production-default PublicOnly. This controlled local-stack lane opts into the
 # existing host policy boundary explicitly and pins the active profile with fallback disabled.
@@ -95,10 +171,10 @@ export WAVES_FETCH_TRANSPORT_FALLBACK=disabled
 export LOWBAND_TRANSPORT_PROFILE=wap-net-core
 export VITE_WAVES_DEFAULT_URL=wap://localhost/
 export VITE_WAVES_DEFAULT_RUN_MODE=network
-export GATEWAY_HTTP_BASE="${GATEWAY_HTTP_BASE:-http://localhost:13002}"
 export NATIVE_E2E_APP_BINARY="${NATIVE_E2E_APP_BINARY:-${ROOT_DIR}/browser/src-tauri/target/debug/wavenav_host}"
 export NATIVE_E2E_ARTIFACT_DIR="${ARTIFACT_DIR}"
 export WML_METRICS_URL
+export WML_PUBLIC_BASE
 export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 
 {

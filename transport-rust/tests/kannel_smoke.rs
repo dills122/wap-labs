@@ -4,7 +4,8 @@ use kannel_support::{
     assert_engine_input_contains, assert_wbxml_13_response, post_request, request,
 };
 use lowband_transport_rust::{
-    fetch_deck_in_process_with_profile, FetchDeckResponse, FetchTransportProfile,
+    fetch_deck_in_process_with_options, fetch_deck_in_process_with_profile, FetchDeckResponse,
+    FetchTransportOptions, FetchTransportProfile,
 };
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -72,6 +73,34 @@ fn kannel_wap_home_smoke_normalizes_expected_root_deck() {
             "Local WAP training environment.",
             "href=\"#menu\"",
         ],
+    );
+}
+
+#[test]
+#[ignore = "runs against an isolated Kannel dev stack with an owned routing manifest"]
+fn kannel_wap_owned_origin_identity_smoke() {
+    let target = std::env::var("WAP_SMOKE_URL").unwrap_or_else(|_| "wap://localhost/".to_string());
+    let gateway_endpoint =
+        std::env::var("WAP_GATEWAY_ENDPOINT").expect("WAP_GATEWAY_ENDPOINT must be configured");
+    let expected_origin_instance_id =
+        std::env::var("WML_ORIGIN_INSTANCE_ID").expect("WML_ORIGIN_INSTANCE_ID must be configured");
+    let response = fetch_deck_in_process_with_options(
+        request(&target),
+        FetchTransportOptions {
+            profile: FetchTransportProfile::WapNetCore,
+            gateway_endpoint: Some(gateway_endpoint),
+            expected_origin_instance_id: Some(expected_origin_instance_id),
+        },
+    );
+    assert!(
+        response.ok,
+        "owned native WAP response failed: error={:?}",
+        response.error
+    );
+    assert_engine_input_contains(
+        &response,
+        &target,
+        &["card id=\"home\"", "Local WAP training environment."],
     );
 }
 

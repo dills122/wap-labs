@@ -12,7 +12,17 @@ test('native E2E defaults to the smoke suite for compatibility', () => {
   assert.deepEqual(options, { mode: 'run', suite: 'smoke', scenarioId: null });
   assert.deepEqual(
     selectNativeE2EScenarios(options).map(({ id }) => id),
-    ['PILOT-NATIVE-001']
+    [
+      'BOOT-NATIVE-001',
+      'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
+      'NAV-NATIVE-001',
+      'ERR-NATIVE-001',
+      'REQ-NATIVE-001'
+    ]
   );
 });
 
@@ -22,28 +32,45 @@ test('native E2E lists stable scenario metadata without running a provider', () 
     suite: null,
     scenarioId: null
   });
-  assert.deepEqual(listNativeE2EScenarios(), [
-    {
-      id: 'PILOT-NATIVE-001',
-      suite: 'smoke',
-      name: 'Existing native Tauri/Kannel pilot journey'
-    }
-  ]);
+  assert.deepEqual(
+    listNativeE2EScenarios().map(({ id }) => id),
+    [
+      'BOOT-NATIVE-001',
+      'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
+      'NAV-NATIVE-001',
+      'ERR-NATIVE-001',
+      'REQ-NATIVE-001'
+    ]
+  );
 });
 
 test('native E2E selects a named suite', () => {
   const options = parseNativeE2EArguments(['--suite', 'smoke']);
   assert.deepEqual(
     selectNativeE2EScenarios(options).map(({ id }) => id),
-    ['PILOT-NATIVE-001']
+    [
+      'BOOT-NATIVE-001',
+      'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
+      'NAV-NATIVE-001',
+      'ERR-NATIVE-001',
+      'REQ-NATIVE-001'
+    ]
   );
 });
 
 test('native E2E selects one exact scenario', () => {
-  const options = parseNativeE2EArguments(['--scenario', 'PILOT-NATIVE-001']);
+  const options = parseNativeE2EArguments(['--scenario', 'TRN-NATIVE-001']);
   assert.deepEqual(
     selectNativeE2EScenarios(options).map(({ id }) => id),
-    ['PILOT-NATIVE-001']
+    ['TRN-NATIVE-001']
   );
 });
 
@@ -60,7 +87,7 @@ for (const { name, arguments: cliArguments, message } of [
   },
   {
     name: 'mixed selectors',
-    arguments: ['--suite', 'smoke', '--scenario', 'PILOT-NATIVE-001'],
+    arguments: ['--suite', 'smoke', '--scenario', 'TRN-NATIVE-001'],
     message: '--suite and --scenario are mutually exclusive'
   },
   {

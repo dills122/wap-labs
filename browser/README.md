@@ -208,10 +208,10 @@ bounded projections, and exports only the versioned allowlist documented in
 [`ENGINE_DEBUG_INSPECTOR.md`](ENGINE_DEBUG_INSPECTOR.md). It does not add mutable debugger
 commands, raw source/secret access, replay, or multi-session behavior.
 
-## Native Tauri/Kannel UI pilot
+## Native Tauri/Kannel UI suite
 
 Linux can drive the production Tauri window through the supported `tauri-driver` WebDriver
-bridge. The pilot clicks the real address/softkey controls and crosses the generated Tauri IPC
+bridge. The suite clicks the real address/softkey controls and crosses the generated Tauri IPC
 contract, native Rust host, `transport-rust`, and Kannel; it does not install a mock invoke layer.
 
 With `tauri-driver` 2.0.6, `WebKitWebDriver`, Docker, and an X11 display available:
@@ -220,11 +220,12 @@ With `tauri-driver` 2.0.6, `WebKitWebDriver`, Docker, and an X11 display availab
 xvfb-run -a make smoke-native-tauri-kannel-ui
 ```
 
-The runner builds the production frontend and debug Tauri binary, provisions the local gateway,
+The runner builds the production frontend and debug Tauri binary, provisions a run-isolated local gateway,
 opts into `allow-private` only through the existing host test boundary, pins `wap-net-core` with
 fallback disabled, serves the test deck as WML 1.3 through explicit test-only response settings,
-captures screenshots/DOM/driver/service logs, and always stops the GUI process
-group and Docker services. This pilot is scheduled/manual until the promotion criteria in
+allocates fresh WebDriver/application state per scenario, emits only structured safe evidence for
+upload, and always stops the GUI process group and exact owned Docker project. The suite remains
+advisory until the promotion criteria in
 `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are met.
 
 ## Next implementation slice

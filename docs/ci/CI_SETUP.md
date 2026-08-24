@@ -405,7 +405,7 @@ path filters mean the check correctly does not exist on unrelated pull requests.
 
 Purpose:
 
-- Non-optimistic Linux pilot for the complete visible path from production Tauri frontend controls
+- Non-optimistic Linux suite for the complete visible path from production Tauri frontend controls
   through generated IPC, the native Rust host/engine, `transport-rust`, and local Kannel.
 
 Triggers:
@@ -425,20 +425,39 @@ Behavior:
 - restores content-addressed Kannel/WML BuildKit layers and starts only the explicitly loaded
   development image tags
 - builds the production frontend and an unbundled debug Tauri application
-- starts Kannel and the WML server, then opts into local/private access only with the existing
+- starts run-scoped Kannel and WML-server services on dynamic loopback ports, then opts into
+  local/private access only with the existing
   `WAVES_FETCH_DESTINATION_POLICY=allow-private` host boundary
+- routes the dynamic Kannel UDP mapping as one exact operator-configured Lowband peer; arbitrary
+  resource URL ports remain rejected by the WDP service-port policy
 - pins `wap-net-core` and disables gateway fallback
 - serves WML 1.3 through the same explicit WML-server test boundary and requires Kannel to emit
-  the negotiated WBXML 1.3 envelope accepted by the pinned decoder
-- fetches and renders every first-party example through the visible native path, and observes the
-  origin counter for two seconds to require one successful repeat navigation to issue one request
-- uses Selenium to click the real Go and Select controls, assert the gateway-served home/menu UI,
-  traverse menu option 4 into the static example deck, assert a visible invalid-URL failure, and
-  recover with another real gateway load
-- uploads fixed-name screenshots, page source, structured evidence, driver logs, environment
-  versions, service logs, and pre/post-teardown state with 21-day retention
-- closes the WebDriver session, terminates the isolated GUI process group, and always tears down
-  Docker services
+  the negotiated WBXML 1.3 envelope accepted by the pinned decoder; reply-header validation
+  discovers Kannel's trailing hop-local `Encoding-Version` and then re-decodes the complete block
+  strictly at that advertised version before accepting the run-scoped origin identity
+- runs each selected scenario in a fresh dynamically allocated WebDriver session and isolated XDG
+  application profile; driver readiness polls the WebDriver `/status` contract
+- covers cold boot, native gateway rendering, navigation, exactly-once stability through the
+  production retry-horizon quiescence window, visible error recovery, and four independent
+  registration/login Enter/Select regressions
+- binds each form attempt to a bounded test-only origin action oracle and keeps PIN/session values
+  out of retained structured evidence
+- validates exact filename/digest manifests and uploads only the workflow-owned
+  `run.*/waves-e2e-*/*/safe-upload/*` layout; missing, extra, symlinked, escaping,
+  digest-mismatched, non-canonical JSON, or secret-canary-bearing bundles fail closed, and upload
+  runs only after that validator succeeds; normal manifest, entry, and result payload schemas are
+  exact and a synthesized infrastructure-failure bundle forces a nonzero run outcome
+- after artifact handling is initialized, emits a static schema-only infrastructure failure bundle
+  if startup fails before any scenario can publish evidence; prerequisite failures before that point
+  fail without an artifact, and raw Compose logs are neither retained nor uploaded
+- retains only fixed-enum scenario checkpoints and failure classes, never arbitrary exception text,
+  in safe result evidence
+- when scenario or cleanup ownership remains unresolved, stops the suite and publishes a static
+  schema-only ownership failure without reading or deleting active restricted files; secret-bearing
+  restricted evidence is removed asynchronously only if the underlying operation later proves
+  settlement and process cleanup
+- closes every WebDriver session, terminates its isolated GUI process group, and always tears down
+  only the exact owned Docker project
 
 The pilot is intentionally advisory. Its workflow is always present on pull requests and uses a
 path classifier to select relevant browser frontend/host, engine, transport, Kannel, WML-origin,
@@ -452,10 +471,9 @@ irrelevant-pull-request path.
 Keep the final gate advisory until all criteria in the active E2E readiness scorecard are met and
 the repository administrator acting as CI owner completes and reads back the ruleset migration.
 
-The pilot's current whole-directory diagnostics upload and interpolated runtime logging are not safe
-for authentication/session coverage. The harness foundation must replace them with the exact-manifest
-safe bundle and whole-lifecycle secret/console policy in the native E2E plan before any auth scenario
-is enabled.
+Authentication scenarios and the exact-manifest safe publisher are implemented. Keep the final gate
+advisory until the unchanged-revision, scheduled-duration, native mutation-sensitivity, and live
+ruleset-promotion evidence in the scorecard is complete.
 
 ## Dependency Update Automation
 

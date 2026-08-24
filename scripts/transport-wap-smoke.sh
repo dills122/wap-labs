@@ -108,7 +108,7 @@ echo "==> Running transport-rust WAP smoke integration test"
   cd "${ROOT_DIR}/transport-rust"
   export WAP_SMOKE_URL WAP_SMOKE_LOGIN_URL WAP_SMOKE_REGISTER_URL WAP_SMOKE_EXAMPLE_URL WAP_SMOKE_PORTAL_EXAMPLE_URL WAP_SMOKE_PREFERENCES_EXAMPLE_URL WAP_SMOKE_INTEROP_EXAMPLE_URL WAP_SMOKE_DENIED_URL TRANSPORT_WAP_TIMEOUT_MS TRANSPORT_WAP_RETRIES
   run_and_tee "${SMOKE_ARTIFACT_DIR}/transport-kannel-smoke.log" \
-    cargo test --test kannel_smoke -- --ignored --test-threads=1
+    cargo test --test kannel_smoke -- --ignored --skip kannel_wap_owned_origin_identity_smoke --test-threads=1
 )
 
 echo "==> Running browser host native Kannel smoke unit test"

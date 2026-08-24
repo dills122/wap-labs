@@ -101,7 +101,7 @@ describe('CanvasViewportRenderer', () => {
     expect(elements.canvas.width).toBe(200);
     expect(elements.canvas.height).toBe(120);
     expect(elements.canvas.style.height).toBe('60px');
-    expect(elements.accessibleText.textContent).toBe('Go NextLast');
+    expect(elements.accessibleText.textContent).toBe('Go Next\nLast');
     expect(operations.filter(({ kind }) => kind === 'fill-text')).toEqual([
       { kind: 'fill-text', args: ['Go', 3, 18], fillStyle: '#eeeecc' },
       { kind: 'fill-text', args: [' ', 15, 18], fillStyle: '#111111' },

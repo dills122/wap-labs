@@ -49,6 +49,7 @@ jobs:
               - "browser/frontend/src/**"
               - "browser/src-tauri/**"
               - "docker-compose.yml"
+              - "docker-compose.native-e2e.yml"
               - "docker/kannel/**"
               - "engine-wasm/contracts/**"
               - "engine-wasm/engine/**"
@@ -172,13 +173,18 @@ jobs:
           NATIVE_E2E_PREBUILT_IMAGES: '1'
         run: xvfb-run -a make smoke-native-tauri-kannel-ui
 
-      - name: Upload native E2E diagnostics
+      - name: Validate exact safe native E2E bundles
+        id: validate-safe-evidence
         if: always()
+        run: node browser/frontend/e2e/native/evidence-cli.mjs validate-root "${NATIVE_E2E_ARTIFACT_DIR}"
+
+      - name: Upload native E2E diagnostics
+        if: ${{ always() && steps.validate-safe-evidence.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: native-tauri-kannel-e2e-${{ github.run_attempt }}
-          path: browser/frontend/test-results/native-tauri-kannel
-          if-no-files-found: warn
+          path: browser/frontend/test-results/native-tauri-kannel/run.*/waves-e2e-*/*/safe-upload/*
+          if-no-files-found: error
           retention-days: 21
 
   native-waves-e2e-gate:

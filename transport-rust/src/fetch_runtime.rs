@@ -126,11 +126,15 @@ pub(crate) fn fetch_deck_in_process_impl(
     let gateway_endpoint = transport_options
         .as_ref()
         .and_then(|options| options.gateway_endpoint.clone());
+    let expected_origin_instance_id = transport_options
+        .as_ref()
+        .and_then(|options| options.expected_origin_instance_id.clone());
 
     if should_use_native_wap_request_for_profile(&parsed, &method, profile_override) {
         return execute_native_wap_request(NativeFetchPlan {
             request_url: url,
             gateway_endpoint,
+            expected_origin_instance_id,
             method,
             outbound_headers,
             post_body: request_body,
