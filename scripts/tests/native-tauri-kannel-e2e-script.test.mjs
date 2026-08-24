@@ -101,7 +101,7 @@ test('owned-origin transport smoke runs only in the isolated native harness', ()
     source,
     /cargo test --test kannel_smoke kannel_wap_owned_origin_identity_smoke -- --ignored --exact --test-threads=1/
   );
-  assert.match(source, /WAP_GATEWAY_ENDPOINT="\$\{GATEWAY_UDP_BINDING\}"/);
+  assert.match(source, /WAP_GATEWAY_ENDPOINT="wap:\/\/\$\{GATEWAY_UDP_BINDING\}"/);
   for (const legacySource of [transportSmokeSource, transportSmokeWorkflowSource]) {
     assert.match(
       legacySource,

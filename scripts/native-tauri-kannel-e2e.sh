@@ -159,7 +159,7 @@ curl -fsS --connect-timeout 2 --max-time 5 "${WML_HEALTH_URL}" |
 echo "==> Verifying owned native WAP routing before launching the browser"
 (
   cd "${ROOT_DIR}/transport-rust"
-  export WAP_GATEWAY_ENDPOINT="${GATEWAY_UDP_BINDING}"
+  export WAP_GATEWAY_ENDPOINT="wap://${GATEWAY_UDP_BINDING}"
   cargo test --test kannel_smoke kannel_wap_owned_origin_identity_smoke -- --ignored --exact --test-threads=1
 )
 
