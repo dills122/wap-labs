@@ -42,3 +42,28 @@ func TestRunHealthcheck(t *testing.T) {
 		})
 	}
 }
+
+func TestParseE2EFixtureMode(t *testing.T) {
+	for _, test := range []struct {
+		raw     string
+		want    bool
+		wantErr bool
+	}{
+		{raw: "", want: false},
+		{raw: "false", want: false},
+		{raw: "true", want: true},
+		{raw: " TRUE ", want: true},
+		{raw: "1", wantErr: true},
+		{raw: "yes", wantErr: true},
+	} {
+		t.Run(test.raw, func(t *testing.T) {
+			got, err := parseE2EFixtureMode(test.raw)
+			if (err != nil) != test.wantErr {
+				t.Fatalf("parseE2EFixtureMode(%q) error = %v, wantErr %t", test.raw, err, test.wantErr)
+			}
+			if got != test.want {
+				t.Fatalf("parseE2EFixtureMode(%q) = %t, want %t", test.raw, got, test.want)
+			}
+		})
+	}
+}

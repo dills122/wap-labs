@@ -39,9 +39,15 @@ func main() {
 	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	e2eFixtureMode, err := parseE2EFixtureMode(os.Getenv("WML_E2E_FIXTURE_MODE"))
+	if err != nil {
+		logger.Error("invalid configuration", "error", err)
+		os.Exit(1)
+	}
 	app, err := origin.New(origin.Config{
 		DTDVersion:       strings.TrimSpace(envOrDefault("WML_DTD_VERSION", "1.1")),
 		OriginInstanceID: strings.TrimSpace(os.Getenv("WML_ORIGIN_INSTANCE_ID")),
+		E2EFixtureMode:   e2eFixtureMode,
 		Logger:           logger,
 		AllowedHosts:     splitCSV(os.Getenv("WML_ALLOWED_HOSTS")),
 		HomeHosts:        splitCSV(envOrDefault("WML_HOME_HOSTS", "home.wap.test")),
@@ -79,6 +85,17 @@ func main() {
 		if err := server.Shutdown(shutdownCtx); err != nil {
 			logger.Error("graceful shutdown failed", "address", server.Addr, "error", err)
 		}
+	}
+}
+
+func parseE2EFixtureMode(raw string) (bool, error) {
+	switch strings.ToLower(strings.TrimSpace(raw)) {
+	case "", "false":
+		return false, nil
+	case "true":
+		return true, nil
+	default:
+		return false, errors.New("WML_E2E_FIXTURE_MODE must be true, false, or unset")
 	}
 }
 
