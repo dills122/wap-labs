@@ -56,6 +56,17 @@ test('native E2E gives every scenario a fresh session and continues after failur
   assert.match(results[1].error.message, /expected failure/);
 });
 
+test('native E2E exposes provider-owned scenario context without global state', async () => {
+  const [result] = await executeNativeE2EScenarios({
+    scenarios: [scenario('CONTEXT', async ({ waves }) => assert.equal(waves, 'owned-page'))],
+    createSession: async () => ({
+      waves: 'owned-page',
+      cleanup: async () => ({ result: 'closed' })
+    })
+  });
+  assert.equal(result.result, 'pass');
+});
+
 test('native E2E records startup failures and still runs later scenarios', async () => {
   const results = await executeNativeE2EScenarios({
     scenarios: [scenario('START-FAIL', async () => assert.fail()), scenario('PASS', async () => {})],
