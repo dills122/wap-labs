@@ -117,14 +117,16 @@ only after every required status check and any other ruleset requirement succeed
 
 - `Transport WAP Smoke (Kannel)` is a path-scoped PR/manual signal. Do not configure it as a
   global required context because it intentionally does not run on unrelated pull requests.
-- `Native Tauri UI through Kannel (pilot)` is advisory and currently uses a trigger-level path
-  filter that already includes relevant browser frontend/host, engine, transport, Kannel, and WML
-  origin changes, plus scheduled/manual execution. It must not be required in that shape. The
-  foundation work in `docs/waves/WAVES_NATIVE_E2E_HARNESS_PLAN.md` will first replace the trigger
-  filter with an always-present advisory classifier/native/final-gate result matrix. Only after the
-  scorecard's independent 20-run and four-run/21-day promotion samples pass may a repository
-  administrator acting as CI owner add the exact `native-waves-e2e-gate` context to the live
-  ruleset and read back the resulting required-context list.
+- `Native Tauri UI through Kannel (pilot)` is advisory. Its always-present workflow classifies
+  pull-request paths, runs the expensive native job for relevant changes, and skips that job for
+  irrelevant pull requests. Scheduled and manual runs always select the native job. The final
+  `Native Waves E2E Gate` job is always present: it accepts an irrelevant pull request only when the
+  native job was skipped, accepts a selected run only when the native job succeeded, and fails
+  closed for invalid event, classifier, selection, or job-result states. Only after the scorecard's
+  independent 20-run and four-run/21-day promotion samples pass may a repository administrator
+  acting as CI owner add the exact published `Native Waves E2E Gate` check context to the live
+  ruleset and read back the resulting required-context list. The workflow's YAML job ID is
+  `native-waves-e2e-gate`; it is not the published check name used by the ruleset.
   Authentication scenarios must not land before the advisory matrix, exact-manifest safe artifact
   publisher, whole-lifecycle secret/console policy, and isolation prerequisites are in place.
 - `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is

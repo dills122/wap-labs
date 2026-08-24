@@ -410,8 +410,8 @@ Purpose:
 
 Triggers:
 
-- `pull_request` when the engine, shared contracts, transport, Tauri host, native UI pilot,
-  Kannel/WML services, Compose topology, or workspace lockfiles traversed by the pilot change
+- every `pull_request` targeting `main`; the relevance classifier decides whether the expensive
+  native job runs
 - weekly schedule (`17 5 * * 1`)
 - `workflow_dispatch`
 
@@ -440,13 +440,17 @@ Behavior:
 - closes the WebDriver session, terminates the isolated GUI process group, and always tears down
   Docker services
 
-The pilot is intentionally not required. Its current trigger-level pull-request filter already
-includes relevant browser frontend/host, engine, transport, Kannel, and WML-origin product paths.
-The native E2E foundation must replace that filter with the always-present advisory
-classifier/native/final-gate matrix before authentication scenario PRs land, so new harness files
-cannot skip their own validation. Promote the existing final gate to a live required context only
-after all criteria in the active E2E readiness scorecard are met and the repository administrator
-acting as CI owner completes and reads back the ruleset migration.
+The pilot is intentionally advisory. Its workflow is always present on pull requests and uses a
+path classifier to select relevant browser frontend/host, engine, transport, Kannel, WML-origin,
+and native-harness changes. Relevant pull requests, scheduled runs, and manual runs execute the
+native job; irrelevant pull requests skip that expensive job. The always-running
+`Native Waves E2E Gate` passes an irrelevant pull request only when the native job was skipped, and
+otherwise passes only after a selected native job succeeds. The gate also validates the triggering
+event so a malformed scheduled or manual classification cannot pass through the
+irrelevant-pull-request path.
+
+Keep the final gate advisory until all criteria in the active E2E readiness scorecard are met and
+the repository administrator acting as CI owner completes and reads back the ruleset migration.
 
 The pilot's current whole-directory diagnostics upload and interpolated runtime logging are not safe
 for authentication/session coverage. The harness foundation must replace them with the exact-manifest
@@ -547,7 +551,7 @@ At minimum, require:
 Do not require:
 
 - `Transport WAP Smoke` globally (it is a path-scoped PR signal and does not run for unrelated PRs)
-- `Native Tauri Kannel E2E` until its documented pilot promotion criteria are met
+- `Native Waves E2E Gate` until its documented pilot promotion criteria are met
 - `OpenTofu Static Validation` globally (it is path-scoped and otherwise absent)
 - `Deploy Pages` (deployment workflow)
 

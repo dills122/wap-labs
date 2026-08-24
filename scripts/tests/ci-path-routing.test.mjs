@@ -21,28 +21,32 @@ function globMatches(pattern, candidate) {
 function parseCiFilters(source) {
   const filters = new Map();
   let inFilters = false;
+  let filtersIndent = 0;
   let current = null;
 
   for (const line of source.split(/\r?\n/)) {
-    if (line === '          filters: |') {
+    const header = line.match(/^(\s+)filters: \|$/);
+    if (header) {
       inFilters = true;
+      filtersIndent = header[1].length;
       continue;
     }
     if (!inFilters) {
       continue;
     }
-    const key = line.match(/^ {12}([a-z_]+):$/);
+    const key = line.match(new RegExp(`^ {${filtersIndent + 2}}([a-z0-9_]+):$`));
     if (key) {
       current = key[1];
       filters.set(current, []);
       continue;
     }
-    const pattern = line.match(/^ {14}- "([^"]+)"$/);
+    const pattern = line.match(new RegExp(`^ {${filtersIndent + 4}}- "([^"]+)"$`));
     if (pattern && current) {
       filters.get(current).push(pattern[1]);
       continue;
     }
-    if (line.trim() !== '' && !line.startsWith('            ')) {
+    const indentation = line.match(/^\s*/)[0].length;
+    if (line.trim() !== '' && indentation <= filtersIndent) {
       break;
     }
   }
@@ -71,7 +75,7 @@ const securityWorkflow = fs.readFileSync('.github/workflows/security.yml', 'utf8
 const fixtures = JSON.parse(fs.readFileSync('scripts/tests/fixtures/ci-path-routing.json', 'utf8'));
 const ciFilters = parseCiFilters(ciWorkflow);
 const transportPaths = parsePullRequestPaths(transportWorkflow);
-const nativePaths = parsePullRequestPaths(nativeWorkflow);
+const nativeFilters = parseCiFilters(nativeWorkflow);
 const securityFilters = parseCiFilters(securityWorkflow);
 
 test('CI path filters are parseable and cover every declared output family', () => {
@@ -92,6 +96,12 @@ test('CI path filters are parseable and cover every declared output family', () 
   );
 });
 
+test('native E2E uses an always-present workflow with an explicit relevance classifier', () => {
+  assert.doesNotMatch(nativeWorkflow, /^ {4}paths:/m);
+  assert.deepEqual([...nativeFilters.keys()], ['native_e2e']);
+  assert.match(nativeWorkflow, /NATIVE_E2E_EVENT_NAME: \$\{\{ github\.event_name \}\}/);
+});
+
 for (const fixture of fixtures) {
   test(`routes ${fixture.path} to the intended validation families`, () => {
     const actualFilters = [...ciFilters]
@@ -103,7 +113,7 @@ for (const fixture of fixtures) {
       fixture.transportSmoke
     );
     assert.equal(
-      nativePaths.some((pattern) => globMatches(pattern, fixture.path)),
+      nativeFilters.get('native_e2e').some((pattern) => globMatches(pattern, fixture.path)),
       fixture.nativeE2e
     );
     assert.equal(

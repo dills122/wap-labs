@@ -84,6 +84,13 @@
     "securityImages": false
   },
   {
+    "path": "browser/frontend/e2e/native/config.mjs",
+    "ciFilters": ["host_sample", "browser_shell", "browser_frontend"],
+    "transportSmoke": false,
+    "nativeE2e": true,
+    "securityImages": false
+  },
+  {
     "path": "wml-server/cmd/wml-server/main.go",
     "ciFilters": ["wml_server"],
     "transportSmoke": true,
