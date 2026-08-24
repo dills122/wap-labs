@@ -144,6 +144,28 @@ func TestE2EActionCorrelationIsDisabledByDefault(t *testing.T) {
 	}
 }
 
+func TestFormsReloadSameDeckBeforeSubmittingPostfields(t *testing.T) {
+	app, _ := newTestApp(t, nil)
+
+	for _, path := range []string{"/register", "/login"} {
+		t.Run(path, func(t *testing.T) {
+			response := perform(app.Handler(), http.MethodGet, path, "", "")
+			if response.Code != http.StatusOK {
+				t.Fatalf("GET %s status = %d", path, response.Code)
+			}
+			body := response.Body.String()
+			if !strings.Contains(body, `method="post" cache-control="no-cache" href="`+path+`"`) {
+				t.Fatalf("GET %s omitted same-deck reload policy: %s", path, body)
+			}
+			for _, name := range []string{"username", "pin"} {
+				if !strings.Contains(body, `<postfield name="`+name+`" value="$(`+name+`)"/>`) {
+					t.Fatalf("GET %s omitted %s postfield: %s", path, name, body)
+				}
+			}
+		})
+	}
+}
+
 func TestE2EFormGETPreservesStrictActionIDIntoPOST(t *testing.T) {
 	app, _ := newTestApp(t, func(config *Config) {
 		config.E2EFixtureMode = true
@@ -162,9 +184,9 @@ func TestE2EFormGETPreservesStrictActionIDIntoPOST(t *testing.T) {
 			if response.Code != http.StatusOK {
 				t.Fatalf("GET %s status = %d", test.path, response.Code)
 			}
-			want := `method="post" href="` + test.path + `?e2e_action=` + test.id + `"`
+			want := `method="post" cache-control="no-cache" href="` + test.path + `?e2e_action=` + test.id + `"`
 			if !strings.Contains(response.Body.String(), want) {
-				t.Fatalf("GET %s did not preserve action ID: %s", test.path, response.Body.String())
+				t.Fatalf("GET %s did not preserve a reload-safe action ID: %s", test.path, response.Body.String())
 			}
 		})
 	}

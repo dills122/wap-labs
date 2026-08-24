@@ -45,7 +45,7 @@ function registration({ id, name, deterministic }) {
         signal: context.signal
       });
       await typePIN(context, pin, { deterministic, submitWith: 'enter' });
-      const response = await context.waves.waitForDeckText('Registration OK');
+      const response = await context.waves.waitForDeckText(`User ${username} created.`);
       assert.match(response, new RegExp(`User ${username} created\\.`));
       assert.doesNotMatch(response, /Username and PIN are required/);
       context.observe({
@@ -105,7 +105,7 @@ function login({ id, name, deterministic }) {
         signal: context.signal
       });
       await typePIN(context, pin, { deterministic, submitWith: 'select' });
-      const response = await context.waves.waitForDeckText('Login OK');
+      const response = await context.waves.waitForDeckText(`Authenticated as ${username}.`);
       assert.match(response, new RegExp(`Authenticated as ${username}\\.`));
       assert.doesNotMatch(response, /Username and PIN are required/);
       context.observe({
