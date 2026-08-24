@@ -32,6 +32,8 @@ function fixture() {
       getAttribute: async () => 'wap://localhost/path?token=secret#card'
     })],
     ['#btn-fetch-url', element({ click: async () => calls.push(['click', 'go']) })],
+    ['#btn-back', element({ click: async () => calls.push(['click', 'back']) })],
+    ['#btn-reload', element({ click: async () => calls.push(['click', 'reload']) })],
     ['#viewport', element({
       click: async () => calls.push(['click', 'viewport']),
       sendKeys: async (value) => calls.push(['sendKeys', 'viewport', value])
@@ -72,10 +74,13 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
   await page.launchWaves();
   await page.dismissWelcome();
   await page.openWapUrl('wap://localhost/login');
+  await page.submitAddress('not a url');
   await page.focusViewport();
   await page.pressSoftkey('select');
   await page.pressKeyboardKey('Enter');
   await page.typeText('user1');
+  await page.goBack();
+  await page.reload();
   assert.equal(await page.readSanitizedAddress(), 'wap://localhost/path');
 
   assert.deepEqual(
@@ -85,10 +90,16 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
       ['clear', 'address'],
       ['sendKeys', 'address', 'wap://localhost/login'],
       ['click', 'go'],
+      ['click', 'address'],
+      ['clear', 'address'],
+      ['sendKeys', 'address', 'not a url'],
+      ['click', 'go'],
       ['click', 'viewport'],
       ['click', 'select'],
       ['sendKeys', 'viewport', 'Enter'],
-      ['sendKeys', 'viewport', 'user1']
+      ['sendKeys', 'viewport', 'user1'],
+      ['click', 'back'],
+      ['click', 'reload']
     ]
   );
 });
@@ -102,7 +113,7 @@ for (const submitWith of ['enter', 'select']) {
     assert.equal(finalCharacter, '4');
     assert.equal(submission, submitWith);
     assert.ok(script.indexOf('dispatchEvent(characterEvent)') < script.indexOf("submission === 'enter'"));
-    assert.match(script, /window\.dispatchEvent\(submitEvent\)/);
+    assert.match(script, /viewport\.dispatchEvent\(submitEvent\)/);
     assert.match(script, /selectButton\.click\(\)/);
     assert.doesNotMatch(script, /await|setTimeout|Promise/);
   });
@@ -125,4 +136,9 @@ test('deck waits report the expected text through the semantic viewport text', a
   const { page } = fixture();
   const text = await page.waitForDeckText('Rendered deck');
   assert.equal(text, 'Rendered deck text');
+});
+
+test('waitForAddress compares only sanitized origin and path', async () => {
+  const { page } = fixture();
+  assert.equal(await page.waitForAddress('wap://localhost/path'), 'wap://localhost/path');
 });
