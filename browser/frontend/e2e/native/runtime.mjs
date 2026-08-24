@@ -29,7 +29,6 @@ function waitForReadableCompletion(source, destination, timeoutMs = 1_000) {
       resolve();
     };
     const timer = setTimeout(done, timeoutMs);
-    timer.unref?.();
     source.once('end', done);
     source.once('close', done);
     source.once('error', done);
