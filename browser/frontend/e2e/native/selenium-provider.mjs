@@ -170,6 +170,21 @@ const buildSeleniumDriver = async ({ application, driverUrl }) => {
   return new Builder().withCapabilities(capabilities).usingServer(driverUrl).build();
 };
 
+const settleWithin = async (operation, timeoutMs, description) => {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`${description} timed out after ${timeoutMs}ms`)),
+      timeoutMs
+    );
+  });
+  try {
+    return await Promise.race([Promise.resolve(operation), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
 const processExitError = (child) => {
   const outcome = child.exitCode === null
     ? `signal ${child.signalCode ?? 'unknown'}`
@@ -230,7 +245,11 @@ export function createSeleniumProvider({
     const state = sessions.get(session);
     assert.ok(state, 'session was not created by this Selenium provider');
     state.stopPromise ??= (async () => {
-      const webdriverSession = await state.driver.quit().then(
+      const webdriverSession = await settleWithin(
+        state.driver.quit(),
+        state.sessionCloseTimeoutMs,
+        'WebDriver session close'
+      ).then(
         () => 'closed',
         () => 'close-failed'
       );
@@ -245,6 +264,8 @@ export function createSeleniumProvider({
     environment = process.env,
     tauriDriverBin = 'tauri-driver',
     startupTimeoutMs = 20_000,
+    sessionBuildTimeoutMs = startupTimeoutMs,
+    sessionCloseTimeoutMs = 5_000,
     pollIntervalMs = 100,
     maxStartupAttempts = 3,
     stdio = ['ignore', 'pipe', 'pipe'],
@@ -255,6 +276,14 @@ export function createSeleniumProvider({
     assert.ok(
       Number.isSafeInteger(startupTimeoutMs) && startupTimeoutMs > 0,
       'startupTimeoutMs must be positive'
+    );
+    assert.ok(
+      Number.isSafeInteger(sessionBuildTimeoutMs) && sessionBuildTimeoutMs > 0,
+      'sessionBuildTimeoutMs must be positive'
+    );
+    assert.ok(
+      Number.isSafeInteger(sessionCloseTimeoutMs) && sessionCloseTimeoutMs > 0,
+      'sessionCloseTimeoutMs must be positive'
     );
     assert.ok(
       Number.isSafeInteger(pollIntervalMs) && pollIntervalMs > 0,
@@ -333,7 +362,11 @@ export function createSeleniumProvider({
 
       let driver;
       try {
-        driver = await buildDriver({ application, driverUrl });
+        driver = await settleWithin(
+          buildDriver({ application, driverUrl }),
+          sessionBuildTimeoutMs,
+          'WebDriver session construction'
+        );
       } catch (error) {
         const cleanup = await terminateProcess(child);
         if (cleanup === 'cleanup-failed') {
@@ -355,7 +388,7 @@ export function createSeleniumProvider({
           return stopSession(session);
         }
       };
-      sessions.set(session, { child, driver, stopPromise: null });
+      sessions.set(session, { child, driver, sessionCloseTimeoutMs, stopPromise: null });
       return session;
     }
 

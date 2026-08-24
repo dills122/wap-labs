@@ -203,6 +203,16 @@ for (const { name, options, message } of [
     message: 'startupTimeoutMs must be positive'
   },
   {
+    name: 'zero session build timeout',
+    options: { sessionBuildTimeoutMs: 0 },
+    message: 'sessionBuildTimeoutMs must be positive'
+  },
+  {
+    name: 'zero session close timeout',
+    options: { sessionCloseTimeoutMs: 0 },
+    message: 'sessionCloseTimeoutMs must be positive'
+  },
+  {
     name: 'zero poll interval',
     options: { pollIntervalMs: 0 },
     message: 'pollIntervalMs must be positive'
@@ -283,6 +293,34 @@ test('provider cleans the spawned process when WebDriver session construction fa
     /failed to construct the WebDriver session/
   );
   assert.deepEqual(terminated, [301]);
+});
+
+test('provider bounds a hung WebDriver session construction before terminating the process', async () => {
+  const terminated = [];
+  const provider = createSeleniumProvider({
+    reservePorts: async () => ({
+      host: '127.0.0.1',
+      ports: [44011, 44012],
+      release: async () => undefined
+    }),
+    spawnProcess: () => createChild(302),
+    waitUntilReady: async () => undefined,
+    buildDriver: async () => new Promise(() => undefined),
+    terminateProcess: async (process) => {
+      terminated.push(process.pid);
+      return 'terminated';
+    }
+  });
+
+  await assert.rejects(
+    provider.startSession({
+      application: '/tmp/wavenav_host',
+      maxStartupAttempts: 1,
+      sessionBuildTimeoutMs: 5
+    }),
+    /failed to construct the WebDriver session/
+  );
+  assert.deepEqual(terminated, [302]);
 });
 
 test('provider retries fresh ports when the native driver race breaks session construction', async () => {
@@ -459,4 +497,32 @@ test('provider still terminates its process when WebDriver quit rejects', async 
     processGroup: 'terminated'
   });
   assert.deepEqual(events, ['quit-rejected', 'terminate-process']);
+});
+
+test('provider bounds a hung WebDriver quit before terminating its process', async () => {
+  const events = [];
+  const provider = createSeleniumProvider({
+    reservePorts: async () => ({
+      host: '127.0.0.1',
+      ports: [49101, 49102],
+      release: async () => undefined
+    }),
+    spawnProcess: () => createChild(702),
+    waitUntilReady: async () => undefined,
+    buildDriver: async () => ({ quit: async () => new Promise(() => undefined) }),
+    terminateProcess: async () => {
+      events.push('terminate-process');
+      return 'terminated';
+    }
+  });
+  const session = await provider.startSession({
+    application: '/tmp/wavenav_host',
+    sessionCloseTimeoutMs: 5
+  });
+
+  assert.deepEqual(await session.stop(), {
+    webdriverSession: 'close-failed',
+    processGroup: 'terminated'
+  });
+  assert.deepEqual(events, ['terminate-process']);
 });
