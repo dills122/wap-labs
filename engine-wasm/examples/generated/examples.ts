@@ -75,7 +75,7 @@ export interface StoryExpectation {
   };
 }
 
-export type StoryAction =
+export type AtomicStoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
@@ -86,6 +86,10 @@ export type StoryAction =
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
 
+export type StoryAction =
+  | AtomicStoryAction
+  | { type: 'sequence'; actions: AtomicStoryAction[] };
+
 export interface StoryStep {
   action: StoryAction;
   expect: StoryExpectation;
@@ -95,7 +99,21 @@ export interface ExecutableStoryFlow {
   id: string;
   title: string;
   target: 'host-sample' | 'waves-browser';
-  setup?: { runMode: 'local' | 'network' };
+  setup?: {
+    runMode: 'local' | 'network';
+    commandDelaysMs?: Partial<
+      Record<
+        | 'engineAdvanceTimeMsFrame'
+        | 'engineBeginFocusedInputEditFrame'
+        | 'engineCommitFocusedInputEditFrame'
+        | 'engineHandleInputFrame'
+        | 'engineLoadDeckContextFrame'
+        | 'engineNavigateBackFrame'
+        | 'engineSetFocusedInputEditDraftFrame',
+        number
+      >
+    >;
+  };
   workItems: string[];
   specItems: string[];
   initial: StoryExpectation;
@@ -1991,7 +2009,8 @@ export const EXAMPLES: HostExample[] = [
       "Load the example in Waves local mode and confirm activeCardId starts at login.",
       "Press Enter on the username field, type a new value, and press Enter to commit.",
       "Move to the PIN field, type digits, and confirm the viewport masks the committed value.",
-      "Submit the card and confirm Waves reports a captured external intent instead of performing a fetch."
+      "Submit the card and confirm Waves reports a captured external intent instead of performing a fetch.",
+      "With delayed host draft updates, submit immediately after typing and confirm both keyboard Enter and the Select softkey preserve the exact username and PIN payload."
     ],
     "flows": [
       {
@@ -2085,6 +2104,297 @@ export const EXAMPLES: HostExample[] = [
             "action": {
               "type": "keyboard",
               "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "login",
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null,
+                "externalNavigationIntent": "http://local.test/login",
+                "externalNavigationRequestPolicy": {
+                  "refererUrl": "http://local.test/examples/formsTextSubmitLocal.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "username=AHMEDBOB&pin=42"
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "username",
+                        "value": "AHMEDBOB"
+                      },
+                      {
+                        "name": "pin",
+                        "value": "42"
+                      }
+                    ]
+                  }
+                }
+              },
+              "traceKinds": [
+                "INPUT_EDIT_COMMIT",
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "runMode": "local",
+                "navigationStatus": "loaded",
+                "externalNavigationIntent": "http://local.test/login"
+              },
+              "statusIncludes": "Local mode captured external intent",
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB",
+                  "**"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-delayed-draft-softkey-submit",
+        "title": "Waves preserves the final delayed PIN draft before an immediate Select softkey submit",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local",
+          "commandDelaysMs": {
+            "engineSetFocusedInputEditDraftFrame": 200
+          }
+        },
+        "workItems": [
+          "A5-04",
+          "A5-06"
+        ],
+        "specItems": [
+          "WML-R-019",
+          "RQ-RMK-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "login",
+            "focusedLinkIndex": 0,
+            "focusedInputEditName": null,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "local",
+            "navigationStatus": "loaded"
+          },
+          "render": {
+            "textIncludes": [
+              "AHMED",
+              "PIN:"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "type-text",
+              "text": "BOB"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 0,
+                "focusedInputEditName": "username",
+                "focusedInputEditValue": "AHMEDBOB"
+              },
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_COMMIT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "4"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": "pin",
+                "focusedInputEditValue": "4"
+              },
+              "render": {
+                "textIncludes": [
+                  "*"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "sequence",
+              "actions": [
+                {
+                  "type": "type-text",
+                  "text": "2"
+                },
+                {
+                  "type": "key",
+                  "key": "enter"
+                }
+              ]
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "login",
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null,
+                "externalNavigationIntent": "http://local.test/login",
+                "externalNavigationRequestPolicy": {
+                  "refererUrl": "http://local.test/examples/formsTextSubmitLocal.wml",
+                  "postContext": {
+                    "sameDeck": false,
+                    "contentType": "application/x-www-form-urlencoded",
+                    "payload": "username=AHMEDBOB&pin=42"
+                  },
+                  "requestIntent": {
+                    "method": "post",
+                    "enctype": "application/x-www-form-urlencoded",
+                    "sendReferer": true,
+                    "sameDeck": false,
+                    "postFields": [
+                      {
+                        "name": "username",
+                        "value": "AHMEDBOB"
+                      },
+                      {
+                        "name": "pin",
+                        "value": "42"
+                      }
+                    ]
+                  }
+                }
+              },
+              "traceKinds": [
+                "INPUT_EDIT_COMMIT",
+                "ACTION_ACCEPT",
+                "ACTION_EXTERNAL"
+              ],
+              "session": {
+                "runMode": "local",
+                "navigationStatus": "loaded",
+                "externalNavigationIntent": "http://local.test/login"
+              },
+              "statusIncludes": "Local mode captured external intent",
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB",
+                  "**"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "waves-delayed-draft-keyboard-submit",
+        "title": "Waves serializes rapid keyboard editing, focus movement, and form submission",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local",
+          "commandDelaysMs": {
+            "engineSetFocusedInputEditDraftFrame": 200
+          }
+        },
+        "workItems": [
+          "A5-04",
+          "A5-06"
+        ],
+        "specItems": [
+          "WML-R-019",
+          "RQ-RMK-008"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "login",
+            "focusedLinkIndex": 0,
+            "focusedInputEditName": null,
+            "externalNavigationIntent": null
+          },
+          "session": {
+            "runMode": "local",
+            "navigationStatus": "loaded"
+          },
+          "render": {
+            "textIncludes": [
+              "AHMED",
+              "PIN:"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "sequence",
+              "actions": [
+                {
+                  "type": "type-text",
+                  "text": "BOB"
+                },
+                {
+                  "type": "keyboard",
+                  "key": "ArrowDown"
+                }
+              ]
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1,
+                "focusedInputEditName": null,
+                "focusedInputEditValue": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_COMMIT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "AHMEDBOB",
+                  "PIN:"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "sequence",
+              "actions": [
+                {
+                  "type": "type-text",
+                  "text": "42"
+                },
+                {
+                  "type": "keyboard",
+                  "key": "Enter"
+                }
+              ]
             },
             "expect": {
               "state": {

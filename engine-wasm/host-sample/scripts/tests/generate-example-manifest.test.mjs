@@ -94,6 +94,86 @@ test('parses waves-browser target setup, keyboard actions, and semantic expectat
   assert.deepEqual(parsed.flows[0].initial.render, { textIncludes: ['Home'] });
 });
 
+test('parses Waves command delays and no-wait interaction sequences', () => {
+  const document = validFlow({
+    target: 'waves-browser',
+    setup: {
+      runMode: 'local',
+      commandDelaysMs: { engineSetFocusedInputEditDraftFrame: 40 }
+    },
+    steps: [
+      {
+        action: {
+          type: 'sequence',
+          actions: [
+            { type: 'type-text', text: '42' },
+            { type: 'key', key: 'enter' }
+          ]
+        },
+        expect: { state: { activeCardId: 'home' } }
+      }
+    ]
+  });
+
+  const parsed = parseExecutableFlow(
+    JSON.stringify(document),
+    'test-example.flow.json',
+    'testExample'
+  );
+
+  assert.deepEqual(parsed.flows[0].setup, {
+    runMode: 'local',
+    commandDelaysMs: { engineSetFocusedInputEditDraftFrame: 40 }
+  });
+  assert.deepEqual(parsed.flows[0].steps[0].action, {
+    type: 'sequence',
+    actions: [
+      { type: 'type-text', text: '42' },
+      { type: 'key', key: 'enter' }
+    ]
+  });
+});
+
+test('rejects unsafe Waves command-delay configuration', () => {
+  for (const commandDelaysMs of [
+    { engineDeleteEverything: 40 },
+    { engineSetFocusedInputEditDraftFrame: 0 },
+    { engineSetFocusedInputEditDraftFrame: 5_001 },
+    { engineSetFocusedInputEditDraftFrame: 1.5 }
+  ]) {
+    const document = validFlow({
+      target: 'waves-browser',
+      setup: { runMode: 'local', commandDelaysMs }
+    });
+
+    assert.throws(
+      () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
+      /commandDelaysMs/
+    );
+  }
+});
+
+test('rejects empty and nested no-wait interaction sequences', () => {
+  for (const action of [
+    { type: 'sequence', actions: [] },
+    {
+      type: 'sequence',
+      actions: [{ type: 'sequence', actions: [{ type: 'key', key: 'enter' }] }]
+    }
+  ]) {
+    const document = validFlow({
+      target: 'waves-browser',
+      setup: { runMode: 'local' },
+      steps: [{ action, expect: { state: { activeCardId: 'home' } } }]
+    });
+
+    assert.throws(
+      () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
+      /sequence/
+    );
+  }
+});
+
 test('parses script outcomes and structured external request policy expectations', () => {
   const document = validFlow({
     initial: {

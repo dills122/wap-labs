@@ -9,6 +9,9 @@ export interface WavesStoryEvidence {
   status: string;
   session: ReturnType<BrowserApplication['presenter']['getSessionState']>;
   render: ReturnType<BrowserApplication['presenter']['getRenderList']>;
+  testHost: {
+    delayedCommandCounts: ReturnType<BrowserTestHostDiagnostics['delayedCommandCounts']>;
+  };
 }
 
 declare global {
@@ -30,7 +33,10 @@ export const installWavesStoryObservationBridge = (
       traceEntries: diagnostics.traceEntries(),
       status: application.presenter.getStatus(),
       session: application.presenter.getSessionState(),
-      render: application.presenter.getRenderList()
+      render: application.presenter.getRenderList(),
+      testHost: {
+        delayedCommandCounts: diagnostics.delayedCommandCounts()
+      }
     })
   };
 };
