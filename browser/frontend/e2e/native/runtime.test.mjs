@@ -68,6 +68,62 @@ test('native runtime starts one isolated provider session and safe result per sc
   }
 });
 
+test('native runtime preserves driver output across failed startup attempts', async () => {
+  const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
+  try {
+    await runNativeE2E({
+      scenarios: [
+        { id: 'RETRY-OUTPUT', suite: 'smoke', name: 'retry output', secretBearing: false, async run() {} }
+      ],
+      application: '/tmp/waves-app',
+      artifactRoot,
+      runId: 'run-retry-output',
+      origin: {},
+      selector: (value) => value,
+      provider: {
+        async startSession(options) {
+          const { once } = await import('node:events');
+          const { Readable } = await import('node:stream');
+          const first = {
+            stdout: Readable.from(['attempt-one\n']),
+            stderr: Readable.from([])
+          };
+          options.onProcessStarted(first);
+          await once(first.stdout, 'end');
+
+          const second = {
+            stdout: Readable.from(['attempt-two\n']),
+            stderr: Readable.from([])
+          };
+          options.onProcessStarted(second);
+          await once(second.stdout, 'end');
+          return {
+            driver: { findElement() {}, executeScript() {} },
+            async stop() {
+              return { webdriverSession: 'closed', processGroup: 'terminated' };
+            }
+          };
+        }
+      },
+      createWaves: () => ({})
+    });
+
+    const retained = await readFile(
+      path.join(
+        artifactRoot,
+        'run-retry-output',
+        'retry-output',
+        'raw',
+        'tauri-driver.stdout.log'
+      ),
+      'utf8'
+    );
+    assert.equal(retained, 'attempt-one\nattempt-two\n');
+  } finally {
+    await rm(artifactRoot, { recursive: true, force: true });
+  }
+});
+
 test('native runtime turns a raw secret canary into only a static failed bundle', async () => {
   const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
   try {

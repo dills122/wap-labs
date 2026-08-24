@@ -132,8 +132,8 @@ export async function runNativeE2E({
           onProcessStarted(child) {
             stdoutSource = child.stdout;
             stderrSource = child.stderr;
-            child.stdout?.pipe(stdout);
-            child.stderr?.pipe(stderr);
+            child.stdout?.pipe(stdout, { end: false });
+            child.stderr?.pipe(stderr, { end: false });
           }
         });
         abortCleanup = () => {
