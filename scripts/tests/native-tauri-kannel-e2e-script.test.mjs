@@ -110,6 +110,10 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
   assert.equal(result.stdout, [
     'BOOT-NATIVE-001\tsmoke\tCold native launch reaches network-ready state',
     'TRN-NATIVE-001\tsmoke\tGateway home deck renders through the native transport',
+    'AUTH-NATIVE-001A\tsmoke\tRegistration preserves same-task final character before Enter',
+    'AUTH-NATIVE-001B\tsmoke\tRegistration submits through ordinary WebDriver Enter',
+    'AUTH-NATIVE-002A\tsmoke\tLogin preserves same-task final character before Select',
+    'AUTH-NATIVE-002B\tsmoke\tLogin submits through the physical Select control',
     'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
     'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
     'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',

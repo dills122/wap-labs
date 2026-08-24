@@ -15,6 +15,10 @@ test('native E2E defaults to the smoke suite for compatibility', () => {
     [
       'BOOT-NATIVE-001',
       'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
       'NAV-NATIVE-001',
       'ERR-NATIVE-001',
       'REQ-NATIVE-001'
@@ -33,6 +37,10 @@ test('native E2E lists stable scenario metadata without running a provider', () 
     [
       'BOOT-NATIVE-001',
       'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
       'NAV-NATIVE-001',
       'ERR-NATIVE-001',
       'REQ-NATIVE-001'
@@ -47,6 +55,10 @@ test('native E2E selects a named suite', () => {
     [
       'BOOT-NATIVE-001',
       'TRN-NATIVE-001',
+      'AUTH-NATIVE-001A',
+      'AUTH-NATIVE-001B',
+      'AUTH-NATIVE-002A',
+      'AUTH-NATIVE-002B',
       'NAV-NATIVE-001',
       'ERR-NATIVE-001',
       'REQ-NATIVE-001'

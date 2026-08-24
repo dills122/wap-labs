@@ -87,3 +87,30 @@ test('native runtime safe result omits arbitrary thrown error text', async () =>
     await rm(artifactRoot, { recursive: true, force: true });
   }
 });
+
+test('native runtime creates fresh in-memory authentication data only for secret scenarios', async () => {
+  const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
+  const created = [];
+  try {
+    await runNativeE2E({
+      scenarios: [{ id: 'AUTH', suite: 'smoke', name: 'auth', secretBearing: true, async run({ testData }) {
+        assert.equal(testData.pin, '4927');
+      } }],
+      application: '/tmp/waves-app', artifactRoot, runId: 'run-auth', origin: {},
+      selector: (value) => value,
+      testDataFactory(id) { created.push(id); return { pin: '4927' }; },
+      provider: { async startSession() { return {
+        driver: { findElement() {}, executeScript() {} },
+        async stop() { return { webdriverSession: 'closed', processGroup: 'terminated' }; }
+      }; } },
+      createWaves: () => ({})
+    });
+    assert.deepEqual(created, ['AUTH']);
+    const retained = await readFile(
+      path.join(artifactRoot, 'run-auth', 'auth', 'safe-upload', 'result.json'), 'utf8'
+    );
+    assert.doesNotMatch(retained, /4927/);
+  } finally {
+    await rm(artifactRoot, { recursive: true, force: true });
+  }
+});

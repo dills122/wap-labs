@@ -12,6 +12,7 @@ import {
 import { executeNativeE2EScenarios } from './orchestrator.mjs';
 import { waitForCondition } from './waits.mjs';
 import { createWavesDriver } from './waves-driver.mjs';
+import { createAuthenticationTestData } from './test-data.mjs';
 
 function closeStream(stream) {
   if (!stream) return Promise.resolve();
@@ -58,6 +59,7 @@ export async function runNativeE2E({
   environment = process.env,
   timeoutMs = 20_000,
   createWaves = createWavesDriver,
+  testDataFactory = createAuthenticationTestData,
   signal
 }) {
   const scenarioState = new Map();
@@ -72,6 +74,7 @@ export async function runNativeE2E({
       });
       const runtimeEnvironment = await createPrivateRuntime(layout);
       const assertions = [];
+      const testData = definition.secretBearing ? testDataFactory(definition.id) : undefined;
       const stdout = createWriteStream(path.join(layout.restrictedDir, 'tauri-driver.stdout.log'), {
         flags: 'wx', mode: 0o600
       });
@@ -117,6 +120,7 @@ export async function runNativeE2E({
       return {
         waves,
         origin,
+        testData,
         recordAssertion(name, details) {
           assertions.push({ name, result: 'pass', details });
         },
