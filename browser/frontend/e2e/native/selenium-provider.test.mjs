@@ -174,6 +174,62 @@ test('provider releases each port lease before spawn and retries fresh ports aft
   ]);
 });
 
+test('provider releases an invalid lease before rejecting configuration', async () => {
+  let released = false;
+  const provider = createSeleniumProvider({
+    reservePorts: async () => ({
+      host: '127.0.0.1',
+      ports: [42001, 42001],
+      release: async () => {
+        released = true;
+      }
+    }),
+    spawnProcess: () => {
+      throw new Error('must not spawn with an invalid lease');
+    }
+  });
+
+  await assert.rejects(
+    provider.startSession({ application: '/tmp/wavenav_host' }),
+    /provider ports must be distinct/
+  );
+  assert.equal(released, true);
+});
+
+for (const { name, options, message } of [
+  {
+    name: 'zero startup timeout',
+    options: { startupTimeoutMs: 0 },
+    message: 'startupTimeoutMs must be positive'
+  },
+  {
+    name: 'zero poll interval',
+    options: { pollIntervalMs: 0 },
+    message: 'pollIntervalMs must be positive'
+  },
+  {
+    name: 'zero startup attempts',
+    options: { maxStartupAttempts: 0 },
+    message: 'maxStartupAttempts must be positive'
+  }
+]) {
+  test(`provider rejects ${name} before reserving resources`, async () => {
+    let reservations = 0;
+    const provider = createSeleniumProvider({
+      reservePorts: async () => {
+        reservations += 1;
+        throw new Error('must not reserve for invalid configuration');
+      }
+    });
+
+    await assert.rejects(
+      provider.startSession({ application: '/tmp/wavenav_host', ...options }),
+      new RegExp(message)
+    );
+    assert.equal(reservations, 0);
+  });
+}
+
 test('provider stop is idempotent and cleans the WebDriver session before its process group', async () => {
   const events = [];
   const child = createChild(201);
