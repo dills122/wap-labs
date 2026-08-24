@@ -120,9 +120,11 @@ fi
 
 KANNEL_ADMIN_BINDING="$(compose_e2e port kannel 13000 --protocol tcp)"
 WML_INTERNAL_BINDING="$(compose_e2e port wml-server 3001 --protocol tcp)"
+WML_PUBLIC_BINDING="$(compose_e2e port wml-server 3000 --protocol tcp)"
 GATEWAY_UDP_BINDING="$(compose_e2e port kannel 9200 --protocol udp)"
 KANNEL_ADMIN_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${KANNEL_ADMIN_BINDING}")"
 WML_INTERNAL_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_INTERNAL_BINDING}")"
+WML_PUBLIC_BASE="$(node "${ENVIRONMENT_CLI}" url http tcp "${WML_PUBLIC_BINDING}")"
 KANNEL_ADMIN_URL="${KANNEL_ADMIN_BASE}/status?password=changeme"
 WML_HEALTH_URL="${WML_INTERNAL_BASE}/health"
 WML_METRICS_URL="${WML_INTERNAL_BASE}/metrics"
@@ -152,6 +154,7 @@ export VITE_WAVES_DEFAULT_RUN_MODE=network
 export NATIVE_E2E_APP_BINARY="${NATIVE_E2E_APP_BINARY:-${ROOT_DIR}/browser/src-tauri/target/debug/wavenav_host}"
 export NATIVE_E2E_ARTIFACT_DIR="${ARTIFACT_DIR}"
 export WML_METRICS_URL
+export WML_PUBLIC_BASE
 export WEBKIT_DISABLE_COMPOSITING_MODE="${WEBKIT_DISABLE_COMPOSITING_MODE:-1}"
 
 {

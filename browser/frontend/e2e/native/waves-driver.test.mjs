@@ -142,3 +142,10 @@ test('waitForAddress compares only sanitized origin and path', async () => {
   const { page } = fixture();
   assert.equal(await page.waitForAddress('wap://localhost/path'), 'wap://localhost/path');
 });
+
+test('raw query-bearing addresses are scoped to an ephemeral callback', async () => {
+  const { page } = fixture();
+  const observed = await page.withEphemeralAddress(async (address) => address.includes('?token='));
+  assert.equal(observed, true);
+  await assert.rejects(page.withEphemeralAddress(null), /requires a callback/);
+});

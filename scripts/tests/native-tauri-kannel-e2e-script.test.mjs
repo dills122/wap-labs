@@ -47,18 +47,21 @@ test('native E2E Compose resolution removes fixed names and uses dynamic loopbac
   assert.match(composeOverlaySource, /ports: !override/g);
   assert.match(composeOverlaySource, /host_ip: 127\.0\.0\.1/g);
   assert.doesNotMatch(composeOverlaySource, /published:/);
-  for (const target of ['3001', '13000', '9200']) {
+  for (const target of ['3000', '3001', '13000', '9200']) {
     assert.match(composeOverlaySource, new RegExp(`target: ${target}`));
   }
+  assert.match(composeOverlaySource, /WML_E2E_FIXTURE_MODE: "true"/);
 });
 
 test('native E2E discovers runtime ports and writes the immutable host routing manifest', () => {
   assert.match(source, /compose_e2e port kannel 9200 --protocol udp/);
   assert.match(source, /compose_e2e port kannel 13000 --protocol tcp/);
   assert.match(source, /compose_e2e port wml-server 3001 --protocol tcp/);
+  assert.match(source, /compose_e2e port wml-server 3000 --protocol tcp/);
   assert.match(source, /node "\$\{ENVIRONMENT_CLI\}" write-manifest/);
   assert.match(source, /export WAVES_FETCH_ROUTING_MANIFEST/);
   assert.match(source, /export WML_ORIGIN_INSTANCE_ID/);
+  assert.match(source, /export WML_PUBLIC_BASE/);
   assert.doesNotMatch(source, /export GATEWAY_HTTP_BASE/);
 });
 

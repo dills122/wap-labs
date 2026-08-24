@@ -184,6 +184,14 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       return readSanitizedAddress();
     },
 
+    async withEphemeralAddress(callback) {
+      if (typeof callback !== 'function') {
+        throw new Error('ephemeral address access requires a callback');
+      }
+      const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
+      return callback(rawAddress);
+    },
+
     async waitForAddress(expected) {
       const sanitizedExpected = stripSensitiveAddress(expected);
       return waitUntil(async () => {

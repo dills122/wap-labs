@@ -3,7 +3,11 @@ services:
     container_name: !reset null
     environment:
       WML_ORIGIN_INSTANCE_ID: "${WML_ORIGIN_INSTANCE_ID:?WML_ORIGIN_INSTANCE_ID is required}"
+      WML_E2E_FIXTURE_MODE: "true"
     ports: !override
+      - target: 3000
+        host_ip: 127.0.0.1
+        protocol: tcp
       - target: 3001
         host_ip: 127.0.0.1
         protocol: tcp
