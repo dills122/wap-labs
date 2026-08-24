@@ -1860,39 +1860,65 @@ Completed `B0` through `B3` tickets are archived in:
 - Review artifact landed in `docs/waves/WAVES_REVIEW_2026-03-15.md`.
 - Follow-through landed in `#109` and `#110`: background startup probing, timer/render churn reduction, stale-safe navigation, combined frame-oriented host commands, off-UI-thread fetch execution, and targeted coverage around the affected coordinators.
 
-### A5-08 Native Tauri/Kannel PR-signal promotion
+### A5-08 Native Tauri/Kannel E2E harness and PR-signal promotion
 
 1. `Status`: `todo`
 2. `Depends On`: `T0-26`, `T0-29`, `A5-07`
-3. `Owner`: `browser`, `transport-rust`, `CI`
+3. `Owner`: `browser`, `transport-rust`, `WML origin`, `CI`; live ruleset changes require the
+   repository administrator acting as CI owner
 4. `Files`:
 
 - `.github/workflows/native-tauri-kannel-e2e.yml`
 - `scripts/native-tauri-kannel-e2e.sh`
 - `browser/frontend/scripts/native-tauri-kannel-e2e.mjs`
+- `browser/frontend/e2e/native/**`
+- `browser/src-tauri/src/fetch_host.rs`
+- `browser/src-tauri/src/waves_config.rs`
+- `transport-rust/src/lib.rs`
+- `wml-server/internal/origin/**`
+- `docker-compose.yml` or a dedicated E2E Compose overlay
+- `docs/waves/WAVES_NATIVE_E2E_HARNESS_PLAN.md`
+- `docs/waves/WAVES_NATIVE_E2E_HARNESS_RESEARCH.md`
 - `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md`
+- `docs/ci/REQUIRED_CHECKS.md`
+- `docs/ci/CI_SETUP.md`
 
 5. `Build`:
 
-- evaluate the scheduled/manual native UI pilot against the scorecard's exact Threshold C
-- preserve schedule/manual and pilot self-validation triggers, widening pull-request coverage to product paths only after the pilot qualifies
+- implement the safe, isolated native E2E foundation and authentication scenarios in the linked
+  plan, including deterministic same-task race proof plus ordinary Enter/Select realism
+- replace trigger-level path filtering during foundation work with an always-present advisory
+  classifier/native/final-gate matrix; scheduled/manual events force native execution
+- add run-scoped Compose, WebDriver, application-state, and host-to-physical-gateway routing with
+  origin-instance mismatch detection while preserving the logical WAP URL
+- publish only an exact-manifest-validated safe bundle; cover PINs, setup bodies, issued session IDs,
+  Kannel admin/status credentials, WebDriver handles, and workflow console output
+- add fresh per-attempt origin correlation and stable exactly-once oracles
+- evaluate both promotion evidence samples against the scorecard's exact Threshold C
 - keep local/private access explicit at the existing host policy boundary with `wap-net-core` and fallback disabled
 
 6. `Tests`:
 
-- four consecutive scheduled successes over at least 21 days with no reruns
-- complete fixed-name UI, driver, service, and teardown artifact set for every qualifying run
-- first path-scoped pull-request run succeeds within the 30-minute promotion budget
+- 20 consecutive no-rerun P0 executions on one unchanged revision
+- four consecutive scheduled successes over at least 21 elapsed days with no reruns
+- deterministic mutation fails and the restored baseline passes the exact race scenario
+- two E2E stacks coexist with the developer stack and detect swapped-origin routing
+- safe-bundle and console canaries prove secrets cannot reach retained evidence
+- relevant and irrelevant pull requests both receive the advisory final-gate result before promotion
 
 7. `Accept`:
 
-- production Tauri frontend changes have a stable, relevant-PR native Kannel signal
+- production Tauri frontend changes have a stable, always-present native Kannel gate that runs the
+  expensive suite only for relevant changes
 - no production SSRF, redirect, DNS, payload, or network-profile policy is weakened
-- `G9` advances to `1.0` only after the promoted workflow succeeds
+- `G9` advances to `1.0` only after both evidence samples pass, the repository administrator adds
+  and reads back the exact live required context, and the promoted workflow succeeds on a relevant PR
 
 8. `Notes`:
 
 - additive follow-up to completed `T0-26`; do not reopen or rewrite its historical acceptance.
+- governing detail lives in `WAVES_NATIVE_E2E_HARNESS_PLAN.md` and its retained research artifact;
+  this item must be synchronized if those active decisions change.
 
 ## WAE Selected-Profile Gap Queue
 

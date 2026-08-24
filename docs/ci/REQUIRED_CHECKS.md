@@ -117,10 +117,16 @@ only after every required status check and any other ruleset requirement succeed
 
 - `Transport WAP Smoke (Kannel)` is a path-scoped PR/manual signal. Do not configure it as a
   global required context because it intentionally does not run on unrelated pull requests.
-- `Native Tauri UI through Kannel (pilot)` only self-validates pilot implementation changes in PRs
-  and otherwise runs scheduled/manual. It must not be required until the promotion criteria in
-  `docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md` are satisfied and the follow-up widens its
-  stable PR paths to relevant product changes.
+- `Native Tauri UI through Kannel (pilot)` is advisory and currently uses a trigger-level path
+  filter that already includes relevant browser frontend/host, engine, transport, Kannel, and WML
+  origin changes, plus scheduled/manual execution. It must not be required in that shape. The
+  foundation work in `docs/waves/WAVES_NATIVE_E2E_HARNESS_PLAN.md` will first replace the trigger
+  filter with an always-present advisory classifier/native/final-gate result matrix. Only after the
+  scorecard's independent 20-run and four-run/21-day promotion samples pass may a repository
+  administrator acting as CI owner add the exact `native-waves-e2e-gate` context to the live
+  ruleset and read back the resulting required-context list.
+  Authentication scenarios must not land before the advisory matrix, exact-manifest safe artifact
+  publisher, whole-lifecycle secret/console policy, and isolation prerequisites are in place.
 - `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is
   intentionally path-scoped and must not be a global required context. Its pinned actionlint gate
   proves offline semantic validity for the static and protected workflow definitions; it does not

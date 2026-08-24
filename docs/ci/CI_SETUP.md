@@ -440,9 +440,18 @@ Behavior:
 - closes the WebDriver session, terminates the isolated GUI process group, and always tears down
   Docker services
 
-The pilot is intentionally not a required or product-change pull-request check yet. Its narrow PR
-filter validates the pilot implementation itself. Widen it additively to relevant product paths
-only after all criteria in the active E2E readiness scorecard are met.
+The pilot is intentionally not required. Its current trigger-level pull-request filter already
+includes relevant browser frontend/host, engine, transport, Kannel, and WML-origin product paths.
+The native E2E foundation must replace that filter with the always-present advisory
+classifier/native/final-gate matrix before authentication scenario PRs land, so new harness files
+cannot skip their own validation. Promote the existing final gate to a live required context only
+after all criteria in the active E2E readiness scorecard are met and the repository administrator
+acting as CI owner completes and reads back the ruleset migration.
+
+The pilot's current whole-directory diagnostics upload and interpolated runtime logging are not safe
+for authentication/session coverage. The harness foundation must replace them with the exact-manifest
+safe bundle and whole-lifecycle secret/console policy in the native E2E plan before any auth scenario
+is enabled.
 
 ## Dependency Update Automation
 
