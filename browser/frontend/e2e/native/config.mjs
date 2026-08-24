@@ -1,6 +1,11 @@
 import { CORE_SCENARIOS } from './scenarios/core.mjs';
+import { AUTHENTICATION_SCENARIOS } from './scenarios/authentication.mjs';
 
-const SCENARIOS = CORE_SCENARIOS;
+const SCENARIOS = Object.freeze([
+  ...CORE_SCENARIOS.slice(0, 2),
+  ...AUTHENTICATION_SCENARIOS,
+  ...CORE_SCENARIOS.slice(2)
+]);
 
 const requireOptionValue = (arguments_, index, option) => {
   const value = arguments_[index + 1];

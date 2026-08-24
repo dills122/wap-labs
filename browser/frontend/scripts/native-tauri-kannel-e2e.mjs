@@ -54,6 +54,7 @@ if (cliOptions?.mode === 'list') {
     const timing = await measureOriginTiming({ metricsUrl });
     const origin = createOriginObserver({
       metricsUrl,
+      publicBase: requiredEnvironment('WML_PUBLIC_BASE'),
       quiescenceMs: timing.quiescenceMs,
       timeoutMs
     });
