@@ -35,3 +35,17 @@ test('native E2E cache records exact Tauri crate provenance without unsupported 
   assert.match(workflowSource, /test -x "\$\(command -v tauri-driver\)"/);
   assert.doesNotMatch(workflowSource, /^\s*tauri-driver --version/m);
 });
+
+test('native E2E publishes an always-present advisory gate', () => {
+  assert.doesNotMatch(workflowSource, /^ {4}paths:/m);
+  assert.match(workflowSource, /^  classify-native-e2e:$/m);
+  assert.match(workflowSource, /^  native-waves-e2e-gate:$/m);
+  assert.match(workflowSource, /if: \$\{\{ always\(\) \}\}/);
+  assert.match(workflowSource, /run: node scripts\/ci\/native-e2e-gate\.mjs/);
+});
+
+test('native E2E forces scheduled and manually dispatched runs through the classifier', () => {
+  assert.match(workflowSource, /EVENT_NAME: \$\{\{ github\.event_name \}\}/);
+  assert.match(workflowSource, /if \[ "\$\{EVENT_NAME\}" != "pull_request" \]/);
+  assert.match(workflowSource, /selected=true/);
+});
