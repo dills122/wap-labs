@@ -47,13 +47,22 @@ export async function reserveLoopbackPorts({
     throw error;
   }
 
-  const ports = servers.map((server) => {
-    const address = server.address();
-    assert.ok(address && typeof address === 'object', 'port lease server omitted its address');
-    assert.equal(address.address, host, 'port lease server bound an unexpected address');
-    assert.ok(address.port > 0 && address.port <= 65_535, 'port lease server omitted its assigned port');
-    return address.port;
-  });
+  let ports;
+  try {
+    ports = servers.map((server) => {
+      const address = server.address();
+      assert.ok(address && typeof address === 'object', 'port lease server omitted its address');
+      assert.equal(address.address, host, 'port lease server bound an unexpected address');
+      assert.ok(
+        address.port > 0 && address.port <= 65_535,
+        'port lease server omitted its assigned port'
+      );
+      return address.port;
+    });
+  } catch (error) {
+    await Promise.allSettled(servers.map(closeServer));
+    throw error;
+  }
   let releasePromise;
 
   return {
@@ -73,7 +82,7 @@ const defaultSignalProcess = (child, signal, platform) => {
 };
 
 const defaultIsProcessAlive = (child, platform) => {
-  if (child.exitCode !== null || child.signalCode !== null) {
+  if (platform === 'win32' && (child.exitCode !== null || child.signalCode !== null)) {
     return false;
   }
   try {
@@ -244,6 +253,14 @@ export function createSeleniumProvider({
     assert.equal(typeof application, 'string', 'application must be a string');
     assert.notEqual(application, '', 'application must not be empty');
     assert.ok(
+      Number.isSafeInteger(startupTimeoutMs) && startupTimeoutMs > 0,
+      'startupTimeoutMs must be positive'
+    );
+    assert.ok(
+      Number.isSafeInteger(pollIntervalMs) && pollIntervalMs > 0,
+      'pollIntervalMs must be positive'
+    );
+    assert.ok(
       Number.isSafeInteger(maxStartupAttempts) && maxStartupAttempts > 0,
       'maxStartupAttempts must be positive'
     );
@@ -251,7 +268,12 @@ export function createSeleniumProvider({
     let lastStartupError;
     for (let attempt = 1; attempt <= maxStartupAttempts; attempt += 1) {
       const lease = await reservePorts({ count: 2, host: '127.0.0.1' });
-      validateLease(lease);
+      try {
+        validateLease(lease);
+      } catch (error) {
+        await lease?.release?.();
+        throw error;
+      }
       const [intermediary, native] = lease.ports;
       const driverUrl = `http://127.0.0.1:${intermediary}/`;
       await lease.release();

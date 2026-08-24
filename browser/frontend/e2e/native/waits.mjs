@@ -43,17 +43,30 @@ export async function waitForCondition({
   const startedAt = now();
   const deadline = startedAt + timeoutMs;
   let lastObservation = 'not observed';
+  let hasObserved = false;
 
   while (true) {
+    if (hasObserved && now() >= deadline) {
+      throw new Error(
+        `timed out after ${timeoutMs}ms waiting for ${description}; last observation: ${lastObservation}`
+      );
+    }
+    hasObserved = true;
+    let observation;
+    let observationSucceeded = false;
     try {
-      const observation = await observe({ remainingMs: Math.max(0, deadline - now()) });
+      observation = await observe({ remainingMs: Math.max(0, deadline - now()) });
+      observationSucceeded = true;
+    } catch (error) {
+      const errorName = error instanceof Error ? error.name : typeof error;
+      lastObservation = `observation failed (${errorName})`;
+      observation = undefined;
+    }
+    if (observationSucceeded) {
       lastObservation = formatObservation(observation);
       if (await accept(observation)) {
         return observation;
       }
-    } catch (error) {
-      const errorName = error instanceof Error ? error.name : typeof error;
-      lastObservation = `observation failed (${errorName})`;
     }
 
     const remainingMs = deadline - now();
@@ -136,7 +149,7 @@ export async function waitForWebDriverReady({
       readWebDriverStatus({
         statusUrl,
         fetchImpl,
-        requestTimeoutMs: Math.max(1, Math.min(requestTimeoutMs, remainingMs || requestTimeoutMs)),
+        requestTimeoutMs: Math.max(1, Math.min(requestTimeoutMs, remainingMs)),
         AbortControllerImpl,
         setTimer,
         clearTimer

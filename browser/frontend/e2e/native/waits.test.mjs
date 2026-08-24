@@ -30,13 +30,36 @@ test('condition waits return the accepted observation', async () => {
   assert.equal(time.now(), 10);
 });
 
-test('condition wait timeouts identify the expectation and last observation', async () => {
+test('condition waits surface acceptance predicate defects immediately', async () => {
   const time = createFakeTime();
 
   await assert.rejects(
     waitForCondition({
+      description: 'valid state',
+      observe: async () => ({ state: 'unexpected' }),
+      accept: () => {
+        throw new TypeError('invalid predicate state');
+      },
+      timeoutMs: 100,
+      pollIntervalMs: 10,
+      ...time
+    }),
+    new TypeError('invalid predicate state')
+  );
+  assert.equal(time.now(), 0);
+});
+
+test('condition wait timeouts identify the expectation and last observation', async () => {
+  const time = createFakeTime();
+  let observationCount = 0;
+
+  await assert.rejects(
+    waitForCondition({
       description: 'deck text "Welcome"',
-      observe: async () => 'Loading',
+      observe: async () => {
+        observationCount += 1;
+        return 'Loading';
+      },
       accept: () => false,
       timeoutMs: 25,
       pollIntervalMs: 10,
@@ -45,6 +68,7 @@ test('condition wait timeouts identify the expectation and last observation', as
     /timed out after 25ms waiting for deck text "Welcome"; last observation: Loading/
   );
   assert.equal(time.now(), 25);
+  assert.equal(observationCount, 3, 'the condition is not observed again after its deadline');
 });
 
 test('WebDriver readiness polls GET /status until the endpoint reports ready', async () => {
@@ -114,7 +138,7 @@ test('WebDriver readiness records protocol-safe observations for HTTP and malfor
   await assert.rejects(
     waitForWebDriverReady({
       driverUrl: 'http://127.0.0.1:41234/',
-      timeoutMs: 10,
+      timeoutMs: 20,
       pollIntervalMs: 10,
       fetchImpl: async () => responses.shift(),
       ...time
@@ -125,6 +149,34 @@ test('WebDriver readiness records protocol-safe observations for HTTP and malfor
       return true;
     }
   );
+});
+
+test('WebDriver readiness bounds each status request by the remaining startup time', async () => {
+  const time = createFakeTime();
+  const requestTimeouts = [];
+
+  await assert.rejects(
+    waitForWebDriverReady({
+      driverUrl: 'http://127.0.0.1:41234/',
+      timeoutMs: 10,
+      pollIntervalMs: 10,
+      requestTimeoutMs: 1_000,
+      fetchImpl: async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({ value: { ready: false } })
+      }),
+      setTimer: (_callback, milliseconds) => {
+        requestTimeouts.push(milliseconds);
+        return 1;
+      },
+      clearTimer: () => undefined,
+      ...time
+    }),
+    /timed out after 10ms/
+  );
+
+  assert.deepEqual(requestTimeouts, [10]);
 });
 
 test('WebDriver readiness rejects non-loopback and credential-bearing endpoints', async () => {
