@@ -477,6 +477,9 @@ Build:
 - before upload, validate one exact mode-specific manifest: the complete normal safe bundle, the
   single static sanitizer-failure bundle, or the single static pre-scenario infrastructure-failure
   bundle; reject missing, extra, symlinked, path-escaping, or digest-mismatched entries
+- if operation or process ownership remains unresolved, publish only a fixed static ownership
+  failure, stop the suite, retain active restricted files outside the upload tree, and delete
+  secret-bearing restricted evidence only after later settlement proves ownership release
 - validate the normal manifest, its entries, and `result.json` against exact bounded schemas and
   fixed assertion/checkpoint/failure-class allowlists; require canonical JSON bytes and never trust
   self-described manifest fields

@@ -285,6 +285,7 @@ test('native E2E hard-bounds a scenario that ignores cancellation', async () => 
 test('native E2E never starts another scenario or publishes while prior cleanup is unresolved', async () => {
   let secondRuns = 0;
   let publications = 0;
+  let terminalPublication;
   let releaseCleanup;
   const cleanupSettled = new Promise((resolve) => {
     releaseCleanup = resolve;
@@ -305,6 +306,9 @@ test('native E2E never starts another scenario or publishes while prior cleanup 
     }),
     async onResult() {
       publications += 1;
+    },
+    async onTerminalResult(result, { ownershipSettlement }) {
+      terminalPublication = { result, ownershipSettlement };
     }
   });
 
@@ -312,7 +316,10 @@ test('native E2E never starts another scenario or publishes while prior cleanup 
   assert.equal(results[0].failureClass, 'scenario-cleanup');
   assert.equal(secondRuns, 0);
   assert.equal(publications, 0);
+  assert.equal(terminalPublication.result.scenarioId, 'CLEANUP-HANG');
+  assert.equal(terminalPublication.result.result, 'fail');
   releaseCleanup();
+  assert.equal(await terminalPublication.ownershipSettlement, true);
 });
 
 test('native E2E cannot pass when the scenario deadline expires during cleanup', async () => {

@@ -8,6 +8,7 @@ import test from 'node:test';
 import { initializeScenarioEvidence } from './evidence.mjs';
 import {
   constructSafeEvidenceBundle,
+  constructStaticOwnershipFailureBundle,
   constructStaticRunFailureBundle,
   validateSafeEvidenceBundle,
   validateSafeEvidenceRoot
@@ -125,6 +126,24 @@ test('pre-scenario infrastructure failure emits one static secret-free bundle', 
       { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase: 'infrastructure' }
     );
     await assert.rejects(readFile(layout.restrictedDir), /ENOENT|EISDIR/);
+  });
+});
+
+test('unresolved ownership emits a static safe failure without deleting active restricted files', async () => {
+  await withLayout(async (layout, root) => {
+    const restrictedFile = path.join(layout.restrictedDir, 'active-driver.log');
+    await writeFile(restrictedFile, 'still owned by the active process');
+
+    assert.deepEqual(await constructStaticOwnershipFailureBundle({ layout }), {
+      ok: false,
+      mode: 'run-failure'
+    });
+    assert.equal(await readFile(restrictedFile, 'utf8'), 'still owned by the active process');
+    assert.deepEqual(
+      JSON.parse(await readFile(path.join(layout.safeUploadDir, 'run-failure.json'), 'utf8')),
+      { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase: 'ownership' }
+    );
+    assert.deepEqual(await validateSafeEvidenceRoot({ artifactRoot: root }), { bundles: 1 });
   });
 });
 

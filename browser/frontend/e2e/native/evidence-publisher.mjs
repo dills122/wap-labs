@@ -292,16 +292,34 @@ export async function constructSafeEvidenceBundle({ layout, payloads, secrets, f
   }
 }
 
-export async function constructStaticRunFailureBundle({ layout, fsOps = fs }) {
-  await cleanupRestrictedEvidence(layout, { fsOps });
+async function constructStaticFailureBundle({ layout, phase, removeRestricted, fsOps }) {
+  if (removeRestricted) await cleanupRestrictedEvidence(layout, { fsOps });
   await clearSafeDirectory(layout, fsOps);
   await writePrivateJsonManifest({
     filePath: path.join(layout.safeUploadDir, RUN_FAILURE_NAME),
-    value: { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase: 'infrastructure' },
+    value: { schemaVersion: 1, mode: 'run-failure', result: 'fail', phase },
     fsOps
   });
   await validateSafeEvidenceBundle({ safeUploadDir: layout.safeUploadDir, fsOps });
   return { ok: false, mode: 'run-failure' };
+}
+
+export async function constructStaticRunFailureBundle({ layout, fsOps = fs }) {
+  return constructStaticFailureBundle({
+    layout,
+    phase: 'infrastructure',
+    removeRestricted: true,
+    fsOps
+  });
+}
+
+export async function constructStaticOwnershipFailureBundle({ layout, fsOps = fs }) {
+  return constructStaticFailureBundle({
+    layout,
+    phase: 'ownership',
+    removeRestricted: false,
+    fsOps
+  });
 }
 
 export async function validateSafeEvidenceBundle({ safeUploadDir, fsOps = fs }) {
@@ -333,7 +351,7 @@ export async function validateSafeEvidenceBundle({ safeUploadDir, fsOps = fs }) 
       value.schemaVersion !== 1 ||
       value.mode !== 'run-failure' ||
       value.result !== 'fail' ||
-      value.phase !== 'infrastructure'
+      !['infrastructure', 'ownership'].includes(value.phase)
     ) {
       throw new Error('invalid static run-failure bundle');
     }
