@@ -5,6 +5,8 @@ const SELECTORS = Object.freeze({
   connectNetwork: '#btn-connect-network',
   address: '#fetch-url',
   go: '#btn-fetch-url',
+  back: '#btn-back',
+  reload: '#btn-reload',
   viewport: '#viewport',
   status: '#status',
   softkeys: Object.freeze({ up: '#btn-up', select: '#btn-enter', down: '#btn-down' })
@@ -13,19 +15,26 @@ const SELECTORS = Object.freeze({
 const SAME_TASK_SUBMIT_SCRIPT = `
 const finalCharacter = arguments[0];
 const submission = arguments[1];
+const viewport = document.querySelector('#viewport');
+if (!(viewport instanceof HTMLElement)) {
+  throw new Error('Waves viewport is unavailable');
+}
+viewport.focus();
 const characterEvent = new KeyboardEvent('keydown', {
   key: finalCharacter,
   bubbles: true,
-  cancelable: true
+  cancelable: true,
+  composed: true
 });
-window.dispatchEvent(characterEvent);
+viewport.dispatchEvent(characterEvent);
 if (submission === 'enter') {
   const submitEvent = new KeyboardEvent('keydown', {
     key: 'Enter',
     bubbles: true,
-    cancelable: true
+    cancelable: true,
+    composed: true
   });
-  window.dispatchEvent(submitEvent);
+  viewport.dispatchEvent(submitEvent);
 } else {
   const selectButton = document.querySelector('#btn-enter');
   if (!(selectButton instanceof HTMLButtonElement)) {
@@ -58,6 +67,20 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
       element
     );
+  const submitAddress = async (address) => {
+    if (typeof address !== 'string' || address.length === 0 || address.length > 2_048) {
+      throw new Error('Waves address must be a bounded non-empty string');
+    }
+    const input = await find(SELECTORS.address);
+    await input.click();
+    await input.clear();
+    await input.sendKeys(address);
+    await (await find(SELECTORS.go)).click();
+  };
+  const readSanitizedAddress = async () => {
+    const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
+    return stripSensitiveAddress(rawAddress);
+  };
 
   return Object.freeze({
     async launchWaves() {
@@ -87,11 +110,11 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
         throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
       }
-      const input = await find(SELECTORS.address);
-      await input.click();
-      await input.clear();
-      await input.sendKeys(address);
-      await (await find(SELECTORS.go)).click();
+      await submitAddress(address);
+    },
+
+    async submitAddress(address) {
+      await submitAddress(address);
     },
 
     async focusViewport() {
@@ -109,6 +132,14 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     async pressKeyboardKey(key) {
       const value = keys[key] ?? key;
       await (await find(SELECTORS.viewport)).sendKeys(value);
+    },
+
+    async goBack() {
+      await (await find(SELECTORS.back)).click();
+    },
+
+    async reload() {
+      await (await find(SELECTORS.reload)).click();
     },
 
     async typeText(value) {
@@ -150,8 +181,15 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     },
 
     async readSanitizedAddress() {
-      const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
-      return stripSensitiveAddress(rawAddress);
+      return readSanitizedAddress();
+    },
+
+    async waitForAddress(expected) {
+      const sanitizedExpected = stripSensitiveAddress(expected);
+      return waitUntil(async () => {
+        const observed = await readSanitizedAddress();
+        return observed === sanitizedExpected ? observed : false;
+      }, { description: `address ${JSON.stringify(sanitizedExpected)}` });
     }
   });
 }
