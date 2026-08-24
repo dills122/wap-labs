@@ -8,6 +8,7 @@ pub mod waves_config;
 pub mod bootstrap;
 mod engine_bridge;
 mod fetch_host;
+mod fetch_routing_manifest;
 
 use application_state::{
     ApplicationStateLoadResult, ApplicationStateV1, AtomicApplicationStateBackend,
