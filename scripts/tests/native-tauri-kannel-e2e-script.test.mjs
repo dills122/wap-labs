@@ -189,6 +189,8 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'AUTH-NATIVE-002A\tsmoke\tLogin preserves same-task final character before Select',
       'AUTH-NATIVE-002B\tsmoke\tLogin submits through the physical Select control',
       'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
+      'NAV-NATIVE-002\tsmoke\tBack restores host deck history before same-deck card history',
+      'NAV-NATIVE-003\tsmoke\tReload fetches once without duplicating host history',
       'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
       'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
       ''
