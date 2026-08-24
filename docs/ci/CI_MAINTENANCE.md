@@ -34,7 +34,7 @@ immutable dependency stores and build layers, not mutable workspaces or test res
 | Security                      | PR, `main`, weekly, manual; image audit path-selected only on PRs        | Four documented required dependency gates; image audit optional | pnpm/Rust/Go caches, exact Syft/Grype binaries, BuildKit image layers, SBOM artifact   |
 | CodeQL                        | PR, `main`, weekly, manual                                               | Three required language contexts                                | CodeQL-managed analysis state; no repository artifact                                  |
 | Transport WAP Smoke           | Relevant PR paths and manual                                             | Optional path-scoped authentic E2E                              | BuildKit Kannel/WML layers, Rust target, deterministic logs                            |
-| Native Tauri Kannel E2E       | Traversed product paths on PRs, weekly, manual                           | Optional pilot                                                  | BuildKit Kannel/WML layers, Rust targets, exact Tauri binaries, UI/service diagnostics |
+| Native Tauri Kannel E2E       | Every PR; native job path-selected on PRs; weekly, manual                | Optional pilot; always-present advisory `Native Waves E2E Gate` | BuildKit Kannel/WML layers, Rust targets, exact Tauri binaries, UI/service diagnostics |
 | OpenTofu Static               | Infrastructure paths on PR/`main`, manual                                | Optional path-scoped static gate                                | Go/OpenTofu provider caches; no cloud state or credentials                             |
 | Protected OpenTofu Plan/Apply | Manual only, shared non-cancelling state lock                            | Access-backed operational gates                                 | Encrypted plan artifact; no decrypted state artifact                                   |
 | Deploy Pages                  | Relevant pushes to `main`, manual                                        | Deployment only                                                 | pnpm/Rust/`wasm-pack`; deploys `_site` to `gh-pages`                                   |
@@ -138,8 +138,9 @@ Follow-ups that need separate policy or branch-protection work:
   Clippy step; validation ignores only that known baseline diagnostic.
 - CodeQL becomes the typical unrelated-PR critical path at about eight minutes. Path-selecting its
   three individually required contexts needs a stable aggregate check and a ruleset migration.
-- The native pilot remains optional, but its PR paths now cover every engine, transport, host,
-  Kannel, WML, Compose, and lockfile surface that the pilot actually traverses.
+- The native pilot remains optional. Its workflow is always present on pull requests, while the
+  native job's relevance paths cover every engine, transport, host, Kannel, WML, Compose, and
+  lockfile surface that the pilot actually traverses.
 - Consider a reusable setup action only after measuring whether reducing YAML duplication offsets
   the extra local-action maintenance surface.
 - Measure two warm BuildKit runs and record actual cache-hit timing before lowering Kannel workflow

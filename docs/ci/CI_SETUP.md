@@ -551,7 +551,7 @@ At minimum, require:
 Do not require:
 
 - `Transport WAP Smoke` globally (it is a path-scoped PR signal and does not run for unrelated PRs)
-- `Native Tauri Kannel E2E` until its documented pilot promotion criteria are met
+- `Native Waves E2E Gate` until its documented pilot promotion criteria are met
 - `OpenTofu Static Validation` globally (it is path-scoped and otherwise absent)
 - `Deploy Pages` (deployment workflow)
 
