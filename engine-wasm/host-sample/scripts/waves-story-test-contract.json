@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "maxCommandDelayMs": 5000,
+  "maxSequenceActions": 32,
+  "delayableCommands": [
+    "engineAdvanceTimeMsFrame",
+    "engineBeginFocusedInputEditFrame",
+    "engineCommitFocusedInputEditFrame",
+    "engineHandleInputFrame",
+    "engineLoadDeckContextFrame",
+    "engineNavigateBackFrame",
+    "engineSetFocusedInputEditDraftFrame"
+  ]
+}

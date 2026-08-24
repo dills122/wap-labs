@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   NoExecutableCoverageError,
+  assertConfiguredCommandDelaysExercised,
   assertStoryExpectation,
   isExpectedHostFailureStatus,
   selectExecutableStories,
+  storyEntryUrl,
   traceContainsSubsequence
 } from '../story-runner-lib.mjs';
 
@@ -43,6 +45,45 @@ test('selects executable stories by work item or spec item, case-insensitively',
 test('selects fast target-specific story lanes', () => {
   assert.equal(selectExecutableStories(records, 'host-sample').length, 1);
   assert.equal(selectExecutableStories(records, 'waves').length, 1);
+});
+
+test('adds configured host-command delays only to Waves story entry URLs', () => {
+  const wavesStory = {
+    flow: {
+      target: 'waves-browser',
+      setup: {
+        commandDelaysMs: {
+          engineSetFocusedInputEditDraftFrame: 40,
+          engineHandleInputFrame: 25
+        }
+      }
+    }
+  };
+  const url = new URL(storyEntryUrl('http://127.0.0.1:4173/browser-story.html', wavesStory));
+
+  assert.deepEqual(url.searchParams.getAll('host-delay'), [
+    'engineSetFocusedInputEditDraftFrame:40',
+    'engineHandleInputFrame:25'
+  ]);
+  assert.equal(
+    storyEntryUrl('http://127.0.0.1:4173/', { flow: { target: 'host-sample' } }),
+    'http://127.0.0.1:4173/'
+  );
+});
+
+test('requires every configured host-command delay to be exercised by the flow', () => {
+  const setup = { commandDelaysMs: { engineSetFocusedInputEditDraftFrame: 40 } };
+  assert.doesNotThrow(() =>
+    assertConfiguredCommandDelaysExercised(
+      { testHost: { delayedCommandCounts: { engineSetFocusedInputEditDraftFrame: 2 } } },
+      setup,
+      'race flow'
+    )
+  );
+  assert.throws(
+    () => assertConfiguredCommandDelaysExercised({ testHost: {} }, setup, 'race flow'),
+    /was never exercised/
+  );
 });
 
 test('reports an explicit metadata-only coverage gap', () => {

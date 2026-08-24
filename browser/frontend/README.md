@@ -147,6 +147,13 @@ state, and render-list text. Playwright screenshots and traces are retained only
 debugging. Network-mode stories use an in-memory fixture adapter restricted to canonical
 `engine-wasm/examples` decks; they do not exercise native Tauri or Rust transport behavior.
 
+Race-focused Waves stories can configure allow-listed host-command latency with
+`setup.commandDelaysMs` and group user inputs in a `sequence` action. Sequence members are
+dispatched without waiting for controller work to settle, so a flow can reproduce real UI/host
+overlap such as typing the final form character and immediately pressing keyboard Enter or the
+Select softkey. The runner fails if a configured delayed command is never exercised. See
+`forms-text-submit-local.flow.json` for the canonical form-serialization regressions.
+
 Run from `browser/`:
 
 ```bash

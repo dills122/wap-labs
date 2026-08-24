@@ -9,6 +9,7 @@ testing-ac:
 - Press Enter on the username field, type a new value, and press Enter to commit.
 - Move to the PIN field, type digits, and confirm the viewport masks the committed value.
 - Submit the card and confirm Waves reports a captured external intent instead of performing a fetch.
+- With delayed host draft updates, submit immediately after typing and confirm both keyboard Enter and the Select softkey preserve the exact username and PIN payload.
 -->
 <?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"

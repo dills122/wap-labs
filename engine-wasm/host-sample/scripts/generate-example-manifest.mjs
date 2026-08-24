@@ -1,4 +1,4 @@
-import { promises as fs } from 'node:fs';
+import { promises as fs, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -9,6 +9,14 @@ const ROOT = HOST_SAMPLE_DIR;
 const DEFAULT_EXAMPLES_DIR = path.join(ENGINE_WASM_DIR, 'examples', 'source');
 const DEFAULT_OUTPUT_FILE = path.join(ENGINE_WASM_DIR, 'examples', 'generated', 'examples.ts');
 const FLOW_SUFFIX = '.flow.json';
+const STORY_TEST_CONTRACT = JSON.parse(
+  readFileSync(new URL('./waves-story-test-contract.json', import.meta.url), 'utf8')
+);
+if (STORY_TEST_CONTRACT.version !== 1) {
+  throw new Error(
+    `Unsupported Waves story test contract version: ${String(STORY_TEST_CONTRACT.version)}`
+  );
+}
 const ID_PATTERN = /^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$/;
 const STATE_KEYS = new Set([
   'activeCardId',
@@ -43,6 +51,7 @@ const ACTION_TYPES = new Set([
   'activate-action',
   'click',
   'scroll',
+  'sequence',
   'back',
   'tick',
   'clear-intent'
@@ -51,6 +60,9 @@ const KEY_NAMES = new Set(['up', 'down', 'enter']);
 const KEYBOARD_NAMES = new Set(['ArrowUp', 'ArrowDown', 'Enter', 'Backspace', 'Escape']);
 const STORY_TARGETS = new Set(['host-sample', 'waves-browser']);
 const WAVES_RUN_MODES = new Set(['local', 'network']);
+const WAVES_DELAYABLE_COMMANDS = new Set(STORY_TEST_CONTRACT.delayableCommands);
+const MAX_WAVES_COMMAND_DELAY_MS = STORY_TEST_CONTRACT.maxCommandDelayMs;
+const MAX_SEQUENCE_ACTIONS = STORY_TEST_CONTRACT.maxSequenceActions;
 
 function toCamelCase(value) {
   return value.replace(/[-_]+([a-zA-Z0-9])/g, (_, c) => c.toUpperCase());
@@ -523,16 +535,44 @@ function parseExpectation(value, filename, location) {
   return parsed;
 }
 
-function parseAction(value, filename, location) {
+function parseAction(value, filename, location, { allowSequence = true } = {}) {
   const action = requireRecord(value, filename, location);
   validateKeys(
     action,
-    new Set(['type', 'key', 'ms', 'text', 'actionId', 'x', 'y', 'deltaRows']),
+    new Set(['type', 'key', 'ms', 'text', 'actionId', 'x', 'y', 'deltaRows', 'actions']),
     filename,
     location
   );
   if (!ACTION_TYPES.has(action.type)) {
     throw new Error(`${filename}: ${location}.type has unknown action "${String(action.type)}"`);
+  }
+
+  if (action.type === 'sequence') {
+    if (!allowSequence) {
+      throw new Error(`${filename}: ${location} cannot nest a sequence action`);
+    }
+    if (
+      !Array.isArray(action.actions) ||
+      action.actions.length === 0 ||
+      action.actions.length > MAX_SEQUENCE_ACTIONS
+    ) {
+      throw new Error(
+        `${filename}: ${location} sequence must contain 1-${MAX_SEQUENCE_ACTIONS} actions`
+      );
+    }
+    const unexpected = Object.keys(action).filter((key) => key !== 'type' && key !== 'actions');
+    if (unexpected.length > 0) {
+      throw new Error(`${filename}: ${location} sequence actions only accept type and actions`);
+    }
+    return {
+      type: action.type,
+      actions: action.actions.map((nested, index) =>
+        parseAction(nested, filename, `${location}.actions[${index}]`, { allowSequence: false })
+      )
+    };
+  }
+  if (action.actions !== undefined) {
+    throw new Error(`${filename}: ${location} ${action.type} actions cannot include actions`);
   }
 
   if (action.type === 'key') {
@@ -626,14 +666,40 @@ function parseStorySetup(value, target, filename, location) {
     return undefined;
   }
   const setup = requireRecord(value, filename, location);
-  validateKeys(setup, new Set(['runMode']), filename, location);
+  validateKeys(setup, new Set(['runMode', 'commandDelaysMs']), filename, location);
   if (target !== 'waves-browser') {
     throw new Error(`${filename}: ${location} is only valid for waves-browser flows`);
   }
   if (!WAVES_RUN_MODES.has(setup.runMode)) {
     throw new Error(`${filename}: ${location}.runMode must be local or network`);
   }
-  return { runMode: setup.runMode };
+  if (setup.commandDelaysMs === undefined) {
+    return { runMode: setup.runMode };
+  }
+
+  const commandDelays = requireRecord(
+    setup.commandDelaysMs,
+    filename,
+    `${location}.commandDelaysMs`
+  );
+  if (Object.keys(commandDelays).length === 0) {
+    throw new Error(`${filename}: ${location}.commandDelaysMs needs at least one command`);
+  }
+  const commandDelaysMs = {};
+  for (const [command, delayMs] of Object.entries(commandDelays)) {
+    if (!WAVES_DELAYABLE_COMMANDS.has(command)) {
+      throw new Error(
+        `${filename}: ${location}.commandDelaysMs contains unsupported command "${command}"`
+      );
+    }
+    if (!Number.isInteger(delayMs) || delayMs < 1 || delayMs > MAX_WAVES_COMMAND_DELAY_MS) {
+      throw new Error(
+        `${filename}: ${location}.commandDelaysMs.${command} must be an integer from 1-${MAX_WAVES_COMMAND_DELAY_MS}`
+      );
+    }
+    commandDelaysMs[command] = delayMs;
+  }
+  return { runMode: setup.runMode, commandDelaysMs };
 }
 
 export function parseExecutableFlow(source, filename, expectedExampleKey) {
@@ -778,6 +844,9 @@ export async function loadExampleRecords({ examplesDir = DEFAULT_EXAMPLES_DIR } 
 }
 
 export function renderManifest(records) {
+  const delayableCommandType = STORY_TEST_CONTRACT.delayableCommands
+    .map((command) => `        | '${command}'`)
+    .join('\n');
   return `/* eslint-disable */
 // AUTO-GENERATED FILE. DO NOT EDIT DIRECTLY.
 // Sources: engine-wasm/examples/source/*.wml and optional *.flow.json companions
@@ -855,7 +924,7 @@ export interface StoryExpectation {
   };
 }
 
-export type StoryAction =
+export type AtomicStoryAction =
   | { type: 'key'; key: 'up' | 'down' | 'enter' }
   | { type: 'keyboard'; key: 'ArrowUp' | 'ArrowDown' | 'Enter' | 'Backspace' | 'Escape' }
   | { type: 'type-text'; text: string }
@@ -866,6 +935,10 @@ export type StoryAction =
   | { type: 'tick'; ms: 100 | 1000 }
   | { type: 'clear-intent' };
 
+export type StoryAction =
+  | AtomicStoryAction
+  | { type: 'sequence'; actions: AtomicStoryAction[] };
+
 export interface StoryStep {
   action: StoryAction;
   expect: StoryExpectation;
@@ -875,7 +948,15 @@ export interface ExecutableStoryFlow {
   id: string;
   title: string;
   target: 'host-sample' | 'waves-browser';
-  setup?: { runMode: 'local' | 'network' };
+  setup?: {
+    runMode: 'local' | 'network';
+    commandDelaysMs?: Partial<
+      Record<
+${delayableCommandType},
+        number
+      >
+    >;
+  };
   workItems: string[];
   specItems: string[];
   initial: StoryExpectation;

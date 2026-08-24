@@ -1,10 +1,13 @@
 import './styles.css';
 import { composeBrowserApplication, initializeBrowserApplication } from './app/browser-application';
 import { createWasmBrowserTestHost } from './test-support/wasm-browser-test-host';
+import { parseBrowserTestHostOptions } from './test-support/browser-test-host-options';
 import { installWavesStoryObservationBridge } from './test-support/waves-story-observation';
 
 const main = async (): Promise<void> => {
-  const host = await createWasmBrowserTestHost();
+  const host = await createWasmBrowserTestHost(
+    parseBrowserTestHostOptions(new URLSearchParams(window.location.search))
+  );
   const application = composeBrowserApplication(host.client, {
     startUrl: 'http://local.test/examples/basic.wml',
     runMode: 'local'

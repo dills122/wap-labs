@@ -119,6 +119,12 @@ Each selected target receives an ephemeral localhost port and a unique temporary
 so concurrent worktrees and CI jobs do not share servers or build output. No manual server setup is
 required.
 
+For Waves UI/host race coverage, a flow may add allow-listed millisecond delays under
+`setup.commandDelaysMs` and use a `sequence` action to dispatch several keyboard or softkey actions
+without an intermediate state assertion. This keeps latency injection in the test-only WASM host
+while exercising the production browser controller, presenter, shell, and engine. Configured
+delays are self-checking: the story fails when the named host command was not called.
+
 Every run writes a stable summary under
 `engine-wasm/host-sample/test-results/story/<selector>/summary.json`. Failed flows also receive
 `failure.png`, `trace.zip`, and structured `evidence.json` containing runtime snapshots, semantic

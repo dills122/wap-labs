@@ -4,8 +4,13 @@ import type { TauriHostClient } from '../../../contracts/generated/tauri-host-cl
 import type { EngineTraceEntry, WmlEngineWasm } from '../../../../engine-wasm/contracts/wml-engine';
 import { MemoryApplicationStateStore } from '../app/application-state-store';
 import { createDeterministicFixtureFetch } from './deterministic-fixture-fetch';
+import type {
+  BrowserTestDelayableCommand,
+  BrowserTestHostOptions
+} from './browser-test-host-options';
 
 export interface BrowserTestHostDiagnostics {
+  delayedCommandCounts(): Partial<Record<BrowserTestDelayableCommand, number>>;
   traceEntries(): EngineTraceEntry[];
 }
 
@@ -14,7 +19,9 @@ export interface BrowserTestHost {
   diagnostics: BrowserTestHostDiagnostics;
 }
 
-export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
+export const createWasmBrowserTestHost = async (
+  options: BrowserTestHostOptions = { commandDelaysMs: {} }
+): Promise<BrowserTestHost> => {
   await init();
   const engine = new WmlEngine() as unknown as WmlEngineWasm;
   const fetchDeck = createDeterministicFixtureFetch();
@@ -61,7 +68,7 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     }
   };
 
-  const client: TauriHostClient = {
+  const baseClient: TauriHostClient = {
     health: async () => 'waves-browser-test-host:ok',
     applicationStateLoad: () => applicationState.load(),
     applicationStateSave: ({ state }) => applicationState.save(state),
@@ -226,13 +233,43 @@ export const createWasmBrowserTestHost = async (): Promise<BrowserTestHost> => {
     }
   };
 
+  const delayedCommandCounts: Partial<Record<BrowserTestDelayableCommand, number>> = {};
+  const client = withCommandDelays(baseClient, options, delayedCommandCounts);
+
   return {
     client,
     diagnostics: {
+      delayedCommandCounts: () => ({ ...delayedCommandCounts }),
       traceEntries: () => engine.traceEntries().map((entry) => ({ ...entry }))
     }
   };
 };
+
+const withCommandDelays = (
+  client: TauriHostClient,
+  options: BrowserTestHostOptions,
+  counts: Partial<Record<BrowserTestDelayableCommand, number>>
+): TauriHostClient =>
+  new Proxy(client, {
+    get(target, property, receiver) {
+      const member = Reflect.get(target, property, receiver);
+      if (typeof property !== 'string' || typeof member !== 'function') {
+        return member;
+      }
+      const command = property as BrowserTestDelayableCommand;
+      const delayMs = options.commandDelaysMs[command];
+      if (delayMs === undefined) {
+        return member;
+      }
+      return async (...args: unknown[]) => {
+        counts[command] = (counts[command] ?? 0) + 1;
+        await new Promise<void>((resolve) => {
+          window.setTimeout(resolve, delayMs);
+        });
+        return Reflect.apply(member, target, args);
+      };
+    }
+  });
 
 const loadDeckContext = (
   engine: WmlEngineWasm,

@@ -2,6 +2,24 @@ import assert from 'node:assert/strict';
 
 export class NoExecutableCoverageError extends Error {}
 
+export function storyEntryUrl(baseUrl, story) {
+  if ((story.flow.target ?? 'host-sample') !== 'waves-browser') {
+    return baseUrl;
+  }
+  const url = new URL(baseUrl);
+  for (const [command, delayMs] of Object.entries(story.flow.setup?.commandDelaysMs ?? {})) {
+    url.searchParams.append('host-delay', `${command}:${delayMs}`);
+  }
+  return url.href;
+}
+
+export function assertConfiguredCommandDelaysExercised(evidence, setup, label) {
+  for (const command of Object.keys(setup?.commandDelaysMs ?? {})) {
+    const actual = evidence.testHost?.delayedCommandCounts?.[command] ?? 0;
+    assert.ok(actual > 0, `${label}: configured host delay for ${command} was never exercised`);
+  }
+}
+
 export function collectExecutableStories(records) {
   return records.flatMap((example) =>
     (example.flows ?? []).map((flow) => ({

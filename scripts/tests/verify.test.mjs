@@ -51,6 +51,17 @@ test('change selects browser, engine stories, and transport for contract changes
   assert.equal(byId(plan, 'transport').selected, true);
 });
 
+test('browser frontend changes always select the real Chromium Waves story gate', () => {
+  const plan = buildPlan('change', ['browser/frontend/src/app/browser-controller.ts']);
+  const stories = byId(plan, 'engine-wasm-stories');
+
+  assert.equal(stories.selected, true);
+  assert.deepEqual(
+    stories.commands.find((command) => command.label === 'all executable stories')?.args,
+    ['run', 'test:story', 'all']
+  );
+});
+
 test('change selects Go origin checks for WML server changes', () => {
   const lane = byId(buildPlan('change', ['wml-server/internal/origin/app.go']), 'wml-server');
   assert.equal(lane.selected, true);

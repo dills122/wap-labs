@@ -6,9 +6,11 @@ import { chromium } from '@playwright/test';
 import { generateExamples } from './generate-example-manifest.mjs';
 import {
   NoExecutableCoverageError,
+  assertConfiguredCommandDelaysExercised,
   assertStoryExpectation,
   isExpectedHostFailureStatus,
   selectExecutableStories,
+  storyEntryUrl,
   storyListLines
 } from './story-runner-lib.mjs';
 import { startVitePreview } from './vite-preview-harness.mjs';
@@ -76,6 +78,7 @@ function deterministicEvidence(evidence) {
     status: evidence.status,
     session: evidence.session,
     render: evidence.render,
+    testHost: evidence.testHost,
     frame: evidence.frame
   };
 }
@@ -90,6 +93,12 @@ async function collectEvidence(page) {
 }
 
 async function applyAction(page, action, target) {
+  if (action.type === 'sequence') {
+    for (const nestedAction of action.actions) {
+      await applyAction(page, nestedAction, target);
+    }
+    return;
+  }
   if (action.type === 'activate-action') {
     if (target !== 'host-sample') {
       throw new Error('activate-action is currently supported by the host-sample story target');
@@ -283,7 +292,7 @@ async function runStory(browser, baseUrl, story, artifactRoot) {
   };
 
   try {
-    await page.goto(baseUrl, { waitUntil: 'networkidle' });
+    await page.goto(storyEntryUrl(baseUrl, story), { waitUntil: 'networkidle' });
     await page.waitForFunction(() => window.__WAVENAV_STORY_EVIDENCE__ !== undefined, null, {
       timeout: 10_000
     });
@@ -316,6 +325,8 @@ async function runStory(browser, baseUrl, story, artifactRoot) {
         evidence: deterministicEvidence(evidence)
       });
     }
+
+    assertConfiguredCommandDelaysExercised(evidence, story.flow.setup, storyName);
 
     if (browserSignals.length > 0) {
       throw new Error(
