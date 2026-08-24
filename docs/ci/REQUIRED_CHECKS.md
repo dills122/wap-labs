@@ -127,8 +127,9 @@ only after every required status check and any other ruleset requirement succeed
   acting as CI owner add the exact published `Native Waves E2E Gate` check context to the live
   ruleset and read back the resulting required-context list. The workflow's YAML job ID is
   `native-waves-e2e-gate`; it is not the published check name used by the ruleset.
-  Authentication scenarios must not land before the advisory matrix, exact-manifest safe artifact
-  publisher, whole-lifecycle secret/console policy, and isolation prerequisites are in place.
+  The advisory matrix, exact-manifest safe artifact publisher, isolated runner, and authentication
+  scenarios are implemented; promotion still requires both stability samples, native mutation
+  sensitivity, and the repository-administrator ruleset read-back.
 - `OpenTofu Static Validation` validates only network-preview infrastructure changes. It is
   intentionally path-scoped and must not be a global required context. Its pinned actionlint gate
   proves offline semantic validity for the static and protected workflow definitions; it does not
