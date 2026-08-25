@@ -327,3 +327,65 @@ test('correlated action oracle proves exactly one stable receipt', async () => {
     quiescenceMs: 200
   });
 });
+
+test('navigation actions can be observed at receipt before cancellation', async () => {
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics',
+    quiescenceMs: 100,
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        actionId: 'navigation-case-a1',
+        kind: 'navigation',
+        count: 1,
+        phase: 'received'
+      })
+    })
+  });
+
+  assert.deepEqual(
+    await observer.waitForActionPhase('navigation-case-a1', {
+      kind: 'navigation',
+      phase: 'received'
+    }),
+    { actionID: 'navigation-case-a1', kind: 'navigation', count: 1, phase: 'received' }
+  );
+});
+
+test('navigation action terminal proof accepts the reached cancellation phase and stays exact', async () => {
+  let clock = 0;
+  const phases = ['received', 'cancelled', 'cancelled', 'cancelled', 'cancelled'];
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics',
+    quiescenceMs: 200,
+    timeoutMs: 1_000,
+    pollIntervalMs: 100,
+    now: () => clock,
+    sleep: async (milliseconds) => {
+      clock += milliseconds;
+    },
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        actionId: 'navigation-case-a1',
+        kind: 'navigation',
+        count: 1,
+        phase: phases.shift() ?? 'cancelled'
+      })
+    })
+  });
+
+  assert.deepEqual(
+    await observer.waitForActionSettledExactlyOnce('navigation-case-a1', {
+      kind: 'navigation',
+      phases: ['success', 'cancelled']
+    }),
+    {
+      actionID: 'navigation-case-a1',
+      kind: 'navigation',
+      count: 1,
+      phase: 'cancelled',
+      quiescenceMs: 200
+    }
+  );
+});

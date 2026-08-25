@@ -288,6 +288,90 @@ fn wml_303_empty_intrinsic_back_is_unhandled_but_remains_callable() {
 }
 
 #[test]
+fn wml_303_prev_override_reports_whether_history_actually_popped() {
+    let mut engine = WmlEngine::new();
+    let xml = r##"
+        <wml>
+          <template><do name="back" type="prev"><prev/></do></template>
+          <card id="home"><a href="#next">Next</a></card>
+          <card id="next">
+            <onevent type="onenterbackward">
+              <refresh><setvar name="direction" value="backward"/></refresh>
+            </onevent>
+            <p>Next</p>
+          </card>
+        </wml>
+        "##;
+    engine.load_deck(xml).expect("deck should load");
+    engine
+        .handle_key("enter".to_string())
+        .expect("forward navigation should succeed");
+
+    assert!(
+        engine.navigate_back(),
+        "prev override pops available history"
+    );
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(engine.last_back_navigation_handled());
+
+    assert!(
+        !engine.navigate_back(),
+        "prev override leaves empty history available to the host fallback"
+    );
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(!engine.last_back_navigation_handled());
+
+    assert!(
+        engine
+            .navigate_back_to_card("next".to_string())
+            .expect("host-known same-deck restore should succeed"),
+        "host restore enters the target as a backward transition"
+    );
+    assert_eq!(engine.active_card_id().expect("active card"), "next");
+    assert_eq!(
+        engine.get_var("direction".to_string()),
+        Some("backward".to_string())
+    );
+    assert!(engine.last_back_navigation_handled());
+    assert!(
+        !engine.navigate_back(),
+        "host restore must not create forward engine history"
+    );
+    assert_trace_kinds_subsequence(
+        &engine,
+        &["ACTION_BACK_OVERRIDE", "ACTION_PREV", "ACTION_BACK_EMPTY"],
+    );
+}
+
+#[test]
+fn wml_303_host_backward_restore_rejects_failed_entry_atomically() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r##"<wml>
+              <card id="home"><p>Home</p></card>
+              <card id="broken">
+                <onevent type="onenterbackward"><go href="#missing"/></onevent>
+                <p>Broken</p>
+              </card>
+            </wml>"##,
+        )
+        .expect("deck should load");
+
+    let error = engine
+        .navigate_back_to_card("broken".to_string())
+        .expect_err("failed backward entry must reject");
+
+    assert_eq!(error, "Card id not found");
+    assert_eq!(engine.active_card_id().expect("active card"), "home");
+    assert!(!engine.last_back_navigation_handled());
+    assert!(
+        !engine.navigate_back(),
+        "failed host restore must not create engine history"
+    );
+}
+
+#[test]
 fn wml_303_failed_back_override_rolls_back_control_and_navigation_state() {
     let mut engine = WmlEngine::new();
     let xml = r##"

@@ -5,6 +5,12 @@ use url::Url;
 
 use super::{evaluate_href, evaluate_vdata};
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum CardTaskExecutionOutcome {
+    Completed,
+    BackNavigation(bool),
+}
+
 impl WmlEngine {
     pub(crate) fn active_do_action_internal(
         &self,
@@ -48,10 +54,14 @@ impl WmlEngine {
         };
 
         self.push_trace("ACTION_BACK_OVERRIDE", String::new());
-        if let Err(error) = self.execute_card_task_action(&action) {
-            self.push_trace("ACTION_BACK_OVERRIDE_ERROR", error);
+        match self.execute_card_task_action_with_outcome(&action) {
+            Ok(CardTaskExecutionOutcome::BackNavigation(handled)) => handled,
+            Ok(CardTaskExecutionOutcome::Completed) => true,
+            Err(error) => {
+                self.push_trace("ACTION_BACK_OVERRIDE_ERROR", error);
+                true
+            }
         }
-        true
     }
 
     /// Navigate to `id`, guarded against unbounded recursion.
@@ -175,6 +185,25 @@ impl WmlEngine {
         self.navigate_back_internal_with_assignments(&[])
     }
 
+    pub(crate) fn navigate_back_to_card_internal(&mut self, id: &str) -> Result<bool, String> {
+        let deck = self
+            .deck
+            .as_ref()
+            .ok_or_else(|| "No deck loaded".to_string())?;
+        let target_idx = deck
+            .card_index(id)
+            .ok_or_else(|| CARD_ID_NOT_FOUND_ERROR.to_string())?;
+
+        if self.nav_dispatch_depth >= MAX_NAV_DISPATCH_DEPTH {
+            self.push_trace("NAV_DEPTH_EXCEEDED", format!("target={id}"));
+            return Err("navigation: dispatch depth exceeded".to_string());
+        }
+        self.nav_dispatch_depth += 1;
+        let handled = self.navigate_back_to_target_internal_bounded(target_idx, &[], false);
+        self.nav_dispatch_depth -= 1;
+        handled
+    }
+
     fn navigate_back_internal_with_assignments(
         &mut self,
         assignments: &[(String, String)],
@@ -190,12 +219,25 @@ impl WmlEngine {
     }
 
     fn navigate_back_internal_bounded(&mut self, assignments: &[(String, String)]) -> bool {
-        let nav = NavRollbackGuard::back(self);
-        let Some(back_target_idx) = nav.engine.nav_stack.pop() else {
-            nav.engine.push_trace("ACTION_BACK_EMPTY", String::new());
-            nav.commit();
+        let Some(back_target_idx) = self.nav_stack.last().copied() else {
+            self.push_trace("ACTION_BACK_EMPTY", String::new());
             return false;
         };
+
+        self.navigate_back_to_target_internal_bounded(back_target_idx, assignments, true)
+            .unwrap_or(true)
+    }
+
+    fn navigate_back_to_target_internal_bounded(
+        &mut self,
+        back_target_idx: usize,
+        assignments: &[(String, String)],
+        pop_engine_history: bool,
+    ) -> Result<bool, String> {
+        let nav = NavRollbackGuard::back(self);
+        if pop_engine_history {
+            nav.engine.nav_stack.pop();
+        }
 
         nav.engine.debug_emit(EngineDebugEventPayload::CardExit);
         nav.engine.stop_active_timer_for_exit();
@@ -206,33 +248,34 @@ impl WmlEngine {
         nav.engine.set_focused_link_idx_with_debug(0);
         nav.engine.debug_emit(EngineDebugEventPayload::CardEnter);
         if let Err(err) = nav.engine.apply_set_var_assignments(assignments) {
-            nav.engine.push_trace("SETVAR_BUDGET_ERROR", err);
-            return true;
+            nav.engine.push_trace("SETVAR_BUDGET_ERROR", err.clone());
+            return Err(err);
         }
         nav.engine.push_trace("ACTION_BACK", String::new());
         // Each fallible entry step traces first, then leaves the guard armed so
         // the drop restores the pre-navigation state before returning.
         if let Err(err) = nav.engine.initialize_controls_on_active_card() {
-            nav.engine.push_trace("INPUT_INIT_ERROR", err);
-            return true;
+            nav.engine.push_trace("INPUT_INIT_ERROR", err.clone());
+            return Err(err);
         }
         match nav.engine.run_onenterbackward_for_active_card() {
             Ok(true) => {
                 nav.commit();
-                return true;
+                return Ok(true);
             }
             Ok(false) => {}
             Err(err) => {
-                nav.engine.push_trace("ACTION_ONENTERBACKWARD_ERROR", err);
-                return true;
+                nav.engine
+                    .push_trace("ACTION_ONENTERBACKWARD_ERROR", err.clone());
+                return Err(err);
             }
         }
         if let Err(err) = nav.engine.start_timer_for_active_card() {
-            nav.engine.push_trace("ACTION_ONTIMER_ERROR", err);
-            return true;
+            nav.engine.push_trace("ACTION_ONTIMER_ERROR", err.clone());
+            return Err(err);
         }
         nav.commit();
-        true
+        Ok(true)
     }
 
     pub(crate) fn run_onenterforward_for_active_card(&mut self) -> Result<bool, String> {
@@ -257,6 +300,14 @@ impl WmlEngine {
         &mut self,
         action: &CardTaskAction,
     ) -> Result<(), String> {
+        self.execute_card_task_action_with_outcome(action)
+            .map(|_| ())
+    }
+
+    fn execute_card_task_action_with_outcome(
+        &mut self,
+        action: &CardTaskAction,
+    ) -> Result<CardTaskExecutionOutcome, String> {
         self.last_runtime_failure = None;
         let result = self.execute_card_task_action_once(action);
         if !result
@@ -296,7 +347,10 @@ impl WmlEngine {
         retry_after_reset
     }
 
-    fn execute_card_task_action_once(&mut self, action: &CardTaskAction) -> Result<(), String> {
+    fn execute_card_task_action_once(
+        &mut self,
+        action: &CardTaskAction,
+    ) -> Result<CardTaskExecutionOutcome, String> {
         let task = TaskRollbackGuard::new(self);
         let result = task.engine.execute_card_task_action_bounded(action);
         if result.is_ok() {
@@ -305,7 +359,10 @@ impl WmlEngine {
         result
     }
 
-    fn execute_card_task_action_bounded(&mut self, action: &CardTaskAction) -> Result<(), String> {
+    fn execute_card_task_action_bounded(
+        &mut self,
+        action: &CardTaskAction,
+    ) -> Result<CardTaskExecutionOutcome, String> {
         if self.active_input_edit.is_some() {
             self.commit_focused_input_edit_internal()?;
         }
@@ -321,12 +378,13 @@ impl WmlEngine {
             CardTaskAction::Go { href, request } => {
                 let href = evaluate_href(href, &self.vars)?;
                 self.apply_set_var_assignments(&assignments)?;
-                self.execute_prepared_action_href(&href, request)
+                self.execute_prepared_action_href(&href, request)?;
+                Ok(CardTaskExecutionOutcome::Completed)
             }
             CardTaskAction::Prev => {
                 self.push_trace("ACTION_PREV", String::new());
-                self.navigate_back_internal_with_assignments(&assignments);
-                Ok(())
+                let handled = self.navigate_back_internal_with_assignments(&assignments);
+                Ok(CardTaskExecutionOutcome::BackNavigation(handled))
             }
             CardTaskAction::Refresh => {
                 self.push_trace("ACTION_REFRESH", String::new());
@@ -334,11 +392,11 @@ impl WmlEngine {
                 self.apply_set_var_assignments(&assignments)?;
                 self.initialize_controls_on_active_card()?;
                 self.start_timer_for_active_card()?;
-                Ok(())
+                Ok(CardTaskExecutionOutcome::Completed)
             }
             CardTaskAction::Noop => {
                 self.push_trace("ACTION_NOOP", String::new());
-                Ok(())
+                Ok(CardTaskExecutionOutcome::Completed)
             }
             CardTaskAction::WithSetVars { .. } => {
                 unreachable!("base_and_set_vars unwraps the setvar wrapper")

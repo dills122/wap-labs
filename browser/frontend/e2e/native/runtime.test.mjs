@@ -10,6 +10,7 @@ test('native runtime starts one isolated provider session and safe result per sc
   const artifactRoot = await mkdtemp(path.join(os.tmpdir(), 'waves-runtime-'));
   const starts = [];
   const stops = [];
+  const infrastructure = { kind: 'owned-infrastructure' };
   try {
     const results = await runNativeE2E({
       scenarios: [
@@ -20,6 +21,7 @@ test('native runtime starts one isolated provider session and safe result per sc
           secretBearing: false,
           async run(context) {
             assert.equal(context.waves.kind, 'waves-page');
+            assert.equal(context.infrastructure, infrastructure);
             context.recordAssertion('native startup', 'bounded detail');
           }
         },
@@ -29,6 +31,7 @@ test('native runtime starts one isolated provider session and safe result per sc
       artifactRoot,
       runId: 'run-1',
       origin: { readCounter: async () => 0, waitForExactlyOne: async () => ({}) },
+      infrastructure,
       selector: (value) => value,
       keys: { Enter: 'Enter' },
       provider: {

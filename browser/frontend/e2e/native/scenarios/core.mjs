@@ -75,6 +75,84 @@ const navigation = Object.freeze({
   }
 });
 
+const hybridBack = Object.freeze({
+  id: 'NAV-NATIVE-002',
+  suite: 'smoke',
+  name: 'Back restores host deck history before same-deck card history',
+  secretBearing: false,
+  async run(context) {
+    await prepare(context);
+    await context.waves.openWapUrl('wap://localhost/');
+    await context.waves.waitForDeckText('Open Menu');
+    await context.waves.pressSoftkey('select');
+    await context.waves.waitForDeckText('1. Login');
+    for (let index = 0; index < 3; index += 1) {
+      await context.waves.pressSoftkey('down');
+    }
+    await context.waves.pressSoftkey('select');
+    await context.waves.waitForDeckText('This is a static WML');
+    await context.waves.waitForAddress('wap://localhost/examples/index.wml');
+    const before = await context.origin.readCounter('requests_total', {
+      signal: context.signal
+    });
+
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('1. Login');
+    await context.waves.waitForAddress('wap://localhost/');
+    pass(context, 'host Back restore', 'Back restored the prior gateway deck and menu card');
+
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.waitForAddress('wap://localhost/');
+    const result = await context.origin.waitForExactlyOne('requests_total', before, {
+      signal: context.signal
+    });
+    pass(
+      context,
+      'hybrid Back request bound',
+      `host Back fetched once while same-deck Back stayed local through ${result.quiescenceMs}ms quiescence`
+    );
+  }
+});
+
+const reload = Object.freeze({
+  id: 'NAV-NATIVE-003',
+  suite: 'smoke',
+  name: 'Reload fetches once without duplicating host history',
+  secretBearing: false,
+  async run(context) {
+    await prepare(context);
+    await context.waves.openWapUrl('wap://localhost/');
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.openWapUrl('wap://localhost/examples/interop-check.wml');
+    await context.waves.waitForDeckText('W13-A');
+    const before = await context.origin.readCounter('requests_total', {
+      signal: context.signal
+    });
+
+    await context.waves.reload();
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress('wap://localhost/examples/interop-check.wml');
+    const result = await context.origin.waitForExactlyOne('requests_total', before, {
+      signal: context.signal
+    });
+    pass(
+      context,
+      'Reload request bound',
+      `Reload produced one origin request through ${result.quiescenceMs}ms quiescence`
+    );
+
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.waitForAddress('wap://localhost/');
+    pass(
+      context,
+      'Reload history integrity',
+      'one Back returned to the prior deck instead of a duplicate reloaded entry'
+    );
+  }
+});
+
 const errorRecovery = Object.freeze({
   id: 'ERR-NATIVE-001',
   suite: 'smoke',
@@ -145,6 +223,8 @@ export const CORE_SCENARIOS = Object.freeze([
   boot,
   transport,
   navigation,
+  hybridBack,
+  reload,
   errorRecovery,
   requestBound
 ]);

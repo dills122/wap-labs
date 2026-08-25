@@ -1,10 +1,12 @@
 import { CORE_SCENARIOS } from './scenarios/core.mjs';
 import { AUTHENTICATION_SCENARIOS } from './scenarios/authentication.mjs';
+import { RESILIENCE_SCENARIOS } from './scenarios/resilience.mjs';
 
 const SCENARIOS = Object.freeze([
   ...CORE_SCENARIOS.slice(0, 2),
   ...AUTHENTICATION_SCENARIOS,
-  ...CORE_SCENARIOS.slice(2)
+  ...CORE_SCENARIOS.slice(2),
+  ...RESILIENCE_SCENARIOS
 ]);
 
 const requireOptionValue = (arguments_, index, option) => {

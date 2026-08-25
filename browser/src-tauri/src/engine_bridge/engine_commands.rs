@@ -10,9 +10,9 @@ use super::engine_adapter::{
     apply_handle_key, apply_handle_key_frame, apply_load_deck, apply_load_deck_context,
     apply_load_deck_context_frame, apply_move_focused_select_edit,
     apply_move_focused_select_edit_frame, apply_navigate_back, apply_navigate_back_frame,
-    apply_navigate_to_card, apply_navigate_to_card_frame, apply_render, apply_render_frame,
-    apply_set_focused_input_edit_draft, apply_set_focused_input_edit_draft_frame,
-    apply_set_viewport_cols, AppState,
+    apply_navigate_back_to_card_frame, apply_navigate_to_card, apply_navigate_to_card_frame,
+    apply_render, apply_render_frame, apply_set_focused_input_edit_draft,
+    apply_set_focused_input_edit_draft_frame, apply_set_viewport_cols, AppState,
 };
 use crate::contract_types::{
     AdvanceTimeRequest, EngineCommandError, EngineFrame, EngineRuntimeSnapshot, HandleInputRequest,
@@ -105,6 +105,15 @@ pub fn command_engine_navigate_to_card_frame(
     request.validate_host_ingress()?;
     let mut engine = lock_engine(state)?;
     map_engine_result(apply_navigate_to_card_frame(&mut engine, request))
+}
+
+pub fn command_engine_navigate_back_to_card_frame(
+    state: &AppState,
+    request: NavigateToCardRequest,
+) -> Result<EngineFrame, HostCommandError> {
+    request.validate_host_ingress()?;
+    let mut engine = lock_engine(state)?;
+    map_engine_result(apply_navigate_back_to_card_frame(&mut engine, request))
 }
 
 pub fn command_engine_navigate_back(

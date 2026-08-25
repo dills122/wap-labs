@@ -269,6 +269,31 @@ const wbxmlDecodeFailureResponse = (url: string): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('publishes engine-action busy state until the serialized queue is idle', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    let releaseAction!: () => void;
+    const heldAction = new Promise<void>((resolve) => {
+      releaseAction = resolve;
+    });
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    expect(document.body.dataset.engineActionState).toBe('idle');
+
+    const action = controllerPrivates(controller).keyboardIntentRouter.serializeEngineAction(
+      async () => heldAction
+    );
+    expect(document.body.dataset.engineActionState).toBe('busy');
+
+    releaseAction();
+    await action;
+    expect(document.body.dataset.engineActionState).toBe('idle');
+
+    controller.dispose();
+  });
+
   it('rejects one-over-limit viewport input before IPC and accepts a later valid value', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);
@@ -433,7 +458,6 @@ describe('BrowserController behavior coverage', () => {
       navigationStatus: 'loaded',
       finalUrl: 'http://example.test/network.wml'
     });
-
     presenter.setSessionState({
       ...presenter.getSessionState(),
       finalUrl: 'http://example.test/reload-target.wml',
@@ -1811,6 +1835,7 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
         resolveFetch = resolve;
       })
   );
+  const committedAddress = refs.fetchUrlInput.value;
   refs.fetchUrlInput.value = 'http://example.test/coalesced.wml';
   const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
   fetchButton?.click();
@@ -1827,6 +1852,7 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
   expect(hostClient.cancelFetch).toHaveBeenCalledTimes(1);
   expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.go);
   expect(fetchButton?.dataset.navigationAction).toBe('go');
+  expect(refs.fetchUrlInput.value).toBe(committedAddress);
 
   resolveFetch?.(fetchOk({ finalUrl: 'http://example.test/coalesced.wml' }));
   await flushAsyncWork();

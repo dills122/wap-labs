@@ -78,6 +78,7 @@ export async function runNativeE2E({
   artifactRoot,
   runId,
   origin,
+  infrastructure,
   provider,
   selector,
   keys,
@@ -204,6 +205,7 @@ export async function runNativeE2E({
       return {
         waves,
         origin,
+        infrastructure,
         testData,
         recordAssertion(name, details) {
           if (!isSafeAssertionName(name) || typeof details !== 'string' || details.length > 256) {

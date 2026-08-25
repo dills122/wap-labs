@@ -296,7 +296,10 @@ export class BrowserController {
       applyEngineKey: (key) => this.applyEngineKey(key),
       navigateBackWithFallback: () => this.navigateBackWithFallback(),
       waitForEngineTimerIdle: () => this.timerRuntime.whenIdle(),
-      setStatus: (message) => this.presenter.setStatus(message)
+      setStatus: (message) => this.presenter.setStatus(message),
+      onActionInFlightChange: (inFlight) => {
+        document.body.dataset.engineActionState = inFlight ? 'busy' : 'idle';
+      }
     });
     this.shellEventBindings = new ShellEventBindings({
       refs: this.refs,
@@ -330,6 +333,7 @@ export class BrowserController {
 
   async init(sampleWml: string): Promise<void> {
     this.bootDeckReadyEmitted = false;
+    document.body.dataset.engineActionState = 'idle';
     this.refs.wmlInput.value = sampleWml;
     this.presenter.setSessionState({
       runMode: this.runMode,
@@ -552,6 +556,10 @@ export class BrowserController {
     const cancellation = this.navigation.cancelPendingNavigation();
     if (cancellation) {
       await cancellation;
+    }
+    const committedUrl = this.navigation.getSessionState().finalUrl ?? this.lastNetworkUrl;
+    if (committedUrl) {
+      this.refs.fetchUrlInput.value = committedUrl;
     }
     this.presenter.clearNavigationPresentation();
     this.presenter.setStatus(WAVES_COPY.status.navigationStopped);

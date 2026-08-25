@@ -1934,6 +1934,11 @@ Completed `B0` through `B3` tickets are archived in:
     classes, and a bounded correlated origin oracle — implemented
   - `NE2E-06` and `NE2E-07`: four independent registration/login race and ordinary-input
     regressions — implemented; authoritative Linux execution and mutation proof pending
+  - Phase 3 navigation/recovery slice: hybrid Back, exactly-once Reload, stale-response exclusion,
+    explicit Stop, and run-owned Kannel outage/restart recovery scenarios — implemented; the
+    authoritative Linux native smoke remains pending CI
+  - `NE2E-10`: bounded slow/cancellable origin fixture and recovery scenarios — partially
+    implemented; malformed and unsupported-response fixtures remain follow-up scope
 - integration verification: native Node tests, browser typecheck/unit tests, host and transport Rust
   tests, contract generation check when the exported Rust surface changes, shell static checks, and
   the Linux native smoke through the existing Make target

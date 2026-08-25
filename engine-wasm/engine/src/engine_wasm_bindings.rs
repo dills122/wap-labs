@@ -165,6 +165,11 @@ impl WmlEngine {
         self.navigate_to_card(id).map_err(as_js_err)
     }
 
+    #[wasm_bindgen(js_name = navigateBackToCard)]
+    pub fn navigate_back_to_card_wasm(&mut self, id: String) -> Result<bool, JsValue> {
+        self.navigate_back_to_card(id).map_err(as_js_err)
+    }
+
     #[wasm_bindgen(js_name = navigateBack)]
     pub fn navigate_back_wasm(&mut self) -> bool {
         self.navigate_back()

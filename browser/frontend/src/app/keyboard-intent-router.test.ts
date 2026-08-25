@@ -18,6 +18,7 @@ const createDeps = (
   applyEngineKey: ReturnType<typeof vi.fn>;
   navigateBackWithFallback: ReturnType<typeof vi.fn>;
   setStatus: ReturnType<typeof vi.fn>;
+  onActionInFlightChange: ReturnType<typeof vi.fn>;
 } => {
   const toggleDeveloperTools = vi.fn(overrides.toggleDeveloperTools ?? (() => true));
   const applyFocusedControlEditKey = vi.fn(
@@ -28,6 +29,7 @@ const createDeps = (
     overrides.navigateBackWithFallback ?? (async () => 'engine' as const)
   );
   const setStatus = vi.fn(overrides.setStatus ?? (() => undefined));
+  const onActionInFlightChange = vi.fn(overrides.onActionInFlightChange ?? (() => undefined));
 
   const base: KeyboardIntentRouterDependencies = {
     // Mirrors BrowserController's real `withAction`: run the action directly,
@@ -38,7 +40,8 @@ const createDeps = (
     applyEngineKey,
     navigateBackWithFallback,
     waitForEngineTimerIdle: async () => undefined,
-    setStatus
+    setStatus,
+    onActionInFlightChange
   };
 
   return Object.assign(base, overrides, {
@@ -46,11 +49,32 @@ const createDeps = (
     applyFocusedControlEditKey,
     applyEngineKey,
     navigateBackWithFallback,
-    setStatus
+    setStatus,
+    onActionInFlightChange
   });
 };
 
 describe('KeyboardIntentRouter', () => {
+  it('publishes busy and idle around the complete serialized action queue', async () => {
+    let releaseAction!: () => void;
+    const heldAction = new Promise<void>((resolve) => {
+      releaseAction = resolve;
+    });
+    const deps = createDeps();
+    const router = new KeyboardIntentRouter(deps);
+
+    const first = router.serializeEngineAction(async () => heldAction);
+    const second = router.serializeEngineAction(async () => undefined);
+
+    expect(deps.onActionInFlightChange).toHaveBeenCalledTimes(1);
+    expect(deps.onActionInFlightChange).toHaveBeenLastCalledWith(true);
+
+    releaseAction();
+    await Promise.all([first, second]);
+
+    expect(deps.onActionInFlightChange.mock.calls).toEqual([[true], [false]]);
+  });
+
   it('leaves application shortcuts to the shared command registry', () => {
     const deps = createDeps();
     const router = new KeyboardIntentRouter(deps);

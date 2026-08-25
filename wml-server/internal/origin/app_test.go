@@ -2,6 +2,7 @@ package origin
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -142,6 +143,56 @@ func TestE2EActionCorrelationIsDisabledByDefault(t *testing.T) {
 	if oracle.Code != http.StatusNotFound {
 		t.Fatalf("ordinary origin oracle status = %d, want 404", oracle.Code)
 	}
+	slow := perform(app.Handler(), http.MethodGet, "/e2e/navigation/slow-case-a1/slow.wml", "", "")
+	if slow.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin slow fixture status = %d, want 404", slow.Code)
+	}
+}
+
+func TestE2ESlowNavigationRecordsOneSuccessfulRequest(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+		config.E2ENavigationDelay = time.Millisecond
+	})
+
+	response := perform(app.Handler(), http.MethodGet, "/e2e/navigation/slow-case-a1/slow.wml", "", "")
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Delayed navigation completed.") {
+		t.Fatalf("slow navigation response = %d %s", response.Code, response.Body.String())
+	}
+	assertActionOracle(t, app, "slow-case-a1", "navigation", 1, "success")
+}
+
+func TestE2ESlowNavigationRejectsInvalidActionID(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+
+	response := perform(app.Handler(), http.MethodGet, "/e2e/navigation/not-valid/slow.wml", "", "")
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("invalid slow navigation action status = %d, want 400", response.Code)
+	}
+}
+
+func TestE2ESlowNavigationRecordsClientCancellation(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+		config.E2ENavigationDelay = time.Minute
+	})
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/e2e/navigation/cancel-case-a1/slow.wml",
+		nil,
+	)
+	ctx, cancel := context.WithCancel(request.Context())
+	cancel()
+	response := httptest.NewRecorder()
+
+	app.Handler().ServeHTTP(response, request.WithContext(ctx))
+
+	assertActionOracle(t, app, "cancel-case-a1", "navigation", 1, "cancelled")
 }
 
 func TestFormsReloadSameDeckBeforeSubmittingPostfields(t *testing.T) {

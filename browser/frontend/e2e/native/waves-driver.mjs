@@ -68,12 +68,33 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
       element
     );
+  const isBrowserInteractionIdle = async (navigationButton, body) => {
+    const navigationAction = await navigationButton.getAttribute('data-navigation-action');
+    if (navigationAction !== 'go') return false;
+    return (await body.getAttribute('data-engine-action-state')) === 'idle';
+  };
   const waitForStatusText = async (expected) => {
     const status = await find(SELECTORS.status);
+    const navigationButton = await find(SELECTORS.go);
+    const body = await find(SELECTORS.body);
     return waitUntil(async () => {
       const text = await readStatusText(status);
-      return text.includes(expected) ? text : false;
+      if (!text.includes(expected)) return false;
+      return (await isBrowserInteractionIdle(navigationButton, body)) ? text : false;
     }, { description: `status text ${JSON.stringify(expected)}` });
+  };
+  const waitForNavigationAction = async (expected) => {
+    if (expected !== 'go' && expected !== 'stop') {
+      throw new Error('navigation action must be go or stop');
+    }
+    const button = await find(SELECTORS.go);
+    const body = expected === 'go' ? await find(SELECTORS.body) : undefined;
+    return waitUntil(async () => {
+      const action = await button.getAttribute('data-navigation-action');
+      if (action !== expected) return false;
+      if (expected === 'go' && !(await isBrowserInteractionIdle(button, body))) return false;
+      return action;
+    }, { description: `navigation action ${JSON.stringify(expected)}` });
   };
   const submitAddress = async (address) => {
     if (typeof address !== 'string' || address.length === 0 || address.length > 2_048) {
@@ -84,6 +105,23 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     await input.clear();
     await input.sendKeys(address);
     await (await find(SELECTORS.go)).click();
+  };
+  const requireWapAddress = (address) => {
+    const parsed = new URL(address);
+    if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
+      throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
+    }
+  };
+  const startWapUrl = async (address) => {
+    requireWapAddress(address);
+    await waitForNavigationAction('go');
+    await submitAddress(address);
+    await waitForNavigationAction('stop');
+  };
+  const openWapUrl = async (address) => {
+    requireWapAddress(address);
+    await waitForNavigationAction('go');
+    await submitAddress(address);
   };
   const readSanitizedAddress = async () => {
     const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
@@ -115,11 +153,11 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     },
 
     async openWapUrl(address) {
-      const parsed = new URL(address);
-      if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
-        throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
-      }
-      await submitAddress(address);
+      await openWapUrl(address);
+    },
+
+    async startWapUrl(address) {
+      await startWapUrl(address);
     },
 
     async submitAddress(address) {
@@ -151,6 +189,13 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       await (await find(SELECTORS.reload)).click();
     },
 
+    async stopNavigation() {
+      await waitForNavigationAction('stop');
+      await (await find(SELECTORS.go)).click();
+      await waitForNavigationAction('go');
+      return waitForStatusText('Navigation stopped.');
+    },
+
     async typeText(value) {
       if (typeof value !== 'string') {
         throw new Error('Waves text input must be a string');
@@ -170,9 +215,12 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async waitForDeckText(expected) {
       const viewport = await find(SELECTORS.viewport);
+      const navigationButton = await find(SELECTORS.go);
+      const body = await find(SELECTORS.body);
       return waitUntil(async () => {
         const text = await readText(viewport);
-        return compactVisibleText(text).includes(compactVisibleText(expected)) ? text : false;
+        if (!compactVisibleText(text).includes(compactVisibleText(expected))) return false;
+        return (await isBrowserInteractionIdle(navigationButton, body)) ? text : false;
       }, { description: `deck text ${JSON.stringify(expected)}` });
     },
 

@@ -24,6 +24,7 @@ export interface TauriHostClient {
     engineHandleInputFrame(request: HandleInputRequest): Promise<EngineFrame>;
     engineNavigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
     engineNavigateToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
+    engineNavigateBackToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
     engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
     engineNavigateBackFrame(): Promise<EngineFrame>;
     engineSetViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;
@@ -71,6 +72,7 @@ export const createTauriHostClient = (invokeFn: TauriInvoke): TauriHostClient =>
     engineHandleInputFrame: request => invokeFn<EngineFrame>("engine_handle_input_frame", { request }),
     engineNavigateToCard: request => invokeFn<EngineRuntimeSnapshot>("engine_navigate_to_card", { request }),
     engineNavigateToCardFrame: request => invokeFn<EngineFrame>("engine_navigate_to_card_frame", { request }),
+    engineNavigateBackToCardFrame: request => invokeFn<EngineFrame>("engine_navigate_back_to_card_frame", { request }),
     engineNavigateBack: () => invokeFn<EngineRuntimeSnapshot>("engine_navigate_back"),
     engineNavigateBackFrame: () => invokeFn<EngineFrame>("engine_navigate_back_frame"),
     engineSetViewportCols: request => invokeFn<EngineRuntimeSnapshot>("engine_set_viewport_cols", { request }),
@@ -2674,6 +2676,10 @@ const TAURI_RESPONSE_SCHEMAS: Record<string, RuntimeSchema> = {
     "name": "EngineRuntimeSnapshot"
   },
   "engine_navigate_to_card_frame": {
+    "kind": "ref",
+    "name": "EngineFrame"
+  },
+  "engine_navigate_back_to_card_frame": {
     "kind": "ref",
     "name": "EngineFrame"
   },

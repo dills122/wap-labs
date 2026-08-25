@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { isSafeAssertionName } from '../evidence-publisher.mjs';
 import { CORE_SCENARIOS } from './core.mjs';
 
 function fixture(overrides = {}) {
@@ -39,6 +40,12 @@ function fixture(overrides = {}) {
     async pressSoftkey(key) {
       calls.push(['softkey', key]);
     },
+    async goBack() {
+      calls.push(['back']);
+    },
+    async reload() {
+      calls.push(['reload']);
+    },
     ...overrides
   };
   const assertions = [];
@@ -51,6 +58,11 @@ function fixture(overrides = {}) {
         calls.push(['observe', value]);
       },
       recordAssertion(name, details) {
+        assert.equal(
+          isSafeAssertionName(name),
+          true,
+          `core scenario assertion is missing from the safe evidence catalog: ${name}`
+        );
         assertions.push({ name, details });
       },
       origin: {
@@ -71,7 +83,15 @@ function fixture(overrides = {}) {
 test('core native scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     CORE_SCENARIOS.map(({ id }) => id),
-    ['BOOT-NATIVE-001', 'TRN-NATIVE-001', 'NAV-NATIVE-001', 'ERR-NATIVE-001', 'REQ-NATIVE-001']
+    [
+      'BOOT-NATIVE-001',
+      'TRN-NATIVE-001',
+      'NAV-NATIVE-001',
+      'NAV-NATIVE-002',
+      'NAV-NATIVE-003',
+      'ERR-NATIVE-001',
+      'REQ-NATIVE-001'
+    ]
   );
   assert.ok(
     CORE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -115,9 +135,42 @@ test('navigation scenario crosses card and external deck boundaries with real so
   assert.ok(calls.some((entry) => entry[0] === 'deck' && entry[1] === 'This is a static WML'));
 });
 
+test('hybrid Back restores the prior deck before consuming same-deck card history', async () => {
+  const { calls, context, assertions } = fixture();
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'NAV-NATIVE-002');
+
+  await scenario.run(context);
+
+  assert.deepEqual(
+    calls.filter(([kind]) => kind === 'back'),
+    [['back'], ['back']]
+  );
+  assert.ok(calls.some((entry) => entry[0] === 'deck' && entry[1] === '1. Login'));
+  assert.ok(
+    calls.some(
+      (entry) => entry[0] === 'deck' && entry[1] === 'Local WAP training environment.'
+    )
+  );
+  assert.ok(calls.some((entry) => entry[0] === 'exactly-one' && entry[1] === 'requests_total'));
+  assert.equal(assertions.at(-1).name, 'hybrid Back request bound');
+});
+
+test('Reload fetches exactly once and does not add a duplicate history entry', async () => {
+  const { calls, context, assertions } = fixture();
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'NAV-NATIVE-003');
+
+  await scenario.run(context);
+
+  assert.deepEqual(calls.filter(([kind]) => kind === 'reload'), [['reload']]);
+  assert.deepEqual(calls.filter(([kind]) => kind === 'back'), [['back']]);
+  assert.ok(calls.some((entry) => entry[0] === 'exactly-one' && entry[1] === 'requests_total'));
+  assert.equal(assertions.at(-1).name, 'Reload history integrity');
+});
+
 test('error scenario proves invalid input is visible and a later gateway load recovers', async () => {
   const { calls, context, assertions } = fixture();
-  await CORE_SCENARIOS[3].run(context);
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-001');
+  await scenario.run(context);
   assert.ok(calls.some((entry) => entry[0] === 'submit-address' && entry[1] === 'not a url'));
   assert.deepEqual(
     assertions.map(({ name }) => name),
@@ -127,7 +180,8 @@ test('error scenario proves invalid input is visible and a later gateway load re
 
 test('request-bound scenario delegates exactly-once quiescence to the correlated observer', async () => {
   const { calls, context, assertions } = fixture();
-  await CORE_SCENARIOS[4].run(context);
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'REQ-NATIVE-001');
+  await scenario.run(context);
   assert.ok(calls.some((entry) => entry[0] === 'exactly-one' && entry[1] === 'requests_total'));
   assert.match(assertions.at(-1).details, /500ms derived retry-horizon quiescence/);
 });
@@ -137,7 +191,8 @@ test('request-bound failure retains every completed core boundary checkpoint', a
   context.origin.waitForExactlyOne = async () => {
     throw new Error('injected origin failure');
   };
-  await assert.rejects(CORE_SCENARIOS[4].run(context), /injected origin failure/);
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'REQ-NATIVE-001');
+  await assert.rejects(scenario.run(context), /injected origin failure/);
   assert.deepEqual(
     calls.filter(([kind]) => kind === 'observe').map(([, value]) => value.phase),
     ['engine-ready', 'deck-ready', 'ui-dispatched', 'response-rendered']
@@ -150,7 +205,8 @@ test('error scenario fails if visible status is not an error', async () => {
       return { text: 'Loaded', tone: 'success', displayed: true };
     }
   });
-  await assert.rejects(CORE_SCENARIOS[3].run(context), /visible error tone/);
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-001');
+  await assert.rejects(scenario.run(context), /visible error tone/);
 });
 
 test('error scenario distinguishes failed recovery dispatch from a failed recovery deck load', async () => {

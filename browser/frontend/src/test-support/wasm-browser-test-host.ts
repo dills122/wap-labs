@@ -110,6 +110,10 @@ export const createWasmBrowserTestHost = async (
       applyRuntimeMutation(() => engine.navigateToCard(cardId));
       return frame();
     },
+    engineNavigateBackToCardFrame: async ({ cardId }) => {
+      applyRuntimeMutation(() => engine.navigateBackToCard(cardId));
+      return frame();
+    },
     engineNavigateBack: async () => {
       engine.navigateBack();
       return snapshot();

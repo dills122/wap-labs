@@ -38,10 +38,11 @@ use engine_bridge::{
     command_engine_load_deck, command_engine_load_deck_context,
     command_engine_load_deck_context_frame, command_engine_move_focused_select_edit,
     command_engine_move_focused_select_edit_frame, command_engine_navigate_back,
-    command_engine_navigate_back_frame, command_engine_navigate_to_card,
-    command_engine_navigate_to_card_frame, command_engine_render, command_engine_render_frame,
-    command_engine_set_focused_input_edit_draft, command_engine_set_focused_input_edit_draft_frame,
-    command_engine_set_viewport_cols, command_engine_snapshot, AppState,
+    command_engine_navigate_back_frame, command_engine_navigate_back_to_card_frame,
+    command_engine_navigate_to_card, command_engine_navigate_to_card_frame, command_engine_render,
+    command_engine_render_frame, command_engine_set_focused_input_edit_draft,
+    command_engine_set_focused_input_edit_draft_frame, command_engine_set_viewport_cols,
+    command_engine_snapshot, AppState,
 };
 use fetch_host::fetch_deck_cancellable as host_fetch_deck_cancellable;
 use host_contract::{validate_correlation_id, HostCommandError};
@@ -311,6 +312,15 @@ fn engine_navigate_to_card_frame(
     request: NavigateToCardRequest,
 ) -> Result<EngineFrame, HostCommandError> {
     command_engine_navigate_to_card_frame(state.inner(), request)
+}
+
+#[tauri::command]
+#[cfg_attr(test, allow(dead_code))]
+fn engine_navigate_back_to_card_frame(
+    state: State<AppState>,
+    request: NavigateToCardRequest,
+) -> Result<EngineFrame, HostCommandError> {
+    command_engine_navigate_back_to_card_frame(state.inner(), request)
 }
 
 #[tauri::command]

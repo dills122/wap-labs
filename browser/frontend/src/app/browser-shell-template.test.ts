@@ -41,6 +41,16 @@ describe('mountBrowserShell', () => {
     expect(suggestedUrls).toEqual(WAVES_CONFIG.networkAddressSuggestions.map(({ url }) => url));
   });
 
+  it('publishes the initial Go navigation state before the first request', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('wap://localhost/start.wml', 'network');
+
+    const navigationButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
+
+    expect(navigationButton?.textContent).toBe('Go');
+    expect(navigationButton?.dataset.navigationAction).toBe('go');
+  });
+
   it('decomposes the shell into landmark-labelled sections', () => {
     document.body.innerHTML = '<div id="app"></div>';
     mountBrowserShell('http://example.test/start.wml', 'local');

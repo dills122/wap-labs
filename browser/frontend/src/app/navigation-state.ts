@@ -83,6 +83,7 @@ export interface NavigationHostClient {
   engineSnapshot(): Promise<EngineRuntimeSnapshot>;
   engineNavigateBack(): Promise<EngineRuntimeSnapshot>;
   engineNavigateBackFrame(): Promise<EngineFrame>;
+  engineNavigateBackToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
   engineNavigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
   engineNavigateToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
   engineAdvanceTimeMs(request: AdvanceTimeRequest): Promise<EngineRuntimeSnapshot>;
@@ -597,7 +598,13 @@ export const createNavigationStateMachine = (
     const browserContextChanged = observeBrowserContext(frame.snapshot);
     observeHistoryPush(frame.snapshot);
     if (browserContextChanged) {
-      resetHostHistoryState(hostHistory);
+      // A user-entered URL intentionally establishes an independent WML
+      // browser context, but it is still an ordinary host-browser navigation
+      // and must remain reachable through Back. Context changes reached from
+      // within WML keep their stronger history-reset semantics.
+      if (options.source !== 'user') {
+        resetHostHistoryState(hostHistory);
+      }
       hooks.onStateEvent?.('browser-context-reset', {
         browserContextEpoch: frame.snapshot.browserContextEpoch
       });
@@ -842,6 +849,41 @@ export const createNavigationStateMachine = (
       if (canHistoryBack(hostHistory)) {
         const previous = peekHistoryBack(hostHistory);
         if (previous?.url) {
+          const current = hostHistory.entries[hostHistory.index];
+          if (current && previous.activeCardId && sameHistoryDocument(current.url, previous.url)) {
+            try {
+              const restoredFrame = await hostClient.engineNavigateBackToCardFrame({
+                cardId: previous.activeCardId
+              });
+              if (!isCurrentNavigation(generation)) {
+                return 'none';
+              }
+              if (restoredFrame.snapshot.lastBackNavigationHandled) {
+                const committed = commitHistoryBack(hostHistory);
+                if (!committed) {
+                  return 'none';
+                }
+                publishFrame(restoredFrame);
+                updateCurrentHistoryCard(hostHistory, restoredFrame.snapshot.activeCardId);
+                mergeSessionState({
+                  historyIndex: hostHistory.index,
+                  history: hostHistory.entries
+                });
+                hooks.onStateEvent?.('host-history-back', {
+                  historyIndex: hostHistory.index,
+                  url: previous.url,
+                  restoredCardId: restoredFrame.snapshot.activeCardId,
+                  restorationMode: 'same-deck'
+                });
+                return 'engine';
+              }
+            } catch {
+              // A stale host entry can name a card absent from a newly loaded
+              // representation of the same URL. Fall through to transport so
+              // the authoritative deck can be reloaded before restoration.
+            }
+          }
+
           const loadedFrame = await loadTransportUrlForGeneration(
             {
               url: previous.requestedUrl ?? previous.url,

@@ -23,6 +23,7 @@ commands.allow = [
   "engine_handle_input_frame",
   "engine_navigate_to_card",
   "engine_navigate_to_card_frame",
+  "engine_navigate_back_to_card_frame",
   "engine_navigate_back",
   "engine_navigate_back_frame",
   "engine_set_viewport_cols",

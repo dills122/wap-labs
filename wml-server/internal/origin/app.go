@@ -26,20 +26,21 @@ import (
 )
 
 const (
-	defaultDTDVersion    = "1.1"
-	defaultSessionTTL    = 30 * time.Minute
-	defaultMaxUsers      = 128
-	defaultMaxSessions   = 256
-	defaultMaxBody       = int64(8 << 10)
-	defaultE2EActionTTL  = 15 * time.Minute
-	defaultMaxE2EActions = 256
-	maxUsernameBytes     = 32
-	maxPINBytes          = 6
-	maxSessionIDBytes    = 64
-	maxExampleBytes      = 4 << 10
-	maxE2EActionIDBytes  = 63
-	maxE2EActionAttempt  = 9999
-	pageSize             = 2
+	defaultDTDVersion         = "1.1"
+	defaultSessionTTL         = 30 * time.Minute
+	defaultMaxUsers           = 128
+	defaultMaxSessions        = 256
+	defaultMaxBody            = int64(8 << 10)
+	defaultE2EActionTTL       = 15 * time.Minute
+	defaultMaxE2EActions      = 256
+	defaultE2ENavigationDelay = 3 * time.Second
+	maxUsernameBytes          = 32
+	maxPINBytes               = 6
+	maxSessionIDBytes         = 64
+	maxExampleBytes           = 4 << 10
+	maxE2EActionIDBytes       = 63
+	maxE2EActionAttempt       = 9999
+	pageSize                  = 2
 )
 
 var (
@@ -54,22 +55,23 @@ var (
 var exampleFiles embed.FS
 
 type Config struct {
-	DTDVersion       string
-	OriginInstanceID string
-	Clock            func() time.Time
-	NewID            func() (string, error)
-	Logger           *slog.Logger
-	SessionTTL       time.Duration
-	MaxUsers         int
-	MaxSessions      int
-	MaxBody          int64
-	E2EFixtureMode   bool
-	E2EActionTTL     time.Duration
-	MaxE2EActions    int
-	AllowedHosts     []string
-	HomeHosts        []string
-	FormsHosts       []string
-	InteropHosts     []string
+	DTDVersion         string
+	OriginInstanceID   string
+	Clock              func() time.Time
+	NewID              func() (string, error)
+	Logger             *slog.Logger
+	SessionTTL         time.Duration
+	MaxUsers           int
+	MaxSessions        int
+	MaxBody            int64
+	E2EFixtureMode     bool
+	E2EActionTTL       time.Duration
+	MaxE2EActions      int
+	E2ENavigationDelay time.Duration
+	AllowedHosts       []string
+	HomeHosts          []string
+	FormsHosts         []string
+	InteropHosts       []string
 }
 
 type user struct {
@@ -100,20 +102,21 @@ type counters struct {
 }
 
 type App struct {
-	dtdVersion       string
-	originInstanceID string
-	clock            func() time.Time
-	newID            func() (string, error)
-	logger           *slog.Logger
-	sessionTTL       time.Duration
-	maxUsers         int
-	maxSessions      int
-	maxBody          int64
-	e2eFixtureMode   bool
-	e2eActionTTL     time.Duration
-	maxE2EActions    int
-	allowedHosts     map[string]bool
-	hostProfiles     map[string]string
+	dtdVersion         string
+	originInstanceID   string
+	clock              func() time.Time
+	newID              func() (string, error)
+	logger             *slog.Logger
+	sessionTTL         time.Duration
+	maxUsers           int
+	maxSessions        int
+	maxBody            int64
+	e2eFixtureMode     bool
+	e2eActionTTL       time.Duration
+	maxE2EActions      int
+	e2eNavigationDelay time.Duration
+	allowedHosts       map[string]bool
+	hostProfiles       map[string]string
 
 	mu       sync.Mutex
 	users    map[string]user
@@ -172,6 +175,9 @@ func New(config Config) (*App, error) {
 	if config.MaxE2EActions <= 0 {
 		config.MaxE2EActions = defaultMaxE2EActions
 	}
+	if config.E2ENavigationDelay <= 0 {
+		config.E2ENavigationDelay = defaultE2ENavigationDelay
+	}
 	if len(config.HomeHosts) == 0 {
 		config.HomeHosts = []string{"home.wap.test"}
 	}
@@ -188,23 +194,24 @@ func New(config Config) (*App, error) {
 	addHostProfiles(hostProfiles, config.InteropHosts, "interop")
 
 	return &App{
-		dtdVersion:       config.DTDVersion,
-		originInstanceID: config.OriginInstanceID,
-		clock:            config.Clock,
-		newID:            config.NewID,
-		logger:           config.Logger,
-		sessionTTL:       config.SessionTTL,
-		maxUsers:         config.MaxUsers,
-		maxSessions:      config.MaxSessions,
-		maxBody:          config.MaxBody,
-		e2eFixtureMode:   config.E2EFixtureMode,
-		e2eActionTTL:     config.E2EActionTTL,
-		maxE2EActions:    config.MaxE2EActions,
-		allowedHosts:     allowedHosts,
-		hostProfiles:     hostProfiles,
-		users:            make(map[string]user),
-		sessions:         make(map[string]session),
-		actions:          make(map[string]e2eAction),
+		dtdVersion:         config.DTDVersion,
+		originInstanceID:   config.OriginInstanceID,
+		clock:              config.Clock,
+		newID:              config.NewID,
+		logger:             config.Logger,
+		sessionTTL:         config.SessionTTL,
+		maxUsers:           config.MaxUsers,
+		maxSessions:        config.MaxSessions,
+		maxBody:            config.MaxBody,
+		e2eFixtureMode:     config.E2EFixtureMode,
+		e2eActionTTL:       config.E2EActionTTL,
+		maxE2EActions:      config.MaxE2EActions,
+		e2eNavigationDelay: config.E2ENavigationDelay,
+		allowedHosts:       allowedHosts,
+		hostProfiles:       hostProfiles,
+		users:              make(map[string]user),
+		sessions:           make(map[string]session),
+		actions:            make(map[string]e2eAction),
 	}, nil
 }
 
@@ -221,6 +228,9 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /messages", a.messages)
 	mux.HandleFunc("GET /logout", a.logout)
 	mux.HandleFunc("GET /examples/{file}", a.example)
+	if a.e2eFixtureMode {
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
+	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
 }
 
@@ -636,6 +646,10 @@ func (a *App) beginE2EPost(w http.ResponseWriter, r *http.Request, kind string) 
 	if !ok || !present {
 		return "", ok
 	}
+	return actionID, a.beginE2EAction(w, actionID, kind)
+}
+
+func (a *App) beginE2EAction(w http.ResponseWriter, actionID, kind string) bool {
 	now := a.clock()
 	a.actionMu.Lock()
 	defer a.actionMu.Unlock()
@@ -643,12 +657,12 @@ func (a *App) beginE2EPost(w http.ResponseWriter, r *http.Request, kind string) 
 	current, exists := a.actions[actionID]
 	if exists && current.Kind != kind {
 		a.sendWML(w, errorCard("Invalid Test Action", "The test action belongs to another form."), http.StatusConflict)
-		return "", false
+		return false
 	}
 	if !exists {
 		if len(a.actions) >= a.maxE2EActions {
 			a.sendWML(w, errorCard("Test Fixture Busy", "The test action limit has been reached."), http.StatusServiceUnavailable)
-			return "", false
+			return false
 		}
 		current = e2eAction{ID: actionID, Kind: kind}
 	}
@@ -656,7 +670,27 @@ func (a *App) beginE2EPost(w http.ResponseWriter, r *http.Request, kind string) 
 	current.Phase = "received"
 	current.UpdatedAt = now
 	a.actions[actionID] = current
-	return actionID, true
+	return true
+}
+
+func (a *App) e2eSlowNavigation(w http.ResponseWriter, r *http.Request) {
+	actionID := r.PathValue("actionID")
+	if !validE2EActionID(actionID) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return
+	}
+	if !a.beginE2EAction(w, actionID, "navigation") {
+		return
+	}
+	timer := time.NewTimer(a.e2eNavigationDelay)
+	defer timer.Stop()
+	select {
+	case <-r.Context().Done():
+		a.setE2EActionPhase(actionID, "cancelled")
+	case <-timer.C:
+		a.setE2EActionPhase(actionID, "success")
+		a.sendWML(w, `<card id="delayed" title="Delayed Navigation"><p>Delayed navigation completed.</p></card>`, http.StatusOK)
+	}
 }
 
 func (a *App) prepareE2EValidation(w http.ResponseWriter, actionID, kind string) (string, bool) {

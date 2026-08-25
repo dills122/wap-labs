@@ -9,6 +9,7 @@ import {
   selectNativeE2EScenarios
 } from '../e2e/native/config.mjs';
 import { createOriginObserver, deriveQuiescenceWindow } from '../e2e/native/origin-observer.mjs';
+import { createGatewayInfrastructureController } from '../e2e/native/infrastructure-controller.mjs';
 import { runNativeE2E } from '../e2e/native/runtime.mjs';
 import { createSeleniumProvider } from '../e2e/native/selenium-provider.mjs';
 
@@ -67,6 +68,13 @@ if (cliOptions?.mode === 'list') {
       timeoutMs,
       signal: abortController.signal
     });
+    const infrastructure = createGatewayInfrastructureController({
+      rootDir: path.resolve(requiredEnvironment('NATIVE_E2E_ROOT_DIR')),
+      runId: requiredEnvironment('NATIVE_E2E_RUN_ID'),
+      composeProject: requiredEnvironment('NATIVE_E2E_COMPOSE_PROJECT'),
+      adminBase: requiredEnvironment('KANNEL_ADMIN_BASE'),
+      adminPassword: requiredEnvironment('KANNEL_ADMIN_PASSWORD')
+    });
     const interrupt = () => abortController.abort();
     process.once('SIGINT', interrupt);
     process.once('SIGTERM', interrupt);
@@ -79,6 +87,7 @@ if (cliOptions?.mode === 'list') {
         artifactRoot: path.resolve(requiredEnvironment('NATIVE_E2E_ARTIFACT_DIR')),
         runId: requiredEnvironment('NATIVE_E2E_RUN_ID'),
         origin,
+        infrastructure,
         provider: createSeleniumProvider(),
         selector: By.css,
         keys: { Enter: Key.ENTER, ArrowDown: Key.ARROW_DOWN },

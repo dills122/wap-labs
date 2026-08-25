@@ -387,6 +387,12 @@
           "markdownDescription": "Enables the engine_navigate_back_frame command without any pre-configured scope."
         },
         {
+          "description": "Enables the engine_navigate_back_to_card_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-engine-navigate-back-to-card-frame",
+          "markdownDescription": "Enables the engine_navigate_back_to_card_frame command without any pre-configured scope."
+        },
+        {
           "description": "Enables the engine_navigate_to_card command without any pre-configured scope.",
           "type": "string",
           "const": "allow-engine-navigate-to-card",
@@ -655,6 +661,12 @@
           "type": "string",
           "const": "deny-engine-navigate-back-frame",
           "markdownDescription": "Denies the engine_navigate_back_frame command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the engine_navigate_back_to_card_frame command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-engine-navigate-back-to-card-frame",
+          "markdownDescription": "Denies the engine_navigate_back_to_card_frame command without any pre-configured scope."
         },
         {
           "description": "Denies the engine_navigate_to_card command without any pre-configured scope.",

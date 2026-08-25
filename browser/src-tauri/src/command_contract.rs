@@ -232,6 +232,12 @@ macro_rules! with_tauri_commands {
                 response: CommandType::engine("EngineFrame"),
                 facade: Some(FacadeMethod::engine("navigateToCardFrame"))
             };
+            engine_navigate_back_to_card_frame => {
+                client: "engineNavigateBackToCardFrame",
+                parameter: Some(CommandParameter::new("request", CommandType::engine("NavigateToCardRequest"))),
+                response: CommandType::engine("EngineFrame"),
+                facade: Some(FacadeMethod::engine("navigateBackToCardFrame"))
+            };
             engine_navigate_back => {
                 client: "engineNavigateBack",
                 parameter: None,

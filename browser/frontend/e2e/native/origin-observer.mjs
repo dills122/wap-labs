@@ -205,7 +205,7 @@ export function createOriginObserver({
     if (
       keys.join(',') !== 'actionId,count,kind,phase' ||
       value.actionId !== actionID ||
-      !['register', 'login'].includes(value.kind) ||
+      !['register', 'login', 'navigation'].includes(value.kind) ||
       !Number.isSafeInteger(value.count) ||
       value.count < 0 ||
       typeof value.phase !== 'string' ||
@@ -333,6 +333,65 @@ export function createOriginObserver({
         signal: operationSignal
       });
       return { actionID, kind, count: 1, phase, quiescenceMs };
+    },
+    async waitForActionPhase(actionID, { kind, phase, signal }) {
+      requireActionID(actionID);
+      if (typeof phase !== 'string' || phase.length === 0) {
+        throw new Error('origin action phase is required');
+      }
+      const operationSignal = combineSignals(runSignal, signal);
+      const reached = await waitForCondition({
+        description: `correlated origin action phase ${phase}`,
+        observe: ({ signal }) => readAction(actionID, { signal }),
+        accept: (action) => action.count >= 1 && action.phase === phase,
+        timeoutMs,
+        pollIntervalMs,
+        now,
+        sleep,
+        signal: operationSignal,
+        formatObservation: (action) => `${action.kind}:${action.count}:${action.phase}`
+      });
+      if (reached.kind !== kind || reached.count !== 1) {
+        throw new Error('correlated origin action did not have exactly one matching receipt');
+      }
+      return { actionID, kind, count: 1, phase };
+    },
+    async waitForActionSettledExactlyOnce(actionID, { kind, phases, signal }) {
+      requireActionID(actionID);
+      if (!Array.isArray(phases) || phases.length === 0 || phases.some((phase) => typeof phase !== 'string')) {
+        throw new Error('origin action terminal phases are required');
+      }
+      const operationSignal = combineSignals(runSignal, signal);
+      const reached = await waitForCondition({
+        description: 'correlated origin action to settle once',
+        observe: ({ signal }) => readAction(actionID, { signal }),
+        accept: (action) => action.count >= 1 && phases.includes(action.phase),
+        timeoutMs,
+        pollIntervalMs,
+        now,
+        sleep,
+        signal: operationSignal,
+        formatObservation: (action) => `${action.kind}:${action.count}:${action.phase}`
+      });
+      if (reached.kind !== kind || reached.count !== 1) {
+        throw new Error('correlated origin action did not have exactly one matching receipt');
+      }
+      await proveStable({
+        description: 'correlated origin terminal action to remain exactly once',
+        observe: (signal) => readAction(actionID, { signal }),
+        accept: (current) => {
+          if (
+            current.kind !== kind ||
+            current.count !== 1 ||
+            current.phase !== reached.phase
+          ) {
+            throw new Error('correlated origin action changed during retry-horizon quiescence');
+          }
+        },
+        formatObservation: (current) => `${current.kind}:${current.count}:${current.phase}`,
+        signal: operationSignal
+      });
+      return { actionID, kind, count: 1, phase: reached.phase, quiescenceMs };
     },
     async waitForExactlyOne(name, before, { signal } = {}) {
       const operationSignal = combineSignals(runSignal, signal);

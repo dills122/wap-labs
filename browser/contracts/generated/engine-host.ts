@@ -195,6 +195,7 @@ export interface EngineHostClient {
     handleInputFrame(request: HandleInputRequest): Promise<EngineFrame>;
     navigateToCard(request: NavigateToCardRequest): Promise<EngineRuntimeSnapshot>;
     navigateToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
+    navigateBackToCardFrame(request: NavigateToCardRequest): Promise<EngineFrame>;
     navigateBack(): Promise<EngineRuntimeSnapshot>;
     navigateBackFrame(): Promise<EngineFrame>;
     setViewportCols(request: SetViewportColsRequest): Promise<EngineRuntimeSnapshot>;

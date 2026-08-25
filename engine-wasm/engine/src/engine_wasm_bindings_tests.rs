@@ -906,6 +906,42 @@ fn wasm_m1_02_handle_key_render_and_navigate_back_boundary_flow() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_303_prev_override_exposes_empty_history_to_host_fallback() {
+    let mut engine = WmlEngine::wasm_new();
+    engine
+        .load_deck_wasm(
+            r##"<wml>
+              <template><do name="back" type="prev"><prev/></do></template>
+              <card id="home"><a href="#next">Next</a></card>
+              <card id="next">
+                <onevent type="onenterbackward">
+                  <refresh><setvar name="direction" value="backward"/></refresh>
+                </onevent>
+                <p>Next</p>
+              </card>
+            </wml>"##,
+        )
+        .expect("deck should load");
+
+    engine
+        .handle_key_wasm("enter".to_string())
+        .expect("forward navigation should succeed");
+    assert!(engine.navigate_back_wasm());
+    assert!(engine.last_back_navigation_handled_wasm());
+    assert!(!engine.navigate_back_wasm());
+    assert!(!engine.last_back_navigation_handled_wasm());
+    assert!(engine
+        .navigate_back_to_card_wasm("next".to_string())
+        .expect("host-known same-deck restore should succeed through WASM"));
+    assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("next"));
+    assert_eq!(
+        engine.get_var_wasm("direction".to_string()).as_deref(),
+        Some("backward")
+    );
+    assert!(!engine.navigate_back_wasm());
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_309_frame_and_action_input_match_native_contract() {
     let mut engine = WmlEngine::wasm_new();
     engine
