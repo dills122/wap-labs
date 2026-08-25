@@ -68,14 +68,19 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       'return arguments[0].shadowRoot?.querySelector("#status-root")?.textContent ?? "";',
       element
     );
+  const isBrowserInteractionIdle = async (navigationButton, body) => {
+    const navigationAction = await navigationButton.getAttribute('data-navigation-action');
+    if (navigationAction !== 'go') return false;
+    return (await body.getAttribute('data-engine-action-state')) === 'idle';
+  };
   const waitForStatusText = async (expected) => {
     const status = await find(SELECTORS.status);
     const navigationButton = await find(SELECTORS.go);
+    const body = await find(SELECTORS.body);
     return waitUntil(async () => {
       const text = await readStatusText(status);
       if (!text.includes(expected)) return false;
-      const action = await navigationButton.getAttribute('data-navigation-action');
-      return action === 'go' ? text : false;
+      return (await isBrowserInteractionIdle(navigationButton, body)) ? text : false;
     }, { description: `status text ${JSON.stringify(expected)}` });
   };
   const waitForNavigationAction = async (expected) => {
@@ -83,9 +88,12 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       throw new Error('navigation action must be go or stop');
     }
     const button = await find(SELECTORS.go);
+    const body = expected === 'go' ? await find(SELECTORS.body) : undefined;
     return waitUntil(async () => {
       const action = await button.getAttribute('data-navigation-action');
-      return action === expected ? action : false;
+      if (action !== expected) return false;
+      if (expected === 'go' && !(await isBrowserInteractionIdle(button, body))) return false;
+      return action;
     }, { description: `navigation action ${JSON.stringify(expected)}` });
   };
   const submitAddress = async (address) => {
@@ -208,11 +216,11 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     async waitForDeckText(expected) {
       const viewport = await find(SELECTORS.viewport);
       const navigationButton = await find(SELECTORS.go);
+      const body = await find(SELECTORS.body);
       return waitUntil(async () => {
         const text = await readText(viewport);
         if (!compactVisibleText(text).includes(compactVisibleText(expected))) return false;
-        const action = await navigationButton.getAttribute('data-navigation-action');
-        return action === 'go' ? text : false;
+        return (await isBrowserInteractionIdle(navigationButton, body)) ? text : false;
       }, { description: `deck text ${JSON.stringify(expected)}` });
     },
 

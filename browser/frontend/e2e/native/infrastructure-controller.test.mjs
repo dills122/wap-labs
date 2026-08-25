@@ -17,7 +17,7 @@ function fixture() {
     sleep: async () => {},
     runCommand: async (command, arguments_) => {
       commands.push([command, ...arguments_]);
-      running = arguments_.includes('start');
+      running = arguments_.includes('unpause');
     },
     fetchImpl: async () => {
       if (!running) throw new Error('connection refused');
@@ -42,13 +42,13 @@ test('owned gateway outage uses exact Compose scope and restores Kannel health',
       'docker', 'compose', '--project-name', 'waves-e2e-run-7',
       '--file', '/workspace/wap-labs/docker-compose.yml',
       '--file', '/workspace/wap-labs/docker-compose.native-e2e.yml',
-      'stop', '--timeout', '10', 'kannel'
+      'pause', 'kannel'
     ],
     [
       'docker', 'compose', '--project-name', 'waves-e2e-run-7',
       '--file', '/workspace/wap-labs/docker-compose.yml',
       '--file', '/workspace/wap-labs/docker-compose.native-e2e.yml',
-      'start', 'kannel'
+      'unpause', 'kannel'
     ]
   ]);
 });
@@ -67,7 +67,7 @@ test('gateway recovery waits for an online wapbox after bearerbox reports runnin
     timeoutMs: 100,
     sleep: async () => { sleeps += 1; },
     runCommand: async (_command, arguments_) => {
-      running = arguments_.includes('start');
+      running = arguments_.includes('unpause');
     },
     fetchImpl: async () => {
       if (!running) throw new Error('connection refused');
@@ -99,7 +99,7 @@ test('owned gateway outage restores Kannel when the scenario body fails', async 
 
   assert.equal(isRunning(), true);
   assert.equal(commands.length, 2);
-  assert.equal(commands[1].at(-2), 'start');
+  assert.equal(commands[1].at(-2), 'unpause');
 });
 
 test('owned gateway controller rejects mismatched ownership and unsafe admin endpoints', () => {
@@ -154,7 +154,7 @@ test('owned gateway controller reports both scenario and recovery failures', asy
     pollIntervalMs: 10,
     sleep: async () => {},
     runCommand: async (_command, arguments_) => {
-      if (arguments_.includes('start')) throw new Error('injected recovery failure');
+      if (arguments_.includes('unpause')) throw new Error('injected recovery failure');
       running = false;
     },
     fetchImpl: async () => {

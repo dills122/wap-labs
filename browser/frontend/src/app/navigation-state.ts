@@ -597,7 +597,13 @@ export const createNavigationStateMachine = (
     const browserContextChanged = observeBrowserContext(frame.snapshot);
     observeHistoryPush(frame.snapshot);
     if (browserContextChanged) {
-      resetHostHistoryState(hostHistory);
+      // A user-entered URL intentionally establishes an independent WML
+      // browser context, but it is still an ordinary host-browser navigation
+      // and must remain reachable through Back. Context changes reached from
+      // within WML keep their stronger history-reset semantics.
+      if (options.source !== 'user') {
+        resetHostHistoryState(hostHistory);
+      }
       hooks.onStateEvent?.('browser-context-reset', {
         browserContextEpoch: frame.snapshot.browserContextEpoch
       });

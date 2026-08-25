@@ -839,6 +839,48 @@ describe('navigation-state load behavior', () => {
     ]);
   });
 
+  it('retains host history across independent typed URL browser contexts', async () => {
+    let epoch = 0;
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => fetchOk({ finalUrl: request.url }),
+        engineLoadDeckContextFrame: async (request) => {
+          if (request.navigationKind === 'independent') epoch += 1;
+          return frame({
+            activeCardId: request.baseUrl.endsWith('/a.wml') ? 'a' : 'b',
+            browserContextEpoch: epoch,
+            lastBackNavigationHandled: false
+          });
+        },
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: 'b',
+            browserContextEpoch: epoch,
+            lastBackNavigationHandled: false
+          })
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/a.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/b.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+
+    expect(machine.getHistoryState().entries.map(({ url }) => url)).toEqual([
+      'http://example.test/a.wml',
+      'http://example.test/b.wml'
+    ]);
+    await expect(machine.navigateBackWithFallback()).resolves.toBe('host');
+    expect(machine.getSessionState().finalUrl).toBe('http://example.test/a.wml');
+  });
+
   it('clears prior host history when the engine establishes a new browser context', async () => {
     let epoch = 1;
     const machine = createNavigationStateMachine(

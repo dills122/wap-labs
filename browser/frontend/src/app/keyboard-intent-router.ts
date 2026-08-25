@@ -29,6 +29,7 @@ export interface KeyboardIntentRouterDependencies {
   navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'>;
   waitForEngineTimerIdle(): Promise<void>;
   setStatus(message: string): void;
+  onActionInFlightChange?(inFlight: boolean): void;
 }
 
 export class KeyboardIntentRouter {
@@ -148,7 +149,10 @@ export class KeyboardIntentRouter {
     // plain boolean) is used so overlapping queued actions don't clear the
     // flag early while a later action is still waiting its turn.
     this.actionsPending += 1;
-    this.actionInFlight = true;
+    if (!this.actionInFlight) {
+      this.actionInFlight = true;
+      this.deps.onActionInFlightChange?.(true);
+    }
     const completion = this.actionQueue.then(async () => {
       try {
         // canTick() prevents a new timer from starting after the pending flag
@@ -158,7 +162,11 @@ export class KeyboardIntentRouter {
         await action();
       } finally {
         this.actionsPending = Math.max(0, this.actionsPending - 1);
-        this.actionInFlight = this.actionsPending > 0;
+        const nextActionInFlight = this.actionsPending > 0;
+        if (this.actionInFlight !== nextActionInFlight) {
+          this.actionInFlight = nextActionInFlight;
+          this.deps.onActionInFlightChange?.(nextActionInFlight);
+        }
       }
     });
     this.actionQueue = completion.catch(() => {

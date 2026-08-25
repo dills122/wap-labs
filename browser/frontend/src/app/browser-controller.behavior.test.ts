@@ -269,6 +269,31 @@ const wbxmlDecodeFailureResponse = (url: string): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('publishes engine-action busy state until the serialized queue is idle', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const hostClient = createHostClient();
+    const controller = new BrowserController(hostClient as never, presenter, refs);
+    let releaseAction!: () => void;
+    const heldAction = new Promise<void>((resolve) => {
+      releaseAction = resolve;
+    });
+
+    await controller.init('<wml><card id="seed"/></wml>');
+    expect(document.body.dataset.engineActionState).toBe('idle');
+
+    const action = controllerPrivates(controller).keyboardIntentRouter.serializeEngineAction(
+      async () => heldAction
+    );
+    expect(document.body.dataset.engineActionState).toBe('busy');
+
+    releaseAction();
+    await action;
+    expect(document.body.dataset.engineActionState).toBe('idle');
+
+    controller.dispose();
+  });
+
   it('rejects one-over-limit viewport input before IPC and accepts a later valid value', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

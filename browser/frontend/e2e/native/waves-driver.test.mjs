@@ -23,9 +23,23 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   const waits = [];
   let navigationAction = initialNavigationAction;
   let navigationReadsUntilIdle = 0;
+  let engineActionState = 'idle';
+  let engineActionReadsUntilIdle = 0;
   let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
-    ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
+    ['body', element({
+      getAttribute: async (name) => {
+        calls.push(['getAttribute', 'body', name]);
+        if (name === 'data-boot-phase') return 'engine-ready';
+        if (name !== 'data-engine-action-state') return '';
+        const observed = engineActionState;
+        if (engineActionState === 'busy' && engineActionReadsUntilIdle > 0) {
+          engineActionReadsUntilIdle -= 1;
+          if (engineActionReadsUntilIdle === 0) engineActionState = 'idle';
+        }
+        return observed;
+      }
+    })],
     ['#run-mode', element({ getAttribute: async () => 'network' })],
     ['#welcome-help-panel', element({ isDisplayed: async () => false })],
     ['#btn-connect-network', element({ click: async () => calls.push(['click', 'connect']) })],
@@ -40,10 +54,12 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
         calls.push(['click', navigationAction]);
         if (navigationAction === 'stop') {
           navigationAction = 'go';
+          engineActionState = 'idle';
           statusText = 'Navigation stopped.';
         } else {
           navigationAction = 'stop';
           navigationReadsUntilIdle = 1;
+          engineActionState = 'busy';
         }
       },
       getAttribute: async (name) => {
@@ -52,13 +68,24 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
         const observed = navigationAction;
         if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
           navigationReadsUntilIdle -= 1;
-          if (navigationReadsUntilIdle === 0) navigationAction = 'go';
+          if (navigationReadsUntilIdle === 0) {
+            navigationAction = 'go';
+            engineActionState = 'idle';
+          }
         }
         return observed;
       }
     })],
-    ['#btn-back', element({ click: async () => calls.push(['click', 'back']) })],
-    ['#btn-reload', element({ click: async () => calls.push(['click', 'reload']) })],
+    ['#btn-back', element({ click: async () => {
+      calls.push(['click', 'back']);
+      engineActionState = 'busy';
+      engineActionReadsUntilIdle = 1;
+    } })],
+    ['#btn-reload', element({ click: async () => {
+      calls.push(['click', 'reload']);
+      engineActionState = 'busy';
+      engineActionReadsUntilIdle = 1;
+    } })],
     ['#viewport', element({
       click: async () => calls.push(['click', 'viewport']),
       sendKeys: async (value) => calls.push(['sendKeys', 'viewport', value])
@@ -100,9 +127,9 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
 function wrappedDeckFixture(value) {
   const driver = {
     async findElement(selector) {
-      return selector === '#btn-fetch-url'
-        ? element({ getAttribute: async () => 'go' })
-        : element();
+      if (selector === '#btn-fetch-url') return element({ getAttribute: async () => 'go' });
+      if (selector === 'body') return element({ getAttribute: async () => 'idle' });
+      return element();
     },
     async executeScript(script) {
       return script.includes('textContent') ? value : '';
@@ -205,6 +232,21 @@ test('semantic status waits do not accept an in-flight navigation', async () => 
       index > clickIndex && kind === 'getAttribute' && attribute === 'data-navigation-action'
   );
   assert.ok(navigationReadsAfterClick.length >= 2);
+});
+
+test('semantic deck waits do not accept content while a queued engine action is busy', async () => {
+  const { calls, page } = fixture();
+
+  await page.goBack();
+  await page.waitForDeckText('Rendered deck text');
+
+  const engineStateReads = calls.filter(
+    ([kind, target, attribute]) =>
+      kind === 'getAttribute' &&
+      target === 'body' &&
+      attribute === 'data-engine-action-state'
+  );
+  assert.ok(engineStateReads.length >= 2);
 });
 
 test('in-flight URL starts stop after dispatch so race scenarios can cancel it', async () => {

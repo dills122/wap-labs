@@ -142,7 +142,7 @@ export function createGatewayInfrastructureController({
       let operationError;
       let result;
       try {
-        await runCompose(['stop', '--timeout', '10', 'kannel'], { signal });
+        await runCompose(['pause', 'kannel'], { signal });
         await waitForRunning(false, signal);
         result = await callback();
       } catch (error) {
@@ -151,7 +151,7 @@ export function createGatewayInfrastructureController({
 
       let recoveryError;
       try {
-        await runCompose(['start', 'kannel']);
+        await runCompose(['unpause', 'kannel']);
         await waitForRunning(true);
       } catch (error) {
         recoveryError = error;

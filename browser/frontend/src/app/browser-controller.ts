@@ -296,7 +296,10 @@ export class BrowserController {
       applyEngineKey: (key) => this.applyEngineKey(key),
       navigateBackWithFallback: () => this.navigateBackWithFallback(),
       waitForEngineTimerIdle: () => this.timerRuntime.whenIdle(),
-      setStatus: (message) => this.presenter.setStatus(message)
+      setStatus: (message) => this.presenter.setStatus(message),
+      onActionInFlightChange: (inFlight) => {
+        document.body.dataset.engineActionState = inFlight ? 'busy' : 'idle';
+      }
     });
     this.shellEventBindings = new ShellEventBindings({
       refs: this.refs,
@@ -330,6 +333,7 @@ export class BrowserController {
 
   async init(sampleWml: string): Promise<void> {
     this.bootDeckReadyEmitted = false;
+    document.body.dataset.engineActionState = 'idle';
     this.refs.wmlInput.value = sampleWml;
     this.presenter.setSessionState({
       runMode: this.runMode,
