@@ -23,7 +23,9 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   const waits = [];
   let navigationAction = initialNavigationAction;
   let navigationReadsUntilIdle = 0;
-  let navigationCycleArmed = false;
+  let navigationRequestSequence = 0;
+  let activeNavigationRequestId = '';
+  let settledNavigationRequestId = 'waves-navigation-boot';
   let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
@@ -45,14 +47,35 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
         } else {
           navigationAction = 'stop';
           navigationReadsUntilIdle = 1;
+          navigationRequestSequence += 1;
+          activeNavigationRequestId = `waves-navigation-${navigationRequestSequence}`;
         }
       },
       getAttribute: async (name) => {
+        calls.push(['getAttribute', '#btn-fetch-url', name]);
+        const settleNavigation = () => {
+          if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
+            navigationReadsUntilIdle -= 1;
+            if (navigationReadsUntilIdle === 0) {
+              navigationAction = 'go';
+              settledNavigationRequestId = activeNavigationRequestId;
+              activeNavigationRequestId = '';
+            }
+          }
+        };
+        if (name === 'data-navigation-settled-request-id') {
+          settleNavigation();
+          return settledNavigationRequestId;
+        }
         if (name !== 'data-navigation-action') return '';
         const observed = navigationAction;
         if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
           navigationReadsUntilIdle -= 1;
-          if (navigationReadsUntilIdle === 0) navigationAction = 'go';
+          if (navigationReadsUntilIdle === 0) {
+            navigationAction = 'go';
+            settledNavigationRequestId = activeNavigationRequestId;
+            activeNavigationRequestId = '';
+          }
         }
         return observed;
       }
@@ -77,17 +100,6 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
     },
     async executeScript(script, ...arguments_) {
       calls.push(['script', script, ...arguments_]);
-      if (script.includes('new MutationObserver')) {
-        navigationCycleArmed = true;
-        return '';
-      }
-      if (script.includes('__wavesNativeE2ENavigationCycle')) {
-        if (!navigationCycleArmed) return false;
-        navigationCycleArmed = false;
-        navigationAction = 'go';
-        navigationReadsUntilIdle = 0;
-        return 'go';
-      }
       if (script.includes('shadowRoot')) return statusText;
       if (script.includes('textContent')) return 'Rendered deck text';
       return '';
@@ -175,23 +187,28 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
   );
 });
 
-test('completed URL opens observe an idle-started-idle navigation cycle', async () => {
+test('completed URL opens wait for a new retained navigation settlement marker', async () => {
   const { calls, page, waits } = fixture();
 
   await page.openWapUrl('wap://localhost/login');
 
   assert.deepEqual(waits, [
     'navigation action "go"',
-    'completed navigation cycle'
+    'navigation request to settle'
   ]);
-  const armIndex = calls.findIndex(
-    ([kind, script]) => kind === 'script' && script.includes('new MutationObserver')
-  );
-  const armScript = calls[armIndex]?.[1] ?? '';
   const clickIndex = calls.findIndex(([kind, target]) => kind === 'click' && target === 'go');
-  assert.ok(armIndex >= 0 && armIndex < clickIndex, 'the cycle observer must be armed before Go');
-  assert.match(armScript, /record\.oldValue/);
-  assert.match(armScript, /attributeOldValue:\s*true/);
+  const settlementReadIndexes = calls
+    .map(([kind, , attribute], index) =>
+      kind === 'getAttribute' && attribute === 'data-navigation-settled-request-id' ? index : -1
+    )
+    .filter((index) => index >= 0);
+  assert.ok(clickIndex >= 0);
+  assert.equal(
+    calls.some(([kind, script]) => kind === 'script' && script.includes('MutationObserver')),
+    false
+  );
+  assert.ok(settlementReadIndexes.some((index) => index < clickIndex));
+  assert.ok(settlementReadIndexes.some((index) => index > clickIndex));
 });
 
 test('in-flight URL starts stop after dispatch so race scenarios can cancel it', async () => {

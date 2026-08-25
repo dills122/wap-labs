@@ -44,43 +44,6 @@ if (submission === 'enter') {
 }
 `;
 
-const ARM_NAVIGATION_CYCLE_SCRIPT = `
-const button = document.querySelector('#btn-fetch-url');
-if (!(button instanceof HTMLButtonElement)) {
-  throw new Error('Waves Go/Stop button is unavailable');
-}
-button.__wavesNativeE2ENavigationCycle?.observer?.disconnect();
-const state = { seenActive: false, complete: false, observer: undefined };
-const observe = (records = []) => {
-  for (const record of records) {
-    if (record.oldValue === 'go') state.seenActive = true;
-    if (record.oldValue === 'stop' && state.seenActive) state.complete = true;
-  }
-  const action = button.dataset.navigationAction;
-  if (action === 'stop') state.seenActive = true;
-  if (state.complete) {
-    state.observer?.disconnect();
-  }
-};
-state.observer = new MutationObserver(observe);
-button.__wavesNativeE2ENavigationCycle = state;
-state.observer.observe(button, {
-  attributes: true,
-  attributeOldValue: true,
-  attributeFilter: ['data-navigation-action']
-});
-observe();
-`;
-
-const READ_NAVIGATION_CYCLE_SCRIPT = `
-const button = document.querySelector('#btn-fetch-url');
-const state = button?.__wavesNativeE2ENavigationCycle;
-if (!state?.complete) return false;
-state.observer?.disconnect();
-delete button.__wavesNativeE2ENavigationCycle;
-return 'go';
-`;
-
 function stripSensitiveAddress(rawAddress) {
   const address = new URL(rawAddress);
   address.search = '';
@@ -147,11 +110,17 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
   const openWapUrl = async (address) => {
     requireWapAddress(address);
     await waitForNavigationAction('go');
-    await driver.executeScript(ARM_NAVIGATION_CYCLE_SCRIPT);
+    const button = await find(SELECTORS.go);
+    const previousSettlement =
+      (await button.getAttribute('data-navigation-settled-request-id')) ?? '';
     await submitAddress(address);
     await waitUntil(
-      () => driver.executeScript(READ_NAVIGATION_CYCLE_SCRIPT),
-      { description: 'completed navigation cycle' }
+      async () => {
+        const settlement =
+          (await button.getAttribute('data-navigation-settled-request-id')) ?? '';
+        return settlement.length > 0 && settlement !== previousSettlement ? settlement : false;
+      },
+      { description: 'navigation request to settle' }
     );
   };
   const readSanitizedAddress = async () => {
