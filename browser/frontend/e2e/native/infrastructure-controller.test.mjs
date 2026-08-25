@@ -21,7 +21,7 @@ function fixture() {
     },
     fetchImpl: async () => {
       if (!running) throw new Error('connection refused');
-      return { ok: true, text: async () => 'Status: running' };
+      return { ok: true, text: async () => 'Status: running\nwapbox, on-line' };
     }
   });
   return { commands, controller, isRunning: () => running };
@@ -51,6 +51,40 @@ test('owned gateway outage uses exact Compose scope and restores Kannel health',
       'start', 'kannel'
     ]
   ]);
+});
+
+test('gateway recovery waits for an online wapbox after bearerbox reports running', async () => {
+  let running = true;
+  let recoveryReads = 0;
+  let sleeps = 0;
+  const controller = createGatewayInfrastructureController({
+    rootDir: '/workspace/wap-labs',
+    runId: 'waves-e2e-run-7',
+    composeProject: 'waves-e2e-run-7',
+    adminBase: 'http://127.0.0.1:49152',
+    adminPassword: 'test-secret',
+    pollIntervalMs: 10,
+    timeoutMs: 100,
+    sleep: async () => { sleeps += 1; },
+    runCommand: async (_command, arguments_) => {
+      running = arguments_.includes('start');
+    },
+    fetchImpl: async () => {
+      if (!running) throw new Error('connection refused');
+      recoveryReads += 1;
+      return {
+        ok: true,
+        text: async () => recoveryReads === 1
+          ? 'Status: running\nBox connections:'
+          : 'Status: running\nwapbox, on-line'
+      };
+    }
+  });
+
+  await controller.withGatewayStopped(async () => {});
+
+  assert.equal(sleeps, 1, 'bearerbox-only readiness must not release recovery');
+  assert.equal(recoveryReads, 2);
 });
 
 test('owned gateway outage restores Kannel when the scenario body fails', async () => {
@@ -125,7 +159,7 @@ test('owned gateway controller reports both scenario and recovery failures', asy
     },
     fetchImpl: async () => {
       if (!running) throw new Error('connection refused');
-      return { ok: true, text: async () => 'Status: running' };
+      return { ok: true, text: async () => 'Status: running\nwapbox, on-line' };
     }
   });
 

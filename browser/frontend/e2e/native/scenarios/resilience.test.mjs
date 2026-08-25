@@ -16,6 +16,7 @@ function fixture() {
         async launchWaves() { calls.push(['launch']); },
         async dismissWelcome() { calls.push(['dismiss']); },
         async openWapUrl(address) { calls.push(['open', address]); },
+        async startWapUrl(address) { calls.push(['start', address]); },
         async waitForDeckText(text) { calls.push(['deck', text]); return `deck: ${text}`; },
         async waitForAddress(address) { calls.push(['address', address]); return address; },
         async readSanitizedAddress() { return 'wap://localhost/'; },
@@ -99,11 +100,11 @@ test('superseded slow navigation cannot overwrite a newer successful deck', asyn
   await RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-001').run(context);
 
   assert.deepEqual(
-    calls.filter(([kind]) => kind === 'open').map(([, address]) => address),
+    calls.filter(([kind]) => kind === 'open' || kind === 'start'),
     [
-      'wap://localhost/',
-      'wap://localhost/e2e/navigation/race-native-001-a1/slow.wml',
-      'wap://localhost/examples/interop-check.wml'
+      ['open', 'wap://localhost/'],
+      ['start', 'wap://localhost/e2e/navigation/race-native-001-a1/slow.wml'],
+      ['open', 'wap://localhost/examples/interop-check.wml']
     ]
   );
   assert.deepEqual(calls.filter(([kind]) => kind === 'stop'), [['stop']]);

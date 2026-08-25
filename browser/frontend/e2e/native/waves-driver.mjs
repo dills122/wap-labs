@@ -95,6 +95,15 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     await input.sendKeys(address);
     await (await find(SELECTORS.go)).click();
   };
+  const startWapUrl = async (address) => {
+    const parsed = new URL(address);
+    if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
+      throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
+    }
+    await waitForNavigationAction('go');
+    await submitAddress(address);
+    await waitForNavigationAction('stop');
+  };
   const readSanitizedAddress = async () => {
     const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
     return stripSensitiveAddress(rawAddress);
@@ -125,11 +134,12 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     },
 
     async openWapUrl(address) {
-      const parsed = new URL(address);
-      if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
-        throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
-      }
-      await submitAddress(address);
+      await startWapUrl(address);
+      await waitForNavigationAction('go');
+    },
+
+    async startWapUrl(address) {
+      await startWapUrl(address);
     },
 
     async submitAddress(address) {

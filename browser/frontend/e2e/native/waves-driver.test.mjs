@@ -22,6 +22,7 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   const calls = [];
   const waits = [];
   let navigationAction = initialNavigationAction;
+  let navigationReadsUntilIdle = 0;
   let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
@@ -40,9 +41,20 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
         if (navigationAction === 'stop') {
           navigationAction = 'go';
           statusText = 'Navigation stopped.';
+        } else {
+          navigationAction = 'stop';
+          navigationReadsUntilIdle = 1;
         }
       },
-      getAttribute: async (name) => (name === 'data-navigation-action' ? navigationAction : '')
+      getAttribute: async (name) => {
+        if (name !== 'data-navigation-action') return '';
+        const observed = navigationAction;
+        if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
+          navigationReadsUntilIdle -= 1;
+          if (navigationReadsUntilIdle === 0) navigationAction = 'go';
+        }
+        return observed;
+      }
     })],
     ['#btn-back', element({ click: async () => calls.push(['click', 'back']) })],
     ['#btn-reload', element({ click: async () => calls.push(['click', 'reload']) })],
@@ -74,9 +86,11 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
     selector: (value) => value,
     waitUntil: async (condition, options) => {
       waits.push(options?.description);
-      const observed = await condition();
-      if (!observed) throw new Error('condition did not pass');
-      return observed;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const observed = await condition();
+        if (observed) return observed;
+      }
+      throw new Error('condition did not pass');
     }
   });
   return { calls, page, waits };
@@ -147,6 +161,29 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
       ['click', 'reload']
     ]
   );
+});
+
+test('completed URL opens observe an idle-started-idle navigation cycle', async () => {
+  const { page, waits } = fixture();
+
+  await page.openWapUrl('wap://localhost/login');
+
+  assert.deepEqual(waits, [
+    'navigation action "go"',
+    'navigation action "stop"',
+    'navigation action "go"'
+  ]);
+});
+
+test('in-flight URL starts stop after dispatch so race scenarios can cancel it', async () => {
+  const { page, waits } = fixture();
+
+  await page.startWapUrl('wap://localhost/e2e/navigation/race/slow.wml');
+
+  assert.deepEqual(waits, [
+    'navigation action "go"',
+    'navigation action "stop"'
+  ]);
 });
 
 test('Stop waits for an active navigation, cancels it, and waits for the idle state', async () => {

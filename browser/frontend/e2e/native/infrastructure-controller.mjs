@@ -109,7 +109,10 @@ export function createGatewayInfrastructureController({
         redirect: 'error',
         signal: requestSignal
       });
-      return response.ok && (await response.text()).includes('Status: running');
+      const status = await response.text();
+      return response.ok &&
+        /Status:\s*running\b/i.test(status) &&
+        /\bwapbox\b[^\n]*\bon-line\b/i.test(status);
     } catch (error) {
       if (signal?.aborted) throw signal.reason ?? error;
       return false;

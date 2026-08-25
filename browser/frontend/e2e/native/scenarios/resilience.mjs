@@ -14,7 +14,7 @@ async function loadHome(context) {
 }
 
 async function startObservedSlowNavigation(context, actionID) {
-  await context.waves.openWapUrl(
+  await context.waves.startWapUrl(
     `wap://localhost/e2e/navigation/${actionID}/slow.wml`
   );
   context.observe({ phase: 'ui-dispatched' });
