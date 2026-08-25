@@ -433,11 +433,6 @@ describe('BrowserController behavior coverage', () => {
       navigationStatus: 'loaded',
       finalUrl: 'http://example.test/network.wml'
     });
-    const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
-    expect(fetchButton?.dataset.navigationAction).toBe('go');
-    expect(fetchButton?.dataset.navigationRequestId).toBeUndefined();
-    expect(fetchButton?.dataset.navigationSettledRequestId).toMatch(/^waves-navigation-\d+-\d+$/);
-
     presenter.setSessionState({
       ...presenter.getSessionState(),
       finalUrl: 'http://example.test/reload-target.wml',
@@ -1825,9 +1820,6 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
   expect(hostClient.cancelFetch).not.toHaveBeenCalled();
   expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.stop);
   expect(fetchButton?.dataset.navigationAction).toBe('stop');
-  const activeRequestId = fetchButton?.dataset.navigationRequestId;
-  expect(activeRequestId).toMatch(/^waves-navigation-\d+-\d+$/);
-  expect(fetchButton?.dataset.navigationSettledRequestId).toBeUndefined();
 
   fetchButton?.click();
   await flushAsyncWork();
@@ -1835,8 +1827,6 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
   expect(hostClient.cancelFetch).toHaveBeenCalledTimes(1);
   expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.go);
   expect(fetchButton?.dataset.navigationAction).toBe('go');
-  expect(fetchButton?.dataset.navigationRequestId).toBeUndefined();
-  expect(fetchButton?.dataset.navigationSettledRequestId).toBe(activeRequestId);
   expect(refs.fetchUrlInput.value).toBe(committedAddress);
 
   resolveFetch?.(fetchOk({ finalUrl: 'http://example.test/coalesced.wml' }));

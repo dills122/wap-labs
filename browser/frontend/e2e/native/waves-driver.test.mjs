@@ -23,9 +23,6 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   const waits = [];
   let navigationAction = initialNavigationAction;
   let navigationReadsUntilIdle = 0;
-  let navigationRequestSequence = 0;
-  let activeNavigationRequestId = '';
-  let settledNavigationRequestId = 'waves-navigation-boot';
   let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
@@ -47,35 +44,15 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
         } else {
           navigationAction = 'stop';
           navigationReadsUntilIdle = 1;
-          navigationRequestSequence += 1;
-          activeNavigationRequestId = `waves-navigation-${navigationRequestSequence}`;
         }
       },
       getAttribute: async (name) => {
         calls.push(['getAttribute', '#btn-fetch-url', name]);
-        const settleNavigation = () => {
-          if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
-            navigationReadsUntilIdle -= 1;
-            if (navigationReadsUntilIdle === 0) {
-              navigationAction = 'go';
-              settledNavigationRequestId = activeNavigationRequestId;
-              activeNavigationRequestId = '';
-            }
-          }
-        };
-        if (name === 'data-navigation-settled-request-id') {
-          settleNavigation();
-          return settledNavigationRequestId;
-        }
         if (name !== 'data-navigation-action') return '';
         const observed = navigationAction;
         if (navigationAction === 'stop' && navigationReadsUntilIdle > 0) {
           navigationReadsUntilIdle -= 1;
-          if (navigationReadsUntilIdle === 0) {
-            navigationAction = 'go';
-            settledNavigationRequestId = activeNavigationRequestId;
-            activeNavigationRequestId = '';
-          }
+          if (navigationReadsUntilIdle === 0) navigationAction = 'go';
         }
         return observed;
       }
@@ -122,8 +99,10 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
 
 function wrappedDeckFixture(value) {
   const driver = {
-    async findElement() {
-      return element();
+    async findElement(selector) {
+      return selector === '#btn-fetch-url'
+        ? element({ getAttribute: async () => 'go' })
+        : element();
     },
     async executeScript(script) {
       return script.includes('textContent') ? value : '';
@@ -157,6 +136,7 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
   await page.launchWaves();
   await page.dismissWelcome();
   await page.openWapUrl('wap://localhost/login');
+  await page.waitForDeckText('Rendered deck text');
   await page.submitAddress('not a url');
   await page.focusViewport();
   await page.pressSoftkey('select');
@@ -187,19 +167,20 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
   );
 });
 
-test('completed URL opens wait for a new retained navigation settlement marker', async () => {
+test('semantic deck waits require both expected content and a settled navigation', async () => {
   const { calls, page, waits } = fixture();
 
   await page.openWapUrl('wap://localhost/login');
+  await page.waitForDeckText('Rendered deck text');
 
   assert.deepEqual(waits, [
     'navigation action "go"',
-    'navigation request to settle'
+    'deck text "Rendered deck text"'
   ]);
   const clickIndex = calls.findIndex(([kind, target]) => kind === 'click' && target === 'go');
-  const settlementReadIndexes = calls
+  const navigationReadIndexes = calls
     .map(([kind, , attribute], index) =>
-      kind === 'getAttribute' && attribute === 'data-navigation-settled-request-id' ? index : -1
+      kind === 'getAttribute' && attribute === 'data-navigation-action' ? index : -1
     )
     .filter((index) => index >= 0);
   assert.ok(clickIndex >= 0);
@@ -207,8 +188,23 @@ test('completed URL opens wait for a new retained navigation settlement marker',
     calls.some(([kind, script]) => kind === 'script' && script.includes('MutationObserver')),
     false
   );
-  assert.ok(settlementReadIndexes.some((index) => index < clickIndex));
-  assert.ok(settlementReadIndexes.some((index) => index > clickIndex));
+  assert.ok(navigationReadIndexes.some((index) => index < clickIndex));
+  assert.ok(navigationReadIndexes.filter((index) => index > clickIndex).length >= 2);
+});
+
+test('semantic status waits do not accept an in-flight navigation', async () => {
+  const { calls, page, waits } = fixture();
+
+  await page.submitAddress('wap://localhost/login');
+  await page.waitForStatus('Ready. WAP gateway responded at ');
+
+  assert.deepEqual(waits, ['status text "Ready. WAP gateway responded at "']);
+  const clickIndex = calls.findIndex(([kind, target]) => kind === 'click' && target === 'go');
+  const navigationReadsAfterClick = calls.filter(
+    ([kind, , attribute], index) =>
+      index > clickIndex && kind === 'getAttribute' && attribute === 'data-navigation-action'
+  );
+  assert.ok(navigationReadsAfterClick.length >= 2);
 });
 
 test('in-flight URL starts stop after dispatch so race scenarios can cancel it', async () => {

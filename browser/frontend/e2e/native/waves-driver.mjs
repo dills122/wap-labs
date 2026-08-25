@@ -70,9 +70,12 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     );
   const waitForStatusText = async (expected) => {
     const status = await find(SELECTORS.status);
+    const navigationButton = await find(SELECTORS.go);
     return waitUntil(async () => {
       const text = await readStatusText(status);
-      return text.includes(expected) ? text : false;
+      if (!text.includes(expected)) return false;
+      const action = await navigationButton.getAttribute('data-navigation-action');
+      return action === 'go' ? text : false;
     }, { description: `status text ${JSON.stringify(expected)}` });
   };
   const waitForNavigationAction = async (expected) => {
@@ -110,18 +113,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
   const openWapUrl = async (address) => {
     requireWapAddress(address);
     await waitForNavigationAction('go');
-    const button = await find(SELECTORS.go);
-    const previousSettlement =
-      (await button.getAttribute('data-navigation-settled-request-id')) ?? '';
     await submitAddress(address);
-    await waitUntil(
-      async () => {
-        const settlement =
-          (await button.getAttribute('data-navigation-settled-request-id')) ?? '';
-        return settlement.length > 0 && settlement !== previousSettlement ? settlement : false;
-      },
-      { description: 'navigation request to settle' }
-    );
   };
   const readSanitizedAddress = async () => {
     const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
@@ -215,9 +207,12 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async waitForDeckText(expected) {
       const viewport = await find(SELECTORS.viewport);
+      const navigationButton = await find(SELECTORS.go);
       return waitUntil(async () => {
         const text = await readText(viewport);
-        return compactVisibleText(text).includes(compactVisibleText(expected)) ? text : false;
+        if (!compactVisibleText(text).includes(compactVisibleText(expected))) return false;
+        const action = await navigationButton.getAttribute('data-navigation-action');
+        return action === 'go' ? text : false;
       }, { description: `deck text ${JSON.stringify(expected)}` });
     },
 

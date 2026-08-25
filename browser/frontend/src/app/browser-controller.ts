@@ -160,8 +160,8 @@ export class BrowserController {
           );
         },
         onNavigationPhase: (context) => this.presenter.showNavigationPhase(context),
-        onNavigationCancellableChange: (cancellable, requestId) =>
-          this.updateNavigationCancellable(cancellable, requestId),
+        onNavigationCancellableChange: (cancellable) =>
+          this.updateNavigationCancellable(cancellable),
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);
           if (action === 'engine-load-deck-context') {
@@ -753,22 +753,11 @@ export class BrowserController {
     this.shellEventBindings.setBackButtonAvailable(available);
   }
 
-  private updateNavigationCancellable(cancellable: boolean, requestId?: string): void {
+  private updateNavigationCancellable(cancellable: boolean): void {
     this.networkNavigationCancellable = cancellable;
     const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
     if (!fetchButton) {
       return;
-    }
-    if (cancellable) {
-      if (requestId) {
-        fetchButton.dataset.navigationRequestId = requestId;
-      }
-    } else {
-      const settledRequestId = fetchButton.dataset.navigationRequestId;
-      if (settledRequestId) {
-        fetchButton.dataset.navigationSettledRequestId = settledRequestId;
-      }
-      delete fetchButton.dataset.navigationRequestId;
     }
     fetchButton.textContent = cancellable ? WAVES_COPY.shell.stop : WAVES_COPY.shell.go;
     fetchButton.dataset.navigationAction = cancellable ? 'stop' : 'go';
