@@ -1811,6 +1811,7 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
         resolveFetch = resolve;
       })
   );
+  const committedAddress = refs.fetchUrlInput.value;
   refs.fetchUrlInput.value = 'http://example.test/coalesced.wml';
   const fetchButton = document.querySelector<HTMLButtonElement>('#btn-fetch-url');
   fetchButton?.click();
@@ -1827,6 +1828,7 @@ it('switches Go to Stop only while a network fetch is cancellable', async () => 
   expect(hostClient.cancelFetch).toHaveBeenCalledTimes(1);
   expect(fetchButton?.textContent).toBe(WAVES_COPY.shell.go);
   expect(fetchButton?.dataset.navigationAction).toBe('go');
+  expect(refs.fetchUrlInput.value).toBe(committedAddress);
 
   resolveFetch?.(fetchOk({ finalUrl: 'http://example.test/coalesced.wml' }));
   await flushAsyncWork();

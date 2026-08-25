@@ -553,6 +553,10 @@ export class BrowserController {
     if (cancellation) {
       await cancellation;
     }
+    const committedUrl = this.navigation.getSessionState().finalUrl ?? this.lastNetworkUrl;
+    if (committedUrl) {
+      this.refs.fetchUrlInput.value = committedUrl;
+    }
     this.presenter.clearNavigationPresentation();
     this.presenter.setStatus(WAVES_COPY.status.navigationStopped);
     this.updateBackButtonAvailability();

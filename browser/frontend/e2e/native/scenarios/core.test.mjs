@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { isSafeAssertionName } from '../evidence-publisher.mjs';
 import { CORE_SCENARIOS } from './core.mjs';
 
 function fixture(overrides = {}) {
@@ -57,6 +58,11 @@ function fixture(overrides = {}) {
         calls.push(['observe', value]);
       },
       recordAssertion(name, details) {
+        assert.equal(
+          isSafeAssertionName(name),
+          true,
+          `core scenario assertion is missing from the safe evidence catalog: ${name}`
+        );
         assertions.push({ name, details });
       },
       origin: {

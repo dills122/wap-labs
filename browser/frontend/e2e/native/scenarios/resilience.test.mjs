@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { isSafeAssertionName } from '../evidence-publisher.mjs';
 import { RESILIENCE_SCENARIOS } from './resilience.mjs';
 
 function fixture() {
@@ -47,7 +48,14 @@ function fixture() {
         }
       },
       observe(value) { calls.push(['observe', value]); },
-      recordAssertion(name, details) { assertions.push({ name, details }); }
+      recordAssertion(name, details) {
+        assert.equal(
+          isSafeAssertionName(name),
+          true,
+          `resilience scenario assertion is missing from the safe evidence catalog: ${name}`
+        );
+        assertions.push({ name, details });
+      }
     }
   };
 }
