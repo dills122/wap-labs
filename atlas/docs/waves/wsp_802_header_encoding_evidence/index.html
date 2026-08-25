@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WSP-802 Header and Encoding-Version Evidence · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wsp_802_header_encoding_evidence"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wsp_802_header_encoding_evidence.md</p><div class="markdown-body"><h1 id="wsp-802-header-and-encoding-version-evidence">WSP-802 Header and Encoding-Version Evidence</h1>
+<p>Status: implemented</p>
+<h2 id="boundary-and-effective-sources">Boundary and effective sources</h2>
+<p>WSP-802 owns generic WSP header field-name/value framing, the effective default-page registry,
+header code-page policy, Encoding-Version behavior, and the SIN-corrected Expect encoding in
+<code>transport-rust/</code>. The effective order is WAP-203-WSP followed by SIN 001, SIN 003, and SIN 005.
+The implementation source review used the hash-locked WAP 1.2.1 archive and verified the four
+document hashes recorded in the source manifest before interpreting the effective tables.</p>
+<p>The previously declared <code>general-formats</code> family was a planning-scope error, not a missing
+normative mapping. WAP-188 General Formats defines telephone numbers, DTMF, and address/dial
+strings; it does not define WSP header names, header value framing, code pages, Content-Type,
+Expect, or Encoding-Version. WSP-802 therefore declares only the <code>wsp</code> source family. No
+General Formats clause was invented or reassigned to close the gap.</p>
+<p>Content-Type stays on the shared WSP-801/WML-304 seam: this slice reuses the existing
+connectionless Content-Type framing and does not claim WML-304 media/charset ownership.</p>
+<h2 id="implemented-behavior">Implemented behavior</h2>
+<ul>
+<li>The effective Table 39 default page contains exactly 68 assignments, <code>0x00</code> through <code>0x43</code>,
+with the four superseded assignments retained for decoding but excluded from outbound name
+selection. Successor-only <code>0x44</code> through <code>0x47</code> assignments are rejected or handled by the
+explicit unknown policy.</li>
+<li>Header sets start on page 1. Pages 2–15 are WAP-reserved, pages 16–127 require application
+agreement, and pages 128–255 are future-reserved. Short and long page shifts use the WSP wire
+forms and the selected page is local to one header set.</li>
+<li>Generic values support short length, uintvar length, NUL-terminated text, and terminal
+short-integer framing. Unknown field names can error, preserve their raw framed value, or skip
+it without interpreting field-specific syntax.</li>
+<li>Binary Encoding-Version supports default and application-page identities, version defaults,
+sender/peer version caps, hop-local caching, hop-by-hop removal, per-extension-page
+advertisements, and compatible textual retry selection.</li>
+<li>Native reply validation performs a bounded discovery pass at the implementation ceiling and a
+second strict pass at the peer’s advertised default-page version. This accepts Kannel’s valid
+ordering where WSP 1.3 fields precede a trailing <code>Encoding-Version: 1.3</code>, while an absent,
+duplicate, under-claimed, malformed, or implementation-exceeding declaration still fails
+closed under the WAP 1.2 default/version rules.</li>
+<li>Corrective issue <code>#449</code> closes a residual in the completed WSP-802 text-form evidence:
+malformed one- or two-token textual values are rejected instead of being normalized into a
+different valid binary advertisement. This correction does not reopen WSP-802 or <code>T0-20</code>.</li>
+<li>Expect uses SIN 001: <code>100-continue</code> is octet <code>0x80</code>; extension expressions require a
+Value-length wrapper. The superseded unwrapped expression is rejected.</li>
+<li>HTTP comma-list values are expanded into ordered repeated WSP fields while quoted commas are
+preserved. A text-encoded field name always carries a text value.</li>
+</ul>
+<h2 id="executable-evidence">Executable evidence</h2>
+<ul>
+<li><code>transport-rust/tests/wsp_header_grammar.rs</code></li>
+<li><code>transport-rust/tests/fixtures/transport/wsp_header_grammar_mapped/header_fixture.json</code></li>
+<li>The mapped Encoding-Version table asserts exact bytes for <code>1.3</code>, <code>40</code>, and <code>40 1.3</code>, plus
+exact <code>InvalidVersion</code> failures for malformed one- and two-token values.</li>
+<li>Native WSP header, Encoding-Version, Expect, peer-cache, retry, list-expansion, and hop-boundary
+unit tests under <code>transport-rust/src/network/wsp/</code></li>
+<li>Native origin-identity tests under <code>transport-rust/src/native_fetch.rs</code> include the exact Kannel
+header ordering, absent/under-claimed version rejection, and duplicate-version rejection.</li>
+<li><code>transport-rust/tests/kannel_smoke.rs::kannel_wap_owned_origin_identity_smoke</code> proves the same
+strict response-identity contract against an isolated live Kannel/WML stack and a dynamic UDP
+mapping.</li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_header_grammar</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wsp_connectionless_matrix</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+</ul>
+<p>The WSP-801 matrix remains a separate byte-exact regression gate. WML-304 remains additive
+follow-up ownership and is not reopened by this evidence.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wsp-802-header-and-encoding-version-evidence">WSP-802 Header and Encoding-Version Evidence</a></li><li class="depth-2"><a href="#boundary-and-effective-sources">Boundary and effective sources</a></li><li class="depth-2"><a href="#implemented-behavior">Implemented behavior</a></li><li class="depth-2"><a href="#executable-evidence">Executable evidence</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wsp_802_header_encoding_evidence.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

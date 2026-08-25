@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WAP/WML Browser Emulator Agent Standards (v3) · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="agents/agent_standards"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>agents</span></nav><p class="doc-path">docs/agents/agent_standards.md</p><div class="markdown-body"><h1 id="wapwml-browser-emulator-agent-standards-v3">WAP/WML Browser Emulator Agent Standards (v3)</h1>
+<p><strong>Project Codename:</strong> Waves<br>
+<strong>Owner:</strong> Dylan Steele<br>
+<strong>Target Platform:</strong> Unix / macOS tooling + Tauri host<br>
+<strong>Rendering Engine:</strong> Rust (native + WebAssembly targets)<br>
+<strong>Transport Layer:</strong> Rust (<code>transport-rust/</code>)<br>
+<strong>Adapters / Host UI:</strong> TypeScript (<code>browser/frontend</code>)</p>
+<h2 id="purpose">Purpose</h2>
+<p>This document defines operational standards and architectural contracts for contributors and agents working across the Waves WAP emulator stack.</p>
+<p>Primary stack layers:</p>
+<ul>
+<li>Rust runtime engine (<code>engine-wasm/engine</code>)</li>
+<li>Rust transport library (<code>transport-rust</code>)</li>
+<li>TypeScript/Tauri host adapters (<code>browser</code>)</li>
+</ul>
+<h2 id="canonical-layer-responsibilities">Canonical Layer Responsibilities</h2>
+<ul>
+<li><code>transport-rust/</code>
+<ul>
+<li>network/protocol concerns (HTTP/WAP paths, gateway adaptation)</li>
+<li>WSP/WBXML handling and payload normalization</li>
+<li>deterministic transport error taxonomy and request correlation metadata</li>
+</ul>
+</li>
+<li><code>engine-wasm/</code>
+<ul>
+<li>WML parsing/runtime semantics</li>
+<li>navigation/history/focus behavior</li>
+<li>render list generation</li>
+</ul>
+</li>
+<li><code>browser/</code>
+<ul>
+<li>host UI, input wiring, and Tauri command boundaries</li>
+<li>transport-first fetch flow and handoff to engine contracts</li>
+</ul>
+</li>
+</ul>
+<h2 id="hard-isolation-rules">Hard Isolation Rules</h2>
+<p><code>transport-rust</code> MUST NOT:</p>
+<ul>
+<li>implement rendering/runtime semantics</li>
+<li>own browser UI/session state</li>
+</ul>
+<p><code>engine-wasm</code> MUST NOT:</p>
+<ul>
+<li>perform network requests</li>
+<li>parse WBXML in TS/UI boundaries</li>
+</ul>
+<p><code>browser</code> MUST NOT:</p>
+<ul>
+<li>implement WML parser/runtime logic</li>
+<li>bypass transport contract semantics</li>
+</ul>
+<h2 id="contract-first-files">Contract-First Files</h2>
+<ul>
+<li><code>engine-wasm/contracts/wml-engine.ts</code></li>
+<li><code>browser/contracts/transport.ts</code></li>
+</ul>
+<p>Behavior changes that cross boundaries must update contracts and docs in the same change.</p>
+<h2 id="runtime-parity-policy">Runtime Parity Policy</h2>
+<p>Engine runtime behavior must stay equivalent across native Rust and WASM targets for:</p>
+<ul>
+<li>deck load and metadata handling</li>
+<li>navigation/focus behavior</li>
+<li>render output</li>
+<li>script invocation side effects</li>
+</ul>
+<p>Target-specific glue is allowed only at serialization/binding boundaries.</p>
+<h2 id="testing-expectations">Testing Expectations</h2>
+<ul>
+<li>Add/adjust unit tests in the layer where behavior changed.</li>
+<li>Add integration/E2E coverage for cross-layer flows (<code>fetch_deck</code> -&gt; <code>loadDeckContext</code> -&gt; render).</li>
+<li>Preserve deterministic outputs for fixtures and error paths.</li>
+<li>For stable host-visible engine/runtime behavior, check the shared
+<code>engine-wasm/examples/source</code> corpus and add or update an adjacent executable <code>*.flow.json</code>
+story when the acceptance path is deterministic.</li>
+<li>Validate executable stories by work-item/spec ID with
+<code>pnpm test:story &lt;work-item-or-spec-id&gt;</code> (or <code>all</code>). Prose <code>testing-ac</code> alone remains manual
+evidence and must not be reported as executable coverage.</li>
+</ul>
+<h2 id="security-and-robustness-notes">Security and Robustness Notes</h2>
+<ul>
+<li>Treat host/runtime boundaries as strict IPC contracts.</li>
+<li>Transport errors must remain structured and deterministic.</li>
+<li>Runtime/script failures must trap without crashing host process.</li>
+</ul>
+<h2 id="duplication-policy">Duplication Policy</h2>
+<p>This is the canonical duplication policy, referenced by <code>docs/agents/RUST_ENGINE_STEERING.md</code> and
+<code>docs/agents/RUST_TRANSPORT_STEERING.md</code>. It exists because “keep changes localized, avoid broad
+refactors” (see Scope Control in <code>AGENTS.md</code>) was being read as license to copy-paste instead of
+share, across every layer of this repo. Sharing code is not a broad refactor when it stays inside
+the boundary you’re already working in; it only becomes one when it would require touching files
+you would not otherwise touch for the task at hand. Three tiers, narrowest to widest:</p>
+<ol>
+<li><strong>Same file or module.</strong> Before adding a new function, loop, or encode/decode block, grep the
+file (and sibling files in the same directory) for a near-identical existing implementation. If
+one exists, extract a shared helper and have both call sites use it — this is always in scope,
+regardless of how small the requested change is.</li>
+<li><strong>Same language, different crate in this workspace</strong> (e.g. <code>transport-rust</code> and
+<code>engine-wasm/engine</code>, both Rust). If the same logic is genuinely needed in both, do not copy it
+across the crate boundary; pull it into a small shared internal crate instead. This tier has not
+come up yet in practice — the two crates currently have no overlapping logic — but the rule
+exists so the first occurrence doesn’t get copy-pasted by default.</li>
+<li><strong>Cross-language</strong> (Rust and TypeScript). Single source of truth lives in Rust; the TypeScript
+artifact is generated, never hand-maintained. This is already the house style for wire types
+(<code>ts-rs</code>-derived contract types, drift-checked via <code>pnpm --dir browser run contracts:check</code>) and
+for runtime behavior (<code>engine-wasm/engine</code> compiles once to both native and WASM targets rather
+than reimplementing logic in TypeScript). It is not yet the house style for label/taxonomy
+tables — see <code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code> <code>M1-23</code> for the tracked gap. Any new
+cross-language constant/label/taxonomy mapping should extend the existing codegen pipeline
+rather than add another hand-copied table.</li>
+</ol>
+<p>When duplication is found but fixing it falls outside the current task’s touched files (tier 2 or
+3, or a tier-1 case in a file you have no other reason to open), record it as a scoped
+<code>docs/waves/MAINTENANCE_WORK_ITEMS.md</code> entry instead of leaving it undocumented.</p>
+<h2 id="codegen--supported-tooling-policy">Codegen &amp; Supported-Tooling Policy</h2>
+<p>This exists because of <code>M1-18</code>: <code>transport-rust/src/native_fetch.rs</code> hand-rolled its own WSP wire
+codec instead of calling into the already-existing, spec-conformant <code>network::wsp</code> module —
+built one day apart by the same author, never wired together, and the drift sat unnoticed for
+months. Two related but distinct failure modes to guard against:</p>
+<ol>
+<li><strong>Hand-rolling a format/protocol implementation that already has a supported one.</strong> Before
+writing a new parser, encoder, decoder, or serializer for any wire format, file format, or data
+shape, check whether this repo already has a module/crate for it, or whether the ecosystem has
+a standard crate for it (e.g. <code>ts-rs</code> for Rust-to-TypeScript type generation, <code>wasm_bindgen</code> for
+the WASM boundary, <code>network::wsp</code>’s codec for WSP framing). Use the existing one. If it’s
+missing a capability you need, extend it — don’t build a second implementation “for now”; “for
+now” is how <code>M1-18</code> happened, and it took an explicit owner override to unwind.</li>
+<li><strong>Data/logic that must stay in sync across languages or across multiple hand-authored call
+sites should be generated from one source of truth, not hand-copied.</strong> Ask three questions
+before deciding: (a) does this need to exist in more than one place or language, (b) is there
+already a canonical source of truth it could derive from (a Rust struct/enum, a spec, a
+schema), (c) would hand-sync realistically drift given how infrequently this file gets touched
+and by how many different contributors/agents. If yes to those, generate it — through the
+repo’s existing generator/derive infrastructure (<code>ts-rs</code>, <code>wasm_bindgen</code>,
+<code>browser/scripts/generate-contract-wrappers.mjs</code>, drift-checked via
+<code>pnpm --dir browser run contracts:check</code>) rather than inventing a parallel one-off script. If no
+existing pipeline fits, design the new one deliberately and document it as a contract-first
+surface per <code>AGENTS.md</code>, rather than bolting on an ad hoc generator nobody else knows exists.</li>
+</ol>
+<p>Shipping a hand-rolled reimplementation of something the repo already has a supported
+implementation for is not an acceptable “small, localized change” shortcut, even under Scope
+Control — flag the conflict and get an explicit decision (as happened with <code>M1-18</code>) rather than
+quietly duplicating.</p>
+<h2 id="agent-behavioral-rules">Agent Behavioral Rules</h2>
+<p>Agents MUST:</p>
+<ul>
+<li>preserve layer boundaries</li>
+<li>prefer localized, contract-first changes</li>
+<li>keep behavior deterministic and test-backed</li>
+<li>keep completed backlog artifacts immutable; add linked follow-up tickets instead of rewriting <code>done</code> tickets when new compliance gaps are found</li>
+<li>commit only from a feature branch; never commit on <code>main</code> or <code>gh-pages</code></li>
+<li>create a new branch name when the preferred feature-branch name already exists but is stale, unrelated, or otherwise unsuitable</li>
+<li>dedupe near-identical logic within files/modules already being touched rather than deferring it — see <code>docs/agents/RUST_ENGINE_STEERING.md</code> / <code>docs/agents/RUST_TRANSPORT_STEERING.md</code> §0 for where in-scope dedup ends and an out-of-scope broad refactor begins</li>
+</ul>
+<p>Agents MUST NOT:</p>
+<ul>
+<li>move network behavior into <code>engine-wasm</code></li>
+<li>move WBXML parsing into TypeScript/Tauri frontend code</li>
+<li>introduce broad cross-layer refactors without explicit request</li>
+<li>use branch-name collisions as justification for committing directly on <code>main</code>/<code>gh-pages</code></li>
+</ul>
+<h2 id="github-authentication-and-pr-publishing">GitHub Authentication and PR Publishing</h2>
+<p>Treat these as three independent authentication paths:</p>
+<ol>
+<li>local Git credentials used by <code>git fetch</code> and <code>git push</code></li>
+<li>local GitHub CLI credentials used by <code>gh</code></li>
+<li>the Codex GitHub connector installation and its repository permissions</li>
+</ol>
+<p>A successful push does not prove that the connector can create a pull request, and a connector
+<code>403 Resource not accessible by integration</code> does not prove that local <code>gh</code> authentication is
+invalid.</p>
+<p>For local interactive development on macOS:</p>
+<ul>
+<li>Prefer <code>gh auth login -h github.com -p https -w</code> so the OAuth credential is stored in the
+system keyring.</li>
+<li>Run <code>gh auth setup-git</code> when Git operations should use the same keyring-backed credential.</li>
+<li>Keep <code>GH_TOKEN</code> and <code>GITHUB_TOKEN</code> unset unless an explicit headless workflow requires one;
+either variable overrides stored <code>gh</code> credentials.</li>
+<li>Never place token values in repository files, shell startup files, logs, comments, or agent
+responses.</li>
+</ul>
+<p>Before declaring GitHub authentication invalid:</p>
+<ol>
+<li>Ensure the command has outbound access to <code>api.github.com</code>; request the required sandbox or
+network permission when necessary.</li>
+<li>Run <code>gh auth status -h github.com</code>.</li>
+<li>Confirm API access with <code>gh api user --jq .login</code>.</li>
+<li>Check only whether token environment variables are present; never print their values.</li>
+</ol>
+<p>Do not treat a sandboxed network failure as token revocation. If the connector cannot create a
+pull request but local <code>gh</code> is valid, use <code>gh</code> as the fallback.</p>
+<p>Before creating a pull request:</p>
+<ol>
+<li>Resolve the repository, base branch, and current head branch from local Git.</li>
+<li>Check for an existing pull request for the head branch with
+<code>gh pr list --repo &lt;owner/repo&gt; --head &lt;branch&gt; --state all</code>.</li>
+<li>Create a draft pull request by default unless the user explicitly requests ready-for-review
+status.</li>
+<li>Use a body file with real Markdown newlines for CLI-created pull requests.</li>
+<li>Report the resulting pull request URL and whether it is draft or ready for review.</li>
+</ol>
+<h2 id="backlog-lifecycle-policy">Backlog Lifecycle Policy</h2>
+<ul>
+<li>Do not change the status of an existing <code>done</code> ticket to <code>todo</code>/<code>in-progress</code> during later audits.</li>
+<li>If an implemented ticket is found incomplete or spec-inaccurate, create a new ticket that:
+<ul>
+<li>references the original <code>done</code> ticket in <code>Depends On</code> and notes</li>
+<li>scopes only the corrective delta</li>
+<li>carries explicit spec references and acceptance checks</li>
+</ul>
+</li>
+<li>Preserve historical ticket intent and implementation traceability; corrections happen through additive follow-up work items.</li>
+</ul>
+<h2 id="documentation-source-scope-policy">Documentation Source Scope Policy</h2>
+<ul>
+<li>For documentation audits and source extraction, default to active documentation paths.</li>
+<li>Exclude <code>archive/</code> paths and date-stamped historical snapshots unless explicitly requested by the user.</li>
+<li>If archived docs are requested, treat them as historical evidence only and do not let them override active spec/traceability docs.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wapwml-browser-emulator-agent-standards-v3">WAP/WML Browser Emulator Agent Standards (v3)</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#canonical-layer-responsibilities">Canonical Layer Responsibilities</a></li><li class="depth-2"><a href="#hard-isolation-rules">Hard Isolation Rules</a></li><li class="depth-2"><a href="#contract-first-files">Contract-First Files</a></li><li class="depth-2"><a href="#runtime-parity-policy">Runtime Parity Policy</a></li><li class="depth-2"><a href="#testing-expectations">Testing Expectations</a></li><li class="depth-2"><a href="#security-and-robustness-notes">Security and Robustness Notes</a></li><li class="depth-2"><a href="#duplication-policy">Duplication Policy</a></li><li class="depth-2"><a href="#codegen--supported-tooling-policy">Codegen &amp; Supported-Tooling Policy</a></li><li class="depth-2"><a href="#agent-behavioral-rules">Agent Behavioral Rules</a></li><li class="depth-2"><a href="#github-authentication-and-pr-publishing">GitHub Authentication and PR Publishing</a></li><li class="depth-2"><a href="#backlog-lifecycle-policy">Backlog Lifecycle Policy</a></li><li class="depth-2"><a href="#documentation-source-scope-policy">Documentation Source Scope Policy</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/agents/agent_standards.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

@@ -1,0 +1,1772 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>TRN-7 AI Context Pack · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="knowledge-graph/context-packs/trn-7"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>knowledge-graph</span></nav><p class="doc-path">docs/knowledge-graph/context-packs/trn-7.md</p><div class="markdown-body"><h1 id="trn-7-ai-context-pack">TRN-7 AI Context Pack</h1>
+<blockquote>
+<p>Generated from the WAP 1.2.1 knowledge graph slice. Canonical manifests remain authoritative.</p>
+</blockquote>
+<h2 id="retrieval-contract">Retrieval contract</h2>
+<ul>
+<li>Target: <code>TRN-7</code></li>
+<li>Release/profile: WAP 1.2.1, WML 1.3, <code>CCR-CLASSC-C-001</code></li>
+<li>Compatibility floor: <code>strict-historical-observable-behavior</code></li>
+<li>Selection rule: include the target sprint, its direct dependency/downstream neighbors, all target work items, their explicitly mapped normative clauses, and separately labeled aggregate regression/delegate context.</li>
+<li>Safety rule: absence from this pack does not mean a requirement is optional, implemented, or out of scope.</li>
+<li>Enhancement rule: additive behavior may extend strict behavior but may not replace a selected historical obligation.</li>
+</ul>
+<h2 id="graph-summary">Graph summary</h2>
+<ul>
+<li>Nodes: 234</li>
+<li>Edges: 733</li>
+<li>Selected work items: 9</li>
+<li>Direct SCR rows: 0</li>
+<li>Direct normative clauses: 145</li>
+<li>Aggregate regression/delegate context clauses: 0</li>
+<li>Work items without direct clause mappings: 2</li>
+<li>Work items with unmapped declared normative families: 2</li>
+</ul>
+<h2 id="execution-target">Execution target</h2>
+<h3 id="trn-7-wdp-wcmp-and-conditional-wtp-class-c-transport-core">TRN-7: WDP, WCMP, and conditional WTP Class C transport core</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Goal: Complete the historical datagram and transaction mechanics required beneath WSP.</li>
+<li>Depends on: <code>CONF-1</code></li>
+<li>Direct downstream sprints: None</li>
+</ul>
+<p>Exit gates:</p>
+<ul>
+<li>The nine-row selected WDP path and two-row selected ICMP-backed WCMP path have executable evidence; the completed five-row general-WCMP branch remains capability-gated for non-IP bearers.</li>
+<li>The completed TRN-7-CL-C profile gate allows selected connectionless WSP and downstream integration to proceed without waiting for dormant WTP work or claiming the non-IP general-WCMP capability.</li>
+<li>WTP evidence is required only when connection-oriented WSP is claimed.</li>
+<li>Timing tests are deterministic and do not require live networks.</li>
+<li>WAP 2.0 transport deltas are explicit.</li>
+</ul>
+<h2 id="work-items">Work items</h2>
+<h3 id="trn-701-effective-wdp-service-addressing-port-and-bearer-profile">TRN-701: Effective WDP service, addressing, port, and bearer profile</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wdp</code>, <code>wdp-wcmp-adaptation</code></li>
+<li>Existing tickets: <code>T0-19</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 9 (<code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>)</li>
+<li>Direct normative clauses: 49</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Effective WDP service, addressing, port, and bearer profile</li>
+<li>spec-processing/source-manifests/wap-1.2.1-wdp-scr.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>All nine selected CDPD/IPv4 WDP path rows map to implementation evidence or corrective work; the normalized informative TIAEIA-732 dependency retains its licensed-payload metadata-only boundary.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+</ul>
+<h3 id="trn-702-wdp-constrained-payload-and-segmentationreassembly-policy">TRN-702: WDP constrained-payload and segmentation/reassembly policy</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wdp</code></li>
+<li>Existing tickets: <code>T0-19</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 6 (<code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>)</li>
+<li>Direct normative clauses: 9</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WDP constrained-payload and segmentation/reassembly policy</li>
+<li>transport-rust/tests/fixtures/transport/wdp_constrained_payload_mapped/reassembly_fixture.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>The nine adopted WAP-200 and RFC 791/768 obligations directly evidence deterministic payload limits, rejection without WDP unit-data truncation, no WDP segmentation header on CDPD/IPv4, and destination-IP reassembly below WDP.</li>
+<li>Whole, fragmented, out-of-order, duplicate, malformed, overlapping, oversize, and incomplete-expiry inputs produce bounded deterministic outcomes for the selected 576-octet baseline profile.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wdp_constrained_replay</code></li>
+<li><code>node scripts/check-wap-selected-normative-clauses.mjs</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-702</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+</ul>
+<h3 id="trn-703-wcmp-generationhandling-and-error-mapping">TRN-703: WCMP generation/handling and error mapping</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wcmp</code>, <code>wdp-wcmp-adaptation</code></li>
+<li>Existing tickets: <code>T0-17</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Capability SCR parents: 4 (<code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code>, <code>WCMP-SP-C-002</code>)</li>
+<li>Direct normative clauses: 27</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: <code>TRN-710</code></li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WCMP generation/handling and error mapping</li>
+<li>spec-processing/source-manifests/wap-1.2.1-wcmp-scr.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>The five general-WCMP dependency rows are implemented and tested as an explicit non-IP capability; all 62 source rows retain exact capability disposition using the WAP 1.2.1 byte identity.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-703</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+</ul>
+<h3 id="trn-704-effective-wtp-pdu-and-transaction-state-machines">TRN-704: Effective WTP PDU and transaction state machines</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wtp</code></li>
+<li>Existing tickets: <code>T0-08</code>, <code>T0-18</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 0</li>
+<li>Direct normative clauses: 0</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: None</li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Effective WTP PDU and transaction state machines</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>When connection-oriented WSP is claimed, classes, invoke/result/ack/abort, TID, duplicate handling, retransmission, and terminal states map to effective WTP SCR entries.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+</ul>
+<h3 id="trn-705-wtp-timing-nack-hold-off-and-retry-closure">TRN-705: WTP timing, NACK, hold-off, and retry closure</h3>
+<ul>
+<li>Status: <code>todo</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wtp</code></li>
+<li>Existing tickets: <code>T0-18</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 0</li>
+<li>Direct normative clauses: 0</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: None</li>
+<li>Spec references: None</li>
+<li>Follow-up work items: None</li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WTP timing, NACK, hold-off, and retry closure</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>When connection-oriented WSP is claimed, all WTP timers and retry limits use deterministic simulated time and incorporate SIN corrections in order.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml</code></li>
+</ul>
+<h3 id="trn-706-wdpwtp-packet-and-replay-golden-corpus">TRN-706: WDP/WTP packet and replay golden corpus</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Owner layers: <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wdp</code>, <code>wtp</code></li>
+<li>Existing tickets: <code>T0-22</code>, <code>T0-24</code></li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 8 (<code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>)</li>
+<li>Direct normative clauses: 11</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: <code>TRN-704</code>, <code>TRN-705</code></li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WDP/WTP packet and replay golden corpus</li>
+<li>schema-v2 exact WDP delivery evidence in transport-rust/tests/network/interop/wdp_cdpd_ipv4_seed.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>The selected WDP-only tranche replays positive codec round trips, the 576-octet boundary, malformed IPv4/UDP rejection, idempotent duplicate fragments, and simulated incomplete-assembly expiry against directly mapped WAP-200, RFC 768, and RFC 791 clauses; schema-v2 accepted and reassembled delivery events assert exact addresses, ports, and service-data-unit bytes.</li>
+<li>WTP duplicate, retransmission, timeout, and abort families remain conditional on a future connection-oriented WSP/WTP claim and do not close TRN-706 in the strict connectionless profile.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay</code></li>
+<li><code>node scripts/check-wap-selected-normative-clauses.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-706</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+</ul>
+<h3 id="trn-707-wap-121-to-wap-20-wdpwtpwcmp-delta-register">TRN-707: WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register</h3>
+<ul>
+<li>Status: <code>in-progress</code></li>
+<li>Owner layers: <code>documentation</code>, <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wdp</code>, <code>wtp</code>, <code>wcmp</code></li>
+<li>Existing tickets: None</li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 9 (<code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code>, <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>)</li>
+<li>Direct normative clauses: 9</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code>, <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Spec references: None</li>
+<li>Follow-up work items: <code>TRN-708</code></li>
+<li>Depends on: None</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register</li>
+<li>TRN-707 transport-specific audit in spec-processing/source-manifests/wap-1.2.1-successor-delta.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Current successor-spec implementation assumptions are either proven compatible or ticketed as strict-mode corrections.</li>
+<li>The selected WDP CDPD/UDP/IPv4 service, primitive, port, and bearer assumptions are compared clause-by-clause against effective WAP-200 and WAP-259 without treating the successor as normative.</li>
+<li>The selected ICMP-backed WCMP implementation remains governed by WAP-202; WAP-259 delegates WCMP behavior to that specification rather than redefining it.</li>
+<li>WAP-202 section 5.3 assigns CDPD/IP to ICMP; TRN-708 closes the strict-profile correction and capability-gates the completed TRN-703 general-WCMP branch.</li>
+<li>WTP and connection-oriented WSP remain inactive, and the missing WTP clause mapping remains explicit until a future capability claim activates the effective WAP-201/SIN closure.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>node scripts/check-wap-delta-register.mjs</code></li>
+<li><code>node scripts/check-wap-selected-normative-clauses.mjs</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-707</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --lib network::wdp</code></li>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp</code></li>
+</ul>
+<h3 id="trn-708-strict-cdpdipv4-icmp-profile-correction-with-the-existing-general-wcmp-branch-capability-gated-for-non-ip-use">TRN-708: Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>documentation</code>, <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wdp</code>, <code>wcmp</code></li>
+<li>Existing tickets: None</li>
+<li>Direct SCR rows: 0</li>
+<li>Selected SCR parents: 6 (<code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code>, <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code>)</li>
+<li>Direct normative clauses: 13</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code>, <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Spec references: <code>WAP-202-WCMP section 5.3 (CDPD and other IP bearers use ICMP)</code>, <code>WAP-202-WCMP sections 5.1, 5.2, and 5.5 (general WCMP scope, conformance, syntax, and behavior)</code>, <code>WAP-202-WCMP Appendix A rows WCMP-C-001, WCMP-SP-C-001, and WCMP-SP-C-002</code>, <code>WAP-200 effective CDPD/IPv4 path rows WDP-CT-C-002 and WDP-NA-C-003</code>, <code>WAP-259-WDP section 4.2.2 (successor context delegates processing-error behavior to WCMP)</code></li>
+<li>Follow-up work items: None</li>
+<li>Depends on: <code>TRN-703</code>, <code>T0-17</code></li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use</li>
+<li>transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>The strict CDPD/IPv4 profile selects the WAP-202 section 5.3 ICMPv4 path rather than emitting or consuming the general-WCMP wire format.</li>
+<li>Direct fixtures prove ICMPv4 destination-unreachable code 3 (port unreachable), code 4 (fragmentation needed with DF set), and echo request/reply handling at the WDP error boundary for the selected IPv4 bearer.</li>
+<li>The existing WAP-202 sections 5.1, 5.2, and 5.5 general-WCMP codec and TRN-703 fixtures remain available only behind an explicit non-IP bearer capability and do not satisfy the CDPD/IPv4 strict claim; section 5.4 bearer encapsulations remain deferred.</li>
+<li>No WTP or connection-oriented WSP capability is activated.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --test wcmp_cdpd_icmp_profile</code></li>
+<li><code>node scripts/check-wap-transport-conformance-ledgers.mjs</code></li>
+<li><code>node scripts/check-wap-selected-normative-clauses.mjs</code></li>
+<li><code>node scripts/check-requirement-status-drift.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-708</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+</ul>
+<h3 id="trn-710-direct-normative-clause-mapping-and-executable-evidence-links-for-the-completed-trn-703-non-ip-general-wcmp-capability">TRN-710: Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability</h3>
+<ul>
+<li>Status: <code>done</code></li>
+<li>Owner layers: <code>documentation</code>, <code>spec-processing</code>, <code>transport-rust</code>, <code>qa</code></li>
+<li>Source families: <code>wcmp</code></li>
+<li>Existing tickets: None</li>
+<li>Direct SCR rows: 0</li>
+<li>Capability SCR parents: 4 (<code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code>, <code>WCMP-SP-C-002</code>)</li>
+<li>Direct normative clauses: 27</li>
+<li>Aggregate regression/delegate context: 0</li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Spec references: <code>WAP-202-WCMP sections 5.1 and 5.2 (general WCMP scope and conformance)</code>, <code>WAP-202-WCMP sections 5.5.1, 5.5.2, 5.5.3.1, 5.5.3.3, and 5.5.3.5 (general WCMP syntax and supported message behavior)</code>, <code>WAP-202-WCMP Appendix A rows WCMP-SP-C-002, WCMP-GEN-C-001, WCMP-GEN-C-003, and WCMP-GEN-C-006</code>, <code>WAP-202-WCMP sections 5.4.1-.7 and WAP-159-WDPWCMPAdapt SMPP adaptation (deferred capability scope)</code></li>
+<li>Follow-up work items: None</li>
+<li>Depends on: <code>TRN-703</code>, <code>T0-17</code></li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li>Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Map the concrete WAP-202 sections 5.1, 5.2, and 5.5 clauses supported by the existing general-WCMP fixtures and implementation tests directly to TRN-710 without changing TRN-703 status.</li>
+<li>Keep WAP-202 sections 5.4.1-.7 bearer encapsulations and WAP-159 SMPP adaptation explicitly unimplemented and deferred.</li>
+<li>Keep the capability mapping outside the 198 selected parents, the selected CDPD/IPv4 profile, and the TRN-7-CL-C gate; do not activate WTP or connection-oriented WSP.</li>
+</ul>
+<p>Evidence commands:</p>
+<ul>
+<li><code>cargo test --manifest-path transport-rust/Cargo.toml --lib network::wcmp</code></li>
+<li><code>node scripts/check-wap-selected-normative-clauses.mjs</code></li>
+<li><code>node scripts/wap-context-pack.mjs TRN-710</code></li>
+<li><code>node scripts/check-wap-knowledge-graph.mjs</code></li>
+</ul>
+<h2 id="direct-scr-evidence">Direct SCR evidence</h2>
+<ul>
+<li>No direct SCR matrix rows are mapped for this selection.</li>
+</ul>
+<h2 id="direct-normative-obligations">Direct normative obligations</h2>
+<h3 id="trn-701">TRN-701</h3>
+<ul>
+<li><strong>WDP-CL-ADAPTATION-LAYER-BOUNDARY</strong> — Terminate bearer-specific adaptation at the WDP boundary without changing the service presented to WSP or other upper layers.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.2 (5.2 General Description of the WDP Protocol)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code></li>
+<li>Fixture: <code>WDP-FX-ADAPTATION-LAYER-BOUNDARY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-APPLICATION-PORT-ADDRESSING</strong> — Provide source and destination port addressing for the higher-layer protocol or application above WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.1 (5.1 Reference Model)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-APPLICATION-PORT-ADDRESSING</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-BEARER-TRANSPARENCY</strong> — Keep bearer-specific mechanics below the transport service access point so upper layers can operate transparently.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.1 (5.1 Reference Model)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-BEARER-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CDPD-UDP-IP-PROFILE</strong> — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.4.3 (5.4.3 WDP over CDPD)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-CDPD-UDP-IP-PROFILE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CONSISTENT-TRANSPORT-SERVICE</strong> — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.1 (5.1 Reference Model)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-CONSISTENT-TRANSPORT-SERVICE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-DESTINATION-ADDRESS-SEMANTICS</strong> — Treat the destination address as the network identity of the receiving device for the submitted user data.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-DESTINATION-ADDRESS-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-DESTINATION-PORT-SEMANTICS</strong> — Bind the destination port to the destination application or upper-layer protocol for that communication instance.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-DESTINATION-PORT-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-BEARER-REQUIRES-UDP</strong> — Use UDP as the WDP protocol whenever the selected bearer provides IP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.3 (5.3 WDP Static Conformance Clause)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-BEARER-REQUIRES-UDP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-MAPPING-FRAGMENTATION</strong> — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §7.2 (7.2 Mapping of WDP for IP)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-MAPPING-FRAGMENTATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-MAPPING-IS-UDP</strong> — Map WDP directly to UDP for every selected bearer on which IP routing is available.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §7.2 (7.2 Mapping of WDP for IP)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-MAPPING-IS-UDP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-BASELINE-RECEIVE-SIZE</strong> — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-BASELINE-RECEIVE-SIZE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-DONT-FRAGMENT</strong> — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-DONT-FRAGMENT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FIXED-ADDRESS-SIZE</strong> — Represent each selected IPv4 source or destination address as four octets.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §2.3 (2.3.  Function Description)</li>
+<li>Parents: <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FIXED-ADDRESS-SIZE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY</strong> — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENTATION-LOCATION</strong> — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENTATION-LOCATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-HEADER-CHECKSUM</strong> — Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-HEADER-CHECKSUM</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-HEADER-LAYOUT</strong> — Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-HEADER-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-INDEPENDENT-DATAGRAMS</strong> — Treat each IPv4 datagram independently without a transport connection or logical circuit.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §1.4 (1.4.  Operation)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-INDEPENDENT-DATAGRAMS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-LARGE-SEND-GUARD</strong> — Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-LARGE-SEND-GUARD</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-NO-RELIABILITY</strong> — Do not imply acknowledgments, retransmission, data error control, or flow control at the IPv4 layer.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §1.4 (1.4.  Operation)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-NO-RELIABILITY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-ROBUST-INTEROPERATION</strong> — Send well-formed IPv4 datagrams and accept every received datagram whose meaning can be interpreted safely.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-ROBUST-INTEROPERATION</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS</strong> — Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-TOTAL-LENGTH</strong> — Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-TOTAL-LENGTH</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-TTL-ZERO</strong> — Destroy an IPv4 datagram when its time-to-live value reaches zero.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-TTL-ZERO</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-VERSION-AND-IHL</strong> — Require IPv4 version value 4 and use IHL in 32-bit words with a minimum valid value of five.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-VERSION-AND-IHL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-PROTOCOL-REQUIRED-PORT-FIELDS</strong> — Carry both destination and source port fields in the selected WDP protocol mapping.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §7.1 (7.1 Introduction)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-PROTOCOL-REQUIRED-PORT-FIELDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SELECTED-BEARER-ASSIGNMENT</strong> — Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §appendix-c (Appendix C: Bearer Type Assignments)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SELECTED-BEARER-ASSIGNMENT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SELECTED-WSP-PORT</strong> — Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §appendix-b (Appendix B: Port Number Definitions)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-NA-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SELECTED-WSP-PORT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SIMULTANEOUS-INSTANCES</strong> — Use port numbers to multiplex multiple simultaneous higher-layer communication instances over one WDP bearer service.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.2 (5.2 General Description of the WDP Protocol)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SIMULTANEOUS-INSTANCES</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SOURCE-ADDRESS-SEMANTICS</strong> — Treat the source address as the unique network identity of the device issuing the transport request.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SOURCE-ADDRESS-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SOURCE-PORT-SEMANTICS</strong> — Bind the source port to the requesting application or upper-layer protocol for that communication instance.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SOURCE-PORT-SEMANTICS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-CHECKSUM-COVERAGE</strong> — Compute the UDP checksum over the IPv4 pseudo-header, UDP header, and data using 16-bit ones-complement arithmetic.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-CHECKSUM-COVERAGE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-CHECKSUM-OMISSION</strong> — Accept an all-zero UDP checksum field as the IPv4 sender choosing not to generate a UDP checksum.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-CHECKSUM-OMISSION</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-CHECKSUM-PADDING</strong> — Zero-pad an odd checksum input to a two-octet boundary without transmitting the padding octet.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-CHECKSUM-PADDING</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-CHECKSUM-ZERO-ENCODING</strong> — Transmit an arithmetically computed zero UDP checksum as all one bits.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-CHECKSUM-ZERO-ENCODING</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-DESTINATION-PORT-CONTEXT</strong> — Interpret a UDP destination port within the context of its destination IPv4 address.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-NA-C-006</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-DESTINATION-PORT-CONTEXT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-HEADER-LAYOUT</strong> — Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §format (Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-HEADER-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-IP-INTERFACE-METADATA</strong> — Make source address, destination address, and IP protocol metadata available at the UDP/IP boundary.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §ip-interface (IP Interface)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-IP-INTERFACE-METADATA</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-IP-PROTOCOL-NUMBER</strong> — Identify UDP with IPv4 protocol number 17.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §protocol-number (Protocol Number)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-IP-PROTOCOL-NUMBER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-LENGTH-BOUNDS</strong> — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-LENGTH-BOUNDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-RECEIVE-INTERFACE</strong> — Provide receive-port creation and return received data with its source IPv4 address and source port.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>rfc-768</code> §interface (User Interface)</li>
+<li>Parents: <code>WDP-PF-C-002</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-RECEIVE-INTERFACE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-SEND-INTERFACE</strong> — Provide datagram send using explicit data, source and destination ports, and source and destination IPv4 addresses.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>rfc-768</code> §interface (User Interface)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-SEND-INTERFACE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-SOURCE-PORT-ZERO</strong> — Use source port zero when the sender does not supply a meaningful reply port, and otherwise preserve the selected source port.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-SOURCE-PORT-ZERO</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-UNRELIABLE-DATAGRAMS</strong> — Expose UDP as a connectionless datagram service that does not guarantee delivery, ordering, or duplicate suppression.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §introduction (Introduction)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-UNRELIABLE-DATAGRAMS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-CONTENT-TRANSPARENCY</strong> — Transmit and deliver the complete service data unit without manipulating its content.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-CONTENT-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-INDICATION-PARAMETERS</strong> — Deliver source address, source port, and user data on T-DUnitdata indication, with destination address and port when available.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-INDICATION-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-REQUEST-ANYTIME</strong> — Allow T-DUnitdata.request without establishing a prior transport connection.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-REQUEST-ANYTIME</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-REQUEST-PARAMETERS</strong> — Require source address, source port, destination address, destination port, and user data on every T-DUnitdata request.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>, <code>WDP-NA-C-000</code>, <code>WDP-NA-C-003</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-REQUEST-PARAMETERS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-WAP-PORT-REGISTRY</strong> — Recognize the complete WAP port assignment table, including connectionless, session, secure, push, vCard, and vCalendar services.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §appendix-b (Appendix B: Port Number Definitions)</li>
+<li>Parents: <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-WAP-PORT-REGISTRY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-702">TRN-702</h3>
+<ul>
+<li><strong>WDP-CL-IP-MAPPING-FRAGMENTATION</strong> — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §7.2 (7.2 Mapping of WDP for IP)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-MAPPING-FRAGMENTATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-BASELINE-RECEIVE-SIZE</strong> — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-BASELINE-RECEIVE-SIZE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-DONT-FRAGMENT</strong> — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-DONT-FRAGMENT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY</strong> — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENTATION-LOCATION</strong> — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENTATION-LOCATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-LARGE-SEND-GUARD</strong> — Send an IPv4 datagram larger than 576 octets only with assurance that the destination can accept it.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-LARGE-SEND-GUARD</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-TOTAL-LENGTH</strong> — Interpret IPv4 total length as header plus payload octets with a maximum representable value of 65,535.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-TOTAL-LENGTH</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-LENGTH-BOUNDS</strong> — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-LENGTH-BOUNDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-CONTENT-TRANSPARENCY</strong> — Transmit and deliver the complete service data unit without manipulating its content.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-CONTENT-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-703">TRN-703</h3>
+<ul>
+<li><strong>WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE</strong> — Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.2 (5.5.2. Address Information Formats)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-CONGESTION-SUPPRESSION</strong> — Do not generate Destination Unreachable when datagram delivery fails because of congestion.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-CONGESTION-SUPPRESSION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS</strong> — Carry the original datagram destination address in a Destination Unreachable message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES</strong> — Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION</strong> — Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE</strong> — Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS</strong> — Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP</strong> — Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION</strong> — Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED</strong> — Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-STRUCTURE</strong> — Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-TYPE-CODE</strong> — Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-TYPE-CODE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION</strong> — Do not generate a WCMP error message in response to another WCMP error message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE</strong> — Send no more than one WCMP error message for a fragmented datagram.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER</strong> — Encode an IP address within WCMP address data with the most significant bit first.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.2 (5.5.2. Address Information Formats)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL</strong> — Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS</strong> — Carry the original datagram destination address in a Message Too Big message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE</strong> — Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE</strong> — Use Type 60 and Code 0 for a general-WCMP Message Too Big message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET</strong> — Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.2 (5.2. WCMP Conformance)</li>
+<li>Parents: <code>WCMP-SP-C-002</code>, <code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-NETWORK-BYTE-ORDER</strong> — Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-NETWORK-BYTE-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-NON-IP-SCOPE</strong> — Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-NON-IP-SCOPE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION</strong> — Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES</strong> — Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code>, <code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT</strong> — Require each WCMP message to fit within one bearer-level fragment.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-TYPE-CLASS-RANGES</strong> — Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-TYPE-CLASS-RANGES</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE</strong> — Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-706">TRN-706</h3>
+<ul>
+<li><strong>WDP-CL-CDPD-UDP-IP-PROFILE</strong> — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.4.3 (5.4.3 WDP over CDPD)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-CDPD-UDP-IP-PROFILE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-MAPPING-FRAGMENTATION</strong> — Rely on IPv4 fragmentation and reassembly below UDP rather than adding a second WDP segmentation header on the CDPD/IP path.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §7.2 (7.2 Mapping of WDP for IP)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-MAPPING-FRAGMENTATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-BASELINE-RECEIVE-SIZE</strong> — Accept IPv4 datagrams up to 576 octets whether received whole or reassembled from fragments.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-BASELINE-RECEIVE-SIZE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENT-REASSEMBLY-KEY</strong> — Group IPv4 fragments by identification, source, destination, and protocol, then place data using fragment offsets and the final-fragment marker.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENT-REASSEMBLY-KEY</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-FRAGMENTATION-LOCATION</strong> — Allow IPv4 fragmentation at gateways and reassemble fragments at the destination IP module below WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-FRAGMENTATION-LOCATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-HEADER-CHECKSUM</strong> — Verify the ones-complement IPv4 header checksum and discard a datagram immediately when verification fails.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-HEADER-CHECKSUM</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-HEADER-LAYOUT</strong> — Decode the complete IPv4 header field order and widths before passing its UDP payload to WDP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-HEADER-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-SOURCE-DESTINATION-FIELDS</strong> — Preserve the 32-bit IPv4 source and destination header fields across the WDP request and indication boundary.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.1 (3.1.  Internet Header Format)</li>
+<li>Parents: <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-SOURCE-DESTINATION-FIELDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-HEADER-LAYOUT</strong> — Encode and decode the UDP header as 16-bit source port, destination port, length, and checksum fields followed by data.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §format (Format)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-006</code>, <code>WDP-NA-C-007</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-UDP-HEADER-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UDP-LENGTH-BOUNDS</strong> — Interpret UDP length as header plus data octets and reject values smaller than the eight-octet header.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-768</code> §fields (Fields)</li>
+<li>Parents: <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UDP-LENGTH-BOUNDS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-CONTENT-TRANSPARENCY</strong> — Transmit and deliver the complete service data unit without manipulating its content.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-CONTENT-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-707">TRN-707</h3>
+<ul>
+<li><strong>WCMP-CL-CDPD-USES-ICMP</strong> — Select the ICMP control-message path for CDPD instead of the general WCMP wire format defined for non-IP networks.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.3 (5.3. WCMP in IP Networks)</li>
+<li>Parents: <code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-CDPD-USES-ICMP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-IP-NETWORKS-USE-ICMP</strong> — Use ICMP to provide WCMP error-reporting and diagnostic functions whenever the selected bearer network is IP based.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.3 (5.3. WCMP in IP Networks)</li>
+<li>Parents: <code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-IP-NETWORKS-USE-ICMP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CDPD-UDP-IP-PROFILE</strong> — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.4.3 (5.4.3 WDP over CDPD)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-CDPD-UDP-IP-PROFILE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CONSISTENT-TRANSPORT-SERVICE</strong> — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.1 (5.1 Reference Model)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-CONSISTENT-TRANSPORT-SERVICE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-BEARER-REQUIRES-UDP</strong> — Use UDP as the WDP protocol whenever the selected bearer provides IP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.3 (5.3 WDP Static Conformance Clause)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-BEARER-REQUIRES-UDP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SELECTED-BEARER-ASSIGNMENT</strong> — Represent the AMPS/CDPD/IPv4 network-bearer-address combination with assigned bearer value 0x0D when that registry is carried.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §appendix-c (Appendix C: Bearer Type Assignments)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SELECTED-BEARER-ASSIGNMENT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-SELECTED-WSP-PORT</strong> — Use registered UDP/WDP port 9200 for the selected non-secure connectionless WSP session service.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §appendix-b (Appendix B: Port Number Definitions)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-NA-C-006</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-SELECTED-WSP-PORT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-CONTENT-TRANSPARENCY</strong> — Transmit and deliver the complete service data unit without manipulating its content.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-PF-C-001</code>, <code>WDP-PF-C-002</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-CONTENT-TRANSPARENCY</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-UNITDATA-REQUEST-ANYTIME</strong> — Allow T-DUnitdata.request without establishing a prior transport connection.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §6.3.1.1 (6.3.1.1 T-DUnitdata)</li>
+<li>Parents: <code>WDP-PF-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-UNITDATA-REQUEST-ANYTIME</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-708">TRN-708</h3>
+<ul>
+<li><strong>WCMP-CL-CDPD-USES-ICMP</strong> — Select the ICMP control-message path for CDPD instead of the general WCMP wire format defined for non-IP networks.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.3 (5.3. WCMP in IP Networks)</li>
+<li>Parents: <code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-CDPD-USES-ICMP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-CHECKSUM</strong> — Encode and verify the ICMPv4 ones-complement checksum across the complete control message with the checksum field zeroed for calculation.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §message-formats (Message Formats)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-CHECKSUM</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT</strong> — Decode ICMPv4 Destination Unreachable as Type 3, Code, Checksum, four-octet type-specific data, and the quoted original IPv4 header plus data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §destination-unreachable (Destination Unreachable Message)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-DESTINATION-UNREACHABLE-LAYOUT</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-ECHO-ROUNDTRIP</strong> — Handle ICMPv4 Echo Request type 8 and Echo Reply type 0 with Code 0 while preserving the identifier, sequence number, and returned data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §echo (Echo or Echo Reply Message)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-ECHO-ROUNDTRIP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-ERROR-QUOTE</strong> — Preserve the quoted original IPv4 header and first 64 data bits so the ICMPv4 error can be correlated with the affected WDP UDP datagram.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §destination-unreachable (Destination Unreachable Message)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-ERROR-QUOTE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-FRAGMENTATION-NEEDED</strong> — Interpret ICMPv4 Destination Unreachable type 3 code 4 as fragmentation needed while the original IPv4 datagram had the DF flag set, preserving the RFC 1191 Next-Hop MTU when present.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §destination-unreachable (Destination Unreachable Message)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-FRAGMENTATION-NEEDED</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-PORT-UNREACHABLE</strong> — Interpret ICMPv4 Destination Unreachable type 3 code 3 as an inactive destination process port and map the quoted UDP destination port at the WDP boundary.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §destination-unreachable (Destination Unreachable Message)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-PORT-UNREACHABLE</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-ICMPV4-PROTOCOL</strong> — Carry ICMPv4 as IPv4 protocol number 1 and dispatch each control message from its leading Type field.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-792</code> §message-formats (Message Formats)</li>
+<li>Parents: <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-ICMPV4-PROTOCOL</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-IP-NETWORKS-USE-ICMP</strong> — Use ICMP to provide WCMP error-reporting and diagnostic functions whenever the selected bearer network is IP based.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.3 (5.3. WCMP in IP Networks)</li>
+<li>Parents: <code>WCMP-C-001</code>, <code>WCMP-SP-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-IP-NETWORKS-USE-ICMP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CDPD-UDP-IP-PROFILE</strong> — Declare the selected CDPD bearer as an IP-capable profile whose WDP datagram service is UDP over IPv4.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.4.3 (5.4.3 WDP over CDPD)</li>
+<li>Parents: <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-CDPD-UDP-IP-PROFILE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-CONSISTENT-TRANSPORT-SERVICE</strong> — Expose the same WDP transport service and primitive contract to upper WAP layers across supported bearer adaptations.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>implicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.1 (5.1 Reference Model)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CORE-C-001</code></li>
+<li>Requirements: <code>RQ-TRN-001</code></li>
+<li>Fixture: <code>WDP-FX-CONSISTENT-TRANSPORT-SERVICE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IP-BEARER-REQUIRES-UDP</strong> — Use UDP as the WDP protocol whenever the selected bearer provides IP.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>WAP-200-WDP</code> §5.3 (5.3 WDP Static Conformance Clause)</li>
+<li>Parents: <code>WDP-C-001</code>, <code>WDP-CT-C-002</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-002</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IP-BEARER-REQUIRES-UDP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WDP-CL-IPV4-DONT-FRAGMENT</strong> — Do not fragment a datagram whose DF bit is set; discard it when the route cannot carry it intact.
+<ul>
+<li>Family: <code>wdp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Source: <code>rfc-791</code> §3.2 (3.2.  Discussion)</li>
+<li>Parents: <code>WDP-CORE-C-001</code>, <code>WDP-NA-C-003</code></li>
+<li>Requirements: <code>RQ-TRN-001</code>, <code>RQ-TRN-003</code></li>
+<li>Fixture: <code>WDP-FX-IPV4-DONT-FRAGMENT</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="trn-710">TRN-710</h3>
+<ul>
+<li><strong>WCMP-CL-GENERAL-ADDRESS-INFORMATION-STRUCTURE</strong> — Encode address information as Address Type, Address Length, and the indicated number of Address Data octets.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.2 (5.5.2. Address Information Formats)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ADDRESS-INFORMATION-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-CONGESTION-SUPPRESSION</strong> — Do not generate Destination Unreachable when datagram delivery fails because of congestion.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-CONGESTION-SUPPRESSION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-ADDRESS</strong> — Carry the original datagram destination address in a Destination Unreachable message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-ADDRESS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-CODES</strong> — Interpret Destination Unreachable codes 0, 1, 3, and 4 with their specified route, policy, address, and port meanings.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-CODES</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-GENERATION</strong> — Generate Destination Unreachable when a datagram cannot be delivered unless the failure is congestion.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-should</code>; level: <code>recommended</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-GENERATION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE</strong> — Encode Destination Unreachable with Type, Code, destination and originator ports, address information, and no additional data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-DESTINATION-UNREACHABLE-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-CORRELATION-FIELDS</strong> — Preserve the Echo Request Identifier and Sequence Number in the corresponding Echo Reply.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-CORRELATION-FIELDS</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-DATA-ROUNDTRIP</strong> — Return the Echo Request data unchanged in the corresponding Echo Reply when the return path can carry it.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-DATA-ROUNDTRIP</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-PATH-MTU-TRUNCATION</strong> — Truncate only Echo Reply data when the return-path bearer fragment size cannot carry the complete request data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-may</code>; level: <code>permitted</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-PATH-MTU-TRUNCATION</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-REPLY-REQUIRED</strong> — Send an Echo Reply after receiving an Echo Request when the explicit non-IP capability permits replies.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-REPLY-REQUIRED</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-STRUCTURE</strong> — Encode Echo messages with Type, Code, Identifier, Sequence Number, and optional data.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ECHO-TYPE-CODE</strong> — Use Type 178 Code 0 for Echo Request and Type 179 Code 0 for Echo Reply.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.5 (5.5.3.5. WCMP Echo Request/Reply)</li>
+<li>Parents: <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ECHO-TYPE-CODE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-ERROR-RESPONSE-SUPPRESSION</strong> — Do not generate a WCMP error message in response to another WCMP error message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-ERROR-RESPONSE-SUPPRESSION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE</strong> — Send no more than one WCMP error message for a fragmented datagram.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-FRAGMENT-ERROR-SINGLE-RESPONSE</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-IP-ADDRESS-BIT-ORDER</strong> — Encode an IP address within WCMP address data with the most significant bit first.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.2 (5.5.2. Address Information Formats)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-IP-ADDRESS-BIT-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL</strong> — Generate Message Too Big when a first segment exceeds the receiver reassembly buffer and report the supported maximum size.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-BUFFER-SIGNAL</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS</strong> — Carry the original datagram destination address in a Message Too Big message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-DESTINATION-ADDRESS</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-STRUCTURE</strong> — Encode Message Too Big with Type 60, Code 0, ports, address information, and the supported maximum message size.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE</strong> — Use Type 60 and Code 0 for a general-WCMP Message Too Big message.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.3 (5.5.3.3. Message Too Big)</li>
+<li>Parents: <code>WCMP-GEN-C-003</code></li>
+<li>Requirements: <code>RQ-TRX-007</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MESSAGE-TOO-BIG-TYPE-CODE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-MINIMUM-CLIENT-MESSAGE-SET</strong> — Support Destination Unreachable, Message Too Big, and Echo Reply in the minimum WDP-node WCMP message set.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.2 (5.2. WCMP Conformance)</li>
+<li>Parents: <code>WCMP-SP-C-002</code>, <code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-MINIMUM-CLIENT-MESSAGE-SET</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-NETWORK-BYTE-ORDER</strong> — Encode multi-octet general-WCMP fields in network byte order with the most significant byte first.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-NETWORK-BYTE-ORDER</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-NON-IP-SCOPE</strong> — Use the general WCMP protocol only for an explicitly selected non-IP bearer capability.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-NON-IP-SCOPE</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-PORT-UNREACHABLE-GENERATION</strong> — Generate Destination Unreachable code 4 when no application is listening on the addressed destination port.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.3.1 (5.5.3.1. Destination Unreachable)</li>
+<li>Parents: <code>WCMP-GEN-C-001</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-PORT-UNREACHABLE-GENERATION</code> (<code>error-policy</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-SELECTED-TYPE-CODE-VALUES</strong> — Use the specified Type and Code values for selected Destination Unreachable, Message Too Big, Echo Request, and Echo Reply messages.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code>, <code>WCMP-GEN-C-001</code>, <code>WCMP-GEN-C-003</code>, <code>WCMP-GEN-C-006</code></li>
+<li>Requirements: <code>RQ-TRX-006</code>, <code>RQ-TRX-007</code>, <code>RQ-TRX-008</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-SELECTED-TYPE-CODE-VALUES</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-SINGLE-BEARER-FRAGMENT</strong> — Require each WCMP message to fit within one bearer-level fragment.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>explicit-must</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.1 (5.1. General)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-SINGLE-BEARER-FRAGMENT</code> (<code>transport-boundary</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-TYPE-CLASS-RANGES</strong> — Classify types 0 through 127 as errors, 128 through 191 as informational, and 192 through 255 as reserved.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>table</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-TYPE-CLASS-RANGES</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+<li><strong>WCMP-CL-GENERAL-TYPE-CODE-DATA-STRUCTURE</strong> — Encode every general-WCMP message as a one-octet Type, one-octet Code, and type-dependent Data field.
+<ul>
+<li>Family: <code>wcmp</code>; force: <code>grammar</code>; level: <code>required</code></li>
+<li>Applicability: <code>capability-gated-non-ip-bearer</code></li>
+<li>Source: <code>WAP-202-WCMP</code> §5.5.1 (5.5.1. General Message Structure)</li>
+<li>Parents: <code>WCMP-SP-C-002</code></li>
+<li>Requirements: <code>RQ-TRX-006</code></li>
+<li>Fixture: <code>WCMP-FX-GENERAL-TYPE-CODE-DATA-STRUCTURE</code> (<code>binary-decoder</code>, <code>implemented</code>)</li>
+</ul>
+</li>
+</ul>
+<h2 id="aggregate-regression-and-delegate-context">Aggregate regression and delegate context</h2>
+<ul>
+<li>None mapped for this selection.</li>
+</ul>
+<h2 id="explicit-mapping-gaps">Explicit mapping gaps</h2>
+<ul>
+<li><code>TRN-704</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+<li><code>TRN-705</code> has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.</li>
+</ul>
+<p>Declared-family gaps:</p>
+<ul>
+<li><code>TRN-706</code> declares <code>wtp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+<li><code>TRN-707</code> declares <code>wtp</code> scope without a direct clause mapping from that family. Clauses from another family do not close this gap.</li>
+</ul>
+<h2 id="effective-source-order">Effective source order</h2>
+<ul>
+<li><code>wcmp</code>: <code>WAP-202-WCMP</code></li>
+<li><code>wdp</code>: <code>WAP-200-WDP</code> -&gt; <code>WAP-200_001-WDP</code> -&gt; <code>WAP-200_002-WDP</code> -&gt; <code>WAP-200_003-WDP</code> -&gt; <code>WAP-200_004-WDP</code> -&gt; <code>WAP-200_005-WDP</code></li>
+<li><code>wdp-wcmp-adaptation</code>: <code>WAP-159-WDPWCMPAdapt</code></li>
+<li><code>wtp</code>: <code>WAP-201-WTP</code> -&gt; <code>WAP-201_001-WTP</code> -&gt; <code>WAP-201_002-WTP</code> -&gt; <code>OMA-WAP-201_003-WTP-SIN</code></li>
+</ul>
+<h2 id="source-documents">Source documents</h2>
+<ul>
+<li><code>OMA-WAP-201_003-WTP-SIN</code>: Wireless Transaction Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/OMA-WAP-201_003-WTP-SIN-20020904-a.PDF">https://www.openmobilealliance.org/tech/affiliates/wap/OMA-WAP-201_003-WTP-SIN-20020904-a.PDF</a></li>
+<li><code>rfc-768</code>: rfc-768</li>
+<li><code>rfc-791</code>: rfc-791</li>
+<li><code>rfc-792</code>: rfc-792</li>
+<li><code>WAP-159-WDPWCMPAdapt</code>: WDP/WCMP Wireless Data Gateway Adaptation — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-159-WDPWCMPAdapt-20010713-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-159-WDPWCMPAdapt-20010713-a.pdf</a></li>
+<li><code>WAP-200_001-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_001-WDP-20001212-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_001-WDP-20001212-a.pdf</a></li>
+<li><code>WAP-200_002-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_002-WDP-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_002-WDP-20001213-a.pdf</a></li>
+<li><code>WAP-200_003-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_003-WDP-20010328-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_003-WDP-20010328-a.pdf</a></li>
+<li><code>WAP-200_004-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_004-WDP-20010517-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_004-WDP-20010517-a.pdf</a></li>
+<li><code>WAP-200_005-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_005-WDP-20010718-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200_005-WDP-20010718-a.pdf</a></li>
+<li><code>WAP-200-WDP</code>: Wireless Datagram Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200-WDP-20000219-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-200-WDP-20000219-a.pdf</a></li>
+<li><code>WAP-201_001-WTP</code>: Wireless Transaction Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201_001-WTP-20001212-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201_001-WTP-20001212-a.pdf</a></li>
+<li><code>WAP-201_002-WTP</code>: Wireless Transaction Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201_002-WTP-20001213-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201_002-WTP-20001213-a.pdf</a></li>
+<li><code>WAP-201-WTP</code>: Wireless Transaction Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201-WTP-20000219-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-201-WTP-20000219-a.pdf</a></li>
+<li><code>WAP-202-WCMP</code>: Wireless Control Message Protocol — <a href="https://www.openmobilealliance.org/tech/affiliates/wap/WAP-202-WCMP-20010624-a.pdf">https://www.openmobilealliance.org/tech/affiliates/wap/WAP-202-WCMP-20010624-a.pdf</a></li>
+<li><code>WAP-215-ClassConform-20001213-a</code>: Class Conformance Requirements — <a href="https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf">https://www.wapforum.org/tech/documents/WAP-215-ClassConform-20001213-a.pdf</a></li>
+<li><code>WAP-259-WDP-20010614-a</code>: Wireless Datagram Protocol</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#trn-7-ai-context-pack">TRN-7 AI Context Pack</a></li><li class="depth-2"><a href="#retrieval-contract">Retrieval contract</a></li><li class="depth-2"><a href="#graph-summary">Graph summary</a></li><li class="depth-2"><a href="#execution-target">Execution target</a></li><li class="depth-3"><a href="#trn-7-wdp-wcmp-and-conditional-wtp-class-c-transport-core">TRN-7: WDP, WCMP, and conditional WTP Class C transport core</a></li><li class="depth-2"><a href="#work-items">Work items</a></li><li class="depth-3"><a href="#trn-701-effective-wdp-service-addressing-port-and-bearer-profile">TRN-701: Effective WDP service, addressing, port, and bearer profile</a></li><li class="depth-3"><a href="#trn-702-wdp-constrained-payload-and-segmentationreassembly-policy">TRN-702: WDP constrained-payload and segmentation/reassembly policy</a></li><li class="depth-3"><a href="#trn-703-wcmp-generationhandling-and-error-mapping">TRN-703: WCMP generation/handling and error mapping</a></li><li class="depth-3"><a href="#trn-704-effective-wtp-pdu-and-transaction-state-machines">TRN-704: Effective WTP PDU and transaction state machines</a></li><li class="depth-3"><a href="#trn-705-wtp-timing-nack-hold-off-and-retry-closure">TRN-705: WTP timing, NACK, hold-off, and retry closure</a></li><li class="depth-3"><a href="#trn-706-wdpwtp-packet-and-replay-golden-corpus">TRN-706: WDP/WTP packet and replay golden corpus</a></li><li class="depth-3"><a href="#trn-707-wap-121-to-wap-20-wdpwtpwcmp-delta-register">TRN-707: WAP 1.2.1-to-WAP 2.0 WDP/WTP/WCMP delta register</a></li><li class="depth-3"><a href="#trn-708-strict-cdpdipv4-icmp-profile-correction-with-the-existing-general-wcmp-branch-capability-gated-for-non-ip-use">TRN-708: Strict CDPD/IPv4 ICMP profile correction with the existing general-WCMP branch capability-gated for non-IP use</a></li><li class="depth-3"><a href="#trn-710-direct-normative-clause-mapping-and-executable-evidence-links-for-the-completed-trn-703-non-ip-general-wcmp-capability">TRN-710: Direct normative-clause mapping and executable evidence links for the completed TRN-703 non-IP general-WCMP capability</a></li><li class="depth-2"><a href="#direct-scr-evidence">Direct SCR evidence</a></li><li class="depth-2"><a href="#direct-normative-obligations">Direct normative obligations</a></li><li class="depth-3"><a href="#trn-701">TRN-701</a></li><li class="depth-3"><a href="#trn-702">TRN-702</a></li><li class="depth-3"><a href="#trn-703">TRN-703</a></li><li class="depth-3"><a href="#trn-706">TRN-706</a></li><li class="depth-3"><a href="#trn-707">TRN-707</a></li><li class="depth-3"><a href="#trn-708">TRN-708</a></li><li class="depth-3"><a href="#trn-710">TRN-710</a></li><li class="depth-2"><a href="#aggregate-regression-and-delegate-context">Aggregate regression and delegate context</a></li><li class="depth-2"><a href="#explicit-mapping-gaps">Explicit mapping gaps</a></li><li class="depth-2"><a href="#effective-source-order">Effective source order</a></li><li class="depth-2"><a href="#source-documents">Source documents</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/knowledge-graph/context-packs/trn-7.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

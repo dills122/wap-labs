@@ -1,0 +1,1315 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Native End-to-End Harness Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_native_e2e_harness_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_native_e2e_harness_plan.md</p><div class="markdown-body"><h1 id="waves-native-end-to-end-harness-plan">Waves Native End-to-End Harness Plan</h1>
+<p>Status: accepted; implementation-ready
+Last updated: 2026-08-24
+Owner: browser + transport-rust + gateway/WML origin + CI
+Related tracking: <a href="TRANSPORT_E2E_READINESS_SCORECARD.md">Transport E2E Readiness Scorecard</a>
+Decision research: <a href="WAVES_NATIVE_E2E_HARNESS_RESEARCH.md">Waves Native E2E Harness Decision Research</a></p>
+<h2 id="purpose">Purpose</h2>
+<p>Turn the existing Linux native Tauri/Kannel pilot into a reliable automated test harness for the
+assembled Waves desktop application.</p>
+<p>The primary near-term outcome is:</p>
+<blockquote>
+<p>Any regression where a user can see valid form values but the native Waves stack submits stale or
+missing values must fail an automated test before merge.</p>
+</blockquote>
+<p>The harness must exercise the real application boundary rather than replace the native engine or
+transport with test doubles. It complements the faster unit, contract, engine, and ordinary-browser
+story suites; it does not replace them.</p>
+<h2 id="current-stack-and-evidence">Current Stack and Evidence</h2>
+<p>Versions detected from the repository at plan adoption:</p>
+<ul>
+<li>Tauri <code>2.11.5</code></li>
+<li>Wry <code>0.55.1</code></li>
+<li><code>@tauri-apps/api</code> <code>2.11.1</code></li>
+<li>Selenium <code>4.46.0</code></li>
+<li>CI-pinned <code>tauri-driver</code> <code>2.0.6</code></li>
+</ul>
+<p>The current native pilot is implemented by:</p>
+<ul>
+<li><a href="../../browser/frontend/scripts/native-tauri-kannel-e2e.mjs"><code>browser/frontend/scripts/native-tauri-kannel-e2e.mjs</code></a></li>
+<li><a href="../../scripts/native-tauri-kannel-e2e.sh"><code>scripts/native-tauri-kannel-e2e.sh</code></a></li>
+<li><a href="../../.github/workflows/native-tauri-kannel-e2e.yml"><code>.github/workflows/native-tauri-kannel-e2e.yml</code></a></li>
+</ul>
+<p>It crosses the following production boundaries:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Selenium / WebDriver</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>native Waves WebView</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>production frontend/controller</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>generated Tauri invoke client</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Rust host + native WaveNav engine</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Lowband Rust transport</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Kannel -&gt; Go WML origin</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>response deck -&gt; Canvas render + accessible text projection</span></span></code></pre>
+<p>Existing coverage includes native startup, gateway deck rendering, card and external navigation,
+static examples, input/select rendering, a duplicate-request bound, invalid-URL failure, and
+recovery. It does not submit the native login or registration forms.</p>
+<h2 id="research-basis">Research Basis</h2>
+<p>The implementation strategy is based on current primary documentation:</p>
+<ol>
+<li>Tauri recommends WebdriverIO with <code>@wdio/tauri-service</code> for new cross-platform desktop testing,
+including an embedded WebDriver provider for Linux, Windows, and macOS. It also explicitly
+supports driving <code>tauri-driver</code> directly with Selenium for custom Windows/Linux harnesses.
+<ul>
+<li><a href="https://v2.tauri.app/develop/tests/webdriver/">https://v2.tauri.app/develop/tests/webdriver/</a></li>
+<li><a href="https://webdriver.io/docs/desktop-testing/tauri/">https://webdriver.io/docs/desktop-testing/tauri/</a></li>
+</ul>
+</li>
+<li>Tauri’s embedded WebDriver and richer WDIO capabilities require test instrumentation. Official
+guidance says those plugins must not ship in production and documents conditional registration
+or explicit Cargo features.
+<ul>
+<li><a href="https://webdriver.io/docs/desktop-testing/tauri/plugin-setup/">https://webdriver.io/docs/desktop-testing/tauri/plugin-setup/</a></li>
+</ul>
+</li>
+<li>Selenium recommends short independent scenarios, a fresh WebDriver for each test, and explicit
+condition-based waits. It warns that long end-to-end scripts are slower, harder to diagnose, and
+more vulnerable to timing races.
+<ul>
+<li><a href="https://www.selenium.dev/documentation/test_practices/overview/">https://www.selenium.dev/documentation/test_practices/overview/</a></li>
+<li><a href="https://www.selenium.dev/documentation/test_practices/encouraged/fresh_browser_per_test/">https://www.selenium.dev/documentation/test_practices/encouraged/fresh_browser_per_test/</a></li>
+<li><a href="https://www.selenium.dev/documentation/test_practices/encouraged/test_independency/">https://www.selenium.dev/documentation/test_practices/encouraged/test_independency/</a></li>
+<li><a href="https://www.selenium.dev/documentation/webdriver/waits/">https://www.selenium.dev/documentation/webdriver/waits/</a></li>
+</ul>
+</li>
+<li>Selenium does not recommend using WebDriver as a performance-measurement tool because process
+startup, services, environment, and driver instrumentation introduce uncontrolled variation.
+<ul>
+<li><a href="https://www.selenium.dev/documentation/test_practices/discouraged/performance_testing/">https://www.selenium.dev/documentation/test_practices/discouraged/performance_testing/</a></li>
+</ul>
+</li>
+<li>Tauri treats an application binary build and platform bundling as distinct operations. The
+current Waves configuration has bundling disabled, and the pilot explicitly uses <code>--no-bundle</code>.
+<ul>
+<li><a href="https://v2.tauri.app/distribute/">https://v2.tauri.app/distribute/</a></li>
+</ul>
+</li>
+<li>The DOM dispatch algorithm and WebDriver Execute Script command support a deterministic
+same-task event burst through production handlers. This lets the harness enqueue the final
+character and submission before promise continuations can settle.
+<ul>
+<li><a href="https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent">https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent</a></li>
+<li><a href="https://w3c.github.io/webdriver/#execute-script">https://w3c.github.io/webdriver/#execute-script</a></li>
+</ul>
+</li>
+<li>Docker Compose project names isolate generated resources, but explicit container names and fixed
+published ports remain global collision points. Tauri’s Linux data/config/cache bases honor XDG
+locations, enabling scenario-specific native state.
+<ul>
+<li><a href="https://docs.docker.com/compose/how-tos/project-name/">https://docs.docker.com/compose/how-tos/project-name/</a></li>
+<li><a href="https://docs.docker.com/reference/compose-file/services/#container_name">https://docs.docker.com/reference/compose-file/services/#container_name</a></li>
+<li><a href="https://v2.tauri.app/reference/javascript/api/namespacepath/#appdatadir">https://v2.tauri.app/reference/javascript/api/namespacepath/#appdatadir</a></li>
+</ul>
+</li>
+<li>GitHub warns that path-filtered workflows can leave required checks pending. The required signal
+must therefore come from an always-present final gate job.
+<ul>
+<li><a href="https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks">https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks</a></li>
+</ul>
+</li>
+</ol>
+<h3 id="research-decision">Research decision</h3>
+<p>Do not block urgent authentication coverage on a WebDriver framework migration.</p>
+<ol>
+<li>Harden the working Selenium/<code>tauri-driver</code> Linux lane first.</li>
+<li>Express scenarios through a narrow Waves-facing driver API so the scenario intent is portable.</li>
+<li>Evaluate Tauri’s embedded WebdriverIO provider in a separate cross-platform spike after the
+Linux critical suite is stable and required.</li>
+<li>Adopt the embedded provider only if platform reach and diagnostics justify the additional
+test-only dependencies and application instrumentation.</li>
+<li>Land isolation, deterministic race injection, fail-closed artifact publication, and correlated
+origin oracles before authentication scenarios.</li>
+</ol>
+<p>There is a minor official-documentation ambiguity to resolve in the spike: the Tauri overview calls
+the richer WDIO plugin optional depending on requirements, while the WebdriverIO plugin setup page
+describes it as required for service features. The spike must determine and document the minimum
+plugin set rather than enabling both by assumption.</p>
+<h2 id="test-architecture">Test Architecture</h2>
+<h3 id="three-testing-rings">Three testing rings</h3>
+<table>
+<thead>
+<tr>
+<th>Ring</th>
+<th>Real boundaries</th>
+<th>Intended frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ordinary-browser stories</td>
+<td>Production Waves shell/controller plus real WASM engine and deterministic host fixtures</td>
+<td>Every relevant PR</td>
+</tr>
+<tr>
+<td>Native runtime E2E</td>
+<td>Actual Tauri binary, native engine, Lowband transport, Kannel, and WML origin</td>
+<td>Relevant PRs and nightly</td>
+</tr>
+<tr>
+<td>Packaged artifact smoke</td>
+<td>Platform application bundle/installer, first launch, and essential navigation</td>
+<td>Scheduled and release</td>
+</tr>
+</tbody>
+</table>
+<p>Native E2E remains a deliberately small critical suite. Broad permutations stay in faster engine,
+controller, adapter, contract, and story tests.</p>
+<h3 id="native-scenario-boundary">Native scenario boundary</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Native scenarios</span></span>
+<span class="line"><span>      |</span></span>
+<span class="line"><span>      v</span></span>
+<span class="line"><span>WavesDriver interface</span></span>
+<span class="line"><span>  - launch</span></span>
+<span class="line"><span>  - openUrl</span></span>
+<span class="line"><span>  - pressSoftkey</span></span>
+<span class="line"><span>  - pressKeyboardKey</span></span>
+<span class="line"><span>  - typeText</span></span>
+<span class="line"><span>  - typeFinalCharacterAndSubmitInOneTask</span></span>
+<span class="line"><span>  - waitForDeck</span></span>
+<span class="line"><span>  - readStatus</span></span>
+<span class="line"><span>  - captureEvidence</span></span>
+<span class="line"><span>      |</span></span>
+<span class="line"><span>      +-- Selenium + tauri-driver provider    (first implementation)</span></span>
+<span class="line"><span>      |</span></span>
+<span class="line"><span>      `-- WebdriverIO embedded provider       (later research spike)</span></span></code></pre>
+<p>Driver/page objects own selectors and interaction mechanics. Scenarios own assertions. The public
+test API uses product language such as <code>openWapUrl</code>, <code>pressSelect</code>, and <code>waitForDeckText</code>; it does not
+expose engine command IDs to scenario authors.</p>
+<h3 id="oracle-hierarchy">Oracle hierarchy</h3>
+<p>Use the narrowest externally observable oracle that proves the behavior:</p>
+<ol>
+<li>User-visible deck text through the production accessible-text projection.</li>
+<li>User-visible status tone/message and sanitized current origin/path; query strings and fragments
+never enter assertions or retained evidence.</li>
+<li>Sanitized, bounded action-correlation counts at the controlled WML origin.</li>
+<li>Sanitized production checkpoints for UI, controller/IPC/engine, correlated origin receipt, and
+response rendering.</li>
+<li>Screenshots as supporting evidence, never as the only functional assertion.</li>
+</ol>
+<p>Do not install the ordinary-browser story observation bridge into the production app. Do not record
+authentication request bodies. The harness promises localization to observable boundary groups; it
+does not claim per-layer transport/gateway precision without supporting telemetry.</p>
+<h2 id="scope">Scope</h2>
+<h3 id="in-scope">In scope</h3>
+<ul>
+<li>compiled Waves desktop application</li>
+<li>production frontend entry and controller/presenter behavior</li>
+<li>generated Tauri invoke bridge</li>
+<li>native Rust engine behavior</li>
+<li>real Lowband transport</li>
+<li>real Kannel and Go WML-origin composition</li>
+<li>WML form editing, commit, POST, response, and render</li>
+<li>keyboard and physical softkey input paths</li>
+<li>navigation, history, failures, and recovery</li>
+<li>deterministic evidence and CI routing</li>
+<li>Linux first, followed by a macOS/Windows feasibility spike</li>
+<li>packaged artifact smoke after product bundling is activated</li>
+</ul>
+<h3 id="out-of-scope-for-the-first-build-out">Out of scope for the first build-out</h3>
+<ul>
+<li>external public WAP sites</li>
+<li>pixel-perfect screenshot regression</li>
+<li>load or performance assertions through WebDriver</li>
+<li>every WML/WSP conformance permutation</li>
+<li>behavioral retries that turn a failure into a pass</li>
+<li>parallel native execution before state isolation is proven</li>
+<li>production exposure of WebDriver, global test APIs, or test-only Tauri permissions</li>
+</ul>
+<h2 id="non-negotiable-guardrails">Non-Negotiable Guardrails</h2>
+<ol>
+<li>Native E2E must use the production transport adapter and real Kannel path.</li>
+<li>Test fixtures that model origin behavior live in the WML-origin layer, not in the engine or
+frontend.</li>
+<li>Browser code does not parse WML/WBXML or reproduce engine navigation semantics.</li>
+<li>Stable engine/runtime behavior continues to receive native/WASM parity tests and executable
+stories where deterministic; native E2E only proves assembly and user-critical journeys.</li>
+<li>Secrets—including PINs, setup bodies, issued session IDs, Kannel admin/status credentials, and
+WebDriver session handles—never enter retained artifacts or GitHub Actions stdout/stderr.</li>
+<li>A test-only Tauri plugin, capability, or WebDriver listener must be impossible to include in an
+ordinary production build.</li>
+<li>Cleanup may only stop processes and containers created by the current test run.</li>
+<li>Fixed sleeps are not valid behavioral synchronization.</li>
+<li>A product assertion is never retried automatically.</li>
+<li>Raw runtime evidence is never an upload target; CI uploads only a separately constructed,
+allowlisted safe directory.</li>
+<li>Authentication screenshots, page source, DOM snapshots, video, unstructured logs, and traces
+are forbidden from the first secret creation/keystroke until either no session was issued or the
+issued session is invalidated, and the current retained state is proven free of bearer URLs.</li>
+</ol>
+<h2 id="phase-0-adoption-and-baseline">Phase 0: Adoption and Baseline</h2>
+<h3 id="ne2e-00-adopt-the-plan-and-capture-the-pilot-baseline">NE2E-00 Adopt the plan and capture the pilot baseline</h3>
+<ul>
+<li><code>Depends On</code>: none</li>
+<li><code>Likely Files</code>:
+<ul>
+<li>this plan</li>
+<li><code>docs/waves/TRANSPORT_E2E_READINESS_SCORECARD.md</code></li>
+<li><code>docs/waves/WORK_ITEMS.md</code></li>
+<li><code>docs/ci/CI_SETUP.md</code></li>
+<li><code>docs/ci/REQUIRED_CHECKS.md</code></li>
+<li>ignored native E2E evidence directories</li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>record the current native-pilot runtime and outcome over repeated unchanged-revision CI runs</li>
+<li>preserve a representative success and deliberate-failure artifact bundle</li>
+<li>classify current failure modes as product, harness, or environment</li>
+<li>confirm the existing production boundary description against the host and transport contracts</li>
+<li>synchronize active CI guidance and <code>A5-08</code> with this plan immediately; describe the current broad
+product path filter truthfully while retaining the pilot’s advisory/not-required status</li>
+<li>name the repository administrator acting as CI owner as the only role authorized to change the
+live ruleset, and require that role to read back the resulting required-context list</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>current runtime, flake observations, and scope gaps are recorded</li>
+<li>the readiness scorecard points to this plan for the move from pilot to required gate</li>
+<li><code>A5-08</code>, <code>CI_SETUP.md</code>, and <code>REQUIRED_CHECKS.md</code> no longer prescribe the superseded four-run,
+unsafe artifact, or pilot-only path scope</li>
+<li>baseline collection does not change production behavior</li>
+</ul>
+<p>Verify:</p>
+<ul>
+<li>workflow-dispatch evidence can be reproduced from a pinned revision</li>
+<li>an intentionally failed run retains enough data to identify the last completed boundary</li>
+</ul>
+<h2 id="phase-1-safe-modular-harness-foundation">Phase 1: Safe, Modular Harness Foundation</h2>
+<h3 id="ne2e-01-isolate-the-native-environment">NE2E-01 Isolate the native environment</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-00</code></li>
+<li><code>Estimated Size</code>: medium</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>scripts/native-tauri-kannel-e2e.sh</code></li>
+<li><code>docker-compose.yml</code> or a dedicated native-E2E Compose overlay</li>
+<li><code>transport-rust/src/lib.rs</code></li>
+<li><code>browser/src-tauri/src/fetch_host.rs</code></li>
+<li><code>browser/src-tauri/src/waves_config.rs</code></li>
+<li>transport and host routing tests</li>
+<li><code>scripts/tests/native-tauri-kannel-e2e-script.test.mjs</code></li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>allocate a unique Compose project identity for each run</li>
+<li>remove fixed <code>container_name</code> values from the E2E-resolved Compose stack</li>
+<li>bind every published TCP and UDP port to loopback and allocate or parameterize it per run</li>
+<li>discover assigned host ports from Compose runtime state instead of assuming defaults</li>
+<li>add a contract-first run-scoped physical gateway endpoint from the native host to Lowband
+<code>FetchTransportOptions</code>, including the cancellable fetch path, while preserving the user-visible
+logical <code>wap://localhost/...</code> resource URL and Kannel request URI</li>
+<li>write a runner-owned manifest that binds the Compose project ID, discovered loopback gateway
+endpoint, and expected origin instance ID; the host launcher accepts routing only from that
+validated manifest and not from a free-form scenario value</li>
+<li>do not claim UDP endpoint authentication: add a run-scoped origin instance marker and fail on any
+correlated response from the wrong stack, making cross-contamination detectable</li>
+<li>fail closed on malformed, missing, non-loopback, or manifest-mismatched gateway configuration;
+do not expose the physical endpoint as a frontend engine/transport command</li>
+<li>allocate both the <code>tauri-driver</code> intermediary port and native WebDriver port per run</li>
+<li>isolate <code>XDG_DATA_HOME</code>, <code>XDG_CONFIG_HOME</code>, <code>XDG_CACHE_HOME</code>, and WebDriver/application profile
+state under a scenario-specific directory</li>
+<li>keep all created process/container identifiers in the cleanup manifest</li>
+<li>scope log collection and teardown to the current E2E project</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>cleanup cannot stop an ordinary developer Compose stack</li>
+<li>stale application or WebDriver state cannot affect a subsequent scenario</li>
+<li>two E2E stacks and the ordinary developer stack can coexist without container, network, TCP, or
+UDP collisions</li>
+<li>each native host is configured for its manifest-bound Kannel endpoint, proves the expected origin
+instance on correlated responses, and continues to display the canonical logical WAP URL</li>
+<li>interrupts clean up WebDriver, the app process, and owned containers</li>
+<li>cleanup reports a failure if an owned process or container remains</li>
+</ul>
+<p>Verify:</p>
+<ul>
+<li>keep the ordinary stack running while two concurrent E2E environments start independently</li>
+<li>stop one E2E environment and prove the other E2E and developer environments remain healthy</li>
+<li>deliberately swap the two manifest-bound endpoints and prove the origin-instance mismatch fails
+the run; do not claim the host can make another loopback UDP socket unreachable</li>
+<li>prove the logical request URI never acquires the physical UDP port</li>
+<li>run two scenarios sequentially and prove app/profile state does not cross the boundary</li>
+<li>cover invalid configuration and cleanup target selection with Node tests</li>
+<li>run <code>pnpm --dir browser run contracts:check</code> if the exported Rust transport surface changes</li>
+</ul>
+<h3 id="ne2e-02-split-runner-responsibilities">NE2E-02 Split runner responsibilities</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-01</code></li>
+<li><code>Estimated Size</code>: medium</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>browser/frontend/scripts/native-tauri-kannel-e2e.mjs</code></li>
+<li>new modules under <code>browser/frontend/e2e/native/</code></li>
+<li><code>browser/frontend/package.json</code></li>
+</ul>
+</li>
+</ul>
+<p>Target shape:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>browser/frontend/e2e/native/</span></span>
+<span class="line"><span>  config.mjs</span></span>
+<span class="line"><span>  environment.mjs</span></span>
+<span class="line"><span>  waits.mjs</span></span>
+<span class="line"><span>  evidence.mjs</span></span>
+<span class="line"><span>  waves-driver.mjs</span></span>
+<span class="line"><span>  selenium-provider.mjs</span></span>
+<span class="line"><span>  scenarios/</span></span></code></pre>
+<p>Build:</p>
+<ul>
+<li>retain the existing script as a compatibility entrypoint during extraction</li>
+<li>add <code>--list</code>, <code>--suite &lt;name&gt;</code>, and <code>--scenario &lt;id&gt;</code> selection</li>
+<li>start a fresh application/WebDriver session per scenario</li>
+<li>report scenario identity, duration, last observation, and cleanup result independently</li>
+<li>preserve the current smoke assertions as separate scenarios</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>one scenario failure does not prevent unrelated scenarios from producing results</li>
+<li>unknown selectors fail as configuration errors</li>
+<li>process cleanup occurs after pass, failure, timeout, and interruption</li>
+<li>existing native pilot behavior remains covered</li>
+</ul>
+<p>Verify:</p>
+<ul>
+<li>unit tests cover selection, configuration validation, safe artifact paths, and cleanup</li>
+<li>the extracted smoke suite passes through the existing Make target</li>
+</ul>
+<h3 id="ne2e-03-establish-the-waves-interaction-api">NE2E-03 Establish the Waves interaction API</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-02</code></li>
+<li><code>Estimated Size</code>: small</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>browser/frontend/e2e/native/waves-driver.mjs</code></li>
+<li><code>browser/frontend/e2e/native/selenium-provider.mjs</code></li>
+<li>driver unit tests</li>
+</ul>
+</li>
+</ul>
+<p>Initial operations:</p>
+<ul>
+<li><code>launchWaves</code></li>
+<li><code>dismissWelcome</code></li>
+<li><code>openWapUrl</code></li>
+<li><code>focusViewport</code></li>
+<li><code>pressSoftkey</code></li>
+<li><code>pressKeyboardKey</code></li>
+<li><code>typeText</code></li>
+<li><code>typeFinalCharacterAndSubmitInOneTask</code></li>
+<li><code>waitForDeckText</code></li>
+<li><code>waitForStatus</code></li>
+<li><code>readSanitizedAddress</code></li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>scenario files contain no raw CSS selectors</li>
+<li>selector changes are localized to the provider/page layer</li>
+<li>assertions stay in scenario files</li>
+<li>operations model user intent rather than engine implementation details</li>
+<li>provider methods and assertion errors expose only address origin/path; full query/fragment values
+remain inside non-retained live interaction code</li>
+<li>the race primitive uses one WebDriver Execute Script call to synchronously dispatch the final
+character keydown and then Enter or the real Select button click through production handlers</li>
+<li>ordinary keyboard and physical-click smoke operations remain separate from the deterministic
+synthetic event-burst primitive</li>
+</ul>
+<p>Verify:</p>
+<ul>
+<li>a provider test proves both events are invoked synchronously and in order from one script call</li>
+<li>a native sensitivity check uses a disposable mutant where Select bypasses
+<code>KeyboardIntentRouter.handleButtonKey</code> serialization: the exact race scenario must fail on the
+mutant, then pass on a clean baseline rebuild</li>
+<li>mutation evidence records base revision, exact patch, patch and binary SHA-256 values, expected
+failure, and restored-baseline success; no production test hook is introduced</li>
+</ul>
+<h3 id="ne2e-04-replace-behavioral-sleeps-with-observable-waits">NE2E-04 Replace behavioral sleeps with observable waits</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-02</code></li>
+<li><code>Estimated Size</code>: small</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>browser/frontend/e2e/native/waits.mjs</code></li>
+<li>native scenarios</li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>remove the fixed two-second request-count observation delay</li>
+<li>wait for boot phase, deck text, sanitized address origin/path, status, or metric changes</li>
+<li>for exactly-once actions, wait until the correlated count reaches one and stays one through a
+configured retry-horizon quiescence window</li>
+<li>define separate startup, navigation, interaction, and shutdown timeout classes</li>
+<li>retain short polling only inside explicit condition waits and bounded process cleanup</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>no fixed behavioral sleep remains</li>
+<li>implicit and explicit WebDriver waits are not mixed</li>
+<li>timeout errors identify the expected and last observed states</li>
+<li>the quiescence window covers the production transport’s complete timeout/retry horizon plus a
+bounded scheduling margin; a test locks the E2E constants to the production configuration</li>
+</ul>
+<h3 id="foundation-checkpoint">Foundation checkpoint</h3>
+<ul>
+<li>existing smoke scenarios pass 20 consecutive no-rerun executions on one unchanged revision</li>
+<li>a failing scenario does not suppress evidence from completed scenarios</li>
+<li>the local developer stack survives E2E failure and cleanup</li>
+<li>two E2E stacks coexist and tear down independently while the developer stack remains healthy</li>
+<li>swapped gateway manifests fail through origin-instance mismatch detection</li>
+<li>the suite contains no fixed behavioral sleep</li>
+</ul>
+<h2 id="phase-2-authentication-critical-path">Phase 2: Authentication Critical Path</h2>
+<h3 id="ne2e-05-add-fail-closed-evidence-secure-test-data-and-correlated-origin-oracles">NE2E-05 Add fail-closed evidence, secure test data, and correlated origin oracles</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-03</code>, <code>NE2E-04</code></li>
+<li><code>Estimated Size</code>: medium</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>browser/frontend/e2e/native/evidence.mjs</code></li>
+<li><code>browser/frontend/e2e/native/test-data.mjs</code></li>
+<li><code>browser/frontend/e2e/native/origin-metrics.mjs</code></li>
+<li><code>wml-server/internal/origin/app.go</code></li>
+<li><code>.github/workflows/native-tauri-kannel-e2e.yml</code></li>
+<li>evidence unit tests</li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>generate a unique username for every scenario and run</li>
+<li>keep PIN values in process memory only</li>
+<li>treat every issued session ID as a secret canary from creation through invalidation</li>
+<li>treat Kannel admin/status credentials as whole-run secrets from process startup through teardown;
+parse and redact status URLs before any timeout or cleanup message</li>
+<li>treat WebDriver session handles as ephemeral control capabilities: keep them in provider memory,
+never retain or echo them, and destroy them during owned-session cleanup</li>
+<li>write all runtime output to a non-uploaded owned <code>raw/</code> directory</li>
+<li>after sanitization succeeds, copy only explicit safe filenames into a separate <code>safe-upload/</code>
+directory; reject symlinks and paths that resolve outside <code>raw/</code></li>
+<li>configure the always-running CI upload step to target only the exact
+<code>run.*/waves-e2e-*/*/safe-upload/*</code> layout with <code>if-no-files-found: error</code></li>
+<li>before upload, validate one exact mode-specific manifest: the complete normal safe bundle, the
+single static sanitizer-failure bundle, or the single static pre-scenario infrastructure-failure
+bundle; reject missing, extra, symlinked, path-escaping, or digest-mismatched entries</li>
+<li>if operation or process ownership remains unresolved, publish only a fixed static ownership
+failure, stop the suite, retain active restricted files outside the upload tree, and delete
+secret-bearing restricted evidence only after later settlement proves ownership release</li>
+<li>validate the normal manifest, its entries, and <code>result.json</code> against exact bounded schemas and
+fixed assertion/checkpoint/failure-class allowlists; require canonical JSON bytes and never trust
+self-described manifest fields</li>
+<li>on a scan failure, delete raw evidence and emit only a static failure manifest that never includes
+the matched value, an excerpt, a request body, or page source</li>
+<li>prohibit screenshots, page source, DOM snapshots, video, traces, and unstructured runtime logs
+between the first secret creation/keystroke and confirmation that no session was issued or that
+the issued session was invalidated</li>
+<li>capture child-process output without forwarding it to workflow stdout/stderr; console messages in
+the secret interval are static/schema-only and cannot interpolate request, assertion, address, or
+child-process values</li>
+<li>apply redacted/non-interpolating console rules for infrastructure credentials and WebDriver handles
+for the entire run, including startup, readiness timeout, interruption, and teardown</li>
+<li>strip query strings and fragments from every retained address and checkpoint</li>
+<li>create a bounded non-secret action ID for each form action and preserve it from the controlled
+origin’s GET form URL into the POST action</li>
+<li>enable action-correlation behavior only for the owned E2E origin through an explicit test-fixture
+mode; the ordinary origin rejects or ignores the parameter without exposing per-action state</li>
+<li>expose bounded per-action phase/count data with strict token validation, retention caps, and
+run-scoped expiry; never associate the action ID with form fields</li>
+<li>assign a fresh action ID to every POST attempt; in fixture mode a validation response advances a
+strictly validated bounded attempt suffix in the next rendered form action, so a failed attempt
+and its corrected retry each have an independent exactly-once count</li>
+<li>capture global metric snapshots only as secondary context</li>
+<li>explicitly omit form bodies and credentials from evidence</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>accounts never collide between scenarios</li>
+<li>registration/login outcomes are proven by visible response decks and metric deltas</li>
+<li>exactly-once outcomes are proven by a correlated POST count of one that remains stable through the
+configured retry-horizon quiescence window</li>
+<li>the PIN does not appear in JSON, HTML, driver output, Tauri output, Compose logs, or environment
+reports</li>
+<li>no issued session ID or address query/fragment appears in retained files or workflow console output</li>
+<li>no Kannel credential or WebDriver session handle appears in retained files or workflow console
+output across the complete process lifecycle</li>
+<li>a deliberately written canary makes the artifact scanner fail</li>
+<li>a scan failure cannot cause any raw artifact to be uploaded</li>
+<li>an authentication failure produces no retained visual or DOM artifact from the credential-entry
+interval</li>
+<li>authentication failure evidence is limited to a schema-only allowlist of assertions, counters,
+a maximum of 16 fixed-enum boundary checkpoints, a fixed failure class, environment metadata,
+and cleanup outcome; “sanitized logs” are not an allowed evidence class</li>
+<li>authentication scenarios emit the ordered checkpoints <code>engine-ready</code>, <code>deck-ready</code>,
+<code>form-ready</code>, <code>ui-dispatched</code>, <code>response-rendered</code>, <code>origin-confirmed</code>, and (for login)
+<code>session-invalidated</code>; the runner maps the last completed checkpoint to a fixed class for the next
+boundary that failed</li>
+</ul>
+<p>Verify:</p>
+<ul>
+<li>malicious fixtures cover PIN/session plaintext, URL/JSON/HTML encodings, filenames, symlinks,
+traversal attempts, assertion/error interpolation, child-process output, workflow-console output,
+and a screenshot-policy violation</li>
+<li>workflow tests prove the upload action has no path to <code>raw/</code>, including on cancellation and
+sanitizer failure</li>
+<li>safe-bundle tests prove partial, extra, symlinked, and digest-mismatched bundles fail before upload;
+<code>if-no-files-found: error</code> is only a secondary empty-path guard</li>
+<li>origin tests prove invalid/oversized IDs are rejected, cardinality is bounded, and two concurrent
+actions have independent counts</li>
+<li>origin tests prove validation responses advance to a fresh attempt ID and every attempt is counted
+independently</li>
+</ul>
+<h3 id="ne2e-06-register-with-deterministic-and-ordinary-keyboard-submission">NE2E-06 Register with deterministic and ordinary keyboard submission</h3>
+<ul>
+<li><code>Scenario IDs</code>: <code>AUTH-NATIVE-001A</code> deterministic race, <code>AUTH-NATIVE-001B</code> ordinary keyboard</li>
+<li><code>Priority</code>: P0</li>
+<li><code>Depends On</code>: <code>NE2E-05</code></li>
+<li><code>Estimated Size</code>: small</li>
+</ul>
+<p>Preconditions:</p>
+<ul>
+<li>fresh native app/WebDriver session</li>
+<li>unique username</li>
+<li>healthy gateway and WML origin</li>
+</ul>
+<p>Actions:</p>
+<ol>
+<li>Open <code>wap://localhost/register</code>.</li>
+<li>Enter the username.</li>
+<li>Move focus to PIN.</li>
+<li>Enter all but the final PIN digit.</li>
+<li>For <code>001A</code>, in one WebDriver Execute Script call, synchronously dispatch the final digit keydown
+followed by keyboard Enter through the production <code>window</code> handler.</li>
+<li>In a fresh independent scenario/account for <code>001B</code>, enter the complete PIN, wait for the visible
+masked state, focus the viewport, and submit with ordinary WebDriver <code>sendKeys(ENTER)</code>.</li>
+</ol>
+<p>Accept:</p>
+<ul>
+<li>PIN is rendered as masked text</li>
+<li><code>Registration OK</code> renders with the expected username</li>
+<li><code>register_success_total</code> increases by exactly one as a secondary aggregate check</li>
+<li>the scenario’s correlated POST count reaches one and remains one through the configured
+retry-horizon quiescence
+window</li>
+<li>no missing-fields error appears</li>
+<li>the secret canary scan passes</li>
+<li><code>001A</code> proves adverse queue ordering; <code>001B</code> proves the normal WebDriver keyboard routing path</li>
+</ul>
+<p>This is the direct native regression for the original stale/missing-form-value failure.</p>
+<h3 id="ne2e-07-login-with-deterministic-and-physical-select-submission">NE2E-07 Login with deterministic and physical Select submission</h3>
+<ul>
+<li><code>Scenario IDs</code>: <code>AUTH-NATIVE-002A</code> deterministic race, <code>AUTH-NATIVE-002B</code> physical interaction</li>
+<li><code>Priority</code>: P0</li>
+<li><code>Depends On</code>: <code>NE2E-05</code></li>
+<li><code>Estimated Size</code>: small</li>
+</ul>
+<p>Preconditions:</p>
+<ul>
+<li>POST the unique account directly to the controlled origin’s existing registration handler over
+loopback, without logging the body, before taking the login baseline</li>
+<li>launch a fresh native app/WebDriver session</li>
+</ul>
+<p>Actions:</p>
+<ol>
+<li>Open <code>wap://localhost/login</code>.</li>
+<li>Enter the username and PIN.</li>
+<li>For <code>002A</code>, in one WebDriver Execute Script call, synchronously dispatch the final digit keydown
+and invoke the real Select button’s production click handler.</li>
+<li>In a fresh independent scenario/account for <code>002B</code>, enter the complete PIN, wait for the visible
+masked state, and activate Select with the provider’s ordinary WebDriver click operation.</li>
+</ol>
+<p>Accept:</p>
+<ul>
+<li><code>Login OK</code> renders with the expected username</li>
+<li><code>login_success_total</code> increases by exactly one as a secondary aggregate check</li>
+<li><code>login_failure_total</code> does not change</li>
+<li>the scenario’s correlated login POST count reaches one and remains one through the measured
+quiescence window</li>
+<li>the protected portal action is usable</li>
+<li>the secret canary scan passes</li>
+<li><code>002A</code> proves adverse queue ordering; <code>002B</code> proves the normal physical-button automation path</li>
+</ul>
+<p>Keep the issued session ID only in live provider memory. Before retaining any success visual
+evidence, navigate through Logout, then prove the old session is rejected with a non-echoing live
+request to the controlled origin’s existing portal handler (or a bounded internal per-session
+oracle). Only after that invalidation proof may the scenario navigate to a credential-free canonical
+deck whose current address has no query or fragment. The portal/session interval is asserted only
+through non-retained live observations and schema-only counters/checkpoints; the portal deck itself
+visibly contains the session ID and must never be captured or echoed.</p>
+<h3 id="ne2e-08-add-the-full-register-to-login-journey">NE2E-08 Add the full register-to-login journey</h3>
+<ul>
+<li><code>Scenario ID</code>: <code>AUTH-NATIVE-003</code></li>
+<li><code>Priority</code>: P1 initially</li>
+<li><code>Depends On</code>: <code>NE2E-06</code>, <code>NE2E-07</code></li>
+<li><code>Estimated Size</code>: small</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>register through the UI</li>
+<li>follow the response-deck login action</li>
+<li>verify intended username prefill/context behavior</li>
+<li>enter the PIN, authenticate, and open the protected portal</li>
+<li>verify the portal live without retaining its bearer-bearing deck, then log out, return to a
+canonical credential-free deck, and only then permit visual/unstructured success evidence</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>the complete journey succeeds through the native UI</li>
+<li>registration and login metrics each increase once</li>
+<li>the portal identifies the authenticated user</li>
+<li>the old session is rejected after Logout before retained visual/unstructured evidence resumes</li>
+<li>the scenario remains independent of all other scenarios</li>
+</ul>
+<p>This longer journey supplements rather than replaces the short independent P0 authentication tests.</p>
+<h3 id="ne2e-09-add-authentication-validation-and-recovery">NE2E-09 Add authentication validation and recovery</h3>
+<ul>
+<li><code>Priority</code>: P1</li>
+<li><code>Depends On</code>: <code>NE2E-06</code>, <code>NE2E-07</code></li>
+<li><code>Estimated Size</code>: medium</li>
+</ul>
+<p>Scenarios:</p>
+<ul>
+<li>username present with missing PIN</li>
+<li>PIN present with missing username</li>
+<li>invalid PIN format</li>
+<li>incorrect login PIN</li>
+<li>duplicate username</li>
+<li>failed login followed by successful retry</li>
+<li>registration validation failure followed by successful correction</li>
+<li>username preservation and PIN handling after validation failures</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>each scenario asserts the exact visible error class/message</li>
+<li>every POST attempt receives a fresh correlated action ID and reaches exactly one receipt;
+corrected retries never reuse the failed attempt’s ID</li>
+<li>recovery succeeds without restarting the shared gateway/origin environment</li>
+<li>sensitive input behavior matches the documented engine/browser security contract</li>
+</ul>
+<h3 id="authentication-checkpoint">Authentication checkpoint</h3>
+<ul>
+<li>keyboard Enter and physical Select both submit complete form state through the real native stack</li>
+<li>the recorded Select-serialization mutant makes the exact native race scenario fail, and the clean
+baseline rebuild makes it pass</li>
+<li>all authentication artifacts pass the secret scan</li>
+<li>sanitizer failure proves raw evidence cannot reach artifact upload</li>
+<li>P0 authentication scenarios are short and independent</li>
+</ul>
+<h2 id="phase-3-broader-native-critical-flows">Phase 3: Broader Native Critical Flows</h2>
+<h3 id="required-p0-suite">Required P0 suite</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Scenario</th>
+<th>Primary boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BOOT-NATIVE-001</code></td>
+<td>Cold launch reaches network-ready state</td>
+<td>package/runtime -&gt; frontend -&gt; native engine</td>
+</tr>
+<tr>
+<td><code>TRN-NATIVE-001</code></td>
+<td>Gateway home deck renders</td>
+<td>transport -&gt; Kannel -&gt; WML origin</td>
+</tr>
+<tr>
+<td><code>AUTH-NATIVE-001A</code></td>
+<td>Registration with same-task final character + Enter</td>
+<td>UI -&gt; controller/IPC/engine -&gt; correlated POST</td>
+</tr>
+<tr>
+<td><code>AUTH-NATIVE-001B</code></td>
+<td>Registration with ordinary WebDriver Enter</td>
+<td>physical keyboard routing -&gt; correlated POST</td>
+</tr>
+<tr>
+<td><code>AUTH-NATIVE-002A</code></td>
+<td>Login with same-task final character + Select handler</td>
+<td>UI -&gt; controller/IPC/engine -&gt; correlated POST</td>
+</tr>
+<tr>
+<td><code>AUTH-NATIVE-002B</code></td>
+<td>Login with ordinary WebDriver Select click</td>
+<td>physical interaction -&gt; session</td>
+</tr>
+<tr>
+<td><code>NAV-NATIVE-001</code></td>
+<td>Card and external-deck navigation</td>
+<td>UI -&gt; engine history</td>
+</tr>
+<tr>
+<td><code>NAV-NATIVE-002</code></td>
+<td>Back crosses host-deck then same-deck history</td>
+<td>host history -&gt; engine card history</td>
+</tr>
+<tr>
+<td><code>NAV-NATIVE-003</code></td>
+<td>Reload fetches once without duplicating history</td>
+<td>UI -&gt; transport -&gt; host history</td>
+</tr>
+<tr>
+<td><code>ERR-NATIVE-001</code></td>
+<td>Invalid URL shows an error and recovers</td>
+<td>adapter error propagation</td>
+</tr>
+<tr>
+<td><code>REQ-NATIVE-001</code></td>
+<td>One navigation action produces one origin request</td>
+<td>duplicate-request prevention</td>
+</tr>
+<tr>
+<td><code>RACE-NATIVE-001</code></td>
+<td>Cancelled slow response cannot replace a newer deck</td>
+<td>cancellation -&gt; stale-response exclusion</td>
+</tr>
+<tr>
+<td><code>RACE-NATIVE-002</code></td>
+<td>Stop preserves the current deck and permits recovery</td>
+<td>UI -&gt; controller cancellation -&gt; recovery</td>
+</tr>
+<tr>
+<td><code>ERR-NATIVE-002</code></td>
+<td>Owned Kannel outage is visible and restart recovers</td>
+<td>transport failure -&gt; infrastructure recovery</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nightly-p1-suite">Nightly P1 suite</h3>
+<ul>
+<li>full register-to-login portal journey</li>
+<li>wrong PIN and successful retry</li>
+<li>duplicate registration</li>
+<li>input/select preference behavior</li>
+<li>fragment and external navigation</li>
+<li>keyboard/softkey parity</li>
+<li>transport failure with fallback disabled</li>
+<li>malformed or unsupported WML response</li>
+<li>application restart with isolated state</li>
+<li>repeated immediate-submit stress sequence</li>
+</ul>
+<h3 id="ne2e-10-add-deterministic-failure-fixtures">NE2E-10 Add deterministic failure fixtures</h3>
+<ul>
+<li><code>Depends On</code>: authentication checkpoint</li>
+<li><code>Estimated Size</code>: medium</li>
+<li><code>Likely Files</code>:
+<ul>
+<li>bounded fixtures/routes under <code>wml-server/internal/origin/</code></li>
+<li>WML-origin tests</li>
+<li>native failure scenarios</li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>add only the minimum fixtures required for slow/cancellable, malformed, and unsupported responses</li>
+<li>expose fixtures through the existing allow-listed WML lab routing model</li>
+<li>keep fallback disabled so the native transport result is unambiguous</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>fault behavior originates at the controlled origin/gateway boundary</li>
+<li>no fetch behavior or fault simulation enters the engine</li>
+<li>each failure produces a visible error and a proven recovery action</li>
+<li>fixtures are bounded, deterministic, and unit-tested</li>
+</ul>
+<p>Implementation status:</p>
+<ul>
+<li>the fixture-mode-only delayed navigation route records one bounded <code>navigation</code> action as
+<code>received</code>, then <code>success</code> or <code>cancelled</code>; production origin mode does not register the route</li>
+<li><code>RACE-NATIVE-001</code> and <code>RACE-NATIVE-002</code> prove stale-response exclusion, explicit Stop behavior,
+prior-deck preservation, and recovery through the real native UI/transport assembly</li>
+<li><code>ERR-NATIVE-002</code> stops only the run-owned Kannel Compose service, proves the visible transport
+error, restores Kannel in a mandatory recovery path, waits for admin health, and then proves a
+real deck load in the same browser session</li>
+<li>malformed and unsupported-response fixtures remain follow-up scope</li>
+</ul>
+<h2 id="phase-4-evidence-flake-and-maintenance-discipline">Phase 4: Evidence, Flake, and Maintenance Discipline</h2>
+<h3 id="ne2e-11-standardize-evidence-bundles">NE2E-11 Standardize evidence bundles</h3>
+<ul>
+<li><code>Depends On</code>: foundation checkpoint</li>
+<li><code>Estimated Size</code>: small</li>
+</ul>
+<p>Every scenario writes a structured manifest containing:</p>
+<ul>
+<li>schema version</li>
+<li>scenario and suite IDs</li>
+<li>result and duration</li>
+<li>operating system and architecture</li>
+<li>Tauri, driver, Node, and Rust versions</li>
+<li>active transport profile, fallback, and destination policy</li>
+<li>assertions</li>
+<li>sanitized metrics before/after</li>
+<li>last observed UI state</li>
+<li>cleanup outcome</li>
+</ul>
+<p>Artifact policy:</p>
+<ul>
+<li>runtime tools write only to a non-uploaded owned <code>raw/</code> directory</li>
+<li>after sanitization, construct <code>safe-upload/</code> from an explicit filename allowlist</li>
+<li>validate the exact expected mode-specific filename/digest manifest before upload: complete normal
+bundle, single static sanitizer-failure bundle, or single static pre-scenario
+infrastructure-failure bundle, with no missing, extra, symlinked, escaping, or digest-mismatched
+entry</li>
+<li>treat synthesis of the infrastructure-failure bundle as a nonzero run outcome; a failure-only
+bundle can never satisfy the native job</li>
+<li>always retain safe environment metadata, assertion manifest, duration, boundary checkpoints, and
+cleanup report</li>
+<li>retain one final screenshot on success only after any issued session is invalidated and the
+current canonical deck/address is proven free of credentials, session IDs, queries, and fragments</li>
+<li>outside the authentication secret-entry interval, a failure may retain sanitized screenshot, page
+source, driver logs, Tauri stdout/stderr, Kannel logs, origin logs, Compose status, metrics, and
+last observation</li>
+<li>during an authentication/session interval, retain no screenshot, page source, DOM snapshot,
+video, trace, or unstructured runtime log; retain only the schema-only authentication evidence
+allowlist defined by <code>NE2E-05</code></li>
+<li>never retain authentication bodies or raw sensitive runtime state</li>
+<li>upload only <code>safe-upload/</code>; sanitizer failure removes raw evidence and publishes a static safe
+failure manifest without the matched secret or excerpt</li>
+<li>child-process output remains captured without console forwarding during the authentication/session
+interval, and workflow console messages are static and non-interpolating</li>
+</ul>
+<h3 id="ne2e-12-enforce-the-flake-policy">NE2E-12 Enforce the flake policy</h3>
+<ul>
+<li><code>Depends On</code>: <code>NE2E-11</code></li>
+<li><code>Estimated Size</code>: small</li>
+</ul>
+<p>Policy:</p>
+<ul>
+<li>no automatic behavioral retries</li>
+<li>bounded retry is allowed only for service/driver readiness</li>
+<li>a flaky test is a defect, not a pass</li>
+<li>quarantined scenarios require an owner, reason, issue, and expiry date</li>
+<li>quarantined scenarios cannot satisfy a required gate</li>
+<li>require 20 consecutive, no-rerun executions on one unchanged revision</li>
+<li>independently require four consecutive scheduled, no-rerun successes over at least 21 elapsed days</li>
+<li>neither evidence sample substitutes for the other</li>
+</ul>
+<p>Operational targets, not application performance assertions:</p>
+<ul>
+<li>Linux P0 native suite: less than 15 minutes at CI P95</li>
+<li>Linux nightly suite: less than 35 minutes</li>
+<li>unclassified infrastructure failure rate below 2 percent before the lane becomes required</li>
+<li>one failure artifact bundle is sufficient for boundary-level triage</li>
+</ul>
+<h2 id="phase-5-cross-platform-webdriver-research-spike">Phase 5: Cross-Platform WebDriver Research Spike</h2>
+<p>Start only after the Linux authentication suite is stable and required.</p>
+<h3 id="ne2e-13-prototype-tauris-embedded-webdriver-provider">NE2E-13 Prototype Tauri’s embedded WebDriver provider</h3>
+<ul>
+<li><code>Depends On</code>: Linux P0 promotion</li>
+<li><code>Estimated Size</code>: medium</li>
+<li><code>Likely Files</code>:
+<ul>
+<li><code>browser/src-tauri/Cargo.toml</code></li>
+<li><code>browser/src-tauri/src/lib.rs</code></li>
+<li>a test-only Tauri capability/configuration</li>
+<li>WebdriverIO configuration/provider modules</li>
+<li>CI matrix workflow changes</li>
+</ul>
+</li>
+</ul>
+<p>Build:</p>
+<ul>
+<li>add testing plugins as optional dependencies behind an explicit Cargo feature such as
+<code>native-e2e-driver</code></li>
+<li>register testing plugins only under that feature</li>
+<li>reuse the Waves-facing scenario intent where practical</li>
+<li>do not use command mocking in the native full-stack suite</li>
+<li>run one cold-start and one authentication scenario on Linux, macOS, and Windows</li>
+</ul>
+<p>Accept:</p>
+<ul>
+<li>the same user-visible behavior passes on all three platforms</li>
+<li>the ordinary release dependency graph excludes testing plugins</li>
+<li>a release binary exposes no WebDriver listener or test permission</li>
+<li>production global Tauri/API exposure is not broadened</li>
+<li>platform logs and cleanup evidence are complete</li>
+<li>security review finds no path for accidental test instrumentation in production</li>
+</ul>
+<h3 id="ne2e-14-make-the-driver-adoption-decision">NE2E-14 Make the driver adoption decision</h3>
+<p>Adopt the embedded provider when all of the following are true:</p>
+<ul>
+<li>it runs the same critical scenarios on all three operating systems</li>
+<li>it does not weaken production capabilities</li>
+<li>its CI flake rate is no worse than the Linux Selenium lane</li>
+<li>it materially improves diagnostics or platform reach</li>
+<li>scenario intent does not require a broad rewrite</li>
+</ul>
+<p>Otherwise:</p>
+<ul>
+<li>retain Selenium/<code>tauri-driver</code> as the authoritative Linux/Windows lane</li>
+<li>use the embedded provider only for macOS smoke if its isolation is acceptable</li>
+<li>document the decision and re-evaluation trigger</li>
+</ul>
+<h2 id="phase-6-packaged-artifact-smoke">Phase 6: Packaged Artifact Smoke</h2>
+<p>The current Tauri configuration has <code>bundle.active: false</code>, and the native pilot builds with
+<code>--no-bundle</code>. Package smoke therefore starts only after product/release work activates a supported
+bundle target.</p>
+<h3 id="ne2e-15-add-platform-package-smoke">NE2E-15 Add platform package smoke</h3>
+<ul>
+<li><code>Depends On</code>: product bundling decision, stable native P0 suite</li>
+<li><code>Estimated Size</code>: medium per platform</li>
+</ul>
+<p>Initial scenarios:</p>
+<ul>
+<li>platform bundle/installer is structurally valid</li>
+<li>application installs, mounts, or launches from the packaged location</li>
+<li>production frontend assets load under the release CSP</li>
+<li>network mode loads the gateway deck</li>
+<li>one navigation succeeds</li>
+<li>application exits cleanly</li>
+<li>test plugins, test permissions, and observation surfaces are absent</li>
+</ul>
+<p>Run package smoke in isolated scheduled/release workers against the exact artifacts intended for
+publication. Do not make installer mutation part of ordinary developer-machine tests.</p>
+<h2 id="ci-rollout">CI Rollout</h2>
+<h3 id="stage-1-advisory-always-present-linux-lane">Stage 1: Advisory always-present Linux lane</h3>
+<ul>
+<li>trigger the workflow for every pull request and classify whether relevant paths changed</li>
+<li>conditionally run the expensive Ubuntu native job only for relevant changes</li>
+<li>publish one always-present advisory gate result for both relevant and irrelevant changes</li>
+<li>land this workflow shape in harness-foundation PR 1; do not wait for required-check promotion</li>
+<li>run foundation and authentication scenarios without blocking merge</li>
+<li>collect 20 consecutive unchanged-revision runs and four scheduled successes over at least 21 days</li>
+<li>classify every failure</li>
+</ul>
+<h3 id="stage-2-required-linux-p0-lane">Stage 2: Required Linux P0 lane</h3>
+<p>Trigger on changes to:</p>
+<ul>
+<li>browser frontend source and native host</li>
+<li>browser/engine/transport contracts</li>
+<li>native engine runtime</li>
+<li>Lowband transport</li>
+<li>Kannel configuration</li>
+<li>WML origin</li>
+<li>native E2E harness and workflow</li>
+</ul>
+<p>All P0 scenarios must pass. No quarantined scenario counts toward the gate.</p>
+<p>Workflow shape:</p>
+<ol>
+<li>an always-running classifier determines whether native E2E-relevant paths changed</li>
+<li>the native P0 job runs only when relevant
+<ul>
+<li>scheduled and manual events always classify as relevant and force native execution</li>
+</ul>
+</li>
+<li>a final <code>native-waves-e2e-gate</code> job uses <code>if: always()</code> and checks classifier/native outcomes</li>
+<li>irrelevant changes produce a successful final gate with an explicit skip reason</li>
+<li>only the published <code>Native Waves E2E Gate</code> check from the <code>native-waves-e2e-gate</code> YAML job is
+configured as required; the workflow itself has no top-level path filter</li>
+</ol>
+<p>Before the context becomes required, the same final job runs as an advisory signal. Its tested truth
+table is:</p>
+<table>
+<thead>
+<tr>
+<th>Event/classification</th>
+<th>Native job</th>
+<th>Final gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>relevant pull request</td>
+<td>must run</td>
+<td>mirrors pass/fail/cancel/missing</td>
+</tr>
+<tr>
+<td>irrelevant pull request</td>
+<td>skipped by job condition</td>
+<td>success with explicit irrelevant reason</td>
+</tr>
+<tr>
+<td>schedule or manual</td>
+<td>must run</td>
+<td>mirrors pass/fail/cancel/missing</td>
+</tr>
+<tr>
+<td>classifier failure</td>
+<td>does not run</td>
+<td>failure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="stage-3-nightly-linux-regression">Stage 3: Nightly Linux regression</h3>
+<ul>
+<li>run all P0 and P1 scenarios</li>
+<li>include repeated race-sensitive authentication submission</li>
+<li>retain trend data for duration and failure classification</li>
+</ul>
+<h3 id="stage-4-weekly-platform-matrix">Stage 4: Weekly platform matrix</h3>
+<p>After <code>NE2E-14</code>:</p>
+<ul>
+<li>Ubuntu: full P0/P1 suite</li>
+<li>Windows: P0 smoke</li>
+<li>macOS: P0 smoke</li>
+<li>matrix <code>fail-fast</code> remains disabled so every platform produces evidence</li>
+</ul>
+<h3 id="stage-5-release-artifact-matrix">Stage 5: Release artifact matrix</h3>
+<ul>
+<li>run package smoke against the exact unsigned/signed artifacts appropriate to the release stage</li>
+<li>signing/notarization and installer verification remain release responsibilities, not native runtime
+test concerns</li>
+</ul>
+<h2 id="entry-and-exit-criteria">Entry and Exit Criteria</h2>
+<h3 id="entry-criteria-for-implementation">Entry criteria for implementation</h3>
+<ul>
+<li>current unit, contract, story, native-host, engine, and transport suites are green</li>
+<li>the native pilot succeeds from a pinned main revision</li>
+<li>current success and intentional-failure evidence is preserved</li>
+<li>this plan and its security/production-instrumentation guardrails are accepted</li>
+</ul>
+<h3 id="exit-criteria-for-the-first-major-milestone">Exit criteria for the first major milestone</h3>
+<ul>
+<li>registration and login succeed through the actual native stack</li>
+<li>keyboard Enter and physical Select submission are covered independently</li>
+<li>final-character/immediate-submit behavior is automated</li>
+<li>every native scenario starts with isolated application and WebDriver state</li>
+<li>no fixed behavioral sleeps remain</li>
+<li>no native scenario depends on another scenario</li>
+<li>the complete <code>NE2E-05</code> whole-lifecycle secret taxonomy—including PINs, setup bodies, issued session
+IDs, Kannel admin/status credentials, and WebDriver session handles—plus address queries/fragments
+and secret-bearing unstructured logs is absent from retained artifacts and workflow console output</li>
+<li>two E2E stacks and the developer stack coexist; each host uses its manifest-bound physical gateway,
+detects an origin-instance mismatch, and displays the canonical logical WAP URL</li>
+<li>the P0 suite passes 20 consecutive no-rerun executions on one unchanged revision</li>
+<li>four consecutive scheduled runs pass without reruns over at least 21 elapsed days</li>
+<li>a stale/missing-form-value mutation causes the suite to fail</li>
+<li>Linux P0 exposes an always-present required gate that conditionally runs the expensive suite for
+relevant paths and succeeds explicitly for verified irrelevant changes</li>
+<li>failure evidence retains the bounded fixed-enum checkpoint trail and identifies the next failed
+boundary as startup, UI dispatch, response rendering, origin confirmation, session lifecycle,
+scenario finalization, or cleanup without retaining exception text</li>
+</ul>
+<h2 id="risks-and-mitigations">Risks and Mitigations</h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native UI tests become slow or flaky</td>
+<td>High</td>
+<td>short independent scenarios, fresh driver/app session, explicit waits, no behavioral retries</td>
+</tr>
+<tr>
+<td>Harness cleanup stops developer services</td>
+<td>High</td>
+<td>unique Compose project, owned-resource manifest, cleanup guardrail tests</td>
+</tr>
+<tr>
+<td>Authentication/session secrets leak into files or workflow console</td>
+<td>High</td>
+<td>PIN/SID canaries, captured-not-echoed child output, schema-only interval evidence, invalidation before visuals, fail-closed safe upload</td>
+</tr>
+<tr>
+<td>Test-only WebDriver plugin ships</td>
+<td>High</td>
+<td>optional Cargo feature, separate capability/config, dependency and release-binary absence checks</td>
+</tr>
+<tr>
+<td>Framework migration delays critical auth coverage</td>
+<td>High</td>
+<td>harden existing Selenium lane first; evaluate WDIO separately</td>
+</tr>
+<tr>
+<td>Driver-specific details leak into scenarios</td>
+<td>Medium</td>
+<td>narrow Waves-facing driver API and centralized selectors</td>
+</tr>
+<tr>
+<td>One long journey masks multiple failures</td>
+<td>Medium</td>
+<td>one reason per scenario; long journey remains supplemental P1</td>
+</tr>
+<tr>
+<td>Fixed names, WebDriver ports, or gateway endpoints collide</td>
+<td>High</td>
+<td>no E2E <code>container_name</code>, unique project, both driver ports and TCP/UDP bindings per run, manifest-bound routing plus origin-instance mismatch detection</td>
+</tr>
+<tr>
+<td>Required check remains pending on irrelevant PRs</td>
+<td>High</td>
+<td>no workflow-level path filter; always-present classifier and final gate job</td>
+</tr>
+<tr>
+<td>Global metrics hide delayed duplicates</td>
+<td>High</td>
+<td>bounded action correlation plus configured retry-horizon stability window</td>
+</tr>
+<tr>
+<td>Screenshots become brittle assertions</td>
+<td>Medium</td>
+<td>semantic visible-text/status/metric oracles; screenshots are supporting evidence</td>
+</tr>
+<tr>
+<td>Native suite duplicates engine conformance tests</td>
+<td>Medium</td>
+<td>native suite proves assembly and critical journeys only</td>
+</tr>
+<tr>
+<td>Cross-platform WebViews differ</td>
+<td>Medium</td>
+<td>shared scenario intent, platform-specific provider mechanics, weekly matrix before release gating</td>
+</tr>
+</tbody>
+</table>
+<h2 id="delivery-and-pr-slices">Delivery and PR Slices</h2>
+<h3 id="pr-1-harness-foundation">PR 1: Harness foundation</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/native-waves-e2e-foundation</code></li>
+<li><code>Suggested PR Title</code>: <code>test(browser): harden the native Waves E2E harness</code></li>
+<li><code>Suggested Commit</code>: <code>test(browser): modularize native Waves E2E</code></li>
+<li><code>Scope</code>: <code>NE2E-00</code> through <code>NE2E-05</code>, including fail-closed artifact publication, deterministic
+same-task event injection, correlated origin oracles, contract-first host/transport gateway
+routing, both run-scoped WebDriver ports, and concurrent isolation proof</li>
+<li><code>Workflow prerequisite</code>: remove trigger-level <code>paths</code>, add the always-present advisory
+classifier/native/final-gate truth table, and include <code>browser/frontend/e2e/native/**</code> in its
+relevant-path classifier before PR 2 can land</li>
+</ul>
+<h3 id="pr-2-authentication-critical-flows">PR 2: Authentication critical flows</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/native-waves-e2e-auth</code></li>
+<li><code>Suggested PR Title</code>: <code>test(browser): cover native registration and login flows</code></li>
+<li><code>Suggested Commit</code>: <code>test(browser): add native auth regression coverage</code></li>
+<li><code>Scope</code>: <code>NE2E-06</code> through <code>NE2E-09</code>; authentication scenarios cannot land before PR 1’s safety
+and isolation acceptance tests pass</li>
+</ul>
+<h3 id="pr-3-failure-and-recovery-suite">PR 3: Failure and recovery suite</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/native-waves-e2e-recovery</code></li>
+<li><code>Suggested PR Title</code>: <code>test(browser): expand native transport and recovery coverage</code></li>
+<li><code>Suggested Commit</code>: <code>test(browser): add native failure recovery scenarios</code></li>
+<li><code>Scope</code>: <code>NE2E-10</code> through <code>NE2E-12</code></li>
+</ul>
+<h3 id="pr-4-cross-platform-driver-spike">PR 4: Cross-platform driver spike</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/native-waves-e2e-cross-platform</code></li>
+<li><code>Suggested PR Title</code>: <code>test(browser): evaluate embedded cross-platform Tauri WebDriver</code></li>
+<li><code>Suggested Commit</code>: <code>test(browser): prototype cross-platform Tauri automation</code></li>
+<li><code>Scope</code>: <code>NE2E-13</code> and <code>NE2E-14</code></li>
+</ul>
+<h3 id="pr-5-package-smoke">PR 5: Package smoke</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/waves-package-smoke</code></li>
+<li><code>Suggested PR Title</code>: <code>test(browser): verify packaged Waves application artifacts</code></li>
+<li><code>Suggested Commit</code>: <code>test(browser): add packaged application smoke tests</code></li>
+<li><code>Scope</code>: <code>NE2E-15</code></li>
+</ul>
+<h3 id="promotion-pr-required-check-migration-after-observation">Promotion PR: Required-check migration after observation</h3>
+<ul>
+<li><code>Suggested Branch</code>: <code>codex/native-waves-e2e-promotion</code></li>
+<li><code>Suggested PR Title</code>: <code>ci(browser): promote the native Waves E2E gate</code></li>
+<li><code>Suggested Commit</code>: <code>ci(browser): require the native Waves E2E gate</code></li>
+<li><code>Depends On</code>: both promotion evidence samples, an approved ruleset/settings change window, and a
+qualifying relevant PR run</li>
+<li><code>Scope</code>:
+<ul>
+<li>preserve and revalidate PR 1’s classifier/native/final-gate result matrix</li>
+<li>confirm scheduled and manual events still force native execution</li>
+<li>update <code>docs/ci/REQUIRED_CHECKS.md</code>, <code>docs/ci/CI_SETUP.md</code>, this plan, and the readiness scorecard</li>
+<li>add the published <code>Native Waves E2E Gate</code> check from the <code>native-waves-e2e-gate</code> YAML job to the
+repository ruleset/branch-protection required contexts only after the workflow is present on the
+default branch</li>
+<li>validate the live migration on one relevant and one irrelevant PR so neither can be stranded in
+Pending and relevant native failures remain blocking</li>
+</ul>
+</li>
+</ul>
+<p>Repository settings are an explicit owner-approved delivery step; the implementation PR alone does
+not authorize or complete that external-state change. This promotion can follow PR 2/3 once its
+observation gates close; it does not depend on the later cross-platform or package-smoke PRs.</p>
+<h2 id="estimated-delivery">Estimated Delivery</h2>
+<p>These are engineering-order estimates, not calendar commitments:</p>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Estimated focused effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Safe modular Linux harness, correlation, and artifact controls</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td>Native registration/login critical path</td>
+<td>2-3 days</td>
+</tr>
+<tr>
+<td>Failure/recovery expansion and evidence hardening</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td>Cross-platform embedded-driver spike</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td>Package smoke</td>
+<td>several days per selected platform after bundling is active</td>
+</tr>
+<tr>
+<td>Required-check promotion</td>
+<td>1-2 days after the minimum 21-day observation window</td>
+</tr>
+</tbody>
+</table>
+<p>The foundation and authentication implementation is roughly one to two focused engineering weeks.
+Required-check promotion has a separate minimum 21-day observation window and cannot be promised in
+the implementation week. Cross-platform and packaged artifact coverage should be delivered
+incrementally after the Linux gate proves reliable.</p>
+<h2 id="recommended-start-order">Recommended Start Order</h2>
+<ol>
+<li>Adopt and baseline <code>NE2E-00</code>.</li>
+<li>Land and concurrently verify isolation before adding scenarios (<code>NE2E-01</code>).</li>
+<li>Modularize and add deterministic same-task injection (<code>NE2E-02</code> through <code>NE2E-04</code>).</li>
+<li>Land fail-closed safe publication and correlated origin oracles (<code>NE2E-05</code>).</li>
+<li>Land the two independent native auth regressions (<code>NE2E-06</code>, <code>NE2E-07</code>).</li>
+<li>Add the supplemental journey and recovery cases (<code>NE2E-08</code>, <code>NE2E-09</code>).</li>
+<li>Promote Linux P0 only after the mutation gate, 20-run unchanged-revision sample, and four
+scheduled successes over at least 21 days all pass.</li>
+<li>Expand deterministic failures and nightly coverage.</li>
+<li>Run the cross-platform spike and record the provider decision.</li>
+<li>Add package smoke only after product bundling is activated.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-native-end-to-end-harness-plan">Waves Native End-to-End Harness Plan</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#current-stack-and-evidence">Current Stack and Evidence</a></li><li class="depth-2"><a href="#research-basis">Research Basis</a></li><li class="depth-3"><a href="#research-decision">Research decision</a></li><li class="depth-2"><a href="#test-architecture">Test Architecture</a></li><li class="depth-3"><a href="#three-testing-rings">Three testing rings</a></li><li class="depth-3"><a href="#native-scenario-boundary">Native scenario boundary</a></li><li class="depth-3"><a href="#oracle-hierarchy">Oracle hierarchy</a></li><li class="depth-2"><a href="#scope">Scope</a></li><li class="depth-3"><a href="#in-scope">In scope</a></li><li class="depth-3"><a href="#out-of-scope-for-the-first-build-out">Out of scope for the first build-out</a></li><li class="depth-2"><a href="#non-negotiable-guardrails">Non-Negotiable Guardrails</a></li><li class="depth-2"><a href="#phase-0-adoption-and-baseline">Phase 0: Adoption and Baseline</a></li><li class="depth-3"><a href="#ne2e-00-adopt-the-plan-and-capture-the-pilot-baseline">NE2E-00 Adopt the plan and capture the pilot baseline</a></li><li class="depth-2"><a href="#phase-1-safe-modular-harness-foundation">Phase 1: Safe, Modular Harness Foundation</a></li><li class="depth-3"><a href="#ne2e-01-isolate-the-native-environment">NE2E-01 Isolate the native environment</a></li><li class="depth-3"><a href="#ne2e-02-split-runner-responsibilities">NE2E-02 Split runner responsibilities</a></li><li class="depth-3"><a href="#ne2e-03-establish-the-waves-interaction-api">NE2E-03 Establish the Waves interaction API</a></li><li class="depth-3"><a href="#ne2e-04-replace-behavioral-sleeps-with-observable-waits">NE2E-04 Replace behavioral sleeps with observable waits</a></li><li class="depth-3"><a href="#foundation-checkpoint">Foundation checkpoint</a></li><li class="depth-2"><a href="#phase-2-authentication-critical-path">Phase 2: Authentication Critical Path</a></li><li class="depth-3"><a href="#ne2e-05-add-fail-closed-evidence-secure-test-data-and-correlated-origin-oracles">NE2E-05 Add fail-closed evidence, secure test data, and correlated origin oracles</a></li><li class="depth-3"><a href="#ne2e-06-register-with-deterministic-and-ordinary-keyboard-submission">NE2E-06 Register with deterministic and ordinary keyboard submission</a></li><li class="depth-3"><a href="#ne2e-07-login-with-deterministic-and-physical-select-submission">NE2E-07 Login with deterministic and physical Select submission</a></li><li class="depth-3"><a href="#ne2e-08-add-the-full-register-to-login-journey">NE2E-08 Add the full register-to-login journey</a></li><li class="depth-3"><a href="#ne2e-09-add-authentication-validation-and-recovery">NE2E-09 Add authentication validation and recovery</a></li><li class="depth-3"><a href="#authentication-checkpoint">Authentication checkpoint</a></li><li class="depth-2"><a href="#phase-3-broader-native-critical-flows">Phase 3: Broader Native Critical Flows</a></li><li class="depth-3"><a href="#required-p0-suite">Required P0 suite</a></li><li class="depth-3"><a href="#nightly-p1-suite">Nightly P1 suite</a></li><li class="depth-3"><a href="#ne2e-10-add-deterministic-failure-fixtures">NE2E-10 Add deterministic failure fixtures</a></li><li class="depth-2"><a href="#phase-4-evidence-flake-and-maintenance-discipline">Phase 4: Evidence, Flake, and Maintenance Discipline</a></li><li class="depth-3"><a href="#ne2e-11-standardize-evidence-bundles">NE2E-11 Standardize evidence bundles</a></li><li class="depth-3"><a href="#ne2e-12-enforce-the-flake-policy">NE2E-12 Enforce the flake policy</a></li><li class="depth-2"><a href="#phase-5-cross-platform-webdriver-research-spike">Phase 5: Cross-Platform WebDriver Research Spike</a></li><li class="depth-3"><a href="#ne2e-13-prototype-tauris-embedded-webdriver-provider">NE2E-13 Prototype Tauri’s embedded WebDriver provider</a></li><li class="depth-3"><a href="#ne2e-14-make-the-driver-adoption-decision">NE2E-14 Make the driver adoption decision</a></li><li class="depth-2"><a href="#phase-6-packaged-artifact-smoke">Phase 6: Packaged Artifact Smoke</a></li><li class="depth-3"><a href="#ne2e-15-add-platform-package-smoke">NE2E-15 Add platform package smoke</a></li><li class="depth-2"><a href="#ci-rollout">CI Rollout</a></li><li class="depth-3"><a href="#stage-1-advisory-always-present-linux-lane">Stage 1: Advisory always-present Linux lane</a></li><li class="depth-3"><a href="#stage-2-required-linux-p0-lane">Stage 2: Required Linux P0 lane</a></li><li class="depth-3"><a href="#stage-3-nightly-linux-regression">Stage 3: Nightly Linux regression</a></li><li class="depth-3"><a href="#stage-4-weekly-platform-matrix">Stage 4: Weekly platform matrix</a></li><li class="depth-3"><a href="#stage-5-release-artifact-matrix">Stage 5: Release artifact matrix</a></li><li class="depth-2"><a href="#entry-and-exit-criteria">Entry and Exit Criteria</a></li><li class="depth-3"><a href="#entry-criteria-for-implementation">Entry criteria for implementation</a></li><li class="depth-3"><a href="#exit-criteria-for-the-first-major-milestone">Exit criteria for the first major milestone</a></li><li class="depth-2"><a href="#risks-and-mitigations">Risks and Mitigations</a></li><li class="depth-2"><a href="#delivery-and-pr-slices">Delivery and PR Slices</a></li><li class="depth-3"><a href="#pr-1-harness-foundation">PR 1: Harness foundation</a></li><li class="depth-3"><a href="#pr-2-authentication-critical-flows">PR 2: Authentication critical flows</a></li><li class="depth-3"><a href="#pr-3-failure-and-recovery-suite">PR 3: Failure and recovery suite</a></li><li class="depth-3"><a href="#pr-4-cross-platform-driver-spike">PR 4: Cross-platform driver spike</a></li><li class="depth-3"><a href="#pr-5-package-smoke">PR 5: Package smoke</a></li><li class="depth-3"><a href="#promotion-pr-required-check-migration-after-observation">Promotion PR: Required-check migration after observation</a></li><li class="depth-2"><a href="#estimated-delivery">Estimated Delivery</a></li><li class="depth-2"><a href="#recommended-start-order">Recommended Start Order</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_native_e2e_harness_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

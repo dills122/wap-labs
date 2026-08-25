@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Waves Native E2E Harness Decision Research · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/waves_native_e2e_harness_research"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/waves_native_e2e_harness_research.md</p><div class="markdown-body"><h1 id="waves-native-e2e-harness-decision-research">Waves Native E2E Harness Decision Research</h1>
+<p>Status: accepted decision record; implementation-ready
+Date: 2026-08-24
+Decision owner: browser + WML origin + CI
+Repository revision: <code>21e869cf84838883f1201f8a645777413ac437d5</code></p>
+<h2 id="decision-question">Decision Question</h2>
+<p>What is the smallest reliable design that makes native Waves authentication regressions fail
+before merge while keeping credentials out of CI artifacts, keeping test runs isolated, and
+producing actionable boundary evidence?</p>
+<p>This research is intentionally bounded to six disputed decisions in the native E2E plan:</p>
+<ol>
+<li>deterministic reproduction of the final-character/submission race</li>
+<li>fail-closed authentication evidence</li>
+<li>Compose and native application state isolation</li>
+<li>independent account setup</li>
+<li>exactly-once and boundary-localization oracles</li>
+<li>promotion into an enforceable GitHub required check</li>
+</ol>
+<p>Cross-platform provider selection and packaged-application testing remain separate later spikes.</p>
+<h2 id="method-and-source-hierarchy">Method and Source Hierarchy</h2>
+<p>The source order was:</p>
+<ol>
+<li>current Waves implementation, tests, workflow, and resolved Compose configuration</li>
+<li>normative web specifications</li>
+<li>official Tauri, Docker, GitHub Actions, and Selenium documentation</li>
+<li>inference only where the first three do not prescribe a project-specific design</li>
+</ol>
+<p>Facts, repository observations, inferences, and unknowns are labeled explicitly below.</p>
+<h2 id="repository-experiments">Repository Experiments</h2>
+<p>Environment: macOS development checkout, Node/pnpm dependencies already installed; Compose was
+resolved but services were not started.</p>
+<h3 id="spike-a-production-queue-coverage">Spike A: production queue coverage</h3>
+<p>Command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> browser/frontend</span><span style="color:#9ECBFF"> exec</span><span style="color:#9ECBFF"> vitest</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  src/app/browser-controller.behavior.test.ts</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  -t</span><span style="color:#9ECBFF"> "waits for a pending input draft before a Select button submits the form"</span></span></code></pre>
+<p>Result: pass; one selected test passed and 43 tests were skipped in 1.11 seconds.</p>
+<p>Observation: the existing controller test already proves that a Select click cannot overtake a
+deliberately unresolved input-draft IPC. The native E2E gap is therefore deterministic production
+event injection and assembly coverage, not another controller-only assertion.</p>
+<h3 id="spike-b-current-runner-guard-tests">Spike B: current runner guard tests</h3>
+<p>Command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">node</span><span style="color:#79B8FF"> --test</span><span style="color:#9ECBFF"> scripts/tests/native-tauri-kannel-e2e-script.test.mjs</span></span></code></pre>
+<p>Result: pass; 3 of 3 tests passed.</p>
+<p>Observation: current script tests protect configuration and dependency-provenance behavior, but do
+not yet prove resource ownership, concurrent Compose isolation, safe artifact publication, or
+scenario-level native state freshness.</p>
+<h3 id="spike-c-compose-project-name-isolation">Spike C: Compose project-name isolation</h3>
+<p>Command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> compose</span><span style="color:#79B8FF"> -p</span><span style="color:#9ECBFF"> waves_e2e_a</span><span style="color:#9ECBFF"> config</span></span></code></pre>
+<p>Result: configuration resolved successfully.</p>
+<p>Observation: the network became <code>waves_e2e_a_default</code>, but the resolved services retained fixed
+container names <code>wml-server</code> and <code>wap-gateway</code> and fixed published TCP/UDP ports <code>3000</code>, <code>3001</code>,
+<code>13000</code>, <code>13002</code>, <code>9200</code>, and <code>9201</code>. A unique Compose project name alone cannot permit safe
+coexistence with the developer stack or another E2E run.</p>
+<h2 id="findings-and-decisions">Findings and Decisions</h2>
+<h3 id="d1-reproduce-adverse-ordering-in-one-webdriver-script-task">D1: Reproduce adverse ordering in one WebDriver script task</h3>
+<p>Facts:</p>
+<ul>
+<li>The DOM <code>dispatchEvent()</code> algorithm dispatches the event and invokes its listeners before the
+call returns; synthetic events are explicitly part of the DOM model. See the
+<a href="https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent">WHATWG DOM Standard</a>.</li>
+<li>WebDriver’s Execute Script command executes a supplied JavaScript function in the current
+browsing context. See the <a href="https://w3c.github.io/webdriver/#execute-script">W3C WebDriver specification</a>.</li>
+<li>Waves registers the production keyboard handler on <code>window</code>; the final character and Enter both
+enter the unified queue through that handler. The Select button enters the same queue through the
+production click handler.</li>
+</ul>
+<p>Inference: one synchronous Execute Script call can dispatch the final character keydown and then,
+without yielding, dispatch Enter or invoke the real Select button’s <code>click()</code> method. No promise
+continuation can settle between those two synchronous calls, so this deterministically creates the
+adverse ordering that two separate WebDriver commands cannot guarantee.</p>
+<p>Decision:</p>
+<ul>
+<li>implement a provider primitive named <code>typeFinalCharacterAndSubmitInOneTask</code></li>
+<li>use it for the race-regression scenarios through the real production event handlers</li>
+<li>retain separate ordinary WebDriver keyboard and physical-click scenarios as user-realism smoke</li>
+<li>do not add a production delay or test hook</li>
+</ul>
+<p>Mutation proof:</p>
+<ol>
+<li>build a disposable mutant that changes <code>KeyboardIntentRouter.handleButtonKey</code> from queued
+execution to direct <code>applyEngineKey</code>, matching the pre-fix overtaking behavior</li>
+<li>record the base revision, exact patch, patch SHA-256, binary SHA-256, and scenario ID</li>
+<li>require the exact native race scenario to fail with missing/stale form state</li>
+<li>discard the mutant checkout, rebuild the baseline, and require the same scenario to pass</li>
+</ol>
+<p>This is a one-time harness-sensitivity gate and a repeatable release of the mutation recipe, not a
+mutation performed in ordinary PR CI.</p>
+<h3 id="d2-publish-only-a-constructed-safe-artifact-directory">D2: Publish only a constructed safe artifact directory</h3>
+<p>Facts:</p>
+<ul>
+<li>The current native workflow uploads the entire raw result directory under <code>if: always()</code>.</li>
+<li>GitHub’s official upload action supports failing when its allowlisted path is missing through
+<code>if-no-files-found: error</code>. See
+<a href="https://github.com/actions/upload-artifact#customization-if-no-files-are-found"><code>actions/upload-artifact</code></a>.</li>
+<li>A plaintext scan cannot detect a secret rendered into a screenshot.</li>
+</ul>
+<p>Decision:</p>
+<ul>
+<li>write runtime output to a non-uploaded <code>raw/</code> directory</li>
+<li>construct a separate <code>safe-upload/</code> directory from an explicit filename allowlist only after
+sanitization succeeds</li>
+<li>point the always-running upload step only at <code>safe-upload/</code> and set
+<code>if-no-files-found: error</code></li>
+<li>validate an exact mode-specific filename and digest manifest before upload—either the complete
+normal safe bundle or the single static scanner-failure bundle; reject missing, extra, symlinked,
+escaping, or digest-mismatched entries (<code>if-no-files-found</code> only protects the empty-path case)</li>
+<li>on scan failure, delete the raw credential-bearing evidence before upload and emit only a static
+scanner-failure manifest that contains no matched value, file excerpt, request body, or page source</li>
+<li>never copy symlinks or files that resolve outside the owned raw directory</li>
+</ul>
+<p>Authentication secret and output policy:</p>
+<ul>
+<li>treat PINs, setup bodies, every issued session ID, Kannel admin/status credentials, and WebDriver
+session handles as secret/control-capability canaries</li>
+<li>capture no screenshot, page source, DOM snapshot, video, browser trace, or unstructured log from
+the first secret creation/keystroke until either no session was issued or the issued session is
+invalidated and the retained current state contains no bearer URL</li>
+<li>strip query strings and fragments from all retained addresses and checkpoints</li>
+<li>capture child output without forwarding it to GitHub Actions stdout/stderr; console output during
+the secret/session interval is static and schema-only</li>
+<li>apply credential/handle redaction and non-interpolation from process startup through teardown,
+including readiness timeouts and cleanup; WebDriver handles remain provider-memory-only</li>
+<li>on authentication failure, retain only a schema allowlist of structured assertions, counters,
+boundary checkpoints, environment metadata, and cleanup results</li>
+<li>permit a success screenshot only after logout/session invalidation and navigation to a canonical
+credential-free deck/address; the portal visibly renders its session ID and is never captured</li>
+<li>prove logout invalidation by keeping the SID only in live memory and checking that the existing
+portal handler rejects it before visual or unstructured evidence resumes</li>
+</ul>
+<p>The safe-publisher and its malicious-fixture tests must land before any authentication scenario.</p>
+<h3 id="d3-isolate-global-services-per-run-and-app-state-per-scenario">D3: Isolate global services per run and app state per scenario</h3>
+<p>Facts:</p>
+<ul>
+<li>Docker documents project names as an environment-isolation mechanism, but explicit
+<code>container_name</code> values remain custom global names and inhibit scaling. Docker also supports
+ephemeral host ports by omitting the host-port value. See
+<a href="https://docs.docker.com/compose/how-tos/project-name/">Compose project names</a>,
+<a href="https://docs.docker.com/reference/compose-file/services/#container_name">Compose services</a>, and
+<a href="https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/">port publishing</a>.</li>
+<li>Tauri resolves application data below the platform data directory; on Linux the data, config,
+and cache bases honor the XDG locations. See Tauri’s
+<a href="https://v2.tauri.app/reference/javascript/api/namespacepath/#appdatadir">path API</a>.</li>
+</ul>
+<p>Repository observations:</p>
+<ul>
+<li>the native host currently calls Lowband’s profile-only fetch functions, which construct
+<code>FetchTransportOptions</code> with <code>gateway_endpoint: None</code>; the cancellable API has no options variant</li>
+<li>Lowband then derives the physical UDP peer from the logical WAP resource URL, so placing a random
+gateway port in that URL also changes the logical Kannel request URI</li>
+<li>the current runner fixes the tauri-driver intermediary at <code>127.0.0.1:4444</code>; tauri-driver 2.0.6
+separately configures its intermediary and native-driver ports</li>
+</ul>
+<p>Decision:</p>
+<ul>
+<li>use a unique Compose project per run</li>
+<li>remove <code>container_name</code> from the E2E-resolved stack</li>
+<li>bind every published TCP and UDP port to loopback and allocate/parameterize it per run</li>
+<li>discover assigned ports from resolved/runtime Compose state rather than assuming defaults</li>
+<li>wire a run-scoped physical gateway endpoint through the native host into Lowband
+<code>FetchTransportOptions</code>, including cancellable fetches, without changing the logical WAP URL or
+Kannel request URI</li>
+<li>allocate both the <code>tauri-driver</code> intermediary and native WebDriver ports per run</li>
+<li>bind project ID, discovered endpoint, and expected origin instance ID in a runner-owned manifest;
+the launcher validates the manifest and correlated responses must identify the expected origin</li>
+<li>treat cross-stack UDP reachability as detectable contamination, not authenticated endpoint
+ownership: a deliberate endpoint swap must fail on origin-instance mismatch</li>
+<li>create fresh <code>XDG_DATA_HOME</code>, <code>XDG_CONFIG_HOME</code>, <code>XDG_CACHE_HOME</code>, and WebDriver/application
+profile directories for every scenario</li>
+<li>keep gateway/origin services per run, while keeping app/WebDriver state per scenario</li>
+<li>teardown only resources selected by the owned project ID and cleanup manifest</li>
+</ul>
+<p>Acceptance requires two E2E stacks running concurrently while an ordinary developer stack remains
+healthy, each native host using its manifest-bound physical gateway and validating its expected
+origin instance, a deliberate endpoint swap failing through origin-instance mismatch, and each E2E
+stack tearing down independently.</p>
+<h3 id="d4-seed-login-through-the-controlled-origins-existing-public-registration-behavior">D4: Seed login through the controlled origin’s existing public registration behavior</h3>
+<p>Observation: the controlled Go origin already exposes registration and login handlers and their
+sanitized counters.</p>
+<p>Decision:</p>
+<ul>
+<li>create a unique account by POSTing directly to the controlled origin’s existing registration
+handler over loopback before the login scenario’s metric baseline</li>
+<li>send no setup request through Waves, because the login scenario is intended to isolate login</li>
+<li>never log or retain the setup body</li>
+<li>assert setup success before launching the scenario and destroy the run-scoped origin with the run</li>
+</ul>
+<p>This avoids a privileged seeding API and cross-scenario dependency. It does not replace the separate
+full register-to-login UI journey.</p>
+<h3 id="d5-add-a-bounded-non-secret-action-correlation-oracle">D5: Add a bounded, non-secret action correlation oracle</h3>
+<p>Observation: global metric deltas can show one increment, but they cannot distinguish a delayed
+duplicate from unrelated traffic and cannot localize a failure across the full native path.</p>
+<p>Decision:</p>
+<ul>
+<li>add an opt-in test-fixture action ID to the controlled origin URL, using a random non-secret token
+with a strict bounded alphabet and length</li>
+<li>enable correlation only under an explicit E2E fixture mode on the owned loopback origin; ordinary
+origin execution must not expose per-action state</li>
+<li>preserve that token in the rendered form action so the POST carries it through Waves, transport,
+Kannel, and the origin</li>
+<li>give every POST attempt a fresh token; validation responses advance a bounded attempt suffix in
+the next rendered form, so failure and correction each have independent exactly-once oracles</li>
+<li>expose only bounded per-action request phase/count data; never associate it with form fields</li>
+<li>cap retained IDs and expire them with the run so the fixture cannot become an unbounded metrics
+label or production telemetry surface</li>
+<li>record sanitized checkpoints for these observable boundary groups:
+<ol>
+<li>UI event dispatched</li>
+<li>controller/IPC/engine action accepted, using existing sanitized production diagnostics</li>
+<li>correlated origin POST observed through the real transport/gateway path</li>
+<li>response deck rendered</li>
+</ol>
+</li>
+</ul>
+<p>Exactly once means the correlated POST count reaches <code>1</code>, the expected response renders, and the
+count remains <code>1</code> through a bounded quiescence window that is longer than the observed request and
+response timeout envelope. The implementation spike must measure that envelope and record the
+chosen window; an arbitrary two-second sleep is not acceptable.</p>
+<p>This localizes failures to observable boundary groups. It deliberately does not promise to
+distinguish transport from Kannel internally unless a later need justifies an additional sanitized
+gateway checkpoint.</p>
+<h3 id="d6-use-an-always-present-required-gate-and-two-independent-promotion-samples">D6: Use an always-present required gate and two independent promotion samples</h3>
+<p>Facts:</p>
+<ul>
+<li>GitHub documents that a workflow skipped by path filtering can leave an associated required check
+pending and block merging. A conditionally skipped job, by contrast, reports success; an
+<code>always()</code> dependent job can report a final result. See
+<a href="https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks#handling-skipped-but-required-checks">GitHub required-check troubleshooting</a>.</li>
+</ul>
+<p>Decision:</p>
+<ul>
+<li>remove top-level path filtering from the required workflow</li>
+<li>run an always-present change-classification job</li>
+<li>run native E2E conditionally for relevant changes</li>
+<li>expose one final <code>native-waves-e2e-gate</code> job with <code>if: always()</code> that succeeds for verified
+irrelevant changes and otherwise mirrors the E2E outcome</li>
+<li>make only that final job a required check</li>
+<li>preserve scheduled and manual execution and force those event types to run native E2E</li>
+<li>land the same always-present result matrix in advisory mode with the harness foundation, before
+authentication scenario PRs and before promotion sampling; required status is a later settings step</li>
+</ul>
+<p>Promotion requires both:</p>
+<ol>
+<li>20 consecutive, no-rerun executions against one unchanged revision for concentrated flake
+detection; and</li>
+<li>four consecutive scheduled, no-rerun successes over at least 21 elapsed days for runner and
+ecosystem variation.</li>
+</ol>
+<p>Engineering may be completed in a focused week, but required-check promotion cannot occur before
+the 21-day evidence window closes.</p>
+<p>Promotion is delivered in a distinct post-observation PR/settings step that synchronizes
+<code>docs/ci/REQUIRED_CHECKS.md</code>, <code>docs/ci/CI_SETUP.md</code>, the workflow/check name, and the repository
+ruleset. The live migration must be exercised on both a relevant and irrelevant PR.</p>
+<p>Active <code>A5-08</code>, <code>docs/ci/CI_SETUP.md</code>, and <code>docs/ci/REQUIRED_CHECKS.md</code> are synchronized at plan
+adoption so implementers cannot follow the superseded four-run, unsafe-artifact, or pilot-only path
+description. Only the repository administrator acting as CI owner may change and read back the live
+required-context ruleset.</p>
+<h2 id="remaining-unknowns-and-stop-conditions">Remaining Unknowns and Stop Conditions</h2>
+<p>The following questions are intentionally deferred to implementation spikes:</p>
+<ul>
+<li>the smallest quiescence window supported by measured request/response timing</li>
+<li>whether existing sanitized timeline export is sufficient for the controller/IPC/engine checkpoint
+or needs a narrower evidence projection</li>
+<li>the exact Compose overlay shape that supports dynamic TCP and UDP discovery most cleanly</li>
+</ul>
+<p>Stop and record a new decision if any spike requires production credential logging, a privileged
+seeding endpoint, a test-only native command in ordinary builds, or engine/transport responsibility
+leakage. Those outcomes violate the plan’s guardrails rather than merely changing implementation
+details.</p>
+<h2 id="consequences">Consequences</h2>
+<ul>
+<li>Authentication coverage moves later than the basic runner extraction because artifact safety,
+host/transport endpoint isolation, deterministic event injection, and correlation must land first.</li>
+<li>Failure evidence becomes safer but intentionally less visual during authentication failures.</li>
+<li>Boundary diagnosis is truthful at four observable groups instead of claiming per-layer precision
+that current telemetry cannot support.</li>
+<li>Required-check promotion takes at least 21 elapsed days even if implementation finishes earlier.</li>
+</ul>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#waves-native-e2e-harness-decision-research">Waves Native E2E Harness Decision Research</a></li><li class="depth-2"><a href="#decision-question">Decision Question</a></li><li class="depth-2"><a href="#method-and-source-hierarchy">Method and Source Hierarchy</a></li><li class="depth-2"><a href="#repository-experiments">Repository Experiments</a></li><li class="depth-3"><a href="#spike-a-production-queue-coverage">Spike A: production queue coverage</a></li><li class="depth-3"><a href="#spike-b-current-runner-guard-tests">Spike B: current runner guard tests</a></li><li class="depth-3"><a href="#spike-c-compose-project-name-isolation">Spike C: Compose project-name isolation</a></li><li class="depth-2"><a href="#findings-and-decisions">Findings and Decisions</a></li><li class="depth-3"><a href="#d1-reproduce-adverse-ordering-in-one-webdriver-script-task">D1: Reproduce adverse ordering in one WebDriver script task</a></li><li class="depth-3"><a href="#d2-publish-only-a-constructed-safe-artifact-directory">D2: Publish only a constructed safe artifact directory</a></li><li class="depth-3"><a href="#d3-isolate-global-services-per-run-and-app-state-per-scenario">D3: Isolate global services per run and app state per scenario</a></li><li class="depth-3"><a href="#d4-seed-login-through-the-controlled-origins-existing-public-registration-behavior">D4: Seed login through the controlled origin’s existing public registration behavior</a></li><li class="depth-3"><a href="#d5-add-a-bounded-non-secret-action-correlation-oracle">D5: Add a bounded, non-secret action correlation oracle</a></li><li class="depth-3"><a href="#d6-use-an-always-present-required-gate-and-two-independent-promotion-samples">D6: Use an always-present required gate and two independent promotion samples</a></li><li class="depth-2"><a href="#remaining-unknowns-and-stop-conditions">Remaining Unknowns and Stop Conditions</a></li><li class="depth-2"><a href="#consequences">Consequences</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/waves_native_e2e_harness_research.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

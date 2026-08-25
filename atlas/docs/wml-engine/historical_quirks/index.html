@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Historical WAP Browser Quirks Reference · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="wml-engine/historical_quirks"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>wml-engine</span></nav><p class="doc-path">docs/wml-engine/historical_quirks.md</p><div class="markdown-body"><h1 id="historical-wap-browser-quirks-reference">Historical WAP Browser Quirks Reference</h1>
+<p>Status: reference data, <strong>not implementation-ready</strong>. Nothing in this file or in
+<code>historical-quirks.json</code> currently affects <code>engine-wasm/engine</code> runtime behavior, and none of it
+should until explicitly promoted through the process below.</p>
+<h2 id="purpose">Purpose</h2>
+<p>WaveNav currently implements WML against the formal WAP 1.2.1 / WML 1.3 specification, tracked by
+the spec-fidelity compliance program (<code>docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md</code>). Real historical
+WAP microbrowsers – chiefly Openwave/Phone.com’s UP.Browser and Nokia’s browser implementations –
+are known to have diverged from that spec in practice, the way real HTML of the era was written for
+specific browser quirks rather than strict spec compliance. This is the project’s stated
+differentiator (see <code>docs/waves/WAVES_ARCHITECTURE_REVIEW_2026-07-25.md</code> §6, “Historical
+compatibility profiles”), but building it on guesses would undermine the same evidence discipline
+the WML compliance program already enforces.</p>
+<p><code>historical-quirks.json</code> is a structured, source-cited catalogue of documented divergences, gathered
+across two research passes – see the file’s own <code>researchPasses</code> field for exact scope/dates of
+each. It exists so a future compatibility-profile feature has real evidence to build against
+instead of starting from memory or plausible-sounding assumption. <code>COMPATIBILITY_PROFILE_DESIGN_ NOTES.md</code> captures the proposed architecture (profile struct shape, build order, test corpus) that
+pass 2’s research sketched out – also reference-only, not implemented, subject to the same
+promotion rule as this file.</p>
+<h2 id="whats-actually-in-the-data">What’s actually in the data</h2>
+<p>84 entries as of 2026-07-25 (33 from pass 1, 51 added in pass 2).</p>
+<p>Pass 1’s bulk (24 entries) came from the WAP Forum’s own official “Generic Content Authoring Guide
+for WML 1.1” (WAP-218-GCAG, 8-Feb-2001) – a genuinely strong, citable, primary-tier source, but one
+that deliberately anonymizes every divergence as “some browsers…” for consortium-neutrality
+reasons rather than naming a vendor. Its remaining entries carried vendor attribution (Openwave/
+Phone.com, Nokia, WinWAP) but came from tutorial sites and similar secondary sources – real
+testimony, not independently reproduced against a primary vendor document. That pass explicitly
+flagged Wayback Machine access as unavailable, which it identified as the main reason
+vendor-specific attribution was thin.</p>
+<p>Pass 2 (an external deep-research task, results supplied by the user) closed a meaningful part of
+that gap: it recovered <strong>primary vendor developer documentation</strong> for four distinct devices –
+Nokia’s own 7110 service developer guide, Motorola’s A008 WAP developer style guide, Ericsson’s R320
+manuals, plus several <strong>normative OMA specs</strong> fetched directly (WML 1.1, WBXML, WMLScript, WMLScript
+libraries, WAP caching, WAEMT, UAProf) rather than relying on secondary summaries of them. Those
+entries carry <code>sourceType: "primary-vendor-doc"</code> or <code>"normative-spec"</code> and mostly <code>confidence: "high"</code>. Not every pass-2 URL was independently re-fetched during this integration pass – see each
+entry’s own citation and the file’s <code>researchPasses</code> note for exactly what was and wasn’t
+re-verified before being added.</p>
+<p>Every entry’s <code>sourceType</code>, <code>confidence</code>, and <code>attributionConfidence</code> fields say explicitly which
+kind of evidence it is; read those before citing or acting on any single entry.</p>
+<h2 id="schema">Schema</h2>
+<p>Each entry in <code>historical-quirks.json</code>’s <code>entries</code> array has:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>Stable, unique kebab-case slug</td>
+</tr>
+<tr>
+<td><code>vendor</code></td>
+<td>Attributed vendor name, or <code>null</code> for an unattributed/pattern-tier entry (most GCAG entries)</td>
+</tr>
+<tr>
+<td><code>product</code></td>
+<td>Specific browser/product/version, or <code>null</code> if not that specific</td>
+</tr>
+<tr>
+<td><code>wmlConstruct</code></td>
+<td>The WML tag, attribute, or event the divergence concerns</td>
+</tr>
+<tr>
+<td><code>claimedBehavior</code></td>
+<td>The divergence itself, in the source’s own terms where possible</td>
+</tr>
+<tr>
+<td><code>sourceType</code></td>
+<td>One of <code>sourceTypeTaxonomy</code>: <code>normative-spec</code>, <code>official-informative-document</code>, <code>primary-vendor-doc</code>, <code>contemporary-trade-press</code>, <code>tutorial-site</code>, <code>modern-retrospective</code>, <code>unverified-search-synthesis</code></td>
+</tr>
+<tr>
+<td><code>sourceUrl</code></td>
+<td>Where the claim comes from</td>
+</tr>
+<tr>
+<td><code>confidence</code></td>
+<td>One of <code>confidenceTaxonomy</code> (<code>high</code>/<code>medium</code>/<code>low</code>): how trustworthy the claim itself is</td>
+</tr>
+<tr>
+<td><code>attributionConfidence</code></td>
+<td>One of <code>attributionConfidenceTaxonomy</code> (<code>none</code>/<code>low</code>/<code>medium</code>/<code>high</code>): how confident the <em>vendor attribution specifically</em> is, independent of whether the underlying divergence is real</td>
+</tr>
+<tr>
+<td><code>implementationReady</code></td>
+<td>Always <code>false</code> today – see Promotion rule below</td>
+</tr>
+<tr>
+<td><code>notes</code></td>
+<td>Optional caveats, chronology mismatches, or corroboration gaps worth knowing before citing the entry elsewhere</td>
+</tr>
+</tbody>
+</table>
+<p><code>normative-spec</code> is distinct from <code>official-informative-document</code>: the latter is reserved for the
+WAP Forum’s GCAG specifically (explicitly informative, not normative, and deliberately
+vendor-anonymized); the former is for actual normative OMA specs (WML, WBXML, WMLScript, UAProf,
+caching, WAEMT) fetched directly. Primary Openwave developer documentation (developer.openwave.com)
+is still not recovered as of pass 2 – Wayback Machine access remains the likely path to closing that
+specific gap, per pass 1’s Open Questions.</p>
+<h2 id="promotion-rule-read-before-writing-a-compatibilityprofile">Promotion rule (read before writing a <code>CompatibilityProfile</code>)</h2>
+<p>This file is data, not agent instructions or runtime behavior, per the same trust-boundary
+convention this project already applies to generated compliance context packs
+(<code>docs/agents/COMPLIANCE_CONTEXT_RETRIEVAL.md</code>, “Trust boundary” section). If and when a
+runtime-level compatibility profile type is built:</p>
+<ol>
+<li>It must be explicitly selected, never default (e.g. <code>CompatibilityProfile::StrictWml13</code> as the
+default, with something like <code>CompatibilityProfile::HistoricalObserved(...)</code> requiring explicit
+opt-in) – matching <code>AGENTS.md</code>’s multi-target/contract-first guidance and the “don’t build this
+speculatively” caution in the 2026-07-25 architecture review.</li>
+<li>Any quirk it applies must trace back to a specific <code>id</code> in <code>historical-quirks.json</code> – never an
+unattributed <code>if</code> branch inlined into parser/runtime/layout code.</li>
+<li>An entry with <code>attributionConfidence: "none"</code> or <code>"low"</code> should not be implemented as
+vendor-specific behavior. Unattributed GCAG-sourced entries (<code>attributionConfidence: "none"</code>) are
+real, well-evidenced <em>categories</em> of divergence, but implementing one as if it were, say,
+“Openwave does X” would misrepresent the evidence – if a generic/pattern-tier quirk is
+implemented at all, it should be presented and profiled as such, not vendor-attributed.</li>
+<li>Do not flip <code>implementationReady</code> to <code>true</code> for an entry without independent corroboration beyond
+what’s currently cited – a second source, ideally primary or contemporary trade press, agreeing
+with the existing one. Tutorial-site or search-synthesis sourced entries stay <code>false</code> until that
+bar is met.</li>
+</ol>
+<p>This keeps the existing, spot-checked WAP 1.2.1/WML 1.3 compliance-evidence program uncontaminated
+by speculative or low-confidence historical claims, and keeps this file honest about what it
+actually is: a research lead list, not a spec.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#historical-wap-browser-quirks-reference">Historical WAP Browser Quirks Reference</a></li><li class="depth-2"><a href="#purpose">Purpose</a></li><li class="depth-2"><a href="#whats-actually-in-the-data">What’s actually in the data</a></li><li class="depth-2"><a href="#schema">Schema</a></li><li class="depth-2"><a href="#promotion-rule-read-before-writing-a-compatibilityprofile">Promotion rule (read before writing a CompatibilityProfile)</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/wml-engine/historical_quirks.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

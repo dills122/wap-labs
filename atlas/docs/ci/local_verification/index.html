@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Local Verification Contract · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="ci/local_verification"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>ci</span></nav><p class="doc-path">docs/ci/local_verification.md</p><div class="markdown-body"><h1 id="local-verification-contract">Local Verification Contract</h1>
+<p>The canonical local verification family is exposed through root <code>pnpm</code> scripts and matching Make
+targets:</p>
+<p>For documentation-only iteration, <code>pnpm docs:check</code> validates active Markdown file targets and
+GitHub-style anchors without contacting the network. The change/full verification profiles invoke
+the same check through the always-on workspace-quality lane.</p>
+<table>
+<thead>
+<tr>
+<th>Profile</th>
+<th>Command</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fast</td>
+<td><code>pnpm verify:fast</code></td>
+<td>Runs the verification-orchestrator tests, whitespace check, and managed-version check.</td>
+</tr>
+<tr>
+<td>Change</td>
+<td><code>pnpm verify</code> or <code>pnpm verify:change</code></td>
+<td>Runs strict common checks plus every deterministic lane selected by changed paths relative to <code>origin/main</code>. Override the base with <code>WAP_VERIFY_BASE=&lt;ref&gt;</code> or <code>--base &lt;ref&gt;</code>.</td>
+</tr>
+<tr>
+<td>Full</td>
+<td><code>pnpm verify:full</code></td>
+<td>Runs every deterministic offline lane, including compliance/status drift, graph drift, native and WASM engine checks, contracts, stories, transport, browser host/frontend unit/rendered accessibility, Atlas, marketing, Go WML origin, and backend-disabled OpenTofu checks.</td>
+</tr>
+<tr>
+<td>Extended</td>
+<td><code>pnpm verify:extended</code></td>
+<td>Runs the full profile, then requires the already-running live Kannel/WML stack and runs the browser baseline as a non-blocking stability signal.</td>
+</tr>
+</tbody>
+</table>
+<p>Equivalent Make targets are <code>verify-fast</code>, <code>verify-change</code>, <code>verify-full</code>, and <code>verify-extended</code>.
+<code>make ci-local</code> is retained only as a deprecated compatibility alias. It prints an advisory and
+runs <code>make verify-full</code>; it is not described as CI-equivalent because GitHub-hosted coverage,
+security, OS packaging, and service topology are separate environments.</p>
+<h2 id="outcome-vocabulary">Outcome vocabulary</h2>
+<p>Every known lane is reported with one of these explicit outcomes:</p>
+<ul>
+<li><code>PASS</code>: every required command in the selected lane passed.</li>
+<li><code>INTENTIONAL EXCLUSION</code>: the profile or changed paths deliberately did not select the lane.</li>
+<li><code>UNAVAILABLE PREREQUISITE</code>: a selected required tool or dependency is missing. This makes the
+command fail and includes a remediation hint.</li>
+<li><code>ADVISORY</code>: the lane is intentionally non-blocking, whether its evidence passed or failed.</li>
+<li><code>FAILURE</code>: a selected required command failed. The overall command exits nonzero.</li>
+</ul>
+<p>There is no successful skip for a missing prerequisite in a selected required lane. Run
+<code>./scripts/init-refresh.sh</code> to refresh workspace dependencies. Install the repository Node/pnpm
+versions first when absent; use <code>AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh</code> when the
+pinned <code>wasm-pack</code> or Tauri CLI must be installed. Go 1.25 or newer is required when the selected
+lane includes <code>wml-server/</code>. OpenTofu 1.12.5 and actionlint 1.7.12 are required when the selected
+lane includes <code>infra/network-preview/</code>; install actionlint with
+<code>go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12</code>. Its static lane validates the three
+OpenTofu workflow definitions semantically, never receives cloud credentials, and never enables
+the R2 backend.</p>
+<h2 id="selection-and-evidence-boundaries">Selection and evidence boundaries</h2>
+<p>The <code>change</code> profile combines committed branch changes, staged changes, unstaged changes, and
+untracked files. Root verification surfaces such as <code>package.json</code>, <code>pnpm-lock.yaml</code>, the CI
+workflow, or the orchestrator itself select all ordinary deterministic lanes because they can
+change every lane’s behavior. Layer paths select only their affected commands.</p>
+<p>The <code>full</code> profile is the ordinary pre-PR command. It deliberately excludes:</p>
+<ul>
+<li>the live Kannel/browser smoke, which requires Docker services and is run by
+<code>pnpm verify:extended</code> or the manual <code>Transport WAP Smoke (Kannel)</code> workflow;</li>
+<li>scheduled/advisory performance trends beyond the bounded five-run extended baseline;</li>
+<li>fuzz campaigns, which remain explicit time-bounded commands;</li>
+<li>GitHub-hosted dependency, CodeQL, coverage-threshold, release, deployment, and OS-packaging
+jobs.</li>
+<li>protected R2 locking and DigitalOcean speculative planning, which remain unavailable until
+<code>PRE-001</code> and <code>PRE-003</code> are completed.</li>
+</ul>
+<p>Passing actionlint proves that the checked expression contexts and workflow structure satisfy the
+pinned offline validator. It does not create the <code>PRE-003</code> protected environments or prove live
+R2 locking, provider planning, exact-plan apply, or state-recovery behavior.</p>
+<p>These exclusions are visible in command output and do not imply conformance or release readiness.
+The full compliance wrapper proves that canonical compliance inputs, the family-wide WML evidence
+ledger, successor-delta crosswalk, and generated projections are synchronized. It validates Rust,
+TypeScript/Vitest, and executable-story evidence according to their supported runners;
+implementation conformance still depends on those direct fixtures and the release evidence named
+by the selected profile.</p>
+<p>The extended live-Kannel lane expects the stack to advertise WML 1.3 explicitly at its test
+boundary. Start it with <code>WML_DTD_VERSION=1.3 docker compose up -d --build kannel wml-server</code>, run
+<code>pnpm verify:extended</code>, and always finish with <code>docker compose down</code>. The transport itself sends the
+matching WSP <code>Encoding-Version: 1.3</code> request header; neither setting relaxes the production network
+policy or the strict WBXML 1.3 decoder.</p>
+<h2 id="automated-contract-tests">Automated contract tests</h2>
+<p>Run the orchestration tests directly with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> verify:test</span></span></code></pre>
+<p>They cover profile selection, path selection, required failure propagation, advisory behavior,
+unavailable prerequisites, intentional exclusions, and the CI/compliance-wrapper wiring.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#local-verification-contract">Local Verification Contract</a></li><li class="depth-2"><a href="#outcome-vocabulary">Outcome vocabulary</a></li><li class="depth-2"><a href="#selection-and-evidence-boundaries">Selection and evidence boundaries</a></li><li class="depth-2"><a href="#automated-contract-tests">Automated contract tests</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/ci/local_verification.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

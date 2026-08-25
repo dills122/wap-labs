@@ -1,0 +1,518 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Archival WAP Research Incorporation Plan · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/archival_wap_service_incorporation_plan"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/archival_wap_service_incorporation_plan.md</p><div class="markdown-body"><h1 id="archival-wap-research-incorporation-plan">Archival WAP Research Incorporation Plan</h1>
+<p>Planning status: implementation handoff; no archive acquisition, third-party content import, or
+public museum deployment is authorized by this document</p>
+<p>Research checkpoint: 2026-07-27</p>
+<h2 id="outcome">Outcome</h2>
+<p>Use the useful behavior inventory and preservation lessons from the externally supplied
+<code>waves-wap-archive-kit</code> research package to improve Waves’ first-party public WAP lab without
+importing its untrusted tooling, server configuration, audit output, or third-party material.</p>
+<p>The immediate result should be a richer deterministic service matrix behind the existing public
+lab profiles:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>home.&lt;domain&gt;     -&gt; period-style first-party navigation and service gallery</span></span>
+<span class="line"><span>forms.&lt;domain&gt;    -&gt; bounded input, selection, GET/POST, and disposable-state cases</span></span>
+<span class="line"><span>interop.&lt;domain&gt;  -&gt; versioned protocol, MIME, cache, size, error, and malformed-input cases</span></span></code></pre>
+<p>An actual historical museum remains a separate future product decision. It requires source-level
+rights evidence, privacy review, a dedicated threat model, and separately authorized hosting.</p>
+<h2 id="trust-and-evidence-boundary">Trust and evidence boundary</h2>
+<p>The external package was reviewed as untrusted, read-only research input. It is not tracked in
+this repository and is not a normative WAP source.</p>
+<p>The review established that:</p>
+<ul>
+<li>the package is a text-only research kit rather than a recovered corpus;</li>
+<li>its internal file hashes were consistent, but its origin and authorship were not independently
+authenticated;</li>
+<li>its MIT declaration covers only package-authored material and explicitly excludes third-party
+captures, brands, artwork, text, and named software;</li>
+<li>its research claims and candidate licenses were not independently verified;</li>
+<li>its acquisition/audit scripts and server configuration are unsuitable for execution or direct
+adoption without a separate hardening effort; and</li>
+<li>its bundled reports and prose do not establish WML, WAP, security, or implementation
+compliance.</li>
+</ul>
+<p>Treat the package as an idea and source-lead inventory. Canonical specifications, compliance
+manifests, active work items, repository tests, and independently verified source licenses remain
+authoritative.</p>
+<h2 id="architecture-boundaries">Architecture boundaries</h2>
+<p>All implementation derived from this plan must preserve the existing layer map.</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Owner</th>
+<th>Incorporation rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First-party WML routes, response headers, bounded fake state</td>
+<td><code>wml-server/</code></td>
+<td>Add exact, deterministic routes and golden HTTP tests.</td>
+</tr>
+<tr>
+<td>WAP gateway adaptation and public host allowlisting</td>
+<td><code>gateway-kannel/</code>, <code>docker/kannel/</code>, production gateway work</td>
+<td>Keep exact-host fail-closed routing; do not add arbitrary URL forwarding.</td>
+</tr>
+<tr>
+<td>WSP/WBXML encode/decode and constrained payload behavior</td>
+<td><code>transport-rust/</code></td>
+<td>Reuse the supported Rust codecs; do not encode or decode WBXML in the origin or TypeScript.</td>
+</tr>
+<tr>
+<td>WML parsing, runtime behavior, focus, navigation, timers, rendering</td>
+<td><code>engine-wasm/</code></td>
+<td>Add or reuse canonical examples and executable stories; keep the engine network-free.</td>
+</tr>
+<tr>
+<td>Desktop profile, safety messaging, and diagnostics</td>
+<td><code>browser/</code></td>
+<td>Keep gateway endpoint and resource URI distinct; never imply encryption or WTLS support.</td>
+</tr>
+<tr>
+<td>Public infrastructure and operations</td>
+<td>separate <code>GW-*</code>, <code>INF-*</code>, <code>OPS-*</code>, and <code>PRE-*</code> work</td>
+<td>This plan supplies content/test requirements only and does not authorize deployment changes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-to-incorporate">What to incorporate</h2>
+<h3 id="1-historical-behavior-taxonomy">1. Historical behavior taxonomy</h3>
+<p>Use these observed period patterns to choose test cases and first-party demonstrations:</p>
+<ul>
+<li>small multi-card decks and fragment navigation;</li>
+<li>deck and card softkeys using <code>do</code>, <code>go</code>, <code>prev</code>, <code>noop</code>, and templates;</li>
+<li>variables, <code>setvar</code>, substitution conversions, and URL/form escaping;</li>
+<li>inputs, password-shaped controls, selects, option groups, GET, POST, and <code>postfield</code>;</li>
+<li>timers and <code>ontimer</code> using WML tenths-of-a-second semantics;</li>
+<li>tables, text styles, alignment, wrapping, and compact information hierarchy;</li>
+<li>WBMP success, missing-image, invalid-image, and alternate-text behavior;</li>
+<li>relative, root-relative, fragment, absolute, and rejected external destinations;</li>
+<li>WML 1.1, WML 1.2, and WML 1.3 document identities;</li>
+<li>correct and intentionally incorrect MIME/header combinations;</li>
+<li>small, boundary-sized, oversized, and malformed-but-observed decks;</li>
+<li>WMLScript and compiled-content references only where the active WMLScript work program has
+established a safe executable boundary; and</li>
+<li>JAD/JAR descriptors as a deferred download-interoperability case, not as an invitation to run
+recovered binaries.</li>
+</ul>
+<p>The archive kit’s suggested 1,400-byte and 3,000-byte thresholds are research heuristics, not
+normative limits. Any adopted thresholds must be reconciled with the current transport constraints
+and recorded as named fixture parameters.</p>
+<h3 id="2-safe-first-party-service-patterns">2. Safe first-party service patterns</h3>
+<p>The following period applications are useful as interaction models. Recreate only the behavior,
+using project-authored WML and deterministic synthetic data.</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Proposed demonstration</th>
+<th>Required safety boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Portal/directory/search</td>
+<td>Local service directory and search over the known first-party route catalog</td>
+<td>No arbitrary URL input, crawling, or proxying</td>
+</tr>
+<tr>
+<td>Nagios/Xymon/Monit status</td>
+<td>Synthetic host and service status cards with pagination and compact severity indicators</td>
+<td>No real infrastructure data, ping, traceroute, commands, or admin controls</td>
+</tr>
+<tr>
+<td>Dictionary</td>
+<td>Local dictionary lookup backed by an approved open dataset</td>
+<td>Fixed local dataset; no arbitrary <code>dictd</code> or network target</td>
+</tr>
+<tr>
+<td>Weather</td>
+<td>Deterministic synthetic forecast or explicitly timestamped fixture</td>
+<td>Never present stale data as current safety information</td>
+</tr>
+<tr>
+<td>Mail</td>
+<td>Scripted fake inbox, folders, paging, and message detail</td>
+<td>No real credentials, IMAP, POP3, SMTP, NNTP, or outbound messaging</td>
+</tr>
+<tr>
+<td>RSS/news</td>
+<td>Build-time fixture feed with paging and categories</td>
+<td>No runtime external feed fetch; no unlicensed article republication</td>
+</tr>
+<tr>
+<td>Bookmark catalog</td>
+<td>Read-only local links to first-party lab cases</td>
+<td>Exact target allowlist and escaped labels/URLs</td>
+</tr>
+<tr>
+<td>Guestbook/chat</td>
+<td>Do not include in the first public release</td>
+<td>Requires a separate moderation, abuse, retention, and privacy design</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-preservation-and-provenance-concepts">3. Preservation and provenance concepts</h3>
+<p>If a later rights-cleared corpus is accepted, retain the following model after rewriting it as a
+Waves-owned schema and policy:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>raw/       immutable acquired bytes, never publicly served</span></span>
+<span class="line"><span>deploy/    reviewed, transformed, sanitized derivative</span></span>
+<span class="line"><span>reports/   reproducible audit and transformation evidence</span></span></code></pre>
+<p>Every accepted external artifact must record at least:</p>
+<ul>
+<li>stable source identifier and exact original URL;</li>
+<li>source version or capture timestamp;</li>
+<li>acquisition timestamp and named tool version;</li>
+<li>archive/source digest and local SHA-256;</li>
+<li>byte length and independently sniffed content type;</li>
+<li>exact license identifier and retained license text, or a permission record;</li>
+<li>trademark, artwork, translation, user-content, and personal-data review state;</li>
+<li>transformation steps from raw to deployable derivative;</li>
+<li>reviewer and public-deployment approval;</li>
+<li>non-impersonation label, capture date, affiliation disclaimer, and takedown route; and</li>
+<li>explicit statements that credentials, outbound actions, server code, trackers, and personal data
+were removed or disabled.</li>
+</ul>
+<h2 id="what-not-to-incorporate">What not to incorporate</h2>
+<p>Do not copy, execute, or promote:</p>
+<ul>
+<li>the package’s Wayback harvester or corpus auditor;</li>
+<li>its Makefile, Docker Compose file, Nginx fragment, or Apache fragment;</li>
+<li>its generated reports as verification evidence;</li>
+<li>its candidate or seed rows as verified facts;</li>
+<li>captured PHP, CGI, Perl, ASP, JSP, Java server code, shell scripts, or monitoring binaries;</li>
+<li>recovered WMLScript, WMLC, WMLSC, JAD, JAR, installer, or archive files before specialized
+review;</li>
+<li>branded captures, logos, editorial content, translations, or user submissions without exact
+rights evidence;</li>
+<li>real credential, payment, booking, trading, mail, telephone, SMS, WAP Push, administration,
+monitoring-control, or arbitrary-fetch behavior; or</li>
+<li>any network or parsing behavior inside <code>engine-wasm/</code>.</li>
+</ul>
+<p>The package’s six WML 1.1 files should not be copied into the canonical example corpus. Their
+feature ideas already overlap stronger repository examples and lack adjacent executable stories.</p>
+<h2 id="existing-coverage-to-reuse">Existing coverage to reuse</h2>
+<p>Before adding a fixture, check the current canonical corpus and extend an existing story when it
+already owns the behavior. Relevant examples include:</p>
+<ul>
+<li><code>engine-wasm/examples/source/wml-203-dtd-family.wml</code>;</li>
+<li><code>engine-wasm/examples/source/wml-204-control-validation.wml</code>;</li>
+<li><code>engine-wasm/examples/source/wml-204-select-semantics.wml</code>;</li>
+<li><code>engine-wasm/examples/source/wml-302-variable-substitution.wml</code>;</li>
+<li><code>engine-wasm/examples/source/wml-304-request-intent.wml</code>;</li>
+<li><code>engine-wasm/examples/source/wml-305-timer-lifecycle.wml</code>;</li>
+<li><code>engine-wasm/examples/source/forms-text-submit-local.wml</code>;</li>
+<li><code>engine-wasm/examples/source/forms-select-local.wml</code>;</li>
+<li><code>engine-wasm/examples/source/timer-host-clock-lifecycle.wml</code>; and</li>
+<li><code>wml-server/internal/origin/routes/index.wml</code>.</li>
+</ul>
+<p>The public lab currently supports deterministic WML origin behavior and selectable WML 1.1,
+1.2, or 1.3 document identity at configuration time. The implementation handoff must decide
+whether the interop matrix needs route-specific complete documents or separate test deployments;
+it must not silently change the global default used by existing smoke tests.</p>
+<h2 id="proposed-public-service-matrix">Proposed public service matrix</h2>
+<h3 id="homedomain"><code>home.&lt;domain&gt;</code></h3>
+<p>Purpose: an attractive, period-correct first-party entry surface rather than a third-party museum.</p>
+<p>Proposed cases:</p>
+<ul>
+<li>multi-card home/menu/about navigation;</li>
+<li>service directory grouped by Forms, Interop, Status, Dictionary, Weather, and Mail Demo;</li>
+<li>template/card softkey precedence demonstrations;</li>
+<li>compact two-column table and WBMP icon gallery;</li>
+<li>deterministic multilingual sample deck using project-authored strings; and</li>
+<li>explicit notice that the service is a modern compatibility lab, not a restored historical
+operator.</li>
+</ul>
+<h3 id="formsdomain"><code>forms.&lt;domain&gt;</code></h3>
+<p>Purpose: bounded form and request behavior using disposable fake data.</p>
+<p>Proposed cases:</p>
+<ul>
+<li>text, numeric, password-display, maxlength, format-mask, and empty-value cases;</li>
+<li>single and multiple select, option group, initialization, and commit-order cases;</li>
+<li>GET query generation and POST form encoding;</li>
+<li>ordered and duplicate <code>postfield</code> behavior where supported by the active compliance slice;</li>
+<li>redirect-after-POST and deterministic validation errors;</li>
+<li>session expiry and bounded in-memory state; and</li>
+<li>a persistent warning never to enter real credentials or personal data.</li>
+</ul>
+<h3 id="interopdomain"><code>interop.&lt;domain&gt;</code></h3>
+<p>Purpose: machine-checkable protocol and content-boundary behavior.</p>
+<p>Proposed route families:</p>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Document identity</td>
+<td>Equivalent valid WML 1.1, 1.2, and 1.3 decks</td>
+</tr>
+<tr>
+<td>MIME</td>
+<td>Correct WML/WBMP/JAD types; wrong, absent, parameterized, and unsupported types</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td><code>no-store</code>, cacheable fixture, expired response, and no-cache request behavior</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Deterministic 200, redirect, 400, 404, 405, 413, 415, and 500-shaped test responses</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>Named small, legacy-boundary, transport-boundary, and rejected oversized responses</td>
+</tr>
+<tr>
+<td>Encoding</td>
+<td>UTF-8 baseline plus only the additional encodings supported by current transport evidence</td>
+</tr>
+<tr>
+<td>Images</td>
+<td>Valid WBMP, missing target, invalid bytes, and <code>alt</code> fallback</td>
+</tr>
+<tr>
+<td>Structure</td>
+<td>Multi-card, table, variable, timer, form, and external-intent decks</td>
+</tr>
+<tr>
+<td>Malformed</td>
+<td>Versioned invalid XML/WML cases with an explicit expected failure stage</td>
+</tr>
+<tr>
+<td>Routing</td>
+<td>Allowed hosts succeed; unknown hosts and arbitrary target requests fail closed</td>
+</tr>
+</tbody>
+</table>
+<p>Compiled WML/WMLScript and JAR downloads remain deferred until their active security/compliance
+lanes define safe fixture production and handling. A descriptor-only JAD case may be added first
+if it cannot initiate a download outside the first-party allowlist.</p>
+<h2 id="proposed-implementation-work-items">Proposed implementation work items</h2>
+<p>These identifiers are proposed handoff units. They are not active merely because this planning
+document exists.</p>
+<h3 id="lab-102a-historical-interoperability-fixture-matrix">LAB-102A Historical interoperability fixture matrix</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: <code>LAB-101</code>; coordinate with active <code>WML-304</code> and transport evidence</li>
+<li><code>Owner</code>: <code>wml-server</code>, <code>transport-rust</code>, <code>engine-wasm</code>, <code>qa</code></li>
+<li><code>Build</code>:
+<ul>
+<li>define versioned <code>interop</code> case identifiers and expected HTTP, transport, decode, and engine
+outcomes;</li>
+<li>add only missing first-party fixtures from the proposed matrix;</li>
+<li>reuse canonical engine examples instead of copying archive-kit decks;</li>
+<li>keep origin generation, transport adaptation, and engine semantics in their owning layers;</li>
+<li>add exact-host and arbitrary-target negative cases.</li>
+</ul>
+</li>
+<li><code>Tests</code>:
+<ul>
+<li>Go golden/header/status tests;</li>
+<li>relevant native/WASM executable stories;</li>
+<li>transport WSP/WBXML parity tests where the case crosses that boundary;</li>
+<li>local Kannel smoke for stable end-to-end cases.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>every route has a stable identifier, documented expected outcome, and owning test;</li>
+<li>WML-version and size cases name their exact fixture parameters;</li>
+<li>unknown hosts and arbitrary external targets fail closed;</li>
+<li>no claim exceeds the current compliance ledgers.</li>
+</ul>
+</li>
+</ol>
+<h3 id="lab-102b-safe-period-service-gallery">LAB-102B Safe period-service gallery</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: <code>LAB-102A</code>; <code>PRE-004</code> before public exposure</li>
+<li><code>Owner</code>: <code>wml-server</code>, <code>browser</code>, <code>qa</code></li>
+<li><code>Build</code>:
+<ul>
+<li>add a first-party home directory and selected synthetic Status, Dictionary, Weather, Mail,
+RSS, and Bookmark demonstrations;</li>
+<li>use deterministic local data and exact routes;</li>
+<li>label all accounts, messages, status, and weather as synthetic;</li>
+<li>exclude guestbook/chat, arbitrary URL entry, real authentication, and external feeds.</li>
+</ul>
+</li>
+<li><code>Tests</code>:
+<ul>
+<li>route/method denial and golden response tests;</li>
+<li>body, state-count, and session-TTL bounds;</li>
+<li>escaping and redaction checks;</li>
+<li>packaged desktop navigation smoke after <code>DESK-201</code>.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>the gallery demonstrates period interaction patterns without third-party content;</li>
+<li>no route can contact or control an external system;</li>
+<li>public safety messaging forbids real credentials and identifies the unencrypted preview.</li>
+</ul>
+</li>
+</ol>
+<h3 id="arc-001-archive-intake-and-rights-policy">ARC-001 Archive intake and rights policy</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: owner decision to pursue an archive lane</li>
+<li><code>Owner</code>: product, legal/rights reviewer, security, documentation</li>
+<li><code>Build</code>:
+<ul>
+<li>define source classes, required license/permission evidence, raw/deploy separation,
+transformation records, PII review, takedown process, and non-impersonation rules;</li>
+<li>define rejection criteria for ambiguous, branded, executable, user-generated, and sensitive
+material;</li>
+<li>define where approved research metadata lives without making external content normative.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>no artifact can reach a deploy tree without named rights, privacy, security, and product
+approvals;</li>
+<li>clean-room reconstruction criteria are explicit;</li>
+<li>completed compliance tickets are not reopened to accommodate museum content.</li>
+</ul>
+</li>
+</ol>
+<h3 id="arc-002-offline-corpus-acquisition-and-audit-design">ARC-002 Offline corpus acquisition and audit design</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: <code>ARC-001</code></li>
+<li><code>Owner</code>: security, tooling, documentation</li>
+<li><code>Build</code>:
+<ul>
+<li>design or select supported tooling with maximum bytes/files, redirect and host policy,
+immutable per-capture paths, no-symlink writes, archive/binary scanning, structured errors,
+spreadsheet-safe reports, and reproducible tool/version records;</li>
+<li>run acquisition only in an explicitly authorized, egress-restricted environment;</li>
+<li>separate discovery, acquisition, quarantine, transformation, and deployment approvals.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>hostile paths, redirects, oversized bodies, symlinks, archive bombs, mislabeled types, and
+repeated captures have deterministic safe outcomes;</li>
+<li>the workflow cannot write outside its selected quarantine root;</li>
+<li>no acquired executable is run during inspection.</li>
+</ul>
+</li>
+</ol>
+<h3 id="arc-003-rights-cleared-wml-11-compatibility-pilot">ARC-003 Rights-cleared WML 1.1 compatibility pilot</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: <code>ARC-001</code>, <code>ARC-002</code></li>
+<li><code>Owner</code>: product, <code>engine-wasm</code>, <code>wml-server</code>, qa</li>
+<li><code>Build</code>:
+<ul>
+<li>select one exact, independently license-cleared source artifact;</li>
+<li>preserve its raw bytes outside deployable service content;</li>
+<li>derive the smallest useful project fixture or clean-room reconstruction;</li>
+<li>add an executable story and provenance record without claiming broader compatibility.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>exact source, version, hash, license, transformation, and reviewer evidence is recorded;</li>
+<li>the deployed derivative contains no live endpoint, personal data, tracker, credential field,
+or executable server behavior;</li>
+<li>the fixture adds coverage not already present in the canonical corpus.</li>
+</ul>
+</li>
+</ol>
+<h3 id="arc-004-public-museum-product-and-threat-decision">ARC-004 Public museum product and threat decision</h3>
+<ol>
+<li><code>Status</code>: proposed</li>
+<li><code>Depends On</code>: <code>ARC-003</code>, <code>PRE-004</code>, separate hosting authorization</li>
+<li><code>Owner</code>: product, security, operations, rights reviewer</li>
+<li><code>Decide</code>:
+<ul>
+<li>local-only research collection versus publicly hosted museum;</li>
+<li>domain and path separation from the first-party interoperability lab;</li>
+<li>content review, moderation, logging, takedown, incident, and lifecycle ownership;</li>
+<li>whether public hosting creates unacceptable impersonation or archive-service risk.</li>
+</ul>
+</li>
+<li><code>Accept</code>:
+<ul>
+<li>a written go/no-go decision exists;</li>
+<li>public hosting, if chosen, has its own threat model, runbook, disable path, and infrastructure
+scope;</li>
+<li>the network-preview host is not reused by implication.</li>
+</ul>
+</li>
+</ol>
+<h2 id="dependency-order">Dependency order</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Existing public lab:</span></span>
+<span class="line"><span>LAB-101 -&gt; LAB-102A -&gt; LAB-102B -&gt; DESK-201/202 and QA-201 integration</span></span>
+<span class="line"><span>                  \</span></span>
+<span class="line"><span>                   -&gt; reuse by later rights-cleared fixtures</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Optional archive lane:</span></span>
+<span class="line"><span>owner decision -&gt; ARC-001 -&gt; ARC-002 -&gt; ARC-003 -&gt; ARC-004</span></span>
+<span class="line"><span>                     |          |          |          |</span></span>
+<span class="line"><span>                  rights     tooling     pilot     museum go/no-go</span></span></code></pre>
+<p><code>LAB-102A</code> can proceed with entirely project-authored content. It must not wait for or silently
+activate the archive lane. <code>LAB-102B</code> requires the public preview’s accepted data/threat policy
+before exposure because it adds more stateful and account-shaped interactions.</p>
+<h2 id="implementation-handoff-checklist">Implementation handoff checklist</h2>
+<p>Before starting a proposed item:</p>
+<ul>
+<li>refresh from current <code>origin/main</code> and reconcile the active public-lab and compliance plans;</li>
+<li>retrieve the narrowest required WML/WSP/transport context pack;</li>
+<li>confirm whether the item is first-party lab work or rights-governed archive work;</li>
+<li>identify the exact layer and contract surfaces before implementation;</li>
+<li>search the canonical example corpus for existing coverage;</li>
+<li>name fixture IDs, expected stages, size limits, and error outcomes before writing routes;</li>
+<li>add graph support first if the implementation begins a compliance slice not represented in the
+knowledge graph;</li>
+<li>preserve WML 1.3 as the compatibility target while labeling WML 1.1/1.2 cases accurately;</li>
+<li>avoid edits to <code>infra/network-preview/</code> unless the separately owned infrastructure task
+explicitly requests them; and</li>
+<li>keep all third-party acquisition and deployment disabled unless the <code>ARC-*</code> gates are accepted.</li>
+</ul>
+<p>Expected verification for implemented first-party lab cases:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> lint-go</span></span>
+<span class="line"><span style="color:#B392F0">make</span><span style="color:#9ECBFF"> test-go</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> test:story</span><span style="color:#F97583"> &lt;</span><span style="color:#9ECBFF">work-item-or-spec-i</span><span style="color:#E1E4E8">d</span><span style="color:#F97583">&gt;</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> browser</span><span style="color:#9ECBFF"> run</span><span style="color:#9ECBFF"> contracts:check</span></span>
+<span class="line"><span style="color:#B392F0">./scripts/transport-wap-smoke.sh</span></span></code></pre>
+<p>Run only the commands relevant to the touched layers. Public network checks, cloud operations, and
+external acquisition require their own explicit authorization and are not implied by this plan.</p>
+<h2 id="success-criteria">Success criteria</h2>
+<p>This research has been incorporated successfully when:</p>
+<ol>
+<li>the public lab covers a deliberate, machine-checkable set of historically useful behaviors;</li>
+<li>new cases reuse canonical engine and transport implementations rather than duplicate them;</li>
+<li>all public data and interactions are first-party, deterministic, bounded, and visibly fake;</li>
+<li>unknown hosts, arbitrary destinations, real credentials, external actions, and oversized input
+fail closed;</li>
+<li>WML 1.1/1.2 cases are labeled compatibility fixtures and never substitute for WML 1.3 evidence;</li>
+<li>no archive-kit tool, server configuration, report, or third-party content has entered the
+runtime by convenience; and</li>
+<li>any later historical museum advances through additive <code>ARC-*</code> decisions without competing with
+the public WAP service workstream.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#archival-wap-research-incorporation-plan">Archival WAP Research Incorporation Plan</a></li><li class="depth-2"><a href="#outcome">Outcome</a></li><li class="depth-2"><a href="#trust-and-evidence-boundary">Trust and evidence boundary</a></li><li class="depth-2"><a href="#architecture-boundaries">Architecture boundaries</a></li><li class="depth-2"><a href="#what-to-incorporate">What to incorporate</a></li><li class="depth-3"><a href="#1-historical-behavior-taxonomy">1. Historical behavior taxonomy</a></li><li class="depth-3"><a href="#2-safe-first-party-service-patterns">2. Safe first-party service patterns</a></li><li class="depth-3"><a href="#3-preservation-and-provenance-concepts">3. Preservation and provenance concepts</a></li><li class="depth-2"><a href="#what-not-to-incorporate">What not to incorporate</a></li><li class="depth-2"><a href="#existing-coverage-to-reuse">Existing coverage to reuse</a></li><li class="depth-2"><a href="#proposed-public-service-matrix">Proposed public service matrix</a></li><li class="depth-3"><a href="#homedomain">home.&lt;domain&gt;</a></li><li class="depth-3"><a href="#formsdomain">forms.&lt;domain&gt;</a></li><li class="depth-3"><a href="#interopdomain">interop.&lt;domain&gt;</a></li><li class="depth-2"><a href="#proposed-implementation-work-items">Proposed implementation work items</a></li><li class="depth-3"><a href="#lab-102a-historical-interoperability-fixture-matrix">LAB-102A Historical interoperability fixture matrix</a></li><li class="depth-3"><a href="#lab-102b-safe-period-service-gallery">LAB-102B Safe period-service gallery</a></li><li class="depth-3"><a href="#arc-001-archive-intake-and-rights-policy">ARC-001 Archive intake and rights policy</a></li><li class="depth-3"><a href="#arc-002-offline-corpus-acquisition-and-audit-design">ARC-002 Offline corpus acquisition and audit design</a></li><li class="depth-3"><a href="#arc-003-rights-cleared-wml-11-compatibility-pilot">ARC-003 Rights-cleared WML 1.1 compatibility pilot</a></li><li class="depth-3"><a href="#arc-004-public-museum-product-and-threat-decision">ARC-004 Public museum product and threat decision</a></li><li class="depth-2"><a href="#dependency-order">Dependency order</a></li><li class="depth-2"><a href="#implementation-handoff-checklist">Implementation handoff checklist</a></li><li class="depth-2"><a href="#success-criteria">Success criteria</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/archival_wap_service_incorporation_plan.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>

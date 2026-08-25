@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.1.6"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>WBP-14 Desktop-Path Evidence Audit · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="waves/wbp_14_desktop_path_evidence"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>waves</span></nav><p class="doc-path">docs/waves/wbp_14_desktop_path_evidence.md</p><div class="markdown-body"><h1 id="wbp-14-desktop-path-evidence-audit">WBP-14 Desktop-Path Evidence Audit</h1>
+<p>Status: <code>in-progress</code> — inventory and drift gate established; release gate not closed</p>
+<p>Audit date: 2026-08-02</p>
+<p>Audit base: <code>origin/main</code> at <code>6e30f89f</code></p>
+<p>Machine-readable inventory: <a href="wbp-14-desktop-evidence.json"><code>wbp-14-desktop-evidence.json</code></a></p>
+<h2 id="outcome">Outcome</h2>
+<p>Waves has a credible native success lane today. The automated pilot drives a production-built Tauri
+window through the generated invoke client, Rust host, <code>transport-rust</code>, and a controlled Kannel
+stack. It proves startup, successful WML rendering/navigation, a bounded repeat request, visible
+invalid-address failure, and a subsequent successful recovery.</p>
+<p>That is not yet the complete WBP-14 release gate. Of 19 required evidence scenarios, 3 are complete,
+8 are partial, 5 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
+story evidence for timeout, cancellation, invalid-deck atomicity, and script traps must not be
+presented as proof that the native desktop path handles those cases.</p>
+<h2 id="evidence-classes">Evidence classes</h2>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Meaning</th>
+<th>Current use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fixture</code></td>
+<td>Deterministic story, unit, component, or production-browser evidence without the native desktop/gateway boundary</td>
+<td>frame/input parity, history, concurrency, zoom/reflow</td>
+</tr>
+<tr>
+<td><code>native-gateway</code></td>
+<td>Real Tauri window through Rust host, transport, and controlled Kannel</td>
+<td>startup, successful loads, basic failure/recovery</td>
+</tr>
+<tr>
+<td><code>packaged-manual</code></td>
+<td>Packaged application behavior that depends on operating-system integration or assistive technology</td>
+<td>crash recovery and screen-reader smoke</td>
+</tr>
+</tbody>
+</table>
+<p>Local fixtures and native real-gateway runs remain separate in the inventory. Neither class is used
+as a silent substitute for the other.</p>
+<h2 id="current-release-gate-view">Current release-gate view</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>State</th>
+<th>What is established</th>
+<th>Closure needed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Startup and successful gateway navigation</td>
+<td>complete</td>
+<td>Native production frontend reaches engine-ready and renders/navigates controlled WML 1.3 decks</td>
+<td>Add a startup budget before calling startup performance complete</td>
+</tr>
+<tr>
+<td>Softkeys, keyboard, pointer, scrolling</td>
+<td>partial</td>
+<td>Unified input routing, engine frame/affordance, and deterministic scrolling fixture paths exist</td>
+<td>Add native pointer/keyboard equivalence and text-entry/modifier coverage</td>
+</tr>
+<tr>
+<td>Loading phases and ordinary recovery</td>
+<td>partial</td>
+<td>WBP-11 phases, stale-result tests, and basic native failure/recovery exist</td>
+<td>Measure 100/200 ms budgets and exercise categorized failures natively</td>
+</tr>
+<tr>
+<td>History</td>
+<td>partial</td>
+<td>Typed replayable POST history and request-shaped engine/browser evidence exist</td>
+<td>Add native GET, POST, and Back replay cases</td>
+</tr>
+<tr>
+<td>Timeout and cancellation</td>
+<td>missing</td>
+<td>Lower-level behavior is tested</td>
+<td>Add controlled native cases, cancellation acknowledgement timing, and retained-frame assertions</td>
+</tr>
+<tr>
+<td>Invalid deck</td>
+<td>missing</td>
+<td><code>WML-205</code> engine failure/atomicity story is green</td>
+<td>Serve malformed/invalid WML through Kannel and verify categorized native recovery without frame mutation</td>
+</tr>
+<tr>
+<td>Script trap</td>
+<td>missing</td>
+<td><code>WMLS-501</code> decoder/verifier evidence exists</td>
+<td>Add a native visible trap/recovery case; do not infer unfinished <code>WMLS-502</code> execution coverage</td>
+</tr>
+<tr>
+<td>Crash recovery and safe session</td>
+<td>partial</td>
+<td>Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity</td>
+<td>Run and record the packaged launch-after-crash relaunch case</td>
+</tr>
+<tr>
+<td>Diagnostics and bounded replay</td>
+<td>blocked</td>
+<td>Bounded sanitized Inspector projection exists</td>
+<td>Implement <code>WBP-13</code> <code>.waves-session.json</code> import/replay and the 1,000-step memory gate</td>
+</tr>
+<tr>
+<td>Zoom/reflow</td>
+<td>complete</td>
+<td>Production-built Chromium is green at both windows and effective 200 percent zoom</td>
+<td>Retain as fixture evidence; packaged platform checks remain separate</td>
+</tr>
+<tr>
+<td>Screen reader</td>
+<td>blocked</td>
+<td>Manual VoiceOver procedure is documented</td>
+<td>Enable packaging and record the packaged macOS smoke result</td>
+</tr>
+<tr>
+<td>Interaction latency and memory</td>
+<td>missing/blocked</td>
+<td>No release-budget artifact yet</td>
+<td>Add repeatable native timings and memory observations after the WBP-13 replay path exists</td>
+</tr>
+</tbody>
+</table>
+<h2 id="merged-implementation-contribution">Merged implementation contribution</h2>
+<p>PRs <code>#541</code> through <code>#545</code> are included in the refreshed audit base. Their typed POST-history,
+deterministic scrolling, unified input, phase-aware recovery, and application-shell behavior
+strengthen fixture and manual-test coverage, but native desktop-path evidence is still required.
+In particular, merged PR <code>#544</code> supplies WBP-11 presentation/recovery behavior and timing targets;
+it does not supply the native timing and categorized-failure artifacts needed for closure. PR
+<code>#549</code> adds WBP-12 fixture evidence, moving crash recovery from blocked to partial; its packaged
+launch-after-crash observation remains open. The inventory therefore records 3 complete, 8
+partial, 5 missing, and 3 blocked scenarios.</p>
+<h2 id="compliance-mapping-posture">Compliance mapping posture</h2>
+<p>The inventory maps scenarios only to requirements supported by the narrow context packs retrieved
+for this slice:</p>
+<ul>
+<li><code>WML-205</code> supports invalid-deck/error atomicity mapping to <code>RQ-RMK-002</code>, <code>RQ-RMK-003</code>, and
+<code>RQ-RMK-012</code>. The native invalid-deck scenario remains missing.</li>
+<li><code>WML-309</code> supports engine-owned frame/affordance mapping to <code>RQ-RMK-002</code>. Pending F2 work must
+still join the native/WASM parity gate.</li>
+<li><code>WMLS-501</code> supplies decoder/verifier evidence, but its selected family still contains partial and
+missing SCR evidence and does not close WMLScript execution.</li>
+<li><code>TRN-704</code> and <code>TRN-705</code> have no direct clause mappings. <code>TRN-706</code> and <code>TRN-707</code> declare WTP scope
+without direct WTP mappings. The native success path does not erase those explicit gaps.</li>
+</ul>
+<h2 id="reproduce-the-current-evidence">Reproduce the current evidence</h2>
+<p>With Node.js 22.22.1 and repository dependencies installed:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> evidence:desktop:check</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> docs:check</span></span>
+<span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#9ECBFF"> verify:test</span></span></code></pre>
+<p>On Linux with the pinned Tauri/WebDriver tools, Docker, and X11:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">xvfb-run</span><span style="color:#79B8FF"> -a</span><span style="color:#9ECBFF"> make</span><span style="color:#9ECBFF"> smoke-native-tauri-kannel-ui</span></span></code></pre>
+<p>Rendered browser accessibility evidence is reproduced with:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">pnpm</span><span style="color:#79B8FF"> --dir</span><span style="color:#9ECBFF"> browser/frontend</span><span style="color:#9ECBFF"> test:accessibility:rendered</span></span></code></pre>
+<p>The native workflow uploads screenshots, page source, environment, service logs, cleanup state, and
+<code>evidence.json</code>. A green pilot means only the assertions declared by that artifact passed.</p>
+<h2 id="closure-order">Closure order</h2>
+<ol>
+<li>Preserve the merged phase-recovery slice and rerun stories, parity, rendered accessibility,
+and native success evidence for the combined browser before crediting new release evidence.</li>
+<li>Extend the controlled Kannel origin and native UI driver with timeout, actual cancellation,
+invalid-deck, and script-trap cases. Each case must assert retained committed frame, categorized
+status, correlation metadata, and successful recovery.</li>
+<li>Record the implemented <code>WBP-12</code> launch-after-crash and safe-session policy behavior in a
+packaged build; fixture evidence does not substitute for that relaunch observation.</li>
+<li>Complete <code>WBP-13</code>, then record sanitized replay determinism and bounded 1,000-step memory
+behavior.</li>
+<li>Add repeatable startup/interaction budgets and record the packaged VoiceOver smoke.</li>
+<li>Set <code>releaseComplete</code> only after every required inventory row is complete. The validator rejects
+an optimistic closure while any required row remains partial, missing, or blocked.</li>
+</ol>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#wbp-14-desktop-path-evidence-audit">WBP-14 Desktop-Path Evidence Audit</a></li><li class="depth-2"><a href="#outcome">Outcome</a></li><li class="depth-2"><a href="#evidence-classes">Evidence classes</a></li><li class="depth-2"><a href="#current-release-gate-view">Current release-gate view</a></li><li class="depth-2"><a href="#merged-implementation-contribution">Merged implementation contribution</a></li><li class="depth-2"><a href="#compliance-mapping-posture">Compliance mapping posture</a></li><li class="depth-2"><a href="#reproduce-the-current-evidence">Reproduce the current evidence</a></li><li class="depth-2"><a href="#closure-order">Closure order</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/waves/wbp_14_desktop_path_evidence.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>
