@@ -44,6 +44,43 @@ if (submission === 'enter') {
 }
 `;
 
+const ARM_NAVIGATION_CYCLE_SCRIPT = `
+const button = document.querySelector('#btn-fetch-url');
+if (!(button instanceof HTMLButtonElement)) {
+  throw new Error('Waves Go/Stop button is unavailable');
+}
+button.__wavesNativeE2ENavigationCycle?.observer?.disconnect();
+const state = { seenActive: false, complete: false, observer: undefined };
+const observe = (records = []) => {
+  for (const record of records) {
+    if (record.oldValue === 'go') state.seenActive = true;
+    if (record.oldValue === 'stop' && state.seenActive) state.complete = true;
+  }
+  const action = button.dataset.navigationAction;
+  if (action === 'stop') state.seenActive = true;
+  if (state.complete) {
+    state.observer?.disconnect();
+  }
+};
+state.observer = new MutationObserver(observe);
+button.__wavesNativeE2ENavigationCycle = state;
+state.observer.observe(button, {
+  attributes: true,
+  attributeOldValue: true,
+  attributeFilter: ['data-navigation-action']
+});
+observe();
+`;
+
+const READ_NAVIGATION_CYCLE_SCRIPT = `
+const button = document.querySelector('#btn-fetch-url');
+const state = button?.__wavesNativeE2ENavigationCycle;
+if (!state?.complete) return false;
+state.observer?.disconnect();
+delete button.__wavesNativeE2ENavigationCycle;
+return 'go';
+`;
+
 function stripSensitiveAddress(rawAddress) {
   const address = new URL(rawAddress);
   address.search = '';
@@ -95,14 +132,27 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     await input.sendKeys(address);
     await (await find(SELECTORS.go)).click();
   };
-  const startWapUrl = async (address) => {
+  const requireWapAddress = (address) => {
     const parsed = new URL(address);
     if (parsed.protocol !== 'wap:' && parsed.protocol !== 'waps:') {
       throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
     }
+  };
+  const startWapUrl = async (address) => {
+    requireWapAddress(address);
     await waitForNavigationAction('go');
     await submitAddress(address);
     await waitForNavigationAction('stop');
+  };
+  const openWapUrl = async (address) => {
+    requireWapAddress(address);
+    await waitForNavigationAction('go');
+    await driver.executeScript(ARM_NAVIGATION_CYCLE_SCRIPT);
+    await submitAddress(address);
+    await waitUntil(
+      () => driver.executeScript(READ_NAVIGATION_CYCLE_SCRIPT),
+      { description: 'completed navigation cycle' }
+    );
   };
   const readSanitizedAddress = async () => {
     const rawAddress = await (await find(SELECTORS.address)).getAttribute('value');
@@ -134,8 +184,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     },
 
     async openWapUrl(address) {
-      await startWapUrl(address);
-      await waitForNavigationAction('go');
+      await openWapUrl(address);
     },
 
     async startWapUrl(address) {

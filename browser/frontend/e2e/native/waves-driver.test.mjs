@@ -23,6 +23,7 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   const waits = [];
   let navigationAction = initialNavigationAction;
   let navigationReadsUntilIdle = 0;
+  let navigationCycleArmed = false;
   let statusText = 'Ready. WAP gateway responded at wap://localhost/';
   const elements = new Map([
     ['body', element({ getAttribute: async (name) => (name === 'data-boot-phase' ? 'engine-ready' : '') })],
@@ -76,6 +77,17 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
     },
     async executeScript(script, ...arguments_) {
       calls.push(['script', script, ...arguments_]);
+      if (script.includes('new MutationObserver')) {
+        navigationCycleArmed = true;
+        return '';
+      }
+      if (script.includes('__wavesNativeE2ENavigationCycle')) {
+        if (!navigationCycleArmed) return false;
+        navigationCycleArmed = false;
+        navigationAction = 'go';
+        navigationReadsUntilIdle = 0;
+        return 'go';
+      }
       if (script.includes('shadowRoot')) return statusText;
       if (script.includes('textContent')) return 'Rendered deck text';
       return '';
@@ -164,15 +176,22 @@ test('Waves interaction API drives address, viewport, keyboard, and softkeys by 
 });
 
 test('completed URL opens observe an idle-started-idle navigation cycle', async () => {
-  const { page, waits } = fixture();
+  const { calls, page, waits } = fixture();
 
   await page.openWapUrl('wap://localhost/login');
 
   assert.deepEqual(waits, [
     'navigation action "go"',
-    'navigation action "stop"',
-    'navigation action "go"'
+    'completed navigation cycle'
   ]);
+  const armIndex = calls.findIndex(
+    ([kind, script]) => kind === 'script' && script.includes('new MutationObserver')
+  );
+  const armScript = calls[armIndex]?.[1] ?? '';
+  const clickIndex = calls.findIndex(([kind, target]) => kind === 'click' && target === 'go');
+  assert.ok(armIndex >= 0 && armIndex < clickIndex, 'the cycle observer must be armed before Go');
+  assert.match(armScript, /record\.oldValue/);
+  assert.match(armScript, /attributeOldValue:\s*true/);
 });
 
 test('in-flight URL starts stop after dispatch so race scenarios can cancel it', async () => {
