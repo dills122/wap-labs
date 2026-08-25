@@ -54,7 +54,11 @@ export const navigationToolbarTemplate = () => `
         </label>
       </div>
       <div class="omnibox-actions">
-        <button id="btn-fetch-url" class="btn chrome-btn primary">${WAVES_COPY.shell.go}</button>
+        <button
+          id="btn-fetch-url"
+          class="btn chrome-btn primary"
+          data-navigation-action="go"
+        >${WAVES_COPY.shell.go}</button>
         <button id="btn-load-local" class="btn chrome-btn primary">
           ${WAVES_COPY.shell.loadLocal}
         </button>
