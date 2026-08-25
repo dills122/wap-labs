@@ -279,6 +279,25 @@
       }
     },
     {
+      "clientMethod": "engineNavigateBackToCardFrame",
+      "command": "engine_navigate_back_to_card_frame",
+      "facadeMethod": {
+        "facade": "engine",
+        "method": "navigateBackToCardFrame"
+      },
+      "parameter": {
+        "name": "request",
+        "type": {
+          "name": "NavigateToCardRequest",
+          "source": "engine"
+        }
+      },
+      "response": {
+        "name": "EngineFrame",
+        "source": "engine"
+      }
+    },
+    {
       "clientMethod": "engineNavigateBack",
       "command": "engine_navigate_back",
       "facadeMethod": {

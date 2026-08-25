@@ -232,6 +232,17 @@ pub fn apply_navigate_to_card_frame(
     })
 }
 
+pub fn apply_navigate_back_to_card_frame(
+    engine: &mut WmlEngine,
+    request: NavigateToCardRequest,
+) -> Result<EngineFrame, String> {
+    mutate_then_frame(engine, |candidate| {
+        candidate
+            .navigate_back_to_card(request.card_id.clone())
+            .map(|_| ())
+    })
+}
+
 pub fn apply_navigate_back(engine: &mut WmlEngine) -> EngineRuntimeSnapshot {
     engine.navigate_back();
     snapshot(engine)

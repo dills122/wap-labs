@@ -779,6 +779,20 @@ impl WmlEngine {
         })?
     }
 
+    /// Restore a host-known card as a backward transition without creating
+    /// forward engine history. Hosts use this only after intrinsic engine
+    /// history is empty and their request-shaped history identifies an older
+    /// entry in the currently loaded deck.
+    ///
+    /// Wrapped in the panic-containment boundary (see [`catch_engine_panic`]).
+    pub fn navigate_back_to_card(&mut self, id: String) -> Result<bool, String> {
+        let handled = self.mutate_with_panic_boundary(move |engine| {
+            engine.navigate_back_to_card_internal(&id)
+        })??;
+        self.last_back_navigation_handled = handled;
+        Ok(handled)
+    }
+
     /// Activate BACK. An effective WML `do type="prev"` binding takes
     /// precedence; otherwise the intrinsic history-pop behavior runs.
     ///

@@ -295,6 +295,18 @@ fn every_mutating_frame_adapter_is_atomic_on_frame_failure() {
             )
         },
     );
+    assert_forced_frame_failure_is_atomic(
+        "navigate back to host card",
+        frame_test_engine(BASIC_NAV_WML),
+        |engine| {
+            apply_navigate_back_to_card_frame(
+                engine,
+                NavigateToCardRequest {
+                    card_id: "next".to_string(),
+                },
+            )
+        },
+    );
 
     let mut back_engine = frame_test_engine(BASIC_NAV_WML);
     back_engine
@@ -599,6 +611,52 @@ fn wml_303_back_override_handled_state_crosses_the_native_host_contract() {
 }
 
 #[test]
+fn wml_303_empty_prev_override_crosses_the_native_host_as_unhandled() {
+    let mut engine = WmlEngine::new();
+    apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(
+                r#"<wml><card id="home">
+                  <do name="back" type="prev"><prev/></do>
+                  <p>Home</p>
+                </card><card id="restored">
+                  <onevent type="onenterbackward">
+                    <refresh><setvar name="direction" value="backward"/></refresh>
+                  </onevent>
+                  <p>Restored</p>
+                </card></wml>"#,
+            ),
+            base_url: "http://local.test/wml-303-empty-prev.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("deck should load");
+
+    let snapshot = apply_navigate_back(&mut engine);
+    assert_eq!(snapshot.active_card_id.as_deref(), Some("home"));
+    assert!(!snapshot.last_back_navigation_handled);
+
+    let frame = apply_navigate_back_to_card_frame(
+        &mut engine,
+        NavigateToCardRequest {
+            card_id: "restored".to_string(),
+        },
+    )
+    .expect("native host should restore a known same-deck card backward");
+    assert_eq!(frame.snapshot.active_card_id.as_deref(), Some("restored"));
+    assert!(frame.snapshot.last_back_navigation_handled);
+    assert_eq!(
+        engine.get_var("direction".to_string()).as_deref(),
+        Some("backward")
+    );
+}
+
+#[test]
 fn command_engine_wrappers_drive_state_transitions() {
     let state = AppState::default();
     let loaded = command_engine_load_deck_context(
@@ -638,10 +696,20 @@ fn command_engine_wrappers_drive_state_transitions() {
     .expect("navigateToCard should succeed");
     assert_eq!(nav.active_card_id.as_deref(), Some("next"));
 
+    let restored = command_engine_navigate_back_to_card_frame(
+        &state,
+        NavigateToCardRequest {
+            card_id: "home".to_string(),
+        },
+    )
+    .expect("navigateBackToCardFrame should succeed");
+    assert_eq!(restored.snapshot.active_card_id.as_deref(), Some("home"));
+    assert!(restored.snapshot.last_back_navigation_handled);
+
     let _set_cols = command_engine_set_viewport_cols(&state, SetViewportColsRequest { cols: 18 })
         .expect("set viewport should succeed");
     let snap = command_engine_snapshot(&state).expect("snapshot should succeed");
-    assert_eq!(snap.active_card_id.as_deref(), Some("next"));
+    assert_eq!(snap.active_card_id.as_deref(), Some("home"));
 
     let _cleared = command_engine_clear_external_navigation_intent(&state)
         .expect("clear external intent should succeed");

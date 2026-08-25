@@ -202,6 +202,9 @@ export interface WmlEngineCommon {
   // Delay until the active native WML timer expires; absent when no timer is running.
   nextTimerWakeupMs(): number | undefined;
   navigateToCard(id: string): void;
+  // Restores a host-known same-deck history entry with backward entry semantics
+  // and without pushing a new forward engine-history entry.
+  navigateBackToCard(id: string): boolean;
   navigateBack(): boolean;
   // Reports whether the most recent BACK activation was consumed by either
   // an effective WML `do type="prev"` binding or intrinsic history fallback.

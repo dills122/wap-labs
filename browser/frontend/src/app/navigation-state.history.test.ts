@@ -174,6 +174,76 @@ describe('navigation-state history behavior', () => {
     expect(renderCount).toBe(3);
   });
 
+  it('restores same-deck host history locally when engine history is empty', async () => {
+    const fetchCalls: string[] = [];
+    const backwardCardCalls: string[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async (request) => {
+          fetchCalls.push(request.url);
+          return fetchOk({
+            finalUrl: request.url,
+            engineDeckInput: {
+              wmlXml:
+                '<wml><card id="home"><p>home</p></card><card id="menu"><p>menu</p></card></wml>',
+              baseUrl: request.url,
+              contentType: 'text/vnd.wap.wml'
+            }
+          });
+        },
+        engineLoadDeckContext: async (request) =>
+          snapshot({
+            activeCardId: 'home',
+            baseUrl: request.baseUrl,
+            historyPushSequence: 0
+          }),
+        engineHandleKeyFrame: async () =>
+          frame({
+            activeCardId: 'menu',
+            baseUrl: 'http://example.test/start.wml',
+            historyPushSequence: 1
+          }),
+        engineNavigateBackFrame: async () =>
+          frame({
+            activeCardId: 'menu',
+            baseUrl: 'http://example.test/start.wml',
+            historyPushSequence: 0,
+            lastBackNavigationHandled: false
+          }),
+        engineNavigateBackToCardFrame: async ({ cardId }) => {
+          backwardCardCalls.push(cardId);
+          return frame({
+            activeCardId: cardId,
+            baseUrl: 'http://example.test/start.wml',
+            historyPushSequence: 0,
+            lastBackNavigationHandled: true
+          });
+        }
+      }),
+      'http://seed.test'
+    );
+
+    await machine.loadTransportUrl({
+      url: 'http://example.test/start.wml',
+      source: 'user',
+      followExternalIntent: false
+    });
+    await machine.applyEngineKey('enter');
+
+    expect(machine.getHistoryState().entries.map((entry) => entry.activeCardId)).toEqual([
+      'home',
+      'menu'
+    ]);
+
+    const mode = await machine.navigateBackWithFallback();
+
+    expect(mode).toBe('engine');
+    expect(backwardCardCalls).toEqual(['home']);
+    expect(fetchCalls).toEqual(['http://example.test/start.wml']);
+    expect(machine.getHistoryState().index).toBe(0);
+    expect(machine.getSessionState().activeCardId).toBe('home');
+  });
+
   it('replays typed POST values when history back must refetch the prior deck', async () => {
     const fetchRequests: FetchRequest[] = [];
     const machine = createNavigationStateMachine(

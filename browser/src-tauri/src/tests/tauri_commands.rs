@@ -182,6 +182,19 @@ fn tauri_command_wrappers_cover_viewport_and_direct_navigation_paths() {
         }),
         "frame navigation render should include deck content"
     );
+
+    let backward_frame = super::super::engine_navigate_back_to_card_frame(
+        borrowed_state(&state),
+        NavigateToCardRequest {
+            card_id: "next".to_string(),
+        },
+    )
+    .expect("backward card frame navigation should succeed");
+    assert_eq!(
+        backward_frame.snapshot.active_card_id.as_deref(),
+        Some("next")
+    );
+    assert!(backward_frame.snapshot.last_back_navigation_handled);
 }
 
 #[test]

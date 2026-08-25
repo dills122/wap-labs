@@ -122,6 +122,13 @@ export const createHostClientMock = (
         render: await renderForFrame(),
         presentation: presentationStub
       })),
+    engineNavigateBackToCardFrame:
+      overrides.engineNavigateBackToCardFrame ??
+      (async (request) => ({
+        snapshot: await host.engineNavigateToCard(request),
+        render: await renderForFrame(),
+        presentation: presentationStub
+      })),
     engineNavigateToCardFrame:
       overrides.engineNavigateToCardFrame ??
       (async (request) => ({
