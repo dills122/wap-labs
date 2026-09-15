@@ -5,12 +5,12 @@ packages:
   - "docs-portal"
 
 catalog:
-  "@types/node": "^26.1.2"
-  "@typescript-eslint/eslint-plugin": "^8.66.0"
-  "@typescript-eslint/parser": "^8.66.0"
-  eslint: "^10.8.0"
+  "@types/node": "^26.5.0"
+  "@typescript-eslint/eslint-plugin": "^8.70.0"
+  "@typescript-eslint/parser": "^8.70.0"
+  eslint: "^10.10.0"
   eslint-config-prettier: "^10.1.8"
-  globals: "^17.9.0"
+  globals: "^17.12.0"
   lit: "^3.3.3"
   prettier: "^3.9.6"
   typescript: "^6.0.3"

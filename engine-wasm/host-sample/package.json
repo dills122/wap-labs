@@ -27,7 +27,7 @@
     "format:check": "prettier --ignore-path ../../.prettierignore --check \"**/*.{ts,css,html}\""
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "catalog:",
     "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
