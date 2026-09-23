@@ -22,5 +22,5 @@ ts-rs = { version = "12", features = ["serde-compat"] }
 url = "2"
 
 [dev-dependencies]
-toml = "0.8"
+toml = "1.1"
 wavenav_engine = { path = "../engine-wasm/engine", default-features = false }
