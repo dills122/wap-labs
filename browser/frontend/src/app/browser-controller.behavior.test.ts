@@ -57,6 +57,8 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
   document.body.append(navigationPhaseBarEl);
 
   const viewportEl = document.createElement('div');
+  // Match the 14px handset geometry without depending on jsdom's default font size.
+  viewportEl.style.fontSize = '14px';
   viewportEl.tabIndex = -1;
   const snapshotEl = document.createElement('pre');
   const fetchUrlInput = document.createElement('input');
