@@ -209,6 +209,9 @@ pnpm verify:full       # full local verification profile
 pnpm verify:extended   # external/local-service lanes; requires their prerequisites
 ```
 
+The marketing-site lane validates its separate lockfile with a frozen install before building,
+so existing local dependencies cannot hide manifest/lockfile drift that would fail CI.
+
 Focused checks include:
 
 ```bash
