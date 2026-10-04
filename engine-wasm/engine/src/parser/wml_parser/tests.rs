@@ -1128,6 +1128,25 @@ fn parse_wml_reports_xml_root_and_structure_errors() {
 }
 
 #[test]
+fn preserves_unicode_in_xml_names_attributes_text_and_cdata() {
+    let root = parse_xml_root(
+        r#"<élément résumé="café &amp; thé">Crème &#233;<![CDATA[ 🛰️ <garde>]]></élément>"#,
+    )
+    .expect("UTF-8 XML should parse without lossy conversion");
+    assert_eq!(root.name, "élément");
+    assert_eq!(root.attr("résumé"), Some("café & thé"));
+    let text: String = root
+        .children
+        .iter()
+        .map(|node| match node {
+            super::xml::XmlNode::Text(value) => value.as_str(),
+            super::xml::XmlNode::Element(_) => panic!("expected text nodes"),
+        })
+        .collect();
+    assert_eq!(text, "Crème é 🛰️ <garde>");
+}
+
+#[test]
 fn parses_cdata_and_named_entity_refs() {
     let xml = r##"
         <wml>
