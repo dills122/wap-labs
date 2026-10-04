@@ -73,7 +73,7 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
                         "Malformed XML: XML declaration version is invalid: {err}"
                     ))
                 })?;
-                if version.as_ref() != b"1.0" {
+                if version.as_ref() != "1.0" {
                     return Err(WmlLoadDiagnostic::invalid(
                         "Invalid WML prologue: XML declaration version must be '1.0'",
                     ));
@@ -100,16 +100,16 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
                 attach_node(&mut stack, &mut root, XmlNode::Element(element))?;
             }
             Ok(Event::Text(text)) => {
-                let raw = String::from_utf8_lossy(text.as_ref()).to_string();
+                let raw = text.as_ref().to_owned();
                 attach_node(&mut stack, &mut root, XmlNode::Text(decode_entities(&raw)))?;
             }
             Ok(Event::GeneralRef(reference)) => {
-                let raw = String::from_utf8_lossy(reference.as_ref()).to_string();
+                let raw = reference.as_ref().to_owned();
                 let decoded = decode_general_entity(&raw);
                 attach_node(&mut stack, &mut root, XmlNode::Text(decoded))?;
             }
             Ok(Event::CData(text)) => {
-                let raw = String::from_utf8_lossy(text.as_ref()).to_string();
+                let raw = text.as_ref().to_owned();
                 attach_node(&mut stack, &mut root, XmlNode::Text(raw))?;
             }
             Ok(Event::DocType(value)) => {
@@ -123,9 +123,7 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
                         "Malformed XML: DOCTYPE declaration must precede the root element",
                     ));
                 }
-                let raw = std::str::from_utf8(value.as_ref()).map_err(|_| {
-                    WmlLoadDiagnostic::malformed("Malformed XML: DOCTYPE declaration is not UTF-8")
-                })?;
+                let raw = value.as_ref();
                 document_type = Some(classify_wml_doctype(raw)?);
             }
             Ok(Event::End(_)) => {
@@ -246,13 +244,13 @@ fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnos
     // WML inherits XML's case sensitivity. Preserving authored spelling here
     // ensures the strict WML validator rejects case-folded guesses instead of
     // silently turning <CARD> or HREF into declared WML names.
-    let name = String::from_utf8_lossy(start.name().as_ref()).to_string();
+    let name = start.name().as_ref().to_owned();
     let mut attrs = HashMap::new();
     for attr in start.attributes() {
         let attr = attr.map_err(|err| {
             WmlLoadDiagnostic::malformed(format!("Malformed XML attribute: {err}"))
         })?;
-        let key = String::from_utf8_lossy(attr.key.as_ref()).to_string();
+        let key = attr.key.as_ref().to_owned();
         let value = attr
             .normalized_value(XmlVersion::Implicit1_0)
             .map_err(|err| {
