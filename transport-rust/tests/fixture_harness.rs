@@ -46,7 +46,7 @@ fn fixture_dirs(root: &Path) -> Vec<PathBuf> {
 
 fn parse_meta(path: &Path) -> FixtureMeta {
     let raw = fs::read_to_string(path).expect("meta.toml should be readable");
-    let doc: Value = raw.parse().expect("meta.toml should parse");
+    let doc: Value = toml::from_str(&raw).expect("meta.toml should parse");
     let table = doc
         .as_table()
         .expect("fixture meta root should be a TOML table")

@@ -132,7 +132,7 @@ fn wbxml_fixture_expectations() -> HashMap<String, String> {
         .join("fixtures.toml");
     let raw =
         fs::read_to_string(&manifest_path).expect("fixtures.toml should exist and be readable");
-    let doc: Value = raw.parse().expect("fixtures.toml should parse");
+    let doc: Value = toml::from_str(&raw).expect("fixtures.toml should parse");
     let fixtures = doc
         .get("fixtures")
         .and_then(Value::as_array)
