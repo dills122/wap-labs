@@ -27,6 +27,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 COPY --from=kannel-build /usr/src/kannel-build/kannel_*.deb /tmp/kannel-patched.deb
 
 RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
     && apt-get install -y --no-install-recommends \
        ca-certificates \
        curl \

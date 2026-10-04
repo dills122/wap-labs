@@ -203,11 +203,12 @@ jobs:
           cache-from: type=gha,scope=wml-server-development
           cache-to: type=gha,mode=max,scope=wml-server-development
 
-      - name: Build cached Kannel production image
+      - name: Build Kannel production image with refreshed runtime packages
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: docker/kannel
           target: production
+          no-cache-filters: runtime-base
           load: true
           tags: wap-labs/wap-gateway:security
           cache-from: |
