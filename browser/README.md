@@ -154,7 +154,7 @@ regenerate the contracts and fail on committed drift.
 
 ## Tauri generated assets
 
-Generation uses Node `22.22.1` from `.nvmrc`, pnpm `10.23.0` from the root `packageManager` field,
+Generation uses Node `22.23.3` from `.nvmrc`, pnpm `10.23.0` from the root `packageManager` field,
 locked Rust dependencies from `browser/src-tauri/Cargo.lock`, and exactly `tauri-cli 2.10.0`.
 `AUTO_INSTALL_RUST_TOOLS=1 ./scripts/init-refresh.sh` installs that CLI version when it is missing.
 

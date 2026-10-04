@@ -70,6 +70,11 @@ Set `WAVES_BASELINE_OUTPUT_DIR` to preserve a particular run outside the default
 `engine-wasm/host-sample/test-results/waves-baseline` directory. Relative output paths resolve from
 the repository root.
 
+The current input/render probe checks the engine focus index and the focused link in the
+presenter's render list, which also drives the canvas handset. It does not depend on the older
+DOM segment classes used by the original baseline capture. The recorded measurements above
+remain historical evidence; new runs produce their own results in the output directory.
+
 ## Window and Keyboard Evidence
 
 Both automated window runs assert:
@@ -124,11 +129,11 @@ and `#347` while this integration gate was in progress; `WBP-05` then landed in 
 final `#348` integration merge. These rows preserve the maintenance seams used by the completed
 Phase 1 slices; they are no longer next-work pointers:
 
-| Slice    | Safe leaf seam                                                                         | Integration constraint                                                                                                                                    |
-| -------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `WBP-02` | `app/shell/handset-stage-template.ts` plus scoped component styles/tokens              | Do not change 20 logical columns or infer frame, softkey, or hit-region semantics. Root `styles.css` integration remains single-owner.                    |
-| `WBP-03` | `app/shell/navigation-toolbar-template.ts` and browser-owned controller callbacks      | Preserve `ShellEventBindingActions`, current navigation ordering, Local/Network behavior, and transport truthfulness.                                     |
-| `WBP-04` | new start/help leaf templates and distinct `engine-wasm/examples/source/*` story files | Root-shell insertion, `waves-copy.ts`, and generated example-manifest updates require the integration owner. Tutorial decks use the ordinary engine path. |
+| Slice    | Safe leaf seam                                                                         | Integration constraint                                                                                                                                                                                                                                            |
+| -------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WBP-02` | `app/shell/handset-stage-template.ts` plus scoped component styles/tokens              | Do not change 20 logical columns or infer frame, softkey, or hit-region semantics. Root `styles.css` integration remains single-owner.                                                                                                                            |
+| `WBP-03` | `app/shell/navigation-toolbar-template.ts` and browser-owned controller callbacks      | Preserve `ShellEventBindingActions`, current navigation ordering, Local/Network behavior, and transport truthfulness.                                                                                                                                             |
+| `WBP-04` | new start/help leaf templates and distinct `engine-wasm/examples/source/*` story files | Root-shell insertion, `waves-copy.ts`, and generated example-manifest updates require the integration owner. Tutorial decks use the ordinary engine path.                                                                                                         |
 | `WBP-05` | landmark/ARIA/focus changes within existing leaf templates and scoped tests            | Reuse native-control keyboard behavior. Do not create a DOM interpretation of WML or add future engine action semantics. The now-completed additive `WBP-05A` follow-up closed the single-announcement and rendered-evidence gap found at the Phase 1 checkpoint. |
 
 The root `browser-shell-template.ts`, global `styles.css`, `waves-copy.ts`, and generated example
