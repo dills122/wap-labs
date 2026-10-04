@@ -531,6 +531,8 @@ Auto-merge behavior:
   PR metadata in a read-only job.
 - `dependabot/fetch-metadata` is pinned to a full commit SHA and verifies that the PR and commits
   are Dependabot-owned.
+- Human-triggered rebases and compatibility commits skip automatic metadata evaluation and
+  require manual merge after validation; commit verification remains enabled for bot updates.
 - Only patch and minor updates have auto-merge enabled. The metadata action reports the highest
   semver change in grouped PRs, so a group cannot hide a major update.
 - Major updates and updates without recognized patch/minor metadata require manual review.
