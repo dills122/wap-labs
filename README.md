@@ -161,6 +161,18 @@ cd engine-wasm/engine
 wasm-pack build --target web --out-dir ../pkg
 ```
 
+### Local agent tooling
+
+With a shared AI Central checkout at `~/.ai-central`, run `pnpm codex:links` to refresh the
+curated engineering, Rust, Node, infrastructure, and delivery skills. Use
+`pnpm codex:links --dry-run` to preview changes, or set `AI_CENTRAL_HOME` to another checkout.
+The installer preserves project-owned files and prunes only deselected AI Central skill links.
+
+Serena project configuration and memories live in locally excluded `.serena/`; use
+`serena project index .`, `serena project health-check .`, and `serena memories check .` to
+validate them. Codebase Memory's persistent graph lives in locally excluded `.codebase-memory/`.
+Refresh its full index through the `index_repository` MCP tool after a repository sync.
+
 ## Run a local WAP lab
 
 The Compose stack provides the same Kannel-to-origin topology for development:

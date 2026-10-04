@@ -166,6 +166,7 @@ _site-preview
 !engine-wasm/engine/fuzz/corpus/*/seed-*
 
 # Local AI Central links (repo-owned Codex files remain tracked)
+.agents/skills/
 .codex/skills/
 .codex/steering/frontend-design-steering.md
 .codex/steering/javascript-esm-steering.md
