@@ -1,26 +1,35 @@
 #!/usr/bin/env node
 
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
-const codexDir = path.join(repoRoot, '.codex');
-const skillsDir = path.join(codexDir, 'skills');
-const steeringDir = path.join(codexDir, 'steering');
-const templatesRoot = resolveTemplatesRoot();
 const dryRun = process.argv.includes('--dry-run');
-const sharedSteeringFiles = ['frontend-design-steering.md', 'javascript-esm-steering.md'];
+const bundles = ['core', 'node', 'orchestration', 'delivery', 'rust', 'infra'];
+const additionalSkills = [
+  'repository-doc-drift',
+  'vite',
+  'vitest',
+  'pnpm',
+  'browser-testing-with-devtools',
+  'claude-playwright-review',
+  'frontend-design-review'
+];
+const sharedSteeringFiles = ['frontend-design-steering.md'];
 
 function usage() {
   console.log(`Usage: node scripts/setup-codex-links.mjs [--dry-run]
 
-Creates local .codex symlinks from AI Central while preserving repo-owned files.
+Installs the repository's curated AI Central skill bundles as local links and
+refreshes reusable steering links while preserving repo-owned files.
 
 Environment:
   AI_CENTRAL_HOME  Path to ai-central or ai-central/templates.
-                   Defaults to ../ai-central/templates.
+                   Defaults to ~/.ai-central.
 
 Options:
   --dry-run        Report changes without writing links.
@@ -41,10 +50,10 @@ if (unknownArguments.length > 0) {
   process.exit(2);
 }
 
-function resolveTemplatesRoot() {
-  const input = process.env.AI_CENTRAL_HOME ?? path.resolve(repoRoot, '../ai-central/templates');
+function resolveAiCentralRoot() {
+  const input = process.env.AI_CENTRAL_HOME ?? path.join(os.homedir(), '.ai-central');
   const absolute = path.resolve(input);
-  return path.basename(absolute) === 'ai-central' ? path.join(absolute, 'templates') : absolute;
+  return path.basename(absolute) === 'templates' ? path.dirname(absolute) : absolute;
 }
 
 async function pathExists(target) {
@@ -59,95 +68,7 @@ async function pathExists(target) {
   }
 }
 
-async function* walkDirectories(root) {
-  let entries;
-  try {
-    entries = await fs.readdir(root, { withFileTypes: true });
-  } catch (error) {
-    if (['ENOENT', 'EACCES', 'EPERM'].includes(error.code)) {
-      return;
-    }
-    throw error;
-  }
-
-  yield root;
-
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      yield* walkDirectories(path.join(root, entry.name));
-    }
-  }
-}
-
-function skillLinkName(parts, name) {
-  if (!name || parts[0] === undefined) {
-    return undefined;
-  }
-
-  if (parts[0] === 'adapted' || parts[0] !== 'imported') {
-    return name;
-  }
-
-  switch (parts[1]) {
-    case 'agent-skills':
-      return name;
-    case 'pm-skills':
-      return `pm-${name}`;
-    case 'claude-skills':
-      return `claude-${name}`;
-    case 'agent-toolkit':
-      return `toolkit-${name}`;
-    case 'web-quality-skills':
-      return `web-${name}`;
-    default:
-      return name;
-  }
-}
-
-async function findSkillLinks() {
-  const skillRoot = path.join(templatesRoot, 'skills');
-  const links = new Map();
-
-  for await (const directory of walkDirectories(skillRoot)) {
-    if (!(await pathExists(path.join(directory, 'SKILL.md')))) {
-      continue;
-    }
-
-    const relativeDirectory = path.relative(skillRoot, directory);
-    const parts = relativeDirectory.split(path.sep);
-    const linkName = skillLinkName(parts, parts.at(-1));
-    if (!linkName) {
-      continue;
-    }
-
-    const existingTarget = links.get(linkName);
-    if (existingTarget && existingTarget !== directory) {
-      throw new Error(`AI Central has duplicate skill link name '${linkName}'`);
-    }
-    links.set(linkName, directory);
-  }
-
-  return [...links.entries()]
-    .map(([linkName, target]) => ({ linkName, target }))
-    .sort((left, right) => left.linkName.localeCompare(right.linkName));
-}
-
-async function findSteeringLinks() {
-  const root = path.join(templatesRoot, 'steering');
-  const links = [];
-
-  for (const fileName of sharedSteeringFiles) {
-    const target = path.join(root, fileName);
-    if (await pathExists(target)) {
-      links.push({ linkName: fileName, target });
-    }
-  }
-
-  return links;
-}
-
-async function ensureSymlink(directory, linkName, target) {
-  const linkPath = path.join(directory, linkName);
+async function ensureSymlink(linkPath, target) {
   let existing;
 
   try {
@@ -174,6 +95,7 @@ async function ensureSymlink(directory, linkName, target) {
   }
 
   if (!dryRun) {
+    await fs.mkdir(path.dirname(linkPath), { recursive: true });
     await fs.symlink(target, linkPath);
   }
 
@@ -181,46 +103,62 @@ async function ensureSymlink(directory, linkName, target) {
 }
 
 async function main() {
-  if (!(await pathExists(path.join(templatesRoot, 'skills')))) {
-    console.error(`AI Central templates not found: ${templatesRoot}`);
+  const aiCentralRoot = resolveAiCentralRoot();
+  const templatesRoot = path.join(aiCentralRoot, 'templates');
+  const installer = path.join(aiCentralRoot, 'scripts', 'install-skill-bundle.sh');
+
+  if (!(await pathExists(path.join(templatesRoot, 'catalog.json')))) {
+    console.error(`AI Central catalog not found: ${templatesRoot}`);
     console.error('Set AI_CENTRAL_HOME to your ai-central checkout or templates directory.');
     process.exitCode = 1;
     return;
   }
 
-  if (!dryRun) {
-    await fs.mkdir(skillsDir, { recursive: true });
-    await fs.mkdir(steeringDir, { recursive: true });
+  if (!(await pathExists(installer))) {
+    console.error(`AI Central bundle installer not found: ${installer}`);
+    process.exitCode = 1;
+    return;
   }
 
-  const links = [
-    ...(await findSkillLinks()).map((link) => ({ ...link, directory: skillsDir })),
-    ...(await findSteeringLinks()).map((link) => ({ ...link, directory: steeringDir }))
+  console.log(`AI Central source: ${aiCentralRoot}`);
+  console.log(`Selected bundles: ${bundles.join(',')}`);
+  console.log(`Additional skills: ${additionalSkills.join(',')}`);
+
+  const installerArguments = [
+    repoRoot,
+    '--bundle',
+    bundles.join(','),
+    '--skills',
+    additionalSkills.join(','),
+    '--mode',
+    'link',
+    '--sync'
   ];
-  const results = [];
-
-  for (const link of links) {
-    results.push(await ensureSymlink(link.directory, link.linkName, link.target));
+  if (dryRun) {
+    installerArguments.push('--dry-run');
   }
 
-  const counts = results.reduce((summary, result) => {
-    summary[result.action] = (summary[result.action] ?? 0) + 1;
-    return summary;
-  }, {});
-
-  for (const result of results.filter(
-    (item) => !['unchanged', 'preserved'].includes(item.action)
-  )) {
-    console.log(
-      `${result.action}: ${path.relative(repoRoot, result.linkPath)} -> ${result.target}`
-    );
+  const result = spawnSync(installer, installerArguments, { stdio: 'inherit' });
+  if (result.error) {
+    throw result.error;
+  }
+  if (result.status !== 0) {
+    process.exitCode = result.status ?? 1;
+    return;
   }
 
-  console.log(
-    `AI Central links checked: ${results.length} ` +
-      `(created ${counts.created ?? 0}, updated ${counts.updated ?? 0}, ` +
-      `unchanged ${counts.unchanged ?? 0}, preserved ${counts.preserved ?? 0})`
-  );
+  for (const fileName of sharedSteeringFiles) {
+    const target = path.join(templatesRoot, 'steering', fileName);
+    if (!(await pathExists(target))) {
+      console.error(`AI Central steering file not found: ${target}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const linkPath = path.join(repoRoot, '.codex', 'steering', fileName);
+    const link = await ensureSymlink(linkPath, target);
+    console.log(`${link.action}: ${path.relative(repoRoot, link.linkPath)} -> ${link.target}`);
+  }
 }
 
 await main();

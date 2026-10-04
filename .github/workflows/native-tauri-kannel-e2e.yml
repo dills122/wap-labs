@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  NODE_VERSION: '22.22.1'
+  NODE_VERSION: '22.23.3'
   RUST_BROWSER_KEY: wavenav-browser-native-e2e
   TAURI_CLI_VERSION: '2.10.0'
   TAURI_DRIVER_VERSION: '2.0.6'

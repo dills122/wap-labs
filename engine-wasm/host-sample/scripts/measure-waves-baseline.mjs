@@ -94,8 +94,7 @@ const auditLayout = async (page, expectedRailOpen) => {
       '.browser-shell',
       '.nav-toolbar',
       '.handset-stage',
-      '.utility-rail',
-      '.developer-drawer-section',
+      '.status-bar',
       '#viewport',
       '.softkey-row'
     ];
@@ -189,51 +188,73 @@ const ensureDisclosureOpenWithKeyboard = async (page, summarySelector, detailsSe
 
 const EXPECTED_LOCAL_TAB_ORDER = [
   'btn-reload',
-  'run-mode',
   'local-example',
   'btn-load-local',
+  'btn-mode-local',
+  'btn-mode-network',
+  'btn-library',
+  'btn-preferences',
+  'btn-inspector',
+  'btn-welcome-toggle',
   'viewport',
   'btn-up',
   'btn-enter',
   'btn-down',
-  'utility-rail-toggle',
-  'welcome-help-toggle',
-  'btn-start-tour',
-  'btn-try-local-examples',
-  'btn-connect-network',
   'viewport-cols',
-  'handset-scale-select',
-  'local-example-notes-toggle',
-  'dev-drawer-toggle',
-  'btn-health',
-  'btn-render',
-  'btn-snapshot',
-  'btn-clear-intent',
-  'btn-export-timeline',
-  'btn-clear-timeline',
-  'debug-raw-mode-toggle',
-  'base-url',
-  'wml-input',
-  'btn-load-context',
-  'timeline'
+  'handset-scale-select'
 ];
 
 const auditKeyboard = async (page) => {
   await loadExample(page, 'basic');
-  await ensureDisclosureOpenWithKeyboard(page, '#utility-rail-toggle', '#utility-rail-panel');
-  await ensureDisclosureOpenWithKeyboard(page, '#welcome-help-toggle', '#welcome-help-panel');
+  await page.locator('#btn-welcome-toggle').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(
+    await page.locator('#welcome-help-panel').isVisible(),
+    true,
+    'Welcome opens from Enter'
+  );
+  await page.keyboard.press('Enter');
+  assert.equal(
+    await page.locator('#welcome-help-panel').isVisible(),
+    false,
+    'Welcome closes from Enter'
+  );
+
+  await page.locator('#btn-inspector').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(
+    await page.locator('#developer-tools-workspace').isVisible(),
+    true,
+    'Developer Tools opens from Enter'
+  );
   await ensureDisclosureOpenWithKeyboard(
     page,
     '#local-example-notes-toggle',
     '#local-example-notes'
   );
-  await ensureDisclosureOpenWithKeyboard(page, '#dev-drawer-toggle', '#dev-drawer');
-  await ensureDisclosureOpenWithKeyboard(page, '#debug-raw-mode-toggle', '#debug-raw-mode');
+  await page.locator('#devtools-tab-source').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#wml-input').isVisible(), true, 'Source tab opens from Enter');
+  await page.locator('#btn-health').focus();
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() =>
+    window.__WAVENAV_STORY_EVIDENCE__
+      ?.collect()
+      .status.includes('Health: waves-browser-test-host:ok')
+  );
+  await page.locator('#btn-inspector').focus();
+  await page.keyboard.press('Enter');
+  assert.equal(
+    await page.locator('#developer-tools-workspace').isVisible(),
+    false,
+    'Developer Tools closes from Enter'
+  );
 
+  const initiallyBackAvailable = await page.locator('#btn-back').isEnabled();
   const initialOrder = await collectTabOrder(page);
   assert.deepEqual(
     initialOrder,
-    EXPECTED_LOCAL_TAB_ORDER,
+    initiallyBackAvailable ? ['btn-back', ...EXPECTED_LOCAL_TAB_ORDER] : EXPECTED_LOCAL_TAB_ORDER,
     'local-mode shell tab order must be stable'
   );
 
@@ -266,23 +287,14 @@ const auditKeyboard = async (page) => {
     () => window.__WAVENAV_STORY_EVIDENCE__?.collect().session?.navigationStatus === 'loaded'
   );
 
-  await page.locator('#btn-health').focus();
-  await page.keyboard.press('Enter');
-  await page.waitForFunction(() =>
-    window.__WAVENAV_STORY_EVIDENCE__
-      ?.collect()
-      .status.includes('Health: waves-browser-test-host:ok')
-  );
-
   return {
     initialOrder,
     backEnabledOrder,
     activated: [
-      'utility rail',
-      'welcome/help',
+      'welcome panel',
+      'developer tools',
       'example notes',
-      'developer drawer',
-      'raw WML drawer',
+      'source tab',
       'Back',
       'Reload',
       'Health'
@@ -369,8 +381,10 @@ const measureNavigationAndInput = async (browser, baseUrl) => {
             );
             const check = () => {
               const evidence = window.__WAVENAV_STORY_EVIDENCE__?.collect();
-              const focusedSegment = document.querySelector('.wml-segment-link.is-focused');
-              if (evidence?.snapshot?.focusedLinkIndex === focusIndex && focusedSegment) {
+              const focusedLink = evidence?.render?.draw?.some(
+                (command) => command.type === 'link' && command.focused
+              );
+              if (evidence?.snapshot?.focusedLinkIndex === focusIndex && focusedLink) {
                 window.clearTimeout(timeout);
                 resolve(performance.now() - startedAt);
                 return;
@@ -423,7 +437,7 @@ try {
       preview.baseUrl,
       'default-window-1024x768',
       viewports.default,
-      true
+      false
     ),
     minimum: await captureWindowEvidence(
       browser,

@@ -9,6 +9,24 @@ function byId(plan, id) {
   return plan.find((lane) => lane.id === id);
 }
 
+test('marketing lockfile failure stops verification before cached dependencies can build', () => {
+  const lane = byId(buildPlan('change', ['marketing-site/package.json']), 'marketing-site');
+  const attempted = [];
+  const execution = executePlan([lane], {
+    checkPrerequisite: () => true,
+    runCommand: (step) => {
+      attempted.push(step);
+      return { status: 1 };
+    },
+    write: () => {}
+  });
+  assert.equal(execution.exitCode, 1);
+  assert.equal(attempted.length, 1);
+  assert.ok(attempted[0].args.includes('--frozen-lockfile'));
+  assert.ok(attempted[0].args.includes('--ignore-workspace'));
+  assert.equal(execution.results[0].outcome, OUTCOMES.failure);
+});
+
 test('JavaScript evidence requires the exact declared test name', () => {
   const source = `
     describe('EngineTimerRuntime', () => {

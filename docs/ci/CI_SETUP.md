@@ -269,6 +269,12 @@ Caching:
 - exact OS/architecture/version caches for Syft and Grype, verified after restore
 - target-separated BuildKit GHA caches for the production WML and Kannel images
 
+The Kannel runtime stage upgrades the pinned base image's installed packages before installing
+the patched gateway. Security builds use `no-cache-filters: runtime-base` so each audit resolves
+current distribution patches while preserving the expensive Kannel compilation cache.
+Docker does not invalidate cached `RUN apt-get update` layers when upstream packages change;
+see [build cache invalidation](https://docs.docker.com/build/cache/invalidation/).
+
 ### 4) Release Prepare (`.github/workflows/release-prepare.yml`)
 
 Purpose:
