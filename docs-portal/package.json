@@ -11,9 +11,9 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "ajv": "8.20.0",
-    "astro": "7.3.8",
+    "astro": "7.4.1",
     "typescript": "^6.0.3"
   }
 }
