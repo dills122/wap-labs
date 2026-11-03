@@ -5,7 +5,7 @@ packages:
   - "docs-portal"
 
 catalog:
-  "@types/node": "^26.6.5"
+  "@types/node": "^26.6.6"
   "@typescript-eslint/eslint-plugin": "^8.72.0"
   "@typescript-eslint/parser": "^8.72.0"
   eslint: "^10.13.0"
