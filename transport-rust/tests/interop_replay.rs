@@ -1537,3 +1537,55 @@ fn wml_203_reconstructed_wdp_sdu_matches_text_engine_behavior() {
         "reconstructed WBXML and canonical text should produce identical render lists"
     );
 }
+
+#[test]
+fn invalid_wmlc_fixture_decodes_but_engine_rejects_without_replacing_deck() {
+    let (url, server) = serve_one_wmlc_response(vec![
+        0x03, 0x0a, 0x6a, 0x00, 0x7f, 0x60, 0x03, b'b', b'a', b'd', 0x00, 0x01, 0x01,
+    ]);
+    let response = fetch_deck_in_process(FetchDeckRequest {
+        url,
+        method: Some("GET".to_owned()),
+        headers: None,
+        timeout_ms: Some(1_000),
+        retries: Some(0),
+        request_id: Some("invalid-deck-boundary".to_owned()),
+        request_policy: Some(FetchRequestPolicy {
+            destination_policy: Some(FetchDestinationPolicy::AllowPrivate),
+            cache_control: None,
+            referer_url: None,
+            post_context: None,
+            request_intent: None,
+            ua_capability_profile: None,
+        }),
+    });
+    server.join().expect("fixture server should exit");
+    assert!(response.ok, "WBXML should decode: {:?}", response.error);
+    let input = response
+        .engine_deck_input
+        .expect("decoded WML is handed to engine");
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck_context(
+            WML_203_CANONICAL_TEXT_DECK,
+            "http://example.test/",
+            "text/vnd.wap.wml",
+            None,
+        )
+        .unwrap();
+    let prior_card = engine.active_card_id();
+    let prior_render = serde_json::to_value(engine.render().unwrap()).unwrap();
+    assert!(engine
+        .load_deck_context(
+            &input.wml_xml,
+            &input.base_url,
+            &input.content_type,
+            input.raw_bytes_base64
+        )
+        .is_err());
+    assert_eq!(engine.active_card_id(), prior_card);
+    assert_eq!(
+        serde_json::to_value(engine.render().unwrap()).unwrap(),
+        prior_render
+    );
+}

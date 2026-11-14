@@ -64,7 +64,7 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002', 'ERR-NATIVE-003']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -123,4 +123,66 @@ test('explicit Stop preserves the prior deck and permits a later recovery naviga
     assertions.map(({ name }) => name),
     ['Stop preserves deck', 'Stop recovery']
   );
+});
+
+test('invalid WMLC is rejected with the previous deck retained and a later deck recovers', async () => {
+  const { calls, assertions, context } = fixture();
+  context.waves.waitForStatus = async (text) => {
+    calls.push(['status', text]);
+    return { text: 'Deck parse failed: invalid WML', tone: 'error', displayed: true };
+  };
+  await RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-003').run(context);
+  assert.deepEqual(
+    calls.filter(([kind]) => kind === 'open'),
+    [
+      ['open', 'wap://localhost/'],
+      ['open', 'wap://localhost/e2e/navigation/invalid-deck-a1/invalid.wmlc'],
+      ['open', 'wap://localhost/examples/interop-check.wml']
+    ]
+  );
+  assert.ok(calls.some(([kind, text]) => kind === 'status' && text === 'Deck parse failed:'));
+  assert.equal(
+    calls.filter(([kind, text]) => kind === 'deck' && text === 'Local WAP training environment.')
+      .length,
+    4
+  );
+  assert.ok(
+    calls.some(
+      ([kind, id, type]) =>
+        kind === 'action-settled' && id === 'invalid-deck-a1' && type === 'navigation'
+    )
+  );
+  assert.deepEqual(
+    assertions.map(({ name }) => name),
+    ['invalid deck rejection', 'invalid deck recovery']
+  );
+});
+
+test('invalid deck scenario rejects a non-error presentation', async () => {
+  const { context } = fixture();
+  context.waves.waitForStatus = async () => ({
+    text: 'Deck parse failed: invalid',
+    tone: 'success',
+    displayed: true
+  });
+  await assert.rejects(
+    RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-003').run(context),
+    /error tone/
+  );
+});
+
+test('invalid deck scenario rejects a changed viewport before recovery', async () => {
+  const { calls, context } = fixture();
+  let reads = 0;
+  context.waves.waitForDeckText = async () => (++reads < 3 ? 'prior deck' : 'changed deck');
+  context.waves.waitForStatus = async () => ({
+    text: 'Deck parse failed: invalid',
+    tone: 'error',
+    displayed: true
+  });
+  await assert.rejects(
+    RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-003').run(context),
+    /preserve the committed viewport/
+  );
+  assert.equal(calls.filter(([kind]) => kind === 'open').length, 2);
 });
