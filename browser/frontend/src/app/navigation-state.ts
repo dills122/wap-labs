@@ -42,7 +42,8 @@ export type NavigationErrorKind = 'network' | 'parse';
 
 export type NavigationPhase = 'preparing' | 'connecting' | 'gateway' | 'decode' | 'deck' | 'card';
 
-export type NavigationFailureLayer = 'request' | 'connection' | 'gateway' | 'decode' | 'deck';
+export type NavigationFailureLayer =
+  'request' | 'connection' | 'gateway' | 'response' | 'decode' | 'deck';
 
 export interface NavigationPhaseContext {
   phase: NavigationPhase;
@@ -290,8 +291,9 @@ export const createNavigationStateMachine = (
   ): NavigationFailureLayer => {
     switch (response.error?.code) {
       case 'INVALID_REQUEST':
-      case 'PAYLOAD_TOO_LARGE':
         return 'request';
+      case 'PAYLOAD_TOO_LARGE':
+        return 'response';
       case 'GATEWAY_TIMEOUT':
       case 'PROTOCOL_ERROR':
         return 'gateway';

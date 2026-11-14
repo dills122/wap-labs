@@ -116,3 +116,18 @@ The native workflow uploads screenshots, page source, environment, service logs,
 5. Add repeatable startup/interaction budgets and record the packaged VoiceOver smoke.
 6. Set `releaseComplete` only after every required inventory row is complete. The validator rejects
    an optimistic closure while any required row remains partial, missing, or blocked.
+
+### Interrupted and oversized response recovery
+
+The native pilot includes direct HTTP and connectionless Kannel scenarios for interrupted and
+oversized origin responses. The controlled origin serves a truncated response and a 524,289-byte
+response only in fixture mode. Each scenario checks the correlated error, prior frame, bounded
+origin attempts, recovery, and Back navigation. All four scenarios passed in [GitHub Actions run
+43639535120, attempt 2](https://github.com/dills122/wap-labs/actions/runs/43639535120/attempts/2).
+
+The expected errors differ by transport: direct HTTP reports `TRANSPORT_UNAVAILABLE` for the
+interrupted body and `PAYLOAD_TOO_LARGE` for the oversized body. Kannel turns the interrupted
+upstream response into either a 502 `PROTOCOL_ERROR` or `TRANSPORT_UNAVAILABLE`, both observed in
+the controlled pilot environments; an oversized response exceeds connectionless WDP
+capacity and currently results in `GATEWAY_TIMEOUT`. The latter is a gateway delivery timeout, not
+proof that Lowband's HTTP response-size limit was applied to WSP.

@@ -32,6 +32,10 @@ test('native E2E defaults to the smoke suite for compatibility', () => {
       'HTTP-NATIVE-002',
       'HTTP-NATIVE-003',
       'HTTP-NATIVE-004',
+      'FAIL-NATIVE-001',
+      'FAIL-NATIVE-002',
+      'FAIL-NATIVE-003',
+      'FAIL-NATIVE-004',
       'ERR-NATIVE-002',
       'ERR-NATIVE-003',
       'ERR-NATIVE-004'
@@ -67,6 +71,10 @@ test('native E2E lists stable scenario metadata without running a provider', () 
       'HTTP-NATIVE-002',
       'HTTP-NATIVE-003',
       'HTTP-NATIVE-004',
+      'FAIL-NATIVE-001',
+      'FAIL-NATIVE-002',
+      'FAIL-NATIVE-003',
+      'FAIL-NATIVE-004',
       'ERR-NATIVE-002',
       'ERR-NATIVE-003',
       'ERR-NATIVE-004'
@@ -98,6 +106,10 @@ test('native E2E selects a named suite', () => {
       'HTTP-NATIVE-002',
       'HTTP-NATIVE-003',
       'HTTP-NATIVE-004',
+      'FAIL-NATIVE-001',
+      'FAIL-NATIVE-002',
+      'FAIL-NATIVE-003',
+      'FAIL-NATIVE-004',
       'ERR-NATIVE-002',
       'ERR-NATIVE-003',
       'ERR-NATIVE-004'

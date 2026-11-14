@@ -29,7 +29,11 @@ const SAFE_PHASES = new Set([
   'ui-dispatched',
   'response-rendered',
   'origin-confirmed',
-  'session-invalidated'
+  'session-invalidated',
+  'failure-protocol',
+  'failure-connection',
+  'failure-timeout',
+  'failure-other'
 ]);
 const SAFE_FAILURE_CLASSES = new Set([
   'infrastructure-startup',
@@ -72,6 +76,7 @@ const SAFE_ASSERTION_NAMES = new Set([
   'native timeout frame',
   'native timeout rejection',
   'native timeout recovery',
+  'response failure recovery',
   'masked PIN entry',
   'registration response',
   'correlated registration receipt',

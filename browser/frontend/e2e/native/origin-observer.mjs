@@ -302,6 +302,12 @@ export function createOriginObserver({
       if (!publicOrigin) throw new Error('controlled navigation requires the public base');
       return new URL('/e2e/recovery.wml', publicOrigin).href;
     },
+    controlledFailureUrl(actionID, mode) {
+      if (!publicOrigin) throw new Error('controlled navigation requires the public base');
+      requireActionID(actionID);
+      if (!['interrupted', 'oversized'].includes(mode)) throw new Error('invalid controlled failure mode');
+      return new URL(`/e2e/navigation/${actionID}/${mode}.wmlc`, publicOrigin).href;
+    },
     async seedAccount({ username, pin, actionID }, { signal } = {}) {
       if (!publicOrigin)
         throw new Error('origin account setup requires the controlled public base');

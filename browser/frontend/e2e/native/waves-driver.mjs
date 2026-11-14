@@ -145,6 +145,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     const parsed = new URL(address);
     const validPath =
       parsed.pathname === '/e2e/recovery.wml' ||
+      /^\/e2e\/navigation\/[a-z0-9][a-z0-9-]{0,55}-a(?:[1-9][0-9]{0,3})\/(?:interrupted|oversized)\.wmlc$/.test(parsed.pathname) ||
       /^\/e2e\/navigation\/[a-z0-9][a-z0-9-]{0,55}-a(?:[1-9][0-9]{0,3})\/slow(?:-body)?\.wml$/.test(
         parsed.pathname
       );
