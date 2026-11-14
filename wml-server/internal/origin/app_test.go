@@ -924,3 +924,34 @@ func TestConcurrentRegistrationIsBounded(t *testing.T) {
 		t.Fatalf("users = %d, want 1", users)
 	}
 }
+
+func TestE2EInvalidDeckIsFixtureOnlyAndCorrelated(t *testing.T) {
+	const path = "/e2e/navigation/invalid-deck-a1/invalid.wmlc"
+	ordinary, _ := newTestApp(t, nil)
+	if got := perform(ordinary.Handler(), http.MethodGet, path, "", ""); got.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin exposed invalid deck fixture: %d", got.Code)
+	}
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	response := perform(app.Handler(), http.MethodGet, path, "", "")
+	if response.Code != http.StatusOK || response.Header().Get("Content-Type") != "application/vnd.wap.wmlc" {
+		t.Fatalf("invalid deck response = %d content-type %q", response.Code, response.Header().Get("Content-Type"))
+	}
+	if got := response.Body.Bytes(); !bytes.Equal(got, []byte{0x03, 0x0a, 0x6a, 0x00, 0x7f, 0x60, 0x03, 'b', 'a', 'd', 0x00, 0x01, 0x01}) {
+		t.Fatalf("invalid deck bytes = %x", got)
+	}
+	assertActionOracle(t, app, "invalid-deck-a1", "navigation", 1, "success")
+}
+
+func TestE2EInvalidDeckRejectsInvalidActionID(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	response := perform(app.Handler(), http.MethodGet, "/e2e/navigation/not-valid/invalid.wmlc", "", "")
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("invalid deck action status = %d, want 400", response.Code)
+	}
+}

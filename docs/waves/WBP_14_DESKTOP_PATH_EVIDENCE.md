@@ -16,7 +16,7 @@ stack. It proves startup, successful WML rendering/navigation, a bounded repeat 
 invalid-address failure, and a subsequent successful recovery.
 
 That is not yet the complete WBP-14 release gate. Of 19 required evidence scenarios, 3 are complete,
-8 are partial, 5 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
+9 are partial, 4 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
 story evidence for timeout, cancellation, invalid-deck atomicity, and script traps must not be
 presented as proof that the native desktop path handles those cases.
 
@@ -40,7 +40,7 @@ as a silent substitute for the other.
 | Loading phases and ordinary recovery      | partial         | WBP-11 phases, stale-result tests, and basic native failure/recovery exist                       | Measure 100/200 ms budgets and exercise categorized failures natively                                   |
 | History                                   | partial         | Typed replayable POST history and request-shaped engine/browser evidence exist                  | Add native GET, POST, and Back replay cases                                                              |
 | Timeout and cancellation                  | missing         | Lower-level behavior is tested                                                                  | Add controlled native cases, cancellation acknowledgement timing, and retained-frame assertions          |
-| Invalid deck                              | missing         | `WML-205` engine failure/atomicity story is green                                               | Serve malformed/invalid WML through Kannel and verify categorized native recovery without frame mutation |
+| Invalid deck                              | partial         | An isolated invalid WMLC fixture and native recovery scenario are implemented, with transport/engine boundary coverage | Run the native gateway scenario on Linux and retain evidence of the error, unchanged viewport, and recovery |
 | Script trap                               | missing         | `WMLS-501` decoder/verifier evidence exists                                                     | Add a native visible trap/recovery case; do not infer unfinished `WMLS-502` execution coverage           |
 | Crash recovery and safe session           | partial         | Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity    | Run and record the packaged launch-after-crash relaunch case                                               |
 | Diagnostics and bounded replay            | blocked         | Bounded sanitized Inspector projection exists                                                   | Implement `WBP-13` `.waves-session.json` import/replay and the 1,000-step memory gate                    |
@@ -56,8 +56,8 @@ strengthen fixture and manual-test coverage, but native desktop-path evidence is
 In particular, merged PR `#544` supplies WBP-11 presentation/recovery behavior and timing targets;
 it does not supply the native timing and categorized-failure artifacts needed for closure. PR
 `#549` adds WBP-12 fixture evidence, moving crash recovery from blocked to partial; its packaged
-launch-after-crash observation remains open. The inventory therefore records 3 complete, 8
-partial, 5 missing, and 3 blocked scenarios.
+launch-after-crash observation remains open. The inventory therefore records 3 complete, 9
+partial, 4 missing, and 3 blocked scenarios.
 
 ## Compliance mapping posture
 
@@ -65,7 +65,7 @@ The inventory maps scenarios only to requirements supported by the narrow contex
 for this slice:
 
 - `WML-205` supports invalid-deck/error atomicity mapping to `RQ-RMK-002`, `RQ-RMK-003`, and
-  `RQ-RMK-012`. The native invalid-deck scenario remains missing.
+  `RQ-RMK-012`. The native invalid-deck scenario is implemented but awaits a passing Linux native gateway run.
 - `WML-309` supports engine-owned frame/affordance mapping to `RQ-RMK-002`. Pending F2 work must
   still join the native/WASM parity gate.
 - `WMLS-501` supplies decoder/verifier evidence, but its selected family still contains partial and

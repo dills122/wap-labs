@@ -230,6 +230,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /examples/{file}", a.example)
 	if a.e2eFixtureMode {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
 }
@@ -671,6 +672,24 @@ func (a *App) beginE2EAction(w http.ResponseWriter, actionID, kind string) bool 
 	current.UpdatedAt = now
 	a.actions[actionID] = current
 	return true
+}
+
+// e2eInvalidDeck serves well-formed WBXML whose WML root contains an illegal
+// paragraph instead of a card. Kannel forwards WMLC without recompiling it.
+func (a *App) e2eInvalidDeck(w http.ResponseWriter, r *http.Request) {
+	actionID := r.PathValue("actionID")
+	if !validE2EActionID(actionID) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return
+	}
+	if !a.beginE2EAction(w, actionID, "navigation") {
+		return
+	}
+	w.Header().Set("Content-Type", "application/vnd.wap.wmlc")
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte{0x03, 0x0a, 0x6a, 0x00, 0x7f, 0x60, 0x03, 'b', 'a', 'd', 0x00, 0x01, 0x01})
+	a.setE2EActionPhase(actionID, "success")
 }
 
 func (a *App) e2eSlowNavigation(w http.ResponseWriter, r *http.Request) {

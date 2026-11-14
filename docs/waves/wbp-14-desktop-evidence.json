@@ -109,12 +109,17 @@
     },
     {
       "id": "invalid-deck",
-      "status": "missing",
+      "status": "partial",
       "evidenceClass": "native-gateway",
       "workItems": ["WML-205", "WBP-14"],
       "requirements": ["RQ-RMK-002", "RQ-RMK-003", "RQ-RMK-012"],
-      "evidence": ["engine-wasm/examples/source/wml-205-error-recovery.flow.json"],
-      "blocker": "WML-205 proves deterministic engine failure and atomicity, but the native UI lane only injects an invalid address, not an invalid WML deck."
+      "evidence": [
+        "engine-wasm/examples/source/wml-205-error-recovery.flow.json",
+        "browser/frontend/e2e/native/scenarios/resilience.mjs",
+        "wml-server/internal/origin/app_test.go",
+        "transport-rust/tests/interop_replay.rs"
+      ],
+      "blocker": "The invalid WMLC fixture and native scenario are implemented; a successful Linux native gateway run is required before claiming desktop-path evidence."
     },
     {
       "id": "script-trap",

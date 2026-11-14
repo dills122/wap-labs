@@ -137,8 +137,53 @@ const gatewayOutage = Object.freeze({
   }
 });
 
+const invalidDeck = Object.freeze({
+  id: 'ERR-NATIVE-003',
+  suite: 'smoke',
+  name: 'Invalid WML deck preserves the current card and permits recovery',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'invalid-deck-a1';
+    await prepare(context);
+    await loadHome(context);
+    const priorText = await context.waves.waitForDeckText('Local WAP training environment.');
+    const invalidAddress = `wap://localhost/e2e/navigation/${actionID}/invalid.wmlc`;
+    await context.waves.openWapUrl(invalidAddress);
+    context.observe({ phase: 'ui-dispatched', address: invalidAddress });
+    const status = await context.waves.waitForStatus('Deck parse failed:');
+    assert.equal(status.displayed, true, 'invalid deck status must be visible');
+    assert.equal(status.tone, 'error', 'invalid deck status must use the visible error tone');
+    const retainedText = await context.waves.waitForDeckText('Local WAP training environment.');
+    assert.equal(retainedText, priorText, 'invalid deck must preserve the committed viewport');
+    const settled = await context.origin.waitForActionSettledExactlyOnce(actionID, {
+      kind: 'navigation',
+      phases: ['success'],
+      signal: context.signal
+    });
+    assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), priorText);
+    context.observe({ phase: 'origin-confirmed', address: invalidAddress });
+    context.recordAssertion(
+      'invalid deck rejection',
+      `the invalid deck was rejected and the prior viewport remained unchanged after ${settled.quiescenceMs}ms quiescence`
+    );
+
+    const recoveryAddress = 'wap://localhost/examples/interop-check.wml';
+    context.observe({ phase: 'recovery-ready' });
+    await context.waves.openWapUrl(recoveryAddress);
+    context.observe({ phase: 'recovery-dispatched', address: recoveryAddress });
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recoveryAddress);
+    context.observe({ phase: 'recovered', address: recoveryAddress });
+    context.recordAssertion(
+      'invalid deck recovery',
+      'a later native navigation loaded a valid deck'
+    );
+  }
+});
+
 export const RESILIENCE_SCENARIOS = Object.freeze([
   staleNavigation,
   explicitStop,
-  gatewayOutage
+  gatewayOutage,
+  invalidDeck
 ]);
