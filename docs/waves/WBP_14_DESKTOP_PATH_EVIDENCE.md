@@ -122,8 +122,8 @@ The native workflow uploads screenshots, page source, environment, service logs,
 The native pilot includes direct HTTP and connectionless Kannel scenarios for interrupted and
 oversized origin responses. The controlled origin serves a truncated response and a 524,289-byte
 response only in fixture mode. Each scenario checks the correlated error, prior frame, bounded
-origin attempts, recovery, and Back navigation. A passing Linux native run is still required before
-crediting these scenarios as desktop-path evidence.
+origin attempts, recovery, and Back navigation. All four scenarios passed in [GitHub Actions run
+43639535120, attempt 2](https://github.com/dills122/wap-labs/actions/runs/43639535120/attempts/2).
 
 The expected errors differ by transport: direct HTTP reports `TRANSPORT_UNAVAILABLE` for the
 interrupted body and `PAYLOAD_TOO_LARGE` for the oversized body. Kannel turns the interrupted
