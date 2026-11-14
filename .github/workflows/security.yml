@@ -63,6 +63,9 @@ jobs:
 
       - name: Dependency review
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5
+        with:
+          # Repository-wide risk acceptance for the local Ruflo pilot; see its dependency limitation.
+          allow-ghsas: GHSA-mrhx-c7xc-m3w5
 
   rust-audit:
     name: Rust Advisory Audit

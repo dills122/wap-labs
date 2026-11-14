@@ -1,0 +1,8 @@
+#!/bin/sh
+# Ruflo's adapter asks for ruflo@latest. Never allow an unpinned download.
+if [ "$1" != 'ruflo@latest' ] || [ -z "${RUFLO_PINNED_NODE:-}" ] || [ -z "${RUFLO_PINNED_CLI:-}" ]; then
+  printf '%s\n' 'Blocked unapproved npx package or missing pinned Ruflo paths.' >&2
+  exit 64
+fi
+shift
+exec "$RUFLO_PINNED_NODE" "$RUFLO_PINNED_CLI" "$@"
