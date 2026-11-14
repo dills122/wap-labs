@@ -46,6 +46,15 @@ input guard reduces exposure for messages entering through this project-scoped s
 an upstream Zod fix and does not cover direct Ruflo CLI use or other installations. Use trusted
 local inputs, and reassess the dependency before broader adoption.
 
+The associated [CVE record](https://nvd.nist.gov/vuln/detail/CVE-2023-54404) was rejected by
+its numbering authority, which considers the memory use bounded by the already-parsed request size.
+The GitHub advisory remains active and blocks dependency review, while
+[Red Hat's assessment](https://access.redhat.com/security/cve/cve-2023-54404) still describes
+an availability risk for applications accepting unbounded inputs. These assessments do not prove
+that all Ruflo CLI or SDK inputs pass through this pilot's guard.
+GitHub dependency review's `allow-ghsas` exception applies across the action, not just to this
+lockfile. Adopting an exception is a separate repository risk decision; it is not a Zod fix.
+
 Do not use `ruflo init --codex` over existing `AGENTS.md`, `.agents/skills`, steering, hooks or
 global Codex configuration. Decide isolation, ownership, verification and merge strategy before
 allowing parallel writers. Ruflo's worker registration or a successful CLI exit alone does not prove
