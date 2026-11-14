@@ -127,6 +127,7 @@ crediting these scenarios as desktop-path evidence.
 
 The expected errors differ by transport: direct HTTP reports `TRANSPORT_UNAVAILABLE` for the
 interrupted body and `PAYLOAD_TOO_LARGE` for the oversized body. Kannel turns the interrupted
-upstream response into a 502 `PROTOCOL_ERROR`; an oversized response exceeds connectionless WDP
+upstream response into either a 502 `PROTOCOL_ERROR` or `TRANSPORT_UNAVAILABLE`, both observed in
+the controlled pilot environments; an oversized response exceeds connectionless WDP
 capacity and currently results in `GATEWAY_TIMEOUT`. The latter is a gateway delivery timeout, not
 proof that Lowband's HTTP response-size limit was applied to WSP.

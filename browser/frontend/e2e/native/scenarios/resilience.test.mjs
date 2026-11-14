@@ -323,7 +323,7 @@ test('response failure scenario rejects wrong category and changed frame', async
     const { context } = fixture();
     context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
     context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
-    await assert.rejects(scenario.run(context), /PAYLOAD_TOO_LARGE/);
+    await assert.rejects(scenario.run(context), /unexpected failure category/);
   }
   {
     const { context } = fixture();
@@ -332,5 +332,15 @@ test('response failure scenario rejects wrong category and changed frame', async
     let reads = 0;
     context.waves.waitForDeckText = async () => (++reads < 3 ? 'prior deck' : 'changed deck');
     await assert.rejects(scenario.run(context), /preserve the committed viewport/);
+  }
+});
+
+test('interrupted Kannel response accepts the two observed transport failures', async () => {
+  const scenario = RESILIENCE_SCENARIOS.find(({ id }) => id === 'FAIL-NATIVE-003');
+  for (const title of ['gateway · PROTOCOL_ERROR', 'connection · TRANSPORT_UNAVAILABLE']) {
+    const { context } = fixture();
+    context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+    context.waves.readNavigationFailure = async () => ({ title, correlation: 'Request req-123', displayed: true });
+    await scenario.run(context);
   }
 });

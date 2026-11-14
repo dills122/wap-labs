@@ -360,7 +360,7 @@ function responseFailure({ id, mode, direct, title }) {
         'gateway · GATEWAY_TIMEOUT': 'failure-timeout'
       }[failure.title] ?? 'failure-other';
       context.observe({ phase: categoryPhase });
-      assert.equal(failure.title, title);
+      assert.ok([title].flat().includes(failure.title), `unexpected failure category: ${failure.title}`);
       assert.match(failure.correlation, /^Request \S+$/);
       context.observe({ phase: 'engine-ready' });
       assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), prior,
@@ -526,7 +526,7 @@ export const RESILIENCE_SCENARIOS = Object.freeze([
   httpBodyStop,
   responseFailure({ id: 'FAIL-NATIVE-001', mode: 'interrupted', direct: true, title: 'connection · TRANSPORT_UNAVAILABLE' }),
   responseFailure({ id: 'FAIL-NATIVE-002', mode: 'oversized', direct: true, title: 'response · PAYLOAD_TOO_LARGE' }),
-  responseFailure({ id: 'FAIL-NATIVE-003', mode: 'interrupted', direct: false, title: 'gateway · PROTOCOL_ERROR' }),
+  responseFailure({ id: 'FAIL-NATIVE-003', mode: 'interrupted', direct: false, title: ['gateway · PROTOCOL_ERROR', 'connection · TRANSPORT_UNAVAILABLE'] }),
   responseFailure({ id: 'FAIL-NATIVE-004', mode: 'oversized', direct: false, title: 'gateway · GATEWAY_TIMEOUT' }),
   gatewayOutage,
   invalidDeck,
