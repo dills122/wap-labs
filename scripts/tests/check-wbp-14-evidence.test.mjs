@@ -22,7 +22,9 @@ test('WBP-14 cannot claim release completion while required evidence is open', (
 
 test('WBP-14 incomplete scenarios retain a named blocker', () => {
   const incompleteManifest = structuredClone(manifest);
-  delete incompleteManifest.scenarios.find(({ id }) => id === 'timeout').blocker;
+  const scenario = incompleteManifest.scenarios.find(({ id }) => id === 'timeout');
+  scenario.status = 'partial';
+  delete scenario.blocker;
 
   assert.match(validateEvidenceManifest(incompleteManifest).join('\n'), /timeout: incomplete/);
 });
