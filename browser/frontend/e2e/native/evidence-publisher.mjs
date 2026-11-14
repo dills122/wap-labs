@@ -29,7 +29,11 @@ const SAFE_PHASES = new Set([
   'ui-dispatched',
   'response-rendered',
   'origin-confirmed',
-  'session-invalidated'
+  'session-invalidated',
+  'failure-protocol',
+  'failure-connection',
+  'failure-timeout',
+  'failure-other'
 ]);
 const SAFE_FAILURE_CLASSES = new Set([
   'infrastructure-startup',

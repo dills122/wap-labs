@@ -350,12 +350,22 @@ function responseFailure({ id, mode, direct, title }) {
       const status = await context.waves.waitForStatus('Fetch failed:');
       assert.equal(status.displayed, true, 'failure status must be visible');
       assert.equal(status.tone, 'error', 'failure status must use the error tone');
+      context.observe({ phase: 'response-rendered' });
       const failure = await context.waves.readNavigationFailure();
       assert.equal(failure.displayed, true, 'failure category must be visible');
+      context.observe({ phase: 'recovery-ready' });
+      const categoryPhase = {
+        'gateway · PROTOCOL_ERROR': 'failure-protocol',
+        'connection · TRANSPORT_UNAVAILABLE': 'failure-connection',
+        'gateway · GATEWAY_TIMEOUT': 'failure-timeout'
+      }[failure.title] ?? 'failure-other';
+      context.observe({ phase: categoryPhase });
       assert.equal(failure.title, title);
       assert.match(failure.correlation, /^Request \S+$/);
+      context.observe({ phase: 'engine-ready' });
       assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), prior,
         'failure must preserve the committed viewport');
+      context.observe({ phase: 'deck-ready' });
       await context.origin.waitForActionSettledWithinBound(actionID, {
         kind: 'navigation', phases: ['success'], maxCount: 2, signal: context.signal
       });
