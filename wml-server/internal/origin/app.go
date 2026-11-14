@@ -230,6 +230,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /examples/{file}", a.example)
 	if a.e2eFixtureMode {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
@@ -693,6 +694,15 @@ func (a *App) e2eInvalidDeck(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) e2eSlowNavigation(w http.ResponseWriter, r *http.Request) {
+	a.serveE2EDelayedNavigation(w, r, a.e2eNavigationDelay)
+}
+
+func (a *App) e2eTimeoutNavigation(w http.ResponseWriter, r *http.Request) {
+	// Exceed both production five-second transport attempts.
+	a.serveE2EDelayedNavigation(w, r, 15*time.Second)
+}
+
+func (a *App) serveE2EDelayedNavigation(w http.ResponseWriter, r *http.Request, delay time.Duration) {
 	actionID := r.PathValue("actionID")
 	if !validE2EActionID(actionID) {
 		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
@@ -701,7 +711,7 @@ func (a *App) e2eSlowNavigation(w http.ResponseWriter, r *http.Request) {
 	if !a.beginE2EAction(w, actionID, "navigation") {
 		return
 	}
-	timer := time.NewTimer(a.e2eNavigationDelay)
+	timer := time.NewTimer(delay)
 	defer timer.Stop()
 	select {
 	case <-r.Context().Done():

@@ -336,3 +336,23 @@ test('raw query-bearing addresses are scoped to an ephemeral callback', async ()
   assert.equal(observed, true);
   await assert.rejects(page.withEphemeralAddress(null), /requires a callback/);
 });
+
+test('navigation failure exposes the displayed category and correlation', async () => {
+  const values = new Map([
+    ['#navigation-error-title', { text: 'gateway · GATEWAY_TIMEOUT', visible: true }],
+    ['#navigation-correlation-id', { text: 'Request req-123', visible: true }]
+  ]);
+  const driver = {
+    async findElement(selector) {
+      const value = values.get(selector);
+      return element({ value, isDisplayed: async () => value.visible });
+    },
+    async executeScript(_script, target) { return target.value.text; }
+  };
+  const page = createWavesDriver({ driver, selector: (value) => value, waitUntil: async () => {} });
+  assert.deepEqual(await page.readNavigationFailure(), {
+    title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true
+  });
+  values.get('#navigation-error-title').visible = false;
+  assert.equal((await page.readNavigationFailure()).displayed, false);
+});

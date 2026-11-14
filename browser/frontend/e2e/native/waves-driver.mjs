@@ -234,6 +234,16 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       };
     },
 
+    async readNavigationFailure() {
+      const title = await find('#navigation-error-title');
+      const correlation = await find('#navigation-correlation-id');
+      return {
+        title: await readText(title),
+        correlation: await readText(correlation),
+        displayed: (await title.isDisplayed()) && (await correlation.isDisplayed())
+      };
+    },
+
     async readSanitizedAddress() {
       return readSanitizedAddress();
     },

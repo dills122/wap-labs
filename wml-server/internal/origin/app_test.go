@@ -955,3 +955,17 @@ func TestE2EInvalidDeckRejectsInvalidActionID(t *testing.T) {
 		t.Fatalf("invalid deck action status = %d, want 400", response.Code)
 	}
 }
+
+func TestE2ETimeoutNavigationIsFixtureOnlyAndCorrelated(t *testing.T) {
+	const path = "/e2e/navigation/timeout-case-a1/timeout.wml"
+	ordinary, _ := newTestApp(t, nil)
+	if got := perform(ordinary.Handler(), http.MethodGet, path, "", ""); got.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin exposed timeout fixture: %d", got.Code)
+	}
+	app, _ := newTestApp(t, func(config *Config) { config.E2EFixtureMode = true; config.OriginInstanceID = "origin-run-7" })
+	request := httptest.NewRequest(http.MethodGet, path, nil)
+	ctx, cancel := context.WithCancel(request.Context())
+	cancel()
+	app.Handler().ServeHTTP(httptest.NewRecorder(), request.WithContext(ctx))
+	assertActionOracle(t, app, "timeout-case-a1", "navigation", 1, "cancelled")
+}
