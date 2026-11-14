@@ -117,8 +117,9 @@ jobs:
             librsvg2-dev \
             libwebkit2gtk-4.1-dev \
             pkg-config \
-            webkit2gtk-driver \
+            webkitgtk-webdriver \
             xvfb
+          command -v WebKitWebDriver
 
       - name: Setup pnpm
         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0

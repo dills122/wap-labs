@@ -215,3 +215,9 @@ test('native E2E entrypoint reports unknown scenarios as configuration errors', 
     'native-tauri-kannel-e2e: CONFIG ERROR: unknown native E2E scenario: MISSING\n'
   );
 });
+
+test('native E2E installs the Ubuntu WebKit WebDriver package', () => {
+  assert.match(workflowSource, /\bwebkitgtk-webdriver\b/);
+  assert.doesNotMatch(workflowSource, /\bwebkit2gtk-driver\b/);
+  assert.match(workflowSource, /command -v WebKitWebDriver/);
+});
