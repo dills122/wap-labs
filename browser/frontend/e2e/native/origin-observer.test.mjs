@@ -389,3 +389,23 @@ test('navigation action terminal proof accepts the reached cancellation phase an
     }
   );
 });
+
+test('settled timeout actions allow at most the configured origin attempt bound', async () => {
+  let clock = 0;
+  let count = 2;
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics', quiescenceMs: 200,
+    timeoutMs: 1000, pollIntervalMs: 100, now: () => clock,
+    sleep: async (milliseconds) => { clock += milliseconds; },
+    fetchImpl: async () => ({ ok: true, json: async () => ({
+      actionId: 'timeout-case-a1', kind: 'navigation', count, phase: 'success'
+    }) })
+  });
+  assert.equal((await observer.waitForActionSettledWithinBound('timeout-case-a1', {
+    kind: 'navigation', phases: ['success', 'cancelled'], maxCount: 2
+  })).count, 2);
+  count = 3;
+  await assert.rejects(observer.waitForActionSettledWithinBound('timeout-case-a1', {
+    kind: 'navigation', phases: ['success'], maxCount: 2
+  }), /attempt bound/);
+});

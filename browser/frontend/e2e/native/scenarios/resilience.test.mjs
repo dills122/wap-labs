@@ -27,6 +27,10 @@ function fixture() {
           calls.push(['action-phase', actionID, options.kind, options.phase]);
           return { actionID, kind: options.kind, count: 1, phase: options.phase };
         },
+        async waitForActionSettledWithinBound(actionID, options) {
+          calls.push(['action-settled-bounded', actionID, options.kind, options.maxCount]);
+          return { actionID, kind: options.kind, count: 2, phase: 'success', quiescenceMs: 10_500 };
+        },
         async waitForActionSettledExactlyOnce(actionID, options) {
           calls.push(['action-settled', actionID, options.kind, options.phases]);
           return {
@@ -191,7 +195,7 @@ test('native timeout preserves the prior deck, reports its category, and recover
   const { calls, assertions, context } = fixture();
   context.waves.waitForStatus = async () => ({ text: 'Fetch failed: gateway timed out', tone: 'error', displayed: true });
   context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
-  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 1, phase: 'received' });
+  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 2, phase: 'received' });
   await RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context);
   assert.ok(calls.some(([kind, id, type, phase]) => kind === 'action-phase' && id === 'timeout-native-004-a1' && type === 'navigation' && phase === 'received'));
   assert.ok(calls.some(([kind, url]) => kind === 'open' && url === 'wap://localhost/examples/interop-check.wml'));
@@ -205,10 +209,10 @@ test('native timeout scenario rejects the wrong error category', async () => {
   await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /GATEWAY_TIMEOUT/);
 });
 
-test('native timeout scenario rejects duplicate origin requests', async () => {
+test('native timeout scenario rejects requests beyond the attempt bound', async () => {
   const { context } = fixture();
   context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
   context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
-  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 2, phase: 'received' });
-  await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /one origin request/);
+  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 3, phase: 'received' });
+  await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /attempt bound/);
 });

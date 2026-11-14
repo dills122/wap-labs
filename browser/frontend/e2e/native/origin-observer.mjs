@@ -253,10 +253,45 @@ export function createOriginObserver({
     });
   };
 
+  const waitForActionSettledWithinBound = async (actionID, { kind, phases, maxCount, signal }) => {
+    requireActionID(actionID);
+    if (!Number.isSafeInteger(maxCount) || maxCount < 1) throw new Error('origin attempt bound must be positive');
+    if (!Array.isArray(phases) || phases.length === 0 || phases.some((phase) => typeof phase !== 'string')) {
+      throw new Error('origin action terminal phases are required');
+    }
+    const operationSignal = combineSignals(runSignal, signal);
+    const validate = (action) => {
+      if (action.kind !== kind || action.count < 1 || action.count > maxCount) {
+        throw new Error('correlated origin action exceeded its attempt bound or had the wrong kind');
+      }
+    };
+    const reached = await waitForCondition({
+      description: 'correlated origin action to settle within the attempt bound',
+      observe: ({ signal }) => readAction(actionID, { signal }),
+      accept: (action) => { validate(action); return phases.includes(action.phase); },
+      timeoutMs, pollIntervalMs, now, sleep, signal: operationSignal,
+      formatObservation: (action) => `${action.kind}:${action.count}:${action.phase}`
+    });
+    await proveStable({
+      description: 'correlated origin action to remain settled within the attempt bound',
+      observe: (signal) => readAction(actionID, { signal }),
+      accept: (current) => {
+        validate(current);
+        if (current.count !== reached.count || !phases.includes(current.phase)) {
+          throw new Error('correlated origin action changed during retry-horizon quiescence');
+        }
+      },
+      formatObservation: (current) => `${current.kind}:${current.count}:${current.phase}`,
+      signal: operationSignal
+    });
+    return { actionID, kind, count: reached.count, phase: reached.phase, quiescenceMs };
+  };
+
   return Object.freeze({
     readMetrics,
     readCounter,
     readAction,
+    waitForActionSettledWithinBound,
     async seedAccount({ username, pin, actionID }, { signal } = {}) {
       if (!publicOrigin)
         throw new Error('origin account setup requires the controlled public base');
