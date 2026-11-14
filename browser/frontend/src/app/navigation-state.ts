@@ -70,6 +70,9 @@ const safeDeckLoadFailure = (error: unknown): { message: string; category: strin
     : { message: WAVES_COPY.errors.invalidDeck, category: 'ENGINE_LOAD_FAILED' };
 };
 
+const postFailureMessage = (method: string, message: string): string =>
+  method === 'POST' ? `${message} ${WAVES_COPY.errors.uncertainPostOutcome}` : message;
+
 export interface NavigationHostClient {
   fetchDeck(request: FetchRequest): Promise<FetchResponse>;
   cancelFetch(requestId: string): Promise<boolean>;
@@ -491,7 +494,10 @@ export const createNavigationStateMachine = (
       if (!isCurrentNavigation(generation)) {
         return null;
       }
-      const message = error instanceof Error ? error.message : String(error);
+      const message = postFailureMessage(
+        method,
+        error instanceof Error ? error.message : String(error)
+      );
       const category = navigationFailureCategory(error);
       mergeSessionState({ navigationStatus: 'error', lastError: message });
       hooks.onNavigationError?.(message, 'network', {
@@ -514,7 +520,10 @@ export const createNavigationStateMachine = (
     });
 
     if (!transport.ok) {
-      const errorMessage = transport.error?.message ?? WAVES_COPY.errors.unknownTransportFailure;
+      const errorMessage = postFailureMessage(
+        method,
+        transport.error?.message ?? WAVES_COPY.errors.unknownTransportFailure
+      );
       mergeSessionState({
         navigationStatus: 'error',
         lastError: errorMessage
@@ -544,14 +553,15 @@ export const createNavigationStateMachine = (
     };
 
     if (!deckInput.wmlXml) {
+      const errorMessage = postFailureMessage(method, WAVES_COPY.errors.missingWmlPayload);
       mergeSessionState({
         navigationStatus: 'error',
-        lastError: WAVES_COPY.errors.missingWmlPayload
+        lastError: errorMessage
       });
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(WAVES_COPY.errors.missingWmlPayload, 'parse', {
+      hooks.onNavigationError?.(errorMessage, 'parse', {
         layer: 'decode',
         category: 'MISSING_WML_PAYLOAD',
         requestId,
@@ -577,14 +587,15 @@ export const createNavigationStateMachine = (
         return null;
       }
       const failure = safeDeckLoadFailure(error);
+      const errorMessage = postFailureMessage(method, failure.message);
       mergeSessionState({
         navigationStatus: 'error',
-        lastError: failure.message
+        lastError: errorMessage
       });
       if (options.source === 'external-intent') {
         quarantineExternalIntentRequest(requestedUrl, method, requestPolicy, generation);
       }
-      hooks.onNavigationError?.(failure.message, 'parse', {
+      hooks.onNavigationError?.(errorMessage, 'parse', {
         layer: 'deck',
         category: failure.category,
         requestId,

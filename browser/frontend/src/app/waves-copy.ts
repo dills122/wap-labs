@@ -245,6 +245,7 @@ const locale = {
   errors: {
     urlRequired: 'URL is required',
     unknownTransportFailure: 'unknown transport failure',
+    uncertainPostOutcome: 'The form may already have been submitted. Retrying may submit it again.',
     missingWmlPayload: 'Fetch succeeded but returned no WML payload.',
     deckAccessDenied: 'Deck access denied for referring URI',
     invalidDeck: 'The requested page could not be opened.',

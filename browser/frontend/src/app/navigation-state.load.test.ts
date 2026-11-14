@@ -4,6 +4,53 @@ import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-sta
 import { WAVES_COPY } from './waves-copy';
 
 describe('navigation-state load behavior', () => {
+  it('warns that a timed-out POST may already have been processed', async () => {
+    const errors: string[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async () =>
+          fetchOk({
+            ok: false,
+            status: 0,
+            error: { code: 'GATEWAY_TIMEOUT', message: 'gateway timed out' },
+            engineDeckInput: undefined,
+            wml: undefined
+          })
+      }),
+      'http://seed.test',
+      { onNavigationError: (message) => errors.push(message) }
+    );
+    await machine.loadTransportUrl({
+      url: 'http://example.test/submit',
+      method: 'POST',
+      source: 'user',
+      followExternalIntent: false,
+      requestPolicy: { postContext: { payload: 'x=1' } }
+    });
+    expect(errors[0]).toMatch(/may already have been submitted/i);
+    expect(errors[0]).toMatch(/retrying may submit it again/i);
+    expect(machine.getSessionState().lastError).toBe(errors[0]);
+  });
+
+  it('warns about resubmission when a POST response cannot be loaded', async () => {
+    const errors: string[] = [];
+    const host = createHostClientMock({
+      engineLoadDeckContextFrame: async () => Promise.reject(new Error('malformed deck'))
+    });
+    const machine = createNavigationStateMachine(host, 'http://seed.test', {
+      onNavigationError: (message) => errors.push(message)
+    });
+    await machine.loadTransportUrl({
+      url: 'http://example.test/submit',
+      method: 'POST',
+      source: 'user',
+      followExternalIntent: false,
+      requestPolicy: { postContext: { payload: 'x=1' } }
+    });
+    expect(errors[0]).toContain(WAVES_COPY.errors.invalidDeck);
+    expect(errors[0]).toContain(WAVES_COPY.errors.uncertainPostOutcome);
+  });
+
   it('transitions idle -> loading -> loaded on successful user load', async () => {
     const sessions: string[] = [];
     const machine = createNavigationStateMachine(createHostClientMock(), 'http://seed.test', {

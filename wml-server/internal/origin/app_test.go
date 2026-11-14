@@ -969,3 +969,17 @@ func TestE2ETimeoutNavigationIsFixtureOnlyAndCorrelated(t *testing.T) {
 	app.Handler().ServeHTTP(httptest.NewRecorder(), request.WithContext(ctx))
 	assertActionOracle(t, app, "timeout-case-a1", "navigation", 1, "cancelled")
 }
+
+func TestE2ESlowPostIsFixtureOnlyAndCorrelated(t *testing.T) {
+	const path = "/e2e/submission/post-case-a1/slow.wml"
+	ordinary, _ := newTestApp(t, nil)
+	if got := perform(ordinary.Handler(), http.MethodPost, path, "", ""); got.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin exposed slow POST fixture: %d", got.Code)
+	}
+	app, _ := newTestApp(t, func(config *Config) { config.E2EFixtureMode = true; config.OriginInstanceID = "origin-run-7" })
+	request := httptest.NewRequest(http.MethodPost, path, nil)
+	ctx, cancel := context.WithCancel(request.Context())
+	cancel()
+	app.Handler().ServeHTTP(httptest.NewRecorder(), request.WithContext(ctx))
+	assertActionOracle(t, app, "post-case-a1", "navigation", 1, "cancelled")
+}

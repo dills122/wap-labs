@@ -232,6 +232,7 @@ func (a *App) Handler() http.Handler {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
+		mux.HandleFunc("POST /e2e/submission/{actionID}/slow.wml", a.e2eSlowNavigation)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
 }
