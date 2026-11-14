@@ -2,6 +2,12 @@
 
 In-process Rust transport boundary used by the Waves browser host.
 
+Lowband makes one POST attempt per fetch operation, even if a caller requests retries.
+After a transport or response failure the origin may already have processed the submission; a
+later explicit user action can submit it again. GET requests retain the configured retry policy.
+This limit covers Lowband's own HTTP and connectionless WSP retry loops; HTTP redirects and
+independent retries or side effects inside an intermediary gateway or origin are separate.
+
 ## `wapcurl` diagnostic CLI
 
 `wapcurl` is a small curl-like developer probe built on the same Lowband fetch facade, WSP codec,

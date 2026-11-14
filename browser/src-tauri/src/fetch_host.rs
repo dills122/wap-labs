@@ -2,8 +2,8 @@ use crate::waves_config;
 use lowband_transport_rust::{
     fetch_deck_in_process, fetch_deck_in_process_cancellable, fetch_deck_in_process_with_options,
     fetch_deck_in_process_with_options_cancellable, FetchCancellationToken, FetchDeckRequest,
-    FetchDeckResponse, FetchDestinationPolicy, FetchRequestPolicy, FetchTransportOptions,
-    FetchTransportProfile,
+    FetchDeckResponse, FetchDestinationPolicy, FetchRequestMethod, FetchRequestPolicy,
+    FetchTransportOptions, FetchTransportProfile,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -199,13 +199,20 @@ fn should_retry_with_gateway_fallback(
         return false;
     }
 
-    let method = request
-        .method
-        .as_deref()
-        .unwrap_or("GET")
-        .trim()
-        .eq_ignore_ascii_case("GET");
-    if !method {
+    let is_get = match request
+        .request_policy
+        .as_ref()
+        .and_then(|policy| policy.request_intent.as_ref())
+    {
+        Some(intent) => matches!(intent.method, FetchRequestMethod::Get),
+        None => request
+            .method
+            .as_deref()
+            .unwrap_or("GET")
+            .trim()
+            .eq_ignore_ascii_case("GET"),
+    };
+    if !is_get {
         return false;
     }
 
@@ -225,4 +232,77 @@ fn has_wap_scheme(url: &str) -> bool {
         return false;
     };
     matches!(scheme.trim().to_ascii_lowercase().as_str(), "wap" | "waps")
+}
+
+#[cfg(test)]
+mod post_retry_tests {
+    use super::*;
+    use lowband_transport_rust::{FetchErrorInfo, FetchRequestIntent, FetchRequestMethod};
+
+    #[test]
+    fn gateway_fallback_rejects_post_intent_even_when_method_says_get() {
+        let mut request = FetchDeckRequest {
+            url: "wap://localhost/submit".into(),
+            method: Some("GET".into()),
+            headers: None,
+            timeout_ms: Some(100),
+            retries: Some(1),
+            request_id: Some("post-fallback".into()),
+            request_policy: Some(FetchRequestPolicy {
+                destination_policy: None,
+                cache_control: None,
+                referer_url: None,
+                post_context: None,
+                request_intent: Some(FetchRequestIntent {
+                    method: FetchRequestMethod::Post,
+                    enctype: "application/x-www-form-urlencoded".into(),
+                    send_referer: false,
+                    accept_charset: None,
+                    same_deck: false,
+                    post_fields: vec![],
+                    source_content_type: None,
+                }),
+                ua_capability_profile: None,
+            }),
+        };
+        let response = FetchDeckResponse {
+            ok: false,
+            status: 0,
+            final_url: request.url.clone(),
+            content_type: "text/plain".into(),
+            wml: None,
+            error: Some(FetchErrorInfo {
+                code: "GATEWAY_TIMEOUT".into(),
+                message: "timeout".into(),
+                details: None,
+            }),
+            timing_ms: lowband_transport_rust::FetchTiming {
+                encode: 0.0,
+                udp_rtt: 0.0,
+                decode: 0.0,
+            },
+            engine_deck_input: None,
+        };
+        assert!(!should_retry_with_gateway_fallback(
+            &request,
+            &response,
+            Some(FetchTransportProfile::WapNetCore),
+            HostFetchTransportFallback::GatewayBridged
+        ));
+        request.method = Some("POST".into());
+        request
+            .request_policy
+            .as_mut()
+            .unwrap()
+            .request_intent
+            .as_mut()
+            .unwrap()
+            .method = FetchRequestMethod::Get;
+        assert!(should_retry_with_gateway_fallback(
+            &request,
+            &response,
+            Some(FetchTransportProfile::WapNetCore),
+            HostFetchTransportFallback::GatewayBridged
+        ));
+    }
 }

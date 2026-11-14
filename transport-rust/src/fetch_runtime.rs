@@ -107,7 +107,13 @@ pub(crate) fn fetch_deck_in_process_impl(
         return invalid_request_response(url, error.to_string(), request_id.as_deref());
     }
 
-    let attempts = retries.unwrap_or(1).clamp(0, 2) + 1;
+    // A timeout cannot tell us whether an origin has already processed a POST.
+    // Connectionless WSP and HTTP both lack an end-to-end duplicate guarantee.
+    let attempts = if method == "POST" {
+        1
+    } else {
+        retries.unwrap_or(1).clamp(0, 2) + 1
+    };
 
     log_transport_event(
         "transport.fetch.start",

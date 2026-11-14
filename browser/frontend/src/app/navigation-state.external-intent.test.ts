@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createNavigationStateMachine } from './navigation-state';
 import { createHostClientMock, fetchOk, snapshot } from './navigation-state.test-helpers';
+import { WAVES_COPY } from './waves-copy';
 
 describe('navigation-state external intent behavior', () => {
   it('follows external intent loop and applies hop cap', async () => {
@@ -116,10 +117,12 @@ describe('navigation-state external intent behavior', () => {
       activeCardId: 'invoking-card',
       focusedLinkIndex: 1,
       externalNavigationIntent: targetUrl,
-      lastError: 'target fetch failed'
+      lastError: `target fetch failed ${WAVES_COPY.errors.uncertainPostOutcome}`
     });
     expect(machine.getHistoryState().entries).toHaveLength(1);
-    expect(navigationErrors).toEqual(['target fetch failed']);
+    expect(navigationErrors).toEqual([
+      `target fetch failed ${WAVES_COPY.errors.uncertainPostOutcome}`
+    ]);
     expect(machine.isExternalIntentQuarantined(targetUrl, requestPolicy)).toBe(true);
     expect(
       machine.isExternalIntentQuarantined(targetUrl, {

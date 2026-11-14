@@ -164,6 +164,8 @@ echo "==> Verifying owned native WAP routing before launching the browser"
   cd "${ROOT_DIR}/transport-rust"
   export WAP_GATEWAY_ENDPOINT="wap://${GATEWAY_UDP_BINDING}"
   cargo test --test kannel_smoke kannel_wap_owned_origin_identity_smoke -- --ignored --exact --test-threads=1
+  export WML_INTERNAL_BASE
+  cargo test --test post_retry_safety kannel_timed_out_post_reaches_the_origin_only_once -- --ignored --exact --test-threads=1
 )
 
 # The app remains production-default PublicOnly. This controlled local-stack lane opts into the
