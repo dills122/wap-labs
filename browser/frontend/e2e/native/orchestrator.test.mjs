@@ -130,6 +130,7 @@ test('native E2E maps boundary failure injection to fixed safe failure classes',
   const cases = [
     { phases: [], expected: 'infrastructure-startup' },
     { phases: ['form-ready'], expected: 'ui-dispatch' },
+    ...['failure-protocol', 'failure-connection', 'failure-timeout', 'failure-other'].map((phase) => ({ phases: [phase], expected: 'scenario-assertion' })),
     { phases: ['deck-ready', 'response-rendered', 'recovery-ready'], expected: 'ui-dispatch' },
     {
       phases: ['deck-ready', 'ui-dispatched', 'response-rendered', 'recovery-dispatched'],

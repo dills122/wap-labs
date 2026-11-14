@@ -10,7 +10,11 @@ const SAFE_PHASES = new Set([
   'ui-dispatched',
   'response-rendered',
   'origin-confirmed',
-  'session-invalidated'
+  'session-invalidated',
+  'failure-protocol',
+  'failure-connection',
+  'failure-timeout',
+  'failure-other'
 ]);
 
 const FAILURE_CLASS_AFTER_PHASE = Object.freeze({
@@ -23,7 +27,11 @@ const FAILURE_CLASS_AFTER_PHASE = Object.freeze({
   'ui-dispatched': 'response-rendering',
   'response-rendered': 'origin-confirmation',
   'origin-confirmed': 'session-lifecycle',
-  'session-invalidated': 'scenario-finalization'
+  'session-invalidated': 'scenario-finalization',
+  'failure-protocol': 'scenario-assertion',
+  'failure-connection': 'scenario-assertion',
+  'failure-timeout': 'scenario-assertion',
+  'failure-other': 'scenario-assertion'
 });
 
 function errorRecord(error) {
