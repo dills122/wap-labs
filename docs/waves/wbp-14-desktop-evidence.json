@@ -109,7 +109,7 @@
     },
     {
       "id": "invalid-deck",
-      "status": "partial",
+      "status": "complete",
       "evidenceClass": "native-gateway",
       "workItems": ["WML-205", "WBP-14"],
       "requirements": ["RQ-RMK-002", "RQ-RMK-003", "RQ-RMK-012"],
@@ -119,7 +119,7 @@
         "wml-server/internal/origin/app_test.go",
         "transport-rust/tests/interop_replay.rs"
       ],
-      "blocker": "The invalid WMLC fixture and native scenario are implemented; a successful Linux native gateway run is required before claiming desktop-path evidence."
+      "note": "ERR-NATIVE-003 passed through the native Tauri/Kannel pilot in GitHub Actions run 43549936475, preserving the viewport and recovering to a valid deck."
     },
     {
       "id": "script-trap",
