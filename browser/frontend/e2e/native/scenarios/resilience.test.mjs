@@ -195,7 +195,7 @@ test('native timeout preserves the prior deck, reports its category, and recover
   await RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context);
   assert.ok(calls.some(([kind, id, type, phase]) => kind === 'action-phase' && id === 'timeout-native-004-a1' && type === 'navigation' && phase === 'received'));
   assert.ok(calls.some(([kind, url]) => kind === 'open' && url === 'wap://localhost/examples/interop-check.wml'));
-  assert.deepEqual(assertions.map(({ name }) => name), ['native timeout rejection', 'native timeout recovery']);
+  assert.deepEqual(assertions.map(({ name }) => name), ['native timeout status', 'native timeout category', 'native timeout frame', 'native timeout rejection', 'native timeout recovery']);
 });
 
 test('native timeout scenario rejects the wrong error category', async () => {

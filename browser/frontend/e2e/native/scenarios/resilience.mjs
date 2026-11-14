@@ -198,11 +198,14 @@ const timeoutRecovery = Object.freeze({
     const status = await context.waves.waitForStatus('Fetch failed:');
     assert.equal(status.displayed, true, 'timeout status must be visible');
     assert.equal(status.tone, 'error', 'timeout status must use the visible error tone');
+    context.recordAssertion('native timeout status', 'the timeout produced a visible error status');
     const failure = await context.waves.readNavigationFailure();
     assert.equal(failure.displayed, true, 'timeout category and correlation must be visible');
     assert.equal(failure.title, 'gateway · GATEWAY_TIMEOUT');
     assert.match(failure.correlation, /^Request \S+$/, 'timeout must retain a request correlation ID');
+    context.recordAssertion('native timeout category', 'the visible error identifies a correlated gateway timeout');
     assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), priorText, 'timeout must preserve the committed viewport');
+    context.recordAssertion('native timeout frame', 'the previous viewport was retained');
     const action = await context.origin.readAction(actionID, { signal: context.signal });
     assert.equal(action.kind, 'navigation');
     assert.equal(action.count, 1, 'the gateway must correlate the timeout to one origin request');
