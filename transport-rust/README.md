@@ -223,3 +223,7 @@ When `FetchDeckResponse.ok === false`:
 - [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)
 - [x] Add SMPP adaptation scope decision guardrail (`T0-13`, deferred posture)
 - [x] Add networking profile decision record + machine-checkable promotion gates (`T0-14`)
+
+For cancellable native WDP fetches, receive polling observes cancellation without waiting for the
+full gateway timeout. The configured attempt deadline and retry policy remain in force. Direct HTTP
+uses blocking I/O and may retain a host fetch slot until the underlying operation returns.

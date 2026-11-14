@@ -160,6 +160,16 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       await startWapUrl(address);
     },
 
+    async replaceWapUrl(address) {
+      requireWapAddress(address);
+      await waitForNavigationAction('stop');
+      const input = await find(SELECTORS.address);
+      await input.click();
+      await input.clear();
+      await input.sendKeys(address);
+      await input.sendKeys(keys.Enter);
+    },
+
     async submitAddress(address) {
       await submitAddress(address);
     },

@@ -1947,3 +1947,93 @@ it('projects committed local decks and raw debug loads into distinct persistence
   expect(onSafeSessionCommitted).toHaveBeenCalledTimes(safeCommitCount);
   expect(onUnsafeSessionCommitted).toHaveBeenCalledTimes(2);
 });
+
+it('Back cancels a slow address navigation without waiting for its host response', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const host = createHostClient();
+  const controller = new BrowserController(host as never, presenter, refs);
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(host.fetchDeck).mockImplementationOnce(() => new Promise(() => {}));
+  refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+  document.querySelector<HTMLButtonElement>('#btn-back')?.click();
+  await flushAsyncWork();
+  expect(host.cancelFetch).toHaveBeenCalledOnce();
+  expect(host.engineNavigateBackFrame).toHaveBeenCalledOnce();
+  controller.dispose();
+});
+
+it('Enter on a new address supersedes a slow fetch without waiting for its host response', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const host = createHostClient();
+  const controller = new BrowserController(host as never, presenter, refs);
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(host.fetchDeck).mockImplementationOnce(() => new Promise(() => {}));
+  refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+  refs.fetchUrlInput.value = 'http://example.test/good.wml';
+  refs.fetchUrlInput.dispatchEvent(
+    new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+  );
+  await flushAsyncWork();
+  expect(host.cancelFetch).toHaveBeenCalledOnce();
+  expect(host.fetchDeck).toHaveBeenLastCalledWith(
+    expect.objectContaining({ url: 'http://example.test/good.wml' })
+  );
+  controller.dispose();
+});
+
+it('keyboard Back cancels a slow navigation without waiting for its host response', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const host = createHostClient();
+  const controller = new BrowserController(host as never, presenter, refs);
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(host.fetchDeck).mockImplementationOnce(() => new Promise(() => {}));
+  refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', cancelable: true }));
+  await flushAsyncWork();
+  expect(host.cancelFetch).toHaveBeenCalledOnce();
+  expect(host.engineNavigateBackFrame).toHaveBeenCalledOnce();
+  controller.dispose();
+});
+
+it('does not cancel a slow navigation when Backspace targets a focused input', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const host = createHostClient();
+  const focused = frame({ activeCardId: 'home' });
+  focused.presentation = {
+    ...focused.presentation,
+    focus: { index: 0, focusId: 'pin', targetKind: 'input' }
+  };
+  vi.mocked(host.engineLoadDeckContextFrame).mockResolvedValue(focused);
+  const controller = new BrowserController(host as never, presenter, refs);
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  vi.mocked(host.fetchDeck).mockImplementationOnce(() => new Promise(() => {}));
+  refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Backspace', cancelable: true }));
+  await flushAsyncWork();
+  expect(host.cancelFetch).not.toHaveBeenCalled();
+  controller.dispose();
+});

@@ -202,6 +202,8 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
       'RACE-NATIVE-001\tsmoke\tCancelled slow navigation cannot overwrite a newer deck',
       'RACE-NATIVE-002\tsmoke\tStop preserves the current deck and permits recovery',
+      'RACE-NATIVE-003\tsmoke\tBack interrupts a slow request and restores the previous deck',
+      'RACE-NATIVE-004\tsmoke\tNew addresses supersede slow requests and recover',
       'ERR-NATIVE-002\tsmoke\tReal gateway outage is visible and restart recovers',
       'ERR-NATIVE-003\tsmoke\tInvalid WML deck preserves the current card and permits recovery',
       'ERR-NATIVE-004\tsmoke\tGateway timeout preserves the current deck and permits recovery',

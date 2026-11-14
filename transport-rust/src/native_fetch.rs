@@ -22,7 +22,7 @@ use crate::{FetchCancellationToken, FetchDeckResponse, FetchDestinationPolicy};
 use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::net::SocketAddr;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 use url::Url;
 
 pub const TRANSPORT_PROFILE_ENV: &str = "LOWBAND_TRANSPORT_PROFILE";
@@ -136,9 +136,14 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
     };
 
     let bind_address = default_bind_address(&peer);
-    let mut transport = match UdpDatagramTransport::new(UdpDatagramTransportConfig {
+    let socket_timeout_ms = if plan.cancellation.is_some() {
+        plan.timeout_ms.min(100)
+    } else {
+        plan.timeout_ms
+    };
+    let transport = match UdpDatagramTransport::new(UdpDatagramTransportConfig {
         bind_address,
-        read_timeout_ms: Some(plan.timeout_ms),
+        read_timeout_ms: Some(socket_timeout_ms),
         allowed_peer: plan.gateway_endpoint.as_ref().map(|_| peer),
     }) {
         Ok(transport) => transport,
@@ -155,7 +160,49 @@ pub(crate) fn execute_native_wap_request(plan: NativeFetchPlan) -> FetchDeckResp
         }
     };
 
+    let mut transport = CancellableUdpTransport {
+        inner: transport,
+        cancellation: plan.cancellation.clone(),
+        timeout: Duration::from_millis(plan.timeout_ms),
+    };
     execute_native_wap_request_with_transport(&mut transport, peer, plan)
+}
+
+struct CancellableUdpTransport {
+    inner: UdpDatagramTransport,
+    cancellation: Option<FetchCancellationToken>,
+    timeout: Duration,
+}
+
+impl DatagramTransport for CancellableUdpTransport {
+    fn send(&mut self, datagram: &WdpDatagram) -> Result<(), WdpError> {
+        self.inner.send(datagram)
+    }
+
+    fn receive(&mut self) -> Result<WdpDatagram, WdpError> {
+        let start = Instant::now();
+        loop {
+            if self
+                .cancellation
+                .as_ref()
+                .is_some_and(FetchCancellationToken::is_cancelled)
+            {
+                return Err(WdpError::Timeout);
+            }
+            if self.cancellation.is_some() {
+                let remaining = self.timeout.saturating_sub(start.elapsed());
+                if remaining.is_zero() {
+                    return Err(WdpError::Timeout);
+                }
+                self.inner
+                    .set_read_timeout(remaining.min(Duration::from_millis(100)))?;
+            }
+            match self.inner.receive() {
+                Err(WdpError::Timeout) if start.elapsed() < self.timeout => continue,
+                result => return result,
+            }
+        }
+    }
 }
 
 fn parse_native_gateway_endpoint(endpoint: &str) -> Result<Url, String> {
@@ -386,6 +433,13 @@ pub(crate) fn execute_native_wap_request_with_transport(
                 });
             }
             Err(error) => {
+                if plan
+                    .cancellation
+                    .as_ref()
+                    .is_some_and(FetchCancellationToken::is_cancelled)
+                {
+                    return cancelled_response(plan.request_url, plan.request_id.as_deref());
+                }
                 failure.record(
                     error.to_string(),
                     matches!(error, WdpError::Timeout),

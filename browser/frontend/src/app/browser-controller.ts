@@ -295,6 +295,16 @@ export class BrowserController {
       applyFocusedControlEditKey: (key) => this.focusedControlEdit.applyKey(key),
       applyEngineKey: (key) => this.applyEngineKey(key),
       navigateBackWithFallback: () => this.navigateBackWithFallback(),
+      interruptNavigationForBack: () => {
+        const snapshot = this.presenter.getSnapshot();
+        if (
+          !snapshot?.focusedInputEditName &&
+          !snapshot?.focusedSelectEditName &&
+          this.committedFrame?.presentation.focus?.targetKind !== 'input'
+        ) {
+          this.interruptPendingNavigation();
+        }
+      },
       waitForEngineTimerIdle: () => this.timerRuntime.whenIdle(),
       setStatus: (message) => this.presenter.setStatus(message),
       onActionInFlightChange: (inFlight) => {
@@ -305,12 +315,13 @@ export class BrowserController {
       refs: this.refs,
       runAction: this.withAction,
       serializeEngineAction: (action) => this.keyboardIntentRouter.serializeEngineAction(action),
+      interruptNavigationForBack: () => this.interruptPendingNavigation(),
       onWindowKeydown: this.keyboardIntentRouter.handleWindowKeydown,
       actions: {
         health: this.handleHealthClick,
         loadRawWml: this.handleLoadRawWmlClick,
         fetchUrl: this.handleFetchUrlClick,
-        fetchUrlEnter: this.handleFetchUrlClick,
+        fetchUrlEnter: this.handleFetchUrlEnter,
         reload: this.handleReloadClick,
         stopNavigation: this.handleStopNavigationClick,
         retryNavigation: this.handleRetryNavigationClick,
@@ -504,6 +515,32 @@ export class BrowserController {
       }
       await this.loadTransportUrl(
         this.refs.fetchUrlInput.value,
+        'user',
+        true,
+        true,
+        undefined,
+        this.defaultNavigationHeaders()
+      );
+    });
+  };
+
+  private interruptPendingNavigation(): void {
+    if (this.networkNavigationCancellable) {
+      void this.navigation.cancelPendingNavigation();
+    }
+  }
+
+  private readonly handleFetchUrlEnter = async (): Promise<void> => {
+    const address = this.refs.fetchUrlInput.value;
+    this.interruptPendingNavigation();
+    await this.keyboardIntentRouter.serializeEngineAction(async () => {
+      if (this.runMode === 'local') {
+        await this.loadSelectedLocalDeck();
+        return;
+      }
+      this.refs.fetchUrlInput.value = address;
+      await this.loadTransportUrl(
+        address,
         'user',
         true,
         true,

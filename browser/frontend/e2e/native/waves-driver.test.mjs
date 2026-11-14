@@ -260,6 +260,15 @@ test('in-flight URL starts stop after dispatch so race scenarios can cancel it',
   ]);
 });
 
+test('a replacement address is submitted with Enter while navigation is active', async () => {
+  const { calls, page } = fixture({ initialNavigationAction: 'stop' });
+  await page.replaceWapUrl('wap://localhost/examples/interop-check.wml');
+  assert.deepEqual(calls.filter(([kind]) => kind === 'sendKeys'), [
+    ['sendKeys', 'address', 'wap://localhost/examples/interop-check.wml'],
+    ['sendKeys', 'address', 'Enter']
+  ]);
+});
+
 test('Stop waits for an active navigation, cancels it, and waits for the idle state', async () => {
   const { calls, page, waits } = fixture({ initialNavigationAction: 'stop' });
 

@@ -550,6 +550,7 @@
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
             "cargo test --manifest-path browser/src-tauri/Cargo.toml",
             "pnpm --dir browser/frontend test",
+            "browser/frontend/e2e/native/scenarios/resilience.mjs (Back and replacement navigation)",
             "wasm-pack test --node engine-wasm/engine",
             "pnpm test:story WML-301",
             "node scripts/wap-context-pack.mjs WML-301",
@@ -1351,6 +1352,7 @@
           ],
           "evidence": [
             "cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay",
+            "cargo test --manifest-path transport-rust/Cargo.toml --test native_cancel_responsiveness",
             "node scripts/check-wap-selected-normative-clauses.mjs",
             "node scripts/wap-context-pack.mjs TRN-706",
             "node scripts/check-wap-knowledge-graph.mjs"

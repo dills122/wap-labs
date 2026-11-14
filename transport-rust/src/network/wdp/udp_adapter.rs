@@ -49,6 +49,12 @@ impl UdpDatagramTransport {
             .local_addr()
             .unwrap_or_else(|_| "127.0.0.1:0".parse().expect("literal is valid socket addr"))
     }
+
+    pub(crate) fn set_read_timeout(&self, timeout: Duration) -> WdpResult<()> {
+        self.socket
+            .set_read_timeout(Some(timeout))
+            .map_err(|error| WdpError::TransportUnavailable(error.to_string()))
+    }
 }
 
 fn socket_addr_from_wdp(
