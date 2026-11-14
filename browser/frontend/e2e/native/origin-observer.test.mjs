@@ -198,7 +198,7 @@ test('controlled navigation URLs use only the validated public origin and action
   );
   assert.equal(
     observer.controlledRecoveryUrl(),
-    'http://127.0.0.1:49153/examples/interop-check.wml'
+    'http://127.0.0.1:49153/e2e/recovery.wml'
   );
   assert.equal(observer.controlledNavigationUrl('http-native-004-a1', 'body'),
     'http://127.0.0.1:49153/e2e/navigation/http-native-004-a1/slow-body.wml');

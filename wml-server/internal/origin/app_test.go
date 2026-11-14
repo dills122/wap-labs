@@ -151,6 +151,37 @@ func TestE2EActionCorrelationIsDisabledByDefault(t *testing.T) {
 	if body.Code != http.StatusNotFound {
 		t.Fatalf("ordinary origin slow-body fixture status = %d, want 404", body.Code)
 	}
+	recovery := perform(app.Handler(), http.MethodGet, "/e2e/recovery.wml", "", "")
+	if recovery.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin recovery fixture status = %d, want 404", recovery.Code)
+	}
+}
+
+func TestE2ERecoveryDeckUsesCanonicalWML13Doctype(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	response := perform(app.Handler(), http.MethodGet, "/e2e/recovery.wml", "", "")
+	if response.Code != http.StatusOK {
+		t.Fatalf("recovery fixture status = %d, want 200", response.Code)
+	}
+	if got := response.Header().Get("Content-Type"); !strings.HasPrefix(got, "text/vnd.wap.wml") {
+		t.Fatalf("recovery fixture content type = %q", got)
+	}
+	if got := response.Header().Get("Cache-Control"); got != "no-store" {
+		t.Fatalf("recovery fixture cache control = %q", got)
+	}
+	body := response.Body.String()
+	for _, want := range []string{`-//WAPFORUM//DTD WML 1.3//EN`, `http://www.wapforum.org/DTD/wml13.dtd`, "W13-A"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("recovery fixture omitted %q: %s", want, body)
+		}
+	}
+	var deck struct{ XMLName xml.Name }
+	if err := xml.Unmarshal(response.Body.Bytes(), &deck); err != nil || deck.XMLName.Local != "wml" {
+		t.Fatalf("recovery fixture is not valid WML XML: %v", err)
+	}
 }
 
 func TestE2ESlowBodyFlushesBeforeClientCancellation(t *testing.T) {

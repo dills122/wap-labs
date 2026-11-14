@@ -69,9 +69,7 @@ const explicitStop = Object.freeze({
     await prepare(context);
     await loadHome(context);
     await startObservedSlowNavigation(context, actionID);
-    const startedAt = performance.now();
-    const status = await context.waves.stopNavigation();
-    const acknowledgementMs = performance.now() - startedAt;
+    const { status, acknowledgementMs } = await context.waves.stopNavigationMeasured();
     assert.match(status, /Navigation stopped\./);
     assert.ok(acknowledgementMs < 500, `Stop acknowledgement took ${acknowledgementMs}ms`);
     context.recordAssertion('Stop acknowledgement', 'Stop was acknowledged within 500ms');
@@ -167,11 +165,13 @@ async function startObservedSlowHttp(context, actionID, replace = false) {
   const address = context.origin.controlledNavigationUrl(actionID);
   if (replace) await context.waves.replaceControlledHttpUrl(address);
   else await context.waves.startControlledHttpUrl(address);
+  context.observe({ phase: 'ui-dispatched' });
   await context.origin.waitForActionPhase(actionID, {
     kind: 'navigation',
     phase: 'received',
     signal: context.signal
   });
+  context.observe({ phase: 'origin-confirmed' });
 }
 
 async function settleSlowHttp(context, actionID) {
@@ -194,15 +194,19 @@ const httpStop = Object.freeze({
     await startObservedSlowHttp(context, actionID);
     const start = performance.now();
     assert.match(await context.waves.stopNavigation(), /Navigation stopped\./);
+    context.observe({ phase: 'recovery-ready' });
     assert.ok(performance.now() - start < 2000, 'HTTP Stop must finish before the slow response');
     await context.origin.waitForActionPhase(actionID, {
       kind: 'navigation', phase: 'cancelled', signal: context.signal
     });
     assert.ok(performance.now() - start < 2500, 'origin must observe HTTP cancellation before the slow response');
+    context.observe({ phase: 'origin-confirmed' });
     await context.waves.waitForDeckText('Local WAP training environment.');
     const address = context.origin.controlledRecoveryUrl();
     await context.waves.openControlledHttpUrl(address);
+    context.observe({ phase: 'recovery-dispatched' });
     await context.waves.waitForDeckText('W13-A');
+    context.observe({ phase: 'response-rendered' });
     await context.waves.waitForAddress(address);
     assert.ok(performance.now() - start < 2500, 'Stop and recovery must finish before the slow response');
     await settleSlowHttp(context, actionID);
@@ -227,21 +231,27 @@ const httpBodyStop = Object.freeze({
     await loadHome(context);
     const address = context.origin.controlledNavigationUrl(actionID, 'body');
     await context.waves.startControlledHttpUrl(address);
+    context.observe({ phase: 'ui-dispatched' });
     await context.origin.waitForActionPhase(actionID, {
       kind: 'navigation', phase: 'body_started', signal: context.signal
     });
+    context.observe({ phase: 'origin-confirmed' });
     const start = performance.now();
     // Allow the production HTTP client to consume the flushed prefix before Stop.
     await delay(150, undefined, { signal: context.signal });
     assert.match(await context.waves.stopNavigation(), /Navigation stopped\./);
+    context.observe({ phase: 'recovery-ready' });
     await context.origin.waitForActionPhase(actionID, {
       kind: 'navigation', phase: 'cancelled', signal: context.signal
     });
     assert.ok(performance.now() - start < 2500, 'origin must observe body cancellation before the slow response');
+    context.observe({ phase: 'origin-confirmed' });
     await context.waves.waitForDeckText('Local WAP training environment.');
     const recovery = context.origin.controlledRecoveryUrl();
     await context.waves.openControlledHttpUrl(recovery);
+    context.observe({ phase: 'recovery-dispatched' });
     await context.waves.waitForDeckText('W13-A');
+    context.observe({ phase: 'response-rendered' });
     await context.waves.waitForAddress(recovery);
     assert.ok(performance.now() - start < 2500, 'body Stop and recovery must finish before the slow response');
     await settleSlowHttp(context, actionID);
@@ -266,6 +276,7 @@ const httpBack = Object.freeze({
     await startObservedSlowHttp(context, actionID);
     const start = performance.now();
     await context.waves.goBack();
+    context.observe({ phase: 'recovery-dispatched' });
     await context.waves.waitForDeckText('Local WAP training environment.');
     assert.ok(performance.now() - start < 2000, 'HTTP Back must recover before the slow response');
     await settleSlowHttp(context, actionID);
@@ -299,7 +310,9 @@ const httpReplacement = Object.freeze({
     const address = context.origin.controlledRecoveryUrl();
     start = performance.now();
     await context.waves.replaceControlledHttpUrl(address);
+    context.observe({ phase: 'recovery-dispatched' });
     await context.waves.waitForDeckText('W13-A');
+    context.observe({ phase: 'response-rendered' });
     assert.ok(
       performance.now() - start < 2000,
       'newest HTTP address must load before the slow response'

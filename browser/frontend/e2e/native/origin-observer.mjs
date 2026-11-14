@@ -300,7 +300,7 @@ export function createOriginObserver({
     },
     controlledRecoveryUrl() {
       if (!publicOrigin) throw new Error('controlled navigation requires the public base');
-      return new URL('/examples/interop-check.wml', publicOrigin).href;
+      return new URL('/e2e/recovery.wml', publicOrigin).href;
     },
     async seedAccount({ username, pin, actionID }, { signal } = {}) {
       if (!publicOrigin)

@@ -44,6 +44,33 @@ if (submission === 'enter') {
 }
 `;
 
+// The click is still issued through WebDriver. Measure inside the document so
+// driver IPC and polling time do not inflate the browser's acknowledgement.
+const INSTALL_STOP_TIMING_SCRIPT = `
+const button = arguments[0];
+const status = document.querySelector('#status')?.shadowRoot?.querySelector('#status-root');
+if (!(button instanceof HTMLButtonElement) || !status) throw new Error('Stop timing controls unavailable');
+const probe = { startedAt: null, elapsedMs: null, observer: null, onClick: null };
+probe.onClick = () => { probe.startedAt = performance.now(); };
+probe.observer = new MutationObserver(() => {
+  if (probe.startedAt !== null && probe.elapsedMs === null && status.textContent?.includes('Navigation stopped.')) {
+    probe.elapsedMs = performance.now() - probe.startedAt;
+  }
+});
+probe.observer.observe(status, { childList: true, subtree: true, characterData: true });
+button.addEventListener('click', probe.onClick, { capture: true, once: true });
+window.__wavesNativeStopTiming = probe;
+`;
+const READ_STOP_TIMING_SCRIPT = 'return window.__wavesNativeStopTiming?.elapsedMs ?? null;';
+const CLEAR_STOP_TIMING_SCRIPT = `
+const probe = window.__wavesNativeStopTiming;
+if (probe) {
+  probe.observer.disconnect();
+  arguments[0].removeEventListener('click', probe.onClick, true);
+  delete window.__wavesNativeStopTiming;
+}
+`;
+
 function stripSensitiveAddress(rawAddress) {
   const address = new URL(rawAddress);
   address.search = '';
@@ -117,7 +144,7 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
     const base = new URL(controlledHttpBase);
     const parsed = new URL(address);
     const validPath =
-      parsed.pathname === '/examples/interop-check.wml' ||
+      parsed.pathname === '/e2e/recovery.wml' ||
       /^\/e2e\/navigation\/[a-z0-9][a-z0-9-]{0,55}-a(?:[1-9][0-9]{0,3})\/slow(?:-body)?\.wml$/.test(
         parsed.pathname
       );
@@ -255,6 +282,26 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       await (await find(SELECTORS.go)).click();
       await waitForNavigationAction('go');
       return waitForStatusText('Navigation stopped.');
+    },
+
+    async stopNavigationMeasured() {
+      await waitForNavigationAction('stop');
+      const button = await find(SELECTORS.go);
+      await driver.executeScript(INSTALL_STOP_TIMING_SCRIPT, button);
+      try {
+        await button.click();
+        await waitForNavigationAction('go');
+        const status = await waitForStatusText('Navigation stopped.');
+        const acknowledgementMs = await waitUntil(async () => {
+          const value = await driver.executeScript(READ_STOP_TIMING_SCRIPT);
+          return typeof value === 'number' && Number.isFinite(value) && value >= 0
+            ? { value }
+            : false;
+        }, { description: 'in-browser Stop acknowledgement timing' });
+        return { status, acknowledgementMs: acknowledgementMs.value };
+      } finally {
+        await driver.executeScript(CLEAR_STOP_TIMING_SCRIPT, button);
+      }
     },
 
     async typeText(value) {

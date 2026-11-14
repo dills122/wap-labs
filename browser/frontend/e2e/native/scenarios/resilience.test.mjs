@@ -24,11 +24,12 @@ function fixture() {
         async waitForDeckText(text) { calls.push(['deck', text]); return `deck: ${text}`; },
         async waitForAddress(address) { calls.push(['address', address]); return address; },
         async readSanitizedAddress() { return 'wap://localhost/'; },
-        async stopNavigation() { calls.push(['stop']); return 'Navigation stopped.'; }
+        async stopNavigation() { calls.push(['stop']); return 'Navigation stopped.'; },
+        async stopNavigationMeasured() { calls.push(['stop']); return { status: 'Navigation stopped.', acknowledgementMs: 42 }; }
       },
       origin: {
         controlledNavigationUrl(actionID, mode = 'headers') { return `http://127.0.0.1:1234/e2e/navigation/${actionID}/${mode === 'body' ? 'slow-body' : 'slow'}.wml`; },
-        controlledRecoveryUrl() { return 'http://127.0.0.1:1234/examples/interop-check.wml'; },
+        controlledRecoveryUrl() { return 'http://127.0.0.1:1234/e2e/recovery.wml'; },
         async waitForActionPhase(actionID, options) {
           calls.push(['action-phase', actionID, options.kind, options.phase]);
           return { actionID, kind: options.kind, count: 1, phase: options.phase };
@@ -95,6 +96,9 @@ test('direct HTTP recovery scenarios interrupt and reject late responses', async
       calls.filter(([kind]) => kind === 'action-settled').length,
       id === 'HTTP-NATIVE-003' ? 2 : 1
     );
+    for (const phase of ['ui-dispatched', 'origin-confirmed', 'recovery-dispatched']) {
+      assert.ok(calls.some(([kind, value]) => kind === 'observe' && value.phase === phase));
+    }
     if (id === 'HTTP-NATIVE-001') assert.ok(calls.some(([kind]) => kind === 'stop'));
     if (id === 'HTTP-NATIVE-002') assert.ok(calls.some(([kind]) => kind === 'back'));
     if (id === 'HTTP-NATIVE-003')
@@ -175,6 +179,17 @@ test('explicit Stop preserves the prior deck and permits a later recovery naviga
   assert.deepEqual(
     assertions.map(({ name }) => name),
     ['Stop acknowledgement', 'Stop preserves deck', 'Stop recovery']
+  );
+});
+
+test('Stop acknowledgement enforces the 500ms in-browser budget', async () => {
+  const { context } = fixture();
+  context.waves.stopNavigationMeasured = async () => ({
+    status: 'Navigation stopped.', acknowledgementMs: 500
+  });
+  await assert.rejects(
+    RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-002').run(context),
+    /Stop acknowledgement took 500ms/
   );
 });
 

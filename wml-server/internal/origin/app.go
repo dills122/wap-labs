@@ -229,6 +229,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /logout", a.logout)
 	mux.HandleFunc("GET /examples/{file}", a.example)
 	if a.e2eFixtureMode {
+		mux.HandleFunc("GET /e2e/recovery.wml", a.e2eRecoveryDeck)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow-body.wml", a.e2eSlowBodyNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
@@ -236,6 +237,15 @@ func (a *App) Handler() http.Handler {
 		mux.HandleFunc("POST /e2e/submission/{actionID}/slow.wml", a.e2eSlowNavigation)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
+}
+
+// e2eRecoveryDeck provides a canonical text WML 1.3 recovery target for
+// direct HTTP tests, which do not pass through Kannel's WBXML compilation.
+func (a *App) e2eRecoveryDeck(w http.ResponseWriter, _ *http.Request) {
+	setWMLHeaders(w.Header())
+	_, _ = io.WriteString(w, `<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="recovered" title="Recovery"><p>W13-A</p></card></wml>`)
 }
 
 func (a *App) InternalHandler() http.Handler {
