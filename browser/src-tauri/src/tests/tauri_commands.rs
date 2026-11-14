@@ -312,6 +312,168 @@ fn replacement_fetch_waits_briefly_for_a_cancelled_slot() {
 }
 
 #[test]
+fn cancelling_two_slow_http_fetches_allows_immediate_replacement() {
+    use std::io::{Read, Write};
+    use std::net::{TcpListener, TcpStream};
+    use std::sync::mpsc;
+    use std::time::{Duration, Instant};
+
+    fn read_headers(stream: &mut TcpStream) -> bool {
+        let mut request = Vec::new();
+        let mut bytes = [0; 1024];
+        while request.len() < 8 * 1024 && !request.windows(4).any(|w| w == b"\r\n\r\n") {
+            match stream.read(&mut bytes) {
+                Ok(0) | Err(_) => return false,
+                Ok(count) => request.extend_from_slice(&bytes[..count]),
+            }
+        }
+        request.windows(4).any(|w| w == b"\r\n\r\n")
+    }
+
+    let (ready, first, second, replacement, elapsed) = with_env_var_locked(
+        waves_config::FETCH_DESTINATION_POLICY_ENV,
+        waves_config::FETCH_DESTINATION_POLICY_ALLOW_PRIVATE,
+        || {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            listener.set_nonblocking(true).unwrap();
+            let address = listener.local_addr().unwrap();
+            let (arrived_tx, arrived_rx) = mpsc::channel();
+            let (release_tx, release_rx) = mpsc::channel();
+            let server = std::thread::spawn(move || {
+                let deadline = Instant::now() + Duration::from_secs(4);
+                let mut held = Vec::new();
+                while Instant::now() < deadline && held.len() < 2 {
+                    match listener.accept() {
+                        Ok((mut stream, _)) => {
+                            stream.set_nonblocking(false).unwrap();
+                            stream
+                                .set_read_timeout(Some(Duration::from_secs(1)))
+                                .unwrap();
+                            if !read_headers(&mut stream) {
+                                continue;
+                            }
+                            held.push(stream);
+                            let _ = arrived_tx.send(());
+                        }
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            std::thread::sleep(Duration::from_millis(5));
+                        }
+                        Err(_) => return,
+                    }
+                }
+                while Instant::now() < deadline {
+                    match listener.accept() {
+                        Ok((mut stream, _)) => {
+                            stream.set_nonblocking(false).unwrap();
+                            stream
+                                .set_read_timeout(Some(Duration::from_secs(1)))
+                                .unwrap();
+                            if !read_headers(&mut stream) {
+                                continue;
+                            }
+                            let body = canonical_text_wml(
+                                "<wml><card id=\"recovered\"><p>Recovered</p></card></wml>",
+                            );
+                            let response = format!(
+                                "HTTP/1.1 200 OK\r\nContent-Type: text/vnd.wap.wml\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+                                body.len(), body
+                            );
+                            let _ = stream.write_all(response.as_bytes());
+                            break;
+                        }
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            std::thread::sleep(Duration::from_millis(5));
+                        }
+                        Err(_) => break,
+                    }
+                }
+                let _ = release_rx.recv_timeout(Duration::from_secs(4));
+                drop(held);
+            });
+
+            let state = HostFetchState::default();
+            let (result_tx, result_rx) = mpsc::channel();
+            let (ready, elapsed, first, second, replacement) = std::thread::scope(|scope| {
+                let request = |id: &'static str| FetchDeckRequest {
+                    url: format!("http://{address}/{id}.wml"),
+                    method: Some("GET".into()),
+                    headers: None,
+                    timeout_ms: Some(5_000),
+                    retries: Some(0),
+                    request_id: Some(id.into()),
+                    request_policy: None,
+                };
+                for id in ["slow-one", "slow-two"] {
+                    let tx = result_tx.clone();
+                    let state = &state;
+                    let request = request(id);
+                    scope.spawn(move || {
+                        let result = tauri::async_runtime::block_on(super::super::fetch_deck(
+                            borrowed_fetch_state(state),
+                            request,
+                        ));
+                        let _ = tx.send((id, result));
+                    });
+                }
+                let ready = arrived_rx.recv_timeout(Duration::from_secs(3)).is_ok()
+                    && arrived_rx.recv_timeout(Duration::from_secs(3)).is_ok();
+                let start = Instant::now();
+                state.cancel("slow-one");
+                state.cancel("slow-two");
+                let tx = result_tx.clone();
+                let state = &state;
+                let request = request("replacement");
+                scope.spawn(move || {
+                    let result = tauri::async_runtime::block_on(super::super::fetch_deck(
+                        borrowed_fetch_state(state),
+                        request,
+                    ));
+                    let _ = tx.send(("replacement", result));
+                });
+                let mut results = std::collections::HashMap::new();
+                let until = Instant::now() + Duration::from_millis(1_500);
+                while results.len() < 3 {
+                    let remaining = until.saturating_duration_since(Instant::now());
+                    match result_rx.recv_timeout(remaining) {
+                        Ok((id, response)) => {
+                            results.insert(id, response);
+                        }
+                        Err(_) => break,
+                    }
+                }
+                let elapsed = start.elapsed();
+                let _ = release_tx.send(());
+                (
+                    ready,
+                    elapsed,
+                    results.remove("slow-one"),
+                    results.remove("slow-two"),
+                    results.remove("replacement"),
+                )
+            });
+            server.join().unwrap();
+            (ready, first, second, replacement, elapsed)
+        },
+    );
+
+    assert!(ready, "both slow requests should reach the origin");
+    for response in [first, second] {
+        let response = response
+            .expect("cancelled request should finish promptly")
+            .unwrap();
+        assert_eq!(response.error.unwrap().code, "CANCELLED");
+    }
+    let response = replacement
+        .expect("replacement should finish promptly")
+        .expect("replacement must be admitted");
+    assert!(response.ok, "replacement failed: {:?}", response.error);
+    assert!(
+        elapsed < Duration::from_millis(1_500),
+        "recovery took {elapsed:?}"
+    );
+}
+
+#[test]
 fn oversized_fetch_ingress_is_rejected_before_registration_or_spawn() {
     let state = HostFetchState::default();
     let secret = "s".repeat(lowband_transport_rust::MAX_REQUEST_HEADER_BYTES);

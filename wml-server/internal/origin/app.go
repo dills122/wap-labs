@@ -230,6 +230,7 @@ func (a *App) Handler() http.Handler {
 	mux.HandleFunc("GET /examples/{file}", a.example)
 	if a.e2eFixtureMode {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow.wml", a.e2eSlowNavigation)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow-body.wml", a.e2eSlowBodyNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
 		mux.HandleFunc("POST /e2e/submission/{actionID}/slow.wml", a.e2eSlowNavigation)
@@ -327,6 +328,12 @@ func (w *responseCapture) Write(body []byte) (int, error) {
 	written, err := w.ResponseWriter.Write(body)
 	w.bytes += written
 	return written, err
+}
+
+// Unwrap lets ResponseController reach the underlying writer's optional
+// capabilities without claiming support when the writer lacks them.
+func (w *responseCapture) Unwrap() http.ResponseWriter {
+	return w.ResponseWriter
 }
 
 func remoteIP(address string) string {
@@ -698,6 +705,56 @@ func (a *App) e2eSlowNavigation(w http.ResponseWriter, r *http.Request) {
 	a.serveE2EDelayedNavigation(w, r, a.e2eNavigationDelay)
 }
 
+func (a *App) e2eSlowBodyNavigation(w http.ResponseWriter, r *http.Request) {
+	actionID := r.PathValue("actionID")
+	if !validE2EActionID(actionID) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return
+	}
+	if !a.beginE2EAction(w, actionID, "navigation") {
+		return
+	}
+	body := a.renderWML(`<card id="delayed" title="Delayed Body"><p>Delayed body completed.</p></card>`)
+	split := len(body) / 2 // The fixture is ASCII; the first half starts with the XML prologue.
+	setWMLHeaders(w.Header())
+	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+	w.WriteHeader(http.StatusOK)
+	controller := http.NewResponseController(w)
+	if _, err := io.WriteString(w, body[:split]); err != nil {
+		a.setE2EStreamError(actionID, r)
+		return
+	}
+	if err := controller.Flush(); err != nil {
+		a.setE2EStreamError(actionID, r)
+		return
+	}
+	a.setE2EActionPhase(actionID, "body_started")
+	timer := time.NewTimer(a.e2eNavigationDelay)
+	defer timer.Stop()
+	select {
+	case <-r.Context().Done():
+		a.setE2EActionPhase(actionID, "cancelled")
+	case <-timer.C:
+		if _, err := io.WriteString(w, body[split:]); err != nil {
+			a.setE2EStreamError(actionID, r)
+			return
+		}
+		if err := controller.Flush(); err != nil {
+			a.setE2EStreamError(actionID, r)
+			return
+		}
+		a.setE2EActionPhase(actionID, "success")
+	}
+}
+
+func (a *App) setE2EStreamError(actionID string, r *http.Request) {
+	phase := "stream-error"
+	if r.Context().Err() != nil {
+		phase = "cancelled"
+	}
+	a.setE2EActionPhase(actionID, phase)
+}
+
 func (a *App) e2eTimeoutNavigation(w http.ResponseWriter, r *http.Request) {
 	// Exceed both production five-second transport attempts.
 	a.serveE2EDelayedNavigation(w, r, 15*time.Second)
@@ -989,7 +1046,11 @@ func (a *App) evictOldestSessionLocked() {
 func (a *App) sendWML(w http.ResponseWriter, cards string, status int) {
 	setWMLHeaders(w.Header())
 	w.WriteHeader(status)
-	_, _ = fmt.Fprintf(w,
+	_, _ = io.WriteString(w, a.renderWML(cards))
+}
+
+func (a *App) renderWML(cards string) string {
+	return fmt.Sprintf(
 		"<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML %s//EN\" \"http://www.wapforum.org/DTD/wml_%s.xml\">\n<wml>\n%s\n</wml>\n",
 		a.dtdVersion,
 		a.dtdVersion,

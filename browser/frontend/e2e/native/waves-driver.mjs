@@ -51,7 +51,7 @@ function stripSensitiveAddress(rawAddress) {
   return address.href;
 }
 
-export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter: 'Enter' } }) {
+export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter: 'Enter' }, controlledHttpBase }) {
   if (!driver || typeof driver.findElement !== 'function') {
     throw new Error('Waves driver requires a WebDriver session');
   }
@@ -112,6 +112,34 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
       throw new Error('Waves E2E accepts only wap:// or waps:// addresses');
     }
   };
+  const requireControlledHttpAddress = (address) => {
+    if (!controlledHttpBase) throw new Error('controlled HTTP origin is not configured');
+    const base = new URL(controlledHttpBase);
+    const parsed = new URL(address);
+    const validPath =
+      parsed.pathname === '/examples/interop-check.wml' ||
+      /^\/e2e\/navigation\/[a-z0-9][a-z0-9-]{0,55}-a(?:[1-9][0-9]{0,3})\/slow(?:-body)?\.wml$/.test(
+        parsed.pathname
+      );
+    if (
+      base.protocol !== 'http:' ||
+      base.hostname !== '127.0.0.1' ||
+      !base.port ||
+      base.pathname !== '/' ||
+      base.search ||
+      base.hash ||
+      base.username ||
+      base.password ||
+      parsed.origin !== base.origin ||
+      parsed.username ||
+      parsed.password ||
+      parsed.search ||
+      parsed.hash ||
+      !validPath
+    ) {
+      throw new Error('Waves E2E accepts only approved paths on the controlled HTTP origin');
+    }
+  };
   const startWapUrl = async (address) => {
     requireWapAddress(address);
     await waitForNavigationAction('go');
@@ -158,6 +186,29 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async startWapUrl(address) {
       await startWapUrl(address);
+    },
+
+    async startControlledHttpUrl(address) {
+      requireControlledHttpAddress(address);
+      await waitForNavigationAction('go');
+      await submitAddress(address);
+      await waitForNavigationAction('stop');
+    },
+
+    async openControlledHttpUrl(address) {
+      requireControlledHttpAddress(address);
+      await waitForNavigationAction('go');
+      await submitAddress(address);
+    },
+
+    async replaceControlledHttpUrl(address) {
+      requireControlledHttpAddress(address);
+      await waitForNavigationAction('stop');
+      const input = await find(SELECTORS.address);
+      await input.click();
+      await input.clear();
+      await input.sendKeys(address);
+      await input.sendKeys(keys.Enter);
     },
 
     async replaceWapUrl(address) {

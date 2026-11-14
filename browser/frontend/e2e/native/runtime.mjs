@@ -159,6 +159,7 @@ export async function runNativeE2E({
           driver: providerSession.driver,
           selector,
           keys,
+          controlledHttpBase: environment.WML_PUBLIC_BASE,
           waitUntil: (condition, { description }) =>
             waitForCondition({
               description,

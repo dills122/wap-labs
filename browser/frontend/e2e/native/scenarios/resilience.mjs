@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { setTimeout as delay } from 'node:timers/promises';
 
 async function prepare(context) {
   await context.waves.launchWaves();
@@ -162,6 +163,160 @@ const replaceSlowNavigations = Object.freeze({
   }
 });
 
+async function startObservedSlowHttp(context, actionID, replace = false) {
+  const address = context.origin.controlledNavigationUrl(actionID);
+  if (replace) await context.waves.replaceControlledHttpUrl(address);
+  else await context.waves.startControlledHttpUrl(address);
+  await context.origin.waitForActionPhase(actionID, {
+    kind: 'navigation',
+    phase: 'received',
+    signal: context.signal
+  });
+}
+
+async function settleSlowHttp(context, actionID) {
+  return context.origin.waitForActionSettledExactlyOnce(actionID, {
+    kind: 'navigation',
+    phases: ['success', 'cancelled'],
+    signal: context.signal
+  });
+}
+
+const httpStop = Object.freeze({
+  id: 'HTTP-NATIVE-001',
+  suite: 'smoke',
+  name: 'Direct HTTP Stop preserves the deck and recovers',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'http-native-001-a1';
+    await prepare(context);
+    await loadHome(context);
+    await startObservedSlowHttp(context, actionID);
+    const start = performance.now();
+    assert.match(await context.waves.stopNavigation(), /Navigation stopped\./);
+    assert.ok(performance.now() - start < 2000, 'HTTP Stop must finish before the slow response');
+    await context.origin.waitForActionPhase(actionID, {
+      kind: 'navigation', phase: 'cancelled', signal: context.signal
+    });
+    assert.ok(performance.now() - start < 2500, 'origin must observe HTTP cancellation before the slow response');
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    const address = context.origin.controlledRecoveryUrl();
+    await context.waves.openControlledHttpUrl(address);
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(address);
+    assert.ok(performance.now() - start < 2500, 'Stop and recovery must finish before the slow response');
+    await settleSlowHttp(context, actionID);
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(address);
+    context.observe({ phase: 'recovered' });
+    context.recordAssertion(
+      'direct HTTP Stop recovery',
+      'the newer deck survived the cancelled HTTP request'
+    );
+  }
+});
+
+const httpBodyStop = Object.freeze({
+  id: 'HTTP-NATIVE-004',
+  suite: 'smoke',
+  name: 'Direct HTTP Stop recovers from a stalled response body',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'http-native-004-a1';
+    await prepare(context);
+    await loadHome(context);
+    const address = context.origin.controlledNavigationUrl(actionID, 'body');
+    await context.waves.startControlledHttpUrl(address);
+    await context.origin.waitForActionPhase(actionID, {
+      kind: 'navigation', phase: 'body_started', signal: context.signal
+    });
+    const start = performance.now();
+    // Allow the production HTTP client to consume the flushed prefix before Stop.
+    await delay(150, undefined, { signal: context.signal });
+    assert.match(await context.waves.stopNavigation(), /Navigation stopped\./);
+    await context.origin.waitForActionPhase(actionID, {
+      kind: 'navigation', phase: 'cancelled', signal: context.signal
+    });
+    assert.ok(performance.now() - start < 2500, 'origin must observe body cancellation before the slow response');
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    const recovery = context.origin.controlledRecoveryUrl();
+    await context.waves.openControlledHttpUrl(recovery);
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recovery);
+    assert.ok(performance.now() - start < 2500, 'body Stop and recovery must finish before the slow response');
+    await settleSlowHttp(context, actionID);
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recovery);
+    context.observe({ phase: 'recovered' });
+    context.recordAssertion('direct HTTP body Stop recovery', 'the newer deck survived the cancelled partial response');
+  }
+});
+
+const httpBack = Object.freeze({
+  id: 'HTTP-NATIVE-002',
+  suite: 'smoke',
+  name: 'Direct HTTP Back interrupts a slow request',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'http-native-002-a1';
+    await prepare(context);
+    await loadHome(context);
+    await context.waves.openWapUrl('wap://localhost/examples/interop-check.wml');
+    await context.waves.waitForDeckText('W13-A');
+    await startObservedSlowHttp(context, actionID);
+    const start = performance.now();
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    assert.ok(performance.now() - start < 2000, 'HTTP Back must recover before the slow response');
+    await settleSlowHttp(context, actionID);
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.waitForAddress('wap://localhost/');
+    context.observe({ phase: 'recovered' });
+    context.recordAssertion(
+      'direct HTTP Back recovery',
+      'Back restored the previous deck after HTTP cancellation'
+    );
+  }
+});
+
+const httpReplacement = Object.freeze({
+  id: 'HTTP-NATIVE-003',
+  suite: 'smoke',
+  name: 'Direct HTTP replacement survives two slow requests',
+  secretBearing: false,
+  async run(context) {
+    const first = 'http-native-003-a1';
+    const second = 'http-native-003-a2';
+    await prepare(context);
+    await loadHome(context);
+    await startObservedSlowHttp(context, first);
+    let start = performance.now();
+    await startObservedSlowHttp(context, second, true);
+    assert.ok(
+      performance.now() - start < 2000,
+      'second HTTP request must start before the first response'
+    );
+    const address = context.origin.controlledRecoveryUrl();
+    start = performance.now();
+    await context.waves.replaceControlledHttpUrl(address);
+    await context.waves.waitForDeckText('W13-A');
+    assert.ok(
+      performance.now() - start < 2000,
+      'newest HTTP address must load before the slow response'
+    );
+    await context.waves.waitForAddress(address);
+    await settleSlowHttp(context, first);
+    await settleSlowHttp(context, second);
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(address);
+    context.observe({ phase: 'recovered' });
+    context.recordAssertion(
+      'direct HTTP replacement recovery',
+      'the newest HTTP deck survived both cancelled requests'
+    );
+  }
+});
+
 const gatewayOutage = Object.freeze({
   id: 'ERR-NATIVE-002',
   suite: 'smoke',
@@ -296,6 +451,10 @@ export const RESILIENCE_SCENARIOS = Object.freeze([
   explicitStop,
   backDuringNavigation,
   replaceSlowNavigations,
+  httpStop,
+  httpBack,
+  httpReplacement,
+  httpBodyStop,
   gatewayOutage,
   invalidDeck,
   timeoutRecovery
