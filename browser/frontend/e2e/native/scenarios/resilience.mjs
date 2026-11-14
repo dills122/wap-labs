@@ -181,9 +181,53 @@ const invalidDeck = Object.freeze({
   }
 });
 
+const timeoutRecovery = Object.freeze({
+  id: 'ERR-NATIVE-004',
+  suite: 'smoke',
+  name: 'Gateway timeout preserves the current deck and permits recovery',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'timeout-native-004-a1';
+    const address = `wap://localhost/e2e/navigation/${actionID}/timeout.wml`;
+    await prepare(context);
+    await loadHome(context);
+    const priorText = await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.startWapUrl(address);
+    context.observe({ phase: 'ui-dispatched', address });
+    await context.origin.waitForActionPhase(actionID, { kind: 'navigation', phase: 'received', signal: context.signal });
+    const status = await context.waves.waitForStatus('Fetch failed:');
+    assert.equal(status.displayed, true, 'timeout status must be visible');
+    assert.equal(status.tone, 'error', 'timeout status must use the visible error tone');
+    const failure = await context.waves.readNavigationFailure();
+    assert.equal(failure.displayed, true, 'timeout category and correlation must be visible');
+    assert.equal(failure.title, 'gateway · GATEWAY_TIMEOUT');
+    assert.match(failure.correlation, /^Request \S+$/, 'timeout must retain a request correlation ID');
+    assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), priorText, 'timeout must preserve the committed viewport');
+    const action = await context.origin.readAction(actionID, { signal: context.signal });
+    assert.equal(action.kind, 'navigation');
+    assert.equal(action.count, 1, 'the gateway must correlate the timeout to one origin request');
+    context.observe({ phase: 'origin-confirmed', address });
+    context.recordAssertion('native timeout rejection', 'the correlated gateway timeout preserved the prior viewport');
+    const recoveryAddress = 'wap://localhost/examples/interop-check.wml';
+    context.observe({ phase: 'recovery-ready' });
+    await context.waves.openWapUrl(recoveryAddress);
+    context.observe({ phase: 'recovery-dispatched', address: recoveryAddress });
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recoveryAddress);
+    await context.origin.waitForActionSettledExactlyOnce(actionID, {
+      kind: 'navigation', phases: ['success', 'cancelled'], signal: context.signal
+    });
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recoveryAddress);
+    context.observe({ phase: 'recovered', address: recoveryAddress });
+    context.recordAssertion('native timeout recovery', 'a later native navigation loaded a valid deck');
+  }
+});
+
 export const RESILIENCE_SCENARIOS = Object.freeze([
   staleNavigation,
   explicitStop,
   gatewayOutage,
-  invalidDeck
+  invalidDeck,
+  timeoutRecovery
 ]);

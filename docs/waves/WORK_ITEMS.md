@@ -94,7 +94,7 @@ Audit base: `origin/main` `6e30f89f`. PRs `#541`, `#542`, `#543`, `#544`, and `#
 typed POST history, F2-02 scrolling, F2-03 unified input, WBP-11 phase recovery, and APP-SHELL-01
 Library/Preferences. WBP-11's merge does not by itself add native release evidence. The WBP-14
 inventory in [`WBP_14_DESKTOP_PATH_EVIDENCE.md`](WBP_14_DESKTOP_PATH_EVIDENCE.md) records 4
-complete, 8 partial, 4 missing, and 3 blocked evidence scenarios and prevents release closure from
+complete, 9 partial, 3 missing, and 3 blocked evidence scenarios and prevents release closure from
 being inferred from lower-level tests.
 
 The selected-profile source and planning lanes are complete. The active queue

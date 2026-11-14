@@ -79,12 +79,12 @@
     },
     {
       "id": "timeout",
-      "status": "missing",
+      "status": "partial",
       "evidenceClass": "native-gateway",
       "workItems": ["WBP-10", "WBP-11", "WBP-14"],
       "requirements": [],
-      "evidence": ["browser/src-tauri/src/tests/fetch_commands.rs"],
-      "blocker": "Timeout behavior has lower-level tests but no controlled complete desktop-path case and artifact."
+      "evidence": ["browser/src-tauri/src/tests/fetch_commands.rs", "browser/frontend/e2e/native/scenarios/resilience.mjs", "wml-server/internal/origin/app_test.go"],
+      "blocker": "The controlled native timeout scenario is implemented; a passing Linux native gateway run is required before claiming desktop-path evidence."
     },
     {
       "id": "cancellation",

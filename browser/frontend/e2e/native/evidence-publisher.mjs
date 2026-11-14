@@ -60,6 +60,8 @@ const SAFE_ASSERTION_NAMES = new Set([
   'gateway restart recovery',
   'invalid deck rejection',
   'invalid deck recovery',
+  'native timeout rejection',
+  'native timeout recovery',
   'masked PIN entry',
   'registration response',
   'correlated registration receipt',
