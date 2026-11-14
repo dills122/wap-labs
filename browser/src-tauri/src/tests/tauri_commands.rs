@@ -283,6 +283,35 @@ fn host_fetch_admission_is_bounded_and_cancel_command_marks_active_work() {
 }
 
 #[test]
+fn replacement_fetch_waits_briefly_for_a_cancelled_slot() {
+    let state = HostFetchState::default();
+    let first = state.admission.clone().try_acquire_owned().unwrap();
+    let second = state.admission.clone().try_acquire_owned().unwrap();
+    let release = std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+        drop(first);
+    });
+    let response = tauri::async_runtime::block_on(super::super::fetch_deck(
+        borrowed_fetch_state(&state),
+        FetchDeckRequest {
+            url: "http://127.0.0.1/".into(),
+            method: Some("GET".into()),
+            headers: None,
+            timeout_ms: Some(100),
+            retries: Some(0),
+            request_id: Some("replacement".into()),
+            request_policy: None,
+        },
+    ));
+    release.join().unwrap();
+    drop(second);
+    assert!(
+        response.is_ok(),
+        "a briefly occupied slot must not reject a replacement fetch"
+    );
+}
+
+#[test]
 fn oversized_fetch_ingress_is_rejected_before_registration_or_spawn() {
     let state = HostFetchState::default();
     let secret = "s".repeat(lowband_transport_rust::MAX_REQUEST_HEADER_BYTES);

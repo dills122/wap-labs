@@ -211,9 +211,19 @@ async fn fetch_deck(
     let cancellation = active_fetch.cancellation.clone();
     let request_url = request.url.clone();
     let admission = state.admission.clone();
-    let permit = (!cancellation.is_cancelled())
-        .then(|| admission.try_acquire_owned().ok())
-        .flatten();
+    // A cancelled WDP receive can take a short polling interval to release its
+    // permit. Wait briefly without blocking the executor or increasing the cap.
+    let permit = if cancellation.is_cancelled() {
+        None
+    } else {
+        tokio::time::timeout(
+            std::time::Duration::from_millis(250),
+            admission.acquire_owned(),
+        )
+        .await
+        .ok()
+        .and_then(Result::ok)
+    };
     let response = match permit {
         Some(permit) => tauri::async_runtime::spawn_blocking(move || {
             let _permit = permit;

@@ -68,8 +68,12 @@ const explicitStop = Object.freeze({
     await prepare(context);
     await loadHome(context);
     await startObservedSlowNavigation(context, actionID);
+    const startedAt = performance.now();
     const status = await context.waves.stopNavigation();
+    const acknowledgementMs = performance.now() - startedAt;
     assert.match(status, /Navigation stopped\./);
+    assert.ok(acknowledgementMs < 500, `Stop acknowledgement took ${acknowledgementMs}ms`);
+    context.recordAssertion('Stop acknowledgement', 'Stop was acknowledged within 500ms');
 
     const settled = await context.origin.waitForActionSettledExactlyOnce(actionID, {
       kind: 'navigation',
@@ -95,6 +99,66 @@ const explicitStop = Object.freeze({
       'Stop recovery',
       'a later native navigation completed after explicit cancellation'
     );
+  }
+});
+
+const backDuringNavigation = Object.freeze({
+  id: 'RACE-NATIVE-003',
+  suite: 'smoke',
+  name: 'Back interrupts a slow request and restores the previous deck',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'race-native-003-a1';
+    await prepare(context);
+    await loadHome(context);
+    await context.waves.openWapUrl('wap://localhost/examples/interop-check.wml');
+    await context.waves.waitForDeckText('W13-A');
+    await startObservedSlowNavigation(context, actionID);
+    const startedAt = performance.now();
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    assert.ok(performance.now() - startedAt < 2000, 'Back must recover before the slow response');
+    await context.waves.waitForAddress('wap://localhost/');
+    await context.origin.waitForActionSettledExactlyOnce(actionID, {
+      kind: 'navigation', phases: ['success', 'cancelled'], signal: context.signal
+    });
+    await context.waves.waitForDeckText('Local WAP training environment.');
+    await context.waves.waitForAddress('wap://localhost/');
+    context.observe({ phase: 'recovered', address: 'wap://localhost/' });
+    context.recordAssertion('Back interrupts slow navigation', 'Back restored the prior deck and the late response did not replace it');
+  }
+});
+
+const replaceSlowNavigations = Object.freeze({
+  id: 'RACE-NATIVE-004',
+  suite: 'smoke',
+  name: 'New addresses supersede slow requests and recover',
+  secretBearing: false,
+  async run(context) {
+    const first = 'race-native-004-a1';
+    const second = 'race-native-004-a2';
+    await prepare(context);
+    await loadHome(context);
+    await startObservedSlowNavigation(context, first);
+    let startedAt = performance.now();
+    await context.waves.replaceWapUrl(`wap://localhost/e2e/navigation/${second}/slow.wml`);
+    await context.origin.waitForActionPhase(second, { kind: 'navigation', phase: 'received', signal: context.signal });
+    assert.ok(performance.now() - startedAt < 2000, 'replacement request must start before the slow response');
+    const address = 'wap://localhost/examples/interop-check.wml';
+    startedAt = performance.now();
+    await context.waves.replaceWapUrl(address);
+    await context.waves.waitForDeckText('W13-A');
+    assert.ok(performance.now() - startedAt < 2000, 'the newest address must load before the slow response');
+    await context.waves.waitForAddress(address);
+    for (const actionID of [first, second]) {
+      await context.origin.waitForActionSettledExactlyOnce(actionID, {
+        kind: 'navigation', phases: ['success', 'cancelled'], signal: context.signal
+      });
+    }
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(address);
+    context.observe({ phase: 'recovered', address });
+    context.recordAssertion('new address supersedes slow navigations', 'the newest deck remained visible after both slow requests settled');
   }
 });
 
@@ -230,6 +294,8 @@ const timeoutRecovery = Object.freeze({
 export const RESILIENCE_SCENARIOS = Object.freeze([
   staleNavigation,
   explicitStop,
+  backDuringNavigation,
+  replaceSlowNavigations,
   gatewayOutage,
   invalidDeck,
   timeoutRecovery

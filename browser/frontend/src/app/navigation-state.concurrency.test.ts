@@ -38,6 +38,41 @@ const fetchOkFor = (url: string): FetchResponse => {
 };
 
 describe('NavigationStateMachine concurrency ownership', () => {
+  it('keeps a dispatched engine mutation serialized after cancellation', async () => {
+    const pendingFrame = deferred<EngineFrame>();
+    const host = createHostClientMock({ engineLoadDeckContextFrame: () => pendingFrame.promise });
+    const machine = createNavigationStateMachine(host, 'wap://seed.test');
+    const loadPromise = load(machine, 'wap://example.test/ready.wml');
+    for (let i = 0; i < 10; i += 1) await Promise.resolve();
+    await machine.cancelPendingNavigation();
+    const early = await Promise.race([
+      loadPromise.then(() => 'settled'),
+      new Promise<string>((resolve) => setTimeout(() => resolve('pending'), 30))
+    ]);
+    expect(early).toBe('pending');
+    pendingFrame.resolve(frame({ activeCardId: 'stale' }));
+    await expect(loadPromise).resolves.toBeNull();
+  });
+
+  it('settles a cancelled navigation before the blocked host fetch returns', async () => {
+    const pendingFetch = deferred<FetchResponse>();
+    const machine = createNavigationStateMachine(
+      createHostClientMock({ fetchDeck: vi.fn(() => pendingFetch.promise) }),
+      'wap://seed.test'
+    );
+    const loadPromise = load(machine, 'wap://example.test/slow.wml');
+    await Promise.resolve();
+    await machine.cancelPendingNavigation();
+    const result = await Promise.race([
+      loadPromise.then(() => 'settled'),
+      new Promise<string>((resolve) => setTimeout(() => resolve('blocked'), 50))
+    ]);
+    expect(result).toBe('settled');
+    pendingFetch.resolve(fetchOkFor('wap://example.test/slow.wml'));
+    await Promise.resolve();
+    expect(machine.getSessionState().finalUrl).not.toBe('wap://example.test/slow.wml');
+  });
+
   it('publishes deterministic WAP phases and exposes Stop only while the fetch is cancellable', async () => {
     const pendingFetch = deferred<FetchResponse>();
     const phases: string[] = [];

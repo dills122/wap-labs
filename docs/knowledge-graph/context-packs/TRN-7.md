@@ -217,6 +217,7 @@ Acceptance:
 Evidence commands:
 
 - `cargo test --manifest-path transport-rust/Cargo.toml --test interop_replay`
+- `cargo test --manifest-path transport-rust/Cargo.toml --test native_cancel_responsiveness`
 - `node scripts/check-wap-selected-normative-clauses.mjs`
 - `node scripts/wap-context-pack.mjs TRN-706`
 - `node scripts/check-wap-knowledge-graph.mjs`

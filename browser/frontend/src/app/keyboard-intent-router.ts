@@ -27,6 +27,7 @@ export interface KeyboardIntentRouterDependencies {
   applyFocusedControlEditKey(key: string): Promise<ControlEditDisposition>;
   applyEngineKey(key: EngineKey): Promise<void>;
   navigateBackWithFallback(): Promise<'engine' | 'host' | 'none'>;
+  interruptNavigationForBack?(): void;
   waitForEngineTimerIdle(): Promise<void>;
   setStatus(message: string): void;
   onActionInFlightChange?(inFlight: boolean): void;
@@ -119,6 +120,7 @@ export class KeyboardIntentRouter {
     }
 
     if (intent.type === 'navigate-back') {
+      this.deps.interruptNavigationForBack?.();
       this.enqueueAction(async () => {
         await this.deps.runAction('keyboard-backspace', async () => {
           if (this.shouldRouteKeyToControlEdit(event)) {

@@ -68,7 +68,7 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -125,7 +125,7 @@ test('explicit Stop preserves the prior deck and permits a later recovery naviga
   assert.ok(calls.some((entry) => entry[0] === 'deck' && entry[1] === 'W13-A'));
   assert.deepEqual(
     assertions.map(({ name }) => name),
-    ['Stop preserves deck', 'Stop recovery']
+    ['Stop acknowledgement', 'Stop preserves deck', 'Stop recovery']
   );
 });
 
@@ -215,4 +215,21 @@ test('native timeout scenario rejects requests beyond the attempt bound', async 
   context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
   context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 3, phase: 'received' });
   await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /attempt bound/);
+});
+
+test('Back interrupts a slow request and retains the previous committed deck', async () => {
+  const { calls, assertions, context } = fixture();
+  context.waves.goBack = async () => calls.push(['back']);
+  await RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-003').run(context);
+  assert.ok(calls.some(([kind]) => kind === 'back'));
+  assert.deepEqual(assertions.map(({ name }) => name), ['Back interrupts slow navigation']);
+});
+
+test('new addresses replace two slow navigations and remain after both settle', async () => {
+  const { calls, assertions, context } = fixture();
+  context.waves.replaceWapUrl = async (address) => calls.push(['replace', address]);
+  await RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-004').run(context);
+  assert.equal(calls.filter(([kind]) => kind === 'replace').length, 2);
+  assert.equal(calls.filter(([kind]) => kind === 'action-settled').length, 2);
+  assert.deepEqual(assertions.map(({ name }) => name), ['new address supersedes slow navigations']);
 });

@@ -177,6 +177,8 @@ export const createNavigationStateMachine = (
         identity: NavigationOperationIdentity;
         requestId: string;
         promise: Promise<EngineRuntimeSnapshot | null>;
+        awaitingTransport: boolean;
+        settleCancelled(): void;
       }
     | undefined;
   let observedBrowserContextEpoch: number | undefined;
@@ -243,6 +245,9 @@ export const createNavigationStateMachine = (
     const superseded = activeTransportOperation;
     activeTransportOperation = undefined;
     if (superseded) {
+      if (superseded.awaitingTransport) {
+        superseded.settleCancelled();
+      }
       hooks.onNavigationCancellableChange?.(false);
       pendingHostCancellation = hostClient
         .cancelFetch(superseded.requestId)
@@ -479,6 +484,9 @@ export const createNavigationStateMachine = (
       emitNavigationPhase('gateway', requestId, requestedUrl);
     }
 
+    if (activeTransportOperation?.generation === generation) {
+      activeTransportOperation.awaitingTransport = true;
+    }
     let transport: FetchResponse;
     try {
       transport = await hostClient.fetchDeck({
@@ -507,6 +515,10 @@ export const createNavigationStateMachine = (
         requestedUrl
       });
       return null;
+    } finally {
+      if (activeTransportOperation?.generation === generation) {
+        activeTransportOperation.awaitingTransport = false;
+      }
     }
     if (!isCurrentNavigation(generation)) {
       return null;
@@ -723,7 +735,14 @@ export const createNavigationStateMachine = (
       resolveOperation = resolve;
       rejectOperation = reject;
     });
-    activeTransportOperation = { generation, identity, requestId, promise: operationPromise };
+    activeTransportOperation = {
+      generation,
+      identity,
+      requestId,
+      promise: operationPromise,
+      awaitingTransport: true,
+      settleCancelled: () => resolveOperation(null)
+    };
     emitNavigationPhase('preparing', requestId, identity.requestedUrl);
     hooks.onNavigationCancellableChange?.(true, requestId);
     void (async () => {

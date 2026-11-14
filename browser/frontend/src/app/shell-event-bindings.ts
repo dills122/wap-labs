@@ -43,6 +43,7 @@ export interface ShellEventBindingsDependencies {
     action: (event?: Event) => Promise<void>
   ) => (event?: Event) => Promise<void>;
   serializeEngineAction(action: () => Promise<void>): Promise<void>;
+  interruptNavigationForBack?(): void;
   onWindowKeydown: (event: Event) => void;
 }
 
@@ -136,7 +137,11 @@ export class ShellEventBindings {
     const backBtn = document.querySelector<HTMLButtonElement>('#btn-back');
     if (backBtn) {
       this.backBtnEl = backBtn;
-      this.bindEvent(backBtn, 'click', runEngineAction('navigate-back', actions.navigateBack));
+      const back = runEngineAction('navigate-back', actions.navigateBack);
+      this.bindEvent(backBtn, 'click', (event) => {
+        this.deps.interruptNavigationForBack?.();
+        void back(event);
+      });
     }
 
     this.bindButton('#btn-snapshot', runEngineAction('snapshot', actions.snapshot));

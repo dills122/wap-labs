@@ -16,7 +16,7 @@ stack. It proves startup, successful WML rendering/navigation, a bounded repeat 
 invalid-address and invalid-deck failures, a gateway timeout, and subsequent successful recovery.
 
 That is not yet the complete WBP-14 release gate. Of 19 required evidence scenarios, 5 are complete,
-8 are partial, 3 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
+9 are partial, 2 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
 story evidence for cancellation and script traps must not be
 presented as proof that the native desktop path handles those cases.
 
@@ -39,7 +39,7 @@ as a silent substitute for the other.
 | Softkeys, keyboard, pointer, scrolling    | partial         | Unified input routing, engine frame/affordance, and deterministic scrolling fixture paths exist | Add native pointer/keyboard equivalence and text-entry/modifier coverage                                 |
 | Loading phases and ordinary recovery      | partial         | WBP-11 phases, stale-result tests, and basic native failure/recovery exist                       | Measure 100/200 ms budgets and exercise categorized failures natively                                   |
 | History                                   | partial         | Typed replayable POST history and request-shaped engine/browser evidence exist                  | Add native GET, POST, and Back replay cases                                                              |
-| Timeout and cancellation                  | complete/missing | `ERR-NATIVE-004` passed native timeout recovery; cancellation has lower-level evidence           | Add cancellation acknowledgement timing and retained-frame assertions |
+| Timeout and cancellation                  | complete/partial | `ERR-NATIVE-004` passed native timeout recovery; cancellation scenarios are implemented         | Run native Stop, Back, replacement, and acknowledgement timing scenarios |
 | Invalid deck                              | complete        | `ERR-NATIVE-003` passed through native Tauri and Kannel, retaining the viewport and recovering to a valid deck | Keep the native gateway scenario in the smoke suite |
 | Script trap                               | missing         | `WMLS-501` decoder/verifier evidence exists                                                     | Add a native visible trap/recovery case; do not infer unfinished `WMLS-502` execution coverage           |
 | Crash recovery and safe session           | partial         | Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity    | Run and record the packaged launch-after-crash relaunch case                                               |
@@ -56,8 +56,8 @@ strengthen fixture and manual-test coverage, but native desktop-path evidence is
 In particular, merged PR `#544` supplies WBP-11 presentation/recovery behavior and timing targets;
 it does not supply the native timing and categorized-failure artifacts needed for closure. PR
 `#549` adds WBP-12 fixture evidence, moving crash recovery from blocked to partial; its packaged
-launch-after-crash observation remains open. The inventory therefore records 5 complete, 8
-partial, 3 missing, and 3 blocked scenarios.
+launch-after-crash observation remains open. The inventory therefore records 5 complete, 9
+partial, 2 missing, and 3 blocked scenarios.
 
 ## Compliance mapping posture
 
