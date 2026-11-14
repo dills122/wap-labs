@@ -48,12 +48,15 @@ local inputs, and reassess the dependency before broader adoption.
 
 The associated [CVE record](https://nvd.nist.gov/vuln/detail/CVE-2023-54404) was rejected by
 its numbering authority, which considers the memory use bounded by the already-parsed request size.
-The GitHub advisory remains active and blocks dependency review, while
+The GitHub advisory remains active, while
 [Red Hat's assessment](https://access.redhat.com/security/cve/cve-2023-54404) still describes
 an availability risk for applications accepting unbounded inputs. These assessments do not prove
 that all Ruflo CLI or SDK inputs pass through this pilot's guard.
-GitHub dependency review's `allow-ghsas` exception applies across the action, not just to this
-lockfile. Adopting an exception is a separate repository risk decision; it is not a Zod fix.
+GitHub dependency review has an explicit `allow-ghsas` exception for this advisory. It applies
+repository-wide, not just to this lockfile, so future introductions of this same advisory will not
+fail that action. This is an accepted risk for the local pilot, not a Zod fix. Remove the exception
+when Ruflo and its dependencies no longer require vulnerable legacy Zod, and audit direct CLI and
+SDK paths before expanding the pilot beyond trusted inputs.
 
 Do not use `ruflo init --codex` over existing `AGENTS.md`, `.agents/skills`, steering, hooks or
 global Codex configuration. Decide isolation, ownership, verification and merge strategy before
