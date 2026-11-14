@@ -1,6 +1,6 @@
 # Direct HTTP cancellation and recovery
 
-Status: implemented; native Linux pilot pending. Branch: `codex/http-cancellation-recovery`.
+Status: implemented; native Linux pilot passed. Branch: `codex/http-cancellation-recovery`.
 
 ## Objective
 
@@ -18,8 +18,8 @@ destination/redirect policy, or allow background work to grow without bound.
 | HTTP-C4 | Implement transport and host behavior                        | Lead integration           | C1, C2         | transport and host tests, destination policy and POST safety                        |
 | HTTP-C5 | Verify, review and integrate                                 | Lead                       | C3, C4         | transport lint/tests, host/frontend checks, contracts and applicable desktop checks |
 
-C1–C4 are implemented with local regression evidence. C5 remains open until final verification and
-the native Linux pilot complete. The desktop streaming fixture proves the server sent a partial
+C1–C5 are implemented and verified. The native Linux pilot passed in
+[GitHub Actions run 43629220429](https://github.com/dills122/wap-labs/actions/runs/43629220429). The desktop streaming fixture proves the server sent a partial
 body; the transport loopback test separately exercises cancellation while the client reads it.
 
 Ruflo records coordinate the research and testing lanes; Codex agents perform their actual work.
