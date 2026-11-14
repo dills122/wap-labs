@@ -27,6 +27,10 @@ function fixture() {
           calls.push(['action-phase', actionID, options.kind, options.phase]);
           return { actionID, kind: options.kind, count: 1, phase: options.phase };
         },
+        async waitForActionSettledWithinBound(actionID, options) {
+          calls.push(['action-settled-bounded', actionID, options.kind, options.maxCount]);
+          return { actionID, kind: options.kind, count: 2, phase: 'success', quiescenceMs: 10_500 };
+        },
         async waitForActionSettledExactlyOnce(actionID, options) {
           calls.push(['action-settled', actionID, options.kind, options.phases]);
           return {
@@ -64,7 +68,7 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002', 'ERR-NATIVE-003']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -185,4 +189,30 @@ test('invalid deck scenario rejects a changed viewport before recovery', async (
     /preserve the committed viewport/
   );
   assert.equal(calls.filter(([kind]) => kind === 'open').length, 2);
+});
+
+test('native timeout preserves the prior deck, reports its category, and recovers', async () => {
+  const { calls, assertions, context } = fixture();
+  context.waves.waitForStatus = async () => ({ text: 'Fetch failed: gateway timed out', tone: 'error', displayed: true });
+  context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
+  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 2, phase: 'received' });
+  await RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context);
+  assert.ok(calls.some(([kind, id, type, phase]) => kind === 'action-phase' && id === 'timeout-native-004-a1' && type === 'navigation' && phase === 'received'));
+  assert.ok(calls.some(([kind, url]) => kind === 'open' && url === 'wap://localhost/examples/interop-check.wml'));
+  assert.deepEqual(assertions.map(({ name }) => name), ['native timeout status', 'native timeout category', 'native timeout frame', 'native timeout rejection', 'native timeout recovery']);
+});
+
+test('native timeout scenario rejects the wrong error category', async () => {
+  const { context } = fixture();
+  context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+  context.waves.readNavigationFailure = async () => ({ title: 'connection · TRANSPORT_UNAVAILABLE', correlation: 'Request req-123', displayed: true });
+  await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /GATEWAY_TIMEOUT/);
+});
+
+test('native timeout scenario rejects requests beyond the attempt bound', async () => {
+  const { context } = fixture();
+  context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+  context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
+  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 3, phase: 'received' });
+  await assert.rejects(RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-004').run(context), /attempt bound/);
 });
