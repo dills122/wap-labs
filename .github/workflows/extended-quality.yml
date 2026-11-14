@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: '26.13.1'
   RUST_SHARED_KEY: wavenav-rust
   WASM_PACK_VERSION: '0.13.1'
 

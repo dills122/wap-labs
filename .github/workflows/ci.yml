@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  NODE_VERSION: '22'
-  GO_VERSION: '1.26.6'
+  NODE_VERSION: '26.13.1'
+  GO_VERSION: '1.26.11'
   RUST_SHARED_KEY: wavenav-rust
   RUST_BROWSER_KEY: wavenav-browser-rust
   ENGINE_COV_LINES: '90'
@@ -455,10 +455,10 @@ jobs:
           cache-dependency-path: marketing-site/pnpm-lock.yaml
 
       - name: Install marketing-site deps
-        run: pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile --ignore-scripts
+        run: pnpm --dir marketing-site install --frozen-lockfile --ignore-scripts
 
       - name: Build marketing-site
-        run: pnpm --dir marketing-site --ignore-workspace run build
+        run: pnpm --dir marketing-site run build
 
   docs-portal:
     name: Project Atlas Build

@@ -80,7 +80,7 @@ if [ "${SKIP_NODE_INSTALLS}" != "1" ]; then
 
     if [ -f "${ROOT_DIR}/marketing-site/package.json" ]; then
       log "install marketing-site dependencies"
-      (cd "${ROOT_DIR}" && pnpm --dir marketing-site --ignore-workspace install)
+      (cd "${ROOT_DIR}" && pnpm --dir marketing-site install)
     fi
 
   else

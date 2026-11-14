@@ -168,10 +168,24 @@ curated engineering, Rust, Node, infrastructure, and delivery skills. Use
 `pnpm codex:links --dry-run` to preview changes, or set `AI_CENTRAL_HOME` to another checkout.
 The installer preserves project-owned files and prunes only deselected AI Central skill links.
 
-Serena project configuration and memories live in locally excluded `.serena/`; use
-`serena project index .`, `serena project health-check .`, and `serena memories check .` to
-validate them. Codebase Memory's persistent graph lives in locally excluded `.codebase-memory/`.
-Refresh its full index through the `index_repository` MCP tool after a repository sync.
+Serena project configuration and memories live in locally excluded `.serena/`. For Serena 2.1.0,
+`scripts/serena-compat.py` applies project-scoped Astro and YAML compatibility fixes in memory;
+enable `astro` in the project’s `.serena/project.yml` language server list and configure the MCP
+server to run it with the Python interpreter from the Serena installation.
+From the repository root, run `<serena-python> scripts/serena-compat.py project health-check .`
+and `python3 -B -m unittest discover -s scripts/tests -p test_serena_compat.py` to validate the
+launcher. The launcher does not modify the installed Serena package; after a Serena upgrade, rerun
+the health check and remove or update the shims if its internal API changes. Restart the MCP server
+after changing its launch configuration. For example, set the Codex MCP command to the Serena
+installation’s `bin/python` and its arguments to:
+
+```toml
+args = ["/absolute/path/to/wap-labs/scripts/serena-compat.py", "start-mcp-server", "--project-from-cwd", "--context=codex", "--open-web-dashboard", "false"]
+```
+
+The launcher passes through without shims outside this checkout. Codebase Memory's persistent graph
+lives in locally excluded `.codebase-memory/`; refresh its full index through the `index_repository`
+MCP tool after a repository sync.
 
 ## Run a local WAP lab
 

@@ -23,7 +23,7 @@ test('marketing lockfile failure stops verification before cached dependencies c
   assert.equal(execution.exitCode, 1);
   assert.equal(attempted.length, 1);
   assert.ok(attempted[0].args.includes('--frozen-lockfile'));
-  assert.ok(attempted[0].args.includes('--ignore-workspace'));
+  assert.deepEqual(attempted[0].args.slice(0, 2), ['--dir', 'marketing-site']);
   assert.equal(execution.results[0].outcome, OUTCOMES.failure);
 });
 

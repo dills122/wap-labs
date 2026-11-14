@@ -319,7 +319,7 @@ dev-wavenav-host:
 install-marketing-site:
 	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
 		echo "==> install marketing-site deps"; \
-		pnpm --dir marketing-site --ignore-workspace install --frozen-lockfile; \
+		pnpm --dir marketing-site install --frozen-lockfile; \
 	else \
 		echo "skip: pnpm or marketing-site package missing"; \
 	fi
@@ -327,7 +327,7 @@ install-marketing-site:
 dev-marketing-site:
 	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
 		echo "==> start marketing-site dev server"; \
-		pnpm --dir marketing-site --ignore-workspace run dev; \
+		pnpm --dir marketing-site run dev; \
 	else \
 		echo "skip: pnpm or marketing-site package missing"; \
 		exit 1; \
@@ -336,7 +336,7 @@ dev-marketing-site:
 build-marketing-site:
 	@if [ -f marketing-site/package.json ] && command -v pnpm >/dev/null 2>&1; then \
 		echo "==> build marketing-site"; \
-		pnpm --dir marketing-site --ignore-workspace run build; \
+		pnpm --dir marketing-site run build; \
 	else \
 		echo "skip: pnpm or marketing-site package missing"; \
 		exit 1; \

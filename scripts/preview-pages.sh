@@ -80,13 +80,13 @@ should_install() {
 
 if should_install "$ROOT_DIR/marketing-site"; then
   echo "==> Installing marketing-site dependencies"
-  pnpm --dir "$ROOT_DIR/marketing-site" --ignore-workspace install --frozen-lockfile
+  pnpm --dir "$ROOT_DIR/marketing-site" install --frozen-lockfile
 else
   echo "==> Skipping marketing-site install (dependencies already present)"
 fi
 
 echo "==> Building marketing-site"
-pnpm --dir "$ROOT_DIR/marketing-site" --ignore-workspace run build
+pnpm --dir "$ROOT_DIR/marketing-site" run build
 
 echo "==> Building WaveNav wasm package"
 (
