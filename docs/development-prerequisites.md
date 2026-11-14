@@ -5,8 +5,8 @@ Canonical prerequisite + setup reference for local development across all reposi
 ## Baseline Tools
 
 - `git`
-- `node` 20.19+ (or 22.12+) and `npm`
-- `pnpm` 10+
+- `node` 26.13.1 LTS (see `.nvmrc`) and `npm`
+- `pnpm` 12.21.0 (see root `packageManager`)
 - Go 1.25+
 - Rust toolchain (`rustup`, `cargo`, `rustc`)
 - `pre-commit` (recommended for local hook parity)

@@ -3,6 +3,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'jsdom',
+    // Let jsdom provide localStorage instead of Node's experimental global.
+    execArgv: ['--no-webstorage'],
     include: ['src/**/*.test.ts'],
     coverage: {
       provider: 'v8',

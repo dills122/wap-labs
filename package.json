@@ -10,15 +10,7 @@
     "url": "https://github.com/dills122/wap-labs.git"
   },
   "homepage": "https://dills122.github.io/wap-labs/",
-  "packageManager": "pnpm@10.23.0",
-  "pnpm": {
-    "overrides": {
-      "brace-expansion": "^5.0.8",
-      "flatted": "^3.4.2",
-      "postcss": "^8.5.18",
-      "undici": "^7.28.0"
-    }
-  },
+  "packageManager": "pnpm@12.21.0",
   "scripts": {
     "codex:links": "node scripts/setup-codex-links.mjs",
     "wap-compliance:regenerate": "node spec-processing/scripts/generate-wap-effective-spec.mjs && node spec-processing/scripts/generate-wap-knowledge-graph.mjs",
@@ -38,7 +30,7 @@
     "verify:change": "node scripts/verify.mjs change",
     "verify:full": "node scripts/verify.mjs full",
     "verify:extended": "node scripts/verify.mjs extended",
-    "verify:test": "node --test scripts/tests/verify.test.mjs scripts/tests/ci-path-routing.test.mjs scripts/tests/ci-tool-cache-provenance.test.mjs scripts/tests/native-tauri-kannel-e2e-script.test.mjs scripts/tests/native-e2e-gate.test.mjs scripts/tests/check-wbp-14-evidence.test.mjs browser/frontend/e2e/native/*.test.mjs browser/frontend/e2e/native/scenarios/*.test.mjs",
+    "verify:test": "node --test scripts/tests/verify.test.mjs scripts/tests/ci-path-routing.test.mjs scripts/tests/ci-tool-cache-provenance.test.mjs scripts/tests/native-tauri-kannel-e2e-script.test.mjs scripts/tests/native-e2e-gate.test.mjs scripts/tests/check-wbp-14-evidence.test.mjs browser/frontend/e2e/native/*.test.mjs browser/frontend/e2e/native/scenarios/*.test.mjs && python3 -B -m unittest discover -s scripts/tests -p test_serena_compat.py",
     "version:check": "node scripts/check-release-version.mjs",
     "version:set": "node scripts/set-release-version.mjs",
     "test:node": "pnpm -r --if-present run test",

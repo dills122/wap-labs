@@ -13,15 +13,6 @@
   "dependencies": {
     "astro": "7.4.5"
   },
-  "pnpm": {
-    "overrides": {
-      "js-yaml": "^4.3.0",
-      "picomatch": "^2.3.2",
-      "sharp": "^0.35.0",
-      "smol-toml": "^1.6.1",
-      "svgo": "^4.0.2"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/dills122/wap-labs.git"

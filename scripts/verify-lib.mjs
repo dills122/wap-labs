@@ -316,19 +316,12 @@ export const LANES = Object.freeze([
       command('marketing frozen lockfile', 'pnpm', [
         '--dir',
         'marketing-site',
-        '--ignore-workspace',
         'install',
         '--frozen-lockfile',
         '--ignore-scripts',
         '--lockfile-only'
       ]),
-      command('marketing production build', 'pnpm', [
-        '--dir',
-        'marketing-site',
-        '--ignore-workspace',
-        'run',
-        'build'
-      ])
+      command('marketing production build', 'pnpm', ['--dir', 'marketing-site', 'run', 'build'])
     ]
   },
   {

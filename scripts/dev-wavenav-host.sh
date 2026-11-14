@@ -11,7 +11,7 @@ fi
 
 if ! command -v pnpm >/dev/null 2>&1; then
   echo "error: pnpm is required but not installed."
-  echo "install: corepack enable && corepack prepare pnpm@10.23.0 --activate"
+  echo "install: corepack enable && corepack prepare pnpm@12.21.0 --activate"
   exit 1
 fi
 
