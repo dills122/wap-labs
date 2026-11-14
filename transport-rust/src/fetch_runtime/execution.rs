@@ -1,4 +1,4 @@
-use crate::fetch_body::{read_response_body_limited, ReadBodyError};
+use crate::fetch_body::{read_response_body_limited, run_until_cancelled, ReadBodyError};
 use crate::fetch_policy::{
     resolve_fetch_destination_addresses, validate_fetch_destination, FetchDestinationError,
 };
@@ -11,16 +11,54 @@ use crate::responses::{
 use crate::{
     FetchCancellationToken, FetchDeckResponse, FetchDestinationPolicy, MAX_RESPONSE_BODY_BYTES,
 };
-use reqwest::blocking::{Client, ClientBuilder};
 use reqwest::dns::{Addrs, Name, Resolve, Resolving};
 use reqwest::redirect::Policy;
+use reqwest::{Client, ClientBuilder};
 use std::collections::HashMap;
 use std::fmt;
 use std::io;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 use std::time::{Duration, Instant};
+use tokio::sync::Semaphore;
 
 const MAX_HTTP_REDIRECTS: usize = 10;
+const MAX_CONCURRENT_DNS: usize = 2;
+
+fn dns_admission() -> &'static Arc<Semaphore> {
+    static ADMISSION: OnceLock<Arc<Semaphore>> = OnceLock::new();
+    ADMISSION.get_or_init(|| Arc::new(Semaphore::new(MAX_CONCURRENT_DNS)))
+}
+
+async fn bounded_dns_lookup<F>(
+    admission: Arc<Semaphore>,
+    lookup: F,
+) -> Result<Vec<std::net::SocketAddr>, Box<dyn std::error::Error + Send + Sync>>
+where
+    F: FnOnce() -> Result<Vec<std::net::SocketAddr>, FetchDestinationError> + Send + 'static,
+{
+    let permit = admission.acquire_owned().await.map_err(|error| {
+        Box::new(io::Error::other(error.to_string())) as Box<dyn std::error::Error + Send + Sync>
+    })?;
+    // The permit follows the OS resolver, not the awaiting HTTP future. A
+    // cancelled request can detach from getaddrinfo, but cannot spawn
+    // unbounded resolution work while previous calls remain stuck.
+    let result = tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        lookup()
+    })
+    .await
+    .map_err(|error| {
+        Box::new(io::Error::other(error.to_string())) as Box<dyn std::error::Error + Send + Sync>
+    })?;
+    result.map_err(|error| {
+        if error.is_policy_blocked() {
+            Box::new(DestinationPolicyError(error)) as Box<dyn std::error::Error + Send + Sync>
+        } else {
+            Box::new(io::Error::other(error.to_string()))
+                as Box<dyn std::error::Error + Send + Sync>
+        }
+    })
+}
 
 pub(super) struct FetchExecutionPlan {
     pub(super) url: String,
@@ -59,15 +97,11 @@ impl Resolve for PolicyDnsResolver {
         let host = name.as_str().to_string();
         let destination_policy = self.destination_policy.clone();
         Box::pin(async move {
-            match resolve_fetch_destination_addresses(&host, 0, &destination_policy) {
-                Ok(addresses) => Ok(Box::new(addresses.into_iter()) as Addrs),
-                Err(error) if error.is_policy_blocked() => {
-                    Err(Box::new(DestinationPolicyError(error))
-                        as Box<dyn std::error::Error + Send + Sync>)
-                }
-                Err(error) => Err(Box::new(io::Error::other(error.to_string()))
-                    as Box<dyn std::error::Error + Send + Sync>),
-            }
+            let addresses = bounded_dns_lookup(dns_admission().clone(), move || {
+                resolve_fetch_destination_addresses(&host, 0, &destination_policy)
+            })
+            .await?;
+            Ok(Box::new(addresses.into_iter()) as Addrs)
         })
     }
 }
@@ -105,6 +139,48 @@ fn http_client_builder(
 }
 
 pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
+    let cancellation = plan.cancellation.clone();
+    let request_url = plan.url.clone();
+    let request_id = plan.request_id.clone();
+    let runtime = match tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+    {
+        Ok(runtime) => runtime,
+        Err(error) => {
+            return transport_unavailable_response(
+                plan.url,
+                error.to_string(),
+                plan.request_id.as_deref(),
+            )
+        }
+    };
+    let response = runtime.block_on(execute_fetch_async(plan));
+    // Blocking DNS jobs cannot be interrupted by the OS. Do not wait for them
+    // during teardown; their process-wide permits remain held until completion.
+    runtime.shutdown_background();
+    finish_http_response(
+        response,
+        cancellation.as_ref(),
+        request_url,
+        request_id.as_deref(),
+    )
+}
+
+fn finish_http_response(
+    response: FetchDeckResponse,
+    cancellation: Option<&FetchCancellationToken>,
+    request_url: String,
+    request_id: Option<&str>,
+) -> FetchDeckResponse {
+    if cancellation.is_some_and(FetchCancellationToken::is_cancelled) {
+        cancelled_response(request_url, request_id)
+    } else {
+        response
+    }
+}
+
+async fn execute_fetch_async(plan: FetchExecutionPlan) -> FetchDeckResponse {
     let FetchExecutionPlan {
         url,
         upstream_url,
@@ -159,7 +235,11 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
             req = req.body(body.clone());
         }
 
-        match req.send() {
+        let result = match run_until_cancelled(req.send(), cancellation.as_ref()).await {
+            Ok(result) => result,
+            Err(()) => return cancelled_response(url, request_id.as_deref()),
+        };
+        match result {
             Ok(mut resp) => {
                 if cancellation
                     .as_ref()
@@ -210,8 +290,17 @@ pub(super) fn execute_fetch(plan: FetchExecutionPlan) -> FetchDeckResponse {
                     }
                 }
 
-                let body = match read_response_body_limited(&mut resp, MAX_RESPONSE_BODY_BYTES) {
+                let body = match read_response_body_limited(
+                    &mut resp,
+                    MAX_RESPONSE_BODY_BYTES,
+                    cancellation.as_ref(),
+                )
+                .await
+                {
                     Ok(body) => body,
+                    Err(ReadBodyError::Cancelled) => {
+                        return cancelled_response(url, request_id.as_deref())
+                    }
                     Err(ReadBodyError::ReadFailed(message)) => {
                         log_transport_event(
                             "transport.fetch.failure",
@@ -330,11 +419,121 @@ fn destination_policy_error(error: &reqwest::Error) -> Option<FetchDestinationEr
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::fetch_body::wait_for_cancellation;
     use crate::fetch_policy::DestinationHostClass;
     use crate::test_support::with_env_var_locked;
     use std::io::{Read, Write};
     use std::net::TcpListener;
     use std::thread;
+
+    fn test_runtime() -> tokio::runtime::Runtime {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("test runtime")
+    }
+
+    #[test]
+    fn cancellation_supersedes_completed_send_and_size_failures_at_the_boundary() {
+        let url = "http://example.test/";
+        let token = FetchCancellationToken::default();
+        token.cancel();
+        let errors = [
+            transport_unavailable_response(url.into(), "send failed".into(), Some("race-test")),
+            payload_too_large_response(PayloadTooLargeParams {
+                status: 200,
+                final_url: url.into(),
+                content_type: "text/vnd.wap.wml".into(),
+                limit_bytes: 2,
+                actual_bytes: Some(10),
+                attempt: 1,
+                elapsed_ms: 0.0,
+                request_id: Some("race-test"),
+            }),
+        ];
+        for response in errors {
+            let result =
+                finish_http_response(response, Some(&token), url.into(), Some("race-test"));
+            assert_eq!(result.error.expect("cancel response").code, "CANCELLED");
+        }
+        let normal = transport_unavailable_response(url.into(), "send failed".into(), None);
+        let result = finish_http_response(normal, None, url.into(), None);
+        assert_eq!(
+            result.error.expect("transport response").code,
+            "TRANSPORT_UNAVAILABLE"
+        );
+    }
+
+    #[test]
+    fn cancelled_dns_jobs_keep_their_bounded_permits_until_the_os_call_returns() {
+        let admission = Arc::new(Semaphore::new(2));
+        let (started_tx, started_rx) = std::sync::mpsc::channel();
+        let (release_tx, release_rx) = std::sync::mpsc::channel::<()>();
+        let release_rx = Arc::new(std::sync::Mutex::new(release_rx));
+        let runtime = test_runtime();
+        runtime.block_on(async {
+            let mut tasks = Vec::new();
+            for _ in 0..2 {
+                let started = started_tx.clone();
+                let release = release_rx.clone();
+                tasks.push(tokio::spawn(bounded_dns_lookup(
+                    admission.clone(),
+                    move || {
+                        started.send(()).expect("notify test");
+                        let _ = release
+                            .lock()
+                            .expect("test release lock")
+                            .recv_timeout(Duration::from_secs(4));
+                        Ok(Vec::new())
+                    },
+                )));
+            }
+            let start = Instant::now();
+            let mut started = 0;
+            while started < 2 && start.elapsed() < Duration::from_secs(2) {
+                started += started_rx.try_iter().count();
+                tokio::time::sleep(Duration::from_millis(5)).await;
+            }
+            assert_eq!(started, 2, "both blocking lookups should start");
+            let third = bounded_dns_lookup(admission.clone(), || panic!("unbounded DNS lookup"));
+            assert!(tokio::time::timeout(Duration::from_millis(75), third)
+                .await
+                .is_err());
+            for task in tasks {
+                task.abort();
+            }
+        });
+        let start = Instant::now();
+        runtime.shutdown_background();
+        assert!(start.elapsed() < Duration::from_millis(500));
+        assert_eq!(admission.available_permits(), 0);
+        release_tx.send(()).expect("release first lookup");
+        release_tx.send(()).expect("release second lookup");
+        let start = Instant::now();
+        while admission.available_permits() < 2 && start.elapsed() < Duration::from_secs(2) {
+            thread::sleep(Duration::from_millis(5));
+        }
+        assert_eq!(admission.available_permits(), 2);
+    }
+
+    #[test]
+    fn cancellation_interrupts_waiting_for_dns_capacity() {
+        let admission = Arc::new(Semaphore::new(0));
+        let token = FetchCancellationToken::default();
+        let cancelling = token.clone();
+        test_runtime().block_on(async {
+            tokio::spawn(async move {
+                tokio::time::sleep(Duration::from_millis(10)).await;
+                cancelling.cancel();
+            });
+            let start = Instant::now();
+            tokio::select! {
+                _ = wait_for_cancellation(Some(&token)) => {},
+                _ = bounded_dns_lookup(admission, || panic!("lookup must not start without a permit")) => panic!("unexpected DNS completion"),
+            }
+            assert!(start.elapsed() < Duration::from_millis(500));
+        });
+    }
 
     fn read_http_request_headers(stream: &mut impl Read) {
         const MAX_TEST_REQUEST_HEADER_BYTES: usize = 8 * 1024;
@@ -359,13 +558,16 @@ mod tests {
 
     #[test]
     fn http_client_rejects_private_dns_answer() {
-        let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
-            .build()
-            .expect("build DNS policy test client");
-        let error = client
-            .get("http://localhost:9/private")
-            .send()
-            .expect_err("private DNS answer must be rejected");
+        let error = test_runtime().block_on(async {
+            let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+                .build()
+                .expect("build DNS policy test client");
+            client
+                .get("http://localhost:9/private")
+                .send()
+                .await
+                .expect_err("private DNS answer must be rejected")
+        });
 
         let policy_error =
             destination_policy_error(&error).expect("policy error should survive reqwest wrapping");
@@ -395,14 +597,17 @@ mod tests {
                 .expect("write redirect response");
         });
 
-        let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
-            .resolve("public.test", listener_address)
-            .build()
-            .expect("build redirect test client");
-        let error = client
-            .get(format!("http://public.test:{}/", listener_address.port()))
-            .send()
-            .expect_err("private redirect must be rejected");
+        let error = test_runtime().block_on(async {
+            let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+                .resolve("public.test", listener_address)
+                .build()
+                .expect("build redirect test client");
+            client
+                .get(format!("http://public.test:{}/", listener_address.port()))
+                .send()
+                .await
+                .expect_err("private redirect must be rejected")
+        });
         server.join().expect("redirect test server should exit");
 
         let policy_error =
@@ -475,13 +680,16 @@ mod tests {
             "HTTP_PROXY",
             &format!("http://{fake_proxy_address}"),
             || {
-                let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
-                    .resolve("public.test", direct_address)
-                    .build()
-                    .expect("build proxy-env test client");
-                client
-                    .get(format!("http://public.test:{}/", direct_address.port()))
-                    .send()
+                test_runtime().block_on(async {
+                    let client = http_client_builder(1_000, FetchDestinationPolicy::PublicOnly)
+                        .resolve("public.test", direct_address)
+                        .build()
+                        .expect("build proxy-env test client");
+                    client
+                        .get(format!("http://public.test:{}/", direct_address.port()))
+                        .send()
+                        .await
+                })
             },
         );
 

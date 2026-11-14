@@ -92,8 +92,8 @@
       "evidenceClass": "native-gateway",
       "workItems": ["WBP-10", "WBP-11", "WBP-14"],
       "requirements": [],
-      "evidence": ["browser/frontend/src/app/navigation-state.concurrency.test.ts", "browser/frontend/e2e/native/scenarios/resilience.mjs", "transport-rust/tests/native_cancel_responsiveness.rs"],
-      "blocker": "Prompt cancellation, Back, and replacement-address scenarios are implemented; a passing Linux native gateway run is required to establish desktop-path timing and recovery evidence."
+      "evidence": ["browser/frontend/src/app/navigation-state.concurrency.test.ts", "browser/frontend/e2e/native/scenarios/resilience.mjs", "transport-rust/tests/native_cancel_responsiveness.rs", "transport-rust/tests/http_cancel_responsiveness.rs", "browser/src-tauri/src/tests/tauri_commands.rs"],
+      "blocker": "Kannel Stop, Back and replacement passed in GitHub Actions run 43612801014. Direct HTTP Stop, Back, replacement and stalled-body recovery passed in run 43629220429; broader timeout and cancellation coverage remains partial."
     },
     {
       "id": "history",

@@ -225,5 +225,6 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add networking profile decision record + machine-checkable promotion gates (`T0-14`)
 
 For cancellable native WDP fetches, receive polling observes cancellation without waiting for the
-full gateway timeout. The configured attempt deadline and retry policy remain in force. Direct HTTP
-uses blocking I/O and may retain a host fetch slot until the underlying operation returns.
+full gateway timeout. Direct HTTP sends and body reads also observe cancellation promptly. The
+configured attempt deadline and retry policy remain in force. Operating-system DNS lookups cannot be
+interrupted once started; a separate process-wide limit keeps any surviving lookup work bounded.

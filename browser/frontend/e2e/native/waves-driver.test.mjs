@@ -18,7 +18,7 @@ function element(overrides = {}) {
   };
 }
 
-function fixture({ initialNavigationAction = 'go' } = {}) {
+function fixture({ initialNavigationAction = 'go', controlledHttpBase } = {}) {
   const calls = [];
   const waits = [];
   let navigationAction = initialNavigationAction;
@@ -104,6 +104,7 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
     },
     async executeScript(script, ...arguments_) {
       calls.push(['script', script, ...arguments_]);
+      if (script.includes('return window.__wavesNativeStopTiming?.elapsedMs')) return 42;
       if (script.includes('shadowRoot')) return statusText;
       if (script.includes('textContent')) return 'Rendered deck text';
       return '';
@@ -111,6 +112,7 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   };
   const page = createWavesDriver({
     driver,
+    controlledHttpBase,
     selector: (value) => value,
     waitUntil: async (condition, options) => {
       waits.push(options?.description);
@@ -123,6 +125,56 @@ function fixture({ initialNavigationAction = 'go' } = {}) {
   });
   return { calls, page, waits };
 }
+
+test('controlled HTTP navigation accepts only approved paths at the configured loopback origin', async () => {
+  const { page, calls } = fixture({ controlledHttpBase: 'http://127.0.0.1:1234/' });
+  await page.openControlledHttpUrl('http://127.0.0.1:1234/e2e/recovery.wml');
+  assert.ok(
+    calls.some(
+      ([kind, target, value]) =>
+        kind === 'sendKeys' &&
+        target === 'address' &&
+        value === 'http://127.0.0.1:1234/e2e/recovery.wml'
+    )
+  );
+  for (const bad of [
+    'http://127.0.0.1:9999/e2e/recovery.wml',
+    'http://localhost:1234/e2e/recovery.wml',
+    'http://user@127.0.0.1:1234/e2e/recovery.wml',
+    'http://127.0.0.1:1234/e2e/recovery.wml?secret=1',
+    'http://127.0.0.1:1234/register',
+    'https://127.0.0.1:1234/e2e/recovery.wml',
+    'http://127.0.0.1:1234/examples/interop-check.wml'
+  ])
+    await assert.rejects(page.openControlledHttpUrl(bad), /controlled HTTP origin/);
+});
+
+test('Stop timing measures in the document while clicking through WebDriver', async () => {
+  const { page, calls } = fixture({ initialNavigationAction: 'stop' });
+  assert.deepEqual(await page.stopNavigationMeasured(), {
+    status: 'Navigation stopped.', acknowledgementMs: 42
+  });
+  const scripts = calls.filter(([kind]) => kind === 'script').map(([, script]) => script);
+  assert.ok(scripts.some((script) => script.includes('MutationObserver')));
+  assert.ok(scripts.some((script) => script.includes('return window.__wavesNativeStopTiming?.elapsedMs')));
+  assert.ok(scripts.some((script) => script.includes('probe.observer.disconnect()')));
+  assert.ok(calls.some(([kind, value]) => kind === 'click' && value === 'stop'));
+});
+
+test('controlled HTTP navigation rejects an untrusted configured base', async () => {
+  const { page } = fixture({ controlledHttpBase: 'http://localhost:1234/' });
+  await assert.rejects(
+    page.openControlledHttpUrl('http://localhost:1234/e2e/recovery.wml'),
+    /controlled HTTP origin/
+  );
+});
+
+test('controlled HTTP navigation permits the bounded slow-body fixture', async () => {
+  const { page, calls } = fixture({ controlledHttpBase: 'http://127.0.0.1:1234/' });
+  await page.startControlledHttpUrl('http://127.0.0.1:1234/e2e/navigation/http-native-004-a1/slow-body.wml');
+  assert.ok(calls.some(([kind, target, value]) => kind === 'sendKeys' && target === 'address' && value.endsWith('/slow-body.wml')));
+  await assert.rejects(page.openControlledHttpUrl('http://127.0.0.1:1234/e2e/navigation/http-native-004-a1/slow-body.wml?x=1'), /controlled HTTP origin/);
+});
 
 function wrappedDeckFixture(value) {
   const driver = {

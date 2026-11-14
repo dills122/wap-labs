@@ -100,9 +100,11 @@ impl std::error::Error for FetchRequestValidationError {}
 
 /// Cooperative cancellation shared with host adapters.
 ///
-/// Native WDP receives poll for cancellation while preserving the configured
-/// attempt timeout. Other blocking I/O can remain active until its timeout;
-/// cancellation prevents subsequent attempts, fallback, and response commit.
+/// Native WDP receives and HTTP network operations observe cancellation while
+/// preserving attempt deadlines. An operating-system DNS lookup may continue
+/// after cancellation, but its separately bounded admission permit remains held
+/// until it finishes. Cancellation prevents subsequent attempts, fallback, and
+/// response commit.
 #[derive(Clone, Debug, Default)]
 pub struct FetchCancellationToken {
     cancelled: Arc<AtomicBool>,

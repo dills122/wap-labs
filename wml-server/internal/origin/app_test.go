@@ -147,6 +147,133 @@ func TestE2EActionCorrelationIsDisabledByDefault(t *testing.T) {
 	if slow.Code != http.StatusNotFound {
 		t.Fatalf("ordinary origin slow fixture status = %d, want 404", slow.Code)
 	}
+	body := perform(app.Handler(), http.MethodGet, "/e2e/navigation/slow-body-a1/slow-body.wml", "", "")
+	if body.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin slow-body fixture status = %d, want 404", body.Code)
+	}
+	recovery := perform(app.Handler(), http.MethodGet, "/e2e/recovery.wml", "", "")
+	if recovery.Code != http.StatusNotFound {
+		t.Fatalf("ordinary origin recovery fixture status = %d, want 404", recovery.Code)
+	}
+}
+
+func TestE2ERecoveryDeckUsesCanonicalWML13Doctype(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	response := perform(app.Handler(), http.MethodGet, "/e2e/recovery.wml", "", "")
+	if response.Code != http.StatusOK {
+		t.Fatalf("recovery fixture status = %d, want 200", response.Code)
+	}
+	if got := response.Header().Get("Content-Type"); !strings.HasPrefix(got, "text/vnd.wap.wml") {
+		t.Fatalf("recovery fixture content type = %q", got)
+	}
+	if got := response.Header().Get("Cache-Control"); got != "no-store" {
+		t.Fatalf("recovery fixture cache control = %q", got)
+	}
+	body := response.Body.String()
+	for _, want := range []string{`-//WAPFORUM//DTD WML 1.3//EN`, `http://www.wapforum.org/DTD/wml13.dtd`, "W13-A"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("recovery fixture omitted %q: %s", want, body)
+		}
+	}
+	var deck struct{ XMLName xml.Name }
+	if err := xml.Unmarshal(response.Body.Bytes(), &deck); err != nil || deck.XMLName.Local != "wml" {
+		t.Fatalf("recovery fixture is not valid WML XML: %v", err)
+	}
+}
+
+func TestE2ESlowBodyFlushesBeforeClientCancellation(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+		config.E2ENavigationDelay = time.Minute
+	})
+	server := httptest.NewServer(app.Handler())
+	defer server.Close()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, server.URL+"/e2e/navigation/slow-body-a1/slow-body.wml", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := &http.Client{Timeout: 2 * time.Second}
+	response, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("headers were not flushed before the delay: %v", err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusOK || !strings.HasPrefix(response.Header.Get("Content-Type"), "text/vnd.wap.wml") {
+		t.Fatalf("slow-body response = %d %q", response.StatusCode, response.Header.Get("Content-Type"))
+	}
+	prefix := make([]byte, len("<?xml"))
+	if _, err := io.ReadFull(response.Body, prefix); err != nil || string(prefix) != "<?xml" {
+		t.Fatalf("partial body = %q, %v; want XML prefix before delay", prefix, err)
+	}
+	waitForActionPhase(t, app, "slow-body-a1", "body_started")
+	cancel()
+	response.Body.Close()
+	waitForActionPhase(t, app, "slow-body-a1", "cancelled")
+	assertActionOracle(t, app, "slow-body-a1", "navigation", 1, "cancelled")
+}
+
+func TestE2ESlowBodyCompletesValidDeck(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+		config.E2ENavigationDelay = time.Millisecond
+	})
+	response := perform(app.Handler(), http.MethodGet, "/e2e/navigation/slow-body-a1/slow-body.wml", "", "")
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "Delayed body completed.") {
+		t.Fatalf("slow-body response = %d %s", response.Code, response.Body.String())
+	}
+	var deck struct{ XMLName xml.Name }
+	if err := xml.Unmarshal(response.Body.Bytes(), &deck); err != nil || deck.XMLName.Local != "wml" {
+		t.Fatalf("slow-body deck is not valid WML XML: %v", err)
+	}
+	assertActionOracle(t, app, "slow-body-a1", "navigation", 1, "success")
+}
+
+func TestE2ESlowBodyRejectsInvalidActionID(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	response := perform(app.Handler(), http.MethodGet, "/e2e/navigation/not-valid/slow-body.wml", "", "")
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("invalid slow-body action status = %d, want 400", response.Code)
+	}
+}
+
+// Hide optional writer interfaces to prove the middleware does not invent
+// flushing support when its underlying writer cannot actually flush.
+type noFlushWriter struct{ http.ResponseWriter }
+
+func TestE2ESlowBodyReportsUnsupportedFlush(t *testing.T) {
+	app, _ := newTestApp(t, func(config *Config) {
+		config.E2EFixtureMode = true
+		config.OriginInstanceID = "origin-run-7"
+	})
+	request := httptest.NewRequest(http.MethodGet, "/e2e/navigation/slow-body-a1/slow-body.wml", nil)
+	response := httptest.NewRecorder()
+	app.Handler().ServeHTTP(noFlushWriter{response}, request)
+	assertActionOracle(t, app, "slow-body-a1", "navigation", 1, "stream-error")
+}
+
+func waitForActionPhase(t *testing.T, app *App, actionID, phase string) {
+	t.Helper()
+	deadline := time.Now().Add(time.Second)
+	for time.Now().Before(deadline) {
+		app.actionMu.Lock()
+		action := app.actions[actionID]
+		app.actionMu.Unlock()
+		if action.Phase == phase {
+			return
+		}
+		time.Sleep(time.Millisecond)
+	}
+	t.Fatalf("action %s did not reach %s", actionID, phase)
 }
 
 func TestE2ESlowNavigationRecordsOneSuccessfulRequest(t *testing.T) {

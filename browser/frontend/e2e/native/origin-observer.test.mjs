@@ -186,6 +186,38 @@ test('origin observer accepts only explicit loopback internal endpoints', () => 
   }
 });
 
+test('controlled navigation URLs use only the validated public origin and action IDs', () => {
+  const observer = createOriginObserver({
+    metricsUrl: 'http://127.0.0.1:49152/metrics',
+    publicBase: 'http://127.0.0.1:49153/',
+    quiescenceMs: 100
+  });
+  assert.equal(
+    observer.controlledNavigationUrl('http-native-001-a1'),
+    'http://127.0.0.1:49153/e2e/navigation/http-native-001-a1/slow.wml'
+  );
+  assert.equal(
+    observer.controlledRecoveryUrl(),
+    'http://127.0.0.1:49153/e2e/recovery.wml'
+  );
+  assert.equal(observer.controlledNavigationUrl('http-native-004-a1', 'body'),
+    'http://127.0.0.1:49153/e2e/navigation/http-native-004-a1/slow-body.wml');
+  assert.throws(() => observer.controlledNavigationUrl('http-native-004-a1', 'other'), /invalid controlled navigation mode/);
+  assert.throws(
+    () => observer.controlledNavigationUrl('../escape-a1'),
+    /invalid native E2E action/
+  );
+  assert.throws(
+    () =>
+      createOriginObserver({
+        metricsUrl: 'http://127.0.0.1:49152/metrics',
+        publicBase: 'http://example.test:49153/',
+        quiescenceMs: 100
+      }),
+    /origin public base/
+  );
+});
+
 test('origin observer seeds accounts without exposing bodies and reads exact action schema', async () => {
   const requests = [];
   const observer = createOriginObserver({

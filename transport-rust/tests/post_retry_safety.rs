@@ -1,11 +1,13 @@
 use lowband_transport_rust::{
-    fetch_deck_in_process, fetch_deck_in_process_with_options, FetchDeckRequest,
-    FetchDestinationPolicy, FetchPostContext, FetchRequestIntent, FetchRequestMethod,
-    FetchRequestPolicy, FetchRequestPostField, FetchTransportOptions, FetchTransportProfile,
+    fetch_deck_in_process, fetch_deck_in_process_cancellable, fetch_deck_in_process_with_options,
+    FetchCancellationToken, FetchDeckRequest, FetchDestinationPolicy, FetchPostContext,
+    FetchRequestIntent, FetchRequestMethod, FetchRequestPolicy, FetchRequestPostField,
+    FetchTransportOptions, FetchTransportProfile,
 };
 use std::{
     io::Read,
     net::{TcpListener, UdpSocket},
+    sync::mpsc,
     thread,
     time::{Duration, Instant},
 };
@@ -31,6 +33,56 @@ fn request(url: String, method: &str) -> FetchDeckRequest {
             ua_capability_profile: None,
         }),
     }
+}
+
+#[test]
+fn cancelled_http_post_is_not_automatically_replayed() {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let url = format!("http://{}/submit", listener.local_addr().unwrap());
+    let (received_tx, received_rx) = mpsc::channel();
+    let server = thread::spawn(move || {
+        let deadline = Instant::now() + Duration::from_secs(2);
+        let mut streams = Vec::new();
+        while Instant::now() < deadline {
+            match listener.accept() {
+                Ok((mut stream, _)) => {
+                    stream.set_nonblocking(false).unwrap();
+                    stream
+                        .set_read_timeout(Some(Duration::from_millis(500)))
+                        .unwrap();
+                    let mut bytes = [0; 4096];
+                    let n = stream.read(&mut bytes).unwrap();
+                    assert!(bytes[..n].starts_with(b"POST "));
+                    streams.push(stream);
+                    if streams.len() == 1 {
+                        let _ = received_tx.send(());
+                    }
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    thread::sleep(Duration::from_millis(5))
+                }
+                Err(e) => panic!("accept failed: {e}"),
+            }
+        }
+        streams.len()
+    });
+    let mut fetch = request(url, "POST");
+    fetch.timeout_ms = Some(5000);
+    fetch.retries = Some(2);
+    let token = FetchCancellationToken::default();
+    let fetch_token = token.clone();
+    let worker = thread::spawn(move || fetch_deck_in_process_cancellable(fetch, fetch_token));
+    let received = received_rx.recv_timeout(Duration::from_secs(1));
+    token.cancel();
+    let response = worker.join().unwrap();
+    let count = server.join().unwrap();
+    assert!(received.is_ok(), "POST must reach the controlled origin");
+    assert_eq!(response.error.unwrap().code, "CANCELLED");
+    assert_eq!(
+        count, 1,
+        "cancelled POST must not be automatically replayed"
+    );
 }
 
 fn use_typed_post(fetch: &mut FetchDeckRequest) {
@@ -61,6 +113,7 @@ fn observe_http(method: &str, typed_post: bool) -> (usize, String) {
         while Instant::now() < deadline {
             match listener.accept() {
                 Ok((mut stream, _)) => {
+                    stream.set_nonblocking(false).unwrap();
                     stream
                         .set_read_timeout(Some(Duration::from_millis(200)))
                         .unwrap();

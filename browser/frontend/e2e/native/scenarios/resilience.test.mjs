@@ -17,12 +17,19 @@ function fixture() {
         async dismissWelcome() { calls.push(['dismiss']); },
         async openWapUrl(address) { calls.push(['open', address]); },
         async startWapUrl(address) { calls.push(['start', address]); },
+        async startControlledHttpUrl(address) { calls.push(['http-start', address]); },
+        async openControlledHttpUrl(address) { calls.push(['http-open', address]); },
+        async replaceControlledHttpUrl(address) { calls.push(['http-replace', address]); },
+        async goBack() { calls.push(['back']); },
         async waitForDeckText(text) { calls.push(['deck', text]); return `deck: ${text}`; },
         async waitForAddress(address) { calls.push(['address', address]); return address; },
         async readSanitizedAddress() { return 'wap://localhost/'; },
-        async stopNavigation() { calls.push(['stop']); return 'Navigation stopped.'; }
+        async stopNavigation() { calls.push(['stop']); return 'Navigation stopped.'; },
+        async stopNavigationMeasured() { calls.push(['stop']); return { status: 'Navigation stopped.', acknowledgementMs: 42 }; }
       },
       origin: {
+        controlledNavigationUrl(actionID, mode = 'headers') { return `http://127.0.0.1:1234/e2e/navigation/${actionID}/${mode === 'body' ? 'slow-body' : 'slow'}.wml`; },
+        controlledRecoveryUrl() { return 'http://127.0.0.1:1234/e2e/recovery.wml'; },
         async waitForActionPhase(actionID, options) {
           calls.push(['action-phase', actionID, options.kind, options.phase]);
           return { actionID, kind: options.kind, count: 1, phase: options.phase };
@@ -68,11 +75,57 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'HTTP-NATIVE-001', 'HTTP-NATIVE-002', 'HTTP-NATIVE-003', 'HTTP-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
   );
+});
+
+test('direct HTTP recovery scenarios interrupt and reject late responses', async () => {
+  for (const [id, expected] of [
+    ['HTTP-NATIVE-001', 'direct HTTP Stop recovery'],
+    ['HTTP-NATIVE-002', 'direct HTTP Back recovery'],
+    ['HTTP-NATIVE-003', 'direct HTTP replacement recovery'],
+    ['HTTP-NATIVE-004', 'direct HTTP body Stop recovery']
+  ]) {
+    const { calls, assertions, context } = fixture();
+    await RESILIENCE_SCENARIOS.find((scenario) => scenario.id === id).run(context);
+    assert.equal(assertions.at(-1).name, expected);
+    assert.equal(
+      calls.filter(([kind]) => kind === 'action-settled').length,
+      id === 'HTTP-NATIVE-003' ? 2 : 1
+    );
+    for (const phase of ['ui-dispatched', 'origin-confirmed', 'recovery-dispatched']) {
+      assert.ok(calls.some(([kind, value]) => kind === 'observe' && value.phase === phase));
+    }
+    if (id === 'HTTP-NATIVE-001') assert.ok(calls.some(([kind]) => kind === 'stop'));
+    if (id === 'HTTP-NATIVE-002') assert.ok(calls.some(([kind]) => kind === 'back'));
+    if (id === 'HTTP-NATIVE-003')
+      assert.equal(calls.filter(([kind]) => kind === 'http-replace').length, 2);
+    if (id === 'HTTP-NATIVE-001' || id === 'HTTP-NATIVE-004') {
+      const cancelled = calls.findIndex(([kind, , , phase]) => kind === 'action-phase' && phase === 'cancelled');
+      const recovered = calls.findIndex(([kind]) => kind === 'http-open');
+      assert.ok(cancelled >= 0 && cancelled < recovered, 'origin cancellation must precede recovery');
+    }
+    if (id === 'HTTP-NATIVE-004') {
+      assert.ok(calls.some(([kind, action, type, phase]) => kind === 'action-phase' && action === 'http-native-004-a1' && type === 'navigation' && phase === 'body_started'));
+      assert.ok(calls.some(([kind, address]) => kind === 'http-start' && address.endsWith('/slow-body.wml')));
+      assert.ok(calls.some(([kind]) => kind === 'stop'));
+    }
+  }
+});
+
+test('direct HTTP Stop refuses recovery when the origin has not observed cancellation', async () => {
+  for (const id of ['HTTP-NATIVE-001', 'HTTP-NATIVE-004']) {
+    const { calls, context } = fixture();
+    context.origin.waitForActionPhase = async (_actionID, { phase }) => {
+      if (phase === 'cancelled') throw new Error('origin did not observe cancellation');
+      return { count: 1, phase };
+    };
+    await assert.rejects(RESILIENCE_SCENARIOS.find((scenario) => scenario.id === id).run(context), /origin did not observe cancellation/);
+    assert.equal(calls.some(([kind]) => kind === 'http-open'), false);
+  }
 });
 
 test('real gateway outage is visible and the restarted gateway recovers', async () => {
@@ -126,6 +179,17 @@ test('explicit Stop preserves the prior deck and permits a later recovery naviga
   assert.deepEqual(
     assertions.map(({ name }) => name),
     ['Stop acknowledgement', 'Stop preserves deck', 'Stop recovery']
+  );
+});
+
+test('Stop acknowledgement enforces the 500ms in-browser budget', async () => {
+  const { context } = fixture();
+  context.waves.stopNavigationMeasured = async () => ({
+    status: 'Navigation stopped.', acknowledgementMs: 500
+  });
+  await assert.rejects(
+    RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-002').run(context),
+    /Stop acknowledgement took 500ms/
   );
 });
 

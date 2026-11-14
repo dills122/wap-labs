@@ -292,6 +292,16 @@ export function createOriginObserver({
     readCounter,
     readAction,
     waitForActionSettledWithinBound,
+    controlledNavigationUrl(actionID, mode = 'headers') {
+      if (!publicOrigin) throw new Error('controlled navigation requires the public base');
+      requireActionID(actionID);
+      if (mode !== 'headers' && mode !== 'body') throw new Error('invalid controlled navigation mode');
+      return new URL(`/e2e/navigation/${actionID}/${mode === 'body' ? 'slow-body' : 'slow'}.wml`, publicOrigin).href;
+    },
+    controlledRecoveryUrl() {
+      if (!publicOrigin) throw new Error('controlled navigation requires the public base');
+      return new URL('/e2e/recovery.wml', publicOrigin).href;
+    },
     async seedAccount({ username, pin, actionID }, { signal } = {}) {
       if (!publicOrigin)
         throw new Error('origin account setup requires the controlled public base');

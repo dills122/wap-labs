@@ -13,12 +13,12 @@ Machine-readable inventory: [`wbp-14-desktop-evidence.json`](wbp-14-desktop-evid
 Waves has a credible native success lane today. The automated pilot drives a production-built Tauri
 window through the generated invoke client, Rust host, `transport-rust`, and a controlled Kannel
 stack. It proves startup, successful WML rendering/navigation, a bounded repeat request, visible
-invalid-address and invalid-deck failures, a gateway timeout, and subsequent successful recovery.
+invalid-address and invalid-deck failures, a gateway timeout, cancellation and navigation recovery.
 
 That is not yet the complete WBP-14 release gate. Of 19 required evidence scenarios, 5 are complete,
 9 are partial, 2 are missing, and 3 are blocked by unfinished product slices. In particular, unit or
-story evidence for cancellation and script traps must not be
-presented as proof that the native desktop path handles those cases.
+story evidence for script traps must not be presented as proof that the native desktop path
+handles those cases.
 
 ## Evidence classes
 
@@ -39,7 +39,7 @@ as a silent substitute for the other.
 | Softkeys, keyboard, pointer, scrolling    | partial         | Unified input routing, engine frame/affordance, and deterministic scrolling fixture paths exist | Add native pointer/keyboard equivalence and text-entry/modifier coverage                                 |
 | Loading phases and ordinary recovery      | partial         | WBP-11 phases, stale-result tests, and basic native failure/recovery exist                       | Measure 100/200 ms budgets and exercise categorized failures natively                                   |
 | History                                   | partial         | Typed replayable POST history and request-shaped engine/browser evidence exist                  | Add native GET, POST, and Back replay cases                                                              |
-| Timeout and cancellation                  | complete/partial | `ERR-NATIVE-004` passed native timeout recovery; cancellation scenarios are implemented         | Run native Stop, Back, replacement, and acknowledgement timing scenarios |
+| Timeout and cancellation                  | complete/partial | `ERR-NATIVE-004` passed native timeout recovery; Kannel and direct HTTP cancellation scenarios passed in Linux CI | Extend native coverage to the remaining timeout and cancellation cases |
 | Invalid deck                              | complete        | `ERR-NATIVE-003` passed through native Tauri and Kannel, retaining the viewport and recovering to a valid deck | Keep the native gateway scenario in the smoke suite |
 | Script trap                               | missing         | `WMLS-501` decoder/verifier evidence exists                                                     | Add a native visible trap/recovery case; do not infer unfinished `WMLS-502` execution coverage           |
 | Crash recovery and safe session           | partial         | Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity    | Run and record the packaged launch-after-crash relaunch case                                               |
@@ -74,6 +74,8 @@ for this slice:
   without direct WTP mappings. The native success path does not erase those explicit gaps.
 
 The native timeout scenario passed in [GitHub Actions run 43558915186, attempt 2](https://github.com/dills122/wap-labs/actions/runs/43558915186/attempts/2).
+The Kannel cancellation scenarios passed in [GitHub Actions run 43612801014](https://github.com/dills122/wap-labs/actions/runs/43612801014).
+The direct HTTP Stop, Back, replacement, and stalled-body scenarios passed in [GitHub Actions run 43629220429](https://github.com/dills122/wap-labs/actions/runs/43629220429).
 
 ## Reproduce the current evidence
 
