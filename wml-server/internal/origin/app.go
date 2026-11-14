@@ -234,6 +234,8 @@ func (a *App) Handler() http.Handler {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow-body.wml", a.e2eSlowBodyNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/interrupted.wmlc", a.e2eInterruptedResponse)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/oversized.wmlc", a.e2eOversizedResponse)
 		mux.HandleFunc("POST /e2e/submission/{actionID}/slow.wml", a.e2eSlowNavigation)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
@@ -691,6 +693,43 @@ func (a *App) beginE2EAction(w http.ResponseWriter, actionID, kind string) bool 
 	current.UpdatedAt = now
 	a.actions[actionID] = current
 	return true
+}
+
+func (a *App) e2eFailureResponse(w http.ResponseWriter, r *http.Request) bool {
+	actionID := r.PathValue("actionID")
+	if !validE2EActionID(actionID) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return false
+	}
+	if !a.beginE2EAction(w, actionID, "navigation") {
+		return false
+	}
+	w.Header().Set("Content-Type", "application/vnd.wap.wmlc")
+	w.Header().Set("Cache-Control", "no-store")
+	return true
+}
+
+func (a *App) e2eInterruptedResponse(w http.ResponseWriter, r *http.Request) {
+	if !a.e2eFailureResponse(w, r) {
+		return
+	}
+	w.Header().Set("Content-Length", "100")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte{0x03, 0x0a, 0x6a, 0x00})
+	_ = http.NewResponseController(w).Flush()
+	a.setE2EActionPhase(r.PathValue("actionID"), "success")
+	panic(http.ErrAbortHandler)
+}
+
+func (a *App) e2eOversizedResponse(w http.ResponseWriter, r *http.Request) {
+	if !a.e2eFailureResponse(w, r) {
+		return
+	}
+	const size = 512*1024 + 1
+	w.Header().Set("Content-Length", strconv.Itoa(size))
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(make([]byte, size))
+	a.setE2EActionPhase(r.PathValue("actionID"), "success")
 }
 
 // e2eInvalidDeck serves well-formed WBXML whose WML root contains an illegal

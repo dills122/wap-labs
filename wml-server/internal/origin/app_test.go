@@ -1110,3 +1110,32 @@ func TestE2ESlowPostIsFixtureOnlyAndCorrelated(t *testing.T) {
 	app.Handler().ServeHTTP(httptest.NewRecorder(), request.WithContext(ctx))
 	assertActionOracle(t, app, "post-case-a1", "navigation", 1, "cancelled")
 }
+
+func TestE2EFailureResponsesAreFixtureOnlyAndCorrelated(t *testing.T) {
+	for _, name := range []string{"interrupted", "oversized"} {
+		t.Run(name, func(t *testing.T) {
+			path := "/e2e/navigation/failure-" + name + "-a1/" + name + ".wmlc"
+			ordinary, _ := newTestApp(t, nil)
+			if got := perform(ordinary.Handler(), http.MethodGet, path, "", ""); got.Code != http.StatusNotFound {
+				t.Fatalf("ordinary origin exposed fixture: %d", got.Code)
+			}
+			app, _ := newTestApp(t, func(config *Config) { config.E2EFixtureMode = true; config.OriginInstanceID = "origin-run-7" })
+			server := httptest.NewServer(app.Handler())
+			defer server.Close()
+			response, err := server.Client().Get(server.URL + path)
+			if err != nil {
+				t.Fatalf("request failed before headers: %v", err)
+			}
+			defer response.Body.Close()
+			body, err := io.ReadAll(response.Body)
+			if name == "interrupted" {
+				if err == nil || len(body) == 0 {
+					t.Fatalf("expected partial response and read error, got %d bytes, %v", len(body), err)
+				}
+			} else if err != nil || len(body) != 512*1024+1 {
+				t.Fatalf("oversized response = %d bytes, error %v", len(body), err)
+			}
+			assertActionOracle(t, app, "failure-"+name+"-a1", "navigation", 1, "success")
+		})
+	}
+}

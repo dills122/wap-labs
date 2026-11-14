@@ -202,6 +202,10 @@ test('controlled navigation URLs use only the validated public origin and action
   );
   assert.equal(observer.controlledNavigationUrl('http-native-004-a1', 'body'),
     'http://127.0.0.1:49153/e2e/navigation/http-native-004-a1/slow-body.wml');
+  assert.equal(observer.controlledFailureUrl('fail-native-001-a1', 'interrupted'),
+    'http://127.0.0.1:49153/e2e/navigation/fail-native-001-a1/interrupted.wmlc');
+  assert.throws(() => observer.controlledFailureUrl('../escape-a1', 'oversized'), /invalid native E2E action/);
+  assert.throws(() => observer.controlledFailureUrl('fail-native-001-a1', 'other'), /invalid controlled failure mode/);
   assert.throws(() => observer.controlledNavigationUrl('http-native-004-a1', 'other'), /invalid controlled navigation mode/);
   assert.throws(
     () => observer.controlledNavigationUrl('../escape-a1'),

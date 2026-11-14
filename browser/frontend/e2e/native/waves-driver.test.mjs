@@ -129,6 +129,8 @@ function fixture({ initialNavigationAction = 'go', controlledHttpBase } = {}) {
 test('controlled HTTP navigation accepts only approved paths at the configured loopback origin', async () => {
   const { page, calls } = fixture({ controlledHttpBase: 'http://127.0.0.1:1234/' });
   await page.openControlledHttpUrl('http://127.0.0.1:1234/e2e/recovery.wml');
+  await page.openControlledHttpUrl('http://127.0.0.1:1234/e2e/navigation/fail-native-001-a1/interrupted.wmlc');
+  await page.openControlledHttpUrl('http://127.0.0.1:1234/e2e/navigation/fail-native-002-a1/oversized.wmlc');
   assert.ok(
     calls.some(
       ([kind, target, value]) =>
@@ -143,6 +145,7 @@ test('controlled HTTP navigation accepts only approved paths at the configured l
     'http://user@127.0.0.1:1234/e2e/recovery.wml',
     'http://127.0.0.1:1234/e2e/recovery.wml?secret=1',
     'http://127.0.0.1:1234/register',
+    'http://127.0.0.1:1234/e2e/navigation/fail-native-001-a1/interrupted.wmlc?x=1',
     'https://127.0.0.1:1234/e2e/recovery.wml',
     'http://127.0.0.1:1234/examples/interop-check.wml'
   ])

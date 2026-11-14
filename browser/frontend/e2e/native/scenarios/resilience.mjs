@@ -330,6 +330,52 @@ const httpReplacement = Object.freeze({
   }
 });
 
+function responseFailure({ id, mode, direct, title }) {
+  const actionID = `${id.toLowerCase()}-a1`;
+  return Object.freeze({
+    id,
+    suite: 'smoke',
+    name: `${direct ? 'Direct HTTP' : 'Kannel'} ${mode} response preserves the deck and recovers`,
+    secretBearing: false,
+    async run(context) {
+      await prepare(context);
+      await loadHome(context);
+      const prior = await context.waves.waitForDeckText('Local WAP training environment.');
+      const address = direct
+        ? context.origin.controlledFailureUrl(actionID, mode)
+        : `wap://localhost/e2e/navigation/${actionID}/${mode}.wmlc`;
+      if (direct) await context.waves.openControlledHttpUrl(address);
+      else await context.waves.openWapUrl(address);
+      context.observe({ phase: 'ui-dispatched' });
+      const status = await context.waves.waitForStatus('Fetch failed:');
+      assert.equal(status.displayed, true, 'failure status must be visible');
+      assert.equal(status.tone, 'error', 'failure status must use the error tone');
+      const failure = await context.waves.readNavigationFailure();
+      assert.equal(failure.displayed, true, 'failure category must be visible');
+      assert.equal(failure.title, title);
+      assert.match(failure.correlation, /^Request \S+$/);
+      assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), prior,
+        'failure must preserve the committed viewport');
+      await context.origin.waitForActionSettledWithinBound(actionID, {
+        kind: 'navigation', phases: ['success'], maxCount: 2, signal: context.signal
+      });
+      context.observe({ phase: 'origin-confirmed' });
+      const recovery = direct ? context.origin.controlledRecoveryUrl() : 'wap://localhost/examples/interop-check.wml';
+      if (direct) await context.waves.openControlledHttpUrl(recovery);
+      else await context.waves.openWapUrl(recovery);
+      context.observe({ phase: 'recovery-dispatched' });
+      await context.waves.waitForDeckText('W13-A');
+      await context.waves.waitForAddress(recovery);
+      await context.waves.goBack();
+      assert.equal(await context.waves.waitForDeckText('Local WAP training environment.'), prior,
+        'Back must skip the failed navigation');
+      await context.waves.waitForAddress('wap://localhost/');
+      context.observe({ phase: 'recovered' });
+      context.recordAssertion('response failure recovery', 'the correlated failure retained the previous deck and a later navigation succeeded');
+    }
+  });
+}
+
 const gatewayOutage = Object.freeze({
   id: 'ERR-NATIVE-002',
   suite: 'smoke',
@@ -468,6 +514,10 @@ export const RESILIENCE_SCENARIOS = Object.freeze([
   httpBack,
   httpReplacement,
   httpBodyStop,
+  responseFailure({ id: 'FAIL-NATIVE-001', mode: 'interrupted', direct: true, title: 'connection · TRANSPORT_UNAVAILABLE' }),
+  responseFailure({ id: 'FAIL-NATIVE-002', mode: 'oversized', direct: true, title: 'response · PAYLOAD_TOO_LARGE' }),
+  responseFailure({ id: 'FAIL-NATIVE-003', mode: 'interrupted', direct: false, title: 'gateway · PROTOCOL_ERROR' }),
+  responseFailure({ id: 'FAIL-NATIVE-004', mode: 'oversized', direct: false, title: 'gateway · GATEWAY_TIMEOUT' }),
   gatewayOutage,
   invalidDeck,
   timeoutRecovery

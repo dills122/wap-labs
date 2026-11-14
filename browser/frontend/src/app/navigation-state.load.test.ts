@@ -4,6 +4,31 @@ import { createHostClientMock, fetchOk, frame, snapshot } from './navigation-sta
 import { WAVES_COPY } from './waves-copy';
 
 describe('navigation-state load behavior', () => {
+  it('identifies an oversized payload as a response failure', async () => {
+    const failures: NavigationFailureContext[] = [];
+    const machine = createNavigationStateMachine(
+      createHostClientMock({
+        fetchDeck: async () =>
+          fetchOk({
+            ok: false,
+            status: 200,
+            error: { code: 'PAYLOAD_TOO_LARGE', message: 'Payload exceeds limit' },
+            engineDeckInput: undefined,
+            wml: undefined
+          })
+      }),
+      'http://seed.test',
+      {
+        onNavigationError: (_message, _kind, context) => failures.push(context)
+      }
+    );
+    await machine.loadTransportUrl({
+      url: 'http://example.test/large',
+      source: 'user',
+      followExternalIntent: false
+    });
+    expect(failures[0]).toMatchObject({ layer: 'response', category: 'PAYLOAD_TOO_LARGE' });
+  });
   it('warns that a timed-out POST may already have been processed', async () => {
     const errors: string[] = [];
     const machine = createNavigationStateMachine(

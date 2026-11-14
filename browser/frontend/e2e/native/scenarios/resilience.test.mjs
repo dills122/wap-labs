@@ -30,6 +30,7 @@ function fixture() {
       origin: {
         controlledNavigationUrl(actionID, mode = 'headers') { return `http://127.0.0.1:1234/e2e/navigation/${actionID}/${mode === 'body' ? 'slow-body' : 'slow'}.wml`; },
         controlledRecoveryUrl() { return 'http://127.0.0.1:1234/e2e/recovery.wml'; },
+        controlledFailureUrl(actionID, mode) { return `http://127.0.0.1:1234/e2e/navigation/${actionID}/${mode}.wmlc`; },
         async waitForActionPhase(actionID, options) {
           calls.push(['action-phase', actionID, options.kind, options.phase]);
           return { actionID, kind: options.kind, count: 1, phase: options.phase };
@@ -75,7 +76,7 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'HTTP-NATIVE-001', 'HTTP-NATIVE-002', 'HTTP-NATIVE-003', 'HTTP-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'HTTP-NATIVE-001', 'HTTP-NATIVE-002', 'HTTP-NATIVE-003', 'HTTP-NATIVE-004', 'FAIL-NATIVE-001', 'FAIL-NATIVE-002', 'FAIL-NATIVE-003', 'FAIL-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -296,4 +297,40 @@ test('new addresses replace two slow navigations and remain after both settle', 
   assert.equal(calls.filter(([kind]) => kind === 'replace').length, 2);
   assert.equal(calls.filter(([kind]) => kind === 'action-settled').length, 2);
   assert.deepEqual(assertions.map(({ name }) => name), ['new address supersedes slow navigations']);
+});
+
+test('response failures retain the prior deck and recover on both transports', async () => {
+  for (const [id, title] of [
+    ['FAIL-NATIVE-001', 'connection · TRANSPORT_UNAVAILABLE'],
+    ['FAIL-NATIVE-002', 'response · PAYLOAD_TOO_LARGE'],
+    ['FAIL-NATIVE-003', 'gateway · PROTOCOL_ERROR'],
+    ['FAIL-NATIVE-004', 'gateway · GATEWAY_TIMEOUT']
+  ]) {
+    const { calls, context } = fixture();
+    context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+    context.waves.readNavigationFailure = async () => ({ title, correlation: 'Request req-123', displayed: true });
+    const scenario = RESILIENCE_SCENARIOS.find((item) => item.id === id);
+    assert.ok(scenario, `missing ${id}`);
+    await scenario.run(context);
+    assert.ok(calls.some(([kind]) => kind === 'action-settled-bounded'));
+    assert.ok(calls.some(([kind, text]) => kind === 'deck' && text === 'W13-A'));
+  }
+});
+
+test('response failure scenario rejects wrong category and changed frame', async () => {
+  const scenario = RESILIENCE_SCENARIOS.find(({ id }) => id === 'FAIL-NATIVE-002');
+  {
+    const { context } = fixture();
+    context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+    context.waves.readNavigationFailure = async () => ({ title: 'gateway · GATEWAY_TIMEOUT', correlation: 'Request req-123', displayed: true });
+    await assert.rejects(scenario.run(context), /PAYLOAD_TOO_LARGE/);
+  }
+  {
+    const { context } = fixture();
+    context.waves.waitForStatus = async () => ({ tone: 'error', displayed: true });
+    context.waves.readNavigationFailure = async () => ({ title: 'response · PAYLOAD_TOO_LARGE', correlation: 'Request req-123', displayed: true });
+    let reads = 0;
+    context.waves.waitForDeckText = async () => (++reads < 3 ? 'prior deck' : 'changed deck');
+    await assert.rejects(scenario.run(context), /preserve the committed viewport/);
+  }
 });
