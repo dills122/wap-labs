@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { FetchResponse, HostSessionState } from '../../../contracts/transport';
 import type { BrowserShellRefs } from './browser-shell-template';
+import { mountBrowserShell } from './browser-shell-template';
 import { BrowserController } from './browser-controller';
 import { controllerPrivates } from './browser-controller.test-helpers';
 import { BrowserPresenter } from './browser-presenter';
@@ -271,6 +272,31 @@ const wbxmlDecodeFailureResponse = (url: string): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('shows network controls after restoring a network GET and local controls after restoring an example', async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const refs = mountBrowserShell('', 'local');
+    refs.statusEl.setStatus = vi.fn();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const controller = new BrowserController(createHostClient() as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    await controller.restoreSafeSession({
+      kind: 'network-get',
+      url: 'http://example.test/restored.wml'
+    });
+    expect(document.querySelector('.browser-shell')?.getAttribute('data-run-mode')).toBe('network');
+    expect(document.querySelector('#btn-mode-network')?.getAttribute('aria-pressed')).toBe('true');
+    expect(refs.fetchUrlInput.disabled).toBe(false);
+    expect(document.querySelector('#route-label')?.textContent).toContain('example.test');
+    await controller.restoreSafeSession({
+      kind: 'local-example',
+      exampleId: defaultLocalDeckExample().key
+    });
+    expect(document.querySelector('.browser-shell')?.getAttribute('data-run-mode')).toBe('local');
+    expect(document.querySelector('#btn-mode-local')?.getAttribute('aria-pressed')).toBe('true');
+    expect(refs.fetchUrlInput.disabled).toBe(true);
+    expect(document.querySelector('#route-label')?.textContent).toContain('Local');
+    controller.dispose();
+  });
   it('publishes engine-action busy state until the serialized queue is idle', async () => {
     const refs = createRefs();
     const presenter = new BrowserPresenter(refs, initialSession, 20);

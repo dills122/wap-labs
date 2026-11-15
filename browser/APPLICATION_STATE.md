@@ -80,3 +80,29 @@ Run the state/browser and native host tests with:
 pnpm --dir browser/frontend test
 cargo test --manifest-path browser/src-tauri/Cargo.toml --locked
 ```
+
+## Packaged macOS recovery observation
+
+On 2026-11-14 a release `.app` was built with a test-only bundle identifier and isolated
+application-data directory. An abrupt termination after a committed bundled example restored it
+on relaunch. After a controlled loopback GET, the relaunched app offered recovery without issuing
+another GET; confirming the offer loaded the deck. After a controlled POST or a GET with a
+synthetic sensitive query, neither request was retained as a recovery candidate. A normal exit
+cleared the marker and did not show a crash offer on relaunch. A deliberately corrupt isolated
+state file left the shell usable. The network restore initially exposed a mode/route presentation
+mismatch; the fixed bundle was rebuilt and the confirmed restore displayed Network mode, the
+address, the correct route, and the restored deck.
+
+This is a manual macOS observation of a separately identified test bundle, not a measurement of
+the two-second offer deadline or packaged validation on other platforms. To repeat it, build an
+isolated bundle (replace the identifier with a unique, unused one):
+
+```bash
+cd browser/src-tauri
+cargo tauri build --bundles app --config '{"productName":"Waves Recovery Pilot","identifier":"com.wavenav.recovery-pilot","bundle":{"active":true}}'
+```
+
+Use only that bundle's separate application-data directory and an owned loopback origin. Confirm
+its identifier and process before simulating a crash; do not terminate or change data belonging
+to another Waves instance. The production default destination policy rejects private addresses;
+the isolated loopback test explicitly used `WAVES_FETCH_DESTINATION_POLICY=allow-private`.
