@@ -25,7 +25,7 @@ import { KeyboardIntentRouter } from './keyboard-intent-router';
 import { ShellEventBindings } from './shell-event-bindings';
 import { defaultStartUrl } from './defaults';
 import type { BrowserPresenter } from './browser-presenter';
-import type { BrowserShellRefs } from './browser-shell-template';
+import { syncRunModePresentation, type BrowserShellRefs } from './browser-shell-template';
 import {
   defaultLocalDeckExample,
   findLocalDeckExample,
@@ -393,6 +393,7 @@ export class BrowserController {
     if (target.kind === 'network') {
       await this.setRunMode('network', { loadLocalOnEnter: false });
       this.refs.fetchUrlInput.value = target.url;
+      syncRunModePresentation(this.refs.runModeSelectEl);
       await this.loadTransportUrl(
         target.url,
         'user',
@@ -433,6 +434,7 @@ export class BrowserController {
       if (!target.ok) throw new Error(target.issue.message);
       await this.setRunMode('network', { loadLocalOnEnter: false });
       this.refs.fetchUrlInput.value = target.value.url;
+      syncRunModePresentation(this.refs.runModeSelectEl);
       await this.loadTransportUrl(
         target.value.url,
         'user',
@@ -847,6 +849,7 @@ export class BrowserController {
     }
     this.runMode = mode;
     this.refs.runModeSelectEl.value = mode;
+    syncRunModePresentation(this.refs.runModeSelectEl);
     this.applyModeUiState();
     this.presenter.patchSessionState({ runMode: mode });
     if (mode === 'local') {

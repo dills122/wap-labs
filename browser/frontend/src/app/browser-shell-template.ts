@@ -1,6 +1,6 @@
 import type { WvStatusPanel } from '../components/status-panel';
 import { bindHandsetScaleControl } from './handset-scale-control';
-import { bindRouteIndicator } from './route-indicator';
+import { bindRouteIndicator, deriveRouteLabel } from './route-indicator';
 import { bindWelcomeHelpControls } from './welcome-help-control';
 import { WAVES_CONFIG } from './waves-config';
 import { bindDeveloperToolsWorkspace } from './developer-tools-workspace';
@@ -12,6 +12,19 @@ import { utilityRailTemplate } from './shell/utility-rail-template';
 import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
 import { applicationSurfacesTemplate } from './shell/application-surfaces-template';
 import { sessionRecoveryTemplate } from './shell/session-recovery-template';
+
+export function syncRunModePresentation(select: HTMLSelectElement): void {
+  const mode = select.value === 'network' ? 'network' : 'local';
+  const shell = select.closest('.browser-shell');
+  shell?.setAttribute('data-run-mode', mode);
+  shell?.querySelector('#btn-mode-local')?.setAttribute('aria-pressed', String(mode === 'local'));
+  shell
+    ?.querySelector('#btn-mode-network')
+    ?.setAttribute('aria-pressed', String(mode === 'network'));
+  const route = shell?.querySelector<HTMLElement>('#route-label');
+  const address = shell?.querySelector<HTMLInputElement>('#fetch-url');
+  if (route && address) route.textContent = deriveRouteLabel(mode, address.value);
+}
 
 const browserShellTemplate = () => `
   <div class="browser-shell" data-host-presentation="native">
@@ -155,28 +168,22 @@ export const mountBrowserShell = (
   const localModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-local');
   const networkModeButtonEl = document.querySelector<HTMLButtonElement>('#btn-mode-network');
   const browserShellEl = document.querySelector<HTMLElement>('.browser-shell');
-
-  const syncRunModePresentation = (): void => {
-    const mode = runModeSelectEl.value === 'network' ? 'network' : 'local';
-    browserShellEl?.setAttribute('data-run-mode', mode);
-    localModeButtonEl?.setAttribute('aria-pressed', String(mode === 'local'));
-    networkModeButtonEl?.setAttribute('aria-pressed', String(mode === 'network'));
-  };
+  const syncMode = (): void => syncRunModePresentation(runModeSelectEl);
 
   const requestRunMode = (mode: 'local' | 'network'): void => {
     if (runModeSelectEl.value === mode) {
-      syncRunModePresentation();
+      syncMode();
       return;
     }
     runModeSelectEl.value = mode;
-    syncRunModePresentation();
+    syncMode();
     runModeSelectEl.dispatchEvent(new Event('change', { bubbles: true }));
   };
 
   localModeButtonEl?.addEventListener('click', () => requestRunMode('local'));
   networkModeButtonEl?.addEventListener('click', () => requestRunMode('network'));
-  runModeSelectEl.addEventListener('change', syncRunModePresentation);
-  syncRunModePresentation();
+  runModeSelectEl.addEventListener('change', syncMode);
+  syncMode();
 
   if (utilityRailPanelEl && inspectorButtonEl) {
     const syncInspectorPresentation = (): void => {

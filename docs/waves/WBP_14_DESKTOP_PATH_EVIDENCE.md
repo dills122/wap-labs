@@ -42,7 +42,7 @@ as a silent substitute for the other.
 | Timeout and cancellation                  | complete/partial | `ERR-NATIVE-004` passed native timeout recovery; Kannel and direct HTTP cancellation scenarios passed in Linux CI | Extend native coverage to the remaining timeout and cancellation cases |
 | Invalid deck                              | complete        | `ERR-NATIVE-003` passed through native Tauri and Kannel, retaining the viewport and recovering to a valid deck | Keep the native gateway scenario in the smoke suite |
 | Script trap                               | missing         | `WMLS-501` decoder/verifier evidence exists                                                     | Add a native visible trap/recovery case; do not infer unfinished `WMLS-502` execution coverage           |
-| Crash recovery and safe session           | partial         | Frontend/Rust tests prove the marker, local/GET policy, two-second offer, reset, and atomicity    | Run and record the packaged launch-after-crash relaunch case                                               |
+| Crash recovery and safe session           | partial         | Fixture tests and an isolated packaged macOS relaunch cover marker, local/GET policy, POST exclusion, clean exit, and corrupt state | Measure packaged offer timing and validate remaining platforms                                               |
 | Diagnostics and bounded replay            | blocked         | Bounded sanitized Inspector projection exists                                                   | Implement `WBP-13` `.waves-session.json` import/replay and the 1,000-step memory gate                    |
 | Zoom/reflow                               | complete        | Production-built Chromium is green at both windows and effective 200 percent zoom               | Retain as fixture evidence; packaged platform checks remain separate                                     |
 | Screen reader                             | blocked         | Manual VoiceOver procedure is documented                                                        | Enable packaging and record the packaged macOS smoke result                                              |
@@ -109,8 +109,8 @@ The native workflow uploads screenshots, page source, environment, service logs,
 2. Extend the controlled Kannel origin and native UI driver with timeout, actual cancellation,
    invalid-deck, and script-trap cases. Each case must assert retained committed frame, categorized
    status, correlation metadata, and successful recovery.
-3. Record the implemented `WBP-12` launch-after-crash and safe-session policy behavior in a
-   packaged build; fixture evidence does not substitute for that relaunch observation.
+3. Extend the recorded macOS `WBP-12` packaged recovery observation with an offer-timing
+   measurement and other supported platforms; fixture evidence does not substitute for those checks.
 4. Complete `WBP-13`, then record sanitized replay determinism and bounded 1,000-step memory
    behavior.
 5. Add repeatable startup/interaction budgets and record the packaged VoiceOver smoke.

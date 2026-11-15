@@ -152,7 +152,7 @@
         "browser/src-tauri/src/application_state.rs",
         "browser/APPLICATION_STATE.md"
       ],
-      "blocker": "The marker lifecycle, safe local/confirmed-GET policy, two-second offer budget, reset, removed-monitor handling, and failure atomicity have deterministic fixture coverage. A packaged launch-after-crash relaunch has not been executed."
+      "blocker": "The marker lifecycle, safe local/confirmed-GET policy, two-second offer budget, reset, removed-monitor handling, and failure atomicity have deterministic fixture coverage. An isolated macOS release bundle passed manual local and confirmed GET crash recovery, POST and sensitive-query exclusion, normal exit, and corrupt-state startup; packaged offer timing and other platforms remain unverified."
     },
     {
       "id": "native-wasm-parity",
