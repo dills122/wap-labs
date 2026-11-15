@@ -21,6 +21,7 @@ function fixture() {
         async openControlledHttpUrl(address) { calls.push(['http-open', address]); },
         async replaceControlledHttpUrl(address) { calls.push(['http-replace', address]); },
         async goBack() { calls.push(['back']); },
+        async pressSoftkey(key) { calls.push(['softkey', key]); },
         async waitForDeckText(text) { calls.push(['deck', text]); return `deck: ${text}`; },
         async waitForAddress(address) { calls.push(['address', address]); return address; },
         async readSanitizedAddress() { return 'wap://localhost/'; },
@@ -76,7 +77,7 @@ function fixture() {
 test('navigation resilience scenarios have stable unique P0 identities', () => {
   assert.deepEqual(
     RESILIENCE_SCENARIOS.map(({ id }) => id),
-    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'HTTP-NATIVE-001', 'HTTP-NATIVE-002', 'HTTP-NATIVE-003', 'HTTP-NATIVE-004', 'FAIL-NATIVE-001', 'FAIL-NATIVE-002', 'FAIL-NATIVE-003', 'FAIL-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004']
+    ['RACE-NATIVE-001', 'RACE-NATIVE-002', 'RACE-NATIVE-003', 'RACE-NATIVE-004', 'HTTP-NATIVE-001', 'HTTP-NATIVE-002', 'HTTP-NATIVE-003', 'HTTP-NATIVE-004', 'FAIL-NATIVE-001', 'FAIL-NATIVE-002', 'FAIL-NATIVE-003', 'FAIL-NATIVE-004', 'ERR-NATIVE-002', 'ERR-NATIVE-003', 'ERR-NATIVE-004', 'ERR-NATIVE-005']
   );
   assert.ok(
     RESILIENCE_SCENARIOS.every(({ suite, secretBearing }) => suite === 'smoke' && !secretBearing)
@@ -343,4 +344,17 @@ test('interrupted Kannel response accepts the two observed transport failures', 
     context.waves.readNavigationFailure = async () => ({ title, correlation: 'Request req-123', displayed: true });
     await scenario.run(context);
   }
+});
+
+test('native script failure stays visible and a later navigation recovers', async () => {
+  const { context, calls, assertions } = fixture();
+  context.waves.waitForScriptFailure = async () => { calls.push(['script-failure']); return 'Script error (host binding error): loader: script unit not registered'; };
+  context.waves.waitForScriptFailureDismissed = async () => { calls.push(['script-dismissed']); };
+  const scenario = RESILIENCE_SCENARIOS.find(({ id }) => id === 'ERR-NATIVE-005');
+  assert.ok(scenario, 'missing native script failure scenario');
+  await scenario.run(context);
+  assert.ok(calls.some(([kind]) => kind === 'script-failure'));
+  assert.ok(calls.some(([kind]) => kind === 'script-dismissed'));
+  assert.ok(calls.some(([kind, address]) => kind === 'open' && address === 'wap://localhost/examples/interop-check.wml'));
+  assert.equal(assertions.at(-1).name, 'native script failure recovery');
 });

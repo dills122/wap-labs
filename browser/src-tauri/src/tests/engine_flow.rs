@@ -494,3 +494,86 @@ fn wml_301_adapter_projects_duplicate_same_card_history_pushes() {
     assert_eq!(duplicate.active_card_id.as_deref(), Some("a"));
     assert_eq!(duplicate.history_push_sequence, Some(1));
 }
+
+#[test]
+fn script_trap_frame_is_visible_and_navigation_recovers() {
+    let mut engine = WmlEngine::new();
+    let deck = r##"<wml><card id="home"><p><a href="script:missing.wmlsc#main">Run missing script</a><a href="#next">Continue</a></p></card><card id="next"><p>Recovered</p></card></wml>"##;
+    apply_load_deck_context(
+        &mut engine,
+        LoadDeckContextRequest {
+            wml_xml: canonical_text_wml(deck),
+            base_url: "wap://localhost/script.wml".to_string(),
+            content_type: "text/vnd.wap.wml".to_string(),
+            raw_bytes_base64: None,
+            referring_url: None,
+            navigation_url: None,
+            navigation_kind: None,
+        },
+    )
+    .expect("deck should load");
+    let initial = apply_render_frame(&engine).expect("initial frame");
+    force_next_frame_failure();
+    let rejected = apply_handle_input_frame(
+        &mut engine,
+        HandleInputRequest {
+            event: EngineInputEvent::ActivateAction {
+                frame_id: initial.presentation.frame_id.clone(),
+                action_id: "focus:0".to_string(),
+            },
+        },
+    );
+    assert!(rejected.is_err(), "a failed frame must not commit the trap");
+    assert_eq!(engine.last_script_execution_ok(), None);
+    let failed = apply_handle_input_frame(
+        &mut engine,
+        HandleInputRequest {
+            event: EngineInputEvent::ActivateAction {
+                frame_id: initial.presentation.frame_id,
+                action_id: "focus:0".to_string(),
+            },
+        },
+    )
+    .expect("script failure should be published in a valid frame");
+    assert_eq!(failed.snapshot.active_card_id.as_deref(), Some("home"));
+    assert_eq!(failed.snapshot.last_script_execution_ok, Some(false));
+    assert_eq!(
+        failed.snapshot.last_script_execution_error_class.as_deref(),
+        Some("fatal")
+    );
+    assert_eq!(
+        failed
+            .snapshot
+            .last_script_execution_error_category
+            .as_deref(),
+        Some("host-binding")
+    );
+    for _ in 0..50 {
+        apply_advance_time_ms_frame(&mut engine, AdvanceTimeRequest { delta_ms: 100 })
+            .expect("idle timer ticks should remain usable");
+    }
+    assert_eq!(
+        engine
+            .trace_entries()
+            .iter()
+            .filter(|entry| entry.kind == "ACTION_SCRIPT")
+            .count(),
+        1,
+        "idle ticks must not reinvoke the failing script"
+    );
+    apply_handle_key_frame(
+        &mut engine,
+        HandleKeyRequest {
+            key: EngineKey::Down,
+        },
+    )
+    .expect("focus should move");
+    let recovered = apply_handle_key_frame(
+        &mut engine,
+        HandleKeyRequest {
+            key: EngineKey::Enter,
+        },
+    )
+    .expect("navigation should recover");
+    assert_eq!(recovered.snapshot.active_card_id.as_deref(), Some("next"));
+}

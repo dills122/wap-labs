@@ -420,3 +420,28 @@ test('navigation failure exposes the displayed category and correlation', async 
   values.get('#navigation-error-title').visible = false;
   assert.equal((await page.readNavigationFailure()).displayed, false);
 });
+
+test('script failure requires a visible error toast and can dismiss', async () => {
+  let visible = true;
+  const toast = element({
+    isDisplayed: async () => visible,
+    getAttribute: async () => 'toast toast-error'
+  });
+  const driver = {
+    findElement: async () => toast,
+    executeScript: async () => 'Script error (host binding error): script unit not registered'
+  };
+  const page = createWavesDriver({
+    driver, selector: (value) => value,
+    waitUntil: async (condition) => {
+      const value = await condition();
+      if (!value) throw new Error('condition did not pass');
+      return value;
+    }
+  });
+  assert.match(await page.waitForScriptFailure(), /host binding error/);
+  await assert.rejects(page.waitForScriptFailureDismissed(), /condition did not pass/);
+  visible = false;
+  await page.waitForScriptFailureDismissed();
+  await assert.rejects(page.waitForScriptFailure(), /condition did not pass/);
+});

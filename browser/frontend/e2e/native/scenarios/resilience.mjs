@@ -515,6 +515,44 @@ const timeoutRecovery = Object.freeze({
   }
 });
 
+const scriptFailure = Object.freeze({
+  id: 'ERR-NATIVE-005',
+  suite: 'smoke',
+  name: 'Missing WMLScript reports a visible error and recovers',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'script-native-001-a1';
+    const address = `wap://localhost/e2e/navigation/${actionID}/script-failure.wml`;
+    await prepare(context);
+    await loadHome(context);
+    await context.waves.openWapUrl(address);
+    const prior = await context.waves.waitForDeckText('Script failure fixture');
+    await context.waves.waitForAddress(address);
+    context.observe({ phase: 'deck-ready' });
+    await context.waves.pressSoftkey('select');
+    context.observe({ phase: 'ui-dispatched' });
+    assert.match(await context.waves.waitForScriptFailure(), /script unit not registered/);
+    assert.equal(await context.waves.waitForDeckText('Script failure fixture'), prior,
+      'script failure must preserve the committed deck');
+    await context.waves.waitForAddress(address);
+    context.observe({ phase: 'response-rendered' });
+    await context.origin.waitForActionSettledExactlyOnce(actionID, {
+      kind: 'navigation', phases: ['success'], signal: context.signal
+    });
+    await context.waves.waitForScriptFailureDismissed();
+    await context.waves.waitForDeckText('Script failure fixture');
+    context.observe({ phase: 'origin-confirmed' });
+    const recovery = 'wap://localhost/examples/interop-check.wml';
+    await context.waves.openWapUrl(recovery);
+    context.observe({ phase: 'recovery-dispatched' });
+    await context.waves.waitForDeckText('W13-A');
+    await context.waves.waitForAddress(recovery);
+    context.observe({ phase: 'recovered' });
+    context.recordAssertion('native script failure recovery',
+      'the visible missing-unit error retained the deck and a later gateway navigation succeeded');
+  }
+});
+
 export const RESILIENCE_SCENARIOS = Object.freeze([
   staleNavigation,
   explicitStop,
@@ -530,5 +568,6 @@ export const RESILIENCE_SCENARIOS = Object.freeze([
   responseFailure({ id: 'FAIL-NATIVE-004', mode: 'oversized', direct: false, title: 'gateway · GATEWAY_TIMEOUT' }),
   gatewayOutage,
   invalidDeck,
-  timeoutRecovery
+  timeoutRecovery,
+  scriptFailure
 ]);

@@ -77,6 +77,7 @@ const SAFE_ASSERTION_NAMES = new Set([
   'native timeout frame',
   'native timeout rejection',
   'native timeout recovery',
+  'native script failure recovery',
   'response failure recovery',
   'masked PIN entry',
   'registration response',

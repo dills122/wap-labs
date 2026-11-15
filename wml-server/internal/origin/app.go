@@ -234,6 +234,7 @@ func (a *App) Handler() http.Handler {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/slow-body.wml", a.e2eSlowBodyNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/timeout.wml", a.e2eTimeoutNavigation)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
+		mux.HandleFunc("GET /e2e/navigation/{actionID}/script-failure.wml", a.e2eScriptFailureDeck)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/interrupted.wmlc", a.e2eInterruptedResponse)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/oversized.wmlc", a.e2eOversizedResponse)
 		mux.HandleFunc("GET /e2e/history/{actionID}/form.wml", a.e2eHistoryForm)
@@ -777,6 +778,21 @@ func (a *App) e2eHistoryNext(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	a.sendWML(w, `<card id="history-next"><do type="accept" label="Fail"><go href="/e2e/navigation/post-history-failure-a1/invalid.wmlc"/></do><p>History next deck</p></card>`, http.StatusOK)
+}
+
+// e2eScriptFailureDeck invokes an unregistered script; the desktop runtime
+// does not currently load WMLScript units over the network.
+func (a *App) e2eScriptFailureDeck(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("actionID")
+	if !validE2EActionID(id) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return
+	}
+	if !a.beginE2EAction(w, id, "navigation") {
+		return
+	}
+	a.setE2EActionPhase(id, "success")
+	a.sendWML(w, `<card id="script-test"><p>Script failure fixture <a href="script:missing.wmlsc#main">Run missing script</a></p></card>`, http.StatusOK)
 }
 
 // e2eInvalidDeck serves well-formed WBXML whose WML root contains an illegal
