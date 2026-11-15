@@ -147,4 +147,6 @@ WMLScript unit. The current desktop runtime does not fetch script units from the
 is a deterministic fatal host-binding failure rather than evidence of WAP-193 bytecode loading or
 execution through Kannel. The scenario checks the visible error, retained deck, bounded origin
 request, notification dismissal, and subsequent gateway navigation. Host regression coverage
-checks that 50 idle timer ticks do not reinvoke the script. The native Linux run remains pending.
+checks that 50 idle timer ticks do not reinvoke the script. The native scenario passed in [GitHub Actions run
+43740920082](https://github.com/dills122/wap-labs/actions/runs/43740920082). Native recovery from
+an executing bytecode trap remains unproved.
