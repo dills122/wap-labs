@@ -58,11 +58,17 @@ export const createWasmBrowserTestHost = async (
     render: render(),
     presentation: engine.renderFrame()
   });
-  const applyRuntimeMutation = (mutation: () => void): void => {
+  const applyRuntimeMutation = (mutation: () => void, publishScriptFailure = false): void => {
     try {
       mutation();
     } catch (error) {
-      if (!engine.lastRuntimeFailureCode()) {
+      const recordedScriptFailure =
+        publishScriptFailure &&
+        engine.lastScriptExecutionOk() === false &&
+        typeof error === 'string' &&
+        error.startsWith('loader: script unit not registered (') &&
+        engine.lastScriptExecutionTrap() === error;
+      if (!engine.lastRuntimeFailureCode() && !recordedScriptFailure) {
         throw error;
       }
     }
@@ -95,11 +101,11 @@ export const createWasmBrowserTestHost = async (
       return snapshot();
     },
     engineHandleKeyFrame: async ({ key }) => {
-      applyRuntimeMutation(() => engine.handleKey(key));
+      applyRuntimeMutation(() => engine.handleKey(key), true);
       return frame();
     },
     engineHandleInputFrame: async ({ event }) => {
-      applyRuntimeMutation(() => engine.handleInput(event));
+      applyRuntimeMutation(() => engine.handleInput(event), true);
       return frame();
     },
     engineNavigateToCard: async ({ cardId }) => {

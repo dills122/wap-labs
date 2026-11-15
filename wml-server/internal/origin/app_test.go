@@ -1166,3 +1166,17 @@ func TestE2EPostHistoryFixtureRequiresOriginalFieldsAndCountsReceipts(t *testing
 	}
 	assertActionOracle(t, app, "history-native-001-a1", "navigation", 3, "validation")
 }
+
+func TestE2EScriptFailureDeckIsFixtureOnlyAndCorrelated(t *testing.T) {
+	const path = "/e2e/navigation/script-native-001-a1/script-failure.wml"
+	ordinary, _ := newTestApp(t, nil)
+	if response := perform(ordinary.Handler(), http.MethodGet, path, "", ""); response.Code != http.StatusNotFound {
+		t.Fatalf("script fixture exposed outside fixture mode: %d", response.Code)
+	}
+	app, _ := newTestApp(t, func(config *Config) { config.E2EFixtureMode = true; config.OriginInstanceID = "origin-run-7" })
+	response := perform(app.Handler(), http.MethodGet, path, "", "")
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "script:missing.wmlsc#main") {
+		t.Fatalf("script fixture missing expected action: status %d", response.Code)
+	}
+	assertActionOracle(t, app, "script-native-001-a1", "navigation", 1, "success")
+}

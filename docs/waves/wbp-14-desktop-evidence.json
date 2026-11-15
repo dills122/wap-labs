@@ -128,8 +128,8 @@
       "evidenceClass": "native-gateway",
       "workItems": ["WMLS-501", "WBP-13", "WBP-14"],
       "requirements": ["RQ-RMK-001", "RQ-WMLS-001", "RQ-WMLS-002"],
-      "evidence": ["engine-wasm/examples/source/wavescript-go-cancel.flow.json"],
-      "blocker": "Decoder/verifier and fixture evidence cannot substitute for a visible, recoverable native desktop-path script-trap case. WMLS-502 execution remains separate work."
+      "evidence": ["engine-wasm/examples/source/wavescript-go-cancel.flow.json", "browser/frontend/e2e/native/scenarios/resilience.mjs", "browser/src-tauri/src/tests/engine_flow.rs"],
+      "blocker": "ERR-NATIVE-005 adds a visible missing-unit host-binding failure and recovery scenario pending Linux native evidence. Network WMLScript unit loading and broader script error coverage remain unproved."
     },
     {
       "id": "failure-recovery",

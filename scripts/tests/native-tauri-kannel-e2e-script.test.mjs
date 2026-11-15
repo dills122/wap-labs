@@ -216,6 +216,7 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'ERR-NATIVE-002\tsmoke\tReal gateway outage is visible and restart recovers',
       'ERR-NATIVE-003\tsmoke\tInvalid WML deck preserves the current card and permits recovery',
       'ERR-NATIVE-004\tsmoke\tGateway timeout preserves the current deck and permits recovery',
+      'ERR-NATIVE-005\tsmoke\tMissing WMLScript reports a visible error and recovers',
       ''
     ].join('\n')
   );

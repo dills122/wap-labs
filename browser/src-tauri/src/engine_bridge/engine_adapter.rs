@@ -140,6 +140,25 @@ fn allow_recorded_runtime_failure(
     }
 }
 
+// A missing unit aborts before VM execution, so its recorded outcome can be
+// published without committing partial script effects. Other script failures
+// remain errors until their rollback semantics are explicitly handled.
+fn allow_recorded_frame_failure(
+    engine: &WmlEngine,
+    result: Result<(), String>,
+) -> Result<(), String> {
+    match result {
+        Err(message)
+            if message.starts_with("loader: script unit not registered (")
+                && engine.last_script_execution_ok() == Some(false)
+                && engine.last_script_execution_trap().as_deref() == Some(message.as_str()) =>
+        {
+            Ok(())
+        }
+        other => allow_recorded_runtime_failure(engine, other),
+    }
+}
+
 #[cfg(test)]
 pub(crate) fn force_next_frame_failure() {
     FORCE_NEXT_FRAME_FAILURE.with(|force| {
@@ -199,7 +218,7 @@ pub fn apply_handle_key_frame(
 ) -> Result<EngineFrame, String> {
     mutate_then_frame(engine, |candidate| {
         let result = candidate.handle_key(request.key.as_str().to_string());
-        allow_recorded_runtime_failure(candidate, result)
+        allow_recorded_frame_failure(candidate, result)
     })
 }
 
@@ -209,7 +228,7 @@ pub fn apply_handle_input_frame(
 ) -> Result<EngineFrame, String> {
     mutate_then_frame(engine, |candidate| {
         let result = candidate.handle_input(request.event.clone());
-        allow_recorded_runtime_failure(candidate, result)
+        allow_recorded_frame_failure(candidate, result)
     })
 }
 
@@ -441,4 +460,34 @@ pub fn apply_cancel_focused_select_edit_frame(
         candidate.cancel_focused_select_edit();
         Ok(())
     })
+}
+
+#[cfg(test)]
+mod script_frame_failure_tests {
+    use super::*;
+
+    #[test]
+    fn a_sticky_script_trap_does_not_hide_a_different_error() {
+        let mut engine = WmlEngine::new();
+        let outcome = engine.execute_script_ref("missing.wmlsc".to_string());
+        assert!(!outcome.ok);
+        let unrelated = "unrelated command failure".to_string();
+        assert_eq!(
+            allow_recorded_frame_failure(&engine, Err(unrelated.clone())).unwrap_err(),
+            unrelated
+        );
+    }
+
+    #[test]
+    fn an_executed_or_invalid_unit_failure_remains_an_error() {
+        let mut engine = WmlEngine::new();
+        engine.register_script_unit("invalid.wmlsc".to_string(), vec![0xff]);
+        engine.register_script_entry_point("invalid.wmlsc".to_string(), "main".to_string(), 0);
+        let outcome = engine.execute_script_ref("invalid.wmlsc".to_string());
+        let trap = outcome.trap.expect("invalid unit should fail");
+        assert_eq!(
+            allow_recorded_frame_failure(&engine, Err(trap.clone())).unwrap_err(),
+            trap
+        );
+    }
 }

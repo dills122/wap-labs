@@ -193,6 +193,9 @@ export interface WmlEngineCommon {
   renderFrame(): EnginePresentationFrame;
   // Legacy compatibility surface retained until F4. Primary hosts translate
   // keyboard/control input into EngineInputEvent::Key and call handleInput().
+  // Fatal script actions can throw after recording an outcome. Frame hosts may
+  // publish a matching missing-unit failure, which occurs before VM execution;
+  // other thrown script failures remain errors at this boundary.
   handleKey(key: EngineKey): void;
   // Primary typed input boundary for keys, frame-bound logical clicks/actions,
   // and signed row scrolling. Hosts normalize physical wheel input without

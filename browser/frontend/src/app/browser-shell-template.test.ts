@@ -3,6 +3,13 @@ import { mountBrowserShell } from './browser-shell-template';
 import { WAVES_CONFIG } from './waves-config';
 
 describe('mountBrowserShell', () => {
+  it('keeps notifications outside the hidden inspector rail', () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    mountBrowserShell('', 'local');
+    const toast = document.querySelector('#toast');
+    expect(toast).not.toBeNull();
+    expect(toast?.closest('.utility-rail')).toBeNull();
+  });
   afterEach(() => {
     localStorage.clear();
     vi.unstubAllGlobals();

@@ -139,3 +139,12 @@ failure, and Back through the POST result to the form. The fixture validates two
 fields without exposing them in its action oracle. The scenario requires one original POST and one
 explicit Back replay, then proves no further POST during the retry horizon. The scenario passed in [GitHub Actions run
 43668792899](https://github.com/dills122/wap-labs/actions/runs/43668792899).
+
+### Native WMLScript failure recovery
+
+`ERR-NATIVE-005` loads a controlled WML deck through Kannel and activates an unregistered
+WMLScript unit. The current desktop runtime does not fetch script units from the network, so this
+is a deterministic fatal host-binding failure rather than evidence of WAP-193 bytecode loading or
+execution through Kannel. The scenario checks the visible error, retained deck, bounded origin
+request, notification dismissal, and subsequent gateway navigation. Host regression coverage
+checks that 50 idle timer ticks do not reinvoke the script. The native Linux run remains pending.

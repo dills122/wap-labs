@@ -9,6 +9,6 @@ export const utilityRailTemplate = () => `
         ${developerDrawerTemplate()}
       </div>
     </details>
-    <div id="toast" class="toast toast-hidden"></div>
   </aside>
+  <div id="toast" class="toast toast-hidden"></div>
 `;

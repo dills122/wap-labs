@@ -8,6 +8,7 @@ const SELECTORS = Object.freeze({
   back: '#btn-back',
   reload: '#btn-reload',
   viewport: '#viewport',
+  toast: '#toast',
   status: '#status',
   softkeys: Object.freeze({ up: '#btn-up', select: '#btn-enter', down: '#btn-down' })
 });
@@ -341,6 +342,24 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
         tone: await status.getAttribute('tone'),
         displayed: await status.isDisplayed()
       };
+    },
+
+    async waitForScriptFailure() {
+      const toast = await find(SELECTORS.toast);
+      return waitUntil(async () => {
+        const text = await readText(toast);
+        if (!text.includes('Script error (host binding error):')) return false;
+        if (!(await toast.isDisplayed())) return false;
+        const className = await toast.getAttribute('class');
+        return className.split(/\s+/).includes('toast-error') ? text : false;
+      }, { description: 'visible fatal script error' });
+    },
+
+    async waitForScriptFailureDismissed() {
+      const toast = await find(SELECTORS.toast);
+      return waitUntil(async () => !(await toast.isDisplayed()), {
+        description: 'script error notification to dismiss'
+      });
     },
 
     async readNavigationFailure() {
