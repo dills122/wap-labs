@@ -106,7 +106,7 @@
         "browser/frontend/src/session-history.test.ts",
         "browser/frontend/e2e/native/scenarios/core.mjs"
       ],
-      "blocker": "Typed POST history replay has fixture coverage; NAV-NATIVE-004 adds an explicit Kannel replay and failure-recovery scenario pending a passing Linux native pilot. Broader native history evidence remains partial."
+      "blocker": "Typed POST history replay has fixture coverage; NAV-NATIVE-004 passed explicit Kannel replay and failure-recovery in GitHub Actions run 43668792899. Broader native history evidence remains partial."
     },
     {
       "id": "invalid-deck",
