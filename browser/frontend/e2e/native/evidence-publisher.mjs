@@ -57,6 +57,7 @@ const SAFE_ASSERTION_NAMES = new Set([
   'hybrid Back request bound',
   'Reload request bound',
   'Reload history integrity',
+  'POST history recovery',
   'stale navigation exclusion',
   'Stop preserves deck',
   'Stop acknowledgement',

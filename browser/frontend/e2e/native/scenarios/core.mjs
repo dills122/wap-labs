@@ -219,12 +219,62 @@ const requestBound = Object.freeze({
   }
 });
 
+const postHistory = Object.freeze({
+  id: 'NAV-NATIVE-004',
+  suite: 'smoke',
+  name: 'Back replays a POST after a failed navigation',
+  secretBearing: false,
+  async run(context) {
+    const actionID = 'history-native-001-a1';
+    const base = `wap://localhost/e2e/history/${actionID}/`;
+    await prepare(context);
+    await context.waves.openWapUrl(`${base}form.wml`);
+    await context.waves.waitForDeckText('History form ready');
+    context.observe({ phase: 'deck-ready' });
+    await context.waves.pressSoftkey('select');
+    await context.waves.waitForDeckText('History POST accepted');
+    await context.waves.waitForAddress(`${base}posted.wml`);
+    await context.origin.waitForActionExactlyOnce(actionID, { kind: 'navigation', signal: context.signal });
+    context.observe({ phase: 'origin-confirmed' });
+    await context.waves.pressSoftkey('select');
+    const prior = await context.waves.waitForDeckText('History next deck');
+    await context.waves.waitForAddress(`${base}next.wml`);
+    await context.waves.pressSoftkey('select');
+    const status = await context.waves.waitForStatus('Deck parse failed:');
+    assert.equal(status.displayed, true, 'invalid deck failure must be visible');
+    assert.equal(status.tone, 'error', 'invalid deck failure must use the error tone');
+    assert.equal(await context.waves.waitForDeckText('History next deck'), prior, 'failure must preserve the next deck');
+    await context.origin.waitForActionSettledExactlyOnce('post-history-failure-a1', {
+      kind: 'navigation', phases: ['success'], signal: context.signal
+    });
+    context.observe({ phase: 'recovery-ready' });
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('History POST accepted');
+    await context.waves.waitForAddress(`${base}posted.wml`);
+    const replay = await context.origin.readAction(actionID, { signal: context.signal });
+    assert.equal(replay.kind, 'navigation');
+    assert.equal(replay.phase, 'success', 'replayed POST must contain the original field values');
+    assert.equal(replay.count, 2, 'Back must send exactly one replayed POST');
+    context.observe({ phase: 'response-rendered' });
+    await context.waves.goBack();
+    await context.waves.waitForDeckText('History form ready');
+    await context.waves.waitForAddress(`${base}form.wml`);
+    const settled = await context.origin.waitForActionSettledWithinBound(actionID, {
+      kind: 'navigation', phases: ['success'], maxCount: 2, signal: context.signal
+    });
+    assert.equal(settled.count, 2, 'no further POST may follow Back to the form');
+    context.observe({ phase: 'recovered' });
+    pass(context, 'POST history recovery', 'one original POST and one exact-field Back replay remained bounded after a failed navigation');
+  }
+});
+
 export const CORE_SCENARIOS = Object.freeze([
   boot,
   transport,
   navigation,
   hybridBack,
   reload,
+  postHistory,
   errorRecovery,
   requestBound
 ]);
