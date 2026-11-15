@@ -236,6 +236,9 @@ func (a *App) Handler() http.Handler {
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/invalid.wmlc", a.e2eInvalidDeck)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/interrupted.wmlc", a.e2eInterruptedResponse)
 		mux.HandleFunc("GET /e2e/navigation/{actionID}/oversized.wmlc", a.e2eOversizedResponse)
+		mux.HandleFunc("GET /e2e/history/{actionID}/form.wml", a.e2eHistoryForm)
+		mux.HandleFunc("POST /e2e/history/{actionID}/posted.wml", a.e2eHistoryPost)
+		mux.HandleFunc("GET /e2e/history/{actionID}/next.wml", a.e2eHistoryNext)
 		mux.HandleFunc("POST /e2e/submission/{actionID}/slow.wml", a.e2eSlowNavigation)
 	}
 	return a.logRequests(a.markOriginResponses(a.limitHosts(routeLabProfiles(denyExcludedRoutes(mux)))))
@@ -730,6 +733,50 @@ func (a *App) e2eOversizedResponse(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(make([]byte, size))
 	a.setE2EActionPhase(r.PathValue("actionID"), "success")
+}
+
+func (a *App) e2eHistoryActionID(w http.ResponseWriter, r *http.Request) (string, bool) {
+	id := r.PathValue("actionID")
+	if !validE2EActionID(id) {
+		a.sendWML(w, errorCard("Invalid Test Action", "The test action identifier is invalid."), http.StatusBadRequest)
+		return "", false
+	}
+	return id, true
+}
+
+func (a *App) e2eHistoryForm(w http.ResponseWriter, r *http.Request) {
+	id, ok := a.e2eHistoryActionID(w, r)
+	if !ok {
+		return
+	}
+	a.sendWML(w, fmt.Sprintf(`<card id="history-form"><do type="accept" label="Submit"><go href="/e2e/history/%s/posted.wml" method="post"><postfield name="first" value="alpha beta"/><postfield name="second" value="a&amp;b"/></go></do><p>History form ready</p></card>`, id), http.StatusOK)
+}
+
+func (a *App) e2eHistoryPost(w http.ResponseWriter, r *http.Request) {
+	id, ok := a.e2eHistoryActionID(w, r)
+	if !ok || !a.beginE2EAction(w, id, "navigation") {
+		return
+	}
+	form, ok := a.parseForm(w, r)
+	if !ok {
+		a.setE2EActionPhase(id, "request-rejected")
+		return
+	}
+	if len(form) != 2 || len(form["first"]) != 1 || form.Get("first") != "alpha beta" || len(form["second"]) != 1 || form.Get("second") != "a&b" {
+		a.setE2EActionPhase(id, "validation")
+		a.sendWML(w, errorCard("History Fixture", "POST fields did not match."), http.StatusBadRequest)
+		return
+	}
+	a.setE2EActionPhase(id, "success")
+	a.sendWML(w, fmt.Sprintf(`<card id="history-posted"><do type="accept" label="Next"><go href="/e2e/history/%s/next.wml"/></do><p>History POST accepted</p></card>`, id), http.StatusOK)
+}
+
+func (a *App) e2eHistoryNext(w http.ResponseWriter, r *http.Request) {
+	_, ok := a.e2eHistoryActionID(w, r)
+	if !ok {
+		return
+	}
+	a.sendWML(w, `<card id="history-next"><do type="accept" label="Fail"><go href="/e2e/navigation/post-history-failure-a1/invalid.wmlc"/></do><p>History next deck</p></card>`, http.StatusOK)
 }
 
 // e2eInvalidDeck serves well-formed WBXML whose WML root contains an illegal

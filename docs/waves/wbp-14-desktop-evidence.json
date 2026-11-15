@@ -103,9 +103,10 @@
       "requirements": ["RQ-RMK-002"],
       "evidence": [
         "engine-wasm/examples/source/wml-301-context-history.flow.json",
-        "browser/frontend/src/session-history.test.ts"
+        "browser/frontend/src/session-history.test.ts",
+        "browser/frontend/e2e/native/scenarios/core.mjs"
       ],
-      "blocker": "Typed POST history replay is merged, but native GET/POST/back evidence is not yet part of the complete-path lane."
+      "blocker": "Typed POST history replay has fixture coverage; NAV-NATIVE-004 passed explicit Kannel replay and failure-recovery in GitHub Actions run 43668792899. Broader native history evidence remains partial."
     },
     {
       "id": "invalid-deck",

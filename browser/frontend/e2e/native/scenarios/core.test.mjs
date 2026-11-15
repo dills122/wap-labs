@@ -89,6 +89,7 @@ test('core native scenarios have stable unique P0 identities', () => {
       'NAV-NATIVE-001',
       'NAV-NATIVE-002',
       'NAV-NATIVE-003',
+      'NAV-NATIVE-004',
       'ERR-NATIVE-001',
       'REQ-NATIVE-001'
     ]
@@ -238,4 +239,33 @@ test('error scenario distinguishes failed recovery dispatch from a failed recove
     .filter(([kind]) => kind === 'observe')
     .map(([, observation]) => observation.phase);
   assert.equal(deckFailureCheckpoints.at(-1), 'recovery-dispatched');
+});
+
+test('native POST history replays once after a failed navigation and returns to the form', async () => {
+  const { context, calls } = fixture();
+  context.origin.waitForActionExactlyOnce = async (id, options) => { calls.push(['receipt-one', id, options.kind]); return { count: 1 }; };
+  context.origin.waitForActionSettledExactlyOnce = async (id, options) => { calls.push(['failure-one', id, options.kind]); return { count: 1 }; };
+  context.origin.readAction = async (id) => ({ actionID: id, kind: 'navigation', count: 2, phase: 'success' });
+  context.origin.waitForActionSettledWithinBound = async (id, options) => { calls.push(['receipt-bound', id, options.maxCount]); return { count: 2 }; };
+  const scenario = CORE_SCENARIOS.find(({ id }) => id === 'NAV-NATIVE-004');
+  assert.ok(scenario, 'missing native POST history scenario');
+  await scenario.run(context);
+  assert.equal(calls.filter(([kind]) => kind === 'back').length, 2);
+  assert.ok(calls.some(([kind]) => kind === 'receipt-one'));
+  assert.ok(calls.some(([kind]) => kind === 'failure-one'));
+  assert.ok(calls.some(([kind, , max]) => kind === 'receipt-bound' && max === 2));
+});
+
+test('native POST history rejects missing replay or changed fields', async () => {
+  for (const action of [
+    { kind: 'navigation', count: 1, phase: 'success' },
+    { kind: 'navigation', count: 2, phase: 'validation' }
+  ]) {
+    const { context } = fixture();
+    context.origin.waitForActionExactlyOnce = async () => ({ count: 1 });
+    context.origin.waitForActionSettledExactlyOnce = async () => ({ count: 1 });
+    context.origin.readAction = async () => action;
+    context.waves.waitForStatus = async () => ({ displayed: true, tone: 'error' });
+    await assert.rejects(CORE_SCENARIOS.find(({ id }) => id === 'NAV-NATIVE-004').run(context));
+  }
 });

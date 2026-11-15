@@ -198,6 +198,7 @@ test('native E2E entrypoint lists scenarios without starting the platform provid
       'NAV-NATIVE-001\tsmoke\tCard and external-deck navigation use production softkeys',
       'NAV-NATIVE-002\tsmoke\tBack restores host deck history before same-deck card history',
       'NAV-NATIVE-003\tsmoke\tReload fetches once without duplicating host history',
+      'NAV-NATIVE-004\tsmoke\tBack replays a POST after a failed navigation',
       'ERR-NATIVE-001\tsmoke\tInvalid address failure is visible and recoverable',
       'REQ-NATIVE-001\tsmoke\tOne navigation action produces one origin request',
       'RACE-NATIVE-001\tsmoke\tCancelled slow navigation cannot overwrite a newer deck',

@@ -1139,3 +1139,30 @@ func TestE2EFailureResponsesAreFixtureOnlyAndCorrelated(t *testing.T) {
 		})
 	}
 }
+
+func TestE2EPostHistoryFixtureRequiresOriginalFieldsAndCountsReceipts(t *testing.T) {
+	const base = "/e2e/history/history-native-001-a1/"
+	ordinary, _ := newTestApp(t, nil)
+	if response := perform(ordinary.Handler(), http.MethodGet, base+"form.wml", "", ""); response.Code != http.StatusNotFound {
+		t.Fatalf("history fixture exposed outside fixture mode: %d", response.Code)
+	}
+	app, _ := newTestApp(t, func(config *Config) { config.E2EFixtureMode = true; config.OriginInstanceID = "origin-run-7" })
+	for _, endpoint := range []string{"form.wml", "next.wml"} {
+		response := perform(app.Handler(), http.MethodGet, base+endpoint, "", "")
+		if response.Code != http.StatusOK {
+			t.Fatalf("%s status = %d", endpoint, response.Code)
+		}
+	}
+	for count := 1; count <= 2; count++ {
+		response := perform(app.Handler(), http.MethodPost, base+"posted.wml", "first=alpha+beta&second=a%26b", "application/x-www-form-urlencoded")
+		if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), "History POST accepted") {
+			t.Fatalf("POST response = %d %q", response.Code, response.Body.String())
+		}
+		assertActionOracle(t, app, "history-native-001-a1", "navigation", count, "success")
+	}
+	response := perform(app.Handler(), http.MethodPost, base+"posted.wml", "first=wrong&second=a%26b", "application/x-www-form-urlencoded")
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("incorrect replay status = %d", response.Code)
+	}
+	assertActionOracle(t, app, "history-native-001-a1", "navigation", 3, "validation")
+}

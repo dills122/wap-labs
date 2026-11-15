@@ -131,3 +131,11 @@ upstream response into either a 502 `PROTOCOL_ERROR` or `TRANSPORT_UNAVAILABLE`,
 the controlled pilot environments; an oversized response exceeds connectionless WDP
 capacity and currently results in `GATEWAY_TIMEOUT`. The latter is a gateway delivery timeout, not
 proof that Lowband's HTTP response-size limit was applied to WSP.
+
+### Native POST history recovery
+
+`NAV-NATIVE-004` exercises a controlled form POST, an in-context navigation, an invalid-deck
+failure, and Back through the POST result to the form. The fixture validates two fixed, harmless
+fields without exposing them in its action oracle. The scenario requires one original POST and one
+explicit Back replay, then proves no further POST during the retry horizon. The scenario passed in [GitHub Actions run
+43668792899](https://github.com/dills122/wap-labs/actions/runs/43668792899).
