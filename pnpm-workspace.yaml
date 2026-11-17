@@ -6,15 +6,15 @@ packages:
 
 catalog:
   '@types/node': '^26.6.6'
-  '@typescript-eslint/eslint-plugin': '^8.72.0'
-  '@typescript-eslint/parser': '^8.72.0'
+  '@typescript-eslint/eslint-plugin': '^8.72.2'
+  '@typescript-eslint/parser': '^8.72.2'
   eslint: '^10.14.0'
   eslint-config-prettier: '^10.1.8'
   globals: '^17.14.0'
   lit: '^3.3.3'
   prettier: '^3.9.10'
   typescript: '^6.0.3'
-  vite: '^8.3.6'
+  vite: '^8.3.8'
 
 overrides:
   # Astro's checker pairs emnapi core 1.11.3 with this runtime.
