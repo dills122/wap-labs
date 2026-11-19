@@ -237,7 +237,7 @@ export class BrowserPresenter {
     if (!bar) {
       return;
     }
-    bar.hidden = false;
+    bar.hidden = true;
     bar.dataset.navigationState = 'loading';
     this.setPhaseBarText('#navigation-phase-label', WAVES_COPY.navigation.phase[context.phase]);
     this.setPhaseBarText('#navigation-phase-detail', context.requestedUrl);

@@ -65,6 +65,23 @@ describe('EngineTimerRuntime', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it('does not schedule ticks when the native host serializes an absent timer as null', async () => {
+    const advanceNetwork = vi.fn(async () => snapshot({ activeCardId: 'home' }));
+    const runtime = new EngineTimerRuntime(
+      createDeps({ advanceNetwork, getRunMode: () => 'network' })
+    );
+
+    runtime.start();
+    const nativeSnapshot = snapshot({ activeCardId: 'home' });
+    Object.assign(nativeSnapshot, { nextTimerWakeupMs: null });
+    runtime.applySnapshot(nativeSnapshot);
+    await vi.advanceTimersByTimeAsync(50);
+
+    expect(advanceNetwork).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+    runtime.stop();
+  });
+
   it('advances by the engine-provided wakeup delay', async () => {
     const advanceLocal = vi.fn(async () => snapshot({ activeCardId: 'done', focusedLinkIndex: 0 }));
     const deps = createDeps({ advanceLocal });

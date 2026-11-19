@@ -907,7 +907,6 @@ export class BrowserController {
     const endNavigationProgress = this.presenter.beginNavigationProgress();
 
     try {
-      this.presenter.setStatus(WAVES_COPY.status.loading(example.baseUrl));
       const frame = await this.hostClient.engineLoadDeckContextFrame({
         wmlXml: example.wml,
         baseUrl: example.baseUrl,
@@ -1216,14 +1215,6 @@ export class BrowserController {
     }
     const requestedUrl = url.trim();
     const endNavigationProgress = this.presenter.beginNavigationProgress();
-    if (source === 'user') {
-      this.presenter.setStatus(WAVES_COPY.status.loading(requestedUrl));
-    } else if (source === 'external-intent') {
-      this.presenter.setStatus(WAVES_COPY.status.followingExternalIntent(requestedUrl));
-    } else {
-      this.presenter.setStatus(WAVES_COPY.status.loadingPreviousPage(requestedUrl));
-    }
-
     try {
       const loadPromise = this.navigation.loadTransportUrl({
         url: requestedUrl,

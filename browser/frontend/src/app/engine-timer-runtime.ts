@@ -51,7 +51,8 @@ export class EngineTimerRuntime {
   }
 
   applySnapshot(snapshot: EngineRuntimeSnapshot): void {
-    this.nativeTimerWakeupMs = snapshot.nextTimerWakeupMs;
+    // Native Serde snapshots can carry null for an absent optional timer.
+    this.nativeTimerWakeupMs = snapshot.nextTimerWakeupMs ?? undefined;
     const applied = this.scriptTimerRegistry.applyRequests(snapshot.lastScriptTimerRequests);
     for (const scheduled of applied.scheduled) {
       this.deps.recordTimeline('script-timer-schedule', 'state', {

@@ -288,6 +288,65 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
   await page.locator('#btn-welcome-toggle').click();
   await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
+  const footer = await page.evaluate(async () => {
+    const status = document.querySelector('#status');
+    const context = document.querySelector('.status-context');
+    status.setStatus('Handled key: down', 'idle');
+    await status.updateComplete;
+    const routineOpacity = getComputedStyle(
+      status.shadowRoot.querySelector('#status-root')
+    ).opacity;
+    status.setStatus('Fetch failed', 'error');
+    await status.updateComplete;
+    await new Promise(requestAnimationFrame);
+    const errorOpacity = getComputedStyle(status.shadowRoot.querySelector('#status-root')).opacity;
+    const contextDisplay = getComputedStyle(context).display;
+    status.setStatus('', 'idle');
+    await status.updateComplete;
+    return { routineOpacity, errorOpacity, contextDisplay };
+  });
+  assert.equal(footer.routineOpacity, '0', `${name}: routine status stays out of view`);
+  assert.equal(footer.errorOpacity, '1', `${name}: errors remain visible`);
+  assert.equal(
+    footer.contextDisplay,
+    'none',
+    `${name}: duplicate address and route stay out of view`
+  );
+  const footerBefore = await page.locator('.status-bar').screenshot();
+  await page.evaluate(async () => {
+    const status = document.querySelector('#status');
+    status.setStatus('Fetched and loaded another deck', 'ok');
+    document.querySelector('#route-label').textContent = 'Network — another.example';
+    document.querySelector('#active-url-label').textContent = 'wap://another.example/about';
+    await status.updateComplete;
+  });
+  const footerAfter = await page.locator('.status-bar').screenshot();
+  assert.ok(
+    footerBefore.equals(footerAfter),
+    `${name}: routine navigation must not change the footer`
+  );
+  const navigationLayout = await page.evaluate(() => {
+    const main = document.querySelector('.browser-main');
+    const bar = document.querySelector('#navigation-phase-bar');
+    const handset = document.querySelector('.handset-housing');
+    const measure = () => ({
+      mainHeight: main.getBoundingClientRect().height,
+      handsetTop: handset.getBoundingClientRect().top
+    });
+    const before = measure();
+    bar.dataset.navigationState = 'error';
+    bar.querySelector('#navigation-recovery').hidden = false;
+    bar.hidden = false;
+    const during = measure();
+    bar.hidden = true;
+    bar.querySelector('#navigation-recovery').hidden = true;
+    return { before, during };
+  });
+  assert.deepEqual(
+    navigationLayout.during,
+    navigationLayout.before,
+    `${name}: showing navigation recovery must not move the handset`
+  );
   const handsetScreenshot = `${name}-handset-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
   await page.locator('#btn-inspector').click();
@@ -320,7 +379,47 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   };
 };
 
+const assertRecoveryActionsVisible = async (page, name) => {
+  const recoveryLayout = await page.evaluate(() => {
+    const bar = document.querySelector('#navigation-phase-bar');
+    const recovery = document.querySelector('#navigation-recovery');
+    bar.hidden = false;
+    bar.dataset.navigationState = 'error';
+    recovery.hidden = false;
+    document.querySelector('#navigation-error-title').textContent = 'gateway · GATEWAY_TIMEOUT';
+    document.querySelector('#navigation-error-message').textContent = 'Navigation failed';
+    const buttons = [...recovery.querySelectorAll('button')].map((button) => {
+      const rect = button.getBoundingClientRect();
+      return {
+        id: button.id,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom
+      };
+    });
+    bar.hidden = true;
+    recovery.hidden = true;
+    return { buttons, width: innerWidth, height: innerHeight };
+  });
+  for (const button of recoveryLayout.buttons) {
+    assert.ok(
+      button.right > button.left && button.bottom > button.top,
+      `${name}: recovery action ${button.id} is displayed`
+    );
+    assert.ok(
+      button.left >= 0 && button.right <= recoveryLayout.width,
+      `${name}: recovery action ${button.id} stays within the window`
+    );
+    assert.ok(
+      button.top >= 0 && button.bottom <= recoveryLayout.height,
+      `${name}: recovery action ${button.id} remains vertically visible`
+    );
+  }
+};
+
 const captureResponsiveVisual = async (page, width) => {
+  await assertRecoveryActionsVisible(page, `${width}px`);
   const layout = await page.evaluate(() => {
     const clickableText = [...document.querySelectorAll('button, summary, .btn')]
       .filter((element) => {
@@ -418,6 +517,7 @@ const resolveBaseRevision = async () => {
 };
 
 const auditRenderedPage = async (page, name, windowEvidence) => {
+  await assertRecoveryActionsVisible(page, `${name} at 200%`);
   await page.addScriptTag({ content: axe.source });
   const axeResults = await page.evaluate(async () => window.axe.run(document));
   const violations = axeResults.violations.map((violation) => ({

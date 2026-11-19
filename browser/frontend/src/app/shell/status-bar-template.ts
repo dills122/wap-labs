@@ -1,6 +1,7 @@
 import { WAVES_CONFIG } from '../waves-config';
 import { WAVES_COPY } from '../waves-copy';
 import { HANDSET_SCALE_STEPS } from '../handset-scale-control';
+import { navigationPhaseBarTemplate } from './navigation-phase-bar-template';
 
 const handsetScaleOptions = HANDSET_SCALE_STEPS.map(
   (scale) => `<option value="${scale}">${scale}×</option>`
@@ -8,6 +9,7 @@ const handsetScaleOptions = HANDSET_SCALE_STEPS.map(
 
 export const statusBarTemplate = () => `
   <footer class="status-bar" aria-label="${WAVES_COPY.shell.applicationStatus}">
+    ${navigationPhaseBarTemplate()}
     <div class="status-primary">
       <div class="status-readout status-connection">
         <wv-status-panel id="status"></wv-status-panel>

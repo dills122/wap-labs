@@ -80,6 +80,10 @@ export class WvStatusPanel extends LitElement {
       color: var(--status-error-bg);
       content: '!';
     }
+
+    .status:not(.status-error) {
+      opacity: 0;
+    }
   `;
 
   declare message: string;
