@@ -1056,9 +1056,7 @@ pre {
   min-width: 0;
   min-height: 48px;
   flex: 0 0 auto;
-  grid-template-areas:
-    'primary controls'
-    'context context';
+  grid-template-areas: 'primary controls';
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   border-top: var(--rule-hair) solid var(--host-border);
@@ -1096,26 +1094,12 @@ pre {
   overflow: hidden;
 }
 
-.status-context,
 .status-controls {
   align-items: center;
 }
 
 .status-context {
-  display: grid;
-  grid-area: context;
-  grid-template-columns: max-content max-content minmax(0, 1fr);
-  overflow: hidden;
-  border-top: var(--rule-hair) solid var(--host-border);
-}
-
-.status-context .status-readout {
-  overflow: hidden;
-  padding: var(--space-2xs) var(--space-md);
-}
-
-.status-context .status-readout + .status-readout {
-  border-left: var(--rule-hair) solid var(--host-border);
+  display: none;
 }
 
 .status-controls {
@@ -1129,22 +1113,6 @@ pre {
 .status-label {
   color: var(--host-text);
   font-weight: 650;
-}
-
-.status-location {
-  flex: 1 1 auto;
-  overflow: hidden;
-}
-
-#active-url-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#route-label,
-#profile-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .status-input {
@@ -1386,28 +1354,6 @@ pre {
   .utility-rail-panel {
     border-left: 0;
   }
-
-  .status-bar {
-    grid-template-areas:
-      'primary controls'
-      'context context';
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .status-profile,
-  .status-location {
-    display: none;
-  }
-
-  .status-context {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 68rem) {
-  .status-profile {
-    display: none;
-  }
 }
 
 @media (max-width: 28rem) {
@@ -1450,14 +1396,6 @@ pre {
     padding: var(--space-md) var(--space-xs);
   }
 
-  .status-bar {
-    grid-template-areas:
-      'primary'
-      'controls'
-      'context';
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .status-primary {
     padding: var(--space-2xs) var(--space-xs);
   }
@@ -1466,12 +1404,6 @@ pre {
     justify-content: flex-end;
     gap: var(--space-xs);
     padding: var(--space-2xs) var(--space-xs);
-    border-top: var(--rule-hair) solid var(--host-border);
-    border-left: 0;
-  }
-
-  .status-context .status-readout {
-    padding-inline: var(--space-xs);
   }
 
   .status-control-label-full {

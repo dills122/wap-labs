@@ -288,6 +288,43 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
   await page.locator('#btn-welcome-toggle').click();
   await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
+  const footer = await page.evaluate(async () => {
+    const status = document.querySelector('#status');
+    const context = document.querySelector('.status-context');
+    status.setStatus('Handled key: down', 'idle');
+    await status.updateComplete;
+    const routineOpacity = getComputedStyle(
+      status.shadowRoot.querySelector('#status-root')
+    ).opacity;
+    status.setStatus('Fetch failed', 'error');
+    await status.updateComplete;
+    await new Promise(requestAnimationFrame);
+    const errorOpacity = getComputedStyle(status.shadowRoot.querySelector('#status-root')).opacity;
+    const contextDisplay = getComputedStyle(context).display;
+    status.setStatus('', 'idle');
+    await status.updateComplete;
+    return { routineOpacity, errorOpacity, contextDisplay };
+  });
+  assert.equal(footer.routineOpacity, '0', `${name}: routine status stays out of view`);
+  assert.equal(footer.errorOpacity, '1', `${name}: errors remain visible`);
+  assert.equal(
+    footer.contextDisplay,
+    'none',
+    `${name}: duplicate address and route stay out of view`
+  );
+  const footerBefore = await page.locator('.status-bar').screenshot();
+  await page.evaluate(async () => {
+    const status = document.querySelector('#status');
+    status.setStatus('Fetched and loaded another deck', 'ok');
+    document.querySelector('#route-label').textContent = 'Network — another.example';
+    document.querySelector('#active-url-label').textContent = 'wap://another.example/about';
+    await status.updateComplete;
+  });
+  const footerAfter = await page.locator('.status-bar').screenshot();
+  assert.ok(
+    footerBefore.equals(footerAfter),
+    `${name}: routine navigation must not change the footer`
+  );
   const navigationLayout = await page.evaluate(() => {
     const main = document.querySelector('.browser-main');
     const bar = document.querySelector('#navigation-phase-bar');
