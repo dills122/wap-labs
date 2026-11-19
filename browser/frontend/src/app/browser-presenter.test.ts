@@ -105,6 +105,7 @@ describe('BrowserPresenter', () => {
     const refs = createRefs();
     refs.viewportEl.textContent = 'last committed card';
     const presenter = new BrowserPresenter(refs, initialSession, 20);
+    presenter.setStatus('Ready');
 
     presenter.showNavigationPhase({
       phase: 'connecting',
@@ -113,7 +114,7 @@ describe('BrowserPresenter', () => {
     });
 
     expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
-    expect(presenter.getStatus()).toBe('Connecting');
+    expect(presenter.getStatus()).toBe('Ready');
     expect(refs.navigationPhaseBarEl?.dataset.navigationState).toBe('loading');
     expect(refs.navigationPhaseBarEl?.querySelector('#navigation-phase-label')?.textContent).toBe(
       'Connecting'

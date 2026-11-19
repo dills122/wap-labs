@@ -1781,6 +1781,7 @@ describe('BrowserController behavior coverage', () => {
       );
 
       refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+      const statusBeforeNavigation = refs.statusMessages.at(-1);
       document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
       // Flush the microtask/zero-delay-timer chain up to (but not through)
       // the still-pending fetchDeck call, so beginNavigationProgress() has
@@ -1788,6 +1789,7 @@ describe('BrowserController behavior coverage', () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
+      expect(refs.statusMessages.at(-1)).toBe(statusBeforeNavigation);
       expect(refs.navigationPhaseBarEl?.querySelector('#navigation-phase-label')?.textContent).toBe(
         'Connecting'
       );
