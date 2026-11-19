@@ -297,16 +297,18 @@ const captureDefaultVisual = async (page, name, dimensions) => {
       handsetTop: handset.getBoundingClientRect().top
     });
     const before = measure();
-    bar.dataset.navigationState = 'loading';
+    bar.dataset.navigationState = 'error';
+    bar.querySelector('#navigation-recovery').hidden = false;
     bar.hidden = false;
     const during = measure();
     bar.hidden = true;
+    bar.querySelector('#navigation-recovery').hidden = true;
     return { before, during };
   });
   assert.deepEqual(
     navigationLayout.during,
     navigationLayout.before,
-    `${name}: showing navigation progress must not move the handset`
+    `${name}: showing navigation recovery must not move the handset`
   );
   const handsetScreenshot = `${name}-handset-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });

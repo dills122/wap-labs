@@ -112,7 +112,8 @@ describe('BrowserPresenter', () => {
       requestedUrl: 'wap://example.test/start.wml'
     });
 
-    expect(refs.navigationPhaseBarEl?.hidden).toBe(false);
+    expect(refs.navigationPhaseBarEl?.hidden).toBe(true);
+    expect(presenter.getStatus()).toBe('Connecting');
     expect(refs.navigationPhaseBarEl?.dataset.navigationState).toBe('loading');
     expect(refs.navigationPhaseBarEl?.querySelector('#navigation-phase-label')?.textContent).toBe(
       'Connecting'
