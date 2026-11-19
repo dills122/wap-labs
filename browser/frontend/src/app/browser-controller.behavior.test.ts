@@ -8,6 +8,7 @@ import { BrowserPresenter } from './browser-presenter';
 import { defaultLocalDeckExample } from './local-examples';
 import { fetchOk, frame, renderStub, snapshot } from './navigation-state.test-helpers';
 import { WAVES_COPY } from './waves-copy';
+import * as timelineFileSave from './timeline-file-save';
 
 const flushAsyncWork = async (): Promise<void> => {
   await Promise.resolve();
@@ -272,6 +273,48 @@ const wbxmlDecodeFailureResponse = (url: string): FetchResponse => ({
 });
 
 describe('BrowserController behavior coverage', () => {
+  it('reports a native timeline export only after saving, and not on cancellation', async () => {
+    vi.stubGlobal('isTauri', true);
+    const save = vi
+      .spyOn(timelineFileSave, 'saveTimelineFile')
+      .mockResolvedValueOnce(false)
+      .mockResolvedValueOnce(true);
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const controller = new BrowserController(createHostClient() as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    const exportButton = document.querySelector<HTMLButtonElement>('#btn-export-timeline');
+    exportButton?.click();
+    await flushAsyncWork();
+    expect(save).toHaveBeenCalledOnce();
+    expect(JSON.parse(save.mock.calls[0]?.[0] ?? '{}').schemaVersion).toBe(2);
+    expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.timelineExportCancelled);
+    expect(refs.statusMessages).not.toContain(WAVES_COPY.status.exportedTimeline);
+    exportButton?.click();
+    await flushAsyncWork();
+    expect(save).toHaveBeenCalledTimes(2);
+    expect(refs.statusMessages).toContain(WAVES_COPY.status.exportedTimeline);
+    expect(refs.toastEl.textContent).toBe(WAVES_COPY.status.exportedTimeline);
+    controller.dispose();
+    save.mockRestore();
+  });
+
+  it('reports a failed native timeline write without claiming success', async () => {
+    vi.stubGlobal('isTauri', true);
+    const save = vi
+      .spyOn(timelineFileSave, 'saveTimelineFile')
+      .mockRejectedValue(new Error('Unable to save timeline.'));
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const controller = new BrowserController(createHostClient() as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    document.querySelector<HTMLButtonElement>('#btn-export-timeline')?.click();
+    await flushAsyncWork();
+    expect(refs.statusMessages.at(-1)).toBe(WAVES_COPY.status.error('Unable to save timeline.'));
+    expect(refs.statusMessages).not.toContain(WAVES_COPY.status.exportedTimeline);
+    controller.dispose();
+    save.mockRestore();
+  });
   it('shows network controls after restoring a network GET and local controls after restoring an example', async () => {
     document.body.innerHTML = '<div id="app"></div>';
     const refs = mountBrowserShell('', 'local');

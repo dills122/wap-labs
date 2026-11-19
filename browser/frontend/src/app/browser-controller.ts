@@ -12,6 +12,8 @@ import {
   type EngineRuntimeSnapshot
 } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
+import { isTauri } from '@tauri-apps/api/core';
+import { saveTimelineFile } from './timeline-file-save';
 import { EngineTimerRuntime } from './engine-timer-runtime';
 import { FocusedControlEditController } from './focused-control-edit';
 import {
@@ -702,8 +704,16 @@ export class BrowserController {
     if (this.presenter.timelineLength() === 0) {
       throw new Error(WAVES_COPY.status.noTimelineToExport);
     }
-    this.presenter.exportTimeline();
+    if (isTauri()) {
+      if (!(await saveTimelineFile(this.presenter.serializeTimeline()))) {
+        this.presenter.setStatus(WAVES_COPY.status.timelineExportCancelled);
+        return;
+      }
+    } else {
+      this.presenter.exportTimeline();
+    }
     this.presenter.setStatus(WAVES_COPY.status.exportedTimeline);
+    this.presenter.showToast(WAVES_COPY.status.exportedTimeline, 'ok', WAVES_CONFIG.toastTtlMs);
   };
 
   private readonly handleClearTimelineClick = async (): Promise<void> => {

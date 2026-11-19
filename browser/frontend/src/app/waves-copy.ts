@@ -278,6 +278,7 @@ const locale = {
     snapshotRefreshed: 'Snapshot refreshed.',
     clearedExternalIntent: 'Cleared external navigation intent.',
     noTimelineToExport: 'No timeline events to export yet.',
+    timelineExportCancelled: 'Timeline export cancelled.',
     exportedTimeline: 'Exported timeline JSON.',
     clearedTimeline: 'Cleared event timeline.',
     developerToolsOpened: 'Developer tools opened.',

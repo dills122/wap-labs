@@ -561,13 +561,17 @@ export class BrowserPresenter {
     };
   }
 
-  exportTimeline(): void {
+  serializeTimeline(): string {
     const payload: TimelineExportPayload = buildTimelineExportPayload(
       this.timelineState.entries,
       this.getSessionState()
     );
     validateTimelineExport(payload);
-    const blob = new Blob([JSON.stringify(payload, null, WAVES_CONFIG.timelineExportJsonIndent)], {
+    return JSON.stringify(payload, null, WAVES_CONFIG.timelineExportJsonIndent);
+  }
+
+  exportTimeline(): void {
+    const blob = new Blob([this.serializeTimeline()], {
       type: 'application/json'
     });
     const url = URL.createObjectURL(blob);

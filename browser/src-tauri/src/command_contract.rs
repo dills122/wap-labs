@@ -470,6 +470,8 @@ pub fn render_default_capability() -> String {
     "core:window:allow-maximize",
     "core:window:allow-set-position",
     "core:window:allow-set-size",
+    "dialog:allow-save",
+    "fs:allow-write-text-file",
     "waves-host-commands"
   ]
 }
