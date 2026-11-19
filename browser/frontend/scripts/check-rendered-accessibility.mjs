@@ -288,6 +288,26 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   await page.screenshot({ path: path.join(outputDir, screenshot), fullPage: false });
   await page.locator('#btn-welcome-toggle').click();
   await assertStatusRegionsDoNotOverlap(page, `${name}: handset visual`);
+  const navigationLayout = await page.evaluate(() => {
+    const main = document.querySelector('.browser-main');
+    const bar = document.querySelector('#navigation-phase-bar');
+    const handset = document.querySelector('.handset-housing');
+    const measure = () => ({
+      mainHeight: main.getBoundingClientRect().height,
+      handsetTop: handset.getBoundingClientRect().top
+    });
+    const before = measure();
+    bar.dataset.navigationState = 'loading';
+    bar.hidden = false;
+    const during = measure();
+    bar.hidden = true;
+    return { before, during };
+  });
+  assert.deepEqual(
+    navigationLayout.during,
+    navigationLayout.before,
+    `${name}: showing navigation progress must not move the handset`
+  );
   const handsetScreenshot = `${name}-handset-window-100-percent.png`;
   await page.screenshot({ path: path.join(outputDir, handsetScreenshot), fullPage: false });
   await page.locator('#btn-inspector').click();

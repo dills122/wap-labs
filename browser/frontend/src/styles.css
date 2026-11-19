@@ -1051,6 +1051,7 @@ pre {
 }
 
 .status-bar {
+  position: relative;
   display: grid;
   min-width: 0;
   min-height: 48px;
@@ -1167,7 +1168,10 @@ pre {
 }
 
 .phase-bar-slot {
-  flex: 0 0 auto;
+  position: absolute;
+  z-index: var(--z-raised);
+  inset-inline: 0;
+  inset-block-end: 100%;
   padding: var(--space-xs) var(--space-md);
   border-top: var(--rule-hair) solid var(--host-border);
   background: var(--color-surface);

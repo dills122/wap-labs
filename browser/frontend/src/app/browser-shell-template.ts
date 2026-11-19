@@ -6,7 +6,6 @@ import { WAVES_CONFIG } from './waves-config';
 import { bindDeveloperToolsWorkspace } from './developer-tools-workspace';
 import { handsetStageTemplate } from './shell/handset-stage-template';
 import { navigationToolbarTemplate } from './shell/navigation-toolbar-template';
-import { navigationPhaseBarTemplate } from './shell/navigation-phase-bar-template';
 import { statusBarTemplate } from './shell/status-bar-template';
 import { utilityRailTemplate } from './shell/utility-rail-template';
 import { ensureCanvasViewportElements } from './canvas-viewport-renderer';
@@ -40,8 +39,6 @@ const browserShellTemplate = () => `
     ${applicationSurfacesTemplate()}
 
     ${sessionRecoveryTemplate()}
-
-    ${navigationPhaseBarTemplate()}
 
     ${statusBarTemplate()}
 
