@@ -1253,7 +1253,8 @@ pre {
 }
 
 .phase-bar-actions {
-  flex: 0 0 auto;
+  max-width: 100%;
+  flex: 0 1 auto;
   flex-wrap: wrap;
 }
 

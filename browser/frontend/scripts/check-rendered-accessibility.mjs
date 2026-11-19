@@ -379,7 +379,47 @@ const captureDefaultVisual = async (page, name, dimensions) => {
   };
 };
 
+const assertRecoveryActionsVisible = async (page, name) => {
+  const recoveryLayout = await page.evaluate(() => {
+    const bar = document.querySelector('#navigation-phase-bar');
+    const recovery = document.querySelector('#navigation-recovery');
+    bar.hidden = false;
+    bar.dataset.navigationState = 'error';
+    recovery.hidden = false;
+    document.querySelector('#navigation-error-title').textContent = 'gateway · GATEWAY_TIMEOUT';
+    document.querySelector('#navigation-error-message').textContent = 'Navigation failed';
+    const buttons = [...recovery.querySelectorAll('button')].map((button) => {
+      const rect = button.getBoundingClientRect();
+      return {
+        id: button.id,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom
+      };
+    });
+    bar.hidden = true;
+    recovery.hidden = true;
+    return { buttons, width: innerWidth, height: innerHeight };
+  });
+  for (const button of recoveryLayout.buttons) {
+    assert.ok(
+      button.right > button.left && button.bottom > button.top,
+      `${name}: recovery action ${button.id} is displayed`
+    );
+    assert.ok(
+      button.left >= 0 && button.right <= recoveryLayout.width,
+      `${name}: recovery action ${button.id} stays within the window`
+    );
+    assert.ok(
+      button.top >= 0 && button.bottom <= recoveryLayout.height,
+      `${name}: recovery action ${button.id} remains vertically visible`
+    );
+  }
+};
+
 const captureResponsiveVisual = async (page, width) => {
+  await assertRecoveryActionsVisible(page, `${width}px`);
   const layout = await page.evaluate(() => {
     const clickableText = [...document.querySelectorAll('button, summary, .btn')]
       .filter((element) => {
@@ -477,6 +517,7 @@ const resolveBaseRevision = async () => {
 };
 
 const auditRenderedPage = async (page, name, windowEvidence) => {
+  await assertRecoveryActionsVisible(page, `${name} at 200%`);
   await page.addScriptTag({ content: axe.source });
   const axeResults = await page.evaluate(async () => window.axe.run(document));
   const violations = axeResults.violations.map((violation) => ({
