@@ -121,3 +121,45 @@ New entries should include:
 - the reason the behavior is intended;
 - its boundaries, including linked bugs for incorrect adjacent behavior; and
 - direct specification, contract, implementation, and test evidence.
+
+## IB-003: Explicit anchors activate their bound WML tasks
+
+An explicit WML anchor presents one link focus target. Enter, frame-bound
+activation, and a click on any visible part of that anchor invoke the same
+bound task. The engine keeps task semantics and request data at the runtime
+boundary. A default Go without assignments shares the shorthand link path;
+explicit task arguments and variable assignments use the existing task
+executor. Prev traverses the engine's card history, and Refresh updates
+variables, controls, and timers in the current card.
+
+Explicit breaks inside an anchor split the label into rows that share one
+focus and hit target. A label that resolves to empty text displays its
+destination or task fallback so the target remains visible and clickable.
+A host activates the frame action ID. The legacy
+render-list href is presentation metadata and can be an opaque task marker
+for Prev and Refresh.
+
+The native fixture and the WASM parity test cover task activation,
+card and history transitions, state, and frame input. The canonical
+`wml-201-anchor-tasks` example verifies same-deck activation in Waves local
+mode with `pnpm test:story WML-201`.
+
+### Host history follow-up
+
+A Prev anchor currently executes against the engine's same-deck card
+stack. When the prior entry is owned by the transport host, inline
+activation has no typed outcome that the host can use to restore that
+entry. In transported mode, the host mirror also needs to pop its entry
+when the engine handles an inline Prev within one deck. The local story
+verifies the resulting card and task trace. Its session has no host history
+mirror, and local Back availability can remain latched until Back is
+attempted.
+
+The follow-up should define a typed Prev outcome and one-time restoration
+handoff. Cross-deck restoration must retain evaluated `setvar` assignments
+until the destination is resolved, apply them before backward-entry
+processing, and discard them on cancellation or rollback. Verify same-deck
+mirror reconciliation, cross-deck replay, and failed restoration through
+the native and WASM hosts. Keep `WML-CL-ANCHOR-ACTIVATION` and parent
+`WML-C-20` open for this boundary. Access-key assignment remains an
+unassessed optional capability.

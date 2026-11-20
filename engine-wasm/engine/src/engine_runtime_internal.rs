@@ -1,3 +1,4 @@
+use crate::runtime::card::{link_label_fallback, CardGoRequest};
 use crate::runtime::node::{InlineNode, Node};
 use crate::runtime::variable::{
     checked_insert as checked_insert_var, evaluate as evaluate_variable, SubstitutionContext,
@@ -242,11 +243,11 @@ impl WmlEngine {
 
     pub(crate) fn handle_key_internal(&mut self, key: &str) -> Result<(), String> {
         self.push_trace("KEY", format!("key={key}"));
-        let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
-            .map_err(|error| error.to_string())?;
+        // Use authored targets for dispatch. Labels and viewport wrapping are
+        // presentation concerns, and authored hrefs must be evaluated once.
+        let targets: Vec<_> = FocusTarget::in_card(self.active_card_internal()?).collect();
         let accept_action = self.active_do_action_internal("accept")?;
-        let target_total = layout.focus_targets.len();
+        let target_total = targets.len();
         self.focused_link_idx = clamp_focus(self.focused_link_idx, target_total);
 
         match key {
@@ -288,8 +289,7 @@ impl WmlEngine {
                     }
                     return Ok(());
                 }
-                let target = layout
-                    .focus_targets
+                let target = targets
                     .get(self.focused_link_idx)
                     .ok_or_else(|| "Focused target index out of range".to_string())?;
                 match target {
@@ -327,6 +327,20 @@ impl WmlEngine {
                             self.begin_focused_select_edit_internal()?;
                         }
                         return Ok(());
+                    }
+                    FocusTarget::Anchor(action) => {
+                        self.cancel_active_input_edit_with_debug();
+                        self.active_select_edit = None;
+                        // A plain Go uses the exact shorthand link dispatch, including
+                        // its script extension and request defaults.
+                        match action {
+                            CardTaskAction::Go { href, request }
+                                if *request == CardGoRequest::default() =>
+                            {
+                                self.execute_action_href(href)?;
+                            }
+                            _ => self.execute_card_task_action(action)?,
+                        }
                     }
                     FocusTarget::Link(href) => {
                         self.cancel_active_input_edit_with_debug();
@@ -536,31 +550,23 @@ impl WmlEngine {
         Ok(true)
     }
 
+    fn focused_target_internal(&self) -> Result<Option<FocusTarget>, String> {
+        let targets: Vec<_> = FocusTarget::in_card(self.active_card_internal()?).collect();
+        let focus = clamp_focus(self.focused_link_idx, targets.len());
+        Ok(targets.into_iter().nth(focus))
+    }
+
     fn focused_input_internal(&self) -> Result<Option<(String, String)>, String> {
-        let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
-            .map_err(|error| error.to_string())?;
-        let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
-        let Some(target) = layout.focus_targets.get(focused_idx) else {
-            return Ok(None);
-        };
-        match target {
-            FocusTarget::Input { control_id, name } => Ok(Some((control_id.clone(), name.clone()))),
-            FocusTarget::Select(_) | FocusTarget::Link(_) => Ok(None),
+        match self.focused_target_internal()? {
+            Some(FocusTarget::Input { control_id, name }) => Ok(Some((control_id, name))),
+            _ => Ok(None),
         }
     }
 
     fn focused_select_name_internal(&self) -> Result<Option<String>, String> {
-        let card = self.active_card_internal()?;
-        let layout = layout_card(card, self.viewport_cols, self.focused_link_idx)
-            .map_err(|error| error.to_string())?;
-        let focused_idx = clamp_focus(self.focused_link_idx, layout.focus_targets.len());
-        let Some(target) = layout.focus_targets.get(focused_idx) else {
-            return Ok(None);
-        };
-        match target {
-            FocusTarget::Select(name) => Ok(Some(name.clone())),
-            FocusTarget::Input { .. } | FocusTarget::Link(_) => Ok(None),
+        match self.focused_target_internal()? {
+            Some(FocusTarget::Select(name)) => Ok(Some(name)),
+            _ => Ok(None),
         }
     }
 
@@ -756,6 +762,30 @@ fn substitute_card_text_and_links(
                 InlineNode::Link { text, href } => {
                     *text = evaluate_vdata(text, vars)?;
                     *href = evaluate_href(href, vars)?;
+                    if text.trim().is_empty() {
+                        *text = link_label_fallback(href).to_string();
+                    }
+                }
+                InlineNode::Anchor {
+                    label_lines,
+                    action,
+                } => {
+                    for text in &mut *label_lines {
+                        *text = evaluate_vdata(text, vars)?;
+                    }
+                    let base = match &mut *action {
+                        CardTaskAction::WithSetVars { action, .. } => action.as_mut(),
+                        action => action,
+                    };
+                    if let CardTaskAction::Go { href, .. } = base {
+                        *href = evaluate_href(href, vars)?;
+                    }
+                    if label_lines.iter().all(|text| text.trim().is_empty()) {
+                        let fallback = action.anchor_label_fallback().unwrap_or("Open");
+                        if let Some(first) = label_lines.first_mut() {
+                            *first = fallback.to_string();
+                        }
+                    }
                 }
                 InlineNode::Select { title, options, .. } => {
                     if let Some(title) = title {

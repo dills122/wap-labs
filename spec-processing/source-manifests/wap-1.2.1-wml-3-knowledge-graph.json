@@ -25,13 +25,13 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "57ab2ba3d979d0b6f162a288f0d0cdb0acc5a0ca11ef1d6ca16e270f9ba2c5fb"
+        "sha256": "a28841c2647229aae4f90e94152ed565b66e6619d8412ab940f3022445648d04"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "f552c75c142727e15d8fee2bca15557f98c32bbf42210d0cc686a459e3693356"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "6dfb524065fdf987a24072f6f6ac8a16c97359a7bb1220e0a4ea3dbed67553ee"
+        "sha256": "fdcbf7fb38fee54b656a6059fd65346e861252add4fc0277ea0b847f3a8cb1c1"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."

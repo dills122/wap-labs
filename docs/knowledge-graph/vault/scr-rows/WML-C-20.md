@@ -49,7 +49,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "missing",
   "evidenceState": "gap-work-item-mapped",
-  "assessmentNote": "The anchor element and its nested task/setvar model are not represented.",
+  "assessmentNote": "The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.",
   "implementationEvidence": [],
   "testEvidence": [],
   "ownerLayers": [
