@@ -1,7 +1,7 @@
 # WAP 1.2.1 WMLScript Libraries SCR Ledger
 
 Version: v0.2
-Status: effective SCR extracted; Class C applied; 211 nested clauses planned
+Status: effective SCR extracted, Class C applied, 211 nested clauses mapped
 
 ## Purpose
 
@@ -87,15 +87,17 @@ WMLS-501 B1 verifier tranche now gives the seven identifier-capability rows
 direct source-pinned evidence: strict bytecode accepts exactly library IDs
 `0..5`, the Appendix A function-ID domains, and their declared arities before
 execution. All 80 selected rows remain mapped to 211 required, deduplicated
-normative clauses.
+normative clauses. WMLS-504 adds direct execution evidence for the six signature and
+behavior clauses for `Lang.abs`, `Lang.min`, and `Lang.max`. The parent audit still
+retains its separate assessment status.
 
 The principal missing areas are:
 
-- Lang library and all 15 function rows;
+- Lang library closure and its remaining function behaviors;
 - Float library and all required function rows;
 - String library and all 16 function rows;
 - URL library and all 14 function rows;
-- execution behavior behind the now-verified standard-library and function IDs;
+- execution behavior for the other verified standard-library function IDs;
 - `WMLBrowser.refresh`;
 - complete Dialogs host/UI result integration.
 

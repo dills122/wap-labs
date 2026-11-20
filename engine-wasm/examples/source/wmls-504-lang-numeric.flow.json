@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "example": "wmls504LangNumeric",
+  "flows": [
+    {
+      "id": "lang-numeric-script-and-navigation",
+      "title": "A verified numeric Lang script runs and navigation continues",
+      "workItems": ["WMLS-504"],
+      "specItems": ["RQ-WMLS-013"],
+      "initial": {
+        "state": {
+          "activeCardId": "home",
+          "focusedLinkIndex": 0,
+          "lastScriptExecutionOk": null,
+          "lastScriptExecutionTrap": null
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": {
+              "activeCardId": "home",
+              "lastScriptExecutionOk": true,
+              "lastScriptExecutionTrap": null
+            },
+            "traceKinds": ["ACTION_SCRIPT", "SCRIPT_OK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "done" },
+            "traceKinds": ["ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

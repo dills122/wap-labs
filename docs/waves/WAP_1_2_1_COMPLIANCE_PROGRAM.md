@@ -198,7 +198,7 @@ closes `SRC-004` without changing the redistribution boundary.
 
 After the merged WSP-805 request work, WML-306 policy closure, WML-309 frame-contract closure, and
 additive WMLS-501 verifier tranche and WML-307 charset fixture tranche, the canonical program records
-32 work items `done`, 11 `in-progress`, 39 `todo`, and one `blocked`, with 49/198 selected parents implemented and 374/762
+32 work items `done`, 11 `in-progress`, 39 `todo`, and one `blocked`, with 49/198 selected parents implemented and 380/762
 clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.

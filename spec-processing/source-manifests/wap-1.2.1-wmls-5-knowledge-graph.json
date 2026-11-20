@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "9406fac9ee3acae55b013ee061c1ec8812afc41c7eba0704a4676b8c87987525"
+        "sha256": "b3ac5104b5fe91480c0ef6af977585fad40ea45eb57f70b0955391cad9d6dd9d"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "57ab2ba3d979d0b6f162a288f0d0cdb0acc5a0ca11ef1d6ca16e270f9ba2c5fb"
+        "sha256": "58fdb1880177e85d1a60664ef606a75c4dd50279c11b62aa0f4c755712a1dd49"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "f552c75c142727e15d8fee2bca15557f98c32bbf42210d0cc686a459e3693356"
@@ -6206,7 +6206,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6240,7 +6240,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6755,7 +6755,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6857,7 +6857,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6891,7 +6891,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -6993,7 +6993,7 @@
         "requirementIds": [
           "RQ-WMLS-013"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14216,7 +14216,7 @@
       "title": "Return the absolute magnitude while preserving whether the input was Integer or Float.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Return the absolute magnitude while preserving whether the input was Integer or Float.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14228,7 +14228,7 @@
       "title": "Implement Lang.abs(value) for a Number argument, returning Number or invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement Lang.abs(value) for a Number argument, returning Number or invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14408,7 +14408,7 @@
       "title": "Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14444,7 +14444,7 @@
       "title": "Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14456,7 +14456,7 @@
       "title": "Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -14492,7 +14492,7 @@
       "title": "Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid.",
       "properties": {
         "kind": "runtime",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -21247,7 +21247,7 @@
         "notes": [
           "The bounded floating-capable language executor directly implements 44 clauses; three additional clauses retain completed WMLS-501 verifier evidence, for 47 implemented of 59 clauses directly mapped to WMLS-502. The work item remains in progress rather than overstating closure of its broader parent mappings.",
           "The 32 selected parent rows remain partial or missing in the machine ledger. This work item does not claim that all 41 selected WMLScript language parents or the WMLS-5 sprint are complete.",
-          "WMLS-503 URL/access execution, WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
+          "WMLS-503 URL/access execution, the rest of WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
         ],
         "existingTickets": [
           "W1-04"
@@ -21314,6 +21314,9 @@
         "sourceFamilies": [
           "wmlscript-libraries"
         ],
+        "notes": [
+          "The verified WAP-193 executor dispatches WAP-194 Lang.abs, Lang.min, and Lang.max with six direct signature and behavior clauses covered. The first argument wins ties after numeric promotion and the selected Number keeps its type. This is a bounded slice of the Lang library."
+        ],
         "existingTickets": [
           "W1-05"
         ],
@@ -21327,7 +21330,10 @@
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
           "node scripts/check-wap-conformance-ledger.mjs",
-          "node scripts/check-wap-wmlscript-conformance-ledger.mjs"
+          "node scripts/check-wap-wmlscript-conformance-ledger.mjs",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+          "pnpm test:story WMLS-504"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }

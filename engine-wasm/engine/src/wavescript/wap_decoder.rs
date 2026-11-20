@@ -923,7 +923,7 @@ const fn terminating_library_function(argument_count: usize) -> StandardLibraryF
 
 // WAP-194 Appendix A fixes library IDs 0..=5 and the per-library function
 // domains. Argument counts come from the corresponding function signatures.
-// This is verifier metadata only; execution remains in the WMLS-502/504 lanes.
+// The verifier validates every reference before the runtime dispatches supported functions.
 const LANG_LIBRARY: &[StandardLibraryFunction] = &[
     library_function(1),
     library_function(2),
@@ -1232,7 +1232,7 @@ fn instruction_stack_effect(
     }
 }
 
-fn library_call_indexes(instruction: &WapInstruction) -> (usize, usize) {
+pub(super) fn library_call_indexes(instruction: &WapInstruction) -> (usize, usize) {
     match instruction.opcode {
         0x68..=0x6f => (
             usize::from(instruction.operands[0]),

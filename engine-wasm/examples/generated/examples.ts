@@ -6389,6 +6389,88 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>WMLBrowser var/nav subset demo. <a href=\"script:wmlbrowser-demo.wmlsc#main\">Script setVar + go</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Navigation came from script go(). <a href=\"script:wmlbrowser-demo.wmlsc#back\">Script prev</a></p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wmls504LangNumeric",
+    "label": "WMLScript Lang Numeric Calls",
+    "description": "Runs a verified WAP-193 unit that calls Lang.abs, Lang.min, and Lang.max.",
+    "goal": "Execute a numeric Lang library fixture from a deck and continue navigating.",
+    "workItems": [
+      "WMLS-504"
+    ],
+    "specItems": [
+      "RQ-WMLS-013"
+    ],
+    "testingAc": [
+      "Activate Run Lang numeric calls. The runtime reports successful execution and stays on the home card.",
+      "Activate Continue. The active card becomes done."
+    ],
+    "flows": [
+      {
+        "id": "lang-numeric-script-and-navigation",
+        "title": "A verified numeric Lang script runs and navigation continues",
+        "target": "host-sample",
+        "workItems": [
+          "WMLS-504"
+        ],
+        "specItems": [
+          "RQ-WMLS-013"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "home",
+            "focusedLinkIndex": 0,
+            "lastScriptExecutionOk": null,
+            "lastScriptExecutionTrap": null
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "home",
+                "lastScriptExecutionOk": true,
+                "lastScriptExecutionTrap": null
+              },
+              "traceKinds": [
+                "ACTION_SCRIPT",
+                "SCRIPT_OK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "done"
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      <a href=\"script:wap-193-lang-numeric.wmlsc#main\">Run Lang numeric calls</a>\n      <br/>\n      <a href=\"#done\">Continue</a>\n    </p>\n  </card>\n  <card id=\"done\">\n    <p>Navigation continued.</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wrapStress",
     "label": "Long Token Wrap",
     "description": "Long unbroken token fixture for deterministic wrapping checks.",

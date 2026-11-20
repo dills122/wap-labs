@@ -564,6 +564,19 @@ const wmls502TestPath =
   'engine-wasm/engine/src/wavescript/wap_runtime.rs';
 const wmls502Command =
   'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime';
+const wmls504LangNumericClauseIds = new Set([
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-SIGNATURE'
+]);
+const wmls504LangNumericEvidence = {
+  path: 'engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex',
+  testPath: 'engine-wasm/engine/src/wavescript/wap_runtime.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504'
+};
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -1031,7 +1044,8 @@ for (const family of ledger.families ?? []) {
         implementedWsp801ClauseIds.has(candidate.id) ||
         implementedWsp802ClauseIds.has(candidate.id) ||
         wmls501ClauseIds.has(candidate.id) ||
-        implementedWmls502ClauseIds.has(candidate.id));
+        implementedWmls502ClauseIds.has(candidate.id) ||
+        wmls504LangNumericClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -1146,7 +1160,14 @@ for (const family of ledger.families ?? []) {
           candidate.fixturePlan.evidence?.testPath !== wmls502TestPath ||
           !fs.existsSync(path.join(root, wmls502FixturePath)) ||
           !fs.existsSync(path.join(root, wmls502TestPath)) ||
-          candidate.fixturePlan.evidence?.command !== wmls502Command))
+          candidate.fixturePlan.evidence?.command !== wmls502Command)) ||
+      (wmls504LangNumericClauseIds.has(candidate.id) &&
+        (candidate.fixturePlan.status !== 'implemented' ||
+          candidate.fixturePlan.evidence?.path !== wmls504LangNumericEvidence.path ||
+          candidate.fixturePlan.evidence?.testPath !== wmls504LangNumericEvidence.testPath ||
+          !fs.existsSync(path.join(root, wmls504LangNumericEvidence.path)) ||
+          !fs.existsSync(path.join(root, wmls504LangNumericEvidence.testPath)) ||
+          candidate.fixturePlan.evidence?.command !== wmls504LangNumericEvidence.command))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }

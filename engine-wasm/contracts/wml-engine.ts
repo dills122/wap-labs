@@ -262,6 +262,7 @@ export interface WmlEngineCommon {
   ): ScriptInvocationOutcome;
   executeScriptRef(src: string): ScriptExecutionOutcome;
   executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  /** Verified WAP-193 Lang.abs, Lang.min and Lang.max return invalid for numeric errors. */
   executeScriptRefCall(
     src: string,
     functionName: string,
