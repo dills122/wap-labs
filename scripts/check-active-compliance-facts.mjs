@@ -112,6 +112,27 @@ const wmlSelectedStatusCounts = (wmlFamily?.parents ?? []).reduce(
   },
   { implemented: 0, partial: 0, missing: 0 }
 );
+const librariesFamily = clauses.families.find((family) => family.family === 'wmlscript-libraries');
+const scriptFamily = clauses.families.find((family) => family.family === 'wmlscript');
+function selectedLedgerRows(family) {
+  return readJson(family.parentLedger).obligations.filter(
+    (row) => row.disposition?.classCProfile === family.selectedDisposition
+  );
+}
+const libraryRows = selectedLedgerRows(librariesFamily);
+const libraryStatuses = libraryRows.reduce(
+  (counts, row) => {
+    counts[row.mapping.implementationStatus] += 1;
+    return counts;
+  },
+  { implemented: 0, partial: 0, missing: 0 }
+);
+const libraryDirectTests = libraryRows.filter(
+  (row) => row.mapping.evidenceState === 'direct-test-linked'
+).length;
+const scriptDirectTests = selectedLedgerRows(scriptFamily).filter(
+  (row) => row.mapping.evidenceState === 'direct-test-linked'
+).length;
 const graphMappedClauseCount = wmlGraph.nodes.filter((node) => node.type === 'clause').length;
 const wml201Clauses = wmlGraph.nodes.filter(
   (node) => node.type === 'clause' && node.properties.workItems?.includes('WML-201')
@@ -194,7 +215,11 @@ const activeRollupFragments = new Map([
   [
     'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
     [
-      `implementation audit: ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, ${parentStatusCounts.missing} missing`
+      `implementation audit: ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, ${parentStatusCounts.missing} missing`,
+      `selected audit: ${libraryStatuses.implemented} implemented, ${libraryStatuses.partial} partial, ${libraryStatuses.missing} missing`,
+      `direct structural test evidence: ${scriptDirectTests + libraryDirectTests}/${scriptFamily.selectedParentCount + librariesFamily.selectedParentCount} selected rows, including ${libraryDirectTests} library`,
+      'identifier/verifier rows; this does not establish standard-library execution',
+      `${wmlEvidenceStateCounts['direct-test-linked']} code/test-linked, ${wmlEvidenceStateCounts['gap-work-item-mapped']} mapped gaps, and ${wmlEvidenceStateCounts['optional-not-assessed']} optional rows not assessed`
     ]
   ],
   [
@@ -221,8 +246,18 @@ const activeRollupFragments = new Map([
     [
       `selected implementation audit is ${parentStatusCounts.implemented} implemented, ${parentStatusCounts.partial} partial, and ${parentStatusCounts.missing} missing`,
       `selected 39-row client subset is ${wmlSelectedStatusCounts.implemented} implemented, ${wmlSelectedStatusCounts.partial} partial, and ${wmlSelectedStatusCounts.missing} missing`,
+      `selected libraries audit is ${libraryStatuses.implemented} implemented, ${libraryStatuses.partial} partial, and ${libraryStatuses.missing} missing, with direct normative identifier/verifier tests linked to ${libraryDirectTests} rows`,
+      'Those tests do not establish standard-library execution behavior',
       `selected connectionless transport path resolves to 19 rows`,
       `selected transport audit is 19 implemented, 0 partial, and 0 missing`
+    ]
+  ],
+  [
+    'docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md',
+    [
+      `assessed as ${wmlSelectedStatusCounts.implemented} implemented / ${wmlSelectedStatusCounts.partial} partial / ${wmlSelectedStatusCounts.missing} missing`,
+      `${wmlEvidenceStateCounts['direct-test-linked']} direct-test-linked rows, ${wmlEvidenceStateCounts['gap-work-item-mapped']} mapped gaps, and ${wmlEvidenceStateCounts['optional-not-assessed']} optional unassessed rows`,
+      `Exact direct tests are linked for ${wmlEvidenceStateCounts['direct-test-linked']} rows; ${wmlEvidenceStateCounts['gap-work-item-mapped']} rows are explicitly missing`
     ]
   ]
 ]);

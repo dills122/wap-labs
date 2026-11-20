@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { summarizeFamilyEvidence } from '../src/lib/family-evidence.mjs';
 
 import {
   AtlasDataValidationError,
@@ -21,6 +22,32 @@ function assertValidationFailure(data, pattern) {
     (error) => error instanceof AtlasDataValidationError && pattern.test(error.message)
   );
 }
+
+test('family evidence counts selected parents and clauses without including optional capabilities', () => {
+  const wml = baseline().clauseManifest.families.find((family) => family.family === 'wml');
+  const summary = summarizeFamilyEvidence(wml);
+  assert.equal(
+    Object.values(summary.parents).reduce((a, b) => a + b, 0),
+    wml.selectedParentCount
+  );
+  assert.equal(summary.clauses.assessed + summary.clauses.notAssessed, wml.clauseCount);
+  assert.equal(summarizeFamilyEvidence(undefined), null);
+  assert.deepEqual(
+    summarizeFamilyEvidence({
+      parents: [{ implementationStatus: 'implemented' }, { implementationStatus: 'partial' }],
+      clauses: [
+        { mapping: { clauseImplementationStatus: 'implemented' } },
+        { mapping: { clauseImplementationStatus: 'not-assessed' } }
+      ],
+      capabilityParents: [{ implementationStatus: 'missing' }],
+      capabilityClauses: [{ mapping: { clauseImplementationStatus: 'not-assessed' } }]
+    }),
+    {
+      parents: { implemented: 1, partial: 1, missing: 0 },
+      clauses: { assessed: 1, notAssessed: 1 }
+    }
+  );
+});
 
 test('current Atlas inputs pass schema, reference, and ordering validation', () => {
   const atlas = validateAtlasData(baseline());
@@ -62,9 +89,9 @@ test('unknown selected-clause capability categories fail schema validation', () 
   );
 
   const unknownClause = clone(baseline());
-  const clause = unknownClause.clauseManifest.families
-    .find((candidate) => candidate.capabilityClauses?.length)
-    .capabilityClauses[0];
+  const clause = unknownClause.clauseManifest.families.find(
+    (candidate) => candidate.capabilityClauses?.length
+  ).capabilityClauses[0];
   clause.profileApplicability = 'unknown-capability-category';
   assertValidationFailure(
     unknownClause,
@@ -79,10 +106,7 @@ test('known clause capability category must equal its family disposition', () =>
   );
   family.capabilityClauses[0].profileApplicability = 'capability-gated-non-ip-bearer';
 
-  assertValidationFailure(
-    data,
-    /profileApplicability does not match capabilityDisposition/
-  );
+  assertValidationFailure(data, /profileApplicability does not match capabilityDisposition/);
 });
 
 test('unknown compliance-program schema versions fail before portal assembly', () => {

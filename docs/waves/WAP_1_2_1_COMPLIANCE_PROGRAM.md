@@ -88,8 +88,9 @@ All nine selected Class C family increments are complete at SCR level:
   with 105 required and two recommended behaviors;
 - 95 effective WMLScript Libraries rows are extracted after adding optional
   `WMLSSL-C-095`; `WMLScriptLibs:MCF` selects 80 mandatory interpreter rows;
-- the selected libraries audit is 0 implemented, 14 partial, and 66 missing,
-  with zero direct normative library tests;
+- the selected libraries audit is 0 implemented, 21 partial, and 59 missing,
+  with direct normative identifier/verifier tests linked to 7 rows. Those tests do
+  not establish standard-library execution behavior;
 - all 80 selected WMLScript Libraries rows expand into 211 required anchored
   clauses covering shared rules, identifiers, signatures, outcomes, errors,
   and host-visible effects;

@@ -138,6 +138,10 @@ interface ClauseManifest {
     status: string;
     selectedParentCount: number;
     clauseCount: number;
+    parents: Array<{ implementationStatus: 'implemented' | 'partial' | 'missing' }>;
+    clauses: Array<{
+      mapping: { clauseImplementationStatus: 'implemented' | 'not-assessed' };
+    }>;
   }>;
 }
 
@@ -219,11 +223,7 @@ export function docTitle(body: string | undefined, id: string): string {
     heading
       ?.replace(/\[(.+?)\]\(.+?\)/g, '$1')
       .replace(/[*_`]/g, '')
-      .trim() ??
-    id
-      .split('/')
-      .at(-1)!
-      .replace(/[-_]/g, ' ')
+      .trim() ?? id.split('/').at(-1)!.replace(/[-_]/g, ' ')
   );
 }
 
