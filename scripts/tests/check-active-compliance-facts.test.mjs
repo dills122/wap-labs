@@ -35,6 +35,7 @@ function createFixture() {
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
     'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
+    'docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md',
     'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md',
     ...(clauses.families ?? []).map((family) => family.parentLedger)
   ]);
@@ -127,4 +128,49 @@ test('active rollup guard rejects stale WML evidence-state counts', (context) =>
   const stale = runCheck(fixtureRoot);
   assert.notEqual(stale.status, 0);
   assert.match(stale.stderr, /WAP_1_2_1_WML_SCR_LEDGER\.md: missing or stale derived rollup/);
+});
+
+test('active rollup guard rejects stale library and WML claims in published documents', (context) => {
+  const { fixtureRoot } = createFixture();
+  context.after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
+  for (const [relativePath, current, stale] of [
+    [
+      'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
+      '21 partial, and 59 missing',
+      '14 partial, and 66 missing'
+    ],
+    [
+      'docs/waves/WAP_1_2_1_COMPLIANCE_PROGRAM.md',
+      'tests linked to 7 rows',
+      'tests linked to 0 rows'
+    ],
+    [
+      'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
+      '0 implemented, 21 partial, 59 missing',
+      '0 implemented, 14 partial, 66 missing'
+    ],
+    [
+      'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
+      '29/121 selected rows, including 7 library',
+      '21/121 selected rows, including 0 library'
+    ],
+    [
+      'docs/waves/SPEC_COVERAGE_DASHBOARD.md',
+      '34 code/test-linked, 14 mapped gaps',
+      '32 code/test-linked, 15 mapped gaps'
+    ],
+    [
+      'docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md',
+      '23 implemented / 10 partial / 6 missing',
+      '19 implemented / 14 partial / 6 missing'
+    ]
+  ]) {
+    const file = join(fixtureRoot, relativePath);
+    const original = readFileSync(file, 'utf8');
+    assert.ok(original.includes(current), `${relativePath} contains current claim`);
+    writeFileSync(file, original.replace(current, stale));
+    const result = runCheck(fixtureRoot);
+    assert.notEqual(result.status, 0, `${relativePath} rejects stale claim`);
+    writeFileSync(file, original);
+  }
 });

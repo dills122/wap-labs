@@ -44,8 +44,8 @@ Status: Active
   - `spec-processing/source-manifests/wap-1.2.1-wml-scr.json`
   - exact 76-row actor sequence: 39 required Class C client rows, 27 optional
     client rows, and 10 server/encoder rows outside the client profile
-  - direct evidence states: 32 code/test-linked, 15 mapped mandatory gaps,
-    and 29 optional rows not assessed
+  - direct evidence states: 34 code/test-linked, 14 mapped gaps,
+    and 28 optional rows not assessed
   - WML-201 directly maps all 76 SCR rows and all 175 selected WML clauses;
     its declared WML-family graph gap is closed without changing row status
 - WBXML ledger:
@@ -84,8 +84,9 @@ Status: Active
   - selected audit: 0 implemented, 32 partial, 9 missing
   - `spec-processing/source-manifests/wap-1.2.1-wmlscript-libraries-scr.json`
   - 95 rows and 80 selected Class C interpreter rows
-  - selected audit: 0 implemented, 14 partial, 66 missing
-  - direct structural test evidence: 21/121 selected rows
+  - selected audit: 0 implemented, 21 partial, 59 missing
+  - direct structural test evidence: 29/121 selected rows, including 7 library
+    identifier/verifier rows; this does not establish standard-library execution
 
 3. WAE user-agent behavior and media framework
 - Doc: `docs/waves/WAE_SPEC_TRACEABILITY.md`
