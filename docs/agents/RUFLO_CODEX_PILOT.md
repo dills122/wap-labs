@@ -36,6 +36,73 @@ idempotence without network access. `node --test scripts/ruflo/bounded-mcp.test.
 normal framing, limits, malformed input, and child shutdown. These tests do not establish safety for
 arbitrary Ruflo features, CLI commands, or parallel writers.
 
+## Supervised compliance loop
+
+Use this local runner with Ruflo installed by the bootstrap above. Start from a
+clean feature branch in a linked Git worktree. From a checkout containing the
+runner, create a trusted local JSON packet with the focused work item, its
+directly mapped open clauses, a bounded objective, and the exact paths the
+writer may edit. Include at least one source-derived acceptance check.
+
+```json
+{
+  "workItem": "WML-201",
+  "clauses": ["WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT"],
+  "objective": "Add a WML 1.3 fixture named wml_fx_paragraph_alignment_default that compares unspecified paragraph alignment with explicit left alignment.",
+  "paths": ["engine-wasm/engine/src/layout/flow_layout.rs"],
+  "checks": [
+    ["cargo", "test", "--offline", "--manifest-path", "engine-wasm/engine/Cargo.toml", "wml_fx_paragraph_alignment_default"]
+  ],
+  "timeoutSeconds": 180
+}
+```
+
+The packet's checks are argument arrays executed locally. Review them as you
+would any command you run in the repository. Confirm that filtered test
+commands actually ran the intended test when inspecting the evidence. For
+host-visible changes include the appropriate native, WASM, and executable story
+checks in the packet.
+
+```sh
+python3 scripts/ruflo/compliance_loop.py claim /path/to/packet.json --worktree /path/to/linked-worktree
+python3 scripts/ruflo/compliance_loop.py work
+python3 scripts/ruflo/compliance_loop.py status
+```
+
+A failed or timed-out writer can leave a scoped checkpoint. Use `resume` on
+that exact checkpoint. The runner checks the branch head and content digest
+before starting a fresh writer. Inspect a complete candidate and create one
+local commit directly on the pinned base. Run `verify` from the runner
+checkout. Verification checks the candidate content, reruns the packet checks
+and the full compliance gate, and requests a fresh read-only Ruflo review of
+that commit.
+
+```sh
+python3 scripts/ruflo/compliance_loop.py verify
+python3 scripts/ruflo/compliance_loop.py release
+```
+
+Use the repo's existing local exclusions for installed tool metadata. For
+example, a fresh checkout with Serena enabled may need `/.serena/` in Git's
+local exclude file. Inspect any unexpected changes before retrying. The runner
+verifies the whole candidate worktree stays clean through review.
+
+`status` reports the active claim and the locations of the saved evidence.
+The repository lock covers all linked worktrees sharing the Git common
+directory. A claim stays active through verification. After verification a lead
+serializes canonical ledger, graph, and rollup changes against the current
+integration base. Review the result and confirm the actual merge before
+closing the backlog item. Use `release` to free a verified claim and keep its
+receipt. Use `abandon` for work that cannot proceed. Both leave the worktree
+and logs available.
+
+Ordinary verification failures retain the exact candidate and their logs.
+Use `resume` to request a revision and amend the candidate after inspection.
+A timed-out verification command or interrupted coordinator can leave an
+unsettled claim. A check may have created a separate process group, so confirm
+that its processes have exited before recovering the claim manually. The
+runner blocks another writer in that state.
+
 ## Dependency limitation
 
 Ruflo 3.77.1's lockfile contains Zod 3.25.76 and `npm audit` reports a high-severity
