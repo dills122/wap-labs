@@ -133,14 +133,16 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 175
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 151
+owner/work mapping and a direct fixture plan. The WML family now has 152
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
 slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
 assessed WML-304 request-serialization clauses including multipart per-part typing, typed POST-history replay, and WML-309
 frame-affordance closure. WML-307 adds three WML §6.2 entity clauses verified in native Rust and WASM.
 It covers all five WML §6.1 clauses with lossless text decoding and WBXML charset-precedence fixtures. Native Rust and WASM verify the decoded characters and XML 1.0 rejection diagnostics.
-Shared clauses are deduplicated. The other 24 clauses stay
+WML-201 adds shorthand Go equivalence evidence. Explicit anchor activation has
+engine coverage, with host-owned Prev history integration still open.
+Shared clauses are deduplicated. The other 23 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

@@ -202,6 +202,8 @@ export interface WmlEngineCommon {
   // Primary typed input boundary for keys, frame-bound logical clicks/actions,
   // and signed row scrolling. Hosts normalize physical wheel input without
   // inspecting WML; editor events remain a later expansion.
+  // WML a/anchor targets use link focus and opaque frame action IDs. The engine
+  // dispatches the bound task for both key and frame-bound activation.
   handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.

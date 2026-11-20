@@ -1,0 +1,29 @@
+<!--
+label: WML-201 Anchor Tasks
+work-items: WML-201
+spec-items: WML-CL-ANCHOR-ACTIVATION,WML-CL-A-GO-EQUIVALENCE
+description: Explicit anchors activate WML tasks through the same focus path as shorthand links.
+goal: Follow an explicit go, refresh the card variables, return with prev, then follow the shorthand link.
+testing-ac:
+- Activate Go and arrive at tasks.
+- Activate Refresh and see Stage refreshed on the same card.
+- Activate Return and then follow Shorthand to the same destination.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="start">
+    <p>
+      <anchor>Go<go href="#tasks"/></anchor>
+      <a href="#tasks">Shorthand</a>
+    </p>
+  </card>
+  <card id="tasks">
+    <p>
+      Stage: $(stage)
+      <anchor>Refresh<refresh><setvar name="stage" value="refreshed"/></refresh></anchor>
+      <anchor>Return<prev/></anchor>
+    </p>
+  </card>
+</wml>

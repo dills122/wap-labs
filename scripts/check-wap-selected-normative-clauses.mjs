@@ -697,7 +697,21 @@ const wml203ClauseIds = new Set([
   'WML-CL-TR-STRUCTURE',
   'WML-CL-TD-STRUCTURE'
 ]);
+const wmlAnchorEvidenceByClauseId = new Map(
+  [
+    ['WML-CL-A-GO-EQUIVALENCE', 'wml_fx_a_go_equivalence']
+  ].map(([id, filter]) => {
+    const testPath = 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs';
+    return [id, {
+      path: testPath,
+      testPath,
+      command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${filter}`
+    }];
+  })
+);
+
 const implementedWmlClauseIds = new Set([
+  ...wmlAnchorEvidenceByClauseId.keys(),
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',
@@ -1052,7 +1066,7 @@ for (const family of ledger.families ?? []) {
     const wml307Evidence = wml307EvidenceByClauseId.get(candidate.id);
     const selectedEvidence = waeGenericWbxmlClauseIds.has(candidate.id)
       ? genericWbxmlFixtureEvidence
-      : wml307Evidence;
+      : wmlAnchorEvidenceByClauseId.get(candidate.id) ?? wml307Evidence;
     if (
       !candidate.fixturePlan?.id ||
       globalFixtureIds.has(candidate.fixturePlan.id) ||
@@ -1086,7 +1100,7 @@ for (const family of ledger.families ?? []) {
           !fs.existsSync(path.join(root, selectedEvidence.path)) ||
           !fs.existsSync(path.join(root, selectedEvidence.testPath)))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
-        !wml307Evidence &&
+        !selectedEvidence &&
         (candidate.id === 'WML-CL-DECK-ACCESS-REQUIRED'
           ? candidate.fixturePlan.evidence?.path !== wml306AccessFixtureEvidence.path ||
             candidate.fixturePlan.evidence?.testPath !== wml306AccessFixtureEvidence.testPath ||
