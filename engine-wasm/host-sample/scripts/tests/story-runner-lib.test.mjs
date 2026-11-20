@@ -180,6 +180,44 @@ test('asserts Waves host session, status, and semantic render evidence', () => {
   );
 });
 
+test('checks display command order and exact text on each requested render row', () => {
+  const evidence = {
+    snapshot: { activeCardId: 'home' },
+    render: {
+      draw: [
+        { type: 'text', x: 0, y: 0, text: 'Keep these words' },
+        { type: 'text', x: 0, y: 1, text: 'Red\u00a0' },
+        { type: 'link', x: 4, y: 1, text: 'Fox', href: '#next', focused: true }
+      ]
+    }
+  };
+  const expectation = {
+    state: { activeCardId: 'home' },
+    render: {
+      textAtRows: [
+        { row: 0, text: 'Keep these words' },
+        { row: 1, text: 'Red\u00a0Fox' }
+      ]
+    }
+  };
+  assert.doesNotThrow(() => assertStoryExpectation(evidence, expectation, 'waves'));
+
+  const [, text, link] = evidence.render.draw;
+  link.y = 2;
+  assert.doesNotThrow(() =>
+    assertStoryExpectation(
+      evidence,
+      { state: expectation.state, render: { textIncludes: ['Keep these words Red Fox'] } },
+      'waves'
+    )
+  );
+  assert.throws(() => assertStoryExpectation(evidence, expectation, 'waves'), /render row 1/);
+
+  link.y = 1;
+  text.text = 'Red ';
+  assert.throws(() => assertStoryExpectation(evidence, expectation, 'waves'), /render row 1/);
+});
+
 test('asserts the canonical frame contract and ordered affordances', () => {
   const frame = {
     contractVersion: 3,

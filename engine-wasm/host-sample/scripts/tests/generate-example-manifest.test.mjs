@@ -94,6 +94,37 @@ test('parses waves-browser target setup, keyboard actions, and semantic expectat
   assert.deepEqual(parsed.flows[0].initial.render, { textIncludes: ['Home'] });
 });
 
+test('parses render row expectations without modifying non-breaking spaces', () => {
+  const render = { textAtRows: [{ row: 0, text: 'Red\u00a0Fox' }] };
+  const document = validFlow({ initial: { state: { activeCardId: 'home' }, render } });
+  const parsed = parseExecutableFlow(
+    JSON.stringify(document),
+    'test-example.flow.json',
+    'testExample'
+  );
+  assert.deepEqual(parsed.flows[0].initial.render, render);
+});
+
+test('rejects invalid render row expectations', () => {
+  for (const textAtRows of [
+    [],
+    [{ row: -1, text: 'Home' }],
+    [{ row: 0.5, text: 'Home' }],
+    [{ text: 'Home' }],
+    [{ row: 0, text: '' }],
+    [{ row: 0, text: 123 }],
+    [{ row: 0, text: 'Home', x: 0 }]
+  ]) {
+    const document = validFlow({
+      initial: { state: { activeCardId: 'home' }, render: { textAtRows } }
+    });
+    assert.throws(
+      () => parseExecutableFlow(JSON.stringify(document), 'test-example.flow.json', 'testExample'),
+      /render\.textAtRows/
+    );
+  }
+});
+
 test('parses Waves command delays and no-wait interaction sequences', () => {
   const document = validFlow({
     target: 'waves-browser',

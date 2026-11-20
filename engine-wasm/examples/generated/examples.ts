@@ -51,7 +51,7 @@ export interface StoryExpectation {
   traceKinds?: string[];
   session?: StorySessionExpectation;
   statusIncludes?: string;
-  render?: { textIncludes: string[] };
+  render?: { textIncludes?: string[]; textAtRows?: { row: number; text: string }[] };
   frame?: {
     contractVersion: number;
     profileId: string;

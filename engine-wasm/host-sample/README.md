@@ -64,7 +64,10 @@ companion into `examples.ts`. A version 1 companion contains:
 - runtime state assertions including card/focus, focused input/select edit state, external intent
   and structured request policy, script outcome/refresh state, and `nextCardVar`
 - semantic `statusIncludes` assertions (including expected host error paths), plus Waves-only
-  `session` and rendered `textIncludes` assertions
+  `session` and render assertions
+  - `render.textIncludes` matches normalized text across all rows
+  - `render.textAtRows` matches exact text at zero-based draw rows. Each entry has a `row`
+    number and a `text` string. It preserves whitespace, including nonbreaking spaces.
 - optional `traceKinds`, matched as an ordered subsequence of engine trace entries
 
 Unknown example references/actions, malformed values, missing mappings, extra mappings, and stale

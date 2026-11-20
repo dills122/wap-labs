@@ -368,15 +368,35 @@ function parseExpectedSession(value, filename, location) {
 
 function parseRenderExpectation(value, filename, location) {
   const render = requireRecord(value, filename, location);
-  validateKeys(render, new Set(['textIncludes']), filename, location);
+  validateKeys(render, new Set(['textIncludes', 'textAtRows']), filename, location);
+  if (render.textIncludes === undefined && render.textAtRows === undefined) {
+    throw new Error(`${filename}: ${location} needs at least one render assertion`);
+  }
   if (
-    !Array.isArray(render.textIncludes) ||
-    render.textIncludes.length === 0 ||
-    render.textIncludes.some((text) => typeof text !== 'string' || !text)
+    render.textIncludes !== undefined &&
+    (!Array.isArray(render.textIncludes) ||
+      render.textIncludes.length === 0 ||
+      render.textIncludes.some((text) => typeof text !== 'string' || !text))
   ) {
     throw new Error(`${filename}: ${location}.textIncludes must be non-empty strings`);
   }
-  return { textIncludes: render.textIncludes };
+  if (render.textAtRows !== undefined) {
+    if (!Array.isArray(render.textAtRows) || render.textAtRows.length === 0) {
+      throw new Error(`${filename}: ${location}.textAtRows must be a non-empty array`);
+    }
+    for (const [index, value] of render.textAtRows.entries()) {
+      const entryLocation = `${location}.textAtRows[${index}]`;
+      const entry = requireRecord(value, filename, entryLocation);
+      validateKeys(entry, new Set(['row', 'text']), filename, entryLocation);
+      if (!Number.isInteger(entry.row) || entry.row < 0) {
+        throw new Error(`${filename}: ${entryLocation}.row must be a non-negative integer`);
+      }
+      if (typeof entry.text !== 'string' || !entry.text) {
+        throw new Error(`${filename}: ${entryLocation}.text must be a non-empty string`);
+      }
+    }
+  }
+  return render;
 }
 
 function parseFrameExpectation(value, filename, location) {
@@ -900,7 +920,7 @@ export interface StoryExpectation {
   traceKinds?: string[];
   session?: StorySessionExpectation;
   statusIncludes?: string;
-  render?: { textIncludes: string[] };
+  render?: { textIncludes?: string[]; textAtRows?: { row: number; text: string }[] };
   frame?: {
     contractVersion: number;
     profileId: string;
