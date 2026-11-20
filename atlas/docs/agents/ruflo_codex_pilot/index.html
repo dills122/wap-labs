@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="The living project, source, compliance, and delivery atlas for the Waves WAP/WML browser stack."><meta name="theme-color" content="#171914"><meta name="generator" content="Astro v7.4.12"><link rel="icon" type="image/svg+xml" href="/wap-labs/atlas/favicon.svg"><title>Ruflo and Codex pilot · WAP Labs Atlas</title><link rel="stylesheet" href="/wap-labs/atlas/_astro/repository.CuYGaR1D.css"></head><body><a class="skip-link" href="#main-content">Skip to content</a><header class="app-header"><a class="wordmark" href="/wap-labs/atlas/" aria-label="WAP Labs Atlas home"><span class="wordmark-mark" aria-hidden="true">WA</span><span><strong>WAP Labs</strong><small>Project atlas</small></span></a><nav class="primary-nav" aria-label="Primary"><a href="/wap-labs/atlas/">Overview</a><a href="/wap-labs/atlas/sources">Sources</a><a href="/wap-labs/atlas/compliance">Compliance</a><a href="/wap-labs/atlas/verification">Verification</a><a href="/wap-labs/atlas/planning">Planning</a><a href="/wap-labs/atlas/docs" aria-current="page">Documents</a></nav><nav class="utility-nav" aria-label="WAP Labs products"><a href="/wap-labs/">Waves</a><a href="/wap-labs/simulator/">Simulator</a><a href="https://github.com/dills122/wap-labs">Repository ↗</a></nav></header><main id="main-content"><div class="page-shell doc-layout" data-doc-path="agents/ruflo_codex_pilot"><article class="doc-article"><nav class="breadcrumbs" aria-label="Breadcrumb"><a href="/wap-labs/atlas/docs">Documents</a><span>/</span><span>agents</span></nav><p class="doc-path">docs/agents/ruflo_codex_pilot.md</p><div class="markdown-body"><h1 id="ruflo-and-codex-pilot">Ruflo and Codex pilot</h1>
+<p>Status: local, opt-in coordination pilot, not a repository-wide standard.</p>
+<h2 id="setup">Setup</h2>
+<p>Run <code>python3 scripts/ruflo/bootstrap.py</code> with Python 3.11 or newer and the project Node 26
+toolchain and npm on <code>PATH</code>.
+The bootstrap installs the exact Ruflo 3.77.1 dependency graph from the checked-in lockfile with
+lifecycle scripts disabled. It adds a project-scoped Codex MCP entry and local Git exclusions; it
+refuses to overwrite an existing, different Ruflo entry. Existing project or global agent steering
+and unrelated MCP settings are not replaced. Reopen Codex to load the project configuration.</p>
+<p>The local MCP server runs through <code>scripts/ruflo/bounded-mcp.mjs</code>, which caps input message bytes,
+collection sizes, depth and aggregate nodes before handing messages to Ruflo. Oversized frames close
+the connection; a rejected bounded request receives a JSON-RPC error. The MCP allowlist exposes only
+coordination tools. <code>task_list</code> has an explicit read approval; mutation tools retain the normal
+approval policy. The generated configuration and runtime state are local and excluded from Git.</p>
+<p>Run <code>python3 scripts/ruflo/pilot.py</code> for the bounded, read-only two-worker test. It uses policy
+preflight, a restricted <code>npx</code> shim that maps only <code>ruflo@latest</code> to the pinned installation, worker
+and outer deadlines, and verifies each worker’s output. Codex must be on <code>PATH</code> and authenticated.
+The pilot is a connectivity test, not a general-purpose task runner. It may require outside-sandbox
+execution to access the local Codex runtime and Ruflo policy-trust storage.</p>
+<h2 id="verified-behavior">Verified behavior</h2>
+<p>On 2026-11-14, the pilot launched two real Codex workers concurrently against this checkout, and both
+returned the expected independent results. A fresh read-only Codex session successfully called the
+project Ruflo <code>task_list</code> MCP tool with its configured per-tool approval. A separate fresh-session
+check confirmed <code>task_create</code> remained blocked under a no-approval policy. The project MCP entry
+points to this checkout and no longer inherits the stale global Ruflo working directory.</p>
+<p><code>python3 scripts/ruflo/bootstrap_test.py</code> checks safe handling of existing configuration and
+idempotence without network access. <code>node --test scripts/ruflo/bounded-mcp.test.mjs</code> exercises
+normal framing, limits, malformed input, and child shutdown. These tests do not establish safety for
+arbitrary Ruflo features, CLI commands, or parallel writers.</p>
+<h2 id="supervised-compliance-loop">Supervised compliance loop</h2>
+<p>Use this local runner with Ruflo installed by the bootstrap above. Start from a
+clean feature branch in a linked Git worktree. From a checkout containing the
+runner, create a trusted local JSON packet with the focused work item, its
+directly mapped open clauses, a bounded objective, and the exact paths the
+writer may edit. Include at least one source-derived acceptance check.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "workItem"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"WML-201"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "clauses"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  "objective"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Add a WML 1.3 fixture named wml_fx_paragraph_alignment_default that compares unspecified paragraph alignment with explicit left alignment."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "paths"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"engine-wasm/engine/src/layout/flow_layout.rs"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  "checks"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    [</span><span style="color:#9ECBFF">"cargo"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"test"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--offline"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"--manifest-path"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"engine-wasm/engine/Cargo.toml"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"wml_fx_paragraph_alignment_default"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "timeoutSeconds"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">180</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The packet’s checks are argument arrays executed locally. Review them as you
+would any command you run in the repository. Confirm that filtered test
+commands actually ran the intended test when inspecting the evidence. For
+host-visible changes include the appropriate native, WASM, and executable story
+checks in the packet.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">python3</span><span style="color:#9ECBFF"> scripts/ruflo/compliance_loop.py</span><span style="color:#9ECBFF"> claim</span><span style="color:#9ECBFF"> /path/to/packet.json</span><span style="color:#79B8FF"> --worktree</span><span style="color:#9ECBFF"> /path/to/linked-worktree</span></span>
+<span class="line"><span style="color:#B392F0">python3</span><span style="color:#9ECBFF"> scripts/ruflo/compliance_loop.py</span><span style="color:#9ECBFF"> work</span></span>
+<span class="line"><span style="color:#B392F0">python3</span><span style="color:#9ECBFF"> scripts/ruflo/compliance_loop.py</span><span style="color:#9ECBFF"> status</span></span></code></pre>
+<p>A failed or timed-out writer can leave a scoped checkpoint. Use <code>resume</code> on
+that exact checkpoint. The runner checks the branch head and content digest
+before starting a fresh writer. Inspect a complete candidate and create one
+local commit directly on the pinned base. Run <code>verify</code> from the runner
+checkout. Verification checks the candidate content, reruns the packet checks
+and the full compliance gate, and requests a fresh read-only Ruflo review of
+that commit.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">python3</span><span style="color:#9ECBFF"> scripts/ruflo/compliance_loop.py</span><span style="color:#9ECBFF"> verify</span></span>
+<span class="line"><span style="color:#B392F0">python3</span><span style="color:#9ECBFF"> scripts/ruflo/compliance_loop.py</span><span style="color:#9ECBFF"> release</span></span></code></pre>
+<p>Use the repo’s existing local exclusions for installed tool metadata. For
+example, a fresh checkout with Serena enabled may need <code>/.serena/</code> in Git’s
+local exclude file. Inspect any unexpected changes before retrying. The runner
+verifies the whole candidate worktree stays clean through review.</p>
+<p><code>status</code> reports the active claim and the locations of the saved evidence.
+The repository lock covers all linked worktrees sharing the Git common
+directory. A claim stays active through verification. After verification a lead
+serializes canonical ledger, graph, and rollup changes against the current
+integration base. Review the result and confirm the actual merge before
+closing the backlog item. Use <code>release</code> to free a verified claim and keep its
+receipt. Use <code>abandon</code> for work that cannot proceed. Both leave the worktree
+and logs available.</p>
+<p>Ordinary verification failures retain the exact candidate and their logs.
+Use <code>resume</code> to request a revision and amend the candidate after inspection.
+A timed-out verification command or interrupted coordinator can leave an
+unsettled claim. A check may have created a separate process group, so confirm
+that its processes have exited before recovering the claim manually. The
+runner blocks another writer in that state.</p>
+<h2 id="dependency-limitation">Dependency limitation</h2>
+<p>Ruflo 3.77.1’s lockfile contains Zod 3.25.76 and <code>npm audit</code> reports a high-severity
+<a href="https://github.com/advisories/GHSA-mrhx-c7xc-m3w5">GHSA-mrhx-c7xc-m3w5</a> dependency finding.
+There is no patched Zod 3 release. Forcing Zod 4 makes the package audit green but does not remove
+the vulnerable <code>zod/v3</code> compatibility implementation used by some dependencies. The local MCP
+input guard reduces exposure for messages entering through this project-scoped server; it is <strong>not</strong>
+an upstream Zod fix and does not cover direct Ruflo CLI use or other installations. Use trusted
+local inputs, and reassess the dependency before broader adoption.</p>
+<p>The associated <a href="https://nvd.nist.gov/vuln/detail/CVE-2023-54404">CVE record</a> was rejected by
+its numbering authority, which considers the memory use bounded by the already-parsed request size.
+The GitHub advisory remains active, while
+<a href="https://access.redhat.com/security/cve/cve-2023-54404">Red Hat’s assessment</a> still describes
+an availability risk for applications accepting unbounded inputs. These assessments do not prove
+that all Ruflo CLI or SDK inputs pass through this pilot’s guard.
+GitHub dependency review has an explicit <code>allow-ghsas</code> exception for this advisory. It applies
+repository-wide, not just to this lockfile, so future introductions of this same advisory will not
+fail that action. This is an accepted risk for the local pilot, not a Zod fix. Remove the exception
+when Ruflo and its dependencies no longer require vulnerable legacy Zod, and audit direct CLI and
+SDK paths before expanding the pilot beyond trusted inputs.</p>
+<p>Do not use <code>ruflo init --codex</code> over existing <code>AGENTS.md</code>, <code>.agents/skills</code>, steering, hooks or
+global Codex configuration. Decide isolation, ownership, verification and merge strategy before
+allowing parallel writers. Ruflo’s worker registration or a successful CLI exit alone does not prove
+that workers executed successfully.</p>
+<p>References: <a href="https://github.com/ruvnet/ruflo/releases">Ruflo releases</a>,
+<a href="https://github.com/ruvnet/ruflo/blob/main/docs/ruflo-explained.md">Ruflo Codex integration</a>,
+<a href="https://github.com/ruvnet/ruflo/blob/main/.claude/agents/dual-mode/codex-worker.md">Ruflo Codex worker</a>,
+and <a href="https://developers.openai.com/codex/mcp">Codex MCP configuration</a>.</p>
+</div></article><aside class="doc-toc"><p class="section-label">On this page</p><ol><li class="depth-1"><a href="#ruflo-and-codex-pilot">Ruflo and Codex pilot</a></li><li class="depth-2"><a href="#setup">Setup</a></li><li class="depth-2"><a href="#verified-behavior">Verified behavior</a></li><li class="depth-2"><a href="#supervised-compliance-loop">Supervised compliance loop</a></li><li class="depth-2"><a href="#dependency-limitation">Dependency limitation</a></li></ol><a class="source-edit-link" href="https://github.com/dills122/wap-labs/blob/main/docs/agents/ruflo_codex_pilot.md">View source ↗</a></aside></div><script>(function(){const portalBase = "/wap-labs/atlas/docs";
+
+    const root = document.querySelector('[data-doc-path]');
+    const current = root?.dataset.docPath ?? '';
+    const currentDirectory = current.split('/').slice(0, -1);
+    for (const link of root?.querySelectorAll('.markdown-body a[href]') ?? []) {
+      const raw = link.getAttribute('href');
+      if (!raw || !raw.includes('.md') || /^(https?:|mailto:)/.test(raw)) continue;
+      const [path, fragment = ''] = raw.split('#');
+      const parts = path.startsWith('docs/') ? [] : [...currentDirectory];
+      for (const part of path.replace(/^docs\//, '').split('/')) {
+        if (!part || part === '.') continue;
+        if (part === '..') parts.pop();
+        else parts.push(part);
+      }
+      const normalized = parts.join('/').replace(/\.md$/, '').toLowerCase();
+      link.setAttribute('href', `${portalBase}/${normalized}${fragment ? `#${fragment}` : ''}`);
+    }
+  })();</script></main><footer class="app-footer"><p><strong>WAP Labs Atlas</strong> is assembled from the repository’s validated active manifests and handwritten documentation.</p><p>WAP 1.2.1 · WML 1.3 · strict Class C data client</p></footer></body></html>
