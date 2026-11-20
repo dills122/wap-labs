@@ -367,56 +367,150 @@ fn next_output_error(
     )
 }
 
+const SOFT_HYPHEN: char = '\u{00ad}';
+
+fn push_line(lines: &mut Vec<String>, current: &mut String, max_lines: usize) -> Result<(), ()> {
+    if lines.len() >= max_lines {
+        return Err(());
+    }
+    lines.push(std::mem::take(current));
+    Ok(())
+}
+
+fn push_word_with_soft_hyphens(
+    mut word: &str,
+    width: usize,
+    max_lines: usize,
+    lines: &mut Vec<String>,
+    current: &mut String,
+    current_cols: &mut usize,
+) -> Result<(), ()> {
+    loop {
+        word = word.trim_matches(SOFT_HYPHEN);
+        if word.is_empty() {
+            return Ok(());
+        }
+
+        let needs_space = !current.is_empty();
+        let available = width.saturating_sub(*current_cols + usize::from(needs_space));
+        let mut visible = 0;
+        let mut visible_bytes = 0;
+        let mut soft_break = None;
+        let mut hard_break = None;
+        for (index, character) in word.char_indices() {
+            if character == SOFT_HYPHEN {
+                // A selected soft break needs one column for the rendered hyphen.
+                if visible < available {
+                    soft_break = Some((index, index + character.len_utf8()));
+                }
+            } else if visible == available {
+                hard_break = Some(index);
+                break;
+            } else {
+                visible += 1;
+                visible_bytes += character.len_utf8();
+            }
+        }
+
+        let Some(hard_break) = hard_break else {
+            // Match ordinary word wrapping when the word fits in painted columns.
+            // Appending to a populated line uses UTF-8 bytes, excluding soft hyphens.
+            if needs_space {
+                if current.len() + 1 + visible_bytes <= width {
+                    current.push(' ');
+                    *current_cols += 1;
+                } else {
+                    push_line(lines, current, max_lines)?;
+                    *current_cols = 0;
+                }
+            }
+            current.extend(word.chars().filter(|&character| character != SOFT_HYPHEN));
+            *current_cols += visible;
+            return Ok(());
+        };
+
+        if let Some((end, resume)) = soft_break {
+            if needs_space {
+                current.push(' ');
+            }
+            current.extend(
+                word[..end]
+                    .chars()
+                    .filter(|&character| character != SOFT_HYPHEN),
+            );
+            current.push('-');
+            word = &word[resume..];
+        } else if !needs_space {
+            current.extend(
+                word[..hard_break]
+                    .chars()
+                    .filter(|&character| character != SOFT_HYPHEN),
+            );
+            word = &word[hard_break..];
+        }
+        push_line(lines, current, max_lines)?;
+        *current_cols = 0;
+    }
+}
+
 fn wrap_text(text: &str, width: usize, max_lines: usize) -> Result<Vec<String>, ()> {
     let width = width.max(1);
     let mut lines = Vec::new();
     let mut current = String::new();
+    let mut current_cols = 0;
 
-    {
-        let mut push_word = |word: &str| -> Result<(), ()> {
+    for word in text.split_whitespace() {
+        if word.contains(SOFT_HYPHEN) {
+            push_word_with_soft_hyphens(
+                word,
+                width,
+                max_lines,
+                &mut lines,
+                &mut current,
+                &mut current_cols,
+            )?;
+            continue;
+        }
+
+        let mut push_word = |word: &str, cols: usize| -> Result<(), ()> {
             if !current.is_empty() {
                 let candidate_len = current.len() + 1 + word.len();
                 if candidate_len <= width {
                     current.push(' ');
                     current.push_str(word);
+                    current_cols += 1 + cols;
                     return Ok(());
                 }
-                if lines.len() >= max_lines {
-                    return Err(());
-                }
-                lines.push(std::mem::take(&mut current));
+                push_line(&mut lines, &mut current, max_lines)?;
             }
             current.push_str(word);
+            current_cols = cols;
             Ok(())
         };
 
-        for word in text.split_whitespace() {
-            if word.chars().count() <= width {
-                push_word(word)?;
-            } else {
-                let mut chunk = String::new();
-                let mut count = 0usize;
-                for character in word.chars() {
-                    chunk.push(character);
-                    count += 1;
-                    if count == width {
-                        push_word(&chunk)?;
-                        chunk.clear();
-                        count = 0;
-                    }
+        let word_cols = word.chars().count();
+        if word_cols <= width {
+            push_word(word, word_cols)?;
+        } else {
+            let mut chunk = String::new();
+            let mut count = 0usize;
+            for character in word.chars() {
+                chunk.push(character);
+                count += 1;
+                if count == width {
+                    push_word(&chunk, count)?;
+                    chunk.clear();
+                    count = 0;
                 }
-                if !chunk.is_empty() {
-                    push_word(&chunk)?;
-                }
+            }
+            if !chunk.is_empty() {
+                push_word(&chunk, count)?;
             }
         }
     }
 
     if !current.is_empty() {
-        if lines.len() >= max_lines {
-            return Err(());
-        }
-        lines.push(current);
+        push_line(&mut lines, &mut current, max_lines)?;
     }
 
     Ok(lines)
@@ -644,6 +738,52 @@ mod tests {
             "the same text in one paragraph must fit on one line: {:?}",
             render.draw
         );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_soft_hyphen() {
+        // WAP-191_104-WML §11.8.3 inserts a hyphen only at a selected soft break.
+        for (paragraph, width, expected) in [
+            ("co&shy;operate", 9, &["cooperate"][..]),
+            ("co&shy;operate", 7, &["co-", "operate"][..]),
+            ("co&shy;operate", 2, &["co", "op", "er", "at", "e"][..]),
+            ("éé a&shy;b", 6, &["éé", "ab"][..]),
+            ("éé ab", 6, &["éé", "ab"][..]),
+            ("éé a&shy;b", 7, &["éé ab"][..]),
+            ("éé a&shy;bcde", 6, &["éé a-", "bcde"][..]),
+            ("é&shy;éb", 3, &["ééb"][..]),
+            ("é&shy;éb", 1, &["é", "é", "b"][..]),
+        ] {
+            let wml = format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p>{paragraph}</p></card></wml>"#
+            );
+            let mut engine = WmlEngine::new();
+            engine
+                .load_deck_context(
+                    &wml,
+                    "http://example.test/paragraph-soft-hyphen.wml",
+                    "text/vnd.wap.wml; validation=strict",
+                    None,
+                )
+                .expect("strict WML 1.3 deck must load");
+            engine.set_viewport_cols(width).expect("valid width");
+            let render = engine.render().expect("deck must render");
+            let rows: Vec<_> = render
+                .draw
+                .iter()
+                .map(|command| match command {
+                    DrawCmd::Text { x: 0, y, text } => (*y, text.as_str()),
+                    _ => panic!("expected paragraph text, got {command:?}"),
+                })
+                .collect();
+            assert!(
+                rows.iter().copied().eq((0..).zip(expected.iter().copied())),
+                "paragraph {paragraph:?} at viewport {width}: expected rows {expected:?}, got {rows:?}"
+            );
+        }
     }
 
     #[test]
