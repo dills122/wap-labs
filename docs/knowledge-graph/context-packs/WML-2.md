@@ -1474,7 +1474,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`, `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-PARAGRAPH-NONBREAKING-SPACE` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-NONBREAKING-SPACE` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-SIGNIFICANT-BREAK** — Insert a line break between significant paragraph elements.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)

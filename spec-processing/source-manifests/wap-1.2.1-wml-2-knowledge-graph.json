@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "05a5ed234fd30c7d6295eb8ca3ac5d4ca49189113e13f1dfffa89a1f7720e938"
+        "sha256": "fd7d7c3ac8f58b5fe38cdd403cf7a136010ff97c604e7cd4ca9f85f165c8b3ae"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "e48119ef604194dec808b6c7193c392b6d31a3e80760f07be93e7e083eb7c209"
@@ -6134,7 +6134,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10720,7 +10720,7 @@
       "title": "Do not treat non-breaking space as a legal inter-word line-break point.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Do not treat non-breaking space as a legal inter-word line-break point.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

@@ -3849,6 +3849,101 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p>\n      <anchor>Go<go href=\"#tasks\"/></anchor>\n      <a href=\"#tasks\">Shorthand</a>\n    </p>\n  </card>\n  <card id=\"tasks\">\n    <p>\n      Stage: $(stage)\n      <anchor>Refresh<refresh><setvar name=\"stage\" value=\"refreshed\"/></refresh></anchor>\n      <anchor>Return<prev/></anchor>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201InlineNonbreakingSpace",
+    "label": "WML-201 Inline Nonbreaking Space",
+    "description": "A nonbreaking space keeps paragraph text together with a link across an inline boundary. An indivisible group wider than the viewport stays on one row, and a link beyond the visible columns can still be selected with the keyboard.",
+    "goal": "Compare the ordinary-space control with the same text followed by a nonbreaking space.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-PARAGRAPH-NONBREAKING-SPACE"
+    ],
+    "testingAc": [
+      "At 20 columns, see Keep these words Red on the first row of the ordinary-space card.",
+      "Select Fox to see Keep these words on the first row and Red Fox together on the second row.",
+      "Select Fox again to reach the destination."
+    ],
+    "flows": [
+      {
+        "id": "waves-inline-nonbreaking-space",
+        "title": "Waves keeps the linked word with the preceding text at a nonbreaking space",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-PARAGRAPH-NONBREAKING-SPACE"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "plain"
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Keep these words Red"
+              },
+              {
+                "row": 1,
+                "text": "Fox"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "joined"
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Keep these words"
+                  },
+                  {
+                    "row": 1,
+                    "text": "Red Fox"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next"
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"plain\">\n    <p>Keep these words Red <a href=\"#joined\">Fox</a></p>\n  </card>\n  <card id=\"joined\">\n    <p>Keep these words Red&nbsp;<a href=\"#next\">Fox</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml201ParagraphSoftHyphen",
     "label": "WML-201 Paragraph Soft Hyphen",
     "description": "A discretionary hyphen is invisible inside a word and visible at a selected line break.",

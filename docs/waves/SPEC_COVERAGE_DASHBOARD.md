@@ -64,7 +64,7 @@ Status: Active
   - WDP: 9 selected parents / 49 clauses
   - WMLScript: 41 selected parents / 107 clauses
   - WMLScript Libraries: 80 selected parents / 211 clauses
-  - 387 fixture-backed clauses assessed; 376 fixture plans remain unassessed
+  - 388 fixture-backed clauses assessed; 375 fixture plans remain unassessed
 - Selected-profile successor delta register:
   - `spec-processing/source-manifests/wap-1.2.1-successor-delta.json`
   - all 198 selected rows classified
