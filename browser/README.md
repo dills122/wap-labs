@@ -196,9 +196,9 @@ generation gate.
   `lowband-wml13-wbxml/0.3.0` implementation with bounded output and parser
   depth. No external `wbxml2xml` installation or bundled sidecar is required.
 
-The Developer Tools timeline export opens a native save dialog in the desktop app. It saves the
-existing redacted timeline JSON to the selected file, reports success after the write, and leaves
-the timeline intact if the dialog is cancelled. The browser-only host keeps its download flow.
+The Developer Tools timeline and Inspector capture exports open a native save dialog in the desktop
+app. They save redacted JSON to the selected file, report success after the write, and preserve the
+captured data if the dialog is cancelled. The browser-only host keeps its download flow.
 
 ## Engine debug host policy
 

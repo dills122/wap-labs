@@ -139,10 +139,10 @@ const projectPayload = (
         kind: 'focus.change',
         payload: {
           type: 'focus-change',
-          ...(payload.previousIndex === undefined
+          ...(payload.previousIndex == null
             ? {}
             : { previousIndex: boundedCount(payload.previousIndex) }),
-          ...(payload.currentIndex === undefined
+          ...(payload.currentIndex == null
             ? {}
             : { currentIndex: boundedCount(payload.currentIndex) })
         }
@@ -181,7 +181,7 @@ const projectPayload = (
         payload: {
           type: 'action-accept',
           actionType: boundedText(payload.actionType, textLimit),
-          ...(payload.name === undefined ? {} : { name: boundedText(payload.name, textLimit) })
+          ...(payload.name == null ? {} : { name: boundedText(payload.name, textLimit) })
         }
       };
     case 'action-external':
@@ -270,7 +270,7 @@ export const projectEngineDebugEvent = (
     seq: boundedDecimal(event.seq),
     kind: projected.kind,
     monotonicTimeMs: boundedCount(event.monotonicTimeMs),
-    ...(event.cardId === undefined ? {} : { cardId: boundedText(event.cardId, textLimit) }),
+    ...(event.cardId == null ? {} : { cardId: boundedText(event.cardId, textLimit) }),
     payload: projected.payload
   };
 };
@@ -297,11 +297,11 @@ export const projectEngineDebugSnapshot = (
   return {
     protocolVersion: boundedCount(snapshot.protocolVersion),
     capturedSeq: boundedDecimal(snapshot.capturedSeq),
-    ...(snapshot.activeCardId === undefined
+    ...(snapshot.activeCardId == null
       ? {}
       : { activeCardId: boundedText(snapshot.activeCardId, textLimit) }),
     focusedLinkIndex: boundedCount(snapshot.focusedLinkIndex),
-    ...(snapshot.focusedInputEdit === undefined
+    ...(snapshot.focusedInputEdit == null
       ? {}
       : {
           focusedInputEdit: {
@@ -311,15 +311,15 @@ export const projectEngineDebugSnapshot = (
         }),
     runtimeVars,
     runtimeVarsSummary: projectCollectionSummary(snapshot.runtimeVarsSummary, runtimeVars.length),
-    ...(snapshot.pendingExternalNavigation === undefined
+    ...(snapshot.pendingExternalNavigation == null
       ? {}
       : {
           pendingExternalNavigation: {
             target: projectEngineDebugValue(snapshot.pendingExternalNavigation.target, textLimit),
-            ...(snapshot.pendingExternalNavigation.method === undefined
+            ...(snapshot.pendingExternalNavigation.method == null
               ? {}
               : { method: boundedText(snapshot.pendingExternalNavigation.method, textLimit) }),
-            ...(snapshot.pendingExternalNavigation.refererUrl === undefined
+            ...(snapshot.pendingExternalNavigation.refererUrl == null
               ? {}
               : {
                   refererUrl: projectEngineDebugValue(
@@ -327,7 +327,7 @@ export const projectEngineDebugSnapshot = (
                     textLimit
                   )
                 }),
-            ...(snapshot.pendingExternalNavigation.postBody === undefined
+            ...(snapshot.pendingExternalNavigation.postBody == null
               ? {}
               : {
                   postBody: projectEngineDebugValue(
@@ -340,10 +340,10 @@ export const projectEngineDebugSnapshot = (
     timers,
     timersSummary: projectCollectionSummary(snapshot.timersSummary, timers.length),
     buffer: {
-      ...(snapshot.buffer.oldestSeq === undefined
+      ...(snapshot.buffer.oldestSeq == null
         ? {}
         : { oldestSeq: boundedDecimal(snapshot.buffer.oldestSeq) }),
-      ...(snapshot.buffer.latestSeq === undefined
+      ...(snapshot.buffer.latestSeq == null
         ? {}
         : { latestSeq: boundedDecimal(snapshot.buffer.latestSeq) }),
       droppedCount: boundedCount(snapshot.buffer.droppedCount),
@@ -380,10 +380,8 @@ const projectAccounting = (
   producerDroppedEvents: boundedCount(accounting.producerDroppedEvents),
   frontendDroppedEvents: boundedCount(accounting.frontendDroppedEvents),
   retainedEvents,
-  ...(accounting.oldestSeq === undefined
-    ? {}
-    : { oldestSeq: boundedDecimal(accounting.oldestSeq) }),
-  ...(accounting.latestSeq === undefined ? {} : { latestSeq: boundedDecimal(accounting.latestSeq) })
+  ...(accounting.oldestSeq == null ? {} : { oldestSeq: boundedDecimal(accounting.oldestSeq) }),
+  ...(accounting.latestSeq == null ? {} : { latestSeq: boundedDecimal(accounting.latestSeq) })
 });
 
 const encodeCapture = (

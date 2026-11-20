@@ -117,4 +117,13 @@ describe('Developer Tools workspace', () => {
       'Select advances'
     );
   });
+
+  it('shows no scheduled timer when the native snapshot contains null', () => {
+    renderDeveloperToolsState(root, {
+      ...state,
+      runtimeSnapshot: { ...state.runtimeSnapshot!, nextTimerWakeupMs: null as unknown as number }
+    });
+
+    expect(root.querySelector('[data-devtools-value="next-timer"]')?.textContent).toBe('—');
+  });
 });

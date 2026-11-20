@@ -43,7 +43,7 @@ export interface ShellEventBindingsDependencies {
     action: (event?: Event) => Promise<void>
   ) => (event?: Event) => Promise<void>;
   serializeEngineAction(action: () => Promise<void>): Promise<void>;
-  interruptNavigationForBack?(): void;
+  interruptPendingNavigation?(): void;
   onWindowKeydown: (event: Event) => void;
 }
 
@@ -70,7 +70,11 @@ export class ShellEventBindings {
     };
 
     this.bindButton('#btn-health', runAction('health', actions.health));
-    this.bindButton('#btn-load-context', runEngineAction('load-raw-wml', actions.loadRawWml));
+    const loadRawWml = runEngineAction('load-raw-wml', actions.loadRawWml);
+    this.bindButton('#btn-load-context', (event) => {
+      this.deps.interruptPendingNavigation?.();
+      return loadRawWml(event);
+    });
     // Fetch owns a dual Go/Stop state. Its controller action serializes the
     // Go branch, while Stop must remain able to cancel an in-flight request
     // immediately instead of waiting behind that same request in this queue.
@@ -139,7 +143,7 @@ export class ShellEventBindings {
       this.backBtnEl = backBtn;
       const back = runEngineAction('navigate-back', actions.navigateBack);
       this.bindEvent(backBtn, 'click', (event) => {
-        this.deps.interruptNavigationForBack?.();
+        this.deps.interruptPendingNavigation?.();
         void back(event);
       });
     }
