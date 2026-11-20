@@ -90,8 +90,6 @@ fn wml_203_invalid_content_model_mutations_are_rejected_deterministically() {
         ("empty row", "<wml><card id=\"main\"><p><table columns=\"1\"><tr/></table></p></card></wml>"),
         ("multiple do tasks", "<wml><card id=\"main\"><do type=\"accept\"><noop/><prev/></do><p>bad</p></card></wml>"),
         ("empty select", "<wml><card id=\"main\"><p><select name=\"s\"/></p></card></wml>"),
-        ("anchor without task", "<wml><card id=\"main\"><p><anchor>bad</anchor></p></card></wml>"),
-        ("anchor with multiple tasks", "<wml><card id=\"main\"><p><anchor>bad<prev/><refresh/></anchor></p></card></wml>"),
         ("missing image source", "<wml><card id=\"main\"><p><img alt=\"bad\"/></p></card></wml>"),
         ("nested table", "<wml><card id=\"main\"><p><table columns=\"1\"><tr><td><em><table columns=\"1\"><tr><td>bad</td></tr></table></em></td></tr></table></p></card></wml>"),
         ("unexpected attribute", "<wml bogus=\"x\"><card id=\"main\"><p>bad</p></card></wml>"),
@@ -105,5 +103,36 @@ fn wml_203_invalid_content_model_mutations_are_rejected_deterministically() {
         let first = strict_error(&source, label);
         let second = strict_error(&source, label);
         assert_eq!(first, second, "{label} rejection changed across loads");
+    }
+}
+
+#[test]
+fn wml_203_wml_fx_anchor_placement_rejects_option_text_and_invalid_task_counts() {
+    let deck = |content| {
+        canonical_wml(&format!(
+            r#"<wml><card id="main"><p>{content}</p></card></wml>"#
+        ))
+    };
+    let valid = deck(
+        r##"<select><option>Choice</option></select><anchor>Open<br/><go href="#main"/></anchor>"##,
+    );
+    load_strict(&valid).expect("a single-task anchor beside a select should load");
+
+    let task_count_error = "Invalid <anchor>: expected exactly one go, prev, or refresh task";
+    let cases = [
+        (
+            r##"<select><option>Choice<anchor>Open<br/><go href="#main"/></anchor></option></select>"##,
+            "Invalid <option>: unexpected child <anchor> for WML 1.3 DTD",
+        ),
+        ("<anchor>Open</anchor>", task_count_error),
+        ("<anchor>Open<prev/><refresh/></anchor>", task_count_error),
+        ("<anchor>Open<prev/><prev/></anchor>", task_count_error),
+    ];
+
+    for (content, expected) in cases {
+        let source = deck(content);
+        let first = strict_error(&source, content);
+        assert_eq!(first, expected, "{content}");
+        assert_eq!(strict_error(&source, content), first, "{content}");
     }
 }

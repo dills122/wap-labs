@@ -53,6 +53,9 @@ Legend:
   - Evidence: [x] Card collection and onevent/timer/content grammar plus language/context defaults: `wml_202_retains_root_and_card_language_context_metadata_with_defaults` and `wml_202_enforces_card_event_timer_content_order`.
   - [x] Parser accepts valid deck structure and rejects invalid root/card omissions.
   - [x] Runtime activation and source card-content order are deterministic: `wml_202_card_content_order_is_preserved_in_render_output`.
+  - Evidence: [x] `WML-CL-PARAGRAPH-SIGNIFICANT-BREAK` has direct strict
+    WML 1.3 render coverage in `engine-wasm/engine/src/layout/flow_layout.rs`.
+    Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_significant_break`.
 
 ### RQ-RMK-002 Task model support and execution
 
@@ -121,7 +124,17 @@ Legend:
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
   - [ ] Link activation behavior matches equivalent `go` navigation semantics.
-  - [ ] Invalid nesting path is deterministic and non-crashing.
+    A strict WML 1.3 deck with `<anchor><go>` loads, but Enter on its only
+    anchor leaves the card unchanged. The corresponding `<a href>` navigates.
+    This leaves `WML-CL-A-GO-EQUIVALENCE` and `WML-CL-ANCHOR-ACTIVATION` open.
+  - [x] Invalid nesting has a deterministic structured rejection.
+    `engine-wasm/engine/src/parser/wml_parser/tests.rs` contrasts valid sibling
+    links with invalid nested links. Run
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_a_no_nesting`.
+  - Evidence: [x] `engine-wasm/engine/src/engine_tests/wml_203_validation.rs`
+    verifies `WML-CL-ANCHOR-PLACEMENT` for anchors inside option text and for
+    zero or multiple tasks. Run
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_anchor_placement`.
 
 ### RQ-RMK-007 WBXML boundary and decode ownership
 

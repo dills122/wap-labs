@@ -1087,6 +1087,30 @@ function wml202TestPath(clauseId, fixtureKind) {
     : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
 }
 
+const wml201FixtureEvidence = new Map(
+  [
+    [
+      'WML-CL-A-NO-NESTING',
+      ['engine-wasm/engine/src/parser/wml_parser/tests.rs', 'wml_fx_a_no_nesting']
+    ],
+    [
+      'WML-CL-ANCHOR-PLACEMENT',
+      ['engine-wasm/engine/src/engine_tests/wml_203_validation.rs', 'wml_fx_anchor_placement']
+    ],
+    [
+      'WML-CL-PARAGRAPH-SIGNIFICANT-BREAK',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_significant_break']
+    ]
+  ].map(([id, [testPath, filter]]) => [
+    id,
+    {
+      path: testPath,
+      testPath,
+      command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${filter}`
+    }
+  ])
+);
+
 const wml203FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
@@ -1795,7 +1819,11 @@ if (refreshDirectWorkItems) {
           parentById.get(parentId).mapping.implementationStatus
         ])
       );
-      if (implementedWml203ClauseIds.has(candidate.id)) {
+      const wml201Evidence = wml201FixtureEvidence.get(candidate.id);
+      if (wml201Evidence) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml201Evidence;
+      } else if (implementedWml203ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml203FixtureEvidence;
       } else if (implementedWml202ClauseIds.has(candidate.id)) {
@@ -2627,6 +2655,7 @@ function clause(
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml' ||
+    wml201FixtureEvidence.has(clauseId) ||
     implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId) ||
@@ -2732,7 +2761,7 @@ function clause(
       assertion: obligationSynopsis,
       ...(directFixtureImplemented && family !== 'wbxml'
         ? {
-            evidence
+            evidence: wml201FixtureEvidence.get(clauseId) ?? evidence
           }
         : {})
     }

@@ -409,6 +409,7 @@ mod tests {
     use crate::render::render_list::DrawCmd;
     use crate::runtime::card::Card;
     use crate::runtime::node::{InlineNode, Node};
+    use crate::WmlEngine;
 
     fn text_rows(count: usize) -> Card {
         Card {
@@ -525,6 +526,57 @@ mod tests {
             cmd,
             crate::render::render_list::DrawCmd::Link { focused: true, .. }
         )));
+    }
+
+    #[test]
+    fn wml_fx_paragraph_significant_break_starts_next_paragraph_on_new_line() {
+        let wml = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p>First paragraph</p><p>Second paragraph</p></card></wml>"#;
+
+        let mut engine = WmlEngine::new();
+        engine
+            .set_viewport_cols(40)
+            .expect("viewport must fit both strings on one line");
+        let base_url = "http://example.test/paragraphs.wml";
+        let content_type = "text/vnd.wap.wml; validation=strict";
+        engine
+            .load_deck_context(wml, base_url, content_type, None)
+            .expect("strict WML 1.3 deck must load");
+
+        let deck = engine.deck.as_ref().expect("loaded deck must be available");
+        assert!(
+            matches!(
+                deck.cards[0].nodes.as_slice(),
+                [Node::Paragraph(_), Node::Paragraph(_)]
+            ),
+            "both significant paragraphs must survive as separate nodes"
+        );
+
+        let render = engine.render().expect("deck must render");
+        assert!(
+            matches!(
+                render.draw.as_slice(),
+                [DrawCmd::Text { y: 0, text: first, .. }, DrawCmd::Text { y: 1, text: second, .. }]
+                    if first == "First paragraph" && second == "Second paragraph"
+            ),
+            "significant paragraphs must start on consecutive lines: {:?}",
+            render.draw
+        );
+
+        let single_paragraph = wml.replace("</p><p>", " ");
+        engine
+            .load_deck_context(&single_paragraph, base_url, content_type, None)
+            .expect("single-paragraph control deck must load");
+        let render = engine.render().expect("single paragraph must render");
+        assert!(
+            matches!(
+                render.draw.as_slice(),
+                [DrawCmd::Text { y: 0, text, .. }] if text == "First paragraph Second paragraph"
+            ),
+            "the same text in one paragraph must fit on one line: {:?}",
+            render.draw
+        );
     }
 
     #[test]

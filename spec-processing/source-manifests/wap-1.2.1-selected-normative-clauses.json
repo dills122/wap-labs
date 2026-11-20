@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 364
+    "assessedClauseCount": 367
   },
   "families": [
     {
@@ -6671,8 +6671,13 @@
           "fixturePlan": {
             "id": "WML-FX-ANCHOR-PLACEMENT",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Reject anchor placement inside option text or any anchor containing a task count other than one."
+            "status": "implemented",
+            "assertion": "Reject anchor placement inside option text or any anchor containing a task count other than one.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_anchor_placement"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6690,7 +6695,7 @@
             "parentImplementationSnapshot": {
               "WML-C-20": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -6803,8 +6808,13 @@
           "fixturePlan": {
             "id": "WML-FX-A-NO-NESTING",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Reject nested a elements."
+            "status": "implemented",
+            "assertion": "Reject nested a elements.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "testPath": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_a_no_nesting"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6822,7 +6832,7 @@
             "parentImplementationSnapshot": {
               "WML-C-19": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -9392,8 +9402,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-SIGNIFICANT-BREAK",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Insert a line break between significant paragraph elements."
+            "status": "implemented",
+            "assertion": "Insert a line break between significant paragraph elements.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_significant_break"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9411,7 +9426,7 @@
             "parentImplementationSnapshot": {
               "WML-C-36": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
