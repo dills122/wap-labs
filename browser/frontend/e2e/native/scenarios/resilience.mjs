@@ -69,7 +69,9 @@ const explicitStop = Object.freeze({
     await prepare(context);
     await loadHome(context);
     await startObservedSlowNavigation(context, actionID);
+    await context.waves.waitForNavigationActivity(true);
     const { status, acknowledgementMs } = await context.waves.stopNavigationMeasured();
+    await context.waves.waitForNavigationActivity(false);
     assert.match(status, /Navigation stopped\./);
     assert.ok(acknowledgementMs < 500, `Stop acknowledgement took ${acknowledgementMs}ms`);
     context.recordAssertion('Stop acknowledgement', 'Stop was acknowledged within 500ms');
@@ -93,6 +95,7 @@ const explicitStop = Object.freeze({
     context.observe({ phase: 'recovery-dispatched', address: recoveryAddress });
     await context.waves.waitForDeckText('W13-A');
     await context.waves.waitForAddress(recoveryAddress);
+    await context.waves.waitForNavigationActivity(false);
     context.observe({ phase: 'recovered', address: recoveryAddress });
     context.recordAssertion(
       'Stop recovery',

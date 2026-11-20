@@ -5,6 +5,7 @@ const SELECTORS = Object.freeze({
   connectNetwork: '#btn-connect-network',
   address: '#fetch-url',
   go: '#btn-fetch-url',
+  navigationActivity: '#navigation-activity',
   back: '#btn-back',
   reload: '#btn-reload',
   viewport: '#viewport',
@@ -215,6 +216,13 @@ export function createWavesDriver({ driver, selector, waitUntil, keys = { Enter:
 
     async startWapUrl(address) {
       await startWapUrl(address);
+    },
+
+    async waitForNavigationActivity(active) {
+      const indicator = await find(SELECTORS.navigationActivity);
+      return waitUntil(async () => (await indicator.getAttribute('data-active')) === String(active), {
+        description: `navigation activity ${active ? 'visible' : 'hidden'}`
+      });
     },
 
     async startControlledHttpUrl(address) {

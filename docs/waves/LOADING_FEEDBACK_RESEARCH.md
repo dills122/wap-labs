@@ -1,6 +1,6 @@
 # Loading feedback research
 
-Status: research recommendation; no design or timing decision approved.
+Status: 500 ms toolbar indicator accepted in manual prototype evaluation; native evidence remains scoped below.
 
 ## Question and recommendation
 
@@ -23,14 +23,15 @@ should evaluate a prototype before selecting its visual treatment and timing.
 
 ## Timing and next gate
 
-WBP-11 currently specifies initial feedback within 100 ms and delayed visual progress by 200 ms.
-The user requested less visible churn during fast navigation. A roughly 500 ms delay is a
-prototype hypothesis, not a historical fact or an approved replacement requirement. Test it
-against real fast and slow WAP requests and reconcile any proposed change with WBP-11 before
-implementation. Stop must remain immediately available independently of indicator timing.
+WBP-11 previously targeted delayed visual progress by 200 ms. After the user evaluated the
+500 ms prototype and reported that it looked good, WBP-11 now specifies the reserved toolbar
+indicator after 500 ms for repeat navigation. Immediate Stop availability and the initial
+feedback target remain separate. This is a product decision based on the prototype, not a
+historical timing claim or proof of the native timing budget.
 
 Compare the reserved chrome indicator with the existing delayed viewport hint and no visible
 indicator. Verify no layout shift on fast navigation; one polite start/end announcement only when
 the slow state is presented; no stale indicator after cancellation, supersession, or completion;
 and clear, reachable error recovery. Record user feedback, reduced-motion behavior, and contrast
-before deciding. The recommendation has not yet been prototyped or validated with users.
+for future changes. The user approved the prototype's appearance after trying fast and slow
+direct-HTTP fixtures; native Kannel coverage is recorded separately from that observation.

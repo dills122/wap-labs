@@ -81,6 +81,7 @@ export interface BrowserShellRefs {
   localExampleGoalEl: HTMLParagraphElement;
   localExampleTestingAcEl: HTMLUListElement;
   navigationPhaseBarEl?: HTMLElement;
+  navigationActivityEl?: HTMLElement;
 }
 
 export const mountBrowserShell = (
@@ -123,6 +124,7 @@ export const mountBrowserShell = (
     '#local-example-testing-ac'
   );
   const navigationPhaseBarEl = document.querySelector<HTMLElement>('#navigation-phase-bar');
+  const navigationActivityEl = document.querySelector<HTMLElement>('#navigation-activity');
 
   if (
     !wmlInput ||
@@ -260,6 +262,7 @@ export const mountBrowserShell = (
     utilityRailPanelEl: utilityRailPanelEl ?? undefined,
     toastEl,
     liveAnnouncerEl,
+    navigationActivityEl: navigationActivityEl ?? undefined,
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,

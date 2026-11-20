@@ -53,6 +53,7 @@ export const navigationToolbarTemplate = () => `
           <select id="local-example" class="host-control"></select>
         </label>
       </div>
+      <span id="navigation-activity" class="navigation-activity" data-active="false" aria-hidden="true"><span></span></span>
       <div class="omnibox-actions">
         <button
           id="btn-fetch-url"
