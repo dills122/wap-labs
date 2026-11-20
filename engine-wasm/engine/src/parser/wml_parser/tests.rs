@@ -1118,7 +1118,7 @@ fn parses_mixed_card_level_content_paths() {
             node,
             Node::CardContent(items) if matches!(&items[0], InlineNode::Text(t) if t == "tail")
         )),
-        "expected trailing card-level text in parsed nodes: {nodes:?}"
+        "expected trailing card-level text in parsed nodes"
     );
 }
 
