@@ -1099,6 +1099,19 @@ const wmls502FixtureEvidence = {
   command:
     'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime'
 };
+const wmls504LangNumericClauseIds = new Set([
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-SIGNATURE'
+]);
+const wmls504LangNumericEvidence = {
+  path: 'engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex',
+  testPath: 'engine-wasm/engine/src/wavescript/wap_runtime.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504'
+};
 function wmls501FixtureEvidence(clauseId) {
   const fixtureName =
     clauseId === 'WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL'
@@ -1984,6 +1997,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWmls502ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wmls502FixtureEvidence;
+      } else if (wmls504LangNumericClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wmls504LangNumericEvidence;
       } else if (
         candidate.family === 'wml' &&
         candidate.fixturePlan.evidence?.command === wml303FixtureEvidence.command
@@ -2782,7 +2798,8 @@ function clause(
     implementedWml305ClauseIds.has(clauseId) ||
     implementedWml306NewClauseIds.has(clauseId) ||
     implementedWmls501ClauseIds.has(clauseId) ||
-    implementedWmls502ClauseIds.has(clauseId);
+    implementedWmls502ClauseIds.has(clauseId) ||
+    wmls504LangNumericClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -2876,6 +2893,7 @@ function clause(
         ? {
             evidence: wmlAnchorEvidenceByClauseId.get(clauseId) ??
               wml307EvidenceByClauseId.get(clauseId) ??
+              (wmls504LangNumericClauseIds.has(clauseId) ? wmls504LangNumericEvidence : undefined) ??
               (clauseId === wml308InputTitleClause.id
                 ? wml308FixtureEvidence
                 : implementedWaeGenericWbxmlClauseIds.has(clauseId)

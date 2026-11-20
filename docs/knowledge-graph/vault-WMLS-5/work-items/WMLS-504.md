@@ -327,6 +327,9 @@ tags:
   "sourceFamilies": [
     "wmlscript-libraries"
   ],
+  "notes": [
+    "The verified WAP-193 executor dispatches WAP-194 Lang.abs, Lang.min, and Lang.max with six direct signature and behavior clauses covered. The first argument wins ties after numeric promotion and the selected Number keeps its type. This is a bounded slice of the Lang library."
+  ],
   "existingTickets": [
     "W1-05"
   ],
@@ -340,7 +343,10 @@ tags:
   "evidence": [
     "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
     "node scripts/check-wap-conformance-ledger.mjs",
-    "node scripts/check-wap-wmlscript-conformance-ledger.mjs"
+    "node scripts/check-wap-wmlscript-conformance-ledger.mjs",
+    "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504",
+    "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+    "pnpm test:story WMLS-504"
   ],
   "source": "docs/waves/wap-1.2.1-compliance-program.json"
 }

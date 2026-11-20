@@ -9,6 +9,7 @@ import type {
   ScriptInvocationOutcome,
   WmlEngineWasm
 } from '../contracts/wml-engine';
+import wap193LangNumericHex from '../engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex?raw';
 import wap193MinimalReturnEsHex from '../engine/tests/fixtures/wmlscript/wap-193-minimal-return-es.wmlsc.hex?raw';
 import wap193OperatorConversionsHex from '../engine/tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex?raw';
 import wap193StackUnderflowHex from '../engine/tests/fixtures/wmlscript/wap-193-stack-underflow.wmlsc.hex?raw';
@@ -326,6 +327,7 @@ function registerBuiltInScriptUnits(engine: WmlEngineWasm): void {
     'wap-193-operator-conversions.wmlsc',
     parseHexFixture(wap193OperatorConversionsHex)
   );
+  engine.registerScriptUnit('wap-193-lang-numeric.wmlsc', parseHexFixture(wap193LangNumericHex));
   engine.registerScriptUnit(
     'wap-193-stack-underflow.wmlsc',
     parseHexFixture(wap193StackUnderflowHex)

@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 763,
-    "assessedClauseCount": 376
+    "assessedClauseCount": 382
   },
   "families": [
     {
@@ -36330,8 +36330,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-ABS-SIGNATURE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Implement Lang.abs(value) for a Number argument, returning Number or invalid."
+            "status": "implemented",
+            "assertion": "Implement Lang.abs(value) for a Number argument, returning Number or invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36347,7 +36352,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-031": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -36369,8 +36374,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-ABS-BEHAVIOR",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Return the absolute magnitude while preserving whether the input was Integer or Float."
+            "status": "implemented",
+            "assertion": "Return the absolute magnitude while preserving whether the input was Integer or Float.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36386,7 +36396,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-031": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -36408,8 +36418,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-MIN-SIGNATURE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid."
+            "status": "implemented",
+            "assertion": "Implement Lang.min(value1, value2) for two Number arguments, returning Number or invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36425,7 +36440,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-032": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -36447,8 +36462,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-MIN-BEHAVIOR",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal."
+            "status": "implemented",
+            "assertion": "Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36464,7 +36484,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-032": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -36486,8 +36506,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-MAX-SIGNATURE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid."
+            "status": "implemented",
+            "assertion": "Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36503,7 +36528,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-033": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -36525,8 +36550,13 @@
           "fixturePlan": {
             "id": "WMLSCRIPT-LIBRARIES-FX-LANG-MAX-BEHAVIOR",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal."
+            "status": "implemented",
+            "assertion": "Apply numeric conversion rules, return the larger original value with its original type, and select the first argument when values compare equal.",
+            "evidence": {
+              "path": "engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex",
+              "testPath": "engine-wasm/engine/src/wavescript/wap_runtime.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -36542,7 +36572,7 @@
             "parentImplementationSnapshot": {
               "WMLSSL-033": "missing"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },

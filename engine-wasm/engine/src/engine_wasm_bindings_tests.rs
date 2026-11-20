@@ -3,7 +3,7 @@ use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
-use crate::engine_tests::engine_with_empty_select;
+use crate::engine_tests::{engine_with_empty_select, WMLS_504_LANG_NUMERIC_UNIT};
 use crate::wavescript::wap_decoder::{decode_wap_compilation_unit, WapDecodeError};
 
 const SAMPLE: &str = r##"
@@ -218,6 +218,45 @@ fn wasm_wmls_502_operator_conversion_execution_matches_native_result() {
             .as_string()
             .as_deref(),
         Some("1242")
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_504_lang_numeric_execution_matches_native_result() {
+    let source = "lang-numeric.wmlsc";
+    let mut engine = WmlEngine::wasm_new();
+    engine.register_script_unit_wasm(
+        source.to_string(),
+        wmls_501_fixture_bytes(WMLS_504_LANG_NUMERIC_UNIT),
+    );
+
+    let args = Array::of1(&JsValue::from_f64(f64::from(i32::MIN)));
+    let overflow = engine
+        .execute_script_ref_call_wasm(source.to_string(), "abs".to_string(), args.into())
+        .expect("Lang overflow outcome should serialize");
+    let result = Reflect::get(&overflow, &JsValue::from_str("result")).expect("result field");
+    assert_eq!(
+        Reflect::get(&result, &JsValue::from_str("invalid"))
+            .expect("invalid field")
+            .as_bool(),
+        Some(true)
+    );
+    assert_eq!(
+        Reflect::get(&overflow, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
+    );
+
+    let invoked = engine
+        .invoke_script_ref_function_wasm(source.to_string(), "main".to_string())
+        .expect("verified Lang functions should invoke through WASM");
+    assert_eq!(
+        Reflect::get(&invoked, &JsValue::from_str("result"))
+            .expect("result field")
+            .as_string()
+            .as_deref(),
+        Some("3|45|45.0")
     );
 }
 

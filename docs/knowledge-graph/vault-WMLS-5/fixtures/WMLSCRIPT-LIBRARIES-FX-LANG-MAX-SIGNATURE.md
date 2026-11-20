@@ -4,7 +4,7 @@ key: "WMLSCRIPT-LIBRARIES-FX-LANG-MAX-SIGNATURE"
 type: "fixture"
 generated: true
 slice: "WMLS-5"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "runtime",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Implement Lang.max(value1, value2) for two Number arguments, returning Number or invalid.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

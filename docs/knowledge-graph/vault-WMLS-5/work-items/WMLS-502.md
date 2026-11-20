@@ -120,7 +120,7 @@ tags:
   "notes": [
     "The bounded floating-capable language executor directly implements 44 clauses; three additional clauses retain completed WMLS-501 verifier evidence, for 47 implemented of 59 clauses directly mapped to WMLS-502. The work item remains in progress rather than overstating closure of its broader parent mappings.",
     "The 32 selected parent rows remain partial or missing in the machine ledger. This work item does not claim that all 41 selected WMLScript language parents or the WMLS-5 sprint are complete.",
-    "WMLS-503 URL/access execution, WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
+    "WMLS-503 URL/access execution, the rest of WMLS-504 standard-library execution, optional integer-only behavior, and unfinished WMLS-505 chapter 12 coverage remain open."
   ],
   "existingTickets": [
     "W1-04"

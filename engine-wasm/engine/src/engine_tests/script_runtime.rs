@@ -243,6 +243,42 @@ fn registered_wap_unit_executes_wmls_502_operator_conversion_fixture() {
 }
 
 #[test]
+fn registered_wap_unit_executes_wmls_504_lang_numeric_fixture() {
+    let source = "lang-numeric.wmlsc";
+    let mut engine = WmlEngine::new();
+    engine.register_script_unit(
+        source.to_string(),
+        wmls_501_fixture_bytes(WMLS_504_LANG_NUMERIC_UNIT),
+    );
+
+    let overflow = engine.execute_script_ref_call(
+        source.to_string(),
+        "abs".to_string(),
+        vec![ScriptCallArgLiteral::Number(f64::from(i32::MIN))],
+    );
+    assert!(overflow.ok);
+    assert_eq!(
+        overflow.result,
+        ScriptValueLiteral::Invalid { invalid: true }
+    );
+    assert_eq!(overflow.error_class, ScriptErrorClassLiteral::None);
+    assert!(!overflow.invocation_aborted);
+
+    let invoked = engine
+        .invoke_script_ref_function(source.to_string(), "main".to_string())
+        .expect("verified Lang functions should invoke");
+    assert_eq!(
+        invoked.result,
+        ScriptValueLiteral::String("3|45|45.0".to_string())
+    );
+    assert!(matches!(
+        invoked.navigation_intent,
+        ScriptNavigationIntentLiteral::None
+    ));
+    assert!(!invoked.requires_refresh);
+}
+
+#[test]
 fn registered_wap_unit_verifies_every_function_before_selected_execution() {
     let mut engine = WmlEngine::new();
     engine.register_script_unit(
