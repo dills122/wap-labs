@@ -112,7 +112,7 @@ Parser:
 - `engine/src/parser/wml_parser/mod.rs` (public parser entrypoint `parse_wml`)
 - `engine/src/parser/wml_parser/actions.rs` (`<do>`, `<onevent>`, task/timer action parsing)
 - `engine/src/parser/wml_parser/nodes.rs` (card and inline node parsing)
-- `engine/src/parser/wml_parser/xml.rs` (XML tokenize/parse backend via `quick-xml`, normalized element/text tree, text/entity decoding)
+- `engine/src/parser/wml_parser/xml.rs` (XML tokenization via `quick-xml`, XML 1.0 character validation for literals and numeric references, and normalized element/text tree)
 - `engine/src/parser/wml_parser/tests.rs` (parser tests)
 
 Core runtime/rendering support:
@@ -202,6 +202,8 @@ Behavior must stay aligned with the WASM API for:
 - navigation and focus transitions
 - canonical `EnginePresentationFrame` ordering and shape, with equivalent legacy `RenderList`
   compatibility output during the remaining cutover
+- input row text with evaluated WML 1.3 titles, the variable-name fallback for empty
+  or absent titles, and masked password values. Input selection identifies the variable by name
 - typed key/action/click input behavior and trace semantics
 - script execution/invocation outcomes
 - trace entry semantics

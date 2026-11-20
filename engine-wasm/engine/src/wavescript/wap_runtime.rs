@@ -1,7 +1,9 @@
-use super::value::ScriptValue;
+use super::value::{parse_wml_integer, ScriptValue};
 use super::wap_decoder::{
-    WapCompilationUnit, WapConstant, WapFunction, WapInstruction, MAX_WAP_OPERAND_STACK_DEPTH,
+    library_call_indexes, WapCompilationUnit, WapConstant, WapFunction, WapInstruction,
+    MAX_WAP_OPERAND_STACK_DEPTH,
 };
+use std::cmp::Ordering;
 use std::fmt;
 
 const DEFAULT_MAX_STEPS: usize = 512;
@@ -274,9 +276,11 @@ fn execute_named_function_with_limits(
                     limits.max_call_depth,
                 )?;
             }
-            0x68..=0x6f | 0x0a..=0x0d => {
-                return Err(unsupported(active_function, &instruction));
+            0x68..=0x6f | 0x0a..=0x0b => {
+                let result = call_numeric_library(&instruction, active_function, &mut stack)?;
+                push_value(&mut stack, result, limits.max_stack_size)?;
             }
+            0x0c..=0x0d => return Err(unsupported(active_function, &instruction)),
             0xe0..=0xff | 0x0e => {
                 let index = instruction
                     .variable_index()
@@ -608,6 +612,95 @@ enum NumericValue {
     Float(f64),
 }
 
+fn call_numeric_library(
+    instruction: &WapInstruction,
+    function: usize,
+    stack: &mut Vec<ScriptValue>,
+) -> Result<ScriptValue, WapRuntimeError> {
+    let pc = instruction.offset;
+    match library_call_indexes(instruction) {
+        (0, 0) => Ok(lang_abs(pop(stack, function, pc)?)),
+        (0, member @ (1 | 2)) => {
+            let rhs = pop(stack, function, pc)?;
+            let lhs = pop(stack, function, pc)?;
+            let prefer_right = if member == 1 {
+                Ordering::Greater
+            } else {
+                Ordering::Less
+            };
+            Ok(lang_extremum(lhs, rhs, prefer_right))
+        }
+        _ => Err(unsupported(function, instruction)),
+    }
+}
+
+fn lang_number(value: ScriptValue) -> Option<NumericValue> {
+    if let ScriptValue::String(text) = &value {
+        // A legal Integer conversion that overflows is invalid, so the Float
+        // conversion applies only when Integer syntax does not match.
+        if let Some(integer) = parse_wml_integer(text) {
+            return integer.ok().map(NumericValue::Integer);
+        }
+    }
+
+    let already_float = matches!(value, ScriptValue::Float64(_));
+    match unary_numeric(value)? {
+        integer @ NumericValue::Integer(_) => Some(integer),
+        NumericValue::Float(value) => {
+            let single_precision = value as f32;
+            if !single_precision.is_finite() {
+                return None;
+            }
+            // Coerce new Float values to source precision. An existing Float
+            // must retain its stored magnitude when returned by min or max.
+            let value = if already_float {
+                value
+            } else {
+                f64::from(single_precision)
+            };
+            Some(NumericValue::Float(if value == 0.0 { 0.0 } else { value }))
+        }
+    }
+}
+
+fn lang_abs(value: ScriptValue) -> ScriptValue {
+    match lang_number(value) {
+        Some(NumericValue::Integer(value)) => value
+            .checked_abs()
+            .map(ScriptValue::Int32)
+            .unwrap_or(ScriptValue::Invalid),
+        Some(NumericValue::Float(value)) => ScriptValue::Float64(value.abs()),
+        None => ScriptValue::Invalid,
+    }
+}
+
+fn lang_extremum(lhs: ScriptValue, rhs: ScriptValue, prefer_right: Ordering) -> ScriptValue {
+    let (Some(lhs), Some(rhs)) = (lang_number(lhs), lang_number(rhs)) else {
+        return ScriptValue::Invalid;
+    };
+    let order = match (lhs, rhs) {
+        (NumericValue::Integer(lhs), NumericValue::Integer(rhs)) => Some(lhs.cmp(&rhs)),
+        (lhs, rhs) => {
+            let for_comparison = |value| match value {
+                NumericValue::Integer(value) => f64::from(value as f32),
+                NumericValue::Float(value) => value,
+            };
+            for_comparison(lhs).partial_cmp(&for_comparison(rhs))
+        }
+    };
+    // WAP-193 promotes the Integer operand and uses existing Floats as-is.
+    // Compare in the promoted type and return the selected Number before that
+    // promotion. A tie selects the first argument, including mixed types.
+    match if order == Some(prefer_right) {
+        rhs
+    } else {
+        lhs
+    } {
+        NumericValue::Integer(value) => ScriptValue::Int32(value),
+        NumericValue::Float(value) => ScriptValue::Float64(value),
+    }
+}
+
 fn unary_numeric(value: ScriptValue) -> Option<NumericValue> {
     value
         .to_integer()
@@ -907,7 +1000,7 @@ mod tests {
 
         let library = decode_wap_compilation_unit(&unit_with_functions(
             &[],
-            &[(0, 0, &[0x14, 0x68, 0x00, 0x3a])],
+            &[(0, 0, &[0x14, 0x6b, 0x00, 0x3a])],
         ))
         .expect("library call is structurally valid");
         assert_eq!(
@@ -915,9 +1008,133 @@ mod tests {
             Err(WapRuntimeError::UnsupportedExecutionOpcode {
                 function: 0,
                 pc: 1,
-                opcode: 0x68,
+                opcode: 0x6b,
             })
         );
+    }
+
+    #[test]
+    fn executes_wmls_504_lang_numeric_library_calls() {
+        use ScriptValue::{Bool, Float64, Int32, Invalid, String};
+
+        let bytes: Vec<u8> =
+            include_str!("../../tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex")
+                .split_ascii_whitespace()
+                .map(|token| u8::from_str_radix(token, 16).expect("fixture must contain hex bytes"))
+                .collect();
+        let unit = decode_wap_compilation_unit(&bytes).expect("Lang fixture must verify");
+        let cases = [
+            ("abs", vec![Int32(-3)], Int32(3)),
+            ("abs", vec![Float64(-2.5)], Float64(2.5)),
+            ("abs", vec![String("-2.5".into())], Float64(2.5)),
+            ("abs", vec![Bool(true)], Int32(1)),
+            ("abs", vec![Int32(i32::MIN)], Invalid),
+            ("abs", vec![String("2147483648".into())], Invalid),
+            ("abs", vec![String("  -2147483649  ".into())], Invalid),
+            (
+                "abs",
+                vec![String("2147483648.0".into())],
+                Float64(2_147_483_648.0),
+            ),
+            ("abs", vec![Float64(-f64::MAX)], Invalid),
+            ("abs", vec![String("-1e39".into())], Invalid),
+            (
+                "abs",
+                vec![Float64(-f64::from(f32::MAX))],
+                Float64(f64::from(f32::MAX)),
+            ),
+            ("abs", vec![Invalid], Invalid),
+            ("abs", vec![String("invalid number".into())], Invalid),
+            ("min", vec![Int32(45), Float64(76.25)], Int32(45)),
+            ("min", vec![Float64(45.0), Int32(45)], Float64(45.0)),
+            ("min", vec![Int32(45), Float64(45.0)], Int32(45)),
+            (
+                "min",
+                vec![String("10".into()), String("2".into())],
+                Int32(2),
+            ),
+            ("min", vec![Invalid, Int32(4)], Invalid),
+            ("min", vec![Int32(4), String("2147483648".into())], Invalid),
+            (
+                "min",
+                vec![Int32(16_777_217), Float64(16_777_216.0)],
+                Int32(16_777_217),
+            ),
+            (
+                "min",
+                vec![Int32(16_777_217), Int32(16_777_216)],
+                Int32(16_777_216),
+            ),
+            ("max", vec![Float64(45.5), Int32(76)], Int32(76)),
+            ("max", vec![Int32(45), Float64(45.0)], Int32(45)),
+            ("max", vec![Float64(45.0), Int32(45)], Float64(45.0)),
+            ("max", vec![String("2.5".into()), Bool(true)], Float64(2.5)),
+            (
+                "max",
+                vec![String("-2147483649".into()), Float64(4.0)],
+                Invalid,
+            ),
+            (
+                "max",
+                vec![Int32(3), String("invalid number".into())],
+                Invalid,
+            ),
+            (
+                "max",
+                vec![Float64(16_777_216.0), Int32(16_777_217)],
+                Float64(16_777_216.0),
+            ),
+            ("main", vec![], String("3|45|45.0".into())),
+        ];
+        for (function, arguments, result) in cases {
+            assert_eq!(
+                execute_named_function(&unit, function, &arguments),
+                Ok(result),
+                "{function}({arguments:?})"
+            );
+        }
+
+        let result = execute_named_function(&unit, "min", &[Float64(-0.0), Float64(0.0)]);
+        let Ok(Float64(zero)) = result else {
+            panic!("a floating-point tie should return a Float: {result:?}");
+        };
+        assert_eq!(zero.to_bits(), 0.0_f64.to_bits());
+    }
+
+    #[test]
+    fn wmls_504_lang_extrema_preserve_computed_float() {
+        for (name, opcode) in [("min", 0x69), ("max", 0x6a)] {
+            let code = [
+                0x15, 0x50, 0x23, 0x40, // x = 1 / 10
+                0xe0, 0xe0, opcode, 0x00, // Lang.min(x, x) or Lang.max(x, x)
+                0xe0, 0x2d, 0x3a, // return result == x
+            ];
+            assert_eq!(
+                execute(&[WapConstant::Integer32(10)], &[(0, 1, &code)]),
+                ScriptValue::Bool(true),
+                "Lang.{name} must preserve the selected Float value"
+            );
+        }
+    }
+
+    #[test]
+    fn wmls_504_lang_extrema_distinguish_stored_floats() {
+        let constants = [
+            WapConstant::Integer32(10),
+            WapConstant::Float32Bits(0.1_f32.to_bits()),
+        ];
+        for (name, opcode, lhs, rhs) in [("min", 0x69, 0x51, 0xe0), ("max", 0x6a, 0xe0, 0x51)] {
+            let code = [
+                0x15, 0x50, 0x23, 0x40, // x = 1 / 10
+                lhs, rhs, opcode, 0x00, // select the second operand
+                rhs, 0x2d, 0x3a, // return result == second operand
+            ];
+            assert_eq!(
+                execute(&constants, &[(0, 1, &code)]),
+                ScriptValue::Bool(true),
+                "Lang.{name} must order different stored Floats"
+            );
+        }
     }
 
     #[test]

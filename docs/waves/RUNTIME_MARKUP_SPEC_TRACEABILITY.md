@@ -123,10 +123,11 @@ Legend:
   - `WAP-191_104` anchor semantics
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
-  - [ ] Link activation behavior matches equivalent `go` navigation semantics.
-    A strict WML 1.3 deck with `<anchor><go>` loads, but Enter on its only
-    anchor leaves the card unchanged. The corresponding `<a href>` navigates.
-    This leaves `WML-CL-A-GO-EQUIVALENCE` and `WML-CL-ANCHOR-ACTIVATION` open.
+  - [x] Link activation matches equivalent `go` navigation. The strict-WML
+    `wml_fx_a_go_equivalence` fixture checks destination, history, and
+    variable state; `wml_fx_anchor_activation` covers Go, Prev, and Refresh
+    through Enter, frame action, and click. Both are in
+    `engine-wasm/engine/src/engine_tests/wml_203_validation.rs`.
   - [x] Invalid nesting has a deterministic structured rejection.
     `engine-wasm/engine/src/parser/wml_parser/tests.rs` contrasts valid sibling
     links with invalid nested links. Run
@@ -135,6 +136,12 @@ Legend:
     verifies `WML-CL-ANCHOR-PLACEMENT` for anchors inside option text and for
     zero or multiple tasks. Run
     `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_anchor_placement`.
+  - Evidence: [x] `wasm_wml_201_anchor_tasks_match_native_frames_and_state`
+    runs the same frame-bound actions through native Rust and WASM and checks
+    state and traces. `pnpm test:story WML-201` exercises same-deck activation in
+    Waves local mode. `WML-CL-ANCHOR-ACTIVATION` remains open for
+    host-owned Prev history, and `WML-CL-ANCHOR-ACCESSKEY` stays unassessed.
+    See [anchor history follow-up](../wml-engine/INTENDED_BEHAVIORS.md#ib-003-explicit-anchors-activate-their-bound-wml-tasks).
 
 ### RQ-RMK-007 WBXML boundary and decode ownership
 

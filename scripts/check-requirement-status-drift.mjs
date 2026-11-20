@@ -25,8 +25,8 @@ const familyDefinitions = [
     selectedDisposition: 'required-by-class-c-client-mcf',
     expectedRows: 76,
     expectedSelected: 39,
-    expectedClauses: 175,
-    expectedStatus: { implemented: 23, partial: 10, missing: 6 },
+    expectedClauses: 176,
+    expectedStatus: { implemented: 25, partial: 8, missing: 6 },
     activeDoc: 'docs/waves/WAP_1_2_1_WML_SCR_LEDGER.md'
   },
   {
@@ -36,7 +36,7 @@ const familyDefinitions = [
     expectedRows: 86,
     expectedSelected: 11,
     expectedClauses: 39,
-    expectedStatus: { implemented: 5, partial: 3, missing: 3 },
+    expectedStatus: { implemented: 5, partial: 4, missing: 2 },
     activeDoc: 'docs/waves/WAP_1_2_1_WAE_SCR_LEDGER.md'
   },
   {
@@ -158,7 +158,7 @@ for (const sprint of program.sprints ?? []) {
 }
 if (
   JSON.stringify(programStatusCounts) !==
-  JSON.stringify({ done: 32, blocked: 1, 'in-progress': 10, todo: 40 })
+  JSON.stringify({ done: 32, blocked: 1, 'in-progress': 12, todo: 38 })
 ) {
   failures.push('compliance-program work-item status rollup drift');
 }
@@ -322,9 +322,9 @@ if (
   selectedClauses.scope?.remainingSelectedParentCount !== 0 ||
   aggregateRows !== 712 ||
   aggregateSelected !== 198 ||
-  aggregateClauses !== 762 ||
+  aggregateClauses !== 763 ||
   JSON.stringify(aggregateStatus) !==
-  JSON.stringify({ implemented: 47, partial: 72, missing: 79 })
+  JSON.stringify({ implemented: 49, partial: 71, missing: 78 })
 ) {
   failures.push('selected-profile aggregate planning/status drift');
 }
@@ -346,15 +346,15 @@ const requiredDocumentFragments = new Map([
   [
     'docs/waves/SOURCE_MATERIAL_MASTER_AUDIT.md',
     [
-      'all 198 selected rows now expand into 762',
-      `${selectedClauses.summary.assessedClauseCount} WML, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed`
+      'all 198 selected rows now expand into 763',
+      `${selectedClauses.summary.assessedClauseCount} WML, WAE, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed`
     ]
   ],
   [
     'docs/waves/WAP_1_2_1_NORMATIVE_CLAUSE_LEDGER.md',
     [
       'covers all 198 selected Class C parent rows',
-      'The 762 clauses are classified as 722 required'
+      'The 763 clauses are classified as 722 required'
     ]
   ],
   [
@@ -448,7 +448,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 requirement/status drift');
 console.log(
-  'PASS 712 source rows / 198 selected rows / 762 clauses remain synchronized'
+  'PASS 712 source rows / 198 selected rows / 763 clauses remain synchronized'
 );
 console.log(
   `PASS ${seenRequirementIds.size} requirement IDs, active additive work, evidence states, and strict guards`

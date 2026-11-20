@@ -29,7 +29,8 @@ mod wtp_replay_window;
 
 use fetch_runtime::fetch_deck_in_process_impl;
 pub use request_meta::{is_sensitive_transport_field, redact_transport_url, TRANSPORT_TRACE_ENV};
-pub use wbxml::preflight_wbxml_decoder;
+pub use wbxml::{decode_wbxml_for_content_type, preflight_wbxml_decoder};
+pub use wbxml_decoder::{DecodedWbxmlDocument, WbxmlDocumentKind};
 
 pub const MAX_URI_OCTETS: usize = 1024;
 pub const MAX_REQUEST_HEADER_COUNT: usize = 64;
@@ -385,6 +386,8 @@ pub struct FetchErrorInfo {
     pub details: Option<serde_json::Value>,
 }
 
+/// Deck XML and engine-facing metadata. WML decoded from generic WBXML uses
+/// `application/vnd.wap.wmlc` as the engine-facing content type.
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct EngineDeckInputPayload {

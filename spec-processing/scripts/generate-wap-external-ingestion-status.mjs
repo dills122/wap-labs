@@ -78,7 +78,13 @@ const specialArtifacts = new Map([
         sourceUrl:
           'https://www.iana.org/assignments/character-sets/character-sets.xml',
         mediaType: 'application/xml'
-      }
+      },
+      ...['20010609031130', '20011030145938'].map((timestamp) => ({
+        id: `iana-character-sets-${timestamp}`,
+        relativePath: `iana/character-sets-${timestamp}.txt`,
+        sourceUrl: `https://web.archive.org/web/${timestamp}id_/http://www.iana.org/assignments/character-sets`,
+        mediaType: 'text/plain'
+      }))
     ]
   ],
   [
@@ -133,7 +139,7 @@ const metadataOnlyDependencies = new Map([
 const partialDependencies = new Map([
   [
     'iana-character-sets',
-    'The current registry is preserved for research, but the WBXML-era historical registry snapshot remains open.'
+    'The current registry is preserved alongside two verified historical captures that bracket the WBXML 1.3 approval date. The exact registry state on 25 July 2001 remains unverified.'
   ],
   [
     'unicode-2.0.0',

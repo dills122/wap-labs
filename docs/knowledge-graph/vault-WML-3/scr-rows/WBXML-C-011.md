@@ -1,0 +1,46 @@
+---
+id: "scr-row:WBXML-C-011"
+key: "WBXML-C-011"
+type: "scr-row"
+generated: true
+slice: "WML-3"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/scr-row"
+---
+
+# Support both the binary token value and the literal value for all tags, attribute names, and attribute values
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `belongs-to` → [[source-families/wbxml|wbxml]]
+- `refines` ← [[clauses/WBXML-CL-BINARY-LITERAL-EQUIVALENCE|WBXML-CL-BINARY-LITERAL-EQUIVALENCE]]
+- `refines` ← [[clauses/WBXML-CL-EXTERNAL-TOKEN-TYPING|WBXML-CL-EXTERNAL-TOKEN-TYPING]]
+- `refines` ← [[clauses/WBXML-CL-MIME-TOKEN-TYPING|WBXML-CL-MIME-TOKEN-TYPING]]
+
+## Data
+
+```json
+{
+  "family": "wbxml",
+  "referencedSection": "6.4",
+  "sourceAnchor": {
+    "documentId": "WAP-192_105-WBXML",
+    "staticConformanceSection": "9.3",
+    "changeSection": "3.3"
+  },
+  "implementationStatus": "partial",
+  "ownerLayers": [
+    "transport-rust"
+  ],
+  "workItems": [
+    "WML-203",
+    "R0-08",
+    "T0-07",
+    "C5-06"
+  ],
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

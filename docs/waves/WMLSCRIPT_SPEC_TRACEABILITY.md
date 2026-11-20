@@ -294,6 +294,12 @@ Legend:
   - SCRs: `WMLSSL-018 (M)`, `WMLSSL-031..045 (M)`
 - AC:
   - Evidence: [ ] Link concrete tests/fixtures, file paths, and commands proving this requirement.
+  - [x] Six signature/behavior clauses for `Lang.abs`, `Lang.min`, and `Lang.max` have native
+    WAP-193 bytecode and WASM parity evidence. Run
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504`,
+    `wasm-pack test --node engine-wasm/engine --features wasm-bindings`, and
+    `pnpm test:story WMLS-504`. The story exercises script-link execution and continued
+    navigation. The Rust fixture matrix checks numeric type, values, and invalid results.
   - [ ] Unit tests cover each Lang function behavior and edge cases.
 
 ### RQ-WMLS-014: Float library coverage

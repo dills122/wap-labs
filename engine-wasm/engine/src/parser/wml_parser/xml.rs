@@ -1,4 +1,5 @@
 use quick_xml::errors::{Error as XmlError, IllFormedError};
+use quick_xml::escape::resolve_predefined_entity;
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::Reader;
 use quick_xml::XmlVersion;
@@ -49,6 +50,7 @@ pub(super) fn parse_xml_root(xml: &str) -> Result<XmlElement, String> {
 }
 
 pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagnostic> {
+    validate_xml_characters(xml)?;
     let mut reader = Reader::from_str(xml);
     let mut stack: Vec<XmlElement> = Vec::new();
     let mut root: Option<XmlElement> = None;
@@ -101,11 +103,19 @@ pub(super) fn parse_xml_document(xml: &str) -> Result<XmlDocument, WmlLoadDiagno
             }
             Ok(Event::Text(text)) => {
                 let raw = text.as_ref().to_owned();
-                attach_node(&mut stack, &mut root, XmlNode::Text(decode_entities(&raw)))?;
+                attach_node(&mut stack, &mut root, XmlNode::Text(raw))?;
             }
             Ok(Event::GeneralRef(reference)) => {
-                let raw = reference.as_ref().to_owned();
-                let decoded = decode_general_entity(&raw);
+                let decoded = match reference.resolve_char_ref().map_err(map_reader_error)? {
+                    Some(character) => {
+                        validate_xml_character(character)?;
+                        character.to_string()
+                    }
+                    None => {
+                        let name = reference.as_ref();
+                        resolve_wml_entity(name).unwrap_or(name).to_owned()
+                    }
+                };
                 attach_node(&mut stack, &mut root, XmlNode::Text(decoded))?;
             }
             Ok(Event::CData(text)) => {
@@ -252,12 +262,13 @@ fn start_to_element(start: &BytesStart<'_>) -> Result<XmlElement, WmlLoadDiagnos
         })?;
         let key = attr.key.as_ref().to_owned();
         let value = attr
-            .normalized_value(XmlVersion::Implicit1_0)
+            .normalized_value_with(XmlVersion::Implicit1_0, 1, resolve_wml_entity)
             .map_err(|err| {
                 WmlLoadDiagnostic::malformed(format!("Malformed XML attribute value: {err}"))
             })?
             .into_owned();
-        attrs.insert(key, decode_entities(&value));
+        validate_xml_characters(&value)?;
+        attrs.insert(key, value);
     }
     Ok(XmlElement {
         name,
@@ -307,7 +318,7 @@ pub(super) fn normalize_text(input: &str) -> String {
     let mut out = String::new();
     let mut saw_whitespace = false;
 
-    for ch in decode_entities(input).chars() {
+    for ch in input.chars() {
         if ch.is_whitespace() {
             if !saw_whitespace {
                 out.push(' ');
@@ -322,36 +333,30 @@ pub(super) fn normalize_text(input: &str) -> String {
     out.trim().to_string()
 }
 
-fn decode_entities(input: &str) -> String {
-    input
-        .replace("&lt;", "<")
-        .replace("&gt;", ">")
-        .replace("&amp;", "&")
-        .replace("&quot;", "\"")
-        .replace("&#39;", "'")
+fn resolve_wml_entity(name: &str) -> Option<&'static str> {
+    match name {
+        "nbsp" => Some("\u{a0}"),
+        "shy" => Some("\u{ad}"),
+        _ => resolve_predefined_entity(name),
+    }
 }
 
-fn decode_general_entity(raw: &str) -> String {
-    let token = raw.trim_start_matches('&').trim_end_matches(';');
-    let numeric = token
-        .strip_prefix("#x")
-        .or_else(|| token.strip_prefix("#X"))
-        .and_then(|value| u32::from_str_radix(value, 16).ok())
-        .or_else(|| {
-            token
-                .strip_prefix('#')
-                .and_then(|value| value.parse::<u32>().ok())
-        })
-        .and_then(char::from_u32);
-    if let Some(ch) = numeric {
-        return ch.to_string();
-    }
-    match token {
-        "lt" => "<".to_string(),
-        "gt" => ">".to_string(),
-        "amp" => "&".to_string(),
-        "quot" => "\"".to_string(),
-        "apos" | "#39" => "'".to_string(),
-        _ => raw.to_string(),
+fn validate_xml_characters(value: &str) -> Result<(), WmlLoadDiagnostic> {
+    value.chars().try_for_each(validate_xml_character)
+}
+
+fn validate_xml_character(character: char) -> Result<(), WmlLoadDiagnostic> {
+    // XML 1.0 §2.2, production [2].
+    match character {
+        '\t'
+        | '\n'
+        | '\r'
+        | '\u{20}'..='\u{d7ff}'
+        | '\u{e000}'..='\u{fffd}'
+        | '\u{10000}'..='\u{10ffff}' => Ok(()),
+        _ => Err(WmlLoadDiagnostic::malformed(format!(
+            "Malformed XML: U+{:04X} is not permitted in XML 1.0",
+            u32::from(character)
+        ))),
     }
 }

@@ -42,6 +42,8 @@ const WMLS_501_NAMED_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-named-functions.wmlsc.hex");
 const WMLS_502_OPERATOR_CONVERSIONS_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-operator-conversions.wmlsc.hex");
+pub(crate) const WMLS_504_LANG_NUMERIC_UNIT: &str =
+    include_str!("../../tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex");
 const WMLS_501_INVALID_FUNCTION_REF_UNIT: &str =
     include_str!("../../tests/fixtures/wmlscript/wap-193-invalid-function-ref.wmlsc.hex");
 const WMLS_501_STACK_UNDERFLOW_UNIT: &str =
@@ -165,5 +167,7 @@ mod wml_303_actions;
 mod wml_304_request_intent;
 mod wml_305_timers;
 mod wml_306_policy;
+pub(crate) mod wml_307_text;
+pub(crate) mod wml_308_input_title;
 mod wml_309_frame;
 mod wml_load_errors;

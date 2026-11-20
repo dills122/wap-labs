@@ -15,6 +15,9 @@ tags:
 
 ## Relationships
 
+- `belongs-to` ← [[scr-rows/WBXML-C-001|WBXML-C-001]]
+- `belongs-to` ← [[scr-rows/WBXML-C-010|WBXML-C-010]]
+- `belongs-to` ← [[scr-rows/WBXML-C-011|WBXML-C-011]]
 - `covers-family` ← [[work-items/WML-307|WML-307]]
 - `effective-document` → [[source-documents/WAP-192_105-WBXML|WAP-192_105-WBXML]]
 - `effective-document` → [[source-documents/WAP-192-WBXML|WAP-192-WBXML]]

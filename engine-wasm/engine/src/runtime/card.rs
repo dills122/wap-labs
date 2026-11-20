@@ -93,11 +93,28 @@ impl CardTaskAction {
         }
     }
 
+    pub(crate) fn anchor_label_fallback(&self) -> Option<&str> {
+        match self.base_and_set_vars().0 {
+            Self::Go { href, .. } => Some(link_label_fallback(href)),
+            Self::Prev => Some("Back"),
+            Self::Refresh => Some("Refresh"),
+            _ => None,
+        }
+    }
+
     pub fn base_and_set_vars(&self) -> (&Self, &[CardSetVar]) {
         match self {
             Self::WithSetVars { action, set_vars } => (action, set_vars),
             action => (action, &[]),
         }
+    }
+}
+
+pub(crate) fn link_label_fallback(href: &str) -> &str {
+    if href.trim().is_empty() {
+        "Open"
+    } else {
+        href
     }
 }
 

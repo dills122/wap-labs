@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 591
-- Edges: 1729
+- Nodes: 593
+- Edges: 1735
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 302
+- Direct normative clauses: 304
 - Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 0
@@ -47,7 +47,7 @@ Exit gates:
 - Existing tickets: `R0-01`
 - Direct SCR rows: 76 (34 `direct-test-linked`, 14 `gap-work-item-mapped`, 28 `optional-not-assessed`)
 - Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
-- Direct normative clauses: 178
+- Direct normative clauses: 179
 - Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
 - Spec references: None
@@ -63,7 +63,7 @@ Acceptance:
 
 - The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.
 - All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.
-- All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
+- All 176 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
 
 Evidence commands:
 
@@ -153,7 +153,7 @@ Evidence commands:
 - Existing tickets: `R0-04`, `B5-01`, `C5-05`
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
-- Direct normative clauses: 23
+- Direct normative clauses: 24
 - Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
 - Spec references: None
@@ -249,19 +249,19 @@ Evidence commands:
 - **WML-C-05** — Reference processing
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §6.1 (SCR §15.1.1)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `transport-rust/src/responses.rs#decode_textual_wml_payload`
-  - Tests: `transport-rust/src/tests/fetch_mapping.rs::transport_map_success_payload_utf16le_textual_wml_maps_ok` (`cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `transport-rust/src/responses.rs#decode_textual_wml_payload`, `transport-rust/src/wbxml_decoder.rs#decode_wbxml`
+  - Tests: `transport-rust/src/tests/fetch_mapping.rs::transport_wml_307_raw_text_encoding` (`cd transport-rust && cargo test --lib transport_wml_307_raw_text_encoding`), `transport-rust/src/tests/wbxml_conformance.rs::transport_wbxml_wml_307_historical_charset_fixtures` (`cd transport-rust && cargo test --lib transport_wbxml_wml_307_historical_charset_fixtures`)
   - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
-  - Assessment note: The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.
+  - Assessment note: Lowband verifies MIME/BOM/XML precedence, lossless Unicode mapping, malformed-byte rejection, and the WBXML charset boundary. Native and WASM render the same document characters across the supported source encodings.
 - **WML-C-06** — Character entities
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §6.2 (SCR §15.1.1)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/xml.rs#decode_general_entity`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::decodes_entities_and_uses_href_as_fallback_link_text` (`cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/xml.rs#parse_xml_document`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_307_text.rs::wml_307_text_encoding_and_entities` (`cd engine-wasm/engine && cargo test wml_307_text_encoding_and_entities`), `engine-wasm/engine/src/engine_tests/wml_307_text.rs::wml_307_rejects_invalid_xml_characters` (`cd engine-wasm/engine && cargo test wml_307_rejects_invalid_xml_characters`)
   - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
-  - Assessment note: Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.
+  - Assessment note: Native and WASM fixtures cover the seven required named entities, decimal and hexadecimal Unicode references, single-pass resolution, and XML 1.0 character rejection in literals and references.
 - **WML-C-07** — History
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.2 (SCR §15.1.2)
@@ -365,7 +365,7 @@ Evidence commands:
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#map_inline_nodes_recursive`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::enter_navigates_to_fragment_card` (`cd engine-wasm/engine && cargo test enter_navigates_to_fragment_card`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.
+  - Assessment note: The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.
 - **WML-C-20** — anchor
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.8 (SCR §15.1.5)
@@ -373,7 +373,7 @@ Evidence commands:
   - Code: None; the evidence state remains explicit.
   - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The anchor element and its nested task/setvar model are not represented.
+  - Assessment note: The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.
 - **WML-C-21** — access
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
@@ -850,7 +850,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
   - Parents: `WML-C-19`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `implemented`)
 - **WML-CL-A-NO-NESTING** — Reject nested a elements.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
@@ -1054,19 +1054,19 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-FORMS` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-FORMS` (`parser`, `implemented`)
 - **WML-CL-ENTITY-REQUIRED-NAMES** — Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.
   - Family: `wml`; force: `table`; level: `required`
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-REQUIRED-NAMES` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-REQUIRED-NAMES` (`parser`, `implemented`)
 - **WML-CL-ENTITY-UNICODE-IDENTITY** — Resolve numeric character references against Unicode independently of the document byte encoding.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-UNICODE-IDENTITY` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-UNICODE-IDENTITY` (`parser`, `implemented`)
 - **WML-CL-ERROR-ENFORCEMENT** — Enforce every error condition defined by WML.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
@@ -1349,6 +1349,12 @@ Evidence commands:
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-TITLE-PRESENTATION** — Allow presentation to use the input title, with runtime substitution for its vdata content.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-TITLE-PRESENTATION` (`rendering`, `implemented`)
 - **WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE** — Treat intrinsic-event attributes as abbreviated onevent bindings with equivalent go-task behavior.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
@@ -1528,31 +1534,31 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-ENCODING-DETECTION` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-ENCODING-DETECTION` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-ENTITY-CHARSET** — Process character entities in the document character set.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-ENTITY-CHARSET` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-ENTITY-CHARSET` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-TRANSCODING-LOSS** — Avoid transcoding when the user agent supports the original encoding and conversion would lose information.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-TRANSCODING-LOSS` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-TRANSCODING-LOSS` (`transport-boundary`, `implemented`)
 - **WML-CL-REFERENCE-UNICODE-MAPPING** — Map every character in each recognized source encoding to its Unicode character.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-UNICODE-MAPPING` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-UNICODE-MAPPING` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-WBXML-PRECEDENCE** — When WML is carried in WBXML, determine character encoding using the WBXML rules.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-WBXML-PRECEDENCE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-WBXML-PRECEDENCE` (`transport-boundary`, `implemented`)
 - **WML-CL-REFRESH-ASSIGNMENTS** — For refresh, resolve and apply every setvar assignment without changing cards.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)
@@ -2546,6 +2552,12 @@ Evidence commands:
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-TITLE-PRESENTATION** — Allow presentation to use the input title, with runtime substitution for its vdata content.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-TITLE-PRESENTATION` (`rendering`, `implemented`)
 - **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)

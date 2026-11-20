@@ -6,6 +6,13 @@ pub(crate) const WML13_DECODER_ID: &str = "lowband-wml13-wbxml/0.3.0";
 const WBXML_VERSION_1_3: u8 = 0x03;
 const WML_1_3_PUBLIC_ID: u32 = 0x0a;
 const WML_1_3_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD WML 1.3//EN";
+const SI_1_0_PUBLIC_ID: u32 = 0x05;
+const SI_1_0_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD SI 1.0//EN";
+const SL_1_0_PUBLIC_ID: u32 = 0x06;
+const SL_1_0_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD SL 1.0//EN";
+const CO_1_0_PUBLIC_ID: u32 = 0x07;
+const CO_1_0_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD CO 1.0//EN";
+const CHANNEL_1_2_PUBLIC_ID_TEXT: &str = "-//WAPFORUM//DTD CHANNEL 1.2//EN";
 const MAX_NESTING_DEPTH: usize = 128;
 
 const SWITCH_PAGE: u8 = 0x00;
@@ -58,7 +65,7 @@ impl Charset {
     }
 
     fn decode(self, bytes: &[u8]) -> Result<String, String> {
-        match self {
+        let decoded = match self {
             Self::Ascii => {
                 if bytes.iter().any(|byte| !byte.is_ascii()) {
                     return Err("non-ASCII octet in US-ASCII string".to_string());
@@ -69,13 +76,73 @@ impl Charset {
             Self::Latin1 => Ok(bytes.iter().map(|byte| char::from(*byte)).collect()),
             Self::Utf8 => String::from_utf8(bytes.to_vec())
                 .map_err(|error| format!("invalid UTF-8 string: {error}")),
+        }?;
+        if let Some(character) = decoded
+            .chars()
+            .find(|&character| !is_xml_character(character))
+        {
+            return Err(format!(
+                "string character U+{:04X} is not permitted in XML 1.0",
+                u32::from(character)
+            ));
         }
+        Ok(decoded)
     }
 }
 
 struct Header<'a> {
     charset: Charset,
     string_table: &'a [u8],
+    kind: WbxmlDocumentKind,
+}
+
+/// Vocabulary selected for a decoded WBXML document.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum WbxmlDocumentKind {
+    Wml13,
+    ServiceIndication10,
+    ServiceLoading10,
+    CacheOperation10,
+    Channel12,
+}
+
+/// Decoded XML and the vocabulary used to interpret its tokens.
+#[derive(Debug)]
+pub struct DecodedWbxmlDocument {
+    pub kind: WbxmlDocumentKind,
+    pub xml: String,
+}
+
+impl WbxmlDocumentKind {
+    fn registry(self) -> &'static TokenRegistry {
+        match self {
+            Self::Wml13 => &WML13_TOKEN_REGISTRY,
+            Self::ServiceIndication10 => &SI10_TOKEN_REGISTRY,
+            Self::ServiceLoading10 => &SL10_TOKEN_REGISTRY,
+            Self::CacheOperation10 => &CO10_TOKEN_REGISTRY,
+            Self::Channel12 => &CHANNEL12_TOKEN_REGISTRY,
+        }
+    }
+
+    fn versioned_label(self) -> &'static str {
+        match self {
+            Self::Wml13 => "WML 1.3",
+            Self::ServiceIndication10 => "SI 1.0",
+            Self::ServiceLoading10 => "SL 1.0",
+            Self::CacheOperation10 => "CO 1.0",
+            Self::Channel12 => "Channel 1.2",
+        }
+    }
+
+    fn default_attributes(self, tag: &str) -> &'static [(&'static str, &'static str)] {
+        match (self, tag) {
+            (Self::Wml13, _) => wml13_default_attributes(tag),
+            (Self::ServiceIndication10, "indication") => &[("action", "signal-medium")],
+            (Self::ServiceLoading10, "sl") => &[("action", "execute-low")],
+            (Self::Channel12, "channel") => &[("useraccessible", "false")],
+            _ => &[],
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -116,13 +183,77 @@ const WML13_ATTRIBUTE_CODE_PAGES: &[RegisteredCodePage<AttributeTokenTable>] =
         },
     }];
 
-struct Wml13TokenRegistry;
+struct TokenRegistry {
+    label: &'static str,
+    tag_pages: &'static [RegisteredCodePage<TagTokenTable>],
+    attribute_pages: &'static [RegisteredCodePage<AttributeTokenTable>],
+}
 
-const WML13_TOKEN_REGISTRY: Wml13TokenRegistry = Wml13TokenRegistry;
+const WML13_TOKEN_REGISTRY: TokenRegistry = TokenRegistry {
+    label: "WML",
+    tag_pages: WML13_TAG_CODE_PAGES,
+    attribute_pages: WML13_ATTRIBUTE_CODE_PAGES,
+};
+const SI10_TOKEN_REGISTRY: TokenRegistry = TokenRegistry {
+    label: "SI",
+    tag_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: si_tag_name,
+    }],
+    attribute_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: si_attribute_start,
+            value: domain_attribute_value,
+        },
+    }],
+};
+const SL10_TOKEN_REGISTRY: TokenRegistry = TokenRegistry {
+    label: "SL",
+    tag_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: |token| (token == 0x05).then_some("sl"),
+    }],
+    attribute_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: sl_attribute_start,
+            value: domain_attribute_value,
+        },
+    }],
+};
+const CO10_TOKEN_REGISTRY: TokenRegistry = TokenRegistry {
+    label: "CO",
+    tag_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: co_tag_name,
+    }],
+    attribute_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: co_attribute_start,
+            value: domain_attribute_value,
+        },
+    }],
+};
+const CHANNEL12_TOKEN_REGISTRY: TokenRegistry = TokenRegistry {
+    label: "Channel",
+    tag_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: channel_tag_name,
+    }],
+    attribute_pages: &[RegisteredCodePage {
+        page: CodePage::ZERO,
+        table: AttributeTokenTable {
+            start: channel_attribute_start,
+            value: |_| None,
+        },
+    }],
+};
 
-impl Wml13TokenRegistry {
+impl TokenRegistry {
     fn tag_name(&self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
-        let table = self.table(CodeSpace::Tag, page, WML13_TAG_CODE_PAGES)?;
+        let table = self.table(CodeSpace::Tag, page, self.tag_pages)?;
         Ok((table)(token))
     }
 
@@ -131,12 +262,12 @@ impl Wml13TokenRegistry {
         page: CodePage,
         token: u8,
     ) -> Result<Option<(&'static str, &'static str)>, String> {
-        let table = self.table(CodeSpace::Attribute, page, WML13_ATTRIBUTE_CODE_PAGES)?;
+        let table = self.table(CodeSpace::Attribute, page, self.attribute_pages)?;
         Ok((table.start)(token))
     }
 
     fn attribute_value(&self, page: CodePage, token: u8) -> Result<Option<&'static str>, String> {
-        let table = self.table(CodeSpace::Attribute, page, WML13_ATTRIBUTE_CODE_PAGES)?;
+        let table = self.table(CodeSpace::Attribute, page, self.attribute_pages)?;
         Ok((table.value)(token))
     }
 
@@ -151,12 +282,14 @@ impl Wml13TokenRegistry {
         }
         if page.index() == IMPLEMENTATION_SPECIFIC_CODE_PAGE {
             return Err(format!(
-                "implementation-specific WML {} code page 255 is not registered",
+                "implementation-specific {} {} code page 255 is not registered",
+                self.label,
                 code_space.label()
             ));
         }
         Err(format!(
-            "unassigned WML {} code page {}",
+            "unassigned {} {} code page {}",
+            self.label,
             code_space.label(),
             page.index()
         ))
@@ -173,18 +306,26 @@ struct Decoder<'a> {
     output: String,
     max_output_bytes: usize,
     external_charset: Option<Charset>,
+    kind: WbxmlDocumentKind,
 }
 
 #[cfg(test)]
 pub(crate) fn decode_wml13(payload: &[u8], max_output_bytes: usize) -> Result<String, String> {
-    decode_wml13_with_charset(payload, max_output_bytes, None)
+    decode_wbxml(
+        payload,
+        max_output_bytes,
+        None,
+        Some(WbxmlDocumentKind::Wml13),
+    )
+    .map(|document| document.xml)
 }
 
-pub(crate) fn decode_wml13_with_charset(
+pub(crate) fn decode_wbxml(
     payload: &[u8],
     max_output_bytes: usize,
     external_charset: Option<&str>,
-) -> Result<String, String> {
+    expected_kind: Option<WbxmlDocumentKind>,
+) -> Result<DecodedWbxmlDocument, String> {
     if payload.is_empty() {
         return Err(decode_error("empty payload"));
     }
@@ -205,8 +346,9 @@ pub(crate) fn decode_wml13_with_charset(
             .map(Charset::from_mime_name)
             .transpose()
             .map_err(|error| decode_error(&error))?,
+        kind: WbxmlDocumentKind::Wml13,
     };
-    decoder.decode_document().map_err(|error| {
+    decoder.decode_document(expected_kind).map_err(|error| {
         if error.starts_with("WBXML decode failed:") {
             error
         } else {
@@ -216,10 +358,14 @@ pub(crate) fn decode_wml13_with_charset(
 }
 
 impl<'a> Decoder<'a> {
-    fn decode_document(&mut self) -> Result<String, String> {
-        let header = self.decode_header()?;
+    fn decode_document(
+        &mut self,
+        expected_kind: Option<WbxmlDocumentKind>,
+    ) -> Result<DecodedWbxmlDocument, String> {
+        let header = self.decode_header(expected_kind)?;
         self.charset = header.charset;
         self.string_table = header.string_table;
+        self.kind = header.kind;
 
         while self.peek() == Some(PI) {
             self.decode_processing_instruction()?;
@@ -243,10 +389,16 @@ impl<'a> Decoder<'a> {
                 self.max_output_bytes
             ));
         }
-        Ok(std::mem::take(&mut self.output))
+        Ok(DecodedWbxmlDocument {
+            kind: self.kind,
+            xml: std::mem::take(&mut self.output),
+        })
     }
 
-    fn decode_header(&mut self) -> Result<Header<'a>, String> {
+    fn decode_header(
+        &mut self,
+        expected_kind: Option<WbxmlDocumentKind>,
+    ) -> Result<Header<'a>, String> {
         let version = self.read_byte("version")?;
         if version != WBXML_VERSION_1_3 {
             return Err(format!(
@@ -279,22 +431,45 @@ impl<'a> Decoder<'a> {
         let string_table = &self.bytes[table_start..table_end];
         self.position = table_end;
 
-        if let Some(index) = public_id_index {
+        let kind = if let Some(index) = public_id_index {
             let identifier = decode_table_string(charset, string_table, index)?;
-            if identifier != WML_1_3_PUBLIC_ID_TEXT {
-                return Err(format!(
-                    "unsupported literal public identifier {identifier:?}"
-                ));
+            match identifier.as_str() {
+                WML_1_3_PUBLIC_ID_TEXT => Some(WbxmlDocumentKind::Wml13),
+                SI_1_0_PUBLIC_ID_TEXT => Some(WbxmlDocumentKind::ServiceIndication10),
+                SL_1_0_PUBLIC_ID_TEXT => Some(WbxmlDocumentKind::ServiceLoading10),
+                CO_1_0_PUBLIC_ID_TEXT => Some(WbxmlDocumentKind::CacheOperation10),
+                CHANNEL_1_2_PUBLIC_ID_TEXT => Some(WbxmlDocumentKind::Channel12),
+                _ => None,
             }
-        } else if public_id != WML_1_3_PUBLIC_ID {
-            return Err(format!(
-                "unsupported numeric public identifier {public_id}; expected WML 1.3 identifier {WML_1_3_PUBLIC_ID}"
-            ));
-        }
+            .filter(|kind| expected_kind.is_none_or(|expected| expected == *kind))
+            .ok_or_else(|| {
+                format!("unsupported literal public identifier {identifier:?} for MIME type")
+            })?
+        } else {
+            match public_id {
+                WML_1_3_PUBLIC_ID => Some(WbxmlDocumentKind::Wml13),
+                SI_1_0_PUBLIC_ID => Some(WbxmlDocumentKind::ServiceIndication10),
+                SL_1_0_PUBLIC_ID => Some(WbxmlDocumentKind::ServiceLoading10),
+                CO_1_0_PUBLIC_ID => Some(WbxmlDocumentKind::CacheOperation10),
+                // Numeric 0x08 is assigned to Channel 1.1.
+                _ => None,
+            }
+            .filter(|kind| expected_kind.is_none_or(|expected| expected == *kind))
+            .ok_or_else(|| {
+                if expected_kind == Some(WbxmlDocumentKind::Wml13) {
+                    format!(
+                        "unsupported numeric public identifier {public_id}; expected WML 1.3 identifier {WML_1_3_PUBLIC_ID}"
+                    )
+                } else {
+                    format!("unsupported numeric public identifier {public_id} for MIME type")
+                }
+            })?
+        };
 
         Ok(Header {
             charset,
             string_table,
+            kind,
         })
     }
 
@@ -304,6 +479,7 @@ impl<'a> Decoder<'a> {
                 "element nesting exceeds {MAX_NESTING_DEPTH}-level limit"
             ));
         }
+        let registry = self.kind.registry();
         self.consume_page_switches(ParserState::Tag)?;
         let token = self.read_byte("tag token")?;
         let (name, has_attributes, has_content) = match token {
@@ -324,11 +500,12 @@ impl<'a> Decoder<'a> {
                     ));
                 }
                 let identity = token & 0x3f;
-                let name = WML13_TOKEN_REGISTRY
+                let name = registry
                     .tag_name(self.tag_page, identity)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML tag token 0x{identity:02x} on code page {}",
+                            "unknown {} tag token 0x{identity:02x} on code page {}",
+                            registry.label,
                             self.tag_page.index()
                         )
                     })?
@@ -339,26 +516,34 @@ impl<'a> Decoder<'a> {
 
         self.push_output("<")?;
         self.push_output(&name)?;
-        let mut present_attributes = HashSet::new();
-        if has_attributes {
-            let attributes = self.decode_attributes()?;
+        let attributes = if has_attributes {
+            let attributes = self.decode_attributes(Some(&name))?;
             if attributes.is_empty() {
                 return Err(format!(
                     "tag {name:?} sets the attribute bit but encodes no attributes"
                 ));
             }
-            for (attribute_name, value) in attributes {
-                if !present_attributes.insert(attribute_name.clone()) {
-                    return Err(format!(
-                        "duplicate attribute {attribute_name:?} on element {name:?}"
-                    ));
-                }
-                self.write_attribute(&attribute_name, &value)?;
+            attributes
+        } else {
+            Vec::new()
+        };
+        let mut present_attributes = HashSet::new();
+        for (attribute_name, value) in &attributes {
+            if !present_attributes.insert(attribute_name.as_str()) {
+                return Err(format!(
+                    "duplicate attribute {attribute_name:?} on element {name:?}"
+                ));
+            }
+            self.write_attribute(attribute_name, value)?;
+        }
+        for (attribute_name, value) in self.kind.default_attributes(&name) {
+            if !present_attributes.contains(attribute_name) {
+                self.write_attribute(attribute_name, value)?;
             }
         }
-        for (attribute_name, value) in default_attributes(&name) {
-            if present_attributes.insert((*attribute_name).to_string()) {
-                self.write_attribute(attribute_name, value)?;
+        if self.kind == WbxmlDocumentKind::ServiceIndication10 && name == "indication" {
+            if let Some(href) = si_implied_id(&attributes, &present_attributes) {
+                self.write_attribute("si-id", href)?;
             }
         }
 
@@ -374,7 +559,11 @@ impl<'a> Decoder<'a> {
         Ok(())
     }
 
-    fn decode_attributes(&mut self) -> Result<Vec<(String, String)>, String> {
+    fn decode_attributes(
+        &mut self,
+        element: Option<&str>,
+    ) -> Result<Vec<(String, String)>, String> {
+        let registry = self.kind.registry();
         let mut attributes = Vec::new();
         loop {
             self.consume_page_switches(ParserState::Attribute)?;
@@ -395,19 +584,27 @@ impl<'a> Decoder<'a> {
                 (name, String::new())
             } else {
                 if token >= 0x80 || is_global_token(token) {
-                    return Err(format!("token 0x{token:02x} cannot begin a WML attribute"));
+                    return Err(format!(
+                        "token 0x{token:02x} cannot begin a {} attribute",
+                        registry.label
+                    ));
                 }
-                let (name, prefix) = WML13_TOKEN_REGISTRY
+                let (name, prefix) = registry
                     .attribute_start(self.attribute_page, token)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML attribute-start token 0x{token:02x} on code page {}",
+                            "unknown {} attribute-start token 0x{token:02x} on code page {}",
+                            registry.label,
                             self.attribute_page.index()
                         )
                     })?;
                 (name.to_string(), prefix.to_string())
             };
 
+            let is_si_date = self.kind == WbxmlDocumentKind::ServiceIndication10
+                && element == Some("indication")
+                && matches!(name.as_str(), "created" | "si-expires");
+            let mut has_value_token = false;
             loop {
                 match self.peek() {
                     Some(END) | Some(LITERAL) => break,
@@ -424,7 +621,25 @@ impl<'a> Decoder<'a> {
                         }
                     }
                     Some(next) if is_attribute_start_candidate(next) => break,
-                    Some(_) => self.decode_attribute_value(&mut value)?,
+                    Some(OPAQUE) if is_si_date => {
+                        if has_value_token {
+                            return Err("OPAQUE must be the entire SI date value".to_string());
+                        }
+                        self.position += 1;
+                        value = decode_si_opaque_date(self.read_opaque()?)
+                            .map_err(|error| format!("SI {name} date: {error}"))?;
+                        self.consume_page_switches(ParserState::Attribute)?;
+                        if self.peek().is_some_and(|next| {
+                            next != END && next != LITERAL && !is_attribute_start_candidate(next)
+                        }) {
+                            return Err("OPAQUE must be the entire SI date value".to_string());
+                        }
+                        break;
+                    }
+                    Some(_) => {
+                        self.decode_attribute_value(&mut value)?;
+                        has_value_token = true;
+                    }
                     None => return Err("truncated attribute value; END is missing".to_string()),
                 }
             }
@@ -442,25 +657,26 @@ impl<'a> Decoder<'a> {
             }
             ENTITY => {
                 let entity = self.read_mb_u_int32("attribute entity")?;
-                push_entity(value, entity)?;
+                value.push(decode_entity(entity)?);
             }
             EXT_I_0 | EXT_I_1 | EXT_I_2 => {
                 let name = self.read_term_string("inline variable name")?;
-                value.push_str(&variable_reference(token, &name)?);
+                value.push_str(&variable_reference(self.kind, token, &name)?);
             }
             EXT_T_0 | EXT_T_1 | EXT_T_2 => {
                 let index = self.read_mb_u_int32("variable string-table index")?;
                 let name = self.table_string(index)?;
-                value.push_str(&variable_reference(token, &name)?);
+                value.push_str(&variable_reference(self.kind, token, &name)?);
             }
             EXT_0 | EXT_1 | EXT_2 => {
                 return Err(format!(
-                    "reserved WML extension token 0x{token:02x} is unsupported"
+                    "reserved {} extension token 0x{token:02x} is unsupported",
+                    self.kind.registry().label
                 ))
             }
             OPAQUE => {
-                self.skip_opaque()?;
-                return Err("OPAQUE attribute data has no WML 1.3 mapping".to_string());
+                self.read_opaque()?;
+                return Err(self.opaque_error("attribute"));
             }
             LITERAL_A | LITERAL_AC | LITERAL_C | PI => {
                 return Err(format!(
@@ -468,11 +684,13 @@ impl<'a> Decoder<'a> {
                 ))
             }
             _ if token >= 0x80 => {
-                let fragment = WML13_TOKEN_REGISTRY
+                let registry = self.kind.registry();
+                let fragment = registry
                     .attribute_value(self.attribute_page, token)?
                     .ok_or_else(|| {
                         format!(
-                            "unknown WML attribute-value token 0x{token:02x} on code page {}",
+                            "unknown {} attribute-value token 0x{token:02x} on code page {}",
+                            registry.label,
                             self.attribute_page.index()
                         )
                     })?;
@@ -516,26 +734,27 @@ impl<'a> Decoder<'a> {
                 Some(EXT_I_0 | EXT_I_1 | EXT_I_2) => {
                     let token = self.read_byte("inline extension token")?;
                     let name = self.read_term_string("inline variable name")?;
-                    let reference = variable_reference(token, &name)?;
+                    let reference = variable_reference(self.kind, token, &name)?;
                     self.push_escaped(&reference, false)?;
                 }
                 Some(EXT_T_0 | EXT_T_1 | EXT_T_2) => {
                     let token = self.read_byte("table extension token")?;
                     let index = self.read_mb_u_int32("variable string-table index")?;
                     let name = self.table_string(index)?;
-                    let reference = variable_reference(token, &name)?;
+                    let reference = variable_reference(self.kind, token, &name)?;
                     self.push_escaped(&reference, false)?;
                 }
                 Some(EXT_0 | EXT_1 | EXT_2) => {
                     let token = self.read_byte("extension token")?;
                     return Err(format!(
-                        "reserved WML extension token 0x{token:02x} is unsupported"
+                        "reserved {} extension token 0x{token:02x} is unsupported",
+                        self.kind.registry().label
                     ));
                 }
                 Some(OPAQUE) => {
                     self.position += 1;
-                    self.skip_opaque()?;
-                    return Err("OPAQUE content has no WML 1.3 mapping".to_string());
+                    self.read_opaque()?;
+                    return Err(self.opaque_error("content"));
                 }
                 Some(PI) => self.decode_processing_instruction()?,
                 Some(LITERAL | LITERAL_C | LITERAL_A | LITERAL_AC) => self.decode_element(depth)?,
@@ -557,7 +776,7 @@ impl<'a> Decoder<'a> {
                 "expected processing-instruction token, found 0x{token:02x}"
             ));
         }
-        let attributes = self.decode_attributes()?;
+        let attributes = self.decode_attributes(None)?;
         if attributes.len() != 1 {
             return Err(
                 "processing instruction must encode exactly one target/value pair".to_string(),
@@ -590,10 +809,10 @@ impl<'a> Decoder<'a> {
         Ok(())
     }
 
-    fn skip_opaque(&mut self) -> Result<(), String> {
+    fn read_opaque(&mut self) -> Result<&'a [u8], String> {
         let length = self.read_mb_u_int32("OPAQUE length")? as usize;
-        let end = self
-            .position
+        let start = self.position;
+        let end = start
             .checked_add(length)
             .ok_or_else(|| "OPAQUE length overflows address space".to_string())?;
         if end > self.bytes.len() {
@@ -603,7 +822,18 @@ impl<'a> Decoder<'a> {
             ));
         }
         self.position = end;
-        Ok(())
+        Ok(&self.bytes[start..end])
+    }
+
+    fn opaque_error(&self, context: &str) -> String {
+        if self.kind == WbxmlDocumentKind::Wml13 {
+            format!("OPAQUE {context} has no WML 1.3 mapping")
+        } else {
+            format!(
+                "OPAQUE {context} is unsupported for {}",
+                self.kind.versioned_label()
+            )
+        }
     }
 
     fn write_attribute(&mut self, name: &str, value: &str) -> Result<(), String> {
@@ -623,6 +853,10 @@ impl<'a> Decoder<'a> {
                 '>' => escaped.push_str("&gt;"),
                 '"' if attribute => escaped.push_str("&quot;"),
                 '\'' if attribute => escaped.push_str("&apos;"),
+                // XML attribute normalization would turn literal whitespace into spaces.
+                '\t' if attribute => escaped.push_str("&#9;"),
+                '\n' if attribute => escaped.push_str("&#10;"),
+                '\r' if attribute => escaped.push_str("&#13;"),
                 _ => escaped.push(character),
             }
         }
@@ -945,7 +1179,174 @@ fn page_zero_attribute_value(token: u8) -> Option<&'static str> {
     }
 }
 
-fn default_attributes(tag: &str) -> &'static [(&'static str, &'static str)] {
+// WAP-167 §8.3 assigns the SI 1.0 tags and attributes on code page zero.
+fn si_tag_name(token: u8) -> Option<&'static str> {
+    match token {
+        0x05 => Some("si"),
+        0x06 => Some("indication"),
+        0x07 => Some("info"),
+        0x08 => Some("item"),
+        _ => None,
+    }
+}
+
+fn si_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
+    match token {
+        0x05 => Some(("action", "signal-none")),
+        0x06 => Some(("action", "signal-low")),
+        0x07 => Some(("action", "signal-medium")),
+        0x08 => Some(("action", "signal-high")),
+        0x09 => Some(("action", "delete")),
+        0x0a => Some(("created", "")),
+        0x0b => Some(("href", "")),
+        0x0c => Some(("href", "http://")),
+        0x0d => Some(("href", "http://www.")),
+        0x0e => Some(("href", "https://")),
+        0x0f => Some(("href", "https://www.")),
+        0x10 => Some(("si-expires", "")),
+        0x11 => Some(("si-id", "")),
+        0x12 => Some(("class", "")),
+        _ => None,
+    }
+}
+
+fn domain_attribute_value(token: u8) -> Option<&'static str> {
+    match token {
+        0x85 => Some(".com/"),
+        0x86 => Some(".edu/"),
+        0x87 => Some(".net/"),
+        0x88 => Some(".org/"),
+        _ => None,
+    }
+}
+
+// WAP-168 §9.3 defines the SL 1.0 page-zero assignments.
+fn sl_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
+    match token {
+        0x05 => Some(("action", "execute-low")),
+        0x06 => Some(("action", "execute-high")),
+        0x07 => Some(("action", "cache")),
+        0x08 => Some(("href", "")),
+        0x09 => Some(("href", "http://")),
+        0x0a => Some(("href", "http://www.")),
+        0x0b => Some(("href", "https://")),
+        0x0c => Some(("href", "https://www.")),
+        _ => None,
+    }
+}
+
+// WAP-175 §9.3 defines the CO 1.0 page-zero assignments.
+fn co_tag_name(token: u8) -> Option<&'static str> {
+    match token {
+        0x05 => Some("co"),
+        0x06 => Some("invalidate-object"),
+        0x07 => Some("invalidate-service"),
+        _ => None,
+    }
+}
+
+fn co_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
+    match token {
+        0x05 => Some(("uri", "")),
+        0x06 => Some(("uri", "http://")),
+        0x07 => Some(("uri", "http://www.")),
+        0x08 => Some(("uri", "https://")),
+        0x09 => Some(("uri", "https://www.")),
+        _ => None,
+    }
+}
+
+// WAP-169 §9.4.1.7 defines Channel 1.2 page zero with no attribute-value tokens.
+fn channel_tag_name(token: u8) -> Option<&'static str> {
+    match token {
+        0x05 => Some("channel"),
+        0x06 => Some("title"),
+        0x07 => Some("abstract"),
+        0x08 => Some("resource"),
+        _ => None,
+    }
+}
+
+fn channel_attribute_start(token: u8) -> Option<(&'static str, &'static str)> {
+    match token {
+        0x05 => Some(("maxspace", "")),
+        0x06 => Some(("base", "")),
+        0x07 => Some(("href", "")),
+        0x08 => Some(("href", "http://")),
+        0x09 => Some(("href", "https://")),
+        0x0a => Some(("lastmod", "")),
+        0x0b => Some(("etag", "")),
+        0x0c => Some(("md5", "")),
+        0x0d => Some(("success", "")),
+        0x0e => Some(("success", "http://")),
+        0x0f => Some(("success", "https://")),
+        0x10 => Some(("failure", "")),
+        0x11 => Some(("failure", "http://")),
+        0x12 => Some(("failure", "https://")),
+        0x13 => Some(("eventid", "")),
+        0x14 => Some(("eventid", "wtaev-")),
+        0x15 => Some(("channelid", "")),
+        0x16 => Some(("useraccessible", "")),
+        _ => None,
+    }
+}
+
+fn decode_si_opaque_date(payload: &[u8]) -> Result<String, &'static str> {
+    if !(4..=7).contains(&payload.len()) {
+        return Err("expected 4 to 7 bytes");
+    }
+
+    // WAP-167 §8.2.2 omits zero pairs from the end of the timestamp.
+    let mut fields = [0; 7];
+    for (&byte, field) in payload.iter().zip(&mut fields) {
+        let tens = byte >> 4;
+        let ones = byte & 0x0f;
+        if tens > 9 || ones > 9 {
+            return Err("invalid packed decimal digit");
+        }
+        *field = tens * 10 + ones;
+    }
+    let [century, year_in_century, month, day, hour, minute, second] = fields;
+    let year = u16::from(century) * 100 + u16::from(year_in_century);
+    let leap_year = year % 4 == 0 && (year_in_century != 0 || year % 400 == 0);
+    let days_in_month = match month {
+        2 if leap_year => 29,
+        2 => 28,
+        4 | 6 | 9 | 11 => 30,
+        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
+        _ => return Err("invalid calendar date"),
+    };
+    if !(1..=days_in_month).contains(&day) {
+        return Err("invalid calendar date");
+    }
+    if hour > 23 || minute > 59 || second > 59 {
+        return Err("invalid time");
+    }
+
+    Ok(format!(
+        "{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}Z"
+    ))
+}
+
+fn si_implied_id<'a>(
+    attributes: &'a [(String, String)],
+    present: &HashSet<&str>,
+) -> Option<&'a str> {
+    // WAP-167 §6.2 requires an explicitly assigned ID for deletion.
+    if present.contains("si-id")
+        || attributes
+            .iter()
+            .any(|(name, value)| name == "action" && value == "delete")
+    {
+        return None;
+    }
+    attributes
+        .iter()
+        .find(|(name, _)| name == "href")
+        .map(|(_, value)| value.as_str())
+}
+
+fn wml13_default_attributes(tag: &str) -> &'static [(&'static str, &'static str)] {
     match tag {
         "card" => &[("newcontext", "false"), ("ordered", "true")],
         "do" => &[("optional", "false")],
@@ -964,7 +1365,13 @@ fn default_attributes(tag: &str) -> &'static [(&'static str, &'static str)] {
     }
 }
 
-fn variable_reference(token: u8, name: &str) -> Result<String, String> {
+fn variable_reference(kind: WbxmlDocumentKind, token: u8, name: &str) -> Result<String, String> {
+    if kind != WbxmlDocumentKind::Wml13 {
+        return Err(format!(
+            "{} extension token 0x{token:02x} is unsupported",
+            kind.registry().label
+        ));
+    }
     if name.is_empty()
         || !name.chars().enumerate().all(|(index, character)| {
             character == '_'
@@ -984,12 +1391,17 @@ fn variable_reference(token: u8, name: &str) -> Result<String, String> {
 }
 
 fn push_entity(output: &mut String, value: u32) -> Result<(), String> {
+    decode_entity(value)?;
+    write!(output, "&#{value};").map_err(|error| format!("format entity: {error}"))
+}
+
+fn decode_entity(value: u32) -> Result<char, String> {
     let character =
         char::from_u32(value).ok_or_else(|| format!("entity U+{value:04X} is not valid UCS-4"))?;
     if !is_xml_character(character) {
         return Err(format!("entity U+{value:04X} is not permitted in XML 1.0"));
     }
-    write!(output, "&#{value};").map_err(|error| format!("format entity: {error}"))
+    Ok(character)
 }
 
 fn is_xml_character(character: char) -> bool {

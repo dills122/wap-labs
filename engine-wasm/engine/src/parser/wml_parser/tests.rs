@@ -1190,6 +1190,18 @@ fn parses_cdata_and_named_entity_refs() {
 }
 
 #[test]
+fn wml_307_text_entities_resolve_once_before_layout() {
+    let root = parse_xml_root("<p>A&nbsp;B&shy;C &amp;quot; <![CDATA[&lt;]]></p>")
+        .expect("WML text entities should parse");
+    assert_eq!(
+        root.children,
+        [super::xml::XmlNode::Text(
+            "A\u{a0}B\u{ad}C &quot; &lt;".into()
+        )]
+    );
+}
+
+#[test]
 fn rejects_excessive_nested_markup_depth() {
     let depth = 200usize;
     let wrappers = "<x>".repeat(depth);

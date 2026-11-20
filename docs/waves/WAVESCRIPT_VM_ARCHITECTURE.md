@@ -105,7 +105,7 @@ Derived implementation standards for Waves WaveScript VM runtime:
 
 ## Architecture
 
-### WMLS-501 verifier and WMLS-502 language executor
+### WMLS-501 verifier and WMLS-502/504 executor
 
 - `registerScriptUnit` stores raw bytes. When invoked without manual PC metadata, the engine
   decodes the bytes with `decode_wap_compilation_unit`, verifies every pool/function/reference,
@@ -125,9 +125,15 @@ Derived implementation standards for Waves WaveScript VM runtime:
 - `registerScriptEntryPoint` is the explicit compatibility opt-in for the project-specific
   nine-opcode fixture VM. Manual PCs are not part of the WAP-193 function-name model and must not
   be treated as normative evidence.
-- Library and URL call opcodes remain verified but return explicit host-binding outcomes. Their
-  execution belongs to WMLS-504 and WMLS-503 respectively. Integer-only optional behavior and the
-  remaining chapter 12 fatal/non-fatal matrix stay outside the bounded WMLS-502 tranche.
+- The executor dispatches WAP-194 library ID `0` and function IDs `0..2` for `Lang.abs`,
+  `Lang.min`, and `Lang.max` through all three library-call encodings. WAP-193 Number conversion
+  uses integer or single-precision float semantics. Comparisons promote Integer operands
+  to single precision when compared with a Float and use existing Float values as stored.
+  The result retains the selected Number’s value and type, with the first argument winning ties.
+  Oversized Integer strings, other invalid inputs, and numeric overflow return `invalid`
+  without aborting the invocation.
+- The remaining library and URL calls still return explicit host-binding outcomes. Integer-only
+  optional behavior and broader chapter 12 coverage remain open.
 
 ### Components
 

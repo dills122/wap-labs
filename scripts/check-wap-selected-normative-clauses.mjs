@@ -59,7 +59,7 @@ const familyDefinitions = new Map([
       ledgerFile: 'wap-1.2.1-wml-scr.json',
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 39,
-      expectedClauses: 175
+      expectedClauses: 176
     }
   ],
   [
@@ -398,6 +398,71 @@ const wml306AccessFixtureEvidence = {
   testPath: 'engine-wasm/engine/src/engine_tests/wml_306_policy.rs',
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_306'
 };
+const wml307ClauseIds = new Set([
+  'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
+  'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
+  'WBXML-CL-CHARSET-INTERNAL-DEFAULT',
+  'WBXML-CL-CHARSET-MIBENUM',
+  'WBXML-CL-CHARSET-STRING-TERMINATION',
+  'WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED',
+  'WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED',
+  'WBXML-CL-ENTITY-UCS4',
+  'WBXML-CL-EXTERNAL-TOKEN-TYPING',
+  'WBXML-CL-INLINE-STRING',
+  'WBXML-CL-MIME-TOKEN-TYPING',
+  'WBXML-CL-TABLE-STRING',
+  'WML-CL-ENTITY-FORMS',
+  'WML-CL-ENTITY-REQUIRED-NAMES',
+  'WML-CL-ENTITY-UNICODE-IDENTITY',
+  'WML-CL-REFERENCE-ENCODING-DETECTION',
+  'WML-CL-REFERENCE-ENTITY-CHARSET',
+  'WML-CL-REFERENCE-TRANSCODING-LOSS',
+  'WML-CL-REFERENCE-UNICODE-MAPPING',
+  'WML-CL-REFERENCE-WBXML-PRECEDENCE'
+]);
+const implementedWml307ClauseIds = new Set([
+  'WML-CL-ENTITY-FORMS',
+  'WML-CL-ENTITY-REQUIRED-NAMES',
+  'WML-CL-ENTITY-UNICODE-IDENTITY'
+]);
+const wml307FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-307-text-entities.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_307_text.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text'
+};
+const wml307EncodingFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json',
+  testPath: 'transport-rust/src/tests/fetch_mapping.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding'
+};
+const wml307WbxmlCharsetFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json',
+  testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures'
+};
+const genericWbxmlFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wbxml_generic/cases.json',
+  testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures'
+};
+const waeGenericWbxmlClauseIds = new Set([
+  'WAE-CL-WBXML-MEDIA-TYPE',
+  'WAE-CL-WBXML-DOCUMENT-TYPING'
+]);
+const wml307EvidenceByClauseId = new Map([
+  ...[...implementedWml307ClauseIds].map((clause) => [clause, wml307FixtureEvidence]),
+  ['WML-CL-REFERENCE-ENCODING-DETECTION', wml307EncodingFixtureEvidence],
+  ['WML-CL-REFERENCE-ENTITY-CHARSET', wml307EncodingFixtureEvidence],
+  ['WML-CL-REFERENCE-TRANSCODING-LOSS', wml307EncodingFixtureEvidence],
+  ['WML-CL-REFERENCE-UNICODE-MAPPING', wml307EncodingFixtureEvidence],
+  ['WML-CL-REFERENCE-WBXML-PRECEDENCE', wml307WbxmlCharsetFixtureEvidence]
+]);
+const wml308ClauseIds = new Set(['WML-CL-INPUT-TITLE-PRESENTATION']);
+const wml308FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-308-input-title.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_308_input_title.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title'
+};
 const wml309ClauseIds = new Set([
   'WML-CL-DO-ACTIVE-VISIBILITY',
   'WML-CL-DO-LABEL-BEST-EFFORT',
@@ -505,6 +570,19 @@ const wmls502TestPath =
   'engine-wasm/engine/src/wavescript/wap_runtime.rs';
 const wmls502Command =
   'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime';
+const wmls504LangNumericClauseIds = new Set([
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-SIGNATURE'
+]);
+const wmls504LangNumericEvidence = {
+  path: 'engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex',
+  testPath: 'engine-wasm/engine/src/wavescript/wap_runtime.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504'
+};
 const trn706ClauseIds = new Set([
   'WDP-CL-CDPD-UDP-IP-PROFILE',
   'WDP-CL-UNITDATA-CONTENT-TRANSPARENCY',
@@ -638,7 +716,21 @@ const wml203ClauseIds = new Set([
   'WML-CL-TR-STRUCTURE',
   'WML-CL-TD-STRUCTURE'
 ]);
+const wmlAnchorEvidenceByClauseId = new Map(
+  [
+    ['WML-CL-A-GO-EQUIVALENCE', 'wml_fx_a_go_equivalence']
+  ].map(([id, filter]) => {
+    const testPath = 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs';
+    return [id, {
+      path: testPath,
+      testPath,
+      command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${filter}`
+    }];
+  })
+);
+
 const implementedWmlClauseIds = new Set([
+  ...wmlAnchorEvidenceByClauseId.keys(),
   'WML-CL-A-NO-NESTING',
   'WML-CL-ANCHOR-PLACEMENT',
   'WML-CL-PARAGRAPH-SIGNIFICANT-BREAK',
@@ -654,6 +746,8 @@ const implementedWmlClauseIds = new Set([
   ...wml302ClauseIds,
   ...wml303ClauseIds,
   ...wml305ClauseIds,
+  ...wml307EvidenceByClauseId.keys(),
+  ...wml308ClauseIds,
   ...wml309ClauseIds,
   'WML-CL-DECK-ACCESS-REQUIRED',
   'WML-CL-BR-LINE-BREAK',
@@ -922,6 +1016,8 @@ for (const family of ledger.families ?? []) {
         ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
+        ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
+        ...(wml308ClauseIds.has(candidate.id) ? ['WML-308'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
         ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -944,6 +1040,8 @@ for (const family of ledger.families ?? []) {
       ...(wsp805WmlClauseIds.has(candidate.id) ? ['WSP-805'] : []),
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
+      ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
+      ...(wml308ClauseIds.has(candidate.id) ? ['WML-308'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
       ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -968,10 +1066,12 @@ for (const family of ledger.families ?? []) {
         candidate.family === 'wdp' ||
         (candidate.family === 'wbxml' && !deferredWbxmlClauseIds.has(candidate.id)) ||
         implementedWmlClauseIds.has(candidate.id) ||
+        waeGenericWbxmlClauseIds.has(candidate.id) ||
         implementedWsp801ClauseIds.has(candidate.id) ||
         implementedWsp802ClauseIds.has(candidate.id) ||
         wmls501ClauseIds.has(candidate.id) ||
-        implementedWmls502ClauseIds.has(candidate.id));
+        implementedWmls502ClauseIds.has(candidate.id) ||
+        wmls504LangNumericClauseIds.has(candidate.id));
     const expectedClauseStatus = directFixtureImplemented ? 'implemented' : 'not-assessed';
     const expectedFixtureStatus = directFixtureImplemented ? 'implemented' : 'planned';
     if (
@@ -989,6 +1089,11 @@ for (const family of ledger.families ?? []) {
       failures.push(`${candidate.id}: owner/work/evidence mapping drift`);
     }
 
+    const selectedEvidence = wml308ClauseIds.has(candidate.id)
+      ? wml308FixtureEvidence
+      : waeGenericWbxmlClauseIds.has(candidate.id)
+        ? genericWbxmlFixtureEvidence
+        : wmlAnchorEvidenceByClauseId.get(candidate.id) ?? wml307EvidenceByClauseId.get(candidate.id);
     if (
       !candidate.fixturePlan?.id ||
       globalFixtureIds.has(candidate.fixturePlan.id) ||
@@ -1016,7 +1121,13 @@ for (const family of ledger.families ?? []) {
                 ? 'network::wdp'
                 : 'wcmp_cdpd_icmp_profile'
           ))) ||
+      (selectedEvidence &&
+        (!directFixtureImplemented ||
+          !Object.entries(selectedEvidence).every(([key, value]) => candidate.fixturePlan.evidence?.[key] === value) ||
+          !fs.existsSync(path.join(root, selectedEvidence.path)) ||
+          !fs.existsSync(path.join(root, selectedEvidence.testPath)))) ||
       (implementedWmlClauseIds.has(candidate.id) &&
+        !selectedEvidence &&
         (candidate.id === 'WML-CL-DECK-ACCESS-REQUIRED'
           ? candidate.fixturePlan.evidence?.path !== wml306AccessFixtureEvidence.path ||
             candidate.fixturePlan.evidence?.testPath !== wml306AccessFixtureEvidence.testPath ||
@@ -1076,7 +1187,14 @@ for (const family of ledger.families ?? []) {
           candidate.fixturePlan.evidence?.testPath !== wmls502TestPath ||
           !fs.existsSync(path.join(root, wmls502FixturePath)) ||
           !fs.existsSync(path.join(root, wmls502TestPath)) ||
-          candidate.fixturePlan.evidence?.command !== wmls502Command))
+          candidate.fixturePlan.evidence?.command !== wmls502Command)) ||
+      (wmls504LangNumericClauseIds.has(candidate.id) &&
+        (candidate.fixturePlan.status !== 'implemented' ||
+          candidate.fixturePlan.evidence?.path !== wmls504LangNumericEvidence.path ||
+          candidate.fixturePlan.evidence?.testPath !== wmls504LangNumericEvidence.testPath ||
+          !fs.existsSync(path.join(root, wmls504LangNumericEvidence.path)) ||
+          !fs.existsSync(path.join(root, wmls504LangNumericEvidence.testPath)) ||
+          candidate.fixturePlan.evidence?.command !== wmls504LangNumericEvidence.command))
     ) {
       failures.push(`${candidate.id}: direct fixture plan is incomplete`);
     }
@@ -1297,7 +1415,7 @@ const expectedSummary = {
 };
 if (
   selectedParentCount !== 198 ||
-  clauseCount !== 762 ||
+  clauseCount !== 763 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);

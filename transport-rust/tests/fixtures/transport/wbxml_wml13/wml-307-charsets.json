@@ -1,0 +1,73 @@
+{
+  "captures": {
+    "june": "iana-character-sets-20010609031130",
+    "october": "iana-character-sets-20011030145938"
+  },
+  "cases": [
+    {
+      "id": "ascii-inline-and-table",
+      "mibEnum": 3,
+      "registeredIn": ["june", "october"],
+      "bytesHex": "03 0a 03 02 42 00 7f 67 60 03 41 00 83 00 01 01 01",
+      "expectedText": "AB"
+    },
+    {
+      "id": "latin1-inline-and-table",
+      "mibEnum": 4,
+      "registeredIn": ["june", "october"],
+      "bytesHex": "03 0a 04 02 f1 00 7f 67 60 03 e9 00 83 00 01 01 01",
+      "expectedText": "éñ"
+    },
+    {
+      "id": "utf8-inline-and-table",
+      "mibEnum": 106,
+      "registeredIn": ["june", "october"],
+      "bytesHex": "03 0a 6a 03 c3 b1 00 7f 67 60 03 c3 a9 00 83 00 01 01 01",
+      "expectedText": "éñ"
+    },
+    {
+      "id": "shift-jis-registered-and-unsupported",
+      "mibEnum": 17,
+      "registeredIn": ["june", "october"],
+      "bytesHex": "03 0a 11 00 3f",
+      "expectedErrorContains": "unsupported charset MIBenum 17"
+    },
+    {
+      "id": "iso-8859-16-october-only-and-unsupported",
+      "mibEnum": 112,
+      "registeredIn": ["october"],
+      "bytesHex": "03 0a 70 00 3f",
+      "expectedErrorContains": "unsupported charset MIBenum 112"
+    },
+    {
+      "id": "unassigned-in-both-captures",
+      "mibEnum": 127,
+      "registeredIn": [],
+      "bytesHex": "03 0a 7f 00 3f",
+      "expectedErrorContains": "unsupported charset MIBenum 127"
+    },
+    {
+      "id": "zero-is-wbxml-unknown",
+      "mibEnum": 0,
+      "registeredIn": [],
+      "bytesHex": "03 0a 00 00 3f",
+      "expectedErrorContains": "charset MIBenum 0 is unknown"
+    },
+    {
+      "id": "mime-charset-overrides-later-registration",
+      "mibEnum": 112,
+      "registeredIn": ["october"],
+      "contentType": "application/vnd.wap.wmlc; charset=iso-8859-1",
+      "bytesHex": "03 0a 70 00 7f 67 60 03 e9 00 01 01 01",
+      "expectedText": "é"
+    },
+    {
+      "id": "mime-charset-resolves-unknown-header",
+      "mibEnum": 0,
+      "registeredIn": [],
+      "contentType": "application/vnd.wap.wmlc; charset=utf-8",
+      "bytesHex": "03 0a 00 00 7f 67 60 03 c3 a9 00 01 01 01",
+      "expectedText": "é"
+    }
+  ]
+}

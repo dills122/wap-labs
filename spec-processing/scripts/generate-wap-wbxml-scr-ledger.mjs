@@ -255,13 +255,21 @@ const rows = [
   ]
 ];
 
+const genericFixtureEvidence = {
+  path: 'transport-rust/src/tests/wbxml_conformance.rs',
+  test: 'transport_wml_307_generic_wbxml_fixtures',
+  command: 'cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures',
+  fixture: 'transport-rust/tests/fixtures/transport/wbxml_generic/cases.json',
+  limitation: 'Covers WBXML 1.3 page-zero WML 1.3, SI 1.0, SL 1.0, CO 1.0, and Channel 1.2 decoding. Application actions and other vocabularies remain separate.'
+};
+
 const selectedAudit = new Map([
   [
     'WBXML-C-001',
     {
       status: 'partial',
       note:
-        'The pinned built-in WML 1.3 decoder and source-derived corpus directly implement all 42 client-applicable mapped section 5 clauses, including carrying-protocol charset precedence and bounded handling of all 256 tag and attribute code-page indices. The row remains partial because only the WML 1.3 page-zero tables are registered and non-WML document families remain unsupported.',
+        'WML-203 backs all 42 selected section 5 clauses in the WML path. WML-307 adds generic routing and page-zero SI, SL, CO, and Channel fixtures anchored in WAP-167, WAP-168, WAP-175, and WAP-169.',
       workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
       implementationEvidence: [
         {
@@ -283,7 +291,8 @@ const selectedAudit = new Map([
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
             'The registry covers the full one-octet page-index space with deterministic unassigned and implementation-specific outcomes; only the WML 1.3 page-zero token tables are registered.'
-        }
+        },
+        genericFixtureEvidence
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
     }
@@ -293,7 +302,7 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'The pinned decoder reconstructs the WML 1.3 DTD default and fixed attributes exercised by a source-derived omitted-attribute fixture. Additional version-dependent and externally supplied implied-value cases remain open.',
+        'Fixtures verify WML defaults, fixed attributes and deck-to-card xml:lang inheritance, the SI action and href-derived si-id, the SL action and the Channel useraccessible defaults. CO has no attribute defaults. External language fallback and other vocabularies remain open.',
       workItems: ['WML-203', 'R0-08', 'C5-06'],
       implementationEvidence: [
         {
@@ -311,7 +320,8 @@ const selectedAudit = new Map([
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
             'The baseline is pinned to WML 1.3 and does not yet model an external implied-value source.'
-        }
+        },
+        genericFixtureEvidence
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
     }
@@ -321,7 +331,7 @@ const selectedAudit = new Map([
     {
       status: 'partial',
       note:
-        'The pinned decoder uses the WMLC MIME media type as its external token-table key and exhaustively pairs all 36 WML 1.3 page-zero tags, 85 attribute starts, and 27 attribute values with literal forms. The row remains partial for non-WML document families and generic WBXML routing.',
+        'Typed MIME requires a matching public identifier. Generic WBXML selects a supported vocabulary by public identifier. SL, CO, and Channel page-zero assignments, literal equivalents, and compact WSP media routing have direct fixtures. Channel 1.2 uses its literal public identifier.',
       workItems: ['WML-203', 'R0-08', 'T0-07', 'C5-06'],
       implementationEvidence: [
         {
@@ -350,7 +360,8 @@ const selectedAudit = new Map([
             'transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json',
           limitation:
             'The matrix covers every assignment in the selected WML 1.3 page-zero token table only.'
-        }
+        },
+        genericFixtureEvidence
       ],
       evidenceState: 'direct-normative-fixture-linked-partial'
     }

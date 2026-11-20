@@ -220,28 +220,37 @@ function transportTest(pathname, test) {
 const mandatoryImplementationAudit = new Map(
   Object.entries({
     'WML-C-05': {
-      status: 'partial',
-      note: 'The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.',
+      status: 'implemented',
+      note: 'Lowband verifies MIME/BOM/XML precedence, lossless Unicode mapping, malformed-byte rejection, and the WBXML charset boundary. Native and WASM render the same document characters across the supported source encodings.',
       implementationEvidence: [
-        codeEvidence('transport-rust/src/responses.rs', 'decode_textual_wml_payload')
+        codeEvidence('transport-rust/src/responses.rs', 'decode_textual_wml_payload'),
+        codeEvidence('transport-rust/src/wbxml_decoder.rs', 'decode_wbxml')
       ],
       testEvidence: [
         transportTest(
           'transport-rust/src/tests/fetch_mapping.rs',
-          'transport_map_success_payload_utf16le_textual_wml_maps_ok'
+          'transport_wml_307_raw_text_encoding'
+        ),
+        transportTest(
+          'transport-rust/src/tests/wbxml_conformance.rs',
+          'transport_wbxml_wml_307_historical_charset_fixtures'
         )
       ]
     },
     'WML-C-06': {
-      status: 'partial',
-      note: 'Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.',
+      status: 'implemented',
+      note: 'Native and WASM fixtures cover the seven required named entities, decimal and hexadecimal Unicode references, single-pass resolution, and XML 1.0 character rejection in literals and references.',
       implementationEvidence: [
-        codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'decode_general_entity')
+        codeEvidence('engine-wasm/engine/src/parser/wml_parser/xml.rs', 'parse_xml_document')
       ],
       testEvidence: [
         engineTest(
-          'engine-wasm/engine/src/parser/wml_parser/tests.rs',
-          'decodes_entities_and_uses_href_as_fallback_link_text'
+          'engine-wasm/engine/src/engine_tests/wml_307_text.rs',
+          'wml_307_text_encoding_and_entities'
+        ),
+        engineTest(
+          'engine-wasm/engine/src/engine_tests/wml_307_text.rs',
+          'wml_307_rejects_invalid_xml_characters'
         )
       ]
     },
@@ -457,7 +466,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-19': {
       status: 'partial',
-      note: 'The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.',
+      note: 'The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -473,7 +482,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-20': {
       status: 'missing',
-      note: 'The anchor element and its nested task/setvar model are not represented.',
+      note: 'The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.',
       implementationEvidence: [],
       testEvidence: []
     },

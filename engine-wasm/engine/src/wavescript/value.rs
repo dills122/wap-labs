@@ -39,7 +39,7 @@ impl ScriptValue {
         match self {
             Self::Int32(value) => Some(*value),
             Self::Bool(value) => Some(i32::from(*value)),
-            Self::String(value) => parse_wml_integer(value),
+            Self::String(value) => parse_wml_integer(value)?.ok(),
             Self::Float64(_) | Self::Invalid => None,
         }
     }
@@ -82,13 +82,14 @@ fn strip_sign(value: &str) -> &str {
         .unwrap_or(value)
 }
 
-fn parse_wml_integer(value: &str) -> Option<i32> {
+/// Return no conversion for invalid Integer syntax and a parse error for range overflow.
+pub(super) fn parse_wml_integer(value: &str) -> Option<Result<i32, std::num::ParseIntError>> {
     let value = trim_wml_whitespace(value);
     let digits = strip_sign(value);
     if digits.is_empty() || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
         return None;
     }
-    value.parse().ok()
+    Some(value.parse())
 }
 
 fn parse_wml_float(value: &str) -> Option<f64> {

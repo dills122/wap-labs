@@ -26,11 +26,11 @@ explicit capability/mode.
 | Class selection | WAP-215's six Class A/B/C client/server graphs are extracted; `CCR-CLASSC-C-001` is the declared first-release profile |
 | Effective specifications | Every selected family has an ordered base/SIN chain and successor sources cannot silently replace the target release |
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
-| Nested clauses | The 198 parents expand into 762 clauses: 722 required, 29 recommended, and 11 permitted |
+| Nested clauses | The 198 parents expand into 763 clauses: 722 required, 29 recommended, and 12 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 762 clause fixtures have target locations; 367 clauses now have direct conformance assessment and 395 remain unassessed |
+| Fixtures | All 763 clause fixtures have target locations; 385 clauses now have direct conformance assessment and 378 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
-| External dependencies | 43 authority-locked dependencies have 48 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
+| External dependencies | 43 authority-locked dependencies have 50 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 83 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
 
 `SRC-006` is the only blocked source item. All 97 technical members are
@@ -46,8 +46,8 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 
 | Family | Selected parents | Clauses | Implemented | Partial | Missing |
 |---|---:|---:|---:|---:|---:|
-| WML | 39 | 175 | 23 | 10 | 6 |
-| WAE | 11 | 39 | 5 | 3 | 3 |
+| WML | 39 | 176 | 25 | 8 | 6 |
+| WAE | 11 | 39 | 5 | 4 | 2 |
 | WBXML | 3 | 47 | 0 | 3 | 0 |
 | WMLScript | 41 | 107 | 0 | 32 | 9 |
 | WMLScript Libraries | 80 | 211 | 0 | 21 | 59 |
@@ -55,10 +55,10 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WDP | 9 | 49 | 9 | 0 | 0 |
 | WCMP | 2 | 9 | 2 | 0 | 0 |
 | WSP | 8 | 57 | 8 | 0 | 0 |
-| **Total** | **198** | **762** | **47** | **72** | **79** |
+| **Total** | **198** | **763** | **49** | **71** | **78** |
 
-Parent-row status is not a substitute for direct clause evidence. With 367 of
-762 clauses assessed, the project remains `pre-conformance` until every
+Parent-row status is not a substitute for direct clause evidence. With 385 of
+763 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
 
@@ -68,8 +68,8 @@ The 83 work items currently roll up to:
 
 - 32 done (source/profile/governance planning, the direct WDP/WCMP slices including TRN-708 and TRN-710, the completed WSP-801/WSP-802 connectionless matrices, the WML-2/WML-205 closure, WML-302 variable/substitution closure, WML-303 action/event/BACK closure, WML-304 request-pipeline closure, WML-305 native timer closure, WML-306 policy closure, WML-309 frame-affordance closure, the additive WMLS-501 verifier closure, and the frontend production-build defect closure);
 - 1 blocked (`SRC-006`, external redistribution permission);
-- 10 in progress (existing runtime, the bounded WMLS-502 executor with broader parent/remaining-clause follow-through, the WML-301 aggregate WAE-delegate follow-through, WAE, transport, and WSP foundations);
-- 40 todo, including additive `WML-307` character-processing/generic-WBXML residual closure without reopening WML-203 and `WML-308` form-control presentation/capability residual closure without reopening WML-305.
+- 12 in progress, including the bounded WMLS-502 executor, WML-301 WAE-delegate follow-through, WML-307 historical charset evidence, WML-308 form-control presentation, and WAE, transport, and WSP foundations;
+- 38 todo.
 
 New completion claims should follow the machine dependency graph:
 
@@ -112,8 +112,8 @@ claim.
 
 The remaining build work is now measurable:
 
-1. close or correct the 72 partial and 79 missing parent rows;
-2. implement and assess the remaining 395 direct clause fixtures;
+1. close or correct the 71 partial and 78 missing parent rows;
+2. implement and assess the remaining 378 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

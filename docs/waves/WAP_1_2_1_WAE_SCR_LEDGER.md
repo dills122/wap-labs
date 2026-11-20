@@ -73,21 +73,21 @@ requirements and cannot be accidentally counted toward current coverage.
 | `WAESpec-C-015` | Wireless Markup Language | partial | `WML-201`, `WAE-601`, `R0-01` |
 | `WAESpec-C-016` | WMLScript | partial | `WMLS-501`, `WMLS-502`, `W1-02`, `W1-04` |
 | `WAESpec-C-017` | WML user agent | partial | `WAE-601`, WML/WMLScript sprints |
-| `WAESpec-C-019` | `application/vnd.wap.wbxml` | missing | `WAE-602`, `R0-08` |
+| `WAESpec-C-019` | `application/vnd.wap.wbxml` | partial | `WAE-602`, `R0-08` |
 | `WAESpec-C-020` | `application/vnd.wap.wmlc` | implemented | `WAE-602`, `T0-07`, `R0-08` |
 | `WAESpec-C-021` | `application/vnd.wap.wmlscriptc` | missing | `WMLS-503`, `W1-01` |
 
 The current selected-row audit is:
 
 - implemented: 5
-- partial: 3
-- missing: 3
-- direct code/test links: 8 of 11
+- partial: 4
+- missing: 2
+- direct code/test links: 9 of 11
 
 These counts describe feature-level evidence only. They are not a WAE
 compliance percentage. The selected rows now expand into 39 source-anchored
-clauses with planned direct fixtures, but clause implementation evidence
-remains `not-assessed`.
+clauses. Two clauses now have direct evidence for generic WBXML MIME routing
+and document typing. The other 37 remain `not-assessed`.
 
 ## Confirmed implementation evidence
 
@@ -102,8 +102,7 @@ The ledger links exact symbols, tests, and runnable commands for:
 The evidence is deliberately conservative:
 
 - WSP header token registration does not satisfy Basic authentication;
-- WMLC-specific decoding does not satisfy generic
-  `application/vnd.wap.wbxml`;
+- generic `application/vnd.wap.wbxml` recognizes registered WML 1.3 and SI 1.0 identifiers. Only WML enters the deck engine;
 - a VM that can execute registered script bytes does not satisfy
   `application/vnd.wap.wmlscriptc` network classification and handoff.
 
@@ -160,8 +159,7 @@ SCR and clause-level planning are complete, but WAE implementation evidence is
 not fully closed.
 
 1. Implement and test `WAE-607` Basic authentication.
-2. Decide and implement generic WBXML media-type handling at the transport
-   boundary.
+2. Extend generic WBXML integration beyond the WML 1.3 and SI 1.0 transport fixtures.
 3. Complete WMLScript text/bytecode content-type routing and host handoff.
 4. Finish the optional WAP-237 media delta and capability declarations.
 5. Reconcile target-era WAE clauses with active `RQ-WAE-*`, test coverage,

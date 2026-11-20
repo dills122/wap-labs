@@ -158,6 +158,9 @@ Evidence commands:
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `node scripts/check-wap-conformance-ledger.mjs`
 - `node scripts/check-wap-wmlscript-conformance-ledger.mjs`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+- `pnpm test:story WMLS-504`
 
 ### WMLS-505: Host capability and script error boundary closure
 
@@ -1789,13 +1792,13 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §7.1 (7.1     abs)
   - Parents: `WMLSSL-031`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-BEHAVIOR` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-BEHAVIOR` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE** — Implement Lang.abs(value) for a Number argument, returning Number or invalid.
   - Family: `wmlscript-libraries`; force: `table`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.1 (7.1     abs)
   - Parents: `WMLSSL-031`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-SIGNATURE` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-ABS-SIGNATURE` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-CHARACTER-SET-BEHAVIOR** — Return the IANA MIBenum identifier for the character set used by the WMLScript interpreter.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.15 (7.15 characterSet)
@@ -1885,7 +1888,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §7.3 (7.3   max)
   - Parents: `WMLSSL-033`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-BEHAVIOR` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-BEHAVIOR` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-MAX-INT-BEHAVIOR** — Return the maximum WMLScript Integer value 2147483647.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.8 (7.8   maxInt)
@@ -1903,13 +1906,13 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §7.3 (7.3   max)
   - Parents: `WMLSSL-033`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-SIGNATURE` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MAX-SIGNATURE` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR** — Apply numeric conversion rules, return the smaller original value with its original type, and select the first argument when values compare equal.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.2 (7.2     min)
   - Parents: `WMLSSL-032`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-BEHAVIOR` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-BEHAVIOR` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-MIN-INT-BEHAVIOR** — Return the minimum WMLScript Integer value -2147483648.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.9 (7.9   minInt)
@@ -1927,7 +1930,7 @@ Evidence commands:
   - Source: `WAP-194-WMLScriptLibraries` §7.2 (7.2     min)
   - Parents: `WMLSSL-032`
   - Requirements: `RQ-WMLS-013`
-  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-SIGNATURE` (`runtime`, `planned`)
+  - Fixture: `WMLSCRIPT-LIBRARIES-FX-LANG-MIN-SIGNATURE` (`runtime`, `implemented`)
 - **WMLSCRIPT-LIBRARIES-CL-LANG-PARSE-FLOAT-BEHAVIOR** — Parse a legal leading decimal floating-point representation and stop at the first character that cannot continue it.
   - Family: `wmlscript-libraries`; force: `implicit-must`; level: `required`
   - Source: `WAP-194-WMLScriptLibraries` §7.5 (7.5   parseFloat)

@@ -128,7 +128,8 @@ export type EngineKey = 'up' | 'down' | 'enter';
 export type DeckNavigationKind = 'independent' | 'forward' | 'backward' | 'reload';
 
 export interface WmlDeckInput {
-  // Normalized textual WML payload passed into engine runtime.
+  // Decoded WML text. Native and WASM resolve character references and reject
+  // illegal XML 1.0 characters with WML_MALFORMED_XML.
   wmlXml: string;
   // Resolved document URL used for fragment and relative navigation resolution.
   baseUrl: string;
@@ -183,13 +184,16 @@ export interface ScriptHostCapabilities {
 // `loadDeckContext` argument shape is allowed to diverge, and that divergence
 // lives in the two target interfaces below.
 export interface WmlEngineCommon {
+  // Accepts decoded WML text and shares character-reference behavior across targets.
   loadDeck(xml: string): void;
   // A rejected load preserves prior runtime state and publishes one diagnostic.
   // A successful load replaces this list with ordered ignored/recoverable warnings.
   lastWmlLoadDiagnostics(): WmlLoadDiagnostic[];
   render(): RenderList;
   // Canonical engine-owned frame/affordance projection. Legacy render() remains
-  // available until the F1/F4 host cutover is complete.
+  // available until the F1/F4 host cutover is complete. Input row text uses the
+  // evaluated WML title, falling back to the name when it is empty or absent.
+  // The input selection still identifies the variable by name.
   renderFrame(): EnginePresentationFrame;
   // Legacy compatibility surface retained until F4. Primary hosts translate
   // keyboard/control input into EngineInputEvent::Key and call handleInput().
@@ -200,6 +204,8 @@ export interface WmlEngineCommon {
   // Primary typed input boundary for keys, frame-bound logical clicks/actions,
   // and signed row scrolling. Hosts normalize physical wheel input without
   // inspecting WML; editor events remain a later expansion.
+  // WML a/anchor targets use link focus and opaque frame action IDs. The engine
+  // dispatches the bound task for both key and frame-bound activation.
   handleInput(event: EngineInputEvent): void;
   advanceTimeMs(deltaMs: number): void;
   // Delay until the active native WML timer expires; absent when no timer is running.
@@ -260,6 +266,7 @@ export interface WmlEngineCommon {
   ): ScriptInvocationOutcome;
   executeScriptRef(src: string): ScriptExecutionOutcome;
   executeScriptRefFunction(src: string, functionName: string): ScriptExecutionOutcome;
+  /** Verified WAP-193 Lang.abs, Lang.min and Lang.max return invalid for numeric errors. */
   executeScriptRefCall(
     src: string,
     functionName: string,

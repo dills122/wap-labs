@@ -15,6 +15,8 @@ tags:
 
 ## Relationships
 
+- `belongs-to` ← [[scr-rows/WML-C-05|WML-C-05]]
+- `belongs-to` ← [[scr-rows/WML-C-06|WML-C-06]]
 - `belongs-to` ← [[scr-rows/WML-C-07|WML-C-07]]
 - `belongs-to` ← [[scr-rows/WML-C-08|WML-C-08]]
 - `belongs-to` ← [[scr-rows/WML-C-09|WML-C-09]]

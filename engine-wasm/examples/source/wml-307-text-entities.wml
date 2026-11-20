@@ -1,0 +1,25 @@
+<!--
+label: WML Text Encoding and Entities
+work-items: WML-307
+spec-items: WML-CL-ENTITY-FORMS, WML-CL-ENTITY-UNICODE-IDENTITY
+description: Load UTF-8 WML containing named and numeric references and a conflicting in-deck charset hint.
+goal: Verify that character references resolve to Unicode and escaped text remains literal.
+testing-ac:
+- Confirm the deck displays Café, Į, and the literal text &quot;.
+- Follow Next and confirm the destination card displays Done.
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <head><meta http-equiv="Content-Type" content="text/vnd.wap.wml; charset=US-ASCII"/></head>
+  <card id="main">
+    <p>Café &#302;&#x12E; &amp;quot;</p>
+    <p><a href="#next">Next</a></p>
+  </card>
+  <card id="next">
+    <onevent type="onenterforward">
+      <refresh><setvar name="entityProbe" value="&quot;&amp;&apos;&lt;&gt;A&nbsp;B&shy;C&#302;&#x12E;&amp;quot;"/></refresh>
+    </onevent>
+    <p>Done</p>
+  </card>
+</wml>

@@ -3,7 +3,7 @@ use js_sys::{Array, Object, Reflect};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
-use crate::engine_tests::engine_with_empty_select;
+use crate::engine_tests::{engine_with_empty_select, WMLS_504_LANG_NUMERIC_UNIT};
 use crate::wavescript::wap_decoder::{decode_wap_compilation_unit, WapDecodeError};
 
 const SAMPLE: &str = r##"
@@ -218,6 +218,45 @@ fn wasm_wmls_502_operator_conversion_execution_matches_native_result() {
             .as_string()
             .as_deref(),
         Some("1242")
+    );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wmls_504_lang_numeric_execution_matches_native_result() {
+    let source = "lang-numeric.wmlsc";
+    let mut engine = WmlEngine::wasm_new();
+    engine.register_script_unit_wasm(
+        source.to_string(),
+        wmls_501_fixture_bytes(WMLS_504_LANG_NUMERIC_UNIT),
+    );
+
+    let args = Array::of1(&JsValue::from_f64(f64::from(i32::MIN)));
+    let overflow = engine
+        .execute_script_ref_call_wasm(source.to_string(), "abs".to_string(), args.into())
+        .expect("Lang overflow outcome should serialize");
+    let result = Reflect::get(&overflow, &JsValue::from_str("result")).expect("result field");
+    assert_eq!(
+        Reflect::get(&result, &JsValue::from_str("invalid"))
+            .expect("invalid field")
+            .as_bool(),
+        Some(true)
+    );
+    assert_eq!(
+        Reflect::get(&overflow, &JsValue::from_str("ok"))
+            .expect("ok field")
+            .as_bool(),
+        Some(true)
+    );
+
+    let invoked = engine
+        .invoke_script_ref_function_wasm(source.to_string(), "main".to_string())
+        .expect("verified Lang functions should invoke through WASM");
+    assert_eq!(
+        Reflect::get(&invoked, &JsValue::from_str("result"))
+            .expect("result field")
+            .as_string()
+            .as_deref(),
+        Some("3|45|45.0")
     );
 }
 
@@ -534,6 +573,113 @@ fn wasm_wml_203_strict_prologue_and_selected_dtd_family_match_native_behavior() 
         draw_text(&engine.render_wasm().expect("WBXML render should succeed")),
         text_render
     );
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_307_rejects_invalid_xml_characters() {
+    use crate::engine_tests::wml_307_text::{invalid_character_decks, TEXT_CONTENT_TYPE, TEXT_URL};
+
+    for (case, deck) in invalid_character_decks() {
+        let mut engine = WmlEngine::wasm_new();
+        let error = engine
+            .load_deck_context_wasm(&deck, TEXT_URL, TEXT_CONTENT_TYPE, None, None)
+            .expect_err(case);
+        assert!(
+            error
+                .as_string()
+                .is_some_and(|message| message.contains("Malformed XML")),
+            "{case}: {error:?}"
+        );
+        let diagnostics = engine
+            .last_wml_load_diagnostics_wasm()
+            .expect("diagnostics");
+        let entries = Array::from(&diagnostics);
+        assert_eq!(entries.length(), 1, "{case}");
+        let code = Reflect::get(&entries.get(0), &JsValue::from_str("code")).expect("code");
+        assert_eq!(
+            code.as_string().as_deref(),
+            Some("WML_MALFORMED_XML"),
+            "{case}"
+        );
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_307_renders_transport_decoded_text() {
+    #[derive(serde::Deserialize)]
+    struct Corpus {
+        cases: Vec<Case>,
+    }
+
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Case {
+        id: String,
+        body_base64: String,
+        decoded_wml: Option<String>,
+        rendered_text: Option<String>,
+    }
+
+    let corpus: Corpus = serde_json::from_str(include_str!(
+        "../../../transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json"
+    ))
+    .expect("raw WML fixture corpus must parse");
+    // Lowband's native test checks this decoded XML byte-for-byte before engine handoff.
+    for case in corpus.cases {
+        let Some(xml) = case.decoded_wml else {
+            continue;
+        };
+        let expected = case
+            .rendered_text
+            .expect("decoded case must specify rendered text");
+        let mut engine = WmlEngine::wasm_new();
+        engine
+            .load_deck_context_wasm(
+                &xml,
+                "http://example.test/wml-307.wml",
+                "text/vnd.wap.wml",
+                Some(case.body_base64),
+                None,
+            )
+            .unwrap_or_else(|error| panic!("{}: {error:?}", case.id));
+        let render = draw_text(&engine.render_wasm().expect("decoded WML should render"));
+        assert!(render.contains(&expected), "{}: {render:?}", case.id);
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_307_text_encoding_and_entities() {
+    use crate::engine_tests::wml_307_text::{
+        text_decks, ENTITY_VALUE, RENDERED_TEXT, TEXT_CONTENT_TYPE, TEXT_URL,
+    };
+
+    for (case, deck) in text_decks() {
+        let mut engine = WmlEngine::wasm_new();
+        engine
+            .load_deck_context_wasm(&deck, TEXT_URL, TEXT_CONTENT_TYPE, None, None)
+            .unwrap_or_else(|error| panic!("{case}: {error:?}"));
+        assert_eq!(
+            engine.active_card_id_wasm().as_deref(),
+            Ok("main"),
+            "{case}"
+        );
+        let text = draw_text(&engine.render_wasm().expect("text deck should render"));
+        assert!(
+            text.iter().any(|line| line == RENDERED_TEXT),
+            "{case}: unexpected render {text:?}"
+        );
+        engine.handle_key_wasm("enter".into()).expect("follow Next");
+        assert_eq!(
+            engine.active_card_id_wasm().as_deref(),
+            Ok("next"),
+            "{case}"
+        );
+        assert_eq!(
+            engine.get_var_wasm("entityProbe".into()).as_deref(),
+            Some(ENTITY_VALUE),
+            "{case}"
+        );
+    }
 }
 
 #[wasm_bindgen_test]
@@ -939,6 +1085,96 @@ fn wasm_wml_303_prev_override_exposes_empty_history_to_host_fallback() {
         Some("backward")
     );
     assert!(!engine.navigate_back_wasm());
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_201_anchor_tasks_match_native_frames_and_state() {
+    let deck = include_str!("../../examples/source/wml-201-anchor-tasks.wml");
+    let mut native = WmlEngine::new();
+    native.load_deck(deck).expect("native WML 1.3 deck");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_wasm(deck).expect("WASM WML 1.3 deck");
+
+    for (target_index, expected_card, trace_kind) in [
+        (0, "tasks", "ACTION_FRAGMENT"),
+        (0, "tasks", "ACTION_REFRESH"),
+        (1, "start", "ACTION_PREV"),
+        (1, "tasks", "ACTION_FRAGMENT"),
+    ] {
+        let frame = native.render_frame().expect("native frame");
+        let actual = js_sys::JSON::stringify(&wasm.render_frame_wasm().expect("WASM frame"))
+            .expect("stringify WASM frame");
+        let expected = js_sys::JSON::stringify(&to_js_value(&frame).expect("native frame shape"))
+            .expect("stringify native frame");
+        assert_eq!(actual.as_string(), expected.as_string());
+        let hit = &frame.hit_regions[target_index];
+        let event = EngineInputEvent::Click {
+            frame_id: frame.frame_id,
+            x: hit.x,
+            y: hit.y,
+        };
+        native.handle_input(event.clone()).expect("native dispatch");
+        let event = serde_wasm_bindgen::to_value(&event).expect("event serialization");
+        wasm.handle_input_wasm(event).expect("WASM dispatch");
+        assert_eq!(native.active_card_id().as_deref(), Ok(expected_card));
+        assert_eq!(wasm.active_card_id_wasm().as_deref(), Ok(expected_card));
+        assert_eq!(
+            wasm.history_push_sequence_wasm(),
+            native.history_push_sequence()
+        );
+        assert_eq!(
+            wasm.get_var_wasm("stage".to_string()),
+            native.get_var("stage".to_string())
+        );
+        let wasm_trace: Vec<EngineTraceEntry> =
+            serde_wasm_bindgen::from_value(wasm.trace_entries_wasm().expect("WASM trace"))
+                .expect("WASM trace shape");
+        let native_trace = native.trace_entries();
+        assert!(native_trace.iter().any(|entry| entry.kind == trace_kind));
+        assert_eq!(
+            wasm_trace
+                .iter()
+                .map(|entry| (&entry.kind, &entry.detail))
+                .collect::<Vec<_>>(),
+            native_trace
+                .iter()
+                .map(|entry| (&entry.kind, &entry.detail))
+                .collect::<Vec<_>>()
+        );
+        native.clear_trace_entries();
+        wasm.clear_trace_entries_wasm();
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_308_input_title_frames_match_native_before_and_after_title_updates() {
+    use crate::engine_tests::wml_308_input_title::{frame_text, CONTENT_TYPE, EXAMPLE, URL};
+
+    let mut native = WmlEngine::new();
+    native
+        .load_deck_context(EXAMPLE, URL, CONTENT_TYPE, None)
+        .expect("native title deck should load");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_context_wasm(EXAMPLE, URL, CONTENT_TYPE, None, None)
+        .expect("WASM title deck should load");
+
+    for (caption, expected) in [("City", "[City: Oslo]"), ("District", "[District: Oslo]")] {
+        assert!(native.set_var("Caption".to_string(), caption.to_string()));
+        assert!(wasm.set_var_wasm("Caption".to_string(), caption.to_string()));
+
+        let native_frame = native.render_frame().expect("native title frame");
+        let wasm_frame = wasm.render_frame_wasm().expect("WASM title frame");
+        let wasm_rows = Reflect::get(&wasm_frame, &JsValue::from_str("rows")).expect("WASM rows");
+        let wasm_rows: serde_json::Value =
+            serde_wasm_bindgen::from_value(wasm_rows).expect("WASM rows as JSON data");
+
+        assert_eq!(
+            wasm_rows,
+            serde_json::to_value(&native_frame.rows).expect("native rows as JSON data")
+        );
+        assert!(frame_text(&native_frame).contains(&expected));
+        assert!(frame_text(&native_frame).contains(&"[Access code: ****]"));
+    }
 }
 
 #[wasm_bindgen_test]

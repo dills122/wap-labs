@@ -37,6 +37,16 @@ const outputPath =
   'spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json';
 const refreshDirectWorkItems = args.includes('--refresh-direct-work-items');
 const refreshWsp801Evidence = args.includes('--refresh-wsp-801-evidence');
+const wml308InputTitleClause = {
+  id: 'WML-CL-INPUT-TITLE-PRESENTATION',
+  key: 'input_title_presentation',
+  parentRows: ['WML-C-33'],
+  section: '11.6.3',
+  normativeForce: 'explicit-may',
+  fixtureKind: 'rendering',
+  obligationSynopsis:
+    'Allow presentation to use the input title, with runtime substitution for its vdata content.'
+};
 const strictWcmpImplemented = true;
 const strictWcmpFixtureEvidence = {
   path: 'transport-rust/tests/fixtures/transport/wcmp_cdpd_icmp_profile/icmp_fixture.json',
@@ -743,6 +753,32 @@ const directWorkItemClauseIds = new Map([
     ])
   ],
   [
+    'WML-307',
+    new Set([
+      'WBXML-CL-BINARY-LITERAL-EQUIVALENCE',
+      'WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE',
+      'WBXML-CL-CHARSET-INTERNAL-DEFAULT',
+      'WBXML-CL-CHARSET-MIBENUM',
+      'WBXML-CL-CHARSET-STRING-TERMINATION',
+      'WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED',
+      'WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED',
+      'WBXML-CL-ENTITY-UCS4',
+      'WBXML-CL-EXTERNAL-TOKEN-TYPING',
+      'WBXML-CL-INLINE-STRING',
+      'WBXML-CL-MIME-TOKEN-TYPING',
+      'WBXML-CL-TABLE-STRING',
+      'WML-CL-ENTITY-FORMS',
+      'WML-CL-ENTITY-REQUIRED-NAMES',
+      'WML-CL-ENTITY-UNICODE-IDENTITY',
+      'WML-CL-REFERENCE-ENCODING-DETECTION',
+      'WML-CL-REFERENCE-ENTITY-CHARSET',
+      'WML-CL-REFERENCE-TRANSCODING-LOSS',
+      'WML-CL-REFERENCE-UNICODE-MAPPING',
+      'WML-CL-REFERENCE-WBXML-PRECEDENCE'
+    ])
+  ],
+  ['WML-308', new Set([wml308InputTitleClause.id])],
+  [
     'WML-309',
     new Set([
       'WML-CL-DO-ACTIVE-VISIBILITY',
@@ -910,6 +946,21 @@ const implementedWml204ClauseIds = new Set(directWorkItemClauseIds.get('WML-204'
 const implementedWml205ClauseIds = new Set(directWorkItemClauseIds.get('WML-205'));
 const implementedWml301ClauseIds = new Set(directWorkItemClauseIds.get('WML-301'));
 const implementedWml303ClauseIds = new Set(directWorkItemClauseIds.get('WML-303'));
+const implementedWml307ClauseIds = new Set([
+  'WML-CL-ENTITY-FORMS',
+  'WML-CL-ENTITY-REQUIRED-NAMES',
+  'WML-CL-ENTITY-UNICODE-IDENTITY'
+]);
+const implementedWml307EncodingClauseIds = new Set([
+  'WML-CL-REFERENCE-ENCODING-DETECTION',
+  'WML-CL-REFERENCE-ENTITY-CHARSET',
+  'WML-CL-REFERENCE-TRANSCODING-LOSS',
+  'WML-CL-REFERENCE-UNICODE-MAPPING'
+]);
+const implementedWaeGenericWbxmlClauseIds = new Set([
+  'WAE-CL-WBXML-MEDIA-TYPE',
+  'WAE-CL-WBXML-DOCUMENT-TYPING'
+]);
 const implementedWml309ClauseIds = new Set(directWorkItemClauseIds.get('WML-309'));
 const implementedWml304TransportClauseIds = new Set([
   'WML-CL-POSTFIELD-REQUEST-PAIR',
@@ -1048,6 +1099,19 @@ const wmls502FixtureEvidence = {
   command:
     'cargo test --manifest-path engine-wasm/engine/Cargo.toml wap_runtime'
 };
+const wmls504LangNumericClauseIds = new Set([
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-ABS-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MAX-SIGNATURE',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-BEHAVIOR',
+  'WMLSCRIPT-LIBRARIES-CL-LANG-MIN-SIGNATURE'
+]);
+const wmls504LangNumericEvidence = {
+  path: 'engine-wasm/engine/tests/fixtures/wmlscript/wap-193-lang-numeric.wmlsc.hex',
+  testPath: 'engine-wasm/engine/src/wavescript/wap_runtime.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wmls_504'
+};
 function wmls501FixtureEvidence(clauseId) {
   const fixtureName =
     clauseId === 'WMLSCRIPT-CL-STACK-UNDERFLOW-FATAL'
@@ -1086,6 +1150,19 @@ function wml202TestPath(clauseId, fixtureKind) {
     ? 'engine-wasm/engine/src/parser/wml_parser/tests.rs'
     : 'engine-wasm/engine/src/engine_tests/actions_timers.rs';
 }
+
+const wmlAnchorEvidenceByClauseId = new Map(
+  [
+    ['WML-CL-A-GO-EQUIVALENCE', 'wml_fx_a_go_equivalence']
+  ].map(([id, filter]) => {
+    const testPath = 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs';
+    return [id, {
+      path: testPath,
+      testPath,
+      command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${filter}`
+    }];
+  })
+);
 
 const wml201FixtureEvidence = new Map(
   [
@@ -1285,6 +1362,40 @@ const wml303FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_303_actions.rs',
   command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_303'
+};
+
+const wml307FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-307-text-entities.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_307_text.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text'
+};
+
+const wml307EncodingFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json',
+  testPath: 'transport-rust/src/tests/fetch_mapping.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding'
+};
+const wml307WbxmlCharsetFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json',
+  testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures'
+};
+const wml307EvidenceByClauseId = new Map([
+  ...[...implementedWml307ClauseIds].map((id) => [id, wml307FixtureEvidence]),
+  ...[...implementedWml307EncodingClauseIds].map((id) => [id, wml307EncodingFixtureEvidence]),
+  ['WML-CL-REFERENCE-WBXML-PRECEDENCE', wml307WbxmlCharsetFixtureEvidence]
+]);
+
+const genericWbxmlFixtureEvidence = {
+  path: 'transport-rust/tests/fixtures/transport/wbxml_generic/cases.json',
+  testPath: 'transport-rust/src/tests/wbxml_conformance.rs',
+  command: 'cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures'
+};
+
+const wml308FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-308-input-title.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_308_input_title.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title'
 };
 
 const wml309FixtureEvidence = {
@@ -1767,6 +1878,34 @@ if (refreshWsp801Evidence) {
 if (refreshDirectWorkItems) {
   const manifest = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
   refreshStrictWcmpFamily(manifest);
+  const wml = manifest.families.find((family) => family.family === 'wml');
+  const titleClause = wml308InputTitleClause;
+  if (!wml.clauses.some((candidate) => candidate.id === titleClause.id)) {
+    const inputIndex = wml.clauses.findIndex((candidate) => candidate.id === 'WML-CL-INPUT-STRUCTURE');
+    const inputStructure = wml.clauses[inputIndex];
+    const inputParent = wml.parents.find((parent) => parent.id === 'WML-C-33');
+    if (inputStructure?.sourceAnchor.section !== titleClause.section || !inputParent) {
+      throw new Error('WML-308 input title requires the selected WAP-191 input source anchor');
+    }
+    wml.clauses.splice(inputIndex + 1, 0, {
+      id: titleClause.id,
+      family: 'wml',
+      parentRows: titleClause.parentRows,
+      sourceAnchor: inputStructure.sourceAnchor,
+      normativeForce: titleClause.normativeForce,
+      obligationLevel: 'permitted',
+      obligationSynopsis: titleClause.obligationSynopsis,
+      fixturePlan: {
+        id: 'WML-FX-INPUT-TITLE-PRESENTATION',
+        kind: titleClause.fixtureKind,
+        status: 'planned',
+        assertion: titleClause.obligationSynopsis
+      },
+      mapping: { evidenceGate: inputStructure.mapping.evidenceGate }
+    });
+    inputParent.clauseIds.push(titleClause.id);
+    inputParent.clauseIds.sort();
+  }
   for (const family of manifest.families) {
     const parentLedger = JSON.parse(fs.readFileSync(family.parentLedger, 'utf8'));
     const parentById = new Map(parentLedger.obligations.map((parent) => [parent.id, parent]));
@@ -1819,10 +1958,12 @@ if (refreshDirectWorkItems) {
           parentById.get(parentId).mapping.implementationStatus
         ])
       );
-      const wml201Evidence = wml201FixtureEvidence.get(candidate.id);
-      if (wml201Evidence) {
+      if (wmlAnchorEvidenceByClauseId.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
-        candidate.fixturePlan.evidence = wml201Evidence;
+        candidate.fixturePlan.evidence = wmlAnchorEvidenceByClauseId.get(candidate.id);
+      } else if (wml201FixtureEvidence.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml201FixtureEvidence.get(candidate.id);
       } else if (implementedWml203ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml203FixtureEvidence;
@@ -1846,6 +1987,15 @@ if (refreshDirectWorkItems) {
       } else if (implementedWml303ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml303FixtureEvidence;
+      } else if (wml307EvidenceByClauseId.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml307EvidenceByClauseId.get(candidate.id);
+      } else if (implementedWaeGenericWbxmlClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = genericWbxmlFixtureEvidence;
+      } else if (candidate.id === wml308InputTitleClause.id) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml308FixtureEvidence;
       } else if (implementedWml309ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml309FixtureEvidence;
@@ -1874,6 +2024,9 @@ if (refreshDirectWorkItems) {
       } else if (implementedWmls502ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wmls502FixtureEvidence;
+      } else if (wmls504LangNumericClauseIds.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wmls504LangNumericEvidence;
       } else if (
         candidate.family === 'wml' &&
         candidate.fixturePlan.evidence?.command === wml303FixtureEvidence.command
@@ -2655,6 +2808,7 @@ function clause(
     (family === 'wcmp' && strictWcmpImplemented) ||
     family === 'wdp' ||
     family === 'wbxml' ||
+    wmlAnchorEvidenceByClauseId.has(clauseId) ||
     wml201FixtureEvidence.has(clauseId) ||
     implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
@@ -2662,6 +2816,9 @@ function clause(
     implementedWml205ClauseIds.has(clauseId) ||
     implementedWml301ClauseIds.has(clauseId) ||
     implementedWml303ClauseIds.has(clauseId) ||
+    wml307EvidenceByClauseId.has(clauseId) ||
+    implementedWaeGenericWbxmlClauseIds.has(clauseId) ||
+    clauseId === wml308InputTitleClause.id ||
     implementedWml309ClauseIds.has(clauseId) ||
     implementedWml304ClauseIds.has(clauseId) ||
     implementedWsp801ClauseIds.has(clauseId) ||
@@ -2669,7 +2826,8 @@ function clause(
     implementedWml305ClauseIds.has(clauseId) ||
     implementedWml306NewClauseIds.has(clauseId) ||
     implementedWmls501ClauseIds.has(clauseId) ||
-    implementedWmls502ClauseIds.has(clauseId);
+    implementedWmls502ClauseIds.has(clauseId) ||
+    wmls504LangNumericClauseIds.has(clauseId);
   const isTrn702Clause = directWorkItems.includes('TRN-702');
   const isStrictWcmpClause = family === 'wcmp' && strictWcmpClauseIds.has(clauseId);
   const wml202EvidencePath = wml202TestPath(clauseId, fixtureKind);
@@ -2761,7 +2919,15 @@ function clause(
       assertion: obligationSynopsis,
       ...(directFixtureImplemented && family !== 'wbxml'
         ? {
-            evidence: wml201FixtureEvidence.get(clauseId) ?? evidence
+            evidence: wmlAnchorEvidenceByClauseId.get(clauseId) ??
+              wml201FixtureEvidence.get(clauseId) ??
+              wml307EvidenceByClauseId.get(clauseId) ??
+              (wmls504LangNumericClauseIds.has(clauseId) ? wmls504LangNumericEvidence : undefined) ??
+              (clauseId === wml308InputTitleClause.id
+                ? wml308FixtureEvidence
+                : implementedWaeGenericWbxmlClauseIds.has(clauseId)
+                  ? genericWbxmlFixtureEvidence
+                  : evidence)
           }
         : {})
     }
@@ -4001,6 +4167,15 @@ clause(
   'grammar',
   'parser',
   'Require an input variable name and constrain input attributes to the declared text-entry grammar.'
+);
+clause(
+  'wml',
+  wml308InputTitleClause.key,
+  wml308InputTitleClause.parentRows,
+  wml308InputTitleClause.section,
+  wml308InputTitleClause.normativeForce,
+  wml308InputTitleClause.fixtureKind,
+  wml308InputTitleClause.obligationSynopsis
 );
 clause(
   'wml',

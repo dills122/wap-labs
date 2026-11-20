@@ -1857,6 +1857,7 @@ dependencies = [
  "base64 0.23.1",
  "encoding_rs",
  "mime",
+ "quick-xml",
  "reqwest 0.12.28",
  "serde",
  "serde_json",

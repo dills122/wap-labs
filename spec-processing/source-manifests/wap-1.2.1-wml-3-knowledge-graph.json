@@ -13,40 +13,40 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "50d3c44c9c838ebedfa859653319b8f6f9b48819e0868600358df902685165e8"
+        "sha256": "8d5807d090a6b69a026dfb9dc570c4557fcdd75e3e3c55cecacab6163e66778b"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
       },
       "spec-processing/source-manifests/wap-1.2.1-effective-spec.json": {
-        "sha256": "da0616547078f7162cba68e6ceffa0332c4ef50861287ecfb14defabe3de0292"
+        "sha256": "39f7c67b6c5786a1db40d1fd59d7cd8979a4e2e3917e327c6ff61076decb3c4f"
       },
       "spec-processing/source-manifests/wap-1.2.1-release.json": {
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "73483a4c298d2ecd08eb542d60c56a385a877735c31b8db375c271a68e4346e9"
+        "sha256": "96867fe3bdee36afee05716abf29eedd5bb9a6c7473723f04ee91843d3c01da6"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f1753f7076b4f1b92a1812735f886e36d757a3486c946ca9409e333c64f6b1c8"
+        "sha256": "e48119ef604194dec808b6c7193c392b6d31a3e80760f07be93e7e083eb7c209"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "43d61781f30f25812f6453a2b3554716e2dc7b1c6dfe1107c6a2ed7281e0e136"
+        "sha256": "fdcbf7fb38fee54b656a6059fd65346e861252add4fc0277ea0b847f3a8cb1c1"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 362,
-    "edgeCount": 963,
+    "nodeCount": 412,
+    "edgeCount": 1093,
     "nodesByType": {
-      "clause": 133,
-      "fixture": 133,
+      "clause": 154,
+      "fixture": 154,
       "legacy-ticket": 16,
       "owner-layer": 4,
       "profile": 1,
-      "requirement": 13,
-      "scr-row": 31,
+      "requirement": 16,
+      "scr-row": 36,
       "source-document": 13,
       "source-family": 3,
       "sprint": 6,
@@ -55,23 +55,23 @@
     "edgesByRelation": {
       "amended-by": 8,
       "applied-before": 8,
-      "belongs-to": 31,
+      "belongs-to": 36,
       "contains": 9,
       "context-for": 7,
       "covers-family": 12,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 207,
+      "maps-to": 248,
       "owned-by": 27,
-      "planned-by": 147,
-      "refines": 191,
+      "planned-by": 168,
+      "refines": 212,
       "relates-to": 18,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 143,
+      "sourced-from": 164,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 133
+      "verified-by": 154
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 13,
@@ -80,8 +80,8 @@
       "WML-304": 15,
       "WML-305": 10,
       "WML-306": 18,
-      "WML-307": 0,
-      "WML-308": 23,
+      "WML-307": 20,
+      "WML-308": 24,
       "WML-309": 3
     },
     "directClauseFamiliesByWorkItem": {
@@ -103,7 +103,10 @@
       "WML-306": [
         "wml"
       ],
-      "WML-307": [],
+      "WML-307": [
+        "wbxml",
+        "wml"
+      ],
       "WML-308": [
         "wml"
       ],
@@ -163,17 +166,11 @@
       "WML-309": {}
     },
     "unmappedNormativeFamiliesByWorkItem": {
-      "WML-307": [
-        "wbxml",
-        "wml"
-      ],
       "WML-308": [
         "wae"
       ]
     },
-    "workItemsWithoutDirectClauses": [
-      "WML-307"
-    ]
+    "workItemsWithoutDirectClauses": []
   },
   "nodes": [
     {
@@ -326,6 +323,460 @@
           "RQ-WMLS-001"
         ],
         "implementationStatus": "not-assessed",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "key": "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "type": "clause",
+      "title": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-011"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "6.4",
+          "heading": "6.4. Associating XML Documents with WBXML Token Values",
+          "normalizedTextSha256": "cc9de8f82b9972e8fd110e8decf68142d3f6bedaac5acc057c7bc468654c099a"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "key": "WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "type": "clause",
+      "title": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.2",
+          "heading": "5.2. Character Encoding",
+          "normalizedTextSha256": "d9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b"
+        },
+        "normativeForce": "explicit-should",
+        "obligationLevel": "recommended",
+        "obligationSynopsis": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "key": "WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "type": "clause",
+      "title": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.2",
+          "heading": "5.2. Character Encoding",
+          "normalizedTextSha256": "d9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "key": "WBXML-CL-CHARSET-MIBENUM",
+      "type": "clause",
+      "title": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.6",
+          "heading": "5.6. Charset",
+          "normalizedTextSha256": "bd7c4e783f1ad4b70992a5b47a19ff8798d103a4d2c76e3681209c31e211a5da"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "key": "WBXML-CL-CHARSET-STRING-TERMINATION",
+      "type": "clause",
+      "title": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.2",
+          "heading": "5.2. Character Encoding",
+          "normalizedTextSha256": "d9b630bf107ba28639ca21183b5f79cc2820c8d90958024a4372190dfcc9fb2b"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "key": "WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "type": "clause",
+      "title": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-010"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "6.3",
+          "heading": "6.3. Encoding Default Attribute Values",
+          "normalizedTextSha256": "b711774ac56016f845ec78dfc29587b6014b1c8336df08eda5d0646c85a400e0"
+        },
+        "normativeForce": "explicit-may",
+        "obligationLevel": "permitted",
+        "obligationSynopsis": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "key": "WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "type": "clause",
+      "title": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-010"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "6.3",
+          "heading": "6.3. Encoding Default Attribute Values",
+          "normalizedTextSha256": "b711774ac56016f845ec78dfc29587b6014b1c8336df08eda5d0646c85a400e0"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4",
+      "key": "WBXML-CL-ENTITY-UCS4",
+      "type": "clause",
+      "title": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.8.4.3",
+          "heading": "5.8.4.3. Character Entity",
+          "normalizedTextSha256": "6ceb50b803c65b3146c807293ffd0b17d18d631ae1b6c1bcf72a870e527cb64c"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "key": "WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "type": "clause",
+      "title": "Use an external typing system to associate an XML document family with its WBXML token values.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-011"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "6.4",
+          "heading": "6.4. Associating XML Documents with WBXML Token Values",
+          "normalizedTextSha256": "cc9de8f82b9972e8fd110e8decf68142d3f6bedaac5acc057c7bc468654c099a"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Use an external typing system to associate an XML document family with its WBXML token values.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING",
+      "key": "WBXML-CL-INLINE-STRING",
+      "type": "clause",
+      "title": "Decode STR_I as encoding-dependent terminated inline character data.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.8.4.1",
+          "heading": "5.8.4.1. Strings",
+          "normalizedTextSha256": "b92248bcacf7045955449f2de3ecdf8db3c177a439e37e98df03713bd240c7e5"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Decode STR_I as encoding-dependent terminated inline character data.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "key": "WBXML-CL-MIME-TOKEN-TYPING",
+      "type": "clause",
+      "title": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-011"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "6.4",
+          "heading": "6.4. Associating XML Documents with WBXML Token Values",
+          "normalizedTextSha256": "cc9de8f82b9972e8fd110e8decf68142d3f6bedaac5acc057c7bc468654c099a"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING",
+      "key": "WBXML-CL-TABLE-STRING",
+      "type": "clause",
+      "title": "Decode STR_T as a multi-byte byte offset into the string table.",
+      "properties": {
+        "family": "wbxml",
+        "parentRows": [
+          "WBXML-C-001"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-192-WBXML",
+          "section": "5.8.4.1",
+          "heading": "5.8.4.1. Strings",
+          "normalizedTextSha256": "b92248bcacf7045955449f2de3ecdf8db3c177a439e37e98df03713bd240c7e5"
+        },
+        "normativeForce": "grammar",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Decode STR_T as a multi-byte byte offset into the string table.",
+        "workItems": [
+          "C5-06",
+          "R0-08",
+          "T0-07",
+          "WML-203",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-007",
+          "RQ-RMK-010"
+        ],
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -1334,6 +1785,123 @@
         ],
         "requirementIds": [
           "RQ-RMK-002"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS",
+      "key": "WML-CL-ENTITY-FORMS",
+      "type": "clause",
+      "title": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-06"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.2",
+          "heading": "6.2 Character Entities",
+          "normalizedTextSha256": "c3fae14a9d46f837de2d78c058c89d9e1718a35ea61b43abb0e734a62887f0a4"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "key": "WML-CL-ENTITY-REQUIRED-NAMES",
+      "type": "clause",
+      "title": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-06"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.2",
+          "heading": "6.2 Character Entities",
+          "normalizedTextSha256": "c3fae14a9d46f837de2d78c058c89d9e1718a35ea61b43abb0e734a62887f0a4"
+        },
+        "normativeForce": "table",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "key": "WML-CL-ENTITY-UNICODE-IDENTITY",
+      "type": "clause",
+      "title": "Resolve numeric character references against Unicode independently of the document byte encoding.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-06"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.2",
+          "heading": "6.2 Character Entities",
+          "normalizedTextSha256": "c3fae14a9d46f837de2d78c058c89d9e1718a35ea61b43abb0e734a62887f0a4"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Resolve numeric character references against Unicode independently of the document byte encoding.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -2913,6 +3481,43 @@
       }
     },
     {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "key": "WML-CL-INPUT-TITLE-PRESENTATION",
+      "type": "clause",
+      "title": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-may",
+        "obligationLevel": "permitted",
+        "obligationSynopsis": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-201",
+          "WML-204",
+          "WML-308"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "clause:WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "key": "WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "type": "clause",
@@ -3713,6 +4318,201 @@
           "RQ-RMK-002",
           "RQ-RMK-003",
           "RQ-RMK-004"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "key": "WML-CL-REFERENCE-ENCODING-DETECTION",
+      "type": "clause",
+      "title": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-05"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.1",
+          "heading": "6.1 Reference Processing Model",
+          "normalizedTextSha256": "6f33ed9fb7f1cbc08081e2038e54087d993d285e5ac4f7b350d02d704b62fe3f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "key": "WML-CL-REFERENCE-ENTITY-CHARSET",
+      "type": "clause",
+      "title": "Process character entities in the document character set.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-05"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.1",
+          "heading": "6.1 Reference Processing Model",
+          "normalizedTextSha256": "6f33ed9fb7f1cbc08081e2038e54087d993d285e5ac4f7b350d02d704b62fe3f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Process character entities in the document character set.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "key": "WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "type": "clause",
+      "title": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-05"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.1",
+          "heading": "6.1 Reference Processing Model",
+          "normalizedTextSha256": "6f33ed9fb7f1cbc08081e2038e54087d993d285e5ac4f7b350d02d704b62fe3f"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "key": "WML-CL-REFERENCE-UNICODE-MAPPING",
+      "type": "clause",
+      "title": "Map every character in each recognized source encoding to its Unicode character.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-05"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.1",
+          "heading": "6.1 Reference Processing Model",
+          "normalizedTextSha256": "6f33ed9fb7f1cbc08081e2038e54087d993d285e5ac4f7b350d02d704b62fe3f"
+        },
+        "normativeForce": "explicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "Map every character in each recognized source encoding to its Unicode character.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "key": "WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "type": "clause",
+      "title": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-05"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "6.1",
+          "heading": "6.1 Reference Processing Model",
+          "normalizedTextSha256": "6f33ed9fb7f1cbc08081e2038e54087d993d285e5ac4f7b350d02d704b62fe3f"
+        },
+        "normativeForce": "implicit-must",
+        "obligationLevel": "required",
+        "obligationSynopsis": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
+        "workItems": [
+          "C5-06",
+          "R0-01",
+          "R0-08",
+          "WML-201",
+          "WML-307"
+        ],
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001",
+          "RQ-WAE-012"
         ],
         "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
@@ -5461,6 +6261,150 @@
       }
     },
     {
+      "id": "fixture:WBXML-FX-BINARY-LITERAL-EQUIVALENCE",
+      "key": "WBXML-FX-BINARY-LITERAL-EQUIVALENCE",
+      "type": "fixture",
+      "title": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE",
+      "key": "WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE",
+      "type": "fixture",
+      "title": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-CHARSET-INTERNAL-DEFAULT",
+      "key": "WBXML-FX-CHARSET-INTERNAL-DEFAULT",
+      "type": "fixture",
+      "title": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Without external charset metadata, present strings using the encoding named by the WBXML charset field.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-CHARSET-MIBENUM",
+      "key": "WBXML-FX-CHARSET-MIBENUM",
+      "type": "fixture",
+      "title": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-CHARSET-STRING-TERMINATION",
+      "key": "WBXML-FX-CHARSET-STRING-TERMINATION",
+      "type": "fixture",
+      "title": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
+      "key": "WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
+      "type": "fixture",
+      "title": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "key": "WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "type": "fixture",
+      "title": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-ENTITY-UCS4",
+      "key": "WBXML-FX-ENTITY-UCS4",
+      "type": "fixture",
+      "title": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-EXTERNAL-TOKEN-TYPING",
+      "key": "WBXML-FX-EXTERNAL-TOKEN-TYPING",
+      "type": "fixture",
+      "title": "Use an external typing system to associate an XML document family with its WBXML token values.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Use an external typing system to associate an XML document family with its WBXML token values.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-INLINE-STRING",
+      "key": "WBXML-FX-INLINE-STRING",
+      "type": "fixture",
+      "title": "Decode STR_I as encoding-dependent terminated inline character data.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Decode STR_I as encoding-dependent terminated inline character data.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-MIME-TOKEN-TYPING",
+      "key": "WBXML-FX-MIME-TOKEN-TYPING",
+      "type": "fixture",
+      "title": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WBXML-FX-TABLE-STRING",
+      "key": "WBXML-FX-TABLE-STRING",
+      "type": "fixture",
+      "title": "Decode STR_T as a multi-byte byte offset into the string table.",
+      "properties": {
+        "kind": "binary-decoder",
+        "status": "implemented",
+        "assertion": "Decode STR_T as a multi-byte byte offset into the string table.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-ACCESS-ABSENT-ALLOWS",
       "key": "WML-FX-ACCESS-ABSENT-ALLOWS",
       "type": "fixture",
@@ -5757,6 +6701,42 @@
         "kind": "rendering",
         "status": "implemented",
         "assertion": "Expose an active non-optional do as a uniquely activatable interface action without assuming a particular physical widget.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-ENTITY-FORMS",
+      "key": "WML-FX-ENTITY-FORMS",
+      "type": "fixture",
+      "title": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-ENTITY-REQUIRED-NAMES",
+      "key": "WML-FX-ENTITY-REQUIRED-NAMES",
+      "type": "fixture",
+      "title": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-ENTITY-UNICODE-IDENTITY",
+      "key": "WML-FX-ENTITY-UNICODE-IDENTITY",
+      "type": "fixture",
+      "title": "Resolve numeric character references against Unicode independently of the document byte encoding.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Resolve numeric character references against Unicode independently of the document byte encoding.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -6241,6 +7221,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-INPUT-TITLE-PRESENTATION",
+      "key": "WML-FX-INPUT-TITLE-PRESENTATION",
+      "type": "fixture",
+      "title": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "key": "WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "type": "fixture",
@@ -6489,6 +7481,66 @@
         "kind": "state-machine",
         "status": "implemented",
         "assertion": "Run a backward-entry handler before starting the restored card timer or displaying the card.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFERENCE-ENCODING-DETECTION",
+      "key": "WML-FX-REFERENCE-ENCODING-DETECTION",
+      "type": "fixture",
+      "title": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFERENCE-ENTITY-CHARSET",
+      "key": "WML-FX-REFERENCE-ENTITY-CHARSET",
+      "type": "fixture",
+      "title": "Process character entities in the document character set.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Process character entities in the document character set.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFERENCE-TRANSCODING-LOSS",
+      "key": "WML-FX-REFERENCE-TRANSCODING-LOSS",
+      "type": "fixture",
+      "title": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFERENCE-UNICODE-MAPPING",
+      "key": "WML-FX-REFERENCE-UNICODE-MAPPING",
+      "type": "fixture",
+      "title": "Map every character in each recognized source encoding to its Unicode character.",
+      "properties": {
+        "kind": "parser",
+        "status": "implemented",
+        "assertion": "Map every character in each recognized source encoding to its Unicode character.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "fixture:WML-FX-REFERENCE-WBXML-PRECEDENCE",
+      "key": "WML-FX-REFERENCE-WBXML-PRECEDENCE",
+      "type": "fixture",
+      "title": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
+      "properties": {
+        "kind": "transport-boundary",
+        "status": "implemented",
+        "assertion": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
     },
@@ -7283,10 +8335,28 @@
       }
     },
     {
+      "id": "requirement:RQ-RMK-007",
+      "key": "RQ-RMK-007",
+      "type": "requirement",
+      "title": "RQ-RMK-007",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "requirement:RQ-RMK-009",
       "key": "RQ-RMK-009",
       "type": "requirement",
       "title": "RQ-RMK-009",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-RMK-010",
+      "key": "RQ-RMK-010",
+      "type": "requirement",
+      "title": "RQ-RMK-010",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7323,6 +8393,15 @@
       "key": "RQ-WAE-003",
       "type": "requirement",
       "title": "RQ-WAE-003",
+      "properties": {
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "requirement:RQ-WAE-012",
+      "key": "RQ-WAE-012",
+      "type": "requirement",
+      "title": "RQ-WAE-012",
       "properties": {
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -7431,6 +8510,135 @@
           "WAE-601",
           "WML-201",
           "WMLS-501"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WBXML-C-001",
+      "key": "WBXML-C-001",
+      "type": "scr-row",
+      "title": "Binary XML Structure",
+      "properties": {
+        "family": "wbxml",
+        "referencedSection": "5",
+        "sourceAnchor": {
+          "documentId": "WAP-192_105-WBXML",
+          "staticConformanceSection": "9.1",
+          "changeSection": "3.3"
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08",
+          "T0-07",
+          "C5-06"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WBXML-C-010",
+      "key": "WBXML-C-010",
+      "type": "scr-row",
+      "title": "Encoding default attribute values",
+      "properties": {
+        "family": "wbxml",
+        "referencedSection": "6.3",
+        "sourceAnchor": {
+          "documentId": "WAP-192_105-WBXML",
+          "staticConformanceSection": "9.2",
+          "changeSection": "3.3"
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08",
+          "C5-06"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WBXML-C-011",
+      "key": "WBXML-C-011",
+      "type": "scr-row",
+      "title": "Support both the binary token value and the literal value for all tags, attribute names, and attribute values",
+      "properties": {
+        "family": "wbxml",
+        "referencedSection": "6.4",
+        "sourceAnchor": {
+          "documentId": "WAP-192_105-WBXML",
+          "staticConformanceSection": "9.3",
+          "changeSection": "3.3"
+        },
+        "implementationStatus": "partial",
+        "ownerLayers": [
+          "transport-rust"
+        ],
+        "workItems": [
+          "WML-203",
+          "R0-08",
+          "T0-07",
+          "C5-06"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-05",
+      "key": "WML-C-05",
+      "type": "scr-row",
+      "title": "Reference processing",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "6.1",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.1",
+          "changeSection": null
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "C5-06"
+        ],
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "scr-row:WML-C-06",
+      "key": "WML-C-06",
+      "type": "scr-row",
+      "title": "Character entities",
+      "properties": {
+        "family": "wml",
+        "referencedSection": "6.2",
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "staticConformanceSection": "15.1.1",
+          "changeSection": null
+        },
+        "implementationStatus": "implemented",
+        "ownerLayers": [
+          "engine-wasm",
+          "transport-rust"
+        ],
+        "workItems": [
+          "R0-01",
+          "R0-08",
+          "C5-06"
         ],
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -9299,7 +10507,7 @@
       "type": "work-item",
       "title": "Additive WML character-processing and generic WBXML residual closure",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "transport-rust",
@@ -9310,7 +10518,14 @@
           "wbxml"
         ],
         "notes": [
-          "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203/WML-302/WML-303 or preempt the WML-305 baton."
+          "The focused pack maps 20 clauses across five selected WML/WBXML parents. The historical charset matrix at transport-rust/tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json verifies dated IANA membership separately from the decoder's current behavior. Its nine wire cases cover supported encodings, unsupported and unassigned values, the zero sentinel, and MIME charset precedence.",
+          "The WML-307 textual fixture shares a deck and assertions across native and WASM. It verifies all seven named references, decimal and hexadecimal Unicode identity, and single-pass text and attribute expansion. The decoded input variants cover UTF-8 declaration, BOM, implicit UTF-8, and an ASCII-only document with Unicode references.",
+          "The raw textual fixture verifies MIME, BOM, and XML declaration handling and malformed-byte rejection through Lowband. Native Rust renders the actual handoff; WASM renders the same expected decoded text from the shared matrix. Supported byte encodings are UTF-8, UTF-16, US-ASCII and ISO-8859-1.",
+          "The generic WBXML 1.3 matrix verifies specific and generic MIME routes, compact WSP replies, WML 1.3 deck handoff, and SI 1.0 page-zero tokens, literal equivalence, defaults, and href-derived IDs. SI XML stays in the transport decoder API, and the WAE media routing and document typing clauses have direct evidence.",
+          "The generic matrix also verifies SI OPAQUE created and si-expires dates under WAP-167 sections 5.2.1 and 8.2.2, including UTC reconstruction and rejection of malformed dates.",
+          "WAP-168 sections 8–9, WAP-175 sections 8–9, and WAP-169 section 9.4.1 with WAP-169_101 section 6 anchor the SL 1.0, CO 1.0, and Channel 1.2 vocabulary fixtures. The matrix verifies token and literal forms, compact WSP routing, SL and Channel defaults, omitted optional attributes, and inherited or explicit WML card language. Non-WML documents stay in the decoder API.",
+          "Native and WASM reject XML 1.0-forbidden literal and referenced characters as malformed XML. The native transport fixtures verify lossless decoding, malformed-byte rejection, WBXML charset precedence, and preservation of WBXML attribute whitespace references, closing the WML-C-05 and WML-C-06 character-processing evidence.",
+          "The evidence is bounded to WBXML 1.3 and the five decoded vocabularies. Additional profiles and transport or user-preference language fallback remain open. Exact IANA assignments at WAP-192 approval still require independent evidence."
         ],
         "existingTickets": [
           "C5-06"
@@ -9322,6 +10537,15 @@
           "WML-C-05 and WML-C-06 receive complete source-derived encoding/entity evidence, and WBXML-C-001, WBXML-C-010, and WBXML-C-011 close non-WML token-table, implied-default, and generic-routing gaps without reopening WML-203."
         ],
         "evidence": [
+          "node scripts/wap-context-pack.mjs WML-307",
+          "node scripts/check-wml-307-iana-fixtures.mjs <june-raw> <october-raw>",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding",
+          "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_rejects_invalid_xml_characters",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+          "pnpm test:story WML-307",
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
           "cargo test --manifest-path transport-rust/Cargo.toml",
           "node scripts/check-wap-conformance-ledger.mjs"
@@ -9335,7 +10559,7 @@
       "type": "work-item",
       "title": "Additive form-control presentation and capability residual closure",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "browser",
@@ -9346,7 +10570,11 @@
           "wae"
         ],
         "notes": [
+          "The input title tranche evaluates vdata in engine presentation rows and retains variable-name edit identity and password-value masking. Its native, WASM, and browser story fixtures cover the permitted WML-C-33 title behavior. Other input, option, select, optgroup, and WAE mapping residuals remain open.",
           "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
+        ],
+        "specReferences": [
+          "WAP-191_104-WML sections 10.3.1 and 11.6.3"
         ],
         "existingTickets": [
           "R0-04",
@@ -9361,7 +10589,10 @@
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
           "pnpm --dir browser/frontend test",
-          "pnpm test:story WML-308"
+          "pnpm test:story WML-308",
+          "node scripts/wap-context-pack.mjs WML-308",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -9642,6 +10873,654 @@
       "from": "clause:WAE-CL-WMLSCRIPT-LANGUAGE-DELEGATE",
       "relation": "verified-by",
       "to": "fixture:WAE-FX-WMLSCRIPT-LANGUAGE-DELEGATE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|refines|scr-row:WBXML-C-011",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-011",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE|verified-by|fixture:WBXML-FX-BINARY-LITERAL-EQUIVALENCE",
+      "from": "clause:WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-BINARY-LITERAL-EQUIVALENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE|verified-by|fixture:WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE",
+      "from": "clause:WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT|verified-by|fixture:WBXML-FX-CHARSET-INTERNAL-DEFAULT",
+      "from": "clause:WBXML-CL-CHARSET-INTERNAL-DEFAULT",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-CHARSET-INTERNAL-DEFAULT",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-MIBENUM|verified-by|fixture:WBXML-FX-CHARSET-MIBENUM",
+      "from": "clause:WBXML-CL-CHARSET-MIBENUM",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-CHARSET-MIBENUM",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-CHARSET-STRING-TERMINATION|verified-by|fixture:WBXML-FX-CHARSET-STRING-TERMINATION",
+      "from": "clause:WBXML-CL-CHARSET-STRING-TERMINATION",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-CHARSET-STRING-TERMINATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|refines|scr-row:WBXML-C-010",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED|verified-by|fixture:WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|refines|scr-row:WBXML-C-010",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED|verified-by|fixture:WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "from": "clause:WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-ENTITY-UCS4|verified-by|fixture:WBXML-FX-ENTITY-UCS4",
+      "from": "clause:WBXML-CL-ENTITY-UCS4",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-ENTITY-UCS4",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|refines|scr-row:WBXML-C-011",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-011",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING|verified-by|fixture:WBXML-FX-EXTERNAL-TOKEN-TYPING",
+      "from": "clause:WBXML-CL-EXTERNAL-TOKEN-TYPING",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-EXTERNAL-TOKEN-TYPING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-INLINE-STRING|verified-by|fixture:WBXML-FX-INLINE-STRING",
+      "from": "clause:WBXML-CL-INLINE-STRING",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-INLINE-STRING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|refines|scr-row:WBXML-C-011",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-011",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-MIME-TOKEN-TYPING|verified-by|fixture:WBXML-FX-MIME-TOKEN-TYPING",
+      "from": "clause:WBXML-CL-MIME-TOKEN-TYPING",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-MIME-TOKEN-TYPING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|maps-to|requirement:RQ-RMK-007",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-007",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|maps-to|requirement:RQ-RMK-010",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-010",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|planned-by|work-item:WML-307",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|refines|scr-row:WBXML-C-001",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "refines",
+      "to": "scr-row:WBXML-C-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|sourced-from|source-document:WAP-192-WBXML",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-192-WBXML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WBXML-CL-TABLE-STRING|verified-by|fixture:WBXML-FX-TABLE-STRING",
+      "from": "clause:WBXML-CL-TABLE-STRING",
+      "relation": "verified-by",
+      "to": "fixture:WBXML-FX-TABLE-STRING",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -10848,6 +12727,168 @@
       "from": "clause:WML-CL-DO-UNIQUE-WIDGET",
       "relation": "verified-by",
       "to": "fixture:WML-FX-DO-UNIQUE-WIDGET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|refines|scr-row:WML-C-06",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-06",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-FORMS|verified-by|fixture:WML-FX-ENTITY-FORMS",
+      "from": "clause:WML-CL-ENTITY-FORMS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-ENTITY-FORMS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|refines|scr-row:WML-C-06",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "refines",
+      "to": "scr-row:WML-C-06",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-REQUIRED-NAMES|verified-by|fixture:WML-FX-ENTITY-REQUIRED-NAMES",
+      "from": "clause:WML-CL-ENTITY-REQUIRED-NAMES",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-ENTITY-REQUIRED-NAMES",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|refines|scr-row:WML-C-06",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "refines",
+      "to": "scr-row:WML-C-06",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-ENTITY-UNICODE-IDENTITY|verified-by|fixture:WML-FX-ENTITY-UNICODE-IDENTITY",
+      "from": "clause:WML-CL-ENTITY-UNICODE-IDENTITY",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-ENTITY-UNICODE-IDENTITY",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -13022,6 +15063,51 @@
       ]
     },
     {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|planned-by|work-item:WML-308",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-308",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|verified-by|fixture:WML-FX-INPUT-TITLE-PRESENTATION",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-TITLE-PRESENTATION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
       "id": "clause:WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE|maps-to|requirement:RQ-RMK-002",
       "from": "clause:WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "relation": "maps-to",
@@ -14151,6 +16237,276 @@
       "from": "clause:WML-CL-PREV-ENTRY-EVENT-PRECEDENCE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-PREV-ENTRY-EVENT-PRECEDENCE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|refines|scr-row:WML-C-05",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-05",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENCODING-DETECTION|verified-by|fixture:WML-FX-REFERENCE-ENCODING-DETECTION",
+      "from": "clause:WML-CL-REFERENCE-ENCODING-DETECTION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFERENCE-ENCODING-DETECTION",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|refines|scr-row:WML-C-05",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "refines",
+      "to": "scr-row:WML-C-05",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-ENTITY-CHARSET|verified-by|fixture:WML-FX-REFERENCE-ENTITY-CHARSET",
+      "from": "clause:WML-CL-REFERENCE-ENTITY-CHARSET",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFERENCE-ENTITY-CHARSET",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|refines|scr-row:WML-C-05",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "refines",
+      "to": "scr-row:WML-C-05",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS|verified-by|fixture:WML-FX-REFERENCE-TRANSCODING-LOSS",
+      "from": "clause:WML-CL-REFERENCE-TRANSCODING-LOSS",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFERENCE-TRANSCODING-LOSS",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|refines|scr-row:WML-C-05",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "refines",
+      "to": "scr-row:WML-C-05",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-UNICODE-MAPPING|verified-by|fixture:WML-FX-REFERENCE-UNICODE-MAPPING",
+      "from": "clause:WML-CL-REFERENCE-UNICODE-MAPPING",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFERENCE-UNICODE-MAPPING",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|maps-to|requirement:RQ-WAE-012",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "maps-to",
+      "to": "requirement:RQ-WAE-012",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|planned-by|work-item:WML-307",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "planned-by",
+      "to": "work-item:WML-307",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|refines|scr-row:WML-C-05",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "refines",
+      "to": "scr-row:WML-C-05",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE|verified-by|fixture:WML-FX-REFERENCE-WBXML-PRECEDENCE",
+      "from": "clause:WML-CL-REFERENCE-WBXML-PRECEDENCE",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-REFERENCE-WBXML-PRECEDENCE",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
@@ -16671,6 +19027,51 @@
       "from": "scr-row:WAESpec-C-017",
       "relation": "belongs-to",
       "to": "source-family:wae",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WBXML-C-001|belongs-to|source-family:wbxml",
+      "from": "scr-row:WBXML-C-001",
+      "relation": "belongs-to",
+      "to": "source-family:wbxml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WBXML-C-010|belongs-to|source-family:wbxml",
+      "from": "scr-row:WBXML-C-010",
+      "relation": "belongs-to",
+      "to": "source-family:wbxml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WBXML-C-011|belongs-to|source-family:wbxml",
+      "from": "scr-row:WBXML-C-011",
+      "relation": "belongs-to",
+      "to": "source-family:wbxml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-05|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-05",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "scr-row:WML-C-06|belongs-to|source-family:wml",
+      "from": "scr-row:WML-C-06",
+      "relation": "belongs-to",
+      "to": "source-family:wml",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]

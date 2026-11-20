@@ -30,7 +30,7 @@ pnpm wap-graph:check
 The generated WML-201 projection treats this ledger as the direct 76-row
 matrix authority. Every row retains its spec anchor and one conservative
 evidence state: 34 `direct-test-linked`, 14 `gap-work-item-mapped`, or 28
-`optional-not-assessed`. All 175 selected WML clauses directly map to
+`optional-not-assessed`. All 176 selected WML clauses directly map to
 `WML-201`; the graph does not infer implementation from family ownership or
 prose.
 
@@ -116,31 +116,35 @@ The source table contains one explicit SCR dependency:
 
 | Assessment | Mandatory rows | Meaning |
 |---|---:|---|
-| `implemented` | 23 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
-| `partial` | 10 | Direct behavior exists, but the cited clause has known uncovered semantics |
+| `implemented` | 25 | Direct code/test evidence covers the SCR feature; profile applicability and release gates still apply |
+| `partial` | 8 | Direct behavior exists, but the cited clause has known uncovered semantics |
 | `missing` | 14 | No conforming implementation path exists; a substantive Phase R work item is attached |
 
-The 23 implemented rows are `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`,
+The 25 implemented rows are `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`,
 `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-18`,
 `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-29`, `WML-C-30`, `WML-C-35`,
 `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-42`, `WML-C-47`, `WML-C-48`,
 and `WML-C-53`. WML-304 closes the selected `go` and `postfield` request
 serialization behavior with byte-exact form-urlencoded and multipart transport
 evidence. Across the 39 required Class C client rows, the audit currently records
-23 implemented, 10 partial, and 6 missing. This is not a compliance percentage: nested normative
+25 implemented, 8 partial, and 6 missing. This is not a compliance percentage: nested normative
 clauses, optional capabilities, cross-target parity, and release evidence
 still have separate gates.
 
-The first `CONF-003` slice now expands all 39 selected WML rows into 175
+The first `CONF-003` slice now expands all 39 selected WML rows into 176
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 146
+owner/work mapping and a direct fixture plan. The WML family now has 156
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
 slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
 assessed WML-304 request-serialization clauses including multipart per-part typing, typed POST-history replay, and WML-309
-frame-affordance closure. WML-201 also has direct fixtures for nested links, invalid
-anchor placement and task counts, and line breaks between significant paragraphs.
-Shared clauses are deduplicated. The other 29 clauses stay
+frame-affordance closure. WML-307 adds three WML §6.2 entity clauses verified in native Rust and WASM.
+It covers all five WML §6.1 clauses with lossless text decoding and WBXML charset-precedence fixtures. Native Rust and WASM verify the decoded characters and XML 1.0 rejection diagnostics.
+WML-201 adds shorthand Go equivalence evidence. Explicit anchor activation has
+engine coverage, with host-owned Prev history integration still open.
+WML-308 adds direct input-title presentation evidence scoped to WML-C-33.
+Additional WML-201 fixtures cover nested links, invalid anchor placement and task counts, and line breaks between significant paragraphs.
+Shared clauses are deduplicated. The other 20 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the
@@ -168,7 +172,7 @@ audit are complete, but implementation and release conformance are not.
 
 ## Next pass
 
-1. Implement and review the 175 source-derived direct clause fixtures.
+1. Implement and review the 176 source-derived direct clause fixtures.
 2. Add cross-target and cross-layer strict-mode outcomes to the linked tests.
 3. Split broad Phase R work items only where a required clause lacks a
    deterministic acceptance lane.

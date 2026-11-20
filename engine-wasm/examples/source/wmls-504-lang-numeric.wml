@@ -1,0 +1,25 @@
+<!--
+label: WMLScript Lang Numeric Calls
+work-items: WMLS-504
+spec-items: RQ-WMLS-013
+description: Runs a verified WAP-193 unit that calls Lang.abs, Lang.min, and Lang.max.
+goal: Execute a numeric Lang library fixture from a deck and continue navigating.
+testing-ac:
+- Activate Run Lang numeric calls. The runtime reports successful execution and stays on the home card.
+- Activate Continue. The active card becomes done.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="home">
+    <p>
+      <a href="script:wap-193-lang-numeric.wmlsc#main">Run Lang numeric calls</a>
+      <br/>
+      <a href="#done">Continue</a>
+    </p>
+  </card>
+  <card id="done">
+    <p>Navigation continued.</p>
+  </card>
+</wml>

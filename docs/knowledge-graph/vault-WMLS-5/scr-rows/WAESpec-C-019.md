@@ -30,7 +30,7 @@ tags:
     "staticConformanceSection": "Appendix B 1.1",
     "changeSection": "4.3"
   },
-  "implementationStatus": "missing",
+  "implementationStatus": "partial",
   "ownerLayers": [
     "transport-rust",
     "browser"

@@ -38,11 +38,11 @@ All nine selected Class C family increments are complete at SCR level:
 
 - together they contain 712 effective source rows and 198 selected strict
   rows;
-- the selected implementation audit is 47 implemented, 72 partial, and 79
+- the selected implementation audit is 49 implemented, 71 partial, and 78
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
-  expand into 762 deduplicated, source-anchored clauses; the selected WDP and
+  expand into 763 deduplicated, source-anchored clauses; the selected WDP and
   WCMP paths contribute 58 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
@@ -56,19 +56,19 @@ All nine selected Class C family increments are complete at SCR level:
   server/encoder rows not applicable to the client;
 - all four SCR actors and the `WML-C-32 -> WML-C-54` dependency are preserved;
 - every mandatory row has an implementation work-item lane;
-- the source-wide mandatory code audit finds 23 implemented, 10 partial, and
-  14 missing; the selected 39-row client subset is 23 implemented, 10 partial,
+- the source-wide mandatory code audit finds 25 implemented, 8 partial, and
+  14 missing; the selected 39-row client subset is 25 implemented, 8 partial,
   and 6 missing;
 - 34 rows have direct code symbols and runnable test evidence.
-- `WML-201` directly projects all 76 WML rows and all 175 selected WML
+- `WML-201` directly projects all 76 WML rows and all 176 selected WML
   clauses; the remaining 14 mandatory gaps and 28 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
   chain, with another 22 removed rows retained as historical change records;
 - `WAESpec:MCF` selects 11 mandatory WAE client rows, while 40 optional client
   rows and 35 server rows remain explicitly separated;
-- the selected WAE audit is 5 implemented, 3 partial, and 3 missing, with
-  direct code/test evidence linked to 8 rows;
+- the selected WAE audit is 5 implemented, 4 partial, and 2 missing, with
+  direct code/test evidence linked to 9 rows;
 - all 11 selected WAE concepts are classified against WAP-236 as
   successor-delta evidence without changing the WAP 1.2.1 target.
 - 15 effective WBXML 1.3 SCR rows are extracted after applying
@@ -181,7 +181,7 @@ Source Sprint `SRC-0` now has reproducible research-access evidence:
 
 - 97/97 technical release PDFs and 97/97 text extractions are hash/size
   recorded in `wap-1.2.1-ingestion-status.json`;
-- 43/43 locked external dependencies have acquisition records backed by 48
+- 43/43 locked external dependencies have acquisition records backed by 50
   artifacts;
 - 36 external dependencies have full primary artifacts, two have partial
   historical evidence, and five licensed IEEE/ISO/TIA payloads remain
@@ -197,8 +197,8 @@ closes `SRC-004` without changing the redistribution boundary.
 ## Immediate execution order
 
 After the merged WSP-805 request work, WML-306 policy closure, WML-309 frame-contract closure, and
-additive WMLS-501 verifier tranche, the canonical program records 32 work items `done`, 10
-`in-progress`, 40 `todo`, and one `blocked`, with 47/198 selected parents implemented and 367/762
+additive WMLS-501 verifier tranche and WML-307 charset fixture tranche, the canonical program records
+32 work items `done`, 12 `in-progress`, 38 `todo`, and one `blocked`, with 49/198 selected parents implemented and 385/763
 clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.

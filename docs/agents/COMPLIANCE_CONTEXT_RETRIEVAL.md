@@ -44,13 +44,14 @@ serialization and fetch ingress. Use `WSP-8` only for sprint-wide WSP planning:
 node scripts/wap-context-pack.mjs WSP-801
 ```
 
-The WML-3 focused targets are `WML-301` through `WML-306` plus the additive frame/affordance
-slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pack exposes the
+The WML-3 focused targets are `WML-301` through `WML-306` plus the additive character-processing
+slice `WML-307`, form-presentation slice `WML-308`, and frame/affordance slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pack exposes the
 canonical mappings and gaps that exist now; it does
 not by itself establish implementation readiness or complete a source audit.
 
 For the WMLScript bytecode decoder/verifier lane, use `WMLS-501`. For bounded language operator
-and conversion execution, use `WMLS-502`. Use `WMLS-5` only for sprint-wide WMLScript planning:
+and conversion execution, use `WMLS-502`. For WMLScript standard-library implementation,
+use `WMLS-504`. Use `WMLS-5` only for sprint-wide WMLScript planning:
 
 ```sh
 node scripts/wap-context-pack.mjs WMLS-501
@@ -58,6 +59,10 @@ node scripts/wap-context-pack.mjs WMLS-501
 
 ```sh
 node scripts/wap-context-pack.mjs WMLS-502
+```
+
+```sh
+node scripts/wap-context-pack.mjs WMLS-504
 ```
 
 ## Retrieval workflow

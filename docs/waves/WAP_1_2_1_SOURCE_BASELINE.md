@@ -240,7 +240,7 @@ encoder/server rows are not applicable to this client profile.
 
 The external-dependency lock now contains 43 historical authority records and
 preserves 60 citation labels in three explicitly dispositioned residual
-groups. Its acquisition ledger contains 48 private artifacts: 36 dependencies
+groups. Its acquisition ledger contains 50 private artifacts: 36 dependencies
 have full primary artifacts, two have partial historical evidence, and five
 historical IEEE/ISO/TIA payloads remain metadata-only. The selected Class C
 profile has zero blocking open citation labels; each residual group names the
