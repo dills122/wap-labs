@@ -139,6 +139,29 @@ fn wml_203_canonical_wml13_doctype_and_decoded_wbxml_reach_equal_decks() {
 }
 
 #[test]
+fn wml_fx_a_no_nesting_rejects_nested_links_but_accepts_siblings() {
+    let strict_deck = |links| {
+        format!(
+            r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p>{links}</p></card></wml>"#
+        )
+    };
+    let siblings = strict_deck(r##"<a href="#main">Outer</a><a href="#main">Inner</a>"##);
+    parse_wml_report_for_content_type(&siblings, "text/vnd.wap.wml")
+        .expect("sibling links should parse in strict WML 1.3");
+
+    let nested = strict_deck(r##"<a href="#main">Outer<a href="#main">Inner</a></a>"##);
+    let Err(diagnostic) = parse_wml_report_for_content_type(&nested, "text/vnd.wap.wml") else {
+        panic!("an a element must reject a nested a element");
+    };
+    assert_eq!(
+        diagnostic,
+        super::WmlLoadDiagnostic::invalid("Invalid <a>: unexpected child <a> for WML 1.3 DTD")
+    );
+}
+
+#[test]
 fn wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content() {
     let alternate = r#"<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//VENDOR//DTD WML 1.3 PLUS//EN" "http://vendor.test/wml13-plus.dtd">

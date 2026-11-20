@@ -856,7 +856,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
   - Parents: `WML-C-19`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-A-NO-NESTING` (`parser`, `planned`)
+  - Fixture: `WML-FX-A-NO-NESTING` (`parser`, `implemented`)
 - **WML-CL-A-REQUIRED-TARGET** — Require an HREF target on each a element and restrict its child content to the declared inline set.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
@@ -922,7 +922,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.8 (9.8 The Anchor Element)
   - Parents: `WML-C-20`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-ANCHOR-PLACEMENT` (`parser`, `planned`)
+  - Fixture: `WML-FX-ANCHOR-PLACEMENT` (`parser`, `implemented`)
 - **WML-CL-ANCHOR-STRUCTURE** — Parse anchor content with exactly one go, prev, or refresh task.
   - Family: `wml`; force: `grammar`; level: `required`
   - Source: `WAP-191_104-WML` §9.8 (9.8 The Anchor Element)
@@ -1480,7 +1480,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-PARAGRAPH-SIGNIFICANT-BREAK` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-SIGNIFICANT-BREAK` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-SOFT-HYPHEN** — When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)

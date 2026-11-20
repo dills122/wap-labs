@@ -731,6 +731,9 @@ const wmlAnchorEvidenceByClauseId = new Map(
 
 const implementedWmlClauseIds = new Set([
   ...wmlAnchorEvidenceByClauseId.keys(),
+  'WML-CL-A-NO-NESTING',
+  'WML-CL-ANCHOR-PLACEMENT',
+  'WML-CL-PARAGRAPH-SIGNIFICANT-BREAK',
   'WML-CL-UNKNOWN-MARKUP-IGNORED',
   'WML-CL-UNKNOWN-CONTENT-PRESERVED',
   'WML-CL-GO-INTERNAL-POSTFIELD-SUPPRESSION',

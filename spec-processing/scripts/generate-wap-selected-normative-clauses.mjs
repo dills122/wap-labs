@@ -1164,6 +1164,30 @@ const wmlAnchorEvidenceByClauseId = new Map(
   })
 );
 
+const wml201FixtureEvidence = new Map(
+  [
+    [
+      'WML-CL-A-NO-NESTING',
+      ['engine-wasm/engine/src/parser/wml_parser/tests.rs', 'wml_fx_a_no_nesting']
+    ],
+    [
+      'WML-CL-ANCHOR-PLACEMENT',
+      ['engine-wasm/engine/src/engine_tests/wml_203_validation.rs', 'wml_fx_anchor_placement']
+    ],
+    [
+      'WML-CL-PARAGRAPH-SIGNIFICANT-BREAK',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_significant_break']
+    ]
+  ].map(([id, [testPath, filter]]) => [
+    id,
+    {
+      path: testPath,
+      testPath,
+      command: `cargo test --manifest-path engine-wasm/engine/Cargo.toml ${filter}`
+    }
+  ])
+);
+
 const wml203FixtureEvidence = {
   path: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
   testPath: 'engine-wasm/engine/src/engine_tests/wml_203_validation.rs',
@@ -1937,6 +1961,9 @@ if (refreshDirectWorkItems) {
       if (wmlAnchorEvidenceByClauseId.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wmlAnchorEvidenceByClauseId.get(candidate.id);
+      } else if (wml201FixtureEvidence.has(candidate.id)) {
+        candidate.fixturePlan.status = 'implemented';
+        candidate.fixturePlan.evidence = wml201FixtureEvidence.get(candidate.id);
       } else if (implementedWml203ClauseIds.has(candidate.id)) {
         candidate.fixturePlan.status = 'implemented';
         candidate.fixturePlan.evidence = wml203FixtureEvidence;
@@ -2782,6 +2809,7 @@ function clause(
     family === 'wdp' ||
     family === 'wbxml' ||
     wmlAnchorEvidenceByClauseId.has(clauseId) ||
+    wml201FixtureEvidence.has(clauseId) ||
     implementedWml203ClauseIds.has(clauseId) ||
     implementedWml202ClauseIds.has(clauseId) ||
     implementedWml204ClauseIds.has(clauseId) ||
@@ -2892,6 +2920,7 @@ function clause(
       ...(directFixtureImplemented && family !== 'wbxml'
         ? {
             evidence: wmlAnchorEvidenceByClauseId.get(clauseId) ??
+              wml201FixtureEvidence.get(clauseId) ??
               wml307EvidenceByClauseId.get(clauseId) ??
               (wmls504LangNumericClauseIds.has(clauseId) ? wmls504LangNumericEvidence : undefined) ??
               (clauseId === wml308InputTitleClause.id
