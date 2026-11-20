@@ -3,7 +3,7 @@ use crate::runtime::card::{
     Card, CardEventBindingKind, CardGoRequest, CardPostField, CardTaskAction, CardTimer,
 };
 use crate::runtime::deck::DeckMetaProperty;
-use crate::runtime::node::{InlineNode, Node};
+use crate::runtime::node::{InlineNode, Node, ParagraphMode};
 
 fn go_action(href: &str) -> CardTaskAction {
     CardTaskAction::Go {
@@ -112,7 +112,7 @@ fn parses_cards_and_links() {
     assert_eq!(deck.cards[0].id, "home");
 
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert!(matches!(&items[0], InlineNode::Text(t) if t == "Hello"));
             assert_eq!(items[1], InlineNode::BreakOpportunity);
             assert!(matches!(&items[2], InlineNode::Link { href, .. } if href == "#next"));
@@ -175,7 +175,7 @@ fn wml_203_alternate_doctype_ignores_unknown_markup_and_preserves_known_content(
     let deck = parse_wml(alternate).expect("alternate DTD decks remain renderable");
     assert_eq!(deck.cards.len(), 1);
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert!(items
                 .iter()
                 .any(|item| matches!(item, InlineNode::Text(text) if text.contains("known"))));
@@ -265,7 +265,7 @@ fn preserves_inline_text_and_link_order_in_paragraph() {
     let deck = parse_wml(xml).expect("deck should parse");
     let first = &deck.cards[0].nodes[0];
     match first {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert_eq!(
                 items,
                 &[
@@ -321,7 +321,7 @@ fn decodes_entities_and_uses_href_as_fallback_link_text() {
 
     let deck = parse_wml(xml).expect("deck should parse");
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert!(matches!(&items[0], InlineNode::Text(t) if t == "<safe> & ok"));
         }
         _ => panic!("expected paragraph"),
@@ -351,7 +351,7 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
 
     let deck = parse_wml(xml).expect("deck should parse");
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert!(matches!(&items[0], InlineNode::Text(t) if t == "User"));
             assert!(matches!(
                 &items[1],
@@ -753,7 +753,7 @@ fn does_not_treat_prev_tag_as_paragraph_opening_tag() {
         deck.cards[0]
             .nodes
             .iter()
-            .any(|node| matches!(node, Node::Paragraph(_))),
+            .any(|node| matches!(node, Node::Paragraph { .. })),
         "paragraph content should still be parsed"
     );
 }
@@ -783,11 +783,38 @@ fn card_nodes_for(body: &str) -> Result<Vec<Node>, String> {
     parse_wml(&deck_with_card_body(body)).map(|deck| deck.cards[0].nodes.clone())
 }
 
+#[test]
+fn parses_authored_paragraph_wrap_modes() {
+    let nodes = card_nodes_for(
+        r#"<p mode="wrap">Text</p><p mode="nowrap">Text</p><p>Text</p><p mode="nowrap"> </p>"#,
+    )
+    .expect("valid paragraph modes should parse");
+    let expected_modes = [Some(ParagraphMode::Wrap), Some(ParagraphMode::NoWrap), None];
+    assert_eq!(nodes.len(), expected_modes.len());
+    for (node, expected) in nodes.iter().zip(expected_modes) {
+        let Node::Paragraph { mode, .. } = node else {
+            panic!("expected a paragraph node");
+        };
+        assert_eq!(*mode, expected);
+    }
+
+    let Err(error) = parse_wml(
+        r#"<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+        <wml><card id="home"><p mode="invalid">Text</p></card></wml>"#,
+    ) else {
+        panic!("strict parsing should reject an invalid paragraph mode");
+    };
+    assert_eq!(
+        error,
+        "Invalid <p>: attribute 'mode' must be 'wrap' or 'nowrap'"
+    );
+}
+
 fn paragraph_items_for(body: &str) -> Vec<InlineNode> {
     let nodes = card_nodes_for(&format!("<p>{body}</p>")).expect("paragraph should parse");
     match nodes.into_iter().next() {
-        Some(Node::Paragraph(items)) => items,
-        other => panic!("expected a leading paragraph, got: {other:?}"),
+        Some(Node::Paragraph { inline: items, .. }) => items,
+        _ => panic!("expected a leading paragraph"),
     }
 }
 
@@ -1104,7 +1131,7 @@ fn parses_mixed_card_level_content_paths() {
         Node::CardContent(items) if matches!(&items[0], InlineNode::Text(t) if t == "lead")
     ));
     assert!(matches!(&nodes[1], Node::Break));
-    assert!(matches!(&nodes[2], Node::Paragraph(_)));
+    assert!(matches!(&nodes[2], Node::Paragraph { .. }));
     assert!(matches!(
         &nodes[3],
         Node::CardContent(items)
@@ -1221,7 +1248,7 @@ fn parses_cdata_and_named_entity_refs() {
 
     let deck = parse_wml(xml).expect("cdata/entity deck should parse");
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::Paragraph { inline: items, .. } => {
             assert!(matches!(
                 &items[0],
                 InlineNode::Text(t) if t == "raw <keep> 'ok'"
@@ -1635,43 +1662,56 @@ fn wml_301_inserts_source_required_table_boundaries_at_card_content_edges() {
 
     assert_eq!(
         deck.cards[0].nodes,
-        vec![Node::Paragraph(vec![
-            InlineNode::Text("Leading table".to_string()),
-            InlineNode::Break,
-            InlineNode::Text("After".to_string()),
-        ])]
+        vec![Node::Paragraph {
+            mode: None,
+            inline: vec![
+                InlineNode::Text("Leading table".to_string()),
+                InlineNode::Break,
+                InlineNode::Text("After".to_string()),
+            ]
+        }]
     );
     assert_eq!(
         deck.cards[1].nodes,
-        vec![Node::Paragraph(vec![
-            InlineNode::Text("Before".to_string()),
-            InlineNode::Break,
-            InlineNode::Text("Middle table".to_string()),
-            InlineNode::Break,
-            InlineNode::Text("After".to_string()),
-        ])]
+        vec![Node::Paragraph {
+            mode: None,
+            inline: vec![
+                InlineNode::Text("Before".to_string()),
+                InlineNode::Break,
+                InlineNode::Text("Middle table".to_string()),
+                InlineNode::Break,
+                InlineNode::Text("After".to_string()),
+            ]
+        }]
     );
     assert_eq!(
         deck.cards[2].nodes,
-        vec![Node::Paragraph(vec![
-            InlineNode::Text("Before".to_string()),
-            InlineNode::Break,
-            InlineNode::Text("Trailing table".to_string()),
-        ])]
+        vec![Node::Paragraph {
+            mode: None,
+            inline: vec![
+                InlineNode::Text("Before".to_string()),
+                InlineNode::Break,
+                InlineNode::Text("Trailing table".to_string()),
+            ]
+        }]
     );
     assert_eq!(
         deck.cards[3].nodes,
-        vec![Node::Paragraph(vec![InlineNode::Text(
-            "Only table".to_string()
-        )])]
+        vec![Node::Paragraph {
+            mode: None,
+            inline: vec![InlineNode::Text("Only table".to_string())]
+        }]
     );
     assert_eq!(
         deck.cards[4].nodes,
-        vec![Node::Paragraph(vec![
-            InlineNode::Text("First table".to_string()),
-            InlineNode::Break,
-            InlineNode::Break,
-            InlineNode::Text("Second table".to_string()),
-        ])]
+        vec![Node::Paragraph {
+            mode: None,
+            inline: vec![
+                InlineNode::Text("First table".to_string()),
+                InlineNode::Break,
+                InlineNode::Break,
+                InlineNode::Text("Second table".to_string()),
+            ]
+        }]
     );
 }

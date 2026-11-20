@@ -136,7 +136,7 @@ fn inline_nodes(card: &Card) -> impl Iterator<Item = &InlineNode> + '_ {
     card.nodes
         .iter()
         .filter_map(|node| match node {
-            Node::Paragraph(items) | Node::CardContent(items) => Some(items.iter()),
+            Node::Paragraph { inline: items, .. } | Node::CardContent(items) => Some(items.iter()),
             Node::Break => None,
         })
         .flatten()
@@ -146,7 +146,9 @@ fn inline_nodes_mut(card: &mut Card) -> impl Iterator<Item = &mut InlineNode> + 
     card.nodes
         .iter_mut()
         .filter_map(|node| match node {
-            Node::Paragraph(items) | Node::CardContent(items) => Some(items.iter_mut()),
+            Node::Paragraph { inline: items, .. } | Node::CardContent(items) => {
+                Some(items.iter_mut())
+            }
             Node::Break => None,
         })
         .flatten()
@@ -332,10 +334,19 @@ mod tests {
     #[test]
     fn find_input_returns_first_match_across_paragraphs() {
         let card = card_with(vec![
-            Node::Paragraph(vec![InlineNode::Text("label".to_string())]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![InlineNode::Text("label".to_string())],
+            },
             Node::Break,
-            Node::Paragraph(vec![input_node("name", "first")]),
-            Node::Paragraph(vec![input_node("name", "second")]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![input_node("name", "first")],
+            },
+            Node::Paragraph {
+                mode: None,
+                inline: vec![input_node("name", "second")],
+            },
         ]);
 
         let input = find_input(&card, "name").expect("input should be found");
@@ -347,28 +358,30 @@ mod tests {
 
     #[test]
     fn find_input_returns_none_for_unknown_name() {
-        let card = card_with(vec![Node::Paragraph(vec![input_node("name", "value")])]);
+        let card = card_with(vec![Node::Paragraph {
+            mode: None,
+            inline: vec![input_node("name", "value")],
+        }]);
 
         assert!(find_input(&card, "other").is_none());
     }
 
     #[test]
     fn find_input_ignores_same_named_select() {
-        let card = card_with(vec![Node::Paragraph(vec![select_node(
-            "choice",
-            &["a", "b"],
-            0,
-        )])]);
+        let card = card_with(vec![Node::Paragraph {
+            mode: None,
+            inline: vec![select_node("choice", &["a", "b"], 0)],
+        }]);
 
         assert!(find_input(&card, "choice").is_none());
     }
 
     #[test]
     fn find_input_mut_mutates_only_first_match() {
-        let mut card = card_with(vec![Node::Paragraph(vec![
-            input_node("name", "first"),
-            input_node("name", "second"),
-        ])]);
+        let mut card = card_with(vec![Node::Paragraph {
+            mode: None,
+            inline: vec![input_node("name", "first"), input_node("name", "second")],
+        }]);
 
         let input = find_input_mut(&mut card, "name").expect("input should be found");
         *input.value = "updated".to_string();
@@ -382,15 +395,21 @@ mod tests {
     #[test]
     fn inputs_mut_yields_every_input_in_document_order() {
         let mut card = card_with(vec![
-            Node::Paragraph(vec![
-                input_node("a", "1"),
-                InlineNode::Link {
-                    text: "link".to_string(),
-                    href: "#next".to_string(),
-                },
-            ]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![
+                    input_node("a", "1"),
+                    InlineNode::Link {
+                        text: "link".to_string(),
+                        href: "#next".to_string(),
+                    },
+                ],
+            },
             Node::Break,
-            Node::Paragraph(vec![select_node("c", &["x"], 0), input_node("b", "2")]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("c", &["x"], 0), input_node("b", "2")],
+            },
         ]);
 
         let names: Vec<String> = inputs_mut(&mut card)
@@ -402,9 +421,18 @@ mod tests {
     #[test]
     fn find_select_returns_first_match_and_ignores_other_node_types() {
         let card = card_with(vec![
-            Node::Paragraph(vec![input_node("choice", "typed")]),
-            Node::Paragraph(vec![select_node("choice", &["a", "b"], 1)]),
-            Node::Paragraph(vec![select_node("choice", &["c"], 0)]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![input_node("choice", "typed")],
+            },
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("choice", &["a", "b"], 1)],
+            },
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("choice", &["c"], 0)],
+            },
         ]);
 
         let select = find_select(&card, "choice").expect("select should be found");
@@ -418,9 +446,18 @@ mod tests {
     #[test]
     fn selects_with_control_id_mut_yields_every_same_id_select() {
         let mut card = card_with(vec![
-            Node::Paragraph(vec![select_node("choice", &["a"], 0)]),
-            Node::Paragraph(vec![select_node("other", &["a", "b"], 0)]),
-            Node::Paragraph(vec![select_node("choice", &["a", "b", "c"], 0)]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("choice", &["a"], 0)],
+            },
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("other", &["a", "b"], 0)],
+            },
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("choice", &["a", "b", "c"], 0)],
+            },
         ]);
 
         let option_counts: Vec<usize> = selects_with_control_id_mut(&mut card, "choice")
@@ -444,12 +481,15 @@ mod tests {
     #[test]
     fn selects_mut_yields_every_select_in_document_order() {
         let mut card = card_with(vec![
-            Node::Paragraph(vec![
-                select_node("a", &["x"], 0),
-                input_node("typed", "value"),
-            ]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("a", &["x"], 0), input_node("typed", "value")],
+            },
             Node::Break,
-            Node::Paragraph(vec![select_node("b", &["y", "z"], 0)]),
+            Node::Paragraph {
+                mode: None,
+                inline: vec![select_node("b", &["y", "z"], 0)],
+            },
         ]);
 
         let ids: Vec<String> = selects_mut(&mut card)

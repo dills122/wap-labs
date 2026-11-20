@@ -1,6 +1,8 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
-use crate::runtime::node::{is_breakable_space, InlineContext, InlineNode, Node, SelectOption};
+use crate::runtime::node::{
+    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, SelectOption,
+};
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
 use std::collections::HashMap;
 
@@ -277,7 +279,12 @@ fn map_card_level_nodes(
                         table_boundaries,
                     )?;
                     if !inline.is_empty() {
-                        out.push(Node::Paragraph(inline));
+                        let mode = match element.attr("mode") {
+                            Some("wrap") => Some(ParagraphMode::Wrap),
+                            Some("nowrap") => Some(ParagraphMode::NoWrap),
+                            _ => None,
+                        };
+                        out.push(Node::Paragraph { mode, inline });
                     }
                     continue;
                 }

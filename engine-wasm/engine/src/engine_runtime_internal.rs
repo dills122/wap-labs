@@ -754,7 +754,7 @@ fn substitute_card_text_and_links(
 ) -> Result<(), String> {
     for node in &mut card.nodes {
         let (inline, context) = match node {
-            Node::Paragraph(inline) => (inline, InlineContext::Paragraph),
+            Node::Paragraph { inline, .. } => (inline, InlineContext::Paragraph),
             Node::CardContent(inline) => (inline, InlineContext::Card),
             Node::Break => continue,
         };
