@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "example": "wml201AnchorTasks",
+  "flows": [
+    {
+      "id": "waves-explicit-anchor-task-activation",
+      "title": "Waves local mode activates explicit anchor tasks and shorthand navigation",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-ANCHOR-ACTIVATION", "WML-CL-A-GO-EQUIVALENCE"],
+      "initial": {
+        "state": { "activeCardId": "start", "focusedLinkIndex": 0 },
+        "render": { "textIncludes": ["Go", "Shorthand"] }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "tasks", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "tasks", "focusedLinkIndex": 0 },
+            "render": { "textIncludes": ["Stage: refreshed"] },
+            "traceKinds": ["ACTION_REFRESH"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "tasks", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "start", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_PREV", "ACTION_BACK"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "start", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "tasks", "focusedLinkIndex": 0 },
+            "traceKinds": ["ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -3709,6 +3709,146 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Refresh policy demo (no navigation).\n      <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201AnchorTasks",
+    "label": "WML-201 Anchor Tasks",
+    "description": "Explicit anchors activate WML tasks through the same focus path as shorthand links.",
+    "goal": "Follow an explicit go, refresh the card variables, return with prev, then follow the shorthand link.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-ANCHOR-ACTIVATION",
+      "WML-CL-A-GO-EQUIVALENCE"
+    ],
+    "testingAc": [
+      "Activate Go and arrive at tasks.",
+      "Activate Refresh and see Stage refreshed on the same card.",
+      "Activate Return and then follow Shorthand to the same destination."
+    ],
+    "flows": [
+      {
+        "id": "waves-explicit-anchor-task-activation",
+        "title": "Waves local mode activates explicit anchor tasks and shorthand navigation",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-ANCHOR-ACTIVATION",
+          "WML-CL-A-GO-EQUIVALENCE"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "start",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "Go",
+              "Shorthand"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_REFRESH"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Stage: refreshed"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "start",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "start",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p>\n      <anchor>Go<go href=\"#tasks\"/></anchor>\n      <a href=\"#tasks\">Shorthand</a>\n    </p>\n  </card>\n  <card id=\"tasks\">\n    <p>\n      Stage: $(stage)\n      <anchor>Refresh<refresh><setvar name=\"stage\" value=\"refreshed\"/></refresh></anchor>\n      <anchor>Return<prev/></anchor>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml202TemplateShadowing",
     "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
     "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",

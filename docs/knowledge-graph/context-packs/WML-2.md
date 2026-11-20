@@ -365,7 +365,7 @@ Evidence commands:
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#map_inline_nodes_recursive`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::enter_navigates_to_fragment_card` (`cd engine-wasm/engine && cargo test enter_navigates_to_fragment_card`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.
+  - Assessment note: The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.
 - **WML-C-20** — anchor
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.8 (SCR §15.1.5)
@@ -373,7 +373,7 @@ Evidence commands:
   - Code: None; the evidence state remains explicit.
   - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The anchor element and its nested task/setvar model are not represented.
+  - Assessment note: The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.
 - **WML-C-21** — access
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
@@ -850,7 +850,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
   - Parents: `WML-C-19`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `implemented`)
 - **WML-CL-A-NO-NESTING** — Reject nested a elements.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)

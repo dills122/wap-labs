@@ -166,9 +166,9 @@ Cross-source selected-profile accounting is now executable:
 - every selected row has an owner and work-item mapping;
 - all 198 selected rows now expand into 763 deduplicated nested clauses with
   source anchors and fixture plans;
-- 375 WML, WAE, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed; direct
+- 376 WML, WAE, WBXML, WDP, WCMP, WSP, and WMLScript clauses are directly fixture-backed; direct
   conformance fixture implementation remains the principal evidence gap for
-  the other 388.
+  the other 387.
 
 The family-level WAP 1.2.1 base/SIN precedence graph now exists at
 `spec-processing/source-manifests/wap-1.2.1-effective-spec.json`. It establishes

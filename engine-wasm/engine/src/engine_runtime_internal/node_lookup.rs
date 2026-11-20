@@ -175,6 +175,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
         InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::Link { .. }
+        | InlineNode::Anchor { .. }
         | InlineNode::Select { .. } => None,
     }
 }
@@ -200,6 +201,7 @@ fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
         InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::Link { .. }
+        | InlineNode::Anchor { .. }
         | InlineNode::Select { .. } => None,
     }
 }
@@ -225,6 +227,7 @@ fn as_select(item: &InlineNode) -> Option<SelectRef<'_>> {
         InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::Link { .. }
+        | InlineNode::Anchor { .. }
         | InlineNode::Input { .. } => None,
     }
 }
@@ -254,6 +257,7 @@ fn as_select_mut(item: &mut InlineNode) -> Option<SelectMut<'_>> {
         InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::Link { .. }
+        | InlineNode::Anchor { .. }
         | InlineNode::Input { .. } => None,
     }
 }
@@ -262,7 +266,10 @@ fn as_control_mut(item: &mut InlineNode) -> Option<ControlMut<'_>> {
     match item {
         InlineNode::Input { .. } => as_input_mut(item).map(ControlMut::Input),
         InlineNode::Select { .. } => as_select_mut(item).map(ControlMut::Select),
-        InlineNode::Text(_) | InlineNode::Break | InlineNode::Link { .. } => None,
+        InlineNode::Text(_)
+        | InlineNode::Break
+        | InlineNode::Link { .. }
+        | InlineNode::Anchor { .. } => None,
     }
 }
 

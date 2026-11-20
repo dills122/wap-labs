@@ -1,6 +1,6 @@
 use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderResource};
 use crate::render::render_list::{DrawCmd, RenderList};
-use crate::runtime::card::Card;
+use crate::runtime::card::{Card, CardTaskAction};
 use crate::runtime::node::{InlineNode, Node};
 
 #[derive(Clone, Debug, Default)]
@@ -21,11 +21,38 @@ pub struct LayoutSegment {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FocusTarget {
     Link(String),
+    Anchor(CardTaskAction),
     Input { control_id: String, name: String },
     Select(String),
 }
 
 impl FocusTarget {
+    fn for_inline_node(node: &InlineNode) -> Option<Self> {
+        match node {
+            InlineNode::Link { href, .. } => Some(Self::Link(href.clone())),
+            InlineNode::Anchor { action, .. } => Some(Self::Anchor(action.clone())),
+            InlineNode::Input {
+                control_id, name, ..
+            } => Some(Self::Input {
+                control_id: control_id.clone(),
+                name: name.clone(),
+            }),
+            InlineNode::Select { control_id, .. } => Some(Self::Select(control_id.clone())),
+            InlineNode::Text(_) | InlineNode::Break => None,
+        }
+    }
+
+    pub(crate) fn in_card(card: &Card) -> impl Iterator<Item = Self> + '_ {
+        card.nodes
+            .iter()
+            .filter_map(|node| match node {
+                Node::Paragraph(inline) => Some(inline),
+                Node::Break => None,
+            })
+            .flatten()
+            .filter_map(Self::for_inline_node)
+    }
+
     /// Encode this target as the `href` string carried by [`DrawCmd::Link`].
     ///
     /// This is the only place the `input:`/`select:` prefix encoding is
@@ -36,6 +63,10 @@ impl FocusTarget {
     pub fn to_render_href(&self) -> String {
         match self {
             FocusTarget::Link(href) => href.clone(),
+            FocusTarget::Anchor(action) => match action.base_and_set_vars().0 {
+                CardTaskAction::Go { href, .. } => href.clone(),
+                _ => "anchor:task".to_string(),
+            },
             FocusTarget::Input { control_id, .. } => format!("input:{control_id}"),
             FocusTarget::Select(name) => format!("select:{name}"),
         }
@@ -43,7 +74,7 @@ impl FocusTarget {
 
     pub fn frame_kind(&self) -> crate::EngineFocusTargetKind {
         match self {
-            FocusTarget::Link(_) => crate::EngineFocusTargetKind::Link,
+            FocusTarget::Link(_) | FocusTarget::Anchor(_) => crate::EngineFocusTargetKind::Link,
             FocusTarget::Input { .. } => crate::EngineFocusTargetKind::Input,
             FocusTarget::Select(_) => crate::EngineFocusTargetKind::Select,
         }
@@ -55,10 +86,12 @@ impl FocusTarget {
 /// advance the line directly instead of going through the word-wrapper (see the comment at the
 /// `ParagraphPart::Break` match arm below for why).
 enum ParagraphPart {
-    Segment(String, Option<FocusTarget>),
+    Segment(String),
+    Anchor(Vec<String>),
     Break,
 }
 
+#[cfg(test)]
 pub fn layout_card(
     card: &Card,
     viewport_cols: usize,
@@ -114,21 +147,17 @@ fn layout_card_impl(
                 line += 1;
             }
             Node::Paragraph(inline) => {
-                let mut parts: Vec<ParagraphPart> = Vec::new();
+                let mut parts = Vec::new();
                 for entry in inline {
-                    match entry {
-                        InlineNode::Break => parts.push(ParagraphPart::Break),
-                        InlineNode::Text(text) => {
-                            parts.push(ParagraphPart::Segment(text.clone(), None));
+                    let part = match entry {
+                        InlineNode::Break => ParagraphPart::Break,
+                        InlineNode::Text(text) | InlineNode::Link { text, .. } => {
+                            ParagraphPart::Segment(text.clone())
                         }
-                        InlineNode::Link { text, href } => {
-                            parts.push(ParagraphPart::Segment(
-                                text.clone(),
-                                Some(FocusTarget::Link(href.clone())),
-                            ));
+                        InlineNode::Anchor { label_lines, .. } => {
+                            ParagraphPart::Anchor(label_lines.clone())
                         }
                         InlineNode::Input {
-                            control_id,
                             name,
                             title,
                             value,
@@ -145,14 +174,7 @@ fn layout_card_impl(
                                 .as_deref()
                                 .filter(|title| !title.trim().is_empty())
                                 .unwrap_or(name);
-                            let rendered = format!("[{label}: {display_value}]");
-                            parts.push(ParagraphPart::Segment(
-                                rendered,
-                                Some(FocusTarget::Input {
-                                    control_id: control_id.clone(),
-                                    name: name.clone(),
-                                }),
-                            ));
+                            ParagraphPart::Segment(format!("[{label}: {display_value}]"))
                         }
                         InlineNode::Select {
                             control_id,
@@ -175,20 +197,14 @@ fn layout_card_impl(
                                 .or_else(|| name.clone())
                                 .or_else(|| iname.clone())
                                 .unwrap_or_else(|| control_id.clone());
-                            let rendered = format!("[{label}: {selected}]");
-                            // Selects are looked up by `control_id` everywhere downstream
-                            // (WML-204 select semantics allow duplicate/absent `name`), so
-                            // the focus target must carry `control_id`, not `name`.
-                            parts.push(ParagraphPart::Segment(
-                                rendered,
-                                Some(FocusTarget::Select(control_id.clone())),
-                            ));
+                            ParagraphPart::Segment(format!("[{label}: {selected}]"))
                         }
-                    }
+                    };
+                    parts.push((part, FocusTarget::for_inline_node(entry)));
                 }
 
-                for part in parts {
-                    let (segment, target) = match part {
+                for (part, target) in &parts {
+                    let lines = match part {
                         // WAP-191_104-WML SS11.8.4: `br` forces a line break wherever it
                         // occurs, including nested inline content -- this must advance the
                         // line directly rather than going through `wrap_text`, which drops
@@ -207,69 +223,83 @@ fn layout_card_impl(
                             line += 1;
                             continue;
                         }
-                        ParagraphPart::Segment(segment, target) => (segment, target),
+                        ParagraphPart::Segment(text) => std::slice::from_ref(text),
+                        ParagraphPart::Anchor(lines) => lines.as_slice(),
                     };
 
-                    let remaining_chunks = limits
-                        .rows
-                        .saturating_sub(row_count)
-                        .min(limits.segments.saturating_sub(result.segments.len()))
-                        .min(
-                            limits
-                                .draw_commands
-                                .saturating_sub(result.render_list.draw.len()),
-                        );
-                    let chunks =
-                        wrap_text(&segment, viewport_cols, remaining_chunks).map_err(|_| {
-                            next_output_error(
-                                &limits,
-                                row_count,
-                                result.segments.len(),
-                                remaining_chunks,
-                            )
-                        })?;
                     let focus_index = target.as_ref().map(|target| {
                         let idx = result.focus_targets.len();
                         result.focus_targets.push(target.clone());
                         idx
                     });
-                    // Stringify once per segment, at the render-list boundary.
+                    // Stringify once per focus target, at the render-list boundary.
                     let href = target.as_ref().map(FocusTarget::to_render_href);
 
-                    for chunk in chunks {
-                        check_next_output(
-                            &limits,
-                            row_count,
-                            result.segments.len(),
-                            result.render_list.draw.len(),
-                            false,
-                        )?;
-                        result.segments.push(LayoutSegment {
-                            x: 0,
-                            y: line,
-                            text: chunk.clone(),
-                            focus_index,
-                        });
-                        match &href {
-                            Some(link_href) => {
-                                result.render_list.draw.push(DrawCmd::Link {
-                                    x: 0,
-                                    y: line,
-                                    text: chunk,
-                                    focused: focus_index == Some(focused_link_idx),
-                                    href: link_href.clone(),
-                                });
-                            }
-                            None => {
-                                result.render_list.draw.push(DrawCmd::Text {
-                                    x: 0,
-                                    y: line,
-                                    text: chunk,
-                                });
-                            }
+                    for (index, text) in lines.iter().enumerate() {
+                        if index > 0 {
+                            check_next_output(
+                                &limits,
+                                row_count,
+                                result.segments.len(),
+                                result.render_list.draw.len(),
+                                true,
+                            )?;
+                            row_count += 1;
+                            line += 1;
                         }
-                        row_count += 1;
-                        line += 1;
+                        let remaining_chunks = limits
+                            .rows
+                            .saturating_sub(row_count)
+                            .min(limits.segments.saturating_sub(result.segments.len()))
+                            .min(
+                                limits
+                                    .draw_commands
+                                    .saturating_sub(result.render_list.draw.len()),
+                            );
+                        let chunks =
+                            wrap_text(text, viewport_cols, remaining_chunks).map_err(|_| {
+                                next_output_error(
+                                    &limits,
+                                    row_count,
+                                    result.segments.len(),
+                                    remaining_chunks,
+                                )
+                            })?;
+                        for chunk in chunks {
+                            check_next_output(
+                                &limits,
+                                row_count,
+                                result.segments.len(),
+                                result.render_list.draw.len(),
+                                false,
+                            )?;
+                            result.segments.push(LayoutSegment {
+                                x: 0,
+                                y: line,
+                                text: chunk.clone(),
+                                focus_index,
+                            });
+                            match &href {
+                                Some(link_href) => {
+                                    result.render_list.draw.push(DrawCmd::Link {
+                                        x: 0,
+                                        y: line,
+                                        text: chunk,
+                                        focused: focus_index == Some(focused_link_idx),
+                                        href: link_href.clone(),
+                                    });
+                                }
+                                None => {
+                                    result.render_list.draw.push(DrawCmd::Text {
+                                        x: 0,
+                                        y: line,
+                                        text: chunk,
+                                    });
+                                }
+                            }
+                            row_count += 1;
+                            line += 1;
+                        }
                     }
                 }
             }
