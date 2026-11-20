@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 410
-- Edges: 1088
+- Nodes: 412
+- Edges: 1093
 - Selected work items: 9
 - Direct SCR rows: 13
-- Direct normative clauses: 149
+- Direct normative clauses: 150
 - Aggregate regression/delegate context clauses: 7
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 1
@@ -281,16 +281,16 @@ Evidence commands:
 
 ### WML-308: Additive form-control presentation and capability residual closure
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `browser`, `qa`
 - Source families: `wml`, `wae`
 - Existing tickets: `R0-04`, `R0-05`
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
-- Direct normative clauses: 23
+- Direct normative clauses: 24
 - Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
-- Spec references: None
+- Spec references: `WAP-191_104-WML sections 10.3.1 and 11.6.3`
 - Follow-up work items: None
 - Depends on: None
 
@@ -307,6 +307,9 @@ Evidence commands:
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `pnpm --dir browser/frontend test`
 - `pnpm test:story WML-308`
+- `node scripts/wap-context-pack.mjs WML-308`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
 
 ### WML-309: Engine-owned frame and affordance contract for active WML do actions
 
@@ -1274,6 +1277,12 @@ Evidence commands:
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-TITLE-PRESENTATION** — Allow presentation to use the input title, with runtime substitution for its vdata content.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-TITLE-PRESENTATION` (`rendering`, `implemented`)
 - **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)

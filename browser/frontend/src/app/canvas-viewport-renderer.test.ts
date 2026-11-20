@@ -114,6 +114,28 @@ describe('CanvasViewportRenderer', () => {
     ]);
   });
 
+  it('draws the engine-provided input title and masked value as text', () => {
+    const viewport = document.createElement('div');
+    const elements = ensureCanvasViewportElements(viewport);
+    const operations: DrawOperation[] = [];
+    const renderer = new CanvasViewportRenderer(viewport, elements, {
+      context: createContext(operations),
+      getStyle: () => FIXED_STYLE
+    });
+    const text = '[Access & security: ****]';
+    renderer.render({
+      rows: [{ index: 0, segments: [{ type: 'focusable', text, focused: true }] }]
+    });
+
+    expect(elements.accessibleText.textContent).toBe(text);
+    expect(operations).toContainEqual({
+      kind: 'fill-text',
+      args: [text, 3, 0],
+      fillStyle: FIXED_STYLE.focusForeground
+    });
+    renderer.dispose();
+  });
+
   it('converts CSS-scaled device pixels into deterministic engine columns and rows', () => {
     const geometry = {
       bounds: { left: 10, top: 20, width: 160, height: 100 },

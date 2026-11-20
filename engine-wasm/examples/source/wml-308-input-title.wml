@@ -1,0 +1,23 @@
+<!--
+label: WML 1.3 Input Titles
+work-items: WML-308
+spec-items: WML-C-33, WML-CL-INPUT-TITLE-PRESENTATION
+description: A field title evaluates WML variables while input edits still update the named variable.
+goal: Verify the presented input title follows runtime state and the password field stays masked.
+testing-ac:
+- View the City field and the masked Access code field.
+- Append X to Caption and commit; verify CityX is now the second field's label.
+- Edit the second field and verify its label remains CityX.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="form" title="Input titles">
+    <p><input name="Caption" value="City"/></p>
+    <p><input name="Place" title="$(Caption)" value="Oslo"/></p>
+    <p><input name="Pin" title="Access code" type="password" value="1234" format="4N"/></p>
+    <p><input name="Fallback" title="$(Missing)"/></p>
+    <p><input name="Plain"/></p>
+  </card>
+</wml>

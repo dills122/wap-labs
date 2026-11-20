@@ -682,7 +682,7 @@ if (
       line.includes('29 optional rows')
   ) ||
   !wml201?.acceptance?.some(
-    (line) => line.includes('All 175 selected WML clauses')
+    (line) => line.includes('All 176 selected WML clauses')
   ) ||
   !wml201?.evidence?.includes('node scripts/wap-context-pack.mjs WML-201') ||
   !wml201?.evidence?.includes('pnpm wap-graph:check')

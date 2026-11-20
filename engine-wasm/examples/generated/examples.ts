@@ -6037,6 +6037,140 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=US-ASCII\"/></head>\n  <card id=\"main\">\n    <p>Café &#302;&#x12E; &amp;quot;</p>\n    <p><a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <onevent type=\"onenterforward\">\n      <refresh><setvar name=\"entityProbe\" value=\"&quot;&amp;&apos;&lt;&gt;A&nbsp;B&shy;C&#302;&#x12E;&amp;quot;\"/></refresh>\n    </onevent>\n    <p>Done</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml308InputTitle",
+    "label": "WML 1.3 Input Titles",
+    "description": "A field title evaluates WML variables while input edits still update the named variable.",
+    "goal": "Verify the presented input title follows runtime state and the password field stays masked.",
+    "workItems": [
+      "WML-308"
+    ],
+    "specItems": [
+      "WML-C-33",
+      "WML-CL-INPUT-TITLE-PRESENTATION"
+    ],
+    "testingAc": [
+      "View the City field and the masked Access code field.",
+      "Append X to Caption and commit; verify CityX is now the second field's label.",
+      "Edit the second field and verify its label remains CityX."
+    ],
+    "flows": [
+      {
+        "id": "waves-input-title-follows-committed-variable",
+        "title": "Waves displays evaluated input titles and edits the named variable",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-308"
+        ],
+        "specItems": [
+          "WML-C-33",
+          "WML-CL-INPUT-TITLE-PRESENTATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "form",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "[Caption: City]",
+              "[City: Oslo]",
+              "[Access code: ****]"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "type-text",
+              "text": "X"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Caption",
+                "focusedInputEditValue": "CityX"
+              },
+              "render": {
+                "textIncludes": [
+                  "[Caption: CityX]",
+                  "[City: Oslo]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_COMMIT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "[CityX: Oslo]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "Y"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Place",
+                "focusedInputEditValue": "OsloY"
+              },
+              "render": {
+                "textIncludes": [
+                  "[CityX: OsloY]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null
+              },
+              "render": {
+                "textIncludes": [
+                  "[CityX: OsloY]",
+                  "[Access code: ****]"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"form\" title=\"Input titles\">\n    <p><input name=\"Caption\" value=\"City\"/></p>\n    <p><input name=\"Place\" title=\"$(Caption)\" value=\"Oslo\"/></p>\n    <p><input name=\"Pin\" title=\"Access code\" type=\"password\" value=\"1234\" format=\"4N\"/></p>\n    <p><input name=\"Fallback\" title=\"$(Missing)\"/></p>\n    <p><input name=\"Plain\"/></p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml309FrameAffordances",
     "label": "WML-309 Frame Affordances",
     "description": "Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.",

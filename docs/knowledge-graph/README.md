@@ -35,7 +35,7 @@ requirements, owner layers, and legacy ticket links.
 
 The pilot intentionally reports remaining gap levels:
 
-- Machine-derived fact: WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE
+- Machine-derived fact: WML-201 has 179 direct clauses: 176 selected WML clauses plus 3 WAE
   composition clauses. It also projects the exact WML SCR matrix while retaining direct-test,
   mapped-gap, and optional-not-assessed evidence states;
 - `WML-202` now directly maps 14 root/head/access, template, and task-shadowing clauses adopted by `R0-04` and `R0-12`;
@@ -78,6 +78,9 @@ timer-lifecycle clauses and their five selected SCR parents without changing fix
 focused `WML-306` target activates WML-C-15 as an explicit optional Class C capability and exposes
 the source-audited access, error, unknown-DTD, and task-failure obligations without inferring an
 unrelated WAE-family mapping.
+The focused `WML-308` target exposes input title presentation evidence and the
+remaining WAE-family mapping gap within the broader form-control slice.
+
 The focused `WML-307` target exposes WML character processing and WBXML charset,
 document defaults, and token typing. Its charset evidence uses dated IANA registry
 fixtures and leaves the broader residual work visible.
@@ -135,7 +138,7 @@ node scripts/wap-context-pack.mjs WML-203
 ```
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
-through `WML-307`, `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
+through `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
 `WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, `WMLS-501`, and `WMLS-502`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice

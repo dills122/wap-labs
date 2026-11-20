@@ -496,6 +496,7 @@ fn parse_input_inline_node(
     Ok(InlineNode::Input {
         control_id,
         name,
+        title: element.attr("title").map(str::to_string),
         value,
         default_value,
         is_password,

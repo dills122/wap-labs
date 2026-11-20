@@ -773,10 +773,10 @@ fn wml_204_control_validation_simulator_example_loads_and_renders() {
     let lines = render_snapshot_lines(&engine);
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=input:UserName:text=[UserName: AHMED]")));
+        .any(|line| line.contains("href=input:UserName:text=[User name: AHMED]")));
     assert!(lines
         .iter()
-        .any(|line| line.contains("href=input:Pin:text=[Pin: ****]")));
+        .any(|line| line.contains("href=input:Pin:text=[Numeric PIN: ****]")));
     assert!(lines
         .iter()
         .any(|line| line.contains("href=select:Country:text=[Country: Jordan]")));

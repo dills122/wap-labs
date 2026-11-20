@@ -166,5 +166,6 @@ mod wml_304_request_intent;
 mod wml_305_timers;
 mod wml_306_policy;
 pub(crate) mod wml_307_text;
+pub(crate) mod wml_308_input_title;
 mod wml_309_frame;
 mod wml_load_errors;

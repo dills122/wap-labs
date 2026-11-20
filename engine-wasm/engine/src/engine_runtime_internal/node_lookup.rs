@@ -274,6 +274,7 @@ mod tests {
         InlineNode::Input {
             control_id: name.to_string(),
             name: name.to_string(),
+            title: None,
             value: value.to_string(),
             default_value: None,
             is_password: false,
