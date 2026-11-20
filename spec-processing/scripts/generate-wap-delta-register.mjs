@@ -240,6 +240,10 @@ function classify(definition, obligation) {
     ];
     base.relationshipClassification = mapping.classification;
     base.rationale = mapping.note;
+    if (obligation.id === 'WAESpec-C-019' && !notImplemented) {
+      base.rationale = `${mapping.note} Generic WBXML routing uses target-era WAP-192 and WAP-167.`;
+      return base;
+    }
     if (!notImplemented) {
       base.successorDerivedImplementation = true;
       base.implementationBasis = 'successor-era-or-cross-checked';

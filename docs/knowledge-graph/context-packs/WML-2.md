@@ -249,19 +249,19 @@ Evidence commands:
 - **WML-C-05** — Reference processing
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §6.1 (SCR §15.1.1)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `transport-rust/src/responses.rs#decode_textual_wml_payload`
-  - Tests: `transport-rust/src/tests/fetch_mapping.rs::transport_map_success_payload_utf16le_textual_wml_maps_ok` (`cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `transport-rust/src/responses.rs#decode_textual_wml_payload`, `transport-rust/src/wbxml_decoder.rs#decode_wbxml`
+  - Tests: `transport-rust/src/tests/fetch_mapping.rs::transport_wml_307_raw_text_encoding` (`cd transport-rust && cargo test --lib transport_wml_307_raw_text_encoding`), `transport-rust/src/tests/wbxml_conformance.rs::transport_wbxml_wml_307_historical_charset_fixtures` (`cd transport-rust && cargo test --lib transport_wbxml_wml_307_historical_charset_fixtures`)
   - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
-  - Assessment note: The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.
+  - Assessment note: Lowband verifies MIME/BOM/XML precedence, lossless Unicode mapping, malformed-byte rejection, and the WBXML charset boundary. Native and WASM render the same document characters across the supported source encodings.
 - **WML-C-06** — Character entities
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §6.2 (SCR §15.1.1)
-  - Assessment: `partial`; evidence `direct-test-linked`
-  - Code: `engine-wasm/engine/src/parser/wml_parser/xml.rs#decode_general_entity`
-  - Tests: `engine-wasm/engine/src/parser/wml_parser/tests.rs::decodes_entities_and_uses_href_as_fallback_link_text` (`cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text`)
+  - Assessment: `implemented`; evidence `direct-test-linked`
+  - Code: `engine-wasm/engine/src/parser/wml_parser/xml.rs#parse_xml_document`
+  - Tests: `engine-wasm/engine/src/engine_tests/wml_307_text.rs::wml_307_text_encoding_and_entities` (`cd engine-wasm/engine && cargo test wml_307_text_encoding_and_entities`), `engine-wasm/engine/src/engine_tests/wml_307_text.rs::wml_307_rejects_invalid_xml_characters` (`cd engine-wasm/engine && cargo test wml_307_rejects_invalid_xml_characters`)
   - Work items: `C5-06`, `R0-01`, `R0-08`, `WML-201`
-  - Assessment note: Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.
+  - Assessment note: Native and WASM fixtures cover the seven required named entities, decimal and hexadecimal Unicode references, single-pass resolution, and XML 1.0 character rejection in literals and references.
 - **WML-C-07** — History
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.2 (SCR §15.1.2)
@@ -1054,19 +1054,19 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-FORMS` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-FORMS` (`parser`, `implemented`)
 - **WML-CL-ENTITY-REQUIRED-NAMES** — Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.
   - Family: `wml`; force: `table`; level: `required`
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-REQUIRED-NAMES` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-REQUIRED-NAMES` (`parser`, `implemented`)
 - **WML-CL-ENTITY-UNICODE-IDENTITY** — Resolve numeric character references against Unicode independently of the document byte encoding.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
   - Parents: `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-ENTITY-UNICODE-IDENTITY` (`parser`, `planned`)
+  - Fixture: `WML-FX-ENTITY-UNICODE-IDENTITY` (`parser`, `implemented`)
 - **WML-CL-ERROR-ENFORCEMENT** — Enforce every error condition defined by WML.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.3 (12.3 Error Handling)
@@ -1528,31 +1528,31 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-ENCODING-DETECTION` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-ENCODING-DETECTION` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-ENTITY-CHARSET** — Process character entities in the document character set.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-ENTITY-CHARSET` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-ENTITY-CHARSET` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-TRANSCODING-LOSS** — Avoid transcoding when the user agent supports the original encoding and conversion would lose information.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-TRANSCODING-LOSS` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-TRANSCODING-LOSS` (`transport-boundary`, `implemented`)
 - **WML-CL-REFERENCE-UNICODE-MAPPING** — Map every character in each recognized source encoding to its Unicode character.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-UNICODE-MAPPING` (`parser`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-UNICODE-MAPPING` (`parser`, `implemented`)
 - **WML-CL-REFERENCE-WBXML-PRECEDENCE** — When WML is carried in WBXML, determine character encoding using the WBXML rules.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
   - Parents: `WML-C-05`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-REFERENCE-WBXML-PRECEDENCE` (`transport-boundary`, `planned`)
+  - Fixture: `WML-FX-REFERENCE-WBXML-PRECEDENCE` (`transport-boundary`, `implemented`)
 - **WML-CL-REFRESH-ASSIGNMENTS** — For refresh, resolve and apply every setvar assignment without changing cards.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §12.5.4 (12.5.4 The Refresh Task)

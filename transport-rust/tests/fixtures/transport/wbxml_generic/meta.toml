@@ -1,0 +1,10 @@
+name = "Generic WBXML vocabulary and routing"
+description = "Source-derived WBXML 1.3 vocabulary, default, and MIME routing fixtures."
+mode = "mapped"
+work_items = ["WML-307"]
+spec_items = ["RQ-RMK-007", "RQ-RMK-010", "WBXML-C-001", "WBXML-C-010", "WBXML-C-011"]
+testing_ac = [
+  "The decoded vocabulary and XML match the fixed fixture outcome.",
+  "Declared defaults and applicable implied values are preserved through XML decoding.",
+  "Typed and generic MIME routing keep non-WML documents out of deck execution."
+]

@@ -54,6 +54,17 @@ struct ConformanceFixture {
     equivalent_group: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct HistoricalCharsetFixture {
+    id: String,
+    mib_enum: u8,
+    bytes_hex: String,
+    content_type: Option<String>,
+    expected_text: Option<String>,
+    expected_error_contains: Option<String>,
+}
+
 fn load_conformance_corpus() -> ConformanceCorpus {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("tests/fixtures/transport/wbxml_wml13/conformance.json");
@@ -112,7 +123,9 @@ fn run_scr_fixtures(scr: &str) -> HashMap<String, String> {
         );
         let bytes = decode_hex(&fixture.bytes_hex);
         let result = match fixture.content_type.as_deref() {
-            Some(content_type) => decode_wbxml_for_content_type(&bytes, content_type),
+            Some(content_type) => {
+                decode_wbxml_for_content_type(&bytes, content_type).map(|document| document.xml)
+            }
             None => decode_wml13(&bytes, 64 * 1024),
         };
         match (&fixture.expected_xml, &fixture.expected_error_contains) {
@@ -151,6 +164,176 @@ fn run_scr_fixtures(scr: &str) -> HashMap<String, String> {
 #[test]
 fn transport_wbxml_c_001_binary_structure_fixtures() {
     run_scr_fixtures("WBXML-C-001");
+}
+
+#[test]
+fn transport_wml_307_generic_wbxml_fixtures() {
+    #[derive(Deserialize)]
+    struct Corpus {
+        cases: Vec<Fixture>,
+    }
+
+    #[derive(Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Fixture {
+        id: String,
+        content_type: String,
+        bytes_hex: String,
+        expected_xml: Option<String>,
+        kind: Option<String>,
+        expected_card_language: Option<String>,
+        expected_error_contains: Option<String>,
+        expected_fetch_error: Option<String>,
+        wsp_media_octet: Option<u8>,
+    }
+
+    let corpus: Corpus = read_json_fixture("wbxml_generic", "cases.json");
+    for case in corpus.cases {
+        let bytes = decode_hex(&case.bytes_hex);
+        let (content_type, bytes) = match case.wsp_media_octet {
+            Some(octet) => {
+                let mut reply = vec![1, 4, 0x20, 1, octet];
+                reply.extend_from_slice(&bytes);
+                let reply =
+                    crate::network::wsp::connectionless::decode_connectionless_reply(1, &reply)
+                        .expect("compact WSP reply should decode");
+                assert_eq!(reply.content_type, case.content_type, "{}", case.id);
+                (reply.content_type, reply.body)
+            }
+            None => (case.content_type, bytes),
+        };
+        let decoded = decode_wbxml_for_content_type(&bytes, &content_type);
+        let url = "http://example.test/generic.wbxml";
+        let response = map_success_payload_response(SuccessPayloadParams {
+            status: 200,
+            is_wap_scheme: false,
+            request_url: url,
+            upstream_url: url,
+            final_url: url.to_owned(),
+            content_type,
+            body: &bytes,
+            attempt: 1,
+            elapsed_ms: 0.0,
+            request_id: None,
+        });
+        match (case.expected_xml, case.kind, case.expected_error_contains) {
+            (Some(expected_xml), Some(kind), None) => {
+                let decoded = decoded.unwrap_or_else(|error| panic!("{}: {error}", case.id));
+                let expected_kind = match kind.as_str() {
+                    "wml" => crate::WbxmlDocumentKind::Wml13,
+                    "si" => crate::WbxmlDocumentKind::ServiceIndication10,
+                    "sl" => crate::WbxmlDocumentKind::ServiceLoading10,
+                    "co" => crate::WbxmlDocumentKind::CacheOperation10,
+                    "channel" => crate::WbxmlDocumentKind::Channel12,
+                    _ => panic!("unexpected fixture document kind: {kind}"),
+                };
+                assert_eq!(decoded.xml, expected_xml, "{}", case.id);
+                assert_eq!(decoded.kind, expected_kind, "{}", case.id);
+                match expected_kind {
+                    crate::WbxmlDocumentKind::Wml13 => {
+                        assert!(response.ok, "{}: {:?}", case.id, response.error);
+                        assert_eq!(response.content_type, "application/vnd.wap.wbxml");
+                        let input = response.engine_deck_input.expect("WML engine input");
+                        assert_eq!(input.content_type, "application/vnd.wap.wmlc");
+                        assert_eq!(input.wml_xml, expected_xml);
+                        let mut engine = wavenav_engine::WmlEngine::new();
+                        engine
+                            .load_deck_context(
+                                &input.wml_xml,
+                                &input.base_url,
+                                &input.content_type,
+                                input.raw_bytes_base64,
+                            )
+                            .expect("generic WBXML WML should load as a normalized deck");
+                        assert_eq!(
+                            engine.active_card_language(),
+                            case.expected_card_language,
+                            "{}",
+                            case.id
+                        );
+                        assert!(engine.render().expect("WML should render").draw.iter().any(|cmd| matches!(cmd, wavenav_engine::DrawCmd::Text { text, .. } if text == "Hello")));
+                    }
+                    _ => {
+                        assert!(
+                            !response.ok
+                                && response.wml.is_none()
+                                && response.engine_deck_input.is_none(),
+                            "{}",
+                            case.id
+                        );
+                        assert_eq!(
+                            response.error.expect("non-WML must stay in transport").code,
+                            "UNSUPPORTED_CONTENT_TYPE"
+                        );
+                    }
+                }
+            }
+            (None, None, Some(expected)) => {
+                let error = decoded.expect_err(&case.id);
+                assert!(error.contains(&expected), "{}: {error}", case.id);
+                assert!(
+                    !response.ok && response.wml.is_none() && response.engine_deck_input.is_none(),
+                    "{}",
+                    case.id
+                );
+                assert_eq!(
+                    response.error.expect("failed vocabulary route").code,
+                    case.expected_fetch_error
+                        .as_deref()
+                        .unwrap_or("WBXML_DECODE_FAILED"),
+                    "{}",
+                    case.id
+                );
+            }
+            _ => panic!("{} must specify one expected outcome", case.id),
+        }
+    }
+}
+
+#[test]
+fn transport_wbxml_wml_307_historical_charset_fixtures() {
+    #[derive(Deserialize)]
+    struct Corpus {
+        cases: Vec<HistoricalCharsetFixture>,
+    }
+
+    let corpus: Corpus = serde_json::from_str(include_str!(
+        "../../tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json"
+    ))
+    .expect("historical charset fixture corpus should parse");
+    assert!(!corpus.cases.is_empty());
+
+    for fixture in corpus.cases {
+        let bytes = decode_hex(&fixture.bytes_hex);
+        assert_eq!(
+            &bytes[..3],
+            &[0x03, 0x0a, fixture.mib_enum],
+            "{}",
+            fixture.id
+        );
+        let result = match fixture.content_type.as_deref() {
+            Some(content_type) => {
+                decode_wbxml_for_content_type(&bytes, content_type).map(|document| document.xml)
+            }
+            None => decode_wml13(&bytes, 64 * 1024),
+        };
+        match (fixture.expected_text, fixture.expected_error_contains) {
+            (Some(text), None) => {
+                let xml = result.unwrap_or_else(|error| panic!("{}: {error}", fixture.id));
+                assert_eq!(
+                    xml,
+                    format!("<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">{text}</p></card></wml>"),
+                    "{}",
+                    fixture.id
+                );
+            }
+            (None, Some(expected)) => {
+                let error = result.expect_err(&fixture.id);
+                assert!(error.contains(&expected), "{}: {error}", fixture.id);
+            }
+            _ => panic!("{} must specify one expected outcome", fixture.id),
+        }
+    }
 }
 
 #[test]

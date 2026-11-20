@@ -155,7 +155,7 @@
           "C5-06"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned built-in WML 1.3 decoder and source-derived corpus directly implement all 42 client-applicable mapped section 5 clauses, including carrying-protocol charset precedence and bounded handling of all 256 tag and attribute code-page indices. The row remains partial because only the WML 1.3 page-zero tables are registered and non-WML document families remain unsupported.",
+        "assessmentNote": "WML-203 backs all 42 selected section 5 clauses in the WML path. WML-307 adds generic routing and page-zero SI, SL, CO, and Channel fixtures anchored in WAP-167, WAP-168, WAP-175, and WAP-169.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",
@@ -173,6 +173,13 @@
             "command": "cd transport-rust && cargo test --lib transport_wbxml_c_001_binary_structure_fixtures",
             "fixture": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
             "limitation": "The registry covers the full one-octet page-index space with deterministic unassigned and implementation-specific outcomes; only the WML 1.3 page-zero token tables are registered."
+          },
+          {
+            "path": "transport-rust/src/tests/wbxml_conformance.rs",
+            "test": "transport_wml_307_generic_wbxml_fixtures",
+            "command": "cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures",
+            "fixture": "transport-rust/tests/fixtures/transport/wbxml_generic/cases.json",
+            "limitation": "Covers WBXML 1.3 page-zero WML 1.3, SI 1.0, SL 1.0, CO 1.0, and Channel 1.2 decoding. Application actions and other vocabularies remain separate."
           }
         ],
         "evidenceState": "direct-normative-fixture-linked-partial"
@@ -585,7 +592,7 @@
           "C5-06"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned decoder reconstructs every default and fixed attribute declared by the selected WML 1.3 DTD, with source-derived fixtures covering omitted attributes and the complete reconstructed set. The row remains partial because externally supplied implied values and other document families are not modeled.",
+        "assessmentNote": "Fixtures verify WML defaults, fixed attributes and deck-to-card xml:lang inheritance, the SI action and href-derived si-id, the SL action and the Channel useraccessible defaults. CO has no attribute defaults. External language fallback and other vocabularies remain open.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",
@@ -599,6 +606,13 @@
             "command": "cd transport-rust && cargo test --lib transport_wbxml_c_010_default_attribute_fixtures",
             "fixture": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
             "limitation": "The selected WML 1.3 DTD is complete; an external implied-value source remains outside this tranche."
+          },
+          {
+            "path": "transport-rust/src/tests/wbxml_conformance.rs",
+            "test": "transport_wml_307_generic_wbxml_fixtures",
+            "command": "cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures",
+            "fixture": "transport-rust/tests/fixtures/transport/wbxml_generic/cases.json",
+            "limitation": "Covers WBXML 1.3 page-zero WML 1.3, SI 1.0, SL 1.0, CO 1.0, and Channel 1.2 decoding. Application actions and other vocabularies remain separate."
           }
         ],
         "evidenceState": "direct-normative-fixture-linked-partial"
@@ -725,7 +739,7 @@
           "C5-06"
         ],
         "implementationStatus": "partial",
-        "assessmentNote": "The pinned decoder uses the WMLC MIME media type as its external token-table key and exhaustively pairs all 36 WML 1.3 page-zero tags, 85 attribute starts, and 27 attribute values with literal forms. The row remains partial for non-WML document families and generic WBXML routing.",
+        "assessmentNote": "Typed MIME requires a matching public identifier. Generic WBXML selects a supported vocabulary by public identifier. SL, CO, and Channel page-zero assignments, literal equivalents, and compact WSP media routing have direct fixtures. Channel 1.2 uses its literal public identifier.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/wbxml_decoder.rs",
@@ -746,6 +760,13 @@
             "command": "cd transport-rust && cargo test --lib transport_wbxml_page_zero_binary_literal_equivalence_is_exhaustive",
             "fixture": "transport-rust/tests/fixtures/transport/wbxml_wml13/conformance.json",
             "limitation": "The matrix covers every assignment in the selected WML 1.3 page-zero token table only."
+          },
+          {
+            "path": "transport-rust/src/tests/wbxml_conformance.rs",
+            "test": "transport_wml_307_generic_wbxml_fixtures",
+            "command": "cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures",
+            "fixture": "transport-rust/tests/fixtures/transport/wbxml_generic/cases.json",
+            "limitation": "Covers WBXML 1.3 page-zero WML 1.3, SI 1.0, SL 1.0, CO 1.0, and Channel 1.2 decoding. Application actions and other vocabularies remain separate."
           }
         ],
         "evidenceState": "direct-normative-fixture-linked-partial"

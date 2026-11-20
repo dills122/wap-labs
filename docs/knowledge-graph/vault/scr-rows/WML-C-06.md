@@ -48,20 +48,25 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.",
+  "assessmentNote": "Native and WASM fixtures cover the seven required named entities, decimal and hexadecimal Unicode references, single-pass resolution, and XML 1.0 character rejection in literals and references.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
-      "symbol": "decode_general_entity"
+      "symbol": "parse_xml_document"
     }
   ],
   "testEvidence": [
     {
-      "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-      "test": "decodes_entities_and_uses_href_as_fallback_link_text",
-      "command": "cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text"
+      "path": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+      "test": "wml_307_text_encoding_and_entities",
+      "command": "cd engine-wasm/engine && cargo test wml_307_text_encoding_and_entities"
+    },
+    {
+      "path": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+      "test": "wml_307_rejects_invalid_xml_characters",
+      "command": "cd engine-wasm/engine && cargo test wml_307_rejects_invalid_xml_characters"
     }
   ],
   "ownerLayers": [

@@ -145,8 +145,9 @@ When `FetchDeckResponse.ok === true`, `engineDeckInput` is present and follows t
 - for proxied `wap://`/`waps://` requests, this remains the original WAP URL presented to host/engine
 
 3. `engineDeckInput.contentType`
-- equals normalized `FetchDeckResponse.contentType`
-- for WBXML decode success, this remains `application/vnd.wap.wmlc` (source media type is preserved as metadata)
+- uses the normalized source type for textual WML
+- uses `application/vnd.wap.wmlc` for decoded WML 1.3 WBXML. For generic WBXML,
+  `FetchDeckResponse.contentType` retains the source MIME type.
 
 4. `engineDeckInput.rawBytesBase64` (optional by contract, currently populated on success)
 - base64 of original response payload bytes before decode/transform
@@ -158,11 +159,63 @@ When `FetchDeckResponse.ok === false`:
 - `engineDeckInput` is `None`
 - `wml` is `None`
 
+### Textual WML decoding
+
+Lowband decodes textual response bytes before handing Unicode text to the native
+or WASM engine. An explicit MIME `charset` takes priority over the XML encoding
+declaration. A conflicting BOM fails the response. With no MIME charset,
+Lowband uses the BOM and checks any declaration for consistency, or uses the
+initial XML declaration and defaults to UTF-8 when absent. In-deck `meta`
+elements are document content and do not select a decoder.
+
+This policy applies XML detection to unlabeled WML responses and preserves
+the existing UTF-8 default for that path. The historical WML registration
+refers to the XML media type principles in RFC 2376, which also specifies a
+US-ASCII default for its own `text/xml` media type.
+[WML media type registration](https://www.iana.org/assignments/media-types/text/vnd.wap.wml) · [RFC 2376 §3.1](https://www.rfc-editor.org/rfc/rfc2376#section-3.1) · [XML 1.0 §4.3.3](https://www.w3.org/TR/1998/REC-xml-19980210#charencoding)
+
+Supported labels cover UTF-8, UTF-16 with a BOM, explicit UTF-16LE and
+UTF-16BE, US-ASCII, and ISO-8859-1. Malformed bytes and unsupported labels fail
+without inserting replacement characters. The handoff preserves the original bytes for
+diagnostics alongside the losslessly decoded document. Native and WASM WaveNav
+apply XML 1.0 character validation while parsing that text.
+
+### WBXML document routing
+
+`decode_wbxml_for_content_type` decodes WBXML 1.3 to XML and returns the
+selected page-zero vocabulary. The format-specific MIME type requires a
+matching public identifier. Generic `application/vnd.wap.wbxml` uses the
+document's public identifier directly.
+
+| Vocabulary | Format-specific MIME type | Public ID forms |
+| --- | --- | --- |
+| WML 1.3 | `application/vnd.wap.wmlc` | Numeric `0x0A` or literal |
+| Service Indication 1.0 | `application/vnd.wap.sic` | Numeric `0x05` or literal |
+| Service Loading 1.0 | `application/vnd.wap.slc` | Numeric `0x06` or literal |
+| Cache Operation 1.0 | `application/vnd.wap.coc` | Numeric `0x07` or literal |
+| Channel 1.2 | `application/vnd.wap.channelc` | Literal only |
+
+Channel MIME version `1.2` may be explicit or omitted. Numeric identifier
+`0x08` belongs to Channel 1.1 and fails decoding.
+WBXML strings reject XML 1.0-forbidden characters. Attribute whitespace is
+serialized as character references so XML attribute normalization preserves it.
+
+WML 1.3 can enter the deck engine through either WBXML MIME route. SI 1.0
+decoding covers its page-zero tokens, literal forms, action default, and
+applicable href-derived `si-id`. OPAQUE values for `created` and `si-expires` on
+`indication` decode to UTC timestamps. The decoder restores omitted time pairs
+as zeros, accepts explicitly encoded zeros, and rejects invalid packed digits,
+calendar dates, times, and truncated payloads. SL defaults to
+`action="execute-low"` and Channel defaults to `useraccessible="false"`. CO
+declares no attribute defaults. Channel's optional attributes stay absent
+when omitted. The deck fetch reports valid non-WML documents as unsupported
+content. The decoder API returns their XML without applying document actions.
+
 ## Error Mapping Notes
 
 - `UNSUPPORTED_CONTENT_TYPE`: unsupported upstream content-type for deck handoff
 - `WBXML_DECODE_FAILED`: WBXML payload could not be decoded
-- `PROTOCOL_ERROR`: upstream HTTP `status >= 400`
+- `PROTOCOL_ERROR`: upstream HTTP `status >= 400` or textual WML decoding failed
 - `PAYLOAD_TOO_LARGE`: payload exceeded the explicit transport/engine handoff limit
 - `TRANSPORT_UNAVAILABLE` / `GATEWAY_TIMEOUT`: request/send/timeout path failures
 
@@ -171,7 +224,7 @@ When `FetchDeckResponse.ok === false`:
 | Error Code | Deterministic Trigger |
 |---|---|
 | `INVALID_REQUEST` | Local request validation fails before transport send (unsupported method, invalid URL) |
-| `PROTOCOL_ERROR` | Upstream HTTP response status is `>= 400` |
+| `PROTOCOL_ERROR` | Upstream HTTP response status is `>= 400`, or textual WML bytes and encoding metadata could not be decoded |
 | `UNSUPPORTED_CONTENT_TYPE` | Upstream success (`2xx`) but normalized content-type is not WML/WBXML-supported |
 | `WBXML_DECODE_FAILED` | Upstream success with `application/vnd.wap.wmlc` but decode pipeline fails |
 | `PAYLOAD_TOO_LARGE` | Response/deck body exceeds explicit guardrail limits before successful handoff |
@@ -216,8 +269,8 @@ When `FetchDeckResponse.ok === false`:
 - [x] Add URI-length and charset boundary conformance fixtures (`T0-06`)
 - [ ] Complete WBXML token/literal compatibility conformance (`T0-07` /
   `R0-08`; pinned decoder and all 47 selected client clauses are directly
-  evidenced; broader non-WML tables, generic WBXML routing, and the unselected
-  server/encoder profile remain open)
+  evidenced; additional vocabularies and the unselected server/encoder profile
+  remain open)
 - [x] Add WSP assigned-number registry fixture lane (`T0-10`)
 - [x] Add WSP capability negotiation/bounds fixture lane (`T0-11`)
 - [x] Declare Wireless Profiled TCP posture with fixture-backed drift guard (`T0-12`)

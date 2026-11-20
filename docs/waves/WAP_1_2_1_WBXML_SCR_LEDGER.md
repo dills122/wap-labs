@@ -133,10 +133,15 @@ evidence. `WBXML-CL-TOKEN-CODE-PAGES` is direct-evidence-backed by the bounded
 registry and fixed outcomes; this does not claim token tables that WML 1.3
 does not assign.
 
-The parent rows also retain broader limitations: externally supplied implied
-attribute values and non-WML document families. Generic
-`application/vnd.wap.wbxml` routing remains a separate WAE
-gap.
+The WML-307 matrix exercises generic MIME dispatch, compact WSP media routing,
+and page-zero token and literal fixtures. SI 1.0 cases cover WAP-167 action
+defaults, href-derived IDs, and OPAQUE dates. WAP-168 supplies SL 1.0's
+`execute-low` default, WAP-175 supplies the CO 1.0 invalidation tokens,
+and WAP-169 supplies Channel 1.2's `useraccessible=false` default and optional
+attributes. Channel 1.2 uses the literal identifier to keep the registered
+numeric Channel 1.1 identifier distinct. WML fixtures verify inherited
+`xml:lang` and explicit card overrides through deck loading. The WBXML
+parent rows remain partial for other vocabularies and implied-value sources.
 
 ## Server and encoder rows
 
@@ -152,11 +157,9 @@ client claim and have not been implementation-audited in this pass.
 ## Remaining WBXML work
 
 1. Extend engine structural parity beyond the focused canonical deck fixture.
-2. Add generic `application/vnd.wap.wbxml` routing and non-WML token-table
-   registries only if those document-family profiles enter selected scope.
-3. Extend default-attribute reconstruction beyond WML 1.3 only if another
-   version or document-type profile is selected.
-4. Audit the 12 server/encoder rows, including unrepresentable-name
+2. Extend registered vocabularies and default reconstruction as additional
+   document families enter scope.
+3. Audit the 12 server/encoder rows, including unrepresentable-name
    tokenisation, only when that independently shippable profile is claimed.
 
 Modern safety, streaming, performance, and diagnostics may improve the

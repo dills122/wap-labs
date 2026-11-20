@@ -749,7 +749,7 @@
         },
         {
           "id": "WML-307",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "transport-rust", "qa"],
           "sourceFamilies": ["wml", "wbxml"],
           "existingTickets": ["C5-06"],
@@ -760,12 +760,28 @@
             "WML-C-05 and WML-C-06 receive complete source-derived encoding/entity evidence, and WBXML-C-001, WBXML-C-010, and WBXML-C-011 close non-WML token-table, implied-default, and generic-routing gaps without reopening WML-203."
           ],
           "evidence": [
+            "node scripts/wap-context-pack.mjs WML-307",
+            "node scripts/check-wml-307-iana-fixtures.mjs <june-raw> <october-raw>",
+            "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures",
+            "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding",
+            "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_rejects_invalid_xml_characters",
+            "wasm-pack test --node engine-wasm/engine --features wasm-bindings",
+            "pnpm test:story WML-307",
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
             "cargo test --manifest-path transport-rust/Cargo.toml",
             "node scripts/check-wap-conformance-ledger.mjs"
           ],
           "notes": [
-            "This additive follow-up records out-of-slice residuals exposed when WML-2 closed. It does not reopen completed WML-203/WML-302/WML-303 or preempt the WML-305 baton."
+            "The focused pack maps 20 clauses across five selected WML/WBXML parents. The historical charset matrix at transport-rust/tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json verifies dated IANA membership separately from the decoder's current behavior. Its nine wire cases cover supported encodings, unsupported and unassigned values, the zero sentinel, and MIME charset precedence.",
+            "The WML-307 textual fixture shares a deck and assertions across native and WASM. It verifies all seven named references, decimal and hexadecimal Unicode identity, and single-pass text and attribute expansion. The decoded input variants cover UTF-8 declaration, BOM, implicit UTF-8, and an ASCII-only document with Unicode references.",
+            "The raw textual fixture verifies MIME, BOM, and XML declaration handling and malformed-byte rejection through Lowband. Native Rust renders the actual handoff; WASM renders the same expected decoded text from the shared matrix. Supported byte encodings are UTF-8, UTF-16, US-ASCII and ISO-8859-1.",
+            "The generic WBXML 1.3 matrix verifies specific and generic MIME routes, compact WSP replies, WML 1.3 deck handoff, and SI 1.0 page-zero tokens, literal equivalence, defaults, and href-derived IDs. SI XML stays in the transport decoder API, and the WAE media routing and document typing clauses have direct evidence.",
+            "The generic matrix also verifies SI OPAQUE created and si-expires dates under WAP-167 sections 5.2.1 and 8.2.2, including UTC reconstruction and rejection of malformed dates.",
+            "WAP-168 sections 8–9, WAP-175 sections 8–9, and WAP-169 section 9.4.1 with WAP-169_101 section 6 anchor the SL 1.0, CO 1.0, and Channel 1.2 vocabulary fixtures. The matrix verifies token and literal forms, compact WSP routing, SL and Channel defaults, omitted optional attributes, and inherited or explicit WML card language. Non-WML documents stay in the decoder API.",
+            "Native and WASM reject XML 1.0-forbidden literal and referenced characters as malformed XML. The native transport fixtures verify lossless decoding, malformed-byte rejection, WBXML charset precedence, and preservation of WBXML attribute whitespace references, closing the WML-C-05 and WML-C-06 character-processing evidence.",
+            "The evidence is bounded to WBXML 1.3 and the five decoded vocabularies. Additional profiles and transport or user-preference language fallback remain open. Exact IANA assignments at WAP-192 approval still require independent evidence."
           ]
         },
         {

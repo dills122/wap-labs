@@ -3,7 +3,7 @@
 Status: bounded research complete; no protected payload promoted; OMA request
 unsent and approval-required
 
-Reviewed: 2026-07-26
+Reviewed: 2026-07-26. IANA capture evidence updated: 2026-11-19.
 
 ## Scope and decision rule
 
@@ -23,7 +23,7 @@ normative behavior claim.
 
 | Authority             | Current primary evidence                                                                                                                                                                                                                                                                                                                                                                                               | Acquisition result                                                                                                                                                     | Readiness disposition                                                                                                                                                                                                                                                         |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| IANA MIBenum registry | The live [Character Sets registry](https://www.iana.org/assignments/character-sets/character-sets.xhtml) defines the MIBenum namespace and current assignments. IANA's [5 September 2000 registry update](https://data.iana.org/archive/ietf-charsets/msg00849.html) confirms pre-WBXML-1.3 changes including UTF-16 registration, UTF-7 reassignment, ISO-8859-15/13/14, SCSU, and removal of duplicate MIBenum 1004. | `verified-private-partial-artifact`; current XML is hash-locked, but no complete registry image at or immediately before WAP-192's 25 July 2001 approval date is held. | Partial historical evidence, not a snapshot. Do not reconstruct the complete 2001 table from the current registry or mailing-list deltas.                                                                                                                                     |
+| IANA MIBenum registry | The [current IANA registry](https://www.iana.org/assignments/character-sets/character-sets.xhtml) defines the namespace. Two captures of the original IANA plaintext bracket WAP-192 approval on 25 July 2001. | `verified-private-partial-artifact`. Current XML and both historical captures are hash-locked. The exact 25 July state remains unverified. | Use the pre-approval capture for dated fixture data and the later capture for comparison. |
 | Unicode 2.0           | The official [Unicode 2.0.0 component catalog](https://www.unicode.org/versions/components-2.0.0.html) identifies the July 1996 paper standard and its versioned UCD files. It also says `Unihan-1.txt` was inadvertently truncated and that the corrected `Unihan-2.txt` was formally released with Unicode 2.1.2.                                                                                                    | `verified-private-partial-artifact`; the component page and versioned 2.0 files are hash-locked, while the paper core remains unavailable online.                      | Fixture-grade for the code points and properties present in the archived files. Not a substitute for unrepresented core-spec definitions, algorithms, or prose. Keep the truncated 2.0 Unihan artifact explicit; do not silently replace it with 2.1.2 data in a 2.0 fixture. |
 | IEEE 754-1985         | The [IEEE authority record](https://standards.ieee.org/ieee/754/993/) confirms the superseded 1985 binary floating-point standard, its scope, and purchase/subscription access.                                                                                                                                                                                                                                        | `metadata-only-licensed-payload`; no standards payload acquired.                                                                                                       | Behavior-relevant only when floating-point capability is claimed. The WAP-193/WAP-194 rules remain the direct test source for the Class C interpreter boundary.                                                                                                               |
 | ISO/IEC 10646-1:1993  | The [ISO authority record](https://www.iso.org/standard/18741.html) confirms the 1993 first edition, 754 pages, withdrawal, and replacement by the 2000 edition.                                                                                                                                                                                                                                                       | `metadata-only-licensed-payload`; no standards payload acquired.                                                                                                       | Normative character-set lineage. WAP-191 and WAP-193 operationalize the target-era behavior and explicitly pair the cited UCS with Unicode 2.0; the official Unicode component set can support bounded repertoire/property fixtures, not replace the ISO text.                |
@@ -31,10 +31,26 @@ normative behavior claim.
 | ISO/TR 8509:1987      | The [ISO authority record](https://www.iso.org/standard/15732.html) confirms the nine-page service-conventions report, its withdrawal in 1994, and replacement by ISO/IEC 10731:1994.                                                                                                                                                                                                                                  | `metadata-only-licensed-payload`; no standards payload acquired.                                                                                                       | Definition-only for the selected connectionless Class C path. It informs WTP service terminology, while WTP is not activated by that path.                                                                                                                                    |
 | TIA/EIA/IS-732        | The authorized-distributor record already locked in the external-dependency manifest identifies the December 1997 `TIA/EIA/IS-732-100` lineage. [Public TIA committee minutes](https://standards.tiaonline.org/standards/committees/files/tr-45/tr45-aug00-28900123652.pdf) corroborate that IS-732 is CDPD, but WAP-200 cites the series generically and does not select a part.                                      | `metadata-only-licensed-payload`; no standards payload acquired.                                                                                                       | Capability/lineage evidence for the selected CDPD bearer. WAP-200 plus RFC 768/791/792 defines the emulator's UDP/IPv4/WDP/WCMP boundary; IS-732 becomes implementation-blocking only if the project claims CDPD lower-layer or radio behavior.                               |
 
-The acquisition states above remain correctly represented in
-`wap-1.2.1-external-ingestion-status.json`: two partial public source sets and
-five licensed-payload metadata-only records. No manifest state can be promoted
-from this review.
+The external ingestion manifest records 50 artifacts across 43 dependencies.
+The IANA and Unicode dependencies retain partial acquisition status, and five
+licensed payloads retain metadata-only status.
+
+### IANA archive verification
+
+Both captures are indexed as HTTP 200 `text/plain` responses from the
+original IANA registry URL. The raw replay bytes match the CDX base32 SHA-1
+digests. The external ingestion manifest records their SHA-256 and byte
+counts. [Internet Archive CDX index](https://web.archive.org/cdx/search/cdx?url=www.iana.org%2Fassignments%2Fcharacter-sets&from=2001&to=2001&output=json)
+
+| UTC capture | Registry's stated update | Bytes | Distinct MIBenum values | CDX digest |
+| --- | --- | ---: | ---: | --- |
+| [2001-06-09 03:11:30](https://web.archive.org/web/20010609031130id_/http://www.iana.org/assignments/character-sets) | 2001-05-30 | 48,034 | 234 | `N7W6SZMA4T3G6QRLXFHBIFTHIKNEBMLY` |
+| [2001-10-30 14:59:38](https://web.archive.org/web/20011030145938id_/http://www.iana.org/assignments/character-sets) | 2001-08-23 | 48,249 | 235 | `ZUBJASKT3QSO3X2HIVVE2KTQCPDZLDBU` |
+
+The later capture adds ISO-8859-16 (112) and preferred MIME aliases for
+ISO-8859-6-E/I (81/82) and ISO-8859-8-E/I (84/85). These are observed
+differences between captures. The exact dates of the individual changes are
+unverified. The raw payloads remain outside Git.
 
 ## Behavior decisions
 
@@ -52,12 +68,10 @@ WAP-192 sections 5.2 and 5.6 for:
 - the source-demonstrated values US-ASCII `3`, ISO-8859-1 `4`, Shift_JIS `17`,
   and UTF-8 `106`.
 
-The historical IANA evidence is sufficient to test those source-pinned values
-and unknown-value handling. It is not sufficient to claim a complete
-WBXML-era MIBenum table. A generic decoder should therefore distinguish:
-recognized supported values, recognized-but-unsupported values, `0`, and
-unrecognized values without treating the current registry as the historical
-allow-list.
+The source-pinned values and dated IANA captures support tests for historical
+registrations and unknown-value handling. A generic decoder should distinguish
+supported values, recognized but unsupported values, `0`, and unrecognized
+values using the registry edition appropriate to the fixture.
 
 The Unicode 2.0 component files are sufficient to derive bounded fixtures for
 numeric character references, names, categories, and properties actually
@@ -106,8 +120,9 @@ terminology rather than an independent parser or runtime rule.
 
 - `SRC-006` remains the sole source-program blocker and remains limited to
   public redistribution/promotion.
-- The IANA snapshot gap prevents a complete historical MIBenum-table claim,
-  not source-pinned WBXML fixtures for known values and unknown handling.
+- The dated IANA captures support WBXML fixtures for observed assignments
+  and unknown handling. A claim about the exact approval-day table still
+  requires additional evidence.
 - Unicode 2.0 UCD components improve test readiness for bounded character
   data; the missing paper standard remains an access gap and does not prevent
   use of the operational WAP/XML clauses.
@@ -119,8 +134,9 @@ terminology rather than an independent parser or runtime rule.
 
 ## Exact remaining access gaps
 
-1. A complete IANA Character Sets registry snapshot from the WBXML 1.3 era,
-   preferably at or immediately before 25 July 2001.
+1. Independent evidence of the exact IANA registry state on 25 July 2001,
+   if a claim requires that precision. The verified May and August registry
+   revisions already support dated fixtures.
 2. The Unicode Standard, Version 2.0 paper core; the official component/UCD
    subset remains available and hash-locked.
 3. ANSI/IEEE Std 754-1985 full licensed text.
@@ -137,12 +153,18 @@ terminology rather than an independent parser or runtime rule.
 
 1. Obtain maintainer approval and identity/commercial-use details, then send
    the prepared OMA request package. No message has been sent.
-2. When `WML-307` begins, add its minimum knowledge-graph support first and
-   build source-pinned charset/entity fixtures without inventing a complete
-   2001 registry.
+2. Use the focused `WML-307` context pack and the validated WBXML charset
+   matrix for dated registry evidence. The shared native and WASM textual
+   fixtures verify WML §6.2 references and XML 1.0 character rejection in decoded
+   input. The raw textual WML matrix verifies BOMs, declarations, MIME charset
+   precedence, and lossless character preservation in Lowband.
+   The generic WBXML 1.3 matrix verifies registered WML/SI MIME routing and
+   SI defaults and OPAQUE date decoding. It also covers SL 1.0, CO 1.0,
+   Channel 1.2, and deck-to-card language inheritance. Subsequent WBXML
+   vocabularies and application handling retain their own profile limits.
 3. Before advancing the numeric portion of `WMLS-5`, record the integer-only
    versus floating-point capability decision and its evidence gate.
 4. Keep the CDPD claim boundary at UDP/IPv4/WDP/WCMP. Open a separately
    sourced profile only if lower-layer IS-732 behavior enters scope.
-5. Do not retry the same historical-registry searches without a new authority
-   path, filename, or archive-timestamp hypothesis.
+5. Pursue approval-day registry evidence only if a fixture or claim needs
+   that precision.

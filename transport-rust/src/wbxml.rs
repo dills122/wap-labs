@@ -1,30 +1,79 @@
 #[cfg(test)]
 use crate::wbxml_decoder::decode_wml13;
-use crate::wbxml_decoder::{decode_wml13_with_charset, WML13_DECODER_ID};
+use crate::wbxml_decoder::{
+    decode_wbxml, DecodedWbxmlDocument, WbxmlDocumentKind, WML13_DECODER_ID,
+};
 use mime::{Mime, CHARSET};
 
 const MAX_DECODED_WBXML_BYTES: usize = 2 * 1024 * 1024;
+pub(crate) const WMLC_MEDIA_TYPE: &str = "application/vnd.wap.wmlc";
+
+enum WbxmlMediaType {
+    Generic,
+    Typed(WbxmlDocumentKind),
+}
+
+impl WbxmlMediaType {
+    fn from_essence(media_type: &str) -> Option<Self> {
+        match media_type {
+            "application/vnd.wap.wbxml" => Some(Self::Generic),
+            WMLC_MEDIA_TYPE => Some(Self::Typed(WbxmlDocumentKind::Wml13)),
+            "application/vnd.wap.sic" => Some(Self::Typed(WbxmlDocumentKind::ServiceIndication10)),
+            "application/vnd.wap.slc" => Some(Self::Typed(WbxmlDocumentKind::ServiceLoading10)),
+            "application/vnd.wap.coc" => Some(Self::Typed(WbxmlDocumentKind::CacheOperation10)),
+            "application/vnd.wap.channelc" => Some(Self::Typed(WbxmlDocumentKind::Channel12)),
+            _ => None,
+        }
+    }
+}
+
+pub(crate) fn is_wbxml_media_type(essence: &str) -> bool {
+    WbxmlMediaType::from_essence(essence).is_some()
+}
 
 #[cfg(test)]
 pub(crate) fn decode_wmlc(payload: &[u8]) -> Result<String, String> {
     decode_wml13(payload, MAX_DECODED_WBXML_BYTES)
 }
 
-pub(crate) fn decode_wbxml_for_content_type(
+/// Decode WBXML 1.3 using the media type and the document public ID.
+///
+/// SI 1.0 OPAQUE dates on `indication` are returned as UTC XML attributes.
+/// The document kind describes the decoded XML vocabulary.
+pub fn decode_wbxml_for_content_type(
     payload: &[u8],
     content_type: &str,
-) -> Result<String, String> {
+) -> Result<DecodedWbxmlDocument, String> {
     let media_type = content_type
         .parse::<Mime>()
         .map_err(|error| format!("WBXML decode failed: invalid MIME media type: {error}"))?;
-    if media_type.essence_str() != "application/vnd.wap.wmlc" {
-        return Err(format!(
+    let route = WbxmlMediaType::from_essence(media_type.essence_str()).ok_or_else(|| {
+        format!(
             "WBXML decode failed: MIME media type {:?} has no selected token table",
             media_type.essence_str()
-        ));
+        )
+    })?;
+    let expected_kind = match route {
+        WbxmlMediaType::Generic => None,
+        WbxmlMediaType::Typed(kind) => Some(kind),
+    };
+    if expected_kind == Some(WbxmlDocumentKind::Channel12) {
+        if let Some(version) = media_type.get_param("version") {
+            if version.as_str() != "1.2" {
+                return Err(format!(
+                    "WBXML decode failed: unsupported Channel MIME version {:?}",
+                    version.as_str()
+                ));
+            }
+        }
     }
     let external_charset = media_type.get_param(CHARSET).map(|value| value.as_str());
-    decode_wml13_with_charset(payload, MAX_DECODED_WBXML_BYTES, external_charset)
+    decode_wbxml(
+        payload,
+        MAX_DECODED_WBXML_BYTES,
+        external_charset,
+        expected_kind,
+    )
 }
 
 pub fn preflight_wbxml_decoder() -> Result<String, String> {
@@ -43,8 +92,7 @@ mod tests {
     }
 
     // Fuzz-lite regression probe, per `docs/agents/RUST_TRANSPORT_STEERING.md`
-    // #12. `decode_wbxml_for_content_type` is `pub(crate)`, so it can't be
-    // reached from an integration test under `tests/` (see
+    // #12. The corpus and mutation loop are kept together here (see
     // `tests/fuzz_lite_decoders.rs` for the sibling probe over the fully
     // `pub` WCMP/WDP/WSP decoders, which duplicates this file's small
     // mutate/RNG helpers rather than exposing them as public API just to

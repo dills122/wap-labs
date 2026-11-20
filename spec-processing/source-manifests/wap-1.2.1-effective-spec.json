@@ -18,11 +18,11 @@
       },
       "externalDependencies": {
         "path": "spec-processing/source-manifests/wap-1.2.1-external-dependencies.json",
-        "sha256": "b6c9b1cb9b24b2f0da9bffe4bea11dcfd353607fea0c64629dbd94d2709a8f8e"
+        "sha256": "1ceab22be8a9a12e28ed7f464eb5c19882e55e2732f72e709aa420847b79f983"
       },
       "externalIngestion": {
         "path": "spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json",
-        "sha256": "7af72df77aebea420b10e9127ad522946b0aa976be4a2abb8d81e8247c6e8bab"
+        "sha256": "581d63635fc4e09745a61556e96fbe0d8734520525f03b2146b182e93f512d9b"
       }
     }
   },

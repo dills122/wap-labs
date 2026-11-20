@@ -37,8 +37,8 @@ Machine-readable evidence:
 - `spec-processing/source-manifests/wap-1.2.1-external-dependencies.json`
 
 The WAP release ingestion covers 2,270 PDF pages, 9,988,119 PDF bytes, and
-5,703,023 extracted-text bytes. The external acquisition ledger covers 48
-artifacts totaling 14,588,705 bytes.
+5,703,023 extracted-text bytes. The external acquisition ledger covers 50
+artifacts totaling 14,684,988 bytes.
 
 ## Why some WAP documents look locked
 
@@ -251,15 +251,14 @@ the sender, date, scope, restrictions, and whether it covers derivatives.
 2. Acquire or formally waive the historical IEEE 754-1985, ISO/IEC
    10646-1:1993, ISO 8879:1986, ISO/TR 8509:1987, and selected TIA/EIA/IS-732
    payloads.
-3. Recover a WBXML-era IANA character-set registry snapshot.
+3. Two verified IANA registry captures bracket WBXML 1.3 approval. Seek an
+   exact 25 July 2001 snapshot only if a claim needs that precision.
 4. Acquire the Unicode 2.0 paper standard if independent verification of
    definitions or algorithms absent from the official component files becomes
    necessary. The component/UCD set is sufficient only for fixtures derived
    from properties actually present in those files.
 
-The bounded 2026-07-26 readiness review is recorded in
-`docs/waves/SRC_006_SOURCE_READINESS_RESEARCH.md`. It leaves the historical
-IANA snapshot and licensed payload gaps open, accepts the Unicode 2.0 component
-set only for fixtures derived from properties actually present in those files,
-and separates definition-only sources from WML-307, WMLS-5, WBXML, and CDPD
-behavior gates.
+The source readiness review in `docs/waves/SRC_006_SOURCE_READINESS_RESEARCH.md`
+records the verified IANA captures and the remaining licensed payload gaps. It
+limits Unicode 2.0 component-based fixtures to properties present in those files
+and identifies the source evidence needed for WML-307, WMLS-5, WBXML, and CDPD.

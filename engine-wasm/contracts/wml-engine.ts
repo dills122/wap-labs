@@ -128,7 +128,8 @@ export type EngineKey = 'up' | 'down' | 'enter';
 export type DeckNavigationKind = 'independent' | 'forward' | 'backward' | 'reload';
 
 export interface WmlDeckInput {
-  // Normalized textual WML payload passed into engine runtime.
+  // Decoded WML text. Native and WASM resolve character references and reject
+  // illegal XML 1.0 characters with WML_MALFORMED_XML.
   wmlXml: string;
   // Resolved document URL used for fragment and relative navigation resolution.
   baseUrl: string;
@@ -183,6 +184,7 @@ export interface ScriptHostCapabilities {
 // `loadDeckContext` argument shape is allowed to diverge, and that divergence
 // lives in the two target interfaces below.
 export interface WmlEngineCommon {
+  // Accepts decoded WML text and shares character-reference behavior across targets.
   loadDeck(xml: string): void;
   // A rejected load preserves prior runtime state and publishes one diagnostic.
   // A successful load replaces this list with ordered ignored/recoverable warnings.

@@ -1,0 +1,10 @@
+name = "WML textual encoding and transcoding"
+description = "Source-derived textual WML byte decoding and lossless handoff fixtures."
+mode = "mapped"
+work_items = ["WML-307"]
+spec_items = ["RQ-RMK-001", "RQ-WAE-012", "WML-C-05", "WML-C-06"]
+testing_ac = [
+  "MIME charset, BOM, and XML declaration precedence produce fixed decode outcomes.",
+  "Supported encodings preserve the source characters and original payload bytes.",
+  "Malformed inputs fail before the transport hands off a deck."
+]

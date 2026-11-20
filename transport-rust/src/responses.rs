@@ -1,11 +1,13 @@
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
+use mime::{Mime, CHARSET};
+use quick_xml::{events::Event, Reader};
 use std::char::decode_utf16;
 use std::time::Instant;
 
 use crate::request_meta::details_with_request_id;
-use crate::wbxml::decode_wbxml_for_content_type;
+use crate::wbxml::{decode_wbxml_for_content_type, is_wbxml_media_type, WMLC_MEDIA_TYPE};
 use crate::{
-    EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming,
+    EngineDeckInputPayload, FetchDeckResponse, FetchErrorInfo, FetchTiming, WbxmlDocumentKind,
     FETCH_ERROR_CODE_CANCELLED, FETCH_ERROR_CODE_PAYLOAD_TOO_LARGE, MAX_RESPONSE_BODY_BYTES,
 };
 
@@ -221,15 +223,15 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
     }
 
     let raw_b64 = BASE64.encode(body);
-    if content_type == "application/vnd.wap.wmlc" {
+    if is_wbxml_media_type(&content_type) {
         let decode_start = Instant::now();
         return match decode_wbxml_for_content_type(body, &raw_content_type) {
-            Ok(wml) => FetchDeckResponse {
+            Ok(document) if document.kind == WbxmlDocumentKind::Wml13 => FetchDeckResponse {
                 ok: true,
                 status,
                 final_url: final_url.clone(),
                 content_type: content_type.clone(),
-                wml: Some(wml.clone()),
+                wml: Some(document.xml.clone()),
                 error: None,
                 timing_ms: FetchTiming {
                     encode: 0.0,
@@ -237,12 +239,26 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
                     decode: decode_start.elapsed().as_secs_f64() * 1000.0,
                 },
                 engine_deck_input: Some(EngineDeckInputPayload {
-                    wml_xml: wml,
+                    wml_xml: document.xml,
                     base_url: final_url,
-                    content_type,
+                    content_type: WMLC_MEDIA_TYPE.to_owned(),
                     raw_bytes_base64: Some(raw_b64),
                 }),
             },
+            Ok(_) => error_response(
+                status,
+                final_url,
+                content_type,
+                FetchErrorInfo {
+                    code: "UNSUPPORTED_CONTENT_TYPE".to_string(),
+                    message: "WBXML vocabulary cannot be loaded as a WML deck".to_string(),
+                    details: details_with_request_id(
+                        request_id,
+                        Some(serde_json::json!({ "attempt": attempt })),
+                    ),
+                },
+                elapsed_ms,
+            ),
             Err(err) => error_response(
                 status,
                 final_url,
@@ -277,7 +293,7 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
         );
     }
 
-    let wml = match decode_textual_wml_payload(body) {
+    let wml = match decode_textual_wml_payload(body, &raw_content_type) {
         Ok(wml) => wml,
         Err(message) => {
             return error_response(
@@ -317,14 +333,113 @@ pub(crate) fn map_success_payload_response(params: SuccessPayloadParams<'_>) -> 
     }
 }
 
-fn decode_textual_wml_payload(body: &[u8]) -> Result<String, String> {
-    if body.starts_with(&[0xFF, 0xFE]) {
-        return decode_utf16_payload(&body[2..], true);
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum WmlEncoding {
+    Ascii,
+    Latin1,
+    Utf8,
+    Utf16,
+    Utf16Le,
+    Utf16Be,
+}
+
+impl WmlEncoding {
+    fn from_label(label: &str) -> Result<Self, String> {
+        match label.to_ascii_lowercase().as_str() {
+            "us-ascii" | "ascii" => Ok(Self::Ascii),
+            "iso-8859-1" | "latin1" => Ok(Self::Latin1),
+            "utf-8" | "utf8" => Ok(Self::Utf8),
+            "utf-16" => Ok(Self::Utf16),
+            "utf-16le" => Ok(Self::Utf16Le),
+            "utf-16be" => Ok(Self::Utf16Be),
+            _ => Err(format!("Unsupported WML charset: {label:?}")),
+        }
     }
-    if body.starts_with(&[0xFE, 0xFF]) {
-        return decode_utf16_payload(&body[2..], false);
+
+    fn matches_bom(self, bom: Self) -> bool {
+        self == bom || (self == Self::Utf16 && matches!(bom, Self::Utf16Le | Self::Utf16Be))
     }
-    Ok(String::from_utf8_lossy(body).to_string())
+
+    fn decode(self, bytes: &[u8]) -> Result<String, String> {
+        match self {
+            Self::Ascii if !bytes.is_ascii() => Err("Invalid US-ASCII payload".to_string()),
+            Self::Ascii | Self::Utf8 => std::str::from_utf8(bytes)
+                .map(str::to_owned)
+                .map_err(|_| "Invalid UTF-8 payload".to_string()),
+            Self::Latin1 => Ok(encoding_rs::mem::decode_latin1(bytes).into_owned()),
+            Self::Utf16 => Err("UTF-16 payload requires a BOM".to_string()),
+            Self::Utf16Le => decode_utf16_payload(bytes, true),
+            Self::Utf16Be => decode_utf16_payload(bytes, false),
+        }
+    }
+}
+
+fn decode_textual_wml_payload(body: &[u8], content_type: &str) -> Result<String, String> {
+    let mime: Mime = content_type
+        .parse()
+        .map_err(|error| format!("Invalid textual WML Content-Type: {error}"))?;
+    let mime_encoding = mime
+        .get_param(CHARSET)
+        .map(|charset| WmlEncoding::from_label(charset.as_str()))
+        .transpose()?;
+    let (bom, bytes) = match body {
+        [0xff, 0xfe, 0, 0, ..] | [0, 0, 0xfe, 0xff, ..] => {
+            return Err("Unsupported WML charset: UTF-32 BOM".to_string());
+        }
+        [0xef, 0xbb, 0xbf, bytes @ ..] => (Some(WmlEncoding::Utf8), bytes),
+        [0xff, 0xfe, bytes @ ..] => (Some(WmlEncoding::Utf16Le), bytes),
+        [0xfe, 0xff, bytes @ ..] => (Some(WmlEncoding::Utf16Be), bytes),
+        _ => (None, body),
+    };
+    let encoding = match (mime_encoding, bom) {
+        (Some(mime_encoding), Some(bom)) if !mime_encoding.matches_bom(bom) => {
+            return Err("WML BOM conflicts with MIME charset".to_string());
+        }
+        (_, Some(bom)) => bom,
+        (Some(mime_encoding), None) => mime_encoding,
+        (None, None) => xml_declaration_encoding(bytes)?.unwrap_or(WmlEncoding::Utf8),
+    };
+    let decoded = encoding.decode(bytes)?;
+    if decoded.contains('\0') {
+        return Err("NUL is not a legal XML character in a WML payload".to_string());
+    }
+    if mime_encoding.is_none() && bom.is_some() {
+        if let Some(declared) = xml_declaration_encoding(decoded.as_bytes())? {
+            if !declared.matches_bom(encoding) {
+                return Err("WML BOM conflicts with XML declaration".to_string());
+            }
+        }
+    }
+    Ok(decoded)
+}
+
+fn xml_declaration_encoding(bytes: &[u8]) -> Result<Option<WmlEncoding>, String> {
+    // Only the initial XML declaration labels source bytes. In-deck metadata is content.
+    if !matches!(
+        bytes,
+        [
+            b'<',
+            b'?',
+            b'x',
+            b'm',
+            b'l',
+            b' ' | b'\t' | b'\r' | b'\n',
+            ..
+        ]
+    ) {
+        return Ok(None);
+    }
+    let declaration = match Reader::from_reader(bytes).read_event() {
+        Ok(Event::Decl(declaration)) => declaration,
+        _ => return Err("Invalid WML XML encoding declaration".to_string()),
+    };
+    declaration
+        .encoding()
+        .map(|label| {
+            let label = label.map_err(|error| format!("Invalid WML XML declaration: {error}"))?;
+            WmlEncoding::from_label(&label)
+        })
+        .transpose()
 }
 
 fn decode_utf16_payload(bytes: &[u8], little_endian: bool) -> Result<String, String> {

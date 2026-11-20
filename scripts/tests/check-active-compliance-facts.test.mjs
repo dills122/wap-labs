@@ -161,7 +161,7 @@ test('active rollup guard rejects stale library and WML claims in published docu
     ],
     [
       'docs/waves/WML_191_FULL_STACK_COMPLIANCE_AUDIT.md',
-      '23 implemented / 10 partial / 6 missing',
+      '25 implemented / 8 partial / 6 missing',
       '19 implemented / 14 partial / 6 missing'
     ]
   ]) {

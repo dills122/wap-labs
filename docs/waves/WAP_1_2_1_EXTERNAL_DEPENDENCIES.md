@@ -75,12 +75,12 @@ The machine-readable acquisition ledger is:
 
 - `spec-processing/source-manifests/wap-1.2.1-external-ingestion-status.json`
 
-It records 48 private research artifacts totaling 14,588,705 bytes:
+It records 50 private research artifacts totaling 14,684,988 bytes:
 
 | State | Dependencies | Meaning |
 |---|---:|---|
 | Full primary artifact | 36 | 31 RFC texts, dated W3C XML/HTML sources, ECMA-262 first edition, and the archived XML-media draft |
-| Partial primary artifact | 2 | Current IANA character-set registry and Unicode 2.0 component/UCD set; historical/full cited form remains open |
+| Partial primary artifact | 2 | Current IANA registry plus two verified 2001 captures, and the Unicode 2.0 component/UCD set. Exact approval-day registry state and the Unicode paper core remain unverified. |
 | Licensed-payload metadata only | 5 | IEEE 754-1985, three historical ISO sources, and the historical TIA/EIA/IS-732 CDPD set |
 
 The artifacts remain outside Git. The ledger stores logical cache references,

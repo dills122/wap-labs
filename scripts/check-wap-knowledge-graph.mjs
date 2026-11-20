@@ -406,6 +406,21 @@ if (
   );
 }
 
+const wml307Pack = renderContextPack(wml3Graph, 'WML-307');
+if (
+  !wml307Pack.startsWith('# WML-307 AI Context Pack') ||
+  !wml307Pack.includes('- Selected work items: 1') ||
+  !wml307Pack.includes('- Selected SCR parents: 5') ||
+  !wml307Pack.includes('- Direct normative clauses: 20') ||
+  !wml307Pack.includes('**WML-CL-REFERENCE-ENCODING-DETECTION**') ||
+  !wml307Pack.includes('**WBXML-CL-CHARSET-MIBENUM**') ||
+  !wml307Pack.includes('**WBXML-CL-MIME-TOKEN-TYPING**') ||
+  wml3Graph.summary.workItemsWithoutDirectClauses.includes('WML-307') ||
+  wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-307']
+) {
+  failures.push('WML-307 must expose its direct WML and WBXML obligations in a focused context pack');
+}
+
 const wml309Pack = renderContextPack(wml3Graph, 'WML-309');
 if (
   !wml309Pack.startsWith('# WML-309 AI Context Pack') ||
