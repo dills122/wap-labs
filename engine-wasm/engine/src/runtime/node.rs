@@ -27,9 +27,14 @@ pub enum InlineNode {
         text: String,
         href: String,
     },
+    Anchor {
+        label_lines: Vec<String>,
+        action: CardTaskAction,
+    },
     Input {
         control_id: String,
         name: String,
+        title: Option<String>,
         value: String,
         default_value: Option<String>,
         is_password: bool,

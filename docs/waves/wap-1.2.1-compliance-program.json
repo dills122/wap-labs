@@ -390,7 +390,7 @@
           "acceptance": [
             "The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.",
             "All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.",
-            "All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
+            "All 176 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation."
           ],
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
@@ -786,7 +786,7 @@
         },
         {
           "id": "WML-308",
-          "status": "todo",
+          "status": "in-progress",
           "ownerLayers": ["engine-wasm", "browser", "qa"],
           "sourceFamilies": ["wml", "wae"],
           "existingTickets": ["R0-04", "R0-05"],
@@ -799,9 +799,14 @@
           "evidence": [
             "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
             "pnpm --dir browser/frontend test",
-            "pnpm test:story WML-308"
+            "pnpm test:story WML-308",
+            "node scripts/wap-context-pack.mjs WML-308",
+            "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title",
+            "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
           ],
+          "specReferences": ["WAP-191_104-WML sections 10.3.1 and 11.6.3"],
           "notes": [
+            "The input title tranche evaluates vdata in engine presentation rows and retains variable-name edit identity and password-value masking. Its native, WASM, and browser story fixtures cover the permitted WML-C-33 title behavior. Other input, option, select, optgroup, and WAE mapping residuals remain open.",
             "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
           ]
         },

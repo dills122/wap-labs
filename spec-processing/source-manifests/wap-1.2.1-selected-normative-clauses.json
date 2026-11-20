@@ -38,19 +38,19 @@
   },
   "summary": {
     "selectedParentCount": 198,
-    "clauseCount": 762,
+    "clauseCount": 763,
     "requiredClauseCount": 722,
     "recommendedClauseCount": 29,
-    "permittedClauseCount": 11,
-    "plannedFixtureCount": 762,
-    "assessedClauseCount": 380
+    "permittedClauseCount": 12,
+    "plannedFixtureCount": 763,
+    "assessedClauseCount": 382
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "6dfb524065fdf987a24072f6f6ac8a16c97359a7bb1220e0a4ea3dbed67553ee",
+      "parentLedgerSha256": "fdcbf7fb38fee54b656a6059fd65346e861252add4fc0277ea0b847f3a8cb1c1",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -68,7 +68,7 @@
         }
       ],
       "selectedParentCount": 39,
-      "clauseCount": 175,
+      "clauseCount": 176,
       "parents": [
         {
           "id": "WML-C-05",
@@ -715,6 +715,7 @@
             "WML-CL-INPUT-PASSWORD-DISPLAY",
             "WML-CL-INPUT-REJECTION-ATOMICITY",
             "WML-CL-INPUT-STRUCTURE",
+            "WML-CL-INPUT-TITLE-PRESENTATION",
             "WML-CL-SELECT-INIT-ORDER",
             "WML-CL-VARIABLE-COMMIT-BEFORE-TASK"
           ]
@@ -6815,8 +6816,13 @@
           "fixturePlan": {
             "id": "WML-FX-A-GO-EQUIVALENCE",
             "kind": "runtime",
-            "status": "planned",
-            "assertion": "Treat an a element as an anchor containing a go task without variable assignments."
+            "status": "implemented",
+            "assertion": "Treat an a element as an anchor containing a go task without variable assignments.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_203_validation.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_a_go_equivalence"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -6834,7 +6840,7 @@
             "parentImplementationSnapshot": {
               "WML-C-19": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -8371,6 +8377,57 @@
             "WML-201",
             "WML-203",
             "WML-204"
+          ]
+        },
+        {
+          "id": "WML-CL-INPUT-TITLE-PRESENTATION",
+          "family": "wml",
+          "parentRows": [
+            "WML-C-33"
+          ],
+          "sourceAnchor": {
+            "documentId": "WAP-191_104-WML",
+            "section": "11.6.3",
+            "heading": "11.6.3 The Input Element",
+            "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+          },
+          "normativeForce": "explicit-may",
+          "obligationLevel": "permitted",
+          "obligationSynopsis": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+          "fixturePlan": {
+            "id": "WML-FX-INPUT-TITLE-PRESENTATION",
+            "kind": "rendering",
+            "status": "implemented",
+            "assertion": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-308-input-title.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_308_input_title.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title"
+            }
+          },
+          "mapping": {
+            "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+            "workItems": [
+              "R0-01",
+              "R0-04",
+              "WML-201",
+              "WML-204",
+              "WML-308"
+            ],
+            "ownerLayers": [
+              "engine-wasm"
+            ],
+            "requirementIds": [
+              "RQ-RMK-001"
+            ],
+            "parentImplementationSnapshot": {
+              "WML-C-33": "partial"
+            },
+            "clauseImplementationStatus": "implemented"
+          },
+          "directWorkItems": [
+            "WML-201",
+            "WML-308"
           ]
         },
         {

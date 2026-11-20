@@ -48,7 +48,7 @@ tags:
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
   "implementationStatus": "partial",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.",
+  "assessmentNote": "The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.",
   "implementationEvidence": [
     {
       "path": "engine-wasm/engine/src/parser/wml_parser/nodes.rs",

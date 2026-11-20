@@ -1,4 +1,4 @@
-use crate::runtime::card::CardTaskAction;
+use crate::runtime::card::{link_label_fallback, CardGoRequest, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{InlineNode, Node, SelectOption};
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
@@ -151,7 +151,7 @@ enum InlineTagOutcome {
     Skip,
 }
 
-/// Handles the tags that both walkers treat identically (`a`, `br`, `input`,
+/// Handles the tags that both walkers treat identically (`a`, `anchor`, `br`, `input`,
 /// `select`, `option`).
 ///
 /// Returns `Ok(None)` when `element` is not part of the shared set, leaving the
@@ -170,6 +170,11 @@ fn map_shared_inline_tag(
     let outcome = match element.name.as_str() {
         "a" => parse_link_inline_node(element, budget, child_depth)?
             .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
+        "anchor" => {
+            return Ok(
+                parse_anchor_inline_node(element, budget, child_depth)?.map(InlineTagOutcome::Node)
+            )
+        }
         "br" => InlineTagOutcome::Break,
         "input" => InlineTagOutcome::Node(parse_input_inline_node(element, control_ids)?),
         "select" => parse_select_inline_node(element, budget, child_depth, control_ids)?
@@ -403,13 +408,61 @@ fn parse_link_inline_node(
     if href.is_empty() {
         return Ok(None);
     }
-    let text = normalize_text(&inline_text_content(
-        &element.children,
-        budget,
-        child_depth,
-    )?);
-    let text = if text.is_empty() { href.clone() } else { text };
-    Ok(Some(InlineNode::Link { text, href }))
+    let mut label_lines =
+        inline_anchor_label(element, budget, child_depth, link_label_fallback(&href))?;
+    if label_lines.len() == 1 {
+        let text = label_lines.pop().expect("one anchor label line");
+        Ok(Some(InlineNode::Link { text, href }))
+    } else {
+        Ok(Some(InlineNode::Anchor {
+            label_lines,
+            action: CardTaskAction::Go {
+                href,
+                request: CardGoRequest::default(),
+            },
+        }))
+    }
+}
+
+fn parse_anchor_inline_node(
+    element: &XmlElement,
+    budget: &mut ParseBudget,
+    child_depth: usize,
+) -> Result<Option<InlineNode>, String> {
+    let Some(action) = parse_first_task_action_xml(&element.children, budget, child_depth)? else {
+        return Ok(None);
+    };
+    let Some(fallback) = action.anchor_label_fallback() else {
+        return Ok(None);
+    };
+    let label_lines = inline_anchor_label(element, budget, child_depth, fallback)?;
+    Ok(Some(InlineNode::Anchor {
+        label_lines,
+        action,
+    }))
+}
+
+fn inline_anchor_label(
+    element: &XmlElement,
+    budget: &mut ParseBudget,
+    child_depth: usize,
+    fallback: &str,
+) -> Result<Vec<String>, String> {
+    let mut lines = element
+        .children
+        .split(|node| matches!(node, XmlNode::Element(element) if element.name == "br"))
+        .enumerate()
+        .map(|(index, nodes)| {
+            if index > 0 {
+                budget.visit_node("inline text extraction")?;
+            }
+            inline_text_content(nodes, budget, child_depth).map(|text| normalize_text(&text))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    if lines.iter().all(String::is_empty) {
+        lines[0] = fallback.to_string();
+    }
+    Ok(lines)
 }
 
 fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode>) {
@@ -496,6 +549,7 @@ fn parse_input_inline_node(
     Ok(InlineNode::Input {
         control_id,
         name,
+        title: element.attr("title").map(str::to_string),
         value,
         default_value,
         is_password,

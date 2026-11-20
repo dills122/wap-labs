@@ -30,7 +30,7 @@ With WML-2 and its WML-205 residual error-handling gate complete, current
 aligned engine priorities are:
 
 1. Preserve the generated `WML-201` evidence projection. Machine-derived fact:
-   WML-201 has 178 direct clauses: 175 selected WML clauses plus 3 WAE composition clauses.
+   WML-201 has 179 direct clauses: 176 selected WML clauses plus 3 WAE composition clauses.
 2. Preserve completed `WML-202` 30/30, `WML-203` 68/68, `WML-204` 23/23,
    and `WML-205` 3/3 direct-clause evidence without reopening their history.
 3. Preserve completed `WML-302` variable/setvar evidence (20/20 directly

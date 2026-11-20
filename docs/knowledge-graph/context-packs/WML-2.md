@@ -13,11 +13,11 @@
 
 ## Graph summary
 
-- Nodes: 591
-- Edges: 1729
+- Nodes: 593
+- Edges: 1735
 - Selected work items: 5
 - Direct SCR rows: 76
-- Direct normative clauses: 302
+- Direct normative clauses: 304
 - Aggregate regression/delegate context clauses: 0
 - Work items without direct clause mappings: 0
 - Work items with unmapped declared normative families: 0
@@ -47,7 +47,7 @@ Exit gates:
 - Existing tickets: `R0-01`
 - Direct SCR rows: 76 (34 `direct-test-linked`, 14 `gap-work-item-mapped`, 28 `optional-not-assessed`)
 - Selected SCR parents: 42 (`WAESpec-C-015`, `WAESpec-C-016`, `WAESpec-C-017`, `WML-C-05`, `WML-C-06`, `WML-C-07`, `WML-C-08`, `WML-C-09`, `WML-C-10`, `WML-C-11`, `WML-C-12`, `WML-C-13`, `WML-C-14`, `WML-C-16`, `WML-C-17`, `WML-C-18`, `WML-C-19`, `WML-C-20`, `WML-C-21`, `WML-C-24`, `WML-C-25`, `WML-C-26`, `WML-C-29`, `WML-C-30`, `WML-C-32`, `WML-C-33`, `WML-C-35`, `WML-C-36`, `WML-C-37`, `WML-C-38`, `WML-C-39`, `WML-C-41`, `WML-C-42`, `WML-C-43`, `WML-C-46`, `WML-C-47`, `WML-C-48`, `WML-C-49`, `WML-C-50`, `WML-C-52`, `WML-C-53`, `WML-C-54`)
-- Direct normative clauses: 178
+- Direct normative clauses: 179
 - Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-002`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`, `RQ-RMK-006`, `RQ-RMK-009`, `RQ-RMK-011`, `RQ-RMK-012`, `RQ-WAE-002`, `RQ-WAE-003`, `RQ-WAE-006`, `RQ-WAE-012`, `RQ-WAE-016`, `RQ-WAE-017`, `RQ-WAE-018`, `RQ-WMLS-001`
 - Spec references: None
@@ -63,7 +63,7 @@ Acceptance:
 
 - The exact WML-C-01..59, WML-S-60..69, and WML-C-70..76 sequence retains source identity, actor, M/O status, profile applicability, and evidence mapping.
 - All 76 rows are directly planned by WML-201 in the graph: 30 retain validated code/test links, 17 retain additive gap work items, and 29 optional rows remain explicitly not assessed.
-- All 175 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
+- All 176 selected WML clauses are directly mapped to WML-201; the three WAE composition clauses remain additive, and the declared WML-family gap is closed without inferring implementation.
 
 Evidence commands:
 
@@ -153,7 +153,7 @@ Evidence commands:
 - Existing tickets: `R0-04`, `B5-01`, `C5-05`
 - Direct SCR rows: 0
 - Selected SCR parents: 5 (`WML-C-09`, `WML-C-12`, `WML-C-33`, `WML-C-41`, `WML-C-43`)
-- Direct normative clauses: 23
+- Direct normative clauses: 24
 - Aggregate regression/delegate context: 0
 - Requirements: `RQ-RMK-001`, `RQ-RMK-003`, `RQ-RMK-004`, `RQ-RMK-005`
 - Spec references: None
@@ -365,7 +365,7 @@ Evidence commands:
   - Code: `engine-wasm/engine/src/parser/wml_parser/nodes.rs#map_inline_nodes_recursive`
   - Tests: `engine-wasm/engine/src/engine_tests/navigation_metadata.rs::enter_navigates_to_fragment_card` (`cd engine-wasm/engine && cargo test enter_navigates_to_fragment_card`)
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.
+  - Assessment note: The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.
 - **WML-C-20** — anchor
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §9.8 (SCR §15.1.5)
@@ -373,7 +373,7 @@ Evidence commands:
   - Code: None; the evidence state remains explicit.
   - Tests: None; use the mapped work items and assessment note rather than inferring coverage.
   - Work items: `R0-01`, `R0-02`, `WML-201`
-  - Assessment note: The anchor element and its nested task/setvar model are not represented.
+  - Assessment note: The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.
 - **WML-C-21** — access
   - Actor/status/profile: `wml-user-agent`; `mandatory`; `required-by-class-c-client-mcf`
   - Spec: `WAP-191_104-WML` §11.3.1 (SCR §15.1.5)
@@ -850,7 +850,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
   - Parents: `WML-C-19`
   - Requirements: `RQ-RMK-006`
-  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `planned`)
+  - Fixture: `WML-FX-A-GO-EQUIVALENCE` (`runtime`, `implemented`)
 - **WML-CL-A-NO-NESTING** — Reject nested a elements.
   - Family: `wml`; force: `error-condition`; level: `required`
   - Source: `WAP-191_104-WML` §9.9 (9.9 The A Element)
@@ -1349,6 +1349,12 @@ Evidence commands:
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-TITLE-PRESENTATION** — Allow presentation to use the input title, with runtime substitution for its vdata content.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-TITLE-PRESENTATION` (`rendering`, `implemented`)
 - **WML-CL-INTRINSIC-ATTRIBUTE-EQUIVALENCE** — Treat intrinsic-event attributes as abbreviated onevent bindings with equivalent go-task behavior.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.10 (9.10 Intrinsic Events)
@@ -2546,6 +2552,12 @@ Evidence commands:
   - Parents: `WML-C-33`
   - Requirements: `RQ-RMK-001`
   - Fixture: `WML-FX-INPUT-STRUCTURE` (`parser`, `implemented`)
+- **WML-CL-INPUT-TITLE-PRESENTATION** — Allow presentation to use the input title, with runtime substitution for its vdata content.
+  - Family: `wml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-191_104-WML` §11.6.3 (11.6.3 The Input Element)
+  - Parents: `WML-C-33`
+  - Requirements: `RQ-RMK-001`
+  - Fixture: `WML-FX-INPUT-TITLE-PRESENTATION` (`rendering`, `implemented`)
 - **WML-CL-OPTION-ONPICK-MULTI** — For multiple selection, dispatch onpick whenever the option is selected or deselected.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.6.2.2 (11.6.2.2 The Option Element)

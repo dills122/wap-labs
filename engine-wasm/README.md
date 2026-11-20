@@ -202,6 +202,8 @@ Behavior must stay aligned with the WASM API for:
 - navigation and focus transitions
 - canonical `EnginePresentationFrame` ordering and shape, with equivalent legacy `RenderList`
   compatibility output during the remaining cutover
+- input row text with evaluated WML 1.3 titles, the variable-name fallback for empty
+  or absent titles, and masked password values. Input selection identifies the variable by name
 - typed key/action/click input behavior and trace semantics
 - script execution/invocation outcomes
 - trace entry semantics

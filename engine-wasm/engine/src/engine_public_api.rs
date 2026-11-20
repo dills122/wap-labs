@@ -500,7 +500,7 @@ impl WmlEngine {
         let selection = focus_index
             .and_then(|index| layout.focus_targets.get(index))
             .map_or(EngineSelectionState::None, |target| match target {
-                FocusTarget::Link(_) => EngineSelectionState::None,
+                FocusTarget::Link(_) | FocusTarget::Anchor(_) => EngineSelectionState::None,
                 FocusTarget::Input { control_id, name } => EngineSelectionState::Input {
                     control_id: control_id.clone(),
                     name: name.clone(),
@@ -534,7 +534,9 @@ impl WmlEngine {
                 .collect::<Vec<_>>()
                 .join(" ");
             let source = match target {
-                FocusTarget::Link(_) => EngineAffordanceSource::FocusedLink,
+                FocusTarget::Link(_) | FocusTarget::Anchor(_) => {
+                    EngineAffordanceSource::FocusedLink
+                }
                 FocusTarget::Input { .. } => EngineAffordanceSource::FocusedInput,
                 FocusTarget::Select(_) => EngineAffordanceSource::FocusedSelect,
             };

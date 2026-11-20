@@ -42,7 +42,7 @@ All nine selected Class C family increments are complete at SCR level:
   missing;
 - every selected row has an implementation owner and work-item mapping;
 - `CONF-003` is complete: all nine families and all 198 selected parent rows
-  expand into 762 deduplicated, source-anchored clauses; the selected WDP and
+  expand into 763 deduplicated, source-anchored clauses; the selected WDP and
   WCMP paths contribute 58 assessed, direct fixture-backed clauses;
 - `CONF-004`, `CONF-005`, and `CONF-006` are complete: strict dispositions,
   the SCR-to-requirement/work/evidence crosswalk, and active-document status
@@ -60,7 +60,7 @@ All nine selected Class C family increments are complete at SCR level:
   14 missing; the selected 39-row client subset is 25 implemented, 8 partial,
   and 6 missing;
 - 34 rows have direct code symbols and runnable test evidence.
-- `WML-201` directly projects all 76 WML rows and all 175 selected WML
+- `WML-201` directly projects all 76 WML rows and all 176 selected WML
   clauses; the remaining 14 mandatory gaps and 28 optional unassessed rows
   stay explicit rather than becoming inferred implementation claims.
 - 86 effective WAE SCR rows are extracted after applying the WAP-190 SIN
@@ -198,7 +198,7 @@ closes `SRC-004` without changing the redistribution boundary.
 
 After the merged WSP-805 request work, WML-306 policy closure, WML-309 frame-contract closure, and
 additive WMLS-501 verifier tranche and WML-307 charset fixture tranche, the canonical program records
-32 work items `done`, 11 `in-progress`, 39 `todo`, and one `blocked`, with 49/198 selected parents implemented and 380/762
+32 work items `done`, 12 `in-progress`, 38 `todo`, and one `blocked`, with 49/198 selected parents implemented and 382/763
 clauses assessed. Project
 Atlas must continue to render these machine-backed counts without widening the remaining execution
 or standard-library claims.

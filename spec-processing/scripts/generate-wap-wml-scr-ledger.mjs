@@ -466,7 +466,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-19': {
       status: 'partial',
-      note: 'The a element parses and activates internal/external navigation, but full HREF variable substitution and equivalent-go behavior are incomplete.',
+      note: 'The a element and explicit default go anchor share internal and external task dispatch. Strict native fixtures verify shorthand equivalence, including once-only HREF substitution for key and pointer activation. Nested-link and access-key assessment remain open on this branch.',
       implementationEvidence: [
         codeEvidence(
           'engine-wasm/engine/src/parser/wml_parser/nodes.rs',
@@ -482,7 +482,7 @@ const mandatoryImplementationAudit = new Map(
     },
     'WML-C-20': {
       status: 'missing',
-      note: 'The anchor element and its nested task/setvar model are not represented.',
+      note: 'The engine parses anchor go, prev, and refresh with task assignments, and native, WASM, and Waves local-mode evidence covers same-deck activation. Host-owned Prev restoration, same-deck transport history mirroring, and optional access keys remain open.',
       implementationEvidence: [],
       testEvidence: []
     },

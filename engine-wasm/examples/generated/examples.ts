@@ -3709,6 +3709,146 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Refresh policy demo (no navigation).\n      <a href=\"script:wavescript-fixtures.wmlsc#refreshOnly\">Script setVar only</a>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201AnchorTasks",
+    "label": "WML-201 Anchor Tasks",
+    "description": "Explicit anchors activate WML tasks through the same focus path as shorthand links.",
+    "goal": "Follow an explicit go, refresh the card variables, return with prev, then follow the shorthand link.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-ANCHOR-ACTIVATION",
+      "WML-CL-A-GO-EQUIVALENCE"
+    ],
+    "testingAc": [
+      "Activate Go and arrive at tasks.",
+      "Activate Refresh and see Stage refreshed on the same card.",
+      "Activate Return and then follow Shorthand to the same destination."
+    ],
+    "flows": [
+      {
+        "id": "waves-explicit-anchor-task-activation",
+        "title": "Waves local mode activates explicit anchor tasks and shorthand navigation",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-ANCHOR-ACTIVATION",
+          "WML-CL-A-GO-EQUIVALENCE"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "start",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "Go",
+              "Shorthand"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_REFRESH"
+              ],
+              "render": {
+                "textIncludes": [
+                  "Stage: refreshed"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "start",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_PREV",
+                "ACTION_BACK"
+              ]
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "start",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "tasks",
+                "focusedLinkIndex": 0
+              },
+              "traceKinds": [
+                "ACTION_FRAGMENT"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p>\n      <anchor>Go<go href=\"#tasks\"/></anchor>\n      <a href=\"#tasks\">Shorthand</a>\n    </p>\n  </card>\n  <card id=\"tasks\">\n    <p>\n      Stage: $(stage)\n      <anchor>Refresh<refresh><setvar name=\"stage\" value=\"refreshed\"/></refresh></anchor>\n      <anchor>Return<prev/></anchor>\n    </p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml202TemplateShadowing",
     "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
     "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",
@@ -6035,6 +6175,140 @@ export const EXAMPLES: HostExample[] = [
       }
     ],
     "wml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=US-ASCII\"/></head>\n  <card id=\"main\">\n    <p>Café &#302;&#x12E; &amp;quot;</p>\n    <p><a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <onevent type=\"onenterforward\">\n      <refresh><setvar name=\"entityProbe\" value=\"&quot;&amp;&apos;&lt;&gt;A&nbsp;B&shy;C&#302;&#x12E;&amp;quot;\"/></refresh>\n    </onevent>\n    <p>Done</p>\n  </card>\n</wml>\n"
+  },
+  {
+    "key": "wml308InputTitle",
+    "label": "WML 1.3 Input Titles",
+    "description": "A field title evaluates WML variables while input edits still update the named variable.",
+    "goal": "Verify the presented input title follows runtime state and the password field stays masked.",
+    "workItems": [
+      "WML-308"
+    ],
+    "specItems": [
+      "WML-C-33",
+      "WML-CL-INPUT-TITLE-PRESENTATION"
+    ],
+    "testingAc": [
+      "View the City field and the masked Access code field.",
+      "Append X to Caption and commit; verify CityX is now the second field's label.",
+      "Edit the second field and verify its label remains CityX."
+    ],
+    "flows": [
+      {
+        "id": "waves-input-title-follows-committed-variable",
+        "title": "Waves displays evaluated input titles and edits the named variable",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-308"
+        ],
+        "specItems": [
+          "WML-C-33",
+          "WML-CL-INPUT-TITLE-PRESENTATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "form",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textIncludes": [
+              "[Caption: City]",
+              "[City: Oslo]",
+              "[Access code: ****]"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "type-text",
+              "text": "X"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Caption",
+                "focusedInputEditValue": "CityX"
+              },
+              "render": {
+                "textIncludes": [
+                  "[Caption: CityX]",
+                  "[City: Oslo]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null
+              },
+              "traceKinds": [
+                "INPUT_EDIT_START",
+                "INPUT_EDIT_COMMIT"
+              ],
+              "render": {
+                "textIncludes": [
+                  "[CityX: Oslo]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "type-text",
+              "text": "Y"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": "Place",
+                "focusedInputEditValue": "OsloY"
+              },
+              "render": {
+                "textIncludes": [
+                  "[CityX: OsloY]"
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "focusedInputEditName": null
+              },
+              "render": {
+                "textIncludes": [
+                  "[CityX: OsloY]",
+                  "[Access code: ****]"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"form\" title=\"Input titles\">\n    <p><input name=\"Caption\" value=\"City\"/></p>\n    <p><input name=\"Place\" title=\"$(Caption)\" value=\"Oslo\"/></p>\n    <p><input name=\"Pin\" title=\"Access code\" type=\"password\" value=\"1234\" format=\"4N\"/></p>\n    <p><input name=\"Fallback\" title=\"$(Missing)\"/></p>\n    <p><input name=\"Plain\"/></p>\n  </card>\n</wml>\n"
   },
   {
     "key": "wml309FrameAffordances",

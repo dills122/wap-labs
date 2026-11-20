@@ -1088,6 +1088,96 @@ fn wasm_wml_303_prev_override_exposes_empty_history_to_host_fallback() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_201_anchor_tasks_match_native_frames_and_state() {
+    let deck = include_str!("../../examples/source/wml-201-anchor-tasks.wml");
+    let mut native = WmlEngine::new();
+    native.load_deck(deck).expect("native WML 1.3 deck");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_wasm(deck).expect("WASM WML 1.3 deck");
+
+    for (target_index, expected_card, trace_kind) in [
+        (0, "tasks", "ACTION_FRAGMENT"),
+        (0, "tasks", "ACTION_REFRESH"),
+        (1, "start", "ACTION_PREV"),
+        (1, "tasks", "ACTION_FRAGMENT"),
+    ] {
+        let frame = native.render_frame().expect("native frame");
+        let actual = js_sys::JSON::stringify(&wasm.render_frame_wasm().expect("WASM frame"))
+            .expect("stringify WASM frame");
+        let expected = js_sys::JSON::stringify(&to_js_value(&frame).expect("native frame shape"))
+            .expect("stringify native frame");
+        assert_eq!(actual.as_string(), expected.as_string());
+        let hit = &frame.hit_regions[target_index];
+        let event = EngineInputEvent::Click {
+            frame_id: frame.frame_id,
+            x: hit.x,
+            y: hit.y,
+        };
+        native.handle_input(event.clone()).expect("native dispatch");
+        let event = serde_wasm_bindgen::to_value(&event).expect("event serialization");
+        wasm.handle_input_wasm(event).expect("WASM dispatch");
+        assert_eq!(native.active_card_id().as_deref(), Ok(expected_card));
+        assert_eq!(wasm.active_card_id_wasm().as_deref(), Ok(expected_card));
+        assert_eq!(
+            wasm.history_push_sequence_wasm(),
+            native.history_push_sequence()
+        );
+        assert_eq!(
+            wasm.get_var_wasm("stage".to_string()),
+            native.get_var("stage".to_string())
+        );
+        let wasm_trace: Vec<EngineTraceEntry> =
+            serde_wasm_bindgen::from_value(wasm.trace_entries_wasm().expect("WASM trace"))
+                .expect("WASM trace shape");
+        let native_trace = native.trace_entries();
+        assert!(native_trace.iter().any(|entry| entry.kind == trace_kind));
+        assert_eq!(
+            wasm_trace
+                .iter()
+                .map(|entry| (&entry.kind, &entry.detail))
+                .collect::<Vec<_>>(),
+            native_trace
+                .iter()
+                .map(|entry| (&entry.kind, &entry.detail))
+                .collect::<Vec<_>>()
+        );
+        native.clear_trace_entries();
+        wasm.clear_trace_entries_wasm();
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_308_input_title_frames_match_native_before_and_after_title_updates() {
+    use crate::engine_tests::wml_308_input_title::{frame_text, CONTENT_TYPE, EXAMPLE, URL};
+
+    let mut native = WmlEngine::new();
+    native
+        .load_deck_context(EXAMPLE, URL, CONTENT_TYPE, None)
+        .expect("native title deck should load");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_context_wasm(EXAMPLE, URL, CONTENT_TYPE, None, None)
+        .expect("WASM title deck should load");
+
+    for (caption, expected) in [("City", "[City: Oslo]"), ("District", "[District: Oslo]")] {
+        assert!(native.set_var("Caption".to_string(), caption.to_string()));
+        assert!(wasm.set_var_wasm("Caption".to_string(), caption.to_string()));
+
+        let native_frame = native.render_frame().expect("native title frame");
+        let wasm_frame = wasm.render_frame_wasm().expect("WASM title frame");
+        let wasm_rows = Reflect::get(&wasm_frame, &JsValue::from_str("rows")).expect("WASM rows");
+        let wasm_rows: serde_json::Value =
+            serde_wasm_bindgen::from_value(wasm_rows).expect("WASM rows as JSON data");
+
+        assert_eq!(
+            wasm_rows,
+            serde_json::to_value(&native_frame.rows).expect("native rows as JSON data")
+        );
+        assert!(frame_text(&native_frame).contains(&expected));
+        assert!(frame_text(&native_frame).contains(&"[Access code: ****]"));
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_309_frame_and_action_input_match_native_contract() {
     let mut engine = WmlEngine::wasm_new();
     engine

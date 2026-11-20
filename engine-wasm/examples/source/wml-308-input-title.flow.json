@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "example": "wml308InputTitle",
+  "flows": [
+    {
+      "id": "waves-input-title-follows-committed-variable",
+      "title": "Waves displays evaluated input titles and edits the named variable",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-308"],
+      "specItems": ["WML-C-33", "WML-CL-INPUT-TITLE-PRESENTATION"],
+      "initial": {
+        "state": { "activeCardId": "form", "focusedLinkIndex": 0 },
+        "render": { "textIncludes": ["[Caption: City]", "[City: Oslo]", "[Access code: ****]"] }
+      },
+      "steps": [
+        {
+          "action": { "type": "type-text", "text": "X" },
+          "expect": {
+            "state": { "focusedInputEditName": "Caption", "focusedInputEditValue": "CityX" },
+            "render": { "textIncludes": ["[Caption: CityX]", "[City: Oslo]"] }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "focusedInputEditName": null },
+            "render": { "textIncludes": ["[CityX: Oslo]"] },
+            "traceKinds": ["INPUT_EDIT_START", "INPUT_EDIT_COMMIT"]
+          }
+        },
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "type-text", "text": "Y" },
+          "expect": {
+            "state": { "focusedInputEditName": "Place", "focusedInputEditValue": "OsloY" },
+            "render": { "textIncludes": ["[CityX: OsloY]"] }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "focusedInputEditName": null },
+            "render": { "textIncludes": ["[CityX: OsloY]", "[Access code: ****]"] }
+          }
+        }
+      ]
+    }
+  ]
+}

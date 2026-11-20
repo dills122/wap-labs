@@ -45,7 +45,7 @@ node scripts/wap-context-pack.mjs WSP-801
 ```
 
 The WML-3 focused targets are `WML-301` through `WML-306` plus the additive character-processing
-slice `WML-307` and frame/affordance slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pack exposes the
+slice `WML-307`, form-presentation slice `WML-308`, and frame/affordance slice `WML-309`. Use `WML-3` only for sprint-wide runtime planning. A focused pack exposes the
 canonical mappings and gaps that exist now; it does
 not by itself establish implementation readiness or complete a source audit.
 

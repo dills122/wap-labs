@@ -13,7 +13,7 @@
     "generator": "spec-processing/scripts/generate-wap-knowledge-graph.mjs",
     "inputs": {
       "docs/waves/wap-1.2.1-compliance-program.json": {
-        "sha256": "b3ac5104b5fe91480c0ef6af977585fad40ea45eb57f70b0955391cad9d6dd9d"
+        "sha256": "8d5807d090a6b69a026dfb9dc570c4557fcdd75e3e3c55cecacab6163e66778b"
       },
       "spec-processing/source-manifests/wap-1.2.1-class-conformance.json": {
         "sha256": "b76605b2144b32965a857b848b2e9e522baada6fae9fe51012b9eaa664e85d86"
@@ -25,23 +25,23 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "58fdb1880177e85d1a60664ef606a75c4dd50279c11b62aa0f4c755712a1dd49"
+        "sha256": "5f62d243199159f453ecbba2461b9ea81c4ec125ca334bb5fbf1179e59ca2b74"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
-        "sha256": "f552c75c142727e15d8fee2bca15557f98c32bbf42210d0cc686a459e3693356"
+        "sha256": "e48119ef604194dec808b6c7193c392b6d31a3e80760f07be93e7e083eb7c209"
       },
       "spec-processing/source-manifests/wap-1.2.1-wml-scr.json": {
-        "sha256": "6dfb524065fdf987a24072f6f6ac8a16c97359a7bb1220e0a4ea3dbed67553ee"
+        "sha256": "fdcbf7fb38fee54b656a6059fd65346e861252add4fc0277ea0b847f3a8cb1c1"
       }
     },
     "policy": "Canonical manifests remain authoritative; this graph and its Obsidian/context projections are generated views."
   },
   "summary": {
-    "nodeCount": 410,
-    "edgeCount": 1088,
+    "nodeCount": 412,
+    "edgeCount": 1093,
     "nodesByType": {
-      "clause": 153,
-      "fixture": 153,
+      "clause": 154,
+      "fixture": 154,
       "legacy-ticket": 16,
       "owner-layer": 4,
       "profile": 1,
@@ -61,17 +61,17 @@
       "covers-family": 12,
       "depends-on": 5,
       "effective-document": 11,
-      "maps-to": 247,
+      "maps-to": 248,
       "owned-by": 27,
-      "planned-by": 167,
-      "refines": 211,
+      "planned-by": 168,
+      "refines": 212,
       "relates-to": 18,
       "requires-family": 3,
       "selected-from": 1,
-      "sourced-from": 163,
+      "sourced-from": 164,
       "targets-profile": 1,
       "uses-context": 1,
-      "verified-by": 153
+      "verified-by": 154
     },
     "directClauseCountsByWorkItem": {
       "WML-301": 13,
@@ -81,7 +81,7 @@
       "WML-305": 10,
       "WML-306": 18,
       "WML-307": 20,
-      "WML-308": 23,
+      "WML-308": 24,
       "WML-309": 3
     },
     "directClauseFamiliesByWorkItem": {
@@ -3466,6 +3466,43 @@
           "R0-04",
           "WML-201",
           "WML-203",
+          "WML-204",
+          "WML-308"
+        ],
+        "ownerLayers": [
+          "engine-wasm"
+        ],
+        "requirementIds": [
+          "RQ-RMK-001"
+        ],
+        "implementationStatus": "implemented",
+        "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "key": "WML-CL-INPUT-TITLE-PRESENTATION",
+      "type": "clause",
+      "title": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+      "properties": {
+        "family": "wml",
+        "parentRows": [
+          "WML-C-33"
+        ],
+        "sourceAnchor": {
+          "documentId": "WAP-191_104-WML",
+          "section": "11.6.3",
+          "heading": "11.6.3 The Input Element",
+          "normalizedTextSha256": "c5c6785fa3854527036b8508b403897658ab4e7525fce331b51eb10e86e2532e"
+        },
+        "normativeForce": "explicit-may",
+        "obligationLevel": "permitted",
+        "obligationSynopsis": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+        "workItems": [
+          "R0-01",
+          "R0-04",
+          "WML-201",
           "WML-204",
           "WML-308"
         ],
@@ -7184,6 +7221,18 @@
       }
     },
     {
+      "id": "fixture:WML-FX-INPUT-TITLE-PRESENTATION",
+      "key": "WML-FX-INPUT-TITLE-PRESENTATION",
+      "type": "fixture",
+      "title": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+      "properties": {
+        "kind": "rendering",
+        "status": "implemented",
+        "assertion": "Allow presentation to use the input title, with runtime substitution for its vdata content.",
+        "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      }
+    },
+    {
       "id": "fixture:WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "key": "WML-FX-INTRINSIC-ATTRIBUTE-EQUIVALENCE",
       "type": "fixture",
@@ -10510,7 +10559,7 @@
       "type": "work-item",
       "title": "Additive form-control presentation and capability residual closure",
       "properties": {
-        "status": "todo",
+        "status": "in-progress",
         "ownerLayers": [
           "engine-wasm",
           "browser",
@@ -10521,7 +10570,11 @@
           "wae"
         ],
         "notes": [
+          "The input title tranche evaluates vdata in engine presentation rows and retains variable-name edit identity and password-value masking. Its native, WASM, and browser story fixtures cover the permitted WML-C-33 title behavior. Other input, option, select, optgroup, and WAE mapping residuals remain open.",
           "This additive follow-up owns the broader presentation and capability residuals on WML-C-33, WML-C-41, and WML-C-43. It does not preempt the WML-305 baton or authorize the separately gated WBP-06 frame contract."
+        ],
+        "specReferences": [
+          "WAP-191_104-WML sections 10.3.1 and 11.6.3"
         ],
         "existingTickets": [
           "R0-04",
@@ -10536,7 +10589,10 @@
         "evidence": [
           "cargo test --manifest-path engine-wasm/engine/Cargo.toml",
           "pnpm --dir browser/frontend test",
-          "pnpm test:story WML-308"
+          "pnpm test:story WML-308",
+          "node scripts/wap-context-pack.mjs WML-308",
+          "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title",
+          "wasm-pack test --node engine-wasm/engine --features wasm-bindings"
         ],
         "source": "docs/waves/wap-1.2.1-compliance-program.json"
       }
@@ -15002,6 +15058,51 @@
       "from": "clause:WML-CL-INPUT-STRUCTURE",
       "relation": "verified-by",
       "to": "fixture:WML-FX-INPUT-STRUCTURE",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|maps-to|requirement:RQ-RMK-001",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "maps-to",
+      "to": "requirement:RQ-RMK-001",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|planned-by|work-item:WML-308",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "planned-by",
+      "to": "work-item:WML-308",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|refines|scr-row:WML-C-33",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "refines",
+      "to": "scr-row:WML-C-33",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|sourced-from|source-document:WAP-191_104-WML",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "sourced-from",
+      "to": "source-document:WAP-191_104-WML",
+      "sourceRefs": [
+        "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+      ]
+    },
+    {
+      "id": "clause:WML-CL-INPUT-TITLE-PRESENTATION|verified-by|fixture:WML-FX-INPUT-TITLE-PRESENTATION",
+      "from": "clause:WML-CL-INPUT-TITLE-PRESENTATION",
+      "relation": "verified-by",
+      "to": "fixture:WML-FX-INPUT-TITLE-PRESENTATION",
       "sourceRefs": [
         "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       ]
