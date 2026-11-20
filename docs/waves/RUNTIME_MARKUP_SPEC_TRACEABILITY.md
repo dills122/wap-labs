@@ -63,6 +63,12 @@ Legend:
     unless wrapping selects its break point. The native and WASM fixture checks
     both cases, and the canonical Waves story checks their exact draw rows.
     Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_soft_hyphen` and `pnpm test:story WML-201`.
+  - Evidence: [x] `WML-CL-PARAGRAPH-NONBREAKING-SPACE` checks literal, named, and runtime-substituted
+    U+00A0 across inline boundaries in native Rust and WASM. The Waves
+    story verifies exact rows and link activation on the canonical example.
+    A group wider than the viewport stays together. Links extending past the
+    visible columns remain keyboard-accessible.
+    Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_nonbreaking_space` and `pnpm test:story WML-201`.
 
 ### RQ-RMK-002 Task model support and execution
 

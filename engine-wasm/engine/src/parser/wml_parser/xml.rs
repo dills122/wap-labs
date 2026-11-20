@@ -315,11 +315,22 @@ fn attach_node(
 }
 
 pub(super) fn normalize_text(input: &str) -> String {
+    normalize_whitespace(input, char::is_whitespace)
+}
+
+pub(super) fn normalize_inline_text(
+    input: &str,
+    context: crate::runtime::node::InlineContext,
+) -> String {
+    normalize_whitespace(input, |character| context.is_space(character))
+}
+
+fn normalize_whitespace(input: &str, is_whitespace: impl Fn(char) -> bool) -> String {
     let mut out = String::new();
     let mut saw_whitespace = false;
 
     for ch in input.chars() {
-        if ch.is_whitespace() {
+        if is_whitespace(ch) {
             if !saw_whitespace {
                 out.push(' ');
                 saw_whitespace = true;
@@ -330,7 +341,7 @@ pub(super) fn normalize_text(input: &str) -> String {
         }
     }
 
-    out.trim().to_string()
+    out.trim_matches(' ').to_string()
 }
 
 fn resolve_wml_entity(name: &str) -> Option<&'static str> {

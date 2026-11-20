@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 763,
-    "assessedClauseCount": 387
+    "assessedClauseCount": 388
   },
   "families": [
     {
@@ -9328,8 +9328,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-NONBREAKING-SPACE",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Do not treat non-breaking space as a legal inter-word line-break point."
+            "status": "implemented",
+            "assertion": "Do not treat non-breaking space as a legal inter-word line-break point.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_nonbreaking_space"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9352,7 +9357,7 @@
               "WML-C-36": "partial",
               "WML-C-06": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [

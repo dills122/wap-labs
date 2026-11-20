@@ -1,11 +1,11 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
-use crate::runtime::node::{InlineNode, Node, SelectOption};
+use crate::runtime::node::{is_breakable_space, InlineContext, InlineNode, Node, SelectOption};
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
 use std::collections::HashMap;
 
 use super::actions::parse_first_task_action_xml;
-use super::xml::{normalize_text, XmlElement, XmlNode};
+use super::xml::{normalize_inline_text, normalize_text, XmlElement, XmlNode};
 use super::ParseBudget;
 
 #[derive(Default)]
@@ -71,7 +71,7 @@ struct TableBoundaryPlan {
 impl TableBoundaryPlan {
     fn for_card(card: &XmlElement) -> Self {
         let mut content = Vec::new();
-        collect_significant_card_content(&card.children, &mut content);
+        collect_significant_card_content(&card.children, InlineContext::Card, &mut content);
         let boundaries = content
             .iter()
             .enumerate()
@@ -104,10 +104,14 @@ enum SignificantCardContent {
     Other,
 }
 
-fn collect_significant_card_content(nodes: &[XmlNode], content: &mut Vec<SignificantCardContent>) {
+fn collect_significant_card_content(
+    nodes: &[XmlNode],
+    context: InlineContext,
+    content: &mut Vec<SignificantCardContent>,
+) {
     for node in nodes {
         match node {
-            XmlNode::Text(text) if !text.trim().is_empty() => {
+            XmlNode::Text(text) if !text.chars().all(|character| context.is_space(character)) => {
                 content.push(SignificantCardContent::Other);
             }
             XmlNode::Text(_) => {}
@@ -127,10 +131,32 @@ fn collect_significant_card_content(nodes: &[XmlNode], content: &mut Vec<Signifi
                 content.push(SignificantCardContent::Other);
             }
             XmlNode::Element(element) => {
-                // Paragraphs, preformatted blocks, style/grouping elements, and
-                // forward-compatible wrappers are transparent for this card-wide test.
-                collect_significant_card_content(&element.children, content);
+                // Follow the same text normalization rule as the matching walker.
+                collect_significant_card_content(
+                    &element.children,
+                    if element.name == "p" {
+                        InlineContext::Paragraph
+                    } else {
+                        context
+                    },
+                    content,
+                );
             }
+        }
+    }
+}
+
+#[derive(Default)]
+struct InlineSpacing {
+    leading: bool,
+    trailing: bool,
+}
+
+impl InlineSpacing {
+    fn from_text(text: &str) -> Self {
+        Self {
+            leading: text.starts_with(is_breakable_space),
+            trailing: text.ends_with(is_breakable_space),
         }
     }
 }
@@ -141,18 +167,15 @@ fn collect_significant_card_content(nodes: &[XmlNode], content: &mut Vec<Signifi
 /// (`Node` for card level, `InlineNode` for paragraph level), so the shared
 /// dispatch reports *what* was produced and each walker decides *where* it
 /// goes.
-enum InlineTagOutcome {
-    /// A line break, rendered differently by each walker.
-    Break,
-    /// A concrete inline node to emit.
-    Node(InlineNode),
-    /// A recognized tag that intentionally contributes nothing (for example an
-    /// `<a>` without an `href`, or a `<select>` without a usable name).
-    Skip,
+#[derive(Default)]
+struct InlineTagOutcome {
+    /// A recognized tag may intentionally contribute no node.
+    node: Option<InlineNode>,
+    spacing: InlineSpacing,
 }
 
-/// Handles the tags that both walkers treat identically (`a`, `anchor`, `br`, `input`,
-/// `select`, `option`).
+/// Handles the tags shared by both walkers (`a`, `anchor`, `br`, `input`,
+/// `select`, `option`). The context selects how link and anchor labels treat spaces.
 ///
 /// Returns `Ok(None)` when `element` is not part of the shared set, leaving the
 /// caller to apply its own walker-specific handling (`<p>` at card level, or
@@ -166,19 +189,23 @@ fn map_shared_inline_tag(
     budget: &mut ParseBudget,
     child_depth: usize,
     control_ids: &mut ControlIdAllocator,
+    context: InlineContext,
 ) -> Result<Option<InlineTagOutcome>, String> {
     let outcome = match element.name.as_str() {
-        "a" => parse_link_inline_node(element, budget, child_depth)?
-            .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
-        "anchor" => {
-            return Ok(
-                parse_anchor_inline_node(element, budget, child_depth)?.map(InlineTagOutcome::Node)
-            )
-        }
-        "br" => InlineTagOutcome::Break,
-        "input" => InlineTagOutcome::Node(parse_input_inline_node(element, control_ids)?),
-        "select" => parse_select_inline_node(element, budget, child_depth, control_ids)?
-            .map_or(InlineTagOutcome::Skip, InlineTagOutcome::Node),
+        "a" => parse_link_inline_node(element, budget, child_depth, context)?.unwrap_or_default(),
+        "anchor" => return parse_anchor_inline_node(element, budget, child_depth, context),
+        "br" => InlineTagOutcome {
+            node: Some(InlineNode::Break),
+            ..InlineTagOutcome::default()
+        },
+        "input" => InlineTagOutcome {
+            node: Some(parse_input_inline_node(element, control_ids)?),
+            ..InlineTagOutcome::default()
+        },
+        "select" => InlineTagOutcome {
+            node: parse_select_inline_node(element, budget, child_depth, control_ids)?,
+            ..InlineTagOutcome::default()
+        },
         "option" => {
             return Err("Invalid <option>: must be contained by <select> or <optgroup>".to_string())
         }
@@ -201,9 +228,9 @@ fn map_card_level_nodes(
         match node {
             XmlNode::Text(text) => {
                 validate_text_variables(text)?;
-                let text = normalize_text(text);
+                let text = normalize_inline_text(text, InlineContext::Card);
                 if !text.is_empty() {
-                    out.push(Node::Paragraph(vec![InlineNode::Text(text)]));
+                    out.push(Node::CardContent(vec![InlineNode::Text(text)]));
                 }
             }
             XmlNode::Element(element) => {
@@ -226,13 +253,17 @@ fn map_card_level_nodes(
                     continue;
                 }
 
-                if let Some(outcome) =
-                    map_shared_inline_tag(element, budget, depth + 1, control_ids)?
-                {
-                    match outcome {
-                        InlineTagOutcome::Break => out.push(Node::Break),
-                        InlineTagOutcome::Node(inline) => out.push(Node::Paragraph(vec![inline])),
-                        InlineTagOutcome::Skip => {}
+                if let Some(outcome) = map_shared_inline_tag(
+                    element,
+                    budget,
+                    depth + 1,
+                    control_ids,
+                    InlineContext::Card,
+                )? {
+                    match outcome.node {
+                        Some(InlineNode::Break) => out.push(Node::Break),
+                        Some(inline) => out.push(Node::CardContent(vec![inline])),
+                        None => {}
                     }
                     continue;
                 }
@@ -305,6 +336,7 @@ fn map_inline_nodes(
         table_boundaries,
     )?;
     flush_pending_inline_text(&mut pending_text, &mut out);
+    discard_trailing_break_opportunity(&mut out);
     Ok(out)
 }
 
@@ -330,6 +362,7 @@ fn map_inline_nodes_recursive(
                     let boundary = table_boundaries.take();
                     flush_pending_inline_text(pending_text, out);
                     if boundary.before {
+                        discard_trailing_break_opportunity(out);
                         out.push(InlineNode::Break);
                     }
                     map_inline_nodes_recursive(
@@ -343,21 +376,24 @@ fn map_inline_nodes_recursive(
                     )?;
                     flush_pending_inline_text(pending_text, out);
                     if boundary.after {
+                        discard_trailing_break_opportunity(out);
                         out.push(InlineNode::Break);
                     }
                     continue;
                 }
 
-                if let Some(outcome) =
-                    map_shared_inline_tag(element, budget, depth + 1, control_ids)?
-                {
+                if let Some(outcome) = map_shared_inline_tag(
+                    element,
+                    budget,
+                    depth + 1,
+                    control_ids,
+                    InlineContext::Paragraph,
+                )? {
                     // Text accumulated before this tag has to be emitted first
                     // so inline ordering is preserved.
                     flush_pending_inline_text(pending_text, out);
-                    match outcome {
-                        InlineTagOutcome::Break => out.push(InlineNode::Break),
-                        InlineTagOutcome::Node(inline) => out.push(inline),
-                        InlineTagOutcome::Skip => {}
+                    if let Some(inline) = outcome.node {
+                        push_inline_fragment(out, inline, outcome.spacing);
                     }
                     continue;
                 }
@@ -403,42 +439,57 @@ fn parse_link_inline_node(
     element: &XmlElement,
     budget: &mut ParseBudget,
     child_depth: usize,
-) -> Result<Option<InlineNode>, String> {
+    context: InlineContext,
+) -> Result<Option<InlineTagOutcome>, String> {
     let href = element.attr("href").unwrap_or_default().to_string();
     if href.is_empty() {
         return Ok(None);
     }
-    let mut label_lines =
-        inline_anchor_label(element, budget, child_depth, link_label_fallback(&href))?;
-    if label_lines.len() == 1 {
+    let (mut label_lines, spacing) = inline_anchor_label(
+        element,
+        budget,
+        child_depth,
+        link_label_fallback(&href),
+        context,
+    )?;
+    let node = if label_lines.len() == 1 {
         let text = label_lines.pop().expect("one anchor label line");
-        Ok(Some(InlineNode::Link { text, href }))
+        InlineNode::Link { text, href }
     } else {
-        Ok(Some(InlineNode::Anchor {
+        InlineNode::Anchor {
             label_lines,
             action: CardTaskAction::Go {
                 href,
                 request: CardGoRequest::default(),
             },
-        }))
-    }
+        }
+    };
+    Ok(Some(InlineTagOutcome {
+        node: Some(node),
+        spacing,
+    }))
 }
 
 fn parse_anchor_inline_node(
     element: &XmlElement,
     budget: &mut ParseBudget,
     child_depth: usize,
-) -> Result<Option<InlineNode>, String> {
+    context: InlineContext,
+) -> Result<Option<InlineTagOutcome>, String> {
     let Some(action) = parse_first_task_action_xml(&element.children, budget, child_depth)? else {
         return Ok(None);
     };
     let Some(fallback) = action.anchor_label_fallback() else {
         return Ok(None);
     };
-    let label_lines = inline_anchor_label(element, budget, child_depth, fallback)?;
-    Ok(Some(InlineNode::Anchor {
-        label_lines,
-        action,
+    let (label_lines, spacing) =
+        inline_anchor_label(element, budget, child_depth, fallback, context)?;
+    Ok(Some(InlineTagOutcome {
+        node: Some(InlineNode::Anchor {
+            label_lines,
+            action,
+        }),
+        spacing,
     }))
 }
 
@@ -447,32 +498,77 @@ fn inline_anchor_label(
     budget: &mut ParseBudget,
     child_depth: usize,
     fallback: &str,
-) -> Result<Vec<String>, String> {
-    let mut lines = element
+    context: InlineContext,
+) -> Result<(Vec<String>, InlineSpacing), String> {
+    let mut lines = Vec::new();
+    let mut spacing = InlineSpacing::default();
+    for (index, nodes) in element
         .children
         .split(|node| matches!(node, XmlNode::Element(element) if element.name == "br"))
         .enumerate()
-        .map(|(index, nodes)| {
-            if index > 0 {
-                budget.visit_node("inline text extraction")?;
-            }
-            inline_text_content(nodes, budget, child_depth).map(|text| normalize_text(&text))
-        })
-        .collect::<Result<Vec<_>, _>>()?;
+    {
+        if index > 0 {
+            budget.visit_node("inline text extraction")?;
+        }
+        let text = inline_text_content(nodes, budget, child_depth)?;
+        let line_spacing = InlineSpacing::from_text(&text);
+        if index == 0 {
+            spacing.leading = line_spacing.leading;
+        }
+        spacing.trailing = line_spacing.trailing;
+        lines.push(normalize_inline_text(&text, context));
+    }
     if lines.iter().all(String::is_empty) {
         lines[0] = fallback.to_string();
     }
-    Ok(lines)
+    Ok((lines, spacing))
 }
 
 fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode>) {
     if pending_text.is_empty() {
         return;
     }
-    let normalized = normalize_text(pending_text);
+    let normalized = normalize_inline_text(pending_text, InlineContext::Paragraph);
+    let spacing = InlineSpacing::from_text(pending_text);
     pending_text.clear();
-    if !normalized.is_empty() {
-        out.push(InlineNode::Text(normalized));
+    if normalized.is_empty() {
+        note_break_opportunity(out);
+    } else {
+        push_inline_fragment(out, InlineNode::Text(normalized), spacing);
+    }
+}
+
+fn is_inline_text_fragment(node: &InlineNode) -> bool {
+    matches!(
+        node,
+        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Anchor { .. }
+    )
+}
+
+fn note_break_opportunity(out: &mut Vec<InlineNode>) {
+    if out.last().is_some_and(is_inline_text_fragment) {
+        out.push(InlineNode::BreakOpportunity);
+    }
+}
+
+fn discard_trailing_break_opportunity(out: &mut Vec<InlineNode>) {
+    if matches!(out.last(), Some(InlineNode::BreakOpportunity)) {
+        out.pop();
+    }
+}
+
+fn push_inline_fragment(out: &mut Vec<InlineNode>, node: InlineNode, spacing: InlineSpacing) {
+    if !is_inline_text_fragment(&node) {
+        discard_trailing_break_opportunity(out);
+        out.push(node);
+        return;
+    }
+    if spacing.leading {
+        note_break_opportunity(out);
+    }
+    out.push(node);
+    if spacing.trailing {
+        note_break_opportunity(out);
     }
 }
 
