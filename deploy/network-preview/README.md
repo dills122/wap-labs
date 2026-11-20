@@ -28,8 +28,9 @@ development fixture:
   are denied access to Docker bridges, and container traffic may not leave through a host uplink.
 
 In `public` mode, that chain permits only UDP 9200 through both a per-source and global packet-rate
-limit before dropping all other public-interface container traffic. DigitalOcean Cloud Firewall
-and UFW remain independent outer layers; passing one layer never substitutes for another.
+limit. Every inbound public WAP datagram goes through the limits, including after Kannel replies.
+In `sealed` mode, public UDP 9200 is dropped even for an existing flow. DigitalOcean Cloud Firewall
+and UFW remain independent outer layers.
 
 ## Build a release locally
 

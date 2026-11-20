@@ -107,6 +107,15 @@ test('Docker forwarding remains sealed by default and public mode is rate limite
   assert.doesNotMatch(firewall, /curl|wget|github\.com/);
 });
 
+test('public UDP 9200 hits the limiter or a drop before established traffic can return', () => {
+  const [limit, drop, established] = firewall
+    .split('\n')
+    .filter((line) => line.trimStart().startsWith("printf -- '-A "));
+  assert.match(limit, /-i %s -p udp --dport 9200 .*--hashlimit-upto .* -m limit .* -j RETURN/);
+  assert.match(drop, /-i %s -p udp --dport 9200 -j DROP.*"\$interface"$/);
+  assert.match(established, /--ctstate RELATED,ESTABLISHED -j RETURN/);
+});
+
 test('release installation verifies provenance and reseals before restarting services', () => {
   assert.match(installer, /release archive SHA-256 mismatch/);
   assert.match(installer, /docker image save --output "\$verification_archive" "\$image"/);
