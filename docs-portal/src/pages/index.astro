@@ -2,12 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StatusPill from '../components/StatusPill.astro';
 import {
-  clauseManifest,
   effectiveSpec,
   percentComplete,
   program,
   progress,
   releaseManifest,
+  selectedClauseImplementation,
   strictFamilies,
   workItems
 } from '../lib/repository';
@@ -57,8 +57,8 @@ const layers = [
     <div><strong>{releaseManifest.summary.memberCount}</strong><span>release sources locked</span></div>
     <div><strong>{effectiveSpec.summary.familyCount}</strong><span>specification families</span></div>
     <div>
-      <strong>{clauseManifest.summary.assessedClauseCount}/{clauseManifest.summary.clauseCount}</strong>
-      <span>normative clauses assessed</span>
+      <strong>{selectedClauseImplementation.percent}</strong>
+      <span>{selectedClauseImplementation.implemented} of {selectedClauseImplementation.total} selected clauses implemented</span>
     </div>
     <div><strong>{workItems.length}</strong><span>work items</span></div>
   </section>

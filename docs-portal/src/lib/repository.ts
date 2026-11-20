@@ -157,6 +157,25 @@ export const releaseManifest = atlasData.releaseManifest;
 export const effectiveSpec = atlasData.effectiveSpec;
 export const clauseManifest = atlasData.clauseManifest;
 
+const selectedClauseCount = clauseManifest.summary.clauseCount;
+const implementedClauseCount = clauseManifest.families.reduce(
+  (count, family) => count + family.clauses.filter(
+    (clause) => clause.mapping.clauseImplementationStatus === 'implemented'
+  ).length,
+  0
+);
+const clausePercentFormat = new Intl.NumberFormat('en', {
+  style: 'percent',
+  maximumFractionDigits: 1
+});
+export const selectedClauseImplementation = {
+  implemented: implementedClauseCount,
+  total: selectedClauseCount,
+  percent: selectedClauseCount
+    ? clausePercentFormat.format(implementedClauseCount / selectedClauseCount)
+    : '—'
+};
+
 export const workItems = program.sprints.flatMap((sprint) =>
   sprint.workItems.map((item) => ({
     ...item,
