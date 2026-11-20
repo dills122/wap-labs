@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "example": "wml201ParagraphSoftHyphen",
+  "flows": [
+    {
+      "id": "waves-paragraph-soft-hyphen",
+      "title": "Waves renders a soft hyphen only at a line break",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-PARAGRAPH-SOFT-HYPHEN"],
+      "initial": {
+        "state": { "activeCardId": "fit" },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "internationalization" },
+            { "row": 1, "text": "Wrap" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "wrap" },
+            "render": {
+              "textAtRows": [
+                { "row": 0, "text": "electroencephalo-" },
+                { "row": 1, "text": "graphically" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

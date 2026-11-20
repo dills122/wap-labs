@@ -4,7 +4,7 @@ key: "WML-FX-PARAGRAPH-SOFT-HYPHEN"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "rendering",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "13263ea1f19ca168bbf4285bfd01868007648521c0c9ab85431dd8c8cef7bb42"
+        "sha256": "05a5ed234fd30c7d6295eb8ca3ac5d4ca49189113e13f1dfffa89a1f7720e938"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "e48119ef604194dec808b6c7193c392b6d31a3e80760f07be93e7e083eb7c209"
@@ -6211,7 +6211,7 @@
           "RQ-RMK-001",
           "RQ-WAE-012"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10744,7 +10744,7 @@
       "title": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "When breaking at a soft hyphen, render a hyphen at line end; otherwise do not render that character as ordinary text.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

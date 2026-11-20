@@ -3849,6 +3849,81 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p>\n      <anchor>Go<go href=\"#tasks\"/></anchor>\n      <a href=\"#tasks\">Shorthand</a>\n    </p>\n  </card>\n  <card id=\"tasks\">\n    <p>\n      Stage: $(stage)\n      <anchor>Refresh<refresh><setvar name=\"stage\" value=\"refreshed\"/></refresh></anchor>\n      <anchor>Return<prev/></anchor>\n    </p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201ParagraphSoftHyphen",
+    "label": "WML-201 Paragraph Soft Hyphen",
+    "description": "A discretionary hyphen is invisible inside a word and visible at a selected line break.",
+    "goal": "Compare a word that fits on one line with a longer word that wraps at a soft hyphen.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-PARAGRAPH-SOFT-HYPHEN"
+    ],
+    "testingAc": [
+      "At 20 columns, see internationalization on one line with no hyphen.",
+      "Select Wrap and see electroencephalo- followed by graphically on the next line."
+    ],
+    "flows": [
+      {
+        "id": "waves-paragraph-soft-hyphen",
+        "title": "Waves renders a soft hyphen only at a line break",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-PARAGRAPH-SOFT-HYPHEN"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "fit"
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "internationalization"
+              },
+              {
+                "row": 1,
+                "text": "Wrap"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "wrap"
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "electroencephalo-"
+                  },
+                  {
+                    "row": 1,
+                    "text": "graphically"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"fit\">\n    <p>international&shy;ization</p>\n    <p><a href=\"#wrap\">Wrap</a></p>\n  </card>\n  <card id=\"wrap\">\n    <p>electroencephalo&shy;graphically</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml202TemplateShadowing",
     "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
     "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",

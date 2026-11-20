@@ -1486,7 +1486,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`, `WML-C-06`
   - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
-  - Fixture: `WML-FX-PARAGRAPH-SOFT-HYPHEN` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-SOFT-HYPHEN` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-WRAP-MODE** — Apply wrap or nowrap behavior and provide a way to view complete non-wrapped lines.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)

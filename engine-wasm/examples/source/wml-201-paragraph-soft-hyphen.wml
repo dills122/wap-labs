@@ -1,0 +1,22 @@
+<!--
+label: WML-201 Paragraph Soft Hyphen
+work-items: WML-201
+spec-items: WML-CL-PARAGRAPH-SOFT-HYPHEN
+description: A discretionary hyphen is invisible inside a word and visible at a selected line break.
+goal: Compare a word that fits on one line with a longer word that wraps at a soft hyphen.
+testing-ac:
+- At 20 columns, see internationalization on one line with no hyphen.
+- Select Wrap and see electroencephalo- followed by graphically on the next line.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="fit">
+    <p>international&shy;ization</p>
+    <p><a href="#wrap">Wrap</a></p>
+  </card>
+  <card id="wrap">
+    <p>electroencephalo&shy;graphically</p>
+  </card>
+</wml>
