@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 763,
-    "assessedClauseCount": 385
+    "assessedClauseCount": 386
   },
   "families": [
     {
@@ -9471,8 +9471,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-ALIGNMENT-DEFAULT",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Default unspecified paragraph alignment to left."
+            "status": "implemented",
+            "assertion": "Default unspecified paragraph alignment to left.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_alignment_default"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9490,7 +9495,7 @@
             "parentImplementationSnapshot": {
               "WML-C-36": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [

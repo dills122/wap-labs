@@ -25,7 +25,7 @@
         "sha256": "654284270a068b427ab05166247cb8e0644a99cf6af511f9b9c477d18ea36faa"
       },
       "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json": {
-        "sha256": "96867fe3bdee36afee05716abf29eedd5bb9a6c7473723f04ee91843d3c01da6"
+        "sha256": "13263ea1f19ca168bbf4285bfd01868007648521c0c9ab85431dd8c8cef7bb42"
       },
       "spec-processing/source-manifests/wap-1.2.1-successor-delta.json": {
         "sha256": "e48119ef604194dec808b6c7193c392b6d31a3e80760f07be93e7e083eb7c209"
@@ -6021,7 +6021,7 @@
         "requirementIds": [
           "RQ-RMK-001"
         ],
-        "implementationStatus": "not-assessed",
+        "implementationStatus": "implemented",
         "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }
@@ -10684,7 +10684,7 @@
       "title": "Default unspecified paragraph alignment to left.",
       "properties": {
         "kind": "rendering",
-        "status": "planned",
+        "status": "implemented",
         "assertion": "Default unspecified paragraph alignment to left.",
         "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
       }

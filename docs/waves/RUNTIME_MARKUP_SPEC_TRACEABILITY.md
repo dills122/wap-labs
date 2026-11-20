@@ -56,6 +56,9 @@ Legend:
   - Evidence: [x] `WML-CL-PARAGRAPH-SIGNIFICANT-BREAK` has direct strict
     WML 1.3 render coverage in `engine-wasm/engine/src/layout/flow_layout.rs`.
     Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_significant_break`.
+  - Evidence: [x] `WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT` verifies that omitted and
+    explicit left alignment both draw text at column zero in strict WML 1.3. Run
+    `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_alignment_default`.
 
 ### RQ-RMK-002 Task model support and execution
 
