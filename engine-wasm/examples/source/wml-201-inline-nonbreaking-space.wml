@@ -1,0 +1,25 @@
+<!--
+label: WML-201 Inline Nonbreaking Space
+work-items: WML-201
+spec-items: WML-CL-PARAGRAPH-NONBREAKING-SPACE
+description: A nonbreaking space keeps paragraph text together with a link across an inline boundary. An indivisible group wider than the viewport stays on one row, and a link beyond the visible columns can still be selected with the keyboard.
+goal: Compare the ordinary-space control with the same text followed by a nonbreaking space.
+testing-ac:
+- At 20 columns, see Keep these words Red on the first row of the ordinary-space card.
+- Select Fox to see Keep these words on the first row and Red Fox together on the second row.
+- Select Fox again to reach the destination.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="plain">
+    <p>Keep these words Red <a href="#joined">Fox</a></p>
+  </card>
+  <card id="joined">
+    <p>Keep these words Red&nbsp;<a href="#next">Fox</a></p>
+  </card>
+  <card id="next">
+    <p>Destination</p>
+  </card>
+</wml>

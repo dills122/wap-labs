@@ -114,7 +114,8 @@ fn parses_cards_and_links() {
     match &deck.cards[0].nodes[0] {
         Node::Paragraph(items) => {
             assert!(matches!(&items[0], InlineNode::Text(t) if t == "Hello"));
-            assert!(matches!(&items[1], InlineNode::Link { href, .. } if href == "#next"));
+            assert_eq!(items[1], InlineNode::BreakOpportunity);
+            assert!(matches!(&items[2], InlineNode::Link { href, .. } if href == "#next"));
         }
         _ => panic!("expected paragraph"),
     }
@@ -265,16 +266,26 @@ fn preserves_inline_text_and_link_order_in_paragraph() {
     let first = &deck.cards[0].nodes[0];
     match first {
         Node::Paragraph(items) => {
-            assert_eq!(items.len(), 5);
-            assert!(matches!(&items[0], InlineNode::Text(t) if t == "one"));
-            assert!(
-                matches!(&items[1], InlineNode::Link { text, href } if text == "A" && href == "#a")
+            assert_eq!(
+                items,
+                &[
+                    InlineNode::Text("one".into()),
+                    InlineNode::BreakOpportunity,
+                    InlineNode::Link {
+                        text: "A".into(),
+                        href: "#a".into()
+                    },
+                    InlineNode::BreakOpportunity,
+                    InlineNode::Text("two".into()),
+                    InlineNode::BreakOpportunity,
+                    InlineNode::Link {
+                        text: "B".into(),
+                        href: "#b".into()
+                    },
+                    InlineNode::BreakOpportunity,
+                    InlineNode::Text("three".into()),
+                ]
             );
-            assert!(matches!(&items[2], InlineNode::Text(t) if t == "two"));
-            assert!(
-                matches!(&items[3], InlineNode::Link { text, href } if text == "B" && href == "#b")
-            );
-            assert!(matches!(&items[4], InlineNode::Text(t) if t == "three"));
         }
         _ => panic!("expected paragraph"),
     }
@@ -317,13 +328,13 @@ fn decodes_entities_and_uses_href_as_fallback_link_text() {
     }
 
     match &deck.cards[0].nodes[1] {
-        Node::Paragraph(items) => {
+        Node::CardContent(items) => {
             assert!(matches!(
                 &items[0],
                 InlineNode::Link { text, href } if text == "#next" && href == "#next"
             ));
         }
-        _ => panic!("expected link paragraph"),
+        _ => panic!("expected card-level link"),
     }
 }
 
@@ -358,7 +369,7 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
     }
 
     match &deck.cards[0].nodes[1] {
-        Node::Paragraph(items) => {
+        Node::CardContent(items) => {
             assert!(matches!(
                 &items[0],
                 InlineNode::Input {
@@ -371,7 +382,7 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
                     && max_length.is_none()
             ));
         }
-        _ => panic!("expected input paragraph"),
+        _ => panic!("expected card-level input"),
     }
 }
 
@@ -387,7 +398,7 @@ fn parses_input_maxlength_when_present() {
 
     let deck = parse_wml(xml).expect("deck should parse");
     match &deck.cards[0].nodes[0] {
-        Node::Paragraph(items) => {
+        Node::CardContent(items) => {
             assert!(matches!(
                 &items[0],
                 InlineNode::Input {
@@ -398,7 +409,7 @@ fn parses_input_maxlength_when_present() {
                 } if name == "pin" && value == "1234" && *max_length == Some(4)
             ));
         }
-        _ => panic!("expected input paragraph"),
+        _ => panic!("expected card-level input"),
     }
 }
 
@@ -430,7 +441,7 @@ fn wml_fx_input_structure_accepts_declared_attributes_and_zero_maxlength() {
     let deck = parse_wml(xml).expect("source-declared input attributes should parse");
     assert!(matches!(
         &deck.cards[0].nodes[0],
-        Node::Paragraph(items)
+        Node::CardContent(items)
             if matches!(
                 &items[0],
                 InlineNode::Input {
@@ -522,7 +533,7 @@ fn wml_fx_select_structure_accepts_declared_control_grammar() {
     let deck = parse_wml(xml).expect("source-declared select and option syntax should parse");
     assert!(matches!(
         &deck.cards[0].nodes[0],
-        Node::Paragraph(items)
+        Node::CardContent(items)
             if matches!(
                 &items[0],
                 InlineNode::Select { name, options, .. }
@@ -607,7 +618,7 @@ fn wml_fx_select_structure_flattens_nested_optgroups_in_document_order() {
     let deck = parse_wml(xml).expect("nested declared control grammar should parse");
     assert!(matches!(
         &deck.cards[0].nodes[0],
-        Node::Paragraph(items)
+        Node::CardContent(items)
             if matches!(
                 &items[0],
                 InlineNode::Select { options, .. }
@@ -1090,13 +1101,13 @@ fn parses_mixed_card_level_content_paths() {
 
     assert!(matches!(
         &nodes[0],
-        Node::Paragraph(items) if matches!(&items[0], InlineNode::Text(t) if t == "lead")
+        Node::CardContent(items) if matches!(&items[0], InlineNode::Text(t) if t == "lead")
     ));
     assert!(matches!(&nodes[1], Node::Break));
     assert!(matches!(&nodes[2], Node::Paragraph(_)));
     assert!(matches!(
         &nodes[3],
-        Node::Paragraph(items)
+        Node::CardContent(items)
             if matches!(
                 &items[0],
                 InlineNode::Link { text, href } if text == "#next" && href == "#next"
@@ -1105,9 +1116,9 @@ fn parses_mixed_card_level_content_paths() {
     assert!(
         nodes.iter().any(|node| matches!(
             node,
-            Node::Paragraph(items) if matches!(&items[0], InlineNode::Text(t) if t == "tail")
+            Node::CardContent(items) if matches!(&items[0], InlineNode::Text(t) if t == "tail")
         )),
-        "expected trailing tail paragraph in parsed nodes: {nodes:?}"
+        "expected trailing card-level text in parsed nodes: {nodes:?}"
     );
 }
 
@@ -1117,20 +1128,51 @@ fn parses_mixed_inline_text_links_break_and_unknown_wrappers() {
         r##"pre <a href="#a">A</a> mid <br/> <span>wrapped</span> <a href="">skip</a> post"##,
     );
 
-    assert!(matches!(&items[0], InlineNode::Text(t) if t == "pre"));
-    assert!(matches!(
-        &items[1],
-        InlineNode::Link { text, href } if text == "A" && href == "#a"
-    ));
-    assert!(matches!(&items[2], InlineNode::Text(t) if t == "mid"));
-    assert!(
-        matches!(&items[3], InlineNode::Break),
-        "inline br must produce a real break node, not collapse to whitespace text \
-         (WAP-191_104-WML SS11.8.4 requires it to force a line break wherever it occurs); got {:?}",
-        items[3]
+    assert_eq!(
+        items,
+        [
+            InlineNode::Text("pre".into()),
+            InlineNode::BreakOpportunity,
+            InlineNode::Link {
+                text: "A".into(),
+                href: "#a".into()
+            },
+            InlineNode::BreakOpportunity,
+            InlineNode::Text("mid".into()),
+            InlineNode::Break,
+            InlineNode::Text("wrapped".into()),
+            InlineNode::BreakOpportunity,
+            InlineNode::Text("post".into()),
+        ]
     );
-    assert!(matches!(&items[4], InlineNode::Text(t) if t == "wrapped"));
-    assert!(matches!(&items[5], InlineNode::Text(t) if t == "post"));
+}
+
+#[test]
+fn wml_fx_paragraph_nonbreaking_space_keeps_authored_breaks_out_of_labels() {
+    let items = paragraph_items_for(
+        r##"Red&nbsp;<a href="#a"> $(word)</a>$(space)<anchor>Fox <go href="#a"/></anchor>&#160;"##,
+    );
+    assert_eq!(
+        items,
+        [
+            InlineNode::Text("Red\u{a0}".into()),
+            InlineNode::BreakOpportunity,
+            InlineNode::Link {
+                text: "$(word)".into(),
+                href: "#a".into()
+            },
+            InlineNode::Text("$(space)".into()),
+            InlineNode::Anchor {
+                label_lines: vec!["Fox".into()],
+                action: CardTaskAction::Go {
+                    href: "#a".into(),
+                    request: Default::default()
+                },
+            },
+            InlineNode::BreakOpportunity,
+            InlineNode::Text("\u{a0}".into()),
+        ]
+    );
 }
 
 #[test]

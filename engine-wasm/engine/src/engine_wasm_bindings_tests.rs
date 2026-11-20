@@ -1088,6 +1088,100 @@ fn wasm_wml_303_prev_override_exposes_empty_history_to_host_fallback() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_fx_paragraph_nonbreaking_space() {
+    let plain = include_str!("../../examples/source/wml-201-inline-nonbreaking-space.wml");
+    let anchor = plain.replace(
+        r##"Red&nbsp;<a href="#next">Fox</a>"##,
+        r##"Red$(space)<anchor>Fox<go href="#next"/></anchor>"##,
+    );
+    for deck in [plain, anchor.as_str()] {
+        let mut engine = WmlEngine::wasm_new();
+        engine.set_viewport_cols_wasm(20.0).unwrap();
+        engine
+            .load_deck_context_wasm(
+                deck,
+                "http://example.test/paragraph-nonbreaking-space.wml",
+                "text/vnd.wap.wml; validation=strict",
+                None,
+                None,
+            )
+            .unwrap();
+        assert!(engine.set_var_wasm("space".into(), "\u{a0}".into()));
+        engine.handle_key_wasm("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("joined"));
+
+        let render: serde_json::Value =
+            serde_wasm_bindgen::from_value(engine.render_wasm().unwrap()).unwrap();
+        assert_eq!(
+            render["draw"],
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Keep these words"},
+                {"type": "text", "x": 0, "y": 1, "text": "Red\u{a0}"},
+                {"type": "link", "x": 4, "y": 1, "text": "Fox", "focused": true, "href": "#next"}
+            ])
+        );
+        let frame: serde_json::Value =
+            serde_wasm_bindgen::from_value(engine.render_frame_wasm().unwrap()).unwrap();
+        let regions = frame["hitRegions"].as_array().unwrap();
+        let [hit] = regions.as_slice() else {
+            panic!("expected one link region");
+        };
+        assert_eq!(hit["x"], 4);
+        assert_eq!(hit["y"], 1);
+        assert_eq!(hit["width"], 3);
+        assert_eq!(hit["height"], 1);
+        assert_eq!(hit["actionId"], "focus:0");
+        assert_eq!(hit["targetKind"], "link");
+        let click = EngineInputEvent::Click {
+            frame_id: frame["frameId"].as_str().unwrap().into(),
+            x: 4,
+            y: 1,
+        };
+        engine
+            .handle_input_wasm(serde_wasm_bindgen::to_value(&click).unwrap())
+            .unwrap();
+        assert_eq!(engine.active_card_id_wasm().as_deref(), Ok("next"));
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_fx_paragraph_nonbreaking_space_preserves_preformatted_labels() {
+    for marker in ["\u{a0}", "&nbsp;", "$(space)"] {
+        let label = format!("Red{marker}Fox");
+        for link in [
+            format!(r##"<a href="#next">{label}</a>"##),
+            format!(r##"<anchor>{label}<go href="#next"/></anchor>"##),
+        ] {
+            let deck = format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><pre>{link}</pre></card><card id="next"><p>Destination</p></card></wml>"#
+            );
+            let url = "http://example.test/preformatted-label.wml";
+            let content_type = "text/vnd.wap.wml; validation=strict";
+            let mut native = WmlEngine::new();
+            let mut wasm = WmlEngine::wasm_new();
+            native.set_viewport_cols(6).unwrap();
+            wasm.set_viewport_cols_wasm(6.0).unwrap();
+            native
+                .load_deck_context(&deck, url, content_type, None)
+                .unwrap();
+            wasm.load_deck_context_wasm(&deck, url, content_type, None, None)
+                .unwrap();
+            assert!(native.set_var("space".into(), "\u{a0}".into()));
+            assert!(wasm.set_var_wasm("space".into(), "\u{a0}".into()));
+
+            let frame = native.render_frame().unwrap();
+            let expected = js_sys::JSON::stringify(&to_js_value(&frame).unwrap()).unwrap();
+            let actual = js_sys::JSON::stringify(&wasm.render_frame_wasm().unwrap()).unwrap();
+            assert_eq!(actual.as_string(), expected.as_string(), "{link}");
+            wasm.handle_key_wasm("enter".into()).unwrap();
+            assert_eq!(wasm.active_card_id_wasm().as_deref(), Ok("next"));
+        }
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_201_anchor_tasks_match_native_frames_and_state() {
     let deck = include_str!("../../examples/source/wml-201-anchor-tasks.wml");
     let mut native = WmlEngine::new();

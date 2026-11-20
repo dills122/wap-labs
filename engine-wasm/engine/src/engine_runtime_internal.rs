@@ -1,5 +1,5 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest};
-use crate::runtime::node::{InlineNode, Node};
+use crate::runtime::node::{InlineContext, InlineNode, Node};
 use crate::runtime::variable::{
     checked_insert as checked_insert_var, evaluate as evaluate_variable, SubstitutionContext,
 };
@@ -753,16 +753,19 @@ fn substitute_card_text_and_links(
     vars: &HashMap<String, String>,
 ) -> Result<(), String> {
     for node in &mut card.nodes {
-        let Node::Paragraph(inline) = node else {
-            continue;
+        let (inline, context) = match node {
+            Node::Paragraph(inline) => (inline, InlineContext::Paragraph),
+            Node::CardContent(inline) => (inline, InlineContext::Card),
+            Node::Break => continue,
         };
+        let is_blank = |text: &str| text.chars().all(|character| context.is_space(character));
         for entry in inline {
             match entry {
                 InlineNode::Text(text) => *text = evaluate_vdata(text, vars)?,
                 InlineNode::Link { text, href } => {
                     *text = evaluate_vdata(text, vars)?;
                     *href = evaluate_href(href, vars)?;
-                    if text.trim().is_empty() {
+                    if is_blank(text) {
                         *text = link_label_fallback(href).to_string();
                     }
                 }
@@ -780,7 +783,7 @@ fn substitute_card_text_and_links(
                     if let CardTaskAction::Go { href, .. } = base {
                         *href = evaluate_href(href, vars)?;
                     }
-                    if label_lines.iter().all(|text| text.trim().is_empty()) {
+                    if label_lines.iter().all(|text| is_blank(text)) {
                         let fallback = action.anchor_label_fallback().unwrap_or("Open");
                         if let Some(first) = label_lines.first_mut() {
                             *first = fallback.to_string();
@@ -800,7 +803,9 @@ fn substitute_card_text_and_links(
                 } => {
                     *title = evaluate_vdata(title, vars)?;
                 }
-                InlineNode::Break | InlineNode::Input { title: None, .. } => {}
+                InlineNode::Break
+                | InlineNode::BreakOpportunity
+                | InlineNode::Input { title: None, .. } => {}
             }
         }
     }

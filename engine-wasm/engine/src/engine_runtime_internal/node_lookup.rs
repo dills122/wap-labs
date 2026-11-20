@@ -1,7 +1,7 @@
 //! Shared lookup helpers for named `<input>`/`<select>` controls on a card.
 //!
 //! Every runtime accessor that reads or mutates a control by name walks the
-//! same `Card -> Node::Paragraph -> InlineNode` tree. The traversal lives here
+//! same paragraph and card-level inline nodes. The traversal lives here
 //! once so callers keep only their own "what to do with the match" logic, and
 //! so lookup order stays deterministic (document order, first match wins).
 
@@ -136,7 +136,7 @@ fn inline_nodes(card: &Card) -> impl Iterator<Item = &InlineNode> + '_ {
     card.nodes
         .iter()
         .filter_map(|node| match node {
-            Node::Paragraph(items) => Some(items.iter()),
+            Node::Paragraph(items) | Node::CardContent(items) => Some(items.iter()),
             Node::Break => None,
         })
         .flatten()
@@ -146,7 +146,7 @@ fn inline_nodes_mut(card: &mut Card) -> impl Iterator<Item = &mut InlineNode> + 
     card.nodes
         .iter_mut()
         .filter_map(|node| match node {
-            Node::Paragraph(items) => Some(items.iter_mut()),
+            Node::Paragraph(items) | Node::CardContent(items) => Some(items.iter_mut()),
             Node::Break => None,
         })
         .flatten()
@@ -174,6 +174,7 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
         }),
         InlineNode::Text(_)
         | InlineNode::Break
+        | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
         | InlineNode::Anchor { .. }
         | InlineNode::Select { .. } => None,
@@ -200,6 +201,7 @@ fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
         }),
         InlineNode::Text(_)
         | InlineNode::Break
+        | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
         | InlineNode::Anchor { .. }
         | InlineNode::Select { .. } => None,
@@ -226,6 +228,7 @@ fn as_select(item: &InlineNode) -> Option<SelectRef<'_>> {
         }),
         InlineNode::Text(_)
         | InlineNode::Break
+        | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
         | InlineNode::Anchor { .. }
         | InlineNode::Input { .. } => None,
@@ -256,6 +259,7 @@ fn as_select_mut(item: &mut InlineNode) -> Option<SelectMut<'_>> {
         }),
         InlineNode::Text(_)
         | InlineNode::Break
+        | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
         | InlineNode::Anchor { .. }
         | InlineNode::Input { .. } => None,
@@ -268,6 +272,7 @@ fn as_control_mut(item: &mut InlineNode) -> Option<ControlMut<'_>> {
         InlineNode::Select { .. } => as_select_mut(item).map(ControlMut::Select),
         InlineNode::Text(_)
         | InlineNode::Break
+        | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
         | InlineNode::Anchor { .. } => None,
     }

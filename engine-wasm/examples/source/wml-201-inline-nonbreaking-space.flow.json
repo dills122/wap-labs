@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "example": "wml201InlineNonbreakingSpace",
+  "flows": [
+    {
+      "id": "waves-inline-nonbreaking-space",
+      "title": "Waves keeps the linked word with the preceding text at a nonbreaking space",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-PARAGRAPH-NONBREAKING-SPACE"],
+      "initial": {
+        "state": { "activeCardId": "plain" },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Keep these words Red" },
+            { "row": 1, "text": "Fox" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "joined" },
+            "render": {
+              "textAtRows": [
+                { "row": 0, "text": "Keep these words" },
+                { "row": 1, "text": "Red\u00a0Fox" }
+              ]
+            }
+          }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next" },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] }
+          }
+        }
+      ]
+    }
+  ]
+}
