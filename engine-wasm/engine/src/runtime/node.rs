@@ -22,9 +22,19 @@ impl InlineContext {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ParagraphMode {
+    Wrap,
+    NoWrap,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Node {
-    Paragraph(Vec<InlineNode>),
+    Paragraph {
+        /// Authored mode. An omitted attribute is left for card-local resolution.
+        mode: Option<ParagraphMode>,
+        inline: Vec<InlineNode>,
+    },
     /// Content emitted by the card-level walker, including the legacy `pre` path.
     CardContent(Vec<InlineNode>),
     Break,

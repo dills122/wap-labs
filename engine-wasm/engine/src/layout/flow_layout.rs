@@ -50,7 +50,7 @@ impl FocusTarget {
         card.nodes
             .iter()
             .filter_map(|node| match node {
-                Node::Paragraph(inline) | Node::CardContent(inline) => Some(inline),
+                Node::Paragraph { inline, .. } | Node::CardContent(inline) => Some(inline),
                 Node::Break => None,
             })
             .flatten()
@@ -246,7 +246,7 @@ fn layout_card_impl(
 
     for node in &card.nodes {
         let (inline, context) = match node {
-            Node::Paragraph(inline) => (inline, InlineContext::Paragraph),
+            Node::Paragraph { inline, .. } => (inline, InlineContext::Paragraph),
             Node::CardContent(inline) => (inline, InlineContext::Card),
             Node::Break => {
                 check_next_row(&limits, row_count)?;
@@ -1289,7 +1289,10 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![InlineNode::Text("a ".repeat(count))])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![InlineNode::Text("a ".repeat(count))],
+            }],
             event_bindings: vec![],
             timer: None,
         }
@@ -1381,13 +1384,16 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![
-                InlineNode::Text("Hello world from wap".to_string()),
-                InlineNode::Link {
-                    text: "Next page".to_string(),
-                    href: "#next".to_string(),
-                },
-            ])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![
+                    InlineNode::Text("Hello world from wap".to_string()),
+                    InlineNode::Link {
+                        text: "Next page".to_string(),
+                        href: "#next".to_string(),
+                    },
+                ],
+            }],
             event_bindings: vec![],
             timer: None,
         };
@@ -1452,7 +1458,7 @@ mod tests {
         assert!(
             matches!(
                 deck.cards[0].nodes.as_slice(),
-                [Node::Paragraph(_), Node::Paragraph(_)]
+                [Node::Paragraph { .. }, Node::Paragraph { .. }]
             ),
             "both significant paragraphs must survive as separate nodes"
         );
@@ -1542,11 +1548,14 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![
-                InlineNode::Text("before".to_string()),
-                InlineNode::Break,
-                InlineNode::Text("after".to_string()),
-            ])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![
+                    InlineNode::Text("before".to_string()),
+                    InlineNode::Break,
+                    InlineNode::Text("after".to_string()),
+                ],
+            }],
             event_bindings: vec![],
             timer: None,
         };
@@ -1577,9 +1586,10 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![InlineNode::Text(
-                "supercalifragilistic".to_string(),
-            )])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![InlineNode::Text("supercalifragilistic".to_string())],
+            }],
             event_bindings: vec![],
             timer: None,
         };
@@ -1605,10 +1615,13 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![InlineNode::Link {
-                text: "abcdefghijkl".to_string(),
-                href: "#next".to_string(),
-            }])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![InlineNode::Link {
+                    text: "abcdefghijkl".to_string(),
+                    href: "#next".to_string(),
+                }],
+            }],
             event_bindings: vec![],
             timer: None,
         };
@@ -1639,52 +1652,55 @@ mod tests {
             language: None,
             new_context: false,
             ordered: true,
-            nodes: vec![Node::Paragraph(vec![
-                InlineNode::Input {
-                    control_id: "UserName".to_string(),
-                    name: "UserName".to_string(),
-                    title: None,
-                    value: "AHMED".to_string(),
-                    default_value: Some("AHMED".to_string()),
-                    is_password: false,
-                    max_length: None,
-                    mask: Default::default(),
-                    empty_ok: true,
-                },
-                InlineNode::Input {
-                    control_id: "Password".to_string(),
-                    name: "Password".to_string(),
-                    title: None,
-                    value: "secret".to_string(),
-                    default_value: Some("secret".to_string()),
-                    is_password: true,
-                    max_length: None,
-                    mask: Default::default(),
-                    empty_ok: true,
-                },
-                InlineNode::Select {
-                    control_id: "Country".to_string(),
-                    name: Some("Country".to_string()),
-                    iname: None,
-                    title: Some("Country".to_string()),
-                    default_value: None,
-                    default_index_value: None,
-                    multiple: false,
-                    options: vec![
-                        crate::runtime::node::SelectOption {
-                            label: "Jordan".to_string(),
-                            value: "Jordan".to_string(),
-                            onpick: None,
-                        },
-                        crate::runtime::node::SelectOption {
-                            label: "France".to_string(),
-                            value: "France".to_string(),
-                            onpick: None,
-                        },
-                    ],
-                    selected_indices: vec![1],
-                },
-            ])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![
+                    InlineNode::Input {
+                        control_id: "UserName".to_string(),
+                        name: "UserName".to_string(),
+                        title: None,
+                        value: "AHMED".to_string(),
+                        default_value: Some("AHMED".to_string()),
+                        is_password: false,
+                        max_length: None,
+                        mask: Default::default(),
+                        empty_ok: true,
+                    },
+                    InlineNode::Input {
+                        control_id: "Password".to_string(),
+                        name: "Password".to_string(),
+                        title: None,
+                        value: "secret".to_string(),
+                        default_value: Some("secret".to_string()),
+                        is_password: true,
+                        max_length: None,
+                        mask: Default::default(),
+                        empty_ok: true,
+                    },
+                    InlineNode::Select {
+                        control_id: "Country".to_string(),
+                        name: Some("Country".to_string()),
+                        iname: None,
+                        title: Some("Country".to_string()),
+                        default_value: None,
+                        default_index_value: None,
+                        multiple: false,
+                        options: vec![
+                            crate::runtime::node::SelectOption {
+                                label: "Jordan".to_string(),
+                                value: "Jordan".to_string(),
+                                onpick: None,
+                            },
+                            crate::runtime::node::SelectOption {
+                                label: "France".to_string(),
+                                value: "France".to_string(),
+                                onpick: None,
+                            },
+                        ],
+                        selected_indices: vec![1],
+                    },
+                ],
+            }],
             event_bindings: vec![],
             timer: None,
         };

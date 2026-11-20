@@ -8,7 +8,7 @@ use super::{
 use crate::render::render_list::DrawCmd;
 use crate::runtime::card::Card;
 use crate::runtime::deck::Deck;
-use crate::runtime::node::{InlineNode, Node};
+use crate::runtime::node::{InlineNode, Node, ParagraphMode};
 use crate::wavescript::value::ScriptValue;
 use crate::wavescript::vm::VmTrap;
 
@@ -90,17 +90,20 @@ pub(crate) fn engine_with_empty_select() -> WmlEngine {
             language: None,
             new_context: false,
             ordered: false,
-            nodes: vec![Node::Paragraph(vec![InlineNode::Select {
-                control_id: "Empty".to_string(),
-                name: Some("Empty".to_string()),
-                iname: None,
-                title: None,
-                default_value: None,
-                default_index_value: None,
-                multiple: false,
-                options: Vec::new(),
-                selected_indices: Vec::new(),
-            }])],
+            nodes: vec![Node::Paragraph {
+                mode: None,
+                inline: vec![InlineNode::Select {
+                    control_id: "Empty".to_string(),
+                    name: Some("Empty".to_string()),
+                    iname: None,
+                    title: None,
+                    default_value: None,
+                    default_index_value: None,
+                    multiple: false,
+                    options: Vec::new(),
+                    selected_indices: Vec::new(),
+                }],
+            }],
             event_bindings: Vec::new(),
             timer: None,
         }],
@@ -110,6 +113,27 @@ pub(crate) fn engine_with_empty_select() -> WmlEngine {
         Vec::new(),
     ));
     engine
+}
+
+#[test]
+fn retains_authored_paragraph_mode_during_variable_substitution() {
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(r#"<wml><card id="home"><p mode="nowrap">$(word)</p></card></wml>"#)
+        .expect("deck should load");
+    assert!(engine.set_var("word".to_string(), "resolved".to_string()));
+
+    let card = engine
+        .runtime_card_for_layout()
+        .expect("layout card should resolve variables");
+    let [Node::Paragraph { mode, inline }] = card.nodes.as_slice() else {
+        panic!("expected one paragraph in the layout card");
+    };
+    assert_eq!(*mode, Some(ParagraphMode::NoWrap));
+    assert_eq!(
+        inline.as_slice(),
+        [InlineNode::Text("resolved".to_string())]
+    );
 }
 
 fn push_string(bytes: &mut Vec<u8>, value: &str) {
