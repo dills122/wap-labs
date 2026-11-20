@@ -1,6 +1,7 @@
 import type { HostSessionState } from '../../../contracts/transport';
 import type { EngineRuntimeSnapshot } from '../../../contracts/engine';
 import type { TauriHostClient } from '../../../contracts/generated/tauri-host-client';
+import { isTauri } from '@tauri-apps/api/core';
 import { BrowserController } from './browser-controller';
 import { BrowserPresenter } from './browser-presenter';
 import { mountBrowserShell, type BrowserShellRefs } from './browser-shell-template';
@@ -11,6 +12,7 @@ import { registerBrowserComponents } from '../components';
 import { bindDeveloperToolsHost } from './developer-tools-bridge';
 import { ApplicationCommandBridge } from './application-command-bridge';
 import { createEngineDebugSessionClient } from './engine-debug-client';
+import { saveEngineDebugCapture } from './engine-debug-file-save';
 import {
   createEngineDebugSessionController,
   type EngineDebugSessionController
@@ -90,7 +92,18 @@ export const composeBrowserApplication = (
   let debugInspector: BrowserApplication['debugInspector'];
   if (refs.developerToolsRootEl) {
     const debugInspectorController = createEngineDebugSessionController({
-      client: createEngineDebugSessionClient(hostClient)
+      client: createEngineDebugSessionClient(hostClient),
+      ...(isTauri()
+        ? {
+            onCapture: (capture) => {
+              void saveEngineDebugCapture(capture.json, (message, error) => {
+                presenter.setStatus(message);
+                if (error) presenter.showToast(message, 'error');
+                else if (message === 'Inspector capture saved.') presenter.showToast(message, 'ok');
+              });
+            }
+          }
+        : {})
     });
     const developerToolsBridge = bindDeveloperToolsHost({
       root: refs.developerToolsRootEl,

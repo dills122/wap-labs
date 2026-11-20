@@ -155,6 +155,25 @@ describe('engine debug session controller lifecycle', () => {
     expect(observation.latest().phase).toBe('idle');
   });
 
+  it('starts when the native snapshot uses null for absent optional fields', async () => {
+    const client = createClient();
+    vi.mocked(client.snapshot).mockResolvedValueOnce({
+      status: 'success',
+      snapshot: {
+        ...snapshot,
+        focusedInputEdit: null,
+        pendingExternalNavigation: null,
+        buffer: { ...snapshot.buffer, oldestSeq: null, latestSeq: null }
+      } as unknown as EngineDebugSnapshot
+    });
+    const controller = createEngineDebugSessionController({ client, onCapture: vi.fn() });
+    const observation = observe(controller);
+    await controller.start();
+    expect(observation.latest().phase).toBe('active');
+    expect(observation.latest().snapshotSummary).toContain('Sequence 3');
+    await controller.dispose();
+  });
+
   it('surfaces the single-session host limit without retrying or mutating engine state', async () => {
     const client = createClient();
     vi.mocked(client.open).mockResolvedValueOnce(failure('SESSION_LIMIT_REACHED'));

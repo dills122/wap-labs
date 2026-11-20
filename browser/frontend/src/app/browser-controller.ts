@@ -317,7 +317,7 @@ export class BrowserController {
       refs: this.refs,
       runAction: this.withAction,
       serializeEngineAction: (action) => this.keyboardIntentRouter.serializeEngineAction(action),
-      interruptNavigationForBack: () => this.interruptPendingNavigation(),
+      interruptPendingNavigation: () => this.interruptPendingNavigation(),
       onWindowKeydown: this.keyboardIntentRouter.handleWindowKeydown,
       actions: {
         health: this.handleHealthClick,
@@ -474,7 +474,6 @@ export class BrowserController {
 
   private readonly handleLoadRawWmlClick = async (): Promise<void> => {
     await this.setViewportCols();
-    this.timerRuntime.resetScriptTimers();
     const frame = await this.hostClient.engineLoadDeckContextFrame({
       wmlXml: this.refs.wmlInput.value,
       baseUrl: this.refs.baseUrlInput.value,
@@ -482,6 +481,9 @@ export class BrowserController {
     });
     const snapshot = frame.snapshot;
     this.applyFrame(frame);
+    this.timerRuntime.resetScriptTimers();
+    this.timerRuntime.applySnapshot(snapshot);
+    this.presenter.setTransportResponse(null);
     // This always loads directly through the engine, clearing its nav
     // stack regardless of which mode is active (see U3).
     this.localBackAvailable = false;

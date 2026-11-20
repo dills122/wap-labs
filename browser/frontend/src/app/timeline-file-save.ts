@@ -3,10 +3,13 @@ import { writeTextFile } from '@tauri-apps/plugin-fs';
 import { WAVES_CONFIG } from './waves-config';
 
 /** Returns false when the user dismisses the native save dialog. */
-export const saveTimelineFile = async (contents: string): Promise<boolean> => {
+export const saveTimelineFile = async (
+  contents: string,
+  filename: string = WAVES_CONFIG.timelineExportFilename
+): Promise<boolean> => {
   try {
     const path = await save({
-      defaultPath: WAVES_CONFIG.timelineExportFilename,
+      defaultPath: filename,
       filters: [{ name: 'JSON', extensions: ['json'] }]
     });
     if (path === null) return false;

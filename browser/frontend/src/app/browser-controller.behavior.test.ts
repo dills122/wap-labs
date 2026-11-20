@@ -484,6 +484,7 @@ describe('BrowserController behavior coverage', () => {
     await controller.init('<wml><card id="seed"/></wml>');
     vi.mocked(hostClient.engineLoadDeckContextFrame).mockClear();
     vi.mocked(hostClient.engineSetViewportCols).mockClear();
+    presenter.setTransportResponse(fetchOk({ finalUrl: 'http://example.test/old.wml' }));
 
     refs.wmlInput.value = '<wml><card id="debug"><p>debug</p></card></wml>';
     refs.baseUrlInput.value = 'http://debug.local/raw.wml';
@@ -500,6 +501,32 @@ describe('BrowserController behavior coverage', () => {
       finalUrl: refs.baseUrlInput.value,
       requestedUrl: refs.baseUrlInput.value
     });
+    expect(presenter.getDeveloperToolsState().transportResponse).toBeNull();
+  });
+
+  it('updates timers only after a raw WML deck loads successfully', async () => {
+    const refs = createRefs();
+    const presenter = new BrowserPresenter(refs, initialSession, 20);
+    const host = createHostClient();
+    const controller = new BrowserController(host as never, presenter, refs);
+    await controller.init('<wml><card id="seed"/></wml>');
+    const timer = controllerPrivates(controller).timerRuntime;
+    timer.stop();
+    const reset = vi.spyOn(timer, 'resetScriptTimers');
+    const apply = vi.spyOn(timer, 'applySnapshot');
+    vi.mocked(host.engineLoadDeckContextFrame).mockRejectedValueOnce(new Error('invalid WML'));
+    document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+    await flushAsyncWork();
+    expect(reset).not.toHaveBeenCalled();
+    expect(apply).not.toHaveBeenCalled();
+
+    const loaded = frame({ activeCardId: 'timer-card', nextTimerWakeupMs: 250 });
+    vi.mocked(host.engineLoadDeckContextFrame).mockResolvedValueOnce(loaded);
+    document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+    await flushAsyncWork();
+    expect(reset).toHaveBeenCalledOnce();
+    expect(apply).toHaveBeenCalledWith(loaded.snapshot);
+    controller.dispose();
   });
 
   it('fetches and reloads transport URLs through bound network actions', async () => {
@@ -2017,6 +2044,42 @@ it('projects committed local decks and raw debug loads into distinct persistence
 
   expect(onSafeSessionCommitted).toHaveBeenCalledTimes(safeCommitCount);
   expect(onUnsafeSessionCommitted).toHaveBeenCalledTimes(2);
+});
+
+it('loading raw WML cancels a slow navigation without waiting for its host response', async () => {
+  const refs = createRefs();
+  const presenter = new BrowserPresenter(refs, initialSession, 20);
+  const host = createHostClient();
+  const controller = new BrowserController(host as never, presenter, refs);
+  await controller.init('<wml><card id="seed"/></wml>');
+  controllerPrivates(controller).timerRuntime.stop();
+  await controllerPrivates(controller).setRunMode('network', { loadLocalOnEnter: false });
+  await flushAsyncWork();
+  let resolveFetch: ((response: FetchResponse) => void) | undefined;
+  vi.mocked(host.fetchDeck).mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolveFetch = resolve;
+      })
+  );
+  refs.fetchUrlInput.value = 'http://example.test/slow.wml';
+  document.querySelector<HTMLButtonElement>('#btn-fetch-url')?.click();
+  await flushAsyncWork();
+  refs.wmlInput.value = '<wml><card id="raw"/></wml>';
+  refs.baseUrlInput.value = 'http://example.test/raw.wml';
+  document.querySelector<HTMLButtonElement>('#btn-load-context')?.click();
+  await flushAsyncWork();
+  expect(host.cancelFetch).toHaveBeenCalledOnce();
+  expect(host.engineLoadDeckContextFrame).toHaveBeenLastCalledWith({
+    wmlXml: refs.wmlInput.value,
+    baseUrl: refs.baseUrlInput.value,
+    contentType: 'text/vnd.wap.wml'
+  });
+  expect(presenter.getSessionState().finalUrl).toBe(refs.baseUrlInput.value);
+  resolveFetch?.(fetchOk({ finalUrl: 'http://example.test/slow.wml' }));
+  await flushAsyncWork();
+  expect(presenter.getSessionState().finalUrl).toBe(refs.baseUrlInput.value);
+  controller.dispose();
 });
 
 it('Back cancels a slow address navigation without waiting for its host response', async () => {

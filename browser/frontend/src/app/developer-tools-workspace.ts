@@ -99,7 +99,7 @@ export const renderDeveloperToolsSummary = (root: ParentNode, state: DeveloperTo
   setText(
     root,
     '[data-devtools-value="next-timer"]',
-    runtimeSnapshot?.nextTimerWakeupMs === undefined
+    runtimeSnapshot?.nextTimerWakeupMs == null
       ? EMPTY_VALUE
       : `${runtimeSnapshot.nextTimerWakeupMs} ms`
   );
