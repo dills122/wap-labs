@@ -1177,6 +1177,10 @@ const wml201FixtureEvidence = new Map(
     [
       'WML-CL-PARAGRAPH-SIGNIFICANT-BREAK',
       ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_significant_break']
+    ],
+    [
+      'WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_alignment_default']
     ]
   ].map(([id, [testPath, filter]]) => [
     id,

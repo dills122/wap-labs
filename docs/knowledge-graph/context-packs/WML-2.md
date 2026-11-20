@@ -1456,7 +1456,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-PARAGRAPH-ALIGNMENT-DEFAULT` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-ALIGNMENT-DEFAULT` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-EMPTY-IGNORED** — Ignore empty or whitespace-only paragraphs without allowing them to alter inherited wrap state.
   - Family: `wml`; force: `explicit-should`; level: `recommended`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
