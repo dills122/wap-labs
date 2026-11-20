@@ -107,13 +107,23 @@ export function assertStoryExpectation(evidence, expectation, label) {
   }
   if (expectation.render) {
     assert.ok(evidence.render, `${label}: semantic render evidence is unavailable`);
-    const actualText = normalizeRenderText(evidence.render.draw.map((command) => command.text));
-    for (const expectedText of expectation.render.textIncludes) {
-      const normalizedExpected = normalizeRenderText([expectedText]);
-      assert.ok(
-        actualText.includes(normalizedExpected),
-        `${label}: expected render text to include "${expectedText}", got "${actualText}"`
-      );
+    const { draw } = evidence.render;
+    if (expectation.render.textIncludes) {
+      const actualText = normalizeRenderText(draw.map((command) => command.text));
+      for (const expectedText of expectation.render.textIncludes) {
+        const normalizedExpected = normalizeRenderText([expectedText]);
+        assert.ok(
+          actualText.includes(normalizedExpected),
+          `${label}: expected render text to include "${expectedText}", got "${actualText}"`
+        );
+      }
+    }
+    for (const { row, text } of expectation.render.textAtRows ?? []) {
+      const rowText = draw
+        .filter((command) => command.y === row)
+        .map((command) => command.text)
+        .join('');
+      assert.equal(rowText, text, `${label}: render row ${row}`);
     }
   }
   if (expectation.frame) {
