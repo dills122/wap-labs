@@ -87,15 +87,17 @@ apply_rules() {
     printf '%s\n' '*filter'
     printf ':%s - [0:0]\n' "$chain_name"
     printf -- '-F %s\n' "$chain_name"
+    # A gateway reply marks the UDP flow established. Apply public ingress policy first.
+    if [ "$mode" = public ]; then
+      printf -- '-A %s -i %s -p udp --dport 9200 -m hashlimit --hashlimit-upto %s --hashlimit-burst %s --hashlimit-mode srcip --hashlimit-name waves_wap_source -m limit --limit %s --limit-burst %s -j RETURN\n' \
+        "$chain_name" "$interface" "$source_rate" "$source_burst" "$public_rate" "$public_burst"
+    fi
+    printf -- '-A %s -i %s -p udp --dport 9200 -j DROP\n' "$chain_name" "$interface"
     printf -- '-A %s -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN\n' "$chain_name"
     printf -- '-A %s -i docker0 -o docker0 -j RETURN\n' "$chain_name"
     printf -- '-A %s -i br+ -o br+ -j RETURN\n' "$chain_name"
     printf -- '-A %s -i %s -p udp --dport 9200 -j RETURN\n' "$chain_name" "$tailnet_interface"
     printf -- '-A %s -i %s -j DROP\n' "$chain_name" "$tailnet_interface"
-    if [ "$mode" = public ]; then
-      printf -- '-A %s -i %s -p udp --dport 9200 -m hashlimit --hashlimit-upto %s --hashlimit-burst %s --hashlimit-mode srcip --hashlimit-name waves_wap_source -m limit --limit %s --limit-burst %s -j RETURN\n' \
-        "$chain_name" "$interface" "$source_rate" "$source_burst" "$public_rate" "$public_burst"
-    fi
     printf -- '-A %s -i %s -j DROP\n' "$chain_name" "$interface"
     printf -- '-A %s -o docker0 -j DROP\n' "$chain_name"
     printf -- '-A %s -o br+ -j DROP\n' "$chain_name"
@@ -122,12 +124,16 @@ check_rules() {
   iptables -C "$chain_name" -o br+ -j DROP >/dev/null
   iptables -C "$chain_name" -i docker0 -j DROP >/dev/null
   iptables -C "$chain_name" -i br+ -j DROP >/dev/null
+  drop_position=1
   if [ "$mode" = public ]; then
-    iptables -S "$chain_name" | grep -Eq -- "^-A $chain_name -i $interface -p udp .*--dport 9200 .* -j RETURN$" \
-      || fail 'public UDP 9200 rate-limit rule is missing'
-  elif iptables -S "$chain_name" | grep -Eq -- "^-A $chain_name -i $interface -p udp .*--dport 9200 .* -j RETURN$"; then
-    fail 'sealed mode unexpectedly allows public UDP 9200'
+    iptables -S "$chain_name" 1 |
+      grep -Eq -- "^-A $chain_name -i $interface -p udp .*--dport 9200 -m hashlimit .* -m limit .* -j RETURN$" \
+      || fail 'public UDP 9200 rate-limit rule must be first'
+    drop_position=2
   fi
+  iptables -S "$chain_name" "$drop_position" |
+    grep -Fxq -- "-A $chain_name -i $interface -p udp -m udp --dport 9200 -j DROP" \
+    || fail 'public UDP 9200 drop rule must precede the established traffic rule'
   echo "PASS: Docker forwarding policy is $mode on $interface"
 }
 
