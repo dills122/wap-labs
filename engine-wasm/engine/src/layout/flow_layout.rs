@@ -564,6 +564,38 @@ mod tests {
     }
 
     #[test]
+    fn wml_fx_paragraph_alignment_default() {
+        // WAP-191_104-WML §11.8.3 defaults an omitted paragraph alignment to left.
+        let wml = r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p>Same text</p><p align="left">Same text</p></card></wml>"#;
+
+        let mut engine = WmlEngine::new();
+        engine
+            .set_viewport_cols(40)
+            .expect("viewport must leave space for alignment");
+        engine
+            .load_deck_context(
+                wml,
+                "http://example.test/paragraph-alignment.wml",
+                "text/vnd.wap.wml; validation=strict",
+                None,
+            )
+            .expect("strict WML 1.3 deck must load");
+
+        let render = engine.render().expect("deck must render");
+        assert!(
+            matches!(
+                render.draw.as_slice(),
+                [DrawCmd::Text { x: 0, text: default, .. }, DrawCmd::Text { x: 0, text: explicit, .. }]
+                    if default == "Same text" && default == explicit
+            ),
+            "omitted and explicit left alignment must draw the same text at column zero: {:?}",
+            render.draw
+        );
+    }
+
+    #[test]
     fn wml_fx_paragraph_significant_break_starts_next_paragraph_on_new_line() {
         let wml = r#"<?xml version="1.0"?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
