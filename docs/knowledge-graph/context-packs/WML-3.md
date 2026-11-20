@@ -13,14 +13,14 @@
 
 ## Graph summary
 
-- Nodes: 362
-- Edges: 963
+- Nodes: 410
+- Edges: 1088
 - Selected work items: 9
 - Direct SCR rows: 13
-- Direct normative clauses: 129
+- Direct normative clauses: 149
 - Aggregate regression/delegate context clauses: 7
-- Work items without direct clause mappings: 1
-- Work items with unmapped declared normative families: 2
+- Work items without direct clause mappings: 0
+- Work items with unmapped declared normative families: 1
 
 ## Execution target
 
@@ -243,15 +243,15 @@ Evidence commands:
 
 ### WML-307: Additive WML character-processing and generic WBXML residual closure
 
-- Status: `todo`
+- Status: `in-progress`
 - Owner layers: `engine-wasm`, `transport-rust`, `qa`
 - Source families: `wml`, `wbxml`
 - Existing tickets: `C5-06`
 - Direct SCR rows: 0
-- Selected SCR parents: 0
-- Direct normative clauses: 0
+- Selected SCR parents: 5 (`WBXML-C-001`, `WBXML-C-010`, `WBXML-C-011`, `WML-C-05`, `WML-C-06`)
+- Direct normative clauses: 20
 - Aggregate regression/delegate context: 0
-- Requirements: None
+- Requirements: `RQ-RMK-001`, `RQ-RMK-007`, `RQ-RMK-010`, `RQ-WAE-012`
 - Spec references: None
 - Follow-up work items: None
 - Depends on: None
@@ -266,6 +266,15 @@ Acceptance:
 
 Evidence commands:
 
+- `node scripts/wap-context-pack.mjs WML-307`
+- `node scripts/check-wml-307-iana-fixtures.mjs <june-raw> <october-raw>`
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures`
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding`
+- `cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text`
+- `cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_rejects_invalid_xml_characters`
+- `wasm-pack test --node engine-wasm/engine --features wasm-bindings`
+- `pnpm test:story WML-307`
 - `cargo test --manifest-path engine-wasm/engine/Cargo.toml`
 - `cargo test --manifest-path transport-rust/Cargo.toml`
 - `node scripts/check-wap-conformance-ledger.mjs`
@@ -1086,6 +1095,129 @@ Evidence commands:
   - Requirements: `RQ-RMK-009`
   - Fixture: `WML-FX-UNKNOWN-MARKUP-IGNORED` (`parser`, `implemented`)
 
+### WML-307
+
+- **WBXML-CL-BINARY-LITERAL-EQUIVALENCE** — Decode both assigned binary tokens and literal encodings for every tag name, attribute name, and attribute value.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
+  - Parents: `WBXML-C-011`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-BINARY-LITERAL-EQUIVALENCE` (`binary-decoder`, `implemented`)
+- **WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE** — When external and internal charset metadata coexist, apply the precedence and conflict policy of the carrying protocol.
+  - Family: `wbxml`; force: `explicit-should`; level: `recommended`
+  - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-CHARSET-EXTERNAL-PRECEDENCE` (`transport-boundary`, `implemented`)
+- **WBXML-CL-CHARSET-INTERNAL-DEFAULT** — Without external charset metadata, present strings using the encoding named by the WBXML charset field.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-CHARSET-INTERNAL-DEFAULT` (`binary-decoder`, `implemented`)
+- **WBXML-CL-CHARSET-MIBENUM** — Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.
+  - Family: `wbxml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §5.6 (5.6. Charset)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-CHARSET-MIBENUM` (`binary-decoder`, `implemented`)
+- **WBXML-CL-CHARSET-STRING-TERMINATION** — Detect string termination according to the selected character encoding rather than assuming a one-byte terminator.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §5.2 (5.2. Character Encoding)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-CHARSET-STRING-TERMINATION` (`binary-decoder`, `implemented`)
+- **WBXML-CL-DEFAULT-ATTRIBUTES-OMITTED** — Accept tokenized elements that omit attributes equal to declared default, fixed, or applicable implied values.
+  - Family: `wbxml`; force: `explicit-may`; level: `permitted`
+  - Source: `WAP-192-WBXML` §6.3 (6.3. Encoding Default Attribute Values)
+  - Parents: `WBXML-C-010`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-OMITTED` (`binary-decoder`, `implemented`)
+- **WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED** — Reconstruct omitted attribute values from the version-appropriate document-type defaults before presenting the decoded XML model.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §6.3 (6.3. Encoding Default Attribute Values)
+  - Parents: `WBXML-C-010`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-DEFAULT-ATTRIBUTES-RECONSTRUCTED` (`binary-decoder`, `implemented`)
+- **WBXML-CL-ENTITY-UCS4** — Decode ENTITY followed by a multi-byte UCS-4 character value with XML numeric-entity semantics.
+  - Family: `wbxml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §5.8.4.3 (5.8.4.3. Character Entity)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-ENTITY-UCS4` (`binary-decoder`, `implemented`)
+- **WBXML-CL-EXTERNAL-TOKEN-TYPING** — Use an external typing system to associate an XML document family with its WBXML token values.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
+  - Parents: `WBXML-C-011`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-EXTERNAL-TOKEN-TYPING` (`transport-boundary`, `implemented`)
+- **WBXML-CL-INLINE-STRING** — Decode STR_I as encoding-dependent terminated inline character data.
+  - Family: `wbxml`; force: `grammar`; level: `required`
+  - Source: `WAP-192-WBXML` §5.8.4.1 (5.8.4.1. Strings)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-INLINE-STRING` (`binary-decoder`, `implemented`)
+- **WBXML-CL-MIME-TOKEN-TYPING** — For WSP, HTTP, or SMTP transport, use the MIME media type as the token-value association key.
+  - Family: `wbxml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-192-WBXML` §6.4 (6.4. Associating XML Documents with WBXML Token Values)
+  - Parents: `WBXML-C-011`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-MIME-TOKEN-TYPING` (`transport-boundary`, `implemented`)
+- **WBXML-CL-TABLE-STRING** — Decode STR_T as a multi-byte byte offset into the string table.
+  - Family: `wbxml`; force: `grammar`; level: `required`
+  - Source: `WAP-192-WBXML` §5.8.4.1 (5.8.4.1. Strings)
+  - Parents: `WBXML-C-001`
+  - Requirements: `RQ-RMK-007`, `RQ-RMK-010`
+  - Fixture: `WBXML-FX-TABLE-STRING` (`binary-decoder`, `implemented`)
+- **WML-CL-ENTITY-FORMS** — Accept named, decimal numeric, and hexadecimal numeric WML character references.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
+  - Parents: `WML-C-06`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-ENTITY-FORMS` (`parser`, `implemented`)
+- **WML-CL-ENTITY-REQUIRED-NAMES** — Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.
+  - Family: `wml`; force: `table`; level: `required`
+  - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
+  - Parents: `WML-C-06`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-ENTITY-REQUIRED-NAMES` (`parser`, `implemented`)
+- **WML-CL-ENTITY-UNICODE-IDENTITY** — Resolve numeric character references against Unicode independently of the document byte encoding.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.2 (6.2 Character Entities)
+  - Parents: `WML-C-06`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-ENTITY-UNICODE-IDENTITY` (`parser`, `implemented`)
+- **WML-CL-REFERENCE-ENCODING-DETECTION** — Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
+  - Parents: `WML-C-05`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-REFERENCE-ENCODING-DETECTION` (`parser`, `implemented`)
+- **WML-CL-REFERENCE-ENTITY-CHARSET** — Process character entities in the document character set.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
+  - Parents: `WML-C-05`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-REFERENCE-ENTITY-CHARSET` (`parser`, `implemented`)
+- **WML-CL-REFERENCE-TRANSCODING-LOSS** — Avoid transcoding when the user agent supports the original encoding and conversion would lose information.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
+  - Parents: `WML-C-05`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-REFERENCE-TRANSCODING-LOSS` (`transport-boundary`, `implemented`)
+- **WML-CL-REFERENCE-UNICODE-MAPPING** — Map every character in each recognized source encoding to its Unicode character.
+  - Family: `wml`; force: `explicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
+  - Parents: `WML-C-05`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-REFERENCE-UNICODE-MAPPING` (`parser`, `implemented`)
+- **WML-CL-REFERENCE-WBXML-PRECEDENCE** — When WML is carried in WBXML, determine character encoding using the WBXML rules.
+  - Family: `wml`; force: `implicit-must`; level: `required`
+  - Source: `WAP-191_104-WML` §6.1 (6.1 Reference Processing Model)
+  - Parents: `WML-C-05`
+  - Requirements: `RQ-RMK-001`, `RQ-WAE-012`
+  - Fixture: `WML-FX-REFERENCE-WBXML-PRECEDENCE` (`transport-boundary`, `implemented`)
+
 ### WML-308
 
 - **WML-CL-INPUT-EMPTY-COMMIT** — Accept an empty committed input only when the effective mask and emptyok rules allow it.
@@ -1297,11 +1429,10 @@ Evidence commands:
 
 ## Explicit mapping gaps
 
-- `WML-307` has no direct clause mapping in the canonical nested-clause manifest. Treat this as a planning/evidence gap, not as zero normative scope.
+- None
 
 Declared-family gaps:
 
-- `WML-307` declares `wbxml`, `wml` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 - `WML-308` declares `wae` scope without a direct clause mapping from that family. Clauses from another family do not close this gap.
 
 ## Effective source order

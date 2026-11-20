@@ -78,6 +78,9 @@ timer-lifecycle clauses and their five selected SCR parents without changing fix
 focused `WML-306` target activates WML-C-15 as an explicit optional Class C capability and exposes
 the source-audited access, error, unknown-DTD, and task-failure obligations without inferring an
 unrelated WAE-family mapping.
+The focused `WML-307` target exposes WML character processing and WBXML charset,
+document defaults, and token typing. Its charset evidence uses dated IANA registry
+fixtures and leaves the broader residual work visible.
 
 The `WSP-8` slice is the adoption checkpoint for the selected connectionless WSP lane:
 
@@ -132,7 +135,7 @@ node scripts/wap-context-pack.mjs WML-203
 ```
 
 The supported retrieval targets are `WML-2`, `WML-201` through `WML-205`, `WML-3`, `WML-301`
-through `WML-306`, `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
+through `WML-307`, `WML-309`, `TRN-7`, `TRN-702`, `TRN-703`, `TRN-706` through `TRN-708`, `TRN-710`,
 `WSP-8`, `WSP-801`, `WSP-802`, `WSP-805`, `WMLS-5`, `WMLS-501`, and `WMLS-502`. A work-item target keeps sprint dependencies and conformance
 governance in view while limiting work-item details, direct obligations, mapping gaps, and source
 documents to the selected slice. Other targets remain rejected until their implementation slice

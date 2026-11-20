@@ -63,9 +63,9 @@
     },
     "testEvidenceLinkedCount": 34,
     "mandatoryImplementationStatus": {
-      "implemented": 23,
+      "implemented": 25,
       "missing": 14,
-      "partial": 10
+      "partial": 8
     }
   },
   "obligations": [
@@ -278,19 +278,28 @@
           "R0-08",
           "C5-06"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Lowband verifies MIME/BOM/XML precedence, lossless Unicode mapping, malformed-byte rejection, and the WBXML charset boundary. Native and WASM render the same document characters across the supported source encodings.",
         "implementationEvidence": [
           {
             "path": "transport-rust/src/responses.rs",
             "symbol": "decode_textual_wml_payload"
+          },
+          {
+            "path": "transport-rust/src/wbxml_decoder.rs",
+            "symbol": "decode_wbxml"
           }
         ],
         "testEvidence": [
           {
             "path": "transport-rust/src/tests/fetch_mapping.rs",
-            "test": "transport_map_success_payload_utf16le_textual_wml_maps_ok",
-            "command": "cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok"
+            "test": "transport_wml_307_raw_text_encoding",
+            "command": "cd transport-rust && cargo test --lib transport_wml_307_raw_text_encoding"
+          },
+          {
+            "path": "transport-rust/src/tests/wbxml_conformance.rs",
+            "test": "transport_wbxml_wml_307_historical_charset_fixtures",
+            "command": "cd transport-rust && cargo test --lib transport_wbxml_wml_307_historical_charset_fixtures"
           }
         ],
         "evidenceState": "direct-test-linked"
@@ -333,19 +342,24 @@
           "R0-08",
           "C5-06"
         ],
-        "implementationStatus": "partial",
-        "assessmentNote": "Named-entity processing is exercised, but the complete decimal/hexadecimal, nbsp, shy, and Unicode entity behavior is not covered.",
+        "implementationStatus": "implemented",
+        "assessmentNote": "Native and WASM fixtures cover the seven required named entities, decimal and hexadecimal Unicode references, single-pass resolution, and XML 1.0 character rejection in literals and references.",
         "implementationEvidence": [
           {
             "path": "engine-wasm/engine/src/parser/wml_parser/xml.rs",
-            "symbol": "decode_general_entity"
+            "symbol": "parse_xml_document"
           }
         ],
         "testEvidence": [
           {
-            "path": "engine-wasm/engine/src/parser/wml_parser/tests.rs",
-            "test": "decodes_entities_and_uses_href_as_fallback_link_text",
-            "command": "cd engine-wasm/engine && cargo test decodes_entities_and_uses_href_as_fallback_link_text"
+            "path": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+            "test": "wml_307_text_encoding_and_entities",
+            "command": "cd engine-wasm/engine && cargo test wml_307_text_encoding_and_entities"
+          },
+          {
+            "path": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+            "test": "wml_307_rejects_invalid_xml_characters",
+            "command": "cd engine-wasm/engine && cargo test wml_307_rejects_invalid_xml_characters"
           }
         ],
         "evidenceState": "direct-test-linked"

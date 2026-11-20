@@ -537,6 +537,113 @@ fn wasm_wml_203_strict_prologue_and_selected_dtd_family_match_native_behavior() 
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_307_rejects_invalid_xml_characters() {
+    use crate::engine_tests::wml_307_text::{invalid_character_decks, TEXT_CONTENT_TYPE, TEXT_URL};
+
+    for (case, deck) in invalid_character_decks() {
+        let mut engine = WmlEngine::wasm_new();
+        let error = engine
+            .load_deck_context_wasm(&deck, TEXT_URL, TEXT_CONTENT_TYPE, None, None)
+            .expect_err(case);
+        assert!(
+            error
+                .as_string()
+                .is_some_and(|message| message.contains("Malformed XML")),
+            "{case}: {error:?}"
+        );
+        let diagnostics = engine
+            .last_wml_load_diagnostics_wasm()
+            .expect("diagnostics");
+        let entries = Array::from(&diagnostics);
+        assert_eq!(entries.length(), 1, "{case}");
+        let code = Reflect::get(&entries.get(0), &JsValue::from_str("code")).expect("code");
+        assert_eq!(
+            code.as_string().as_deref(),
+            Some("WML_MALFORMED_XML"),
+            "{case}"
+        );
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_307_renders_transport_decoded_text() {
+    #[derive(serde::Deserialize)]
+    struct Corpus {
+        cases: Vec<Case>,
+    }
+
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Case {
+        id: String,
+        body_base64: String,
+        decoded_wml: Option<String>,
+        rendered_text: Option<String>,
+    }
+
+    let corpus: Corpus = serde_json::from_str(include_str!(
+        "../../../transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json"
+    ))
+    .expect("raw WML fixture corpus must parse");
+    // Lowband's native test checks this decoded XML byte-for-byte before engine handoff.
+    for case in corpus.cases {
+        let Some(xml) = case.decoded_wml else {
+            continue;
+        };
+        let expected = case
+            .rendered_text
+            .expect("decoded case must specify rendered text");
+        let mut engine = WmlEngine::wasm_new();
+        engine
+            .load_deck_context_wasm(
+                &xml,
+                "http://example.test/wml-307.wml",
+                "text/vnd.wap.wml",
+                Some(case.body_base64),
+                None,
+            )
+            .unwrap_or_else(|error| panic!("{}: {error:?}", case.id));
+        let render = draw_text(&engine.render_wasm().expect("decoded WML should render"));
+        assert!(render.contains(&expected), "{}: {render:?}", case.id);
+    }
+}
+
+#[wasm_bindgen_test]
+fn wasm_wml_307_text_encoding_and_entities() {
+    use crate::engine_tests::wml_307_text::{
+        text_decks, ENTITY_VALUE, RENDERED_TEXT, TEXT_CONTENT_TYPE, TEXT_URL,
+    };
+
+    for (case, deck) in text_decks() {
+        let mut engine = WmlEngine::wasm_new();
+        engine
+            .load_deck_context_wasm(&deck, TEXT_URL, TEXT_CONTENT_TYPE, None, None)
+            .unwrap_or_else(|error| panic!("{case}: {error:?}"));
+        assert_eq!(
+            engine.active_card_id_wasm().as_deref(),
+            Ok("main"),
+            "{case}"
+        );
+        let text = draw_text(&engine.render_wasm().expect("text deck should render"));
+        assert!(
+            text.iter().any(|line| line == RENDERED_TEXT),
+            "{case}: unexpected render {text:?}"
+        );
+        engine.handle_key_wasm("enter".into()).expect("follow Next");
+        assert_eq!(
+            engine.active_card_id_wasm().as_deref(),
+            Ok("next"),
+            "{case}"
+        );
+        assert_eq!(
+            engine.get_var_wasm("entityProbe".into()).as_deref(),
+            Some(ENTITY_VALUE),
+            "{case}"
+        );
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_m1_02_load_deck_context_boundary_sets_metadata() {
     let mut engine = WmlEngine::wasm_new();
 

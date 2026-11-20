@@ -5974,6 +5974,69 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//VENDOR//DTD WML 1.3 POLICY//EN\"\n  \"http://vendor.test/wml13-policy.dtd\">\n<wml>\n  <card id=\"home\">\n    <p>\n      Before vendor policy.\n      <vendor:policy mode=\"constrained\">\n        Recognized content remains available.\n        <a href=\"#failure\">Failure policy</a>\n      </vendor:policy>\n      After vendor policy.\n    </p>\n  </card>\n  <card id=\"failure\">\n    <do type=\"accept\">\n      <go href=\"#missing\">\n        <setvar name=\"PrivateState\" value=\"must-roll-back\"/>\n      </go>\n    </do>\n    <p>Failed actions keep this card active.</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml307TextEntities",
+    "label": "WML Text Encoding and Entities",
+    "description": "Load UTF-8 WML containing named and numeric references and a conflicting in-deck charset hint.",
+    "goal": "Verify that character references resolve to Unicode and escaped text remains literal.",
+    "workItems": [
+      "WML-307"
+    ],
+    "specItems": [
+      "WML-CL-ENTITY-FORMS",
+      "WML-CL-ENTITY-UNICODE-IDENTITY"
+    ],
+    "testingAc": [
+      "Confirm the deck displays Café, Į, and the literal text &quot;.",
+      "Follow Next and confirm the destination card displays Done."
+    ],
+    "flows": [
+      {
+        "id": "textual-wml-entity-render",
+        "title": "WML character references resolve once and preserve Unicode",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-307"
+        ],
+        "specItems": [
+          "WML-CL-ENTITY-FORMS",
+          "WML-CL-ENTITY-UNICODE-IDENTITY"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main"
+          },
+          "render": {
+            "textIncludes": [
+              "Café ĮĮ &quot;"
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next"
+              },
+              "render": {
+                "textIncludes": [
+                  "Done"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=US-ASCII\"/></head>\n  <card id=\"main\">\n    <p>Café &#302;&#x12E; &amp;quot;</p>\n    <p><a href=\"#next\">Next</a></p>\n  </card>\n  <card id=\"next\">\n    <onevent type=\"onenterforward\">\n      <refresh><setvar name=\"entityProbe\" value=\"&quot;&amp;&apos;&lt;&gt;A&nbsp;B&shy;C&#302;&#x12E;&amp;quot;\"/></refresh>\n    </onevent>\n    <p>Done</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml309FrameAffordances",
     "label": "WML-309 Frame Affordances",
     "description": "Exercises the canonical engine presentation frame for ordered active do affordances and frame-bound action dispatch.",

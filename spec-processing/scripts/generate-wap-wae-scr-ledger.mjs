@@ -828,11 +828,20 @@ const selectedAudit = new Map([
       ownerLayers: ['transport-rust', 'browser'],
       requirementIds: ['RQ-WAE-001', 'RQ-WAE-005'],
       workItems: ['WAE-602', 'R0-08'],
-      status: 'missing',
+      status: 'partial',
       note:
-        'The generic application/vnd.wap.wbxml media type is absent from the supported content-type matrix; WMLC-specific WBXML decoding does not satisfy this separate row.',
-      implementationEvidence: [],
-      testEvidence: []
+        'Lowband routes generic WBXML by registered public identifier, with native fixtures for WML 1.3 and SI 1.0. Broader vocabulary support and WAE integration remain open.',
+      implementationEvidence: [
+        codeEvidence('transport-rust/src/wbxml.rs', 'decode_wbxml_for_content_type'),
+        codeEvidence('transport-rust/src/responses.rs', 'map_success_payload_response')
+      ],
+      testEvidence: [
+        testEvidence(
+          'transport-rust/src/tests/wbxml_conformance.rs',
+          'transport_wml_307_generic_wbxml_fixtures',
+          'cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures'
+        )
+      ]
     }
   ],
   [

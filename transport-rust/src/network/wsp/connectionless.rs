@@ -44,8 +44,13 @@ const WELL_KNOWN_MEDIA_TYPES: &[(u8, &str)] = &[
     (0x03, "text/plain"),
     (0x08, "text/vnd.wap.wml"),
     (0x14, "application/vnd.wap.wmlc"),
+    (0x16, "application/vnd.wap.channelc"),
+    (0x27, "application/xml"),
     (0x28, "text/xml"),
-    (0x29, "application/xml"),
+    (0x29, "application/vnd.wap.wbxml"),
+    (0x2e, "application/vnd.wap.sic"),
+    (0x30, "application/vnd.wap.slc"),
+    (0x32, "application/vnd.wap.coc"),
 ];
 
 /// Header field names whose values may be compacted to a well-known media octet.
@@ -1106,6 +1111,9 @@ mod tests {
         assert_eq!(decoded.media_type(), "application/vnd.wap.wmlc");
         assert_eq!(decoded.charset(), None);
         assert_eq!(decoded.consumed_bytes(), 1);
+
+        let xml = decode_content_type_value(&[0xa7]).expect("application/xml assignment");
+        assert_eq!(xml.media_type(), "application/xml");
 
         let error = decode_content_type_value(&[0xFF]).expect_err("unknown media should fail");
         assert_eq!(

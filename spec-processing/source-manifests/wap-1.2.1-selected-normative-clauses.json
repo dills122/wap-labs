@@ -43,14 +43,14 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 11,
     "plannedFixtureCount": 762,
-    "assessedClauseCount": 364
+    "assessedClauseCount": 374
   },
   "families": [
     {
       "family": "wml",
       "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wml-scr.json",
-      "parentLedgerSha256": "43d61781f30f25812f6453a2b3554716e2dc7b1c6dfe1107c6a2ed7281e0e136",
+      "parentLedgerSha256": "6dfb524065fdf987a24072f6f6ac8a16c97359a7bb1220e0a4ea3dbed67553ee",
       "effectiveSequence": [
         "WAP-191-WML",
         "WAP-191_102-WML",
@@ -79,7 +79,7 @@
             "staticConformanceSection": "15.1.1",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "transport-rust"
@@ -106,7 +106,7 @@
             "staticConformanceSection": "15.1.1",
             "changeSection": null
           },
-          "implementationStatus": "partial",
+          "implementationStatus": "implemented",
           "ownerLayers": [
             "engine-wasm",
             "transport-rust"
@@ -1211,8 +1211,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFERENCE-ENCODING-DETECTION",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority."
+            "status": "implemented",
+            "assertion": "Determine textual WML character encoding using XML rules; do not use in-document meta fields as the encoding authority.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json",
+              "testPath": "transport-rust/src/tests/fetch_mapping.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1223,20 +1228,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-05": "partial"
+              "WML-C-05": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1257,8 +1264,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFERENCE-TRANSCODING-LOSS",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information."
+            "status": "implemented",
+            "assertion": "Avoid transcoding when the user agent supports the original encoding and conversion would lose information.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json",
+              "testPath": "transport-rust/src/tests/fetch_mapping.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1269,20 +1281,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-05": "partial"
+              "WML-C-05": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1303,8 +1317,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFERENCE-UNICODE-MAPPING",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Map every character in each recognized source encoding to its Unicode character."
+            "status": "implemented",
+            "assertion": "Map every character in each recognized source encoding to its Unicode character.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json",
+              "testPath": "transport-rust/src/tests/fetch_mapping.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1315,20 +1334,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-05": "partial"
+              "WML-C-05": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1349,8 +1370,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFERENCE-ENTITY-CHARSET",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Process character entities in the document character set."
+            "status": "implemented",
+            "assertion": "Process character entities in the document character set.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wml_307_text_encoding/cases.json",
+              "testPath": "transport-rust/src/tests/fetch_mapping.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_raw_text_encoding"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1361,20 +1387,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-05": "partial"
+              "WML-C-05": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1395,8 +1423,13 @@
           "fixturePlan": {
             "id": "WML-FX-REFERENCE-WBXML-PRECEDENCE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "When WML is carried in WBXML, determine character encoding using the WBXML rules."
+            "status": "implemented",
+            "assertion": "When WML is carried in WBXML, determine character encoding using the WBXML rules.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wbxml_wml13/wml-307-charsets.json",
+              "testPath": "transport-rust/src/tests/wbxml_conformance.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wbxml_wml_307_historical_charset_fixtures"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1407,20 +1440,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-05": "partial"
+              "WML-C-05": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1441,8 +1476,13 @@
           "fixturePlan": {
             "id": "WML-FX-ENTITY-FORMS",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Accept named, decimal numeric, and hexadecimal numeric WML character references."
+            "status": "implemented",
+            "assertion": "Accept named, decimal numeric, and hexadecimal numeric WML character references.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-307-text-entities.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1453,20 +1493,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-06": "partial"
+              "WML-C-06": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1487,8 +1529,13 @@
           "fixturePlan": {
             "id": "WML-FX-ENTITY-UNICODE-IDENTITY",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Resolve numeric character references against Unicode independently of the document byte encoding."
+            "status": "implemented",
+            "assertion": "Resolve numeric character references against Unicode independently of the document byte encoding.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-307-text-entities.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1499,20 +1546,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-06": "partial"
+              "WML-C-06": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -1533,8 +1582,13 @@
           "fixturePlan": {
             "id": "WML-FX-ENTITY-REQUIRED-NAMES",
             "kind": "parser",
-            "status": "planned",
-            "assertion": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen."
+            "status": "implemented",
+            "assertion": "Resolve the WML named entities for quotation mark, ampersand, apostrophe, less-than, greater-than, non-breaking space, and soft hyphen.",
+            "evidence": {
+              "path": "engine-wasm/examples/source/wml-307-text-entities.wml",
+              "testPath": "engine-wasm/engine/src/engine_tests/wml_307_text.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_307_text"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -1545,20 +1599,22 @@
               "C5-06",
               "R0-01",
               "R0-08",
-              "WML-201"
+              "WML-201",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-001",
               "RQ-WAE-012"
             ],
             "parentImplementationSnapshot": {
-              "WML-C-06": "partial"
+              "WML-C-06": "implemented"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
-            "WML-201"
+            "WML-201",
+            "WML-307"
           ]
         },
         {
@@ -9227,7 +9283,7 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-36": "partial",
-              "WML-C-06": "partial"
+              "WML-C-06": "implemented"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -9277,7 +9333,7 @@
             ],
             "parentImplementationSnapshot": {
               "WML-C-36": "partial",
-              "WML-C-06": "partial"
+              "WML-C-06": "implemented"
             },
             "clauseImplementationStatus": "not-assessed",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
@@ -10487,9 +10543,9 @@
     },
     {
       "family": "wae",
-      "status": "nested-clauses-anchored-fixtures-planned",
+      "status": "nested-clauses-partially-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wae-scr.json",
-      "parentLedgerSha256": "5e096d15598d27e64518fb2c90ff15dfb1451b27bb6a16759364cdf347a10775",
+      "parentLedgerSha256": "7e1ce963ab98bf80a8d13546ce75c77ba90247f627181bc901d72214e4892e11",
       "effectiveSequence": [
         "WAP-190-WAESpec",
         "WAP-190_101-WAESpec",
@@ -10775,7 +10831,7 @@
             "staticConformanceSection": "Appendix B 1.1",
             "changeSection": "4.3"
           },
-          "implementationStatus": "missing",
+          "implementationStatus": "partial",
           "ownerLayers": [
             "transport-rust",
             "browser"
@@ -12254,7 +12310,7 @@
               "RQ-WMLS-011"
             ],
             "parentImplementationSnapshot": {
-              "WAESpec-C-019": "missing",
+              "WAESpec-C-019": "partial",
               "WAESpec-C-020": "implemented",
               "WAESpec-C-021": "missing"
             },
@@ -12305,7 +12361,7 @@
               "RQ-WMLS-011"
             ],
             "parentImplementationSnapshot": {
-              "WAESpec-C-019": "missing",
+              "WAESpec-C-019": "partial",
               "WAESpec-C-020": "implemented",
               "WAESpec-C-021": "missing"
             },
@@ -12331,8 +12387,13 @@
           "fixturePlan": {
             "id": "WAE-FX-WBXML-MEDIA-TYPE",
             "kind": "transport-boundary",
-            "status": "planned",
-            "assertion": "Recognize application/vnd.wap.wbxml as generic WBXML content and route it to the WBXML decoder."
+            "status": "implemented",
+            "assertion": "Recognize application/vnd.wap.wbxml as generic WBXML content and route it to the WBXML decoder.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wbxml_generic/cases.json",
+              "testPath": "transport-rust/src/tests/wbxml_conformance.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -12348,9 +12409,9 @@
               "RQ-WAE-005"
             ],
             "parentImplementationSnapshot": {
-              "WAESpec-C-019": "missing"
+              "WAESpec-C-019": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12372,8 +12433,13 @@
           "fixturePlan": {
             "id": "WAE-FX-WBXML-DOCUMENT-TYPING",
             "kind": "binary-decoder",
-            "status": "planned",
-            "assertion": "Use decoded WBXML document typing rather than assuming generic WBXML is always WML."
+            "status": "implemented",
+            "assertion": "Use decoded WBXML document typing rather than assuming generic WBXML is always WML.",
+            "evidence": {
+              "path": "transport-rust/tests/fixtures/transport/wbxml_generic/cases.json",
+              "testPath": "transport-rust/src/tests/wbxml_conformance.rs",
+              "command": "cargo test --manifest-path transport-rust/Cargo.toml --lib transport_wml_307_generic_wbxml_fixtures"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -12389,9 +12455,9 @@
               "RQ-WAE-005"
             ],
             "parentImplementationSnapshot": {
-              "WAESpec-C-019": "missing"
+              "WAESpec-C-019": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           }
         },
@@ -12485,7 +12551,7 @@
       "family": "wbxml",
       "status": "nested-clauses-fixture-backed",
       "parentLedger": "spec-processing/source-manifests/wap-1.2.1-wbxml-scr.json",
-      "parentLedgerSha256": "28934f63b284ce6e6fc130a97be4c93b563cb454ffc08b281eeb3ab4a62a7421",
+      "parentLedgerSha256": "0cd9ae913ec79fded7f89e8cb4d1d4a68ed0043c8296f366a2aa5e38b2623d3a",
       "effectiveSequence": [
         "WAP-192-WBXML",
         "WAP-192_105-WBXML"
@@ -12823,7 +12889,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -12834,7 +12901,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-CHARSET-EXTERNAL-PRECEDENCE",
@@ -12865,7 +12935,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -12876,7 +12947,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-CHARSET-STRING-TERMINATION",
@@ -12907,7 +12981,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -12918,7 +12993,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-DOCUMENT-HEADER-ORDER",
@@ -13159,7 +13237,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -13170,7 +13249,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-STRING-TABLE-REQUIRED",
@@ -13915,7 +13997,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -13926,7 +14009,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-TABLE-STRING",
@@ -13957,7 +14043,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -13968,7 +14055,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-EMPTY-ATTRIBUTE-STRING",
@@ -14125,7 +14215,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14136,7 +14227,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-PROCESSING-INSTRUCTION",
@@ -14422,7 +14516,8 @@
             "workItems": [
               "C5-06",
               "R0-08",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14433,7 +14528,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-DEFAULT-ATTRIBUTES-RECONSTRUCTED",
@@ -14463,7 +14561,8 @@
             "workItems": [
               "C5-06",
               "R0-08",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14474,7 +14573,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-EXTERNAL-TOKEN-TYPING",
@@ -14505,7 +14607,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14516,7 +14619,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-MIME-TOKEN-TYPING",
@@ -14547,7 +14653,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14558,7 +14665,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         },
         {
           "id": "WBXML-CL-BINARY-LITERAL-EQUIVALENCE",
@@ -14589,7 +14699,8 @@
               "C5-06",
               "R0-08",
               "T0-07",
-              "WML-203"
+              "WML-203",
+              "WML-307"
             ],
             "requirementIds": [
               "RQ-RMK-007",
@@ -14600,7 +14711,10 @@
             },
             "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
-          }
+          },
+          "directWorkItems": [
+            "WML-307"
+          ]
         }
       ],
       "directEvidence": {

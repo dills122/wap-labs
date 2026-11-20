@@ -239,6 +239,85 @@ fn transport_map_success_payload_accepts_body_at_limit() {
 }
 
 #[test]
+fn transport_wml_307_raw_text_encoding() {
+    #[derive(Deserialize)]
+    struct Corpus {
+        cases: Vec<Case>,
+    }
+
+    #[derive(Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Case {
+        id: String,
+        content_type: String,
+        body_base64: String,
+        decoded_wml: Option<String>,
+        rendered_text: Option<String>,
+        error_contains: Option<String>,
+    }
+
+    let corpus: Corpus = read_json_fixture("wml_307_text_encoding", "cases.json");
+    let url = "http://example.test/wml-307.wml";
+    for case in corpus.cases {
+        let body = BASE64
+            .decode(&case.body_base64)
+            .expect("fixture must contain bytes");
+        let response = map_success_payload_response(SuccessPayloadParams {
+            status: 200,
+            is_wap_scheme: false,
+            request_url: url,
+            upstream_url: url,
+            final_url: url.to_owned(),
+            content_type: case.content_type,
+            body: &body,
+            attempt: 1,
+            elapsed_ms: 0.0,
+            request_id: None,
+        });
+
+        match (case.decoded_wml, case.rendered_text, case.error_contains) {
+            (Some(xml), Some(text), None) => {
+                assert!(response.ok, "{}: {:?}", case.id, response.error);
+                assert_eq!(response.wml.as_deref(), Some(xml.as_str()), "{}", case.id);
+                let deck = response.engine_deck_input.expect("decoded deck handoff");
+                assert_eq!(deck.wml_xml, xml, "{}", case.id);
+                assert_eq!(
+                    deck.raw_bytes_base64.as_deref(),
+                    Some(case.body_base64.as_str())
+                );
+                let mut engine = wavenav_engine::WmlEngine::new();
+                engine
+                    .load_deck_context(
+                        &deck.wml_xml,
+                        &deck.base_url,
+                        &deck.content_type,
+                        deck.raw_bytes_base64,
+                    )
+                    .unwrap_or_else(|error| panic!("{}: {error}", case.id));
+                let render = engine.render().expect("decoded WML should render");
+                assert!(render.draw.iter().any(|cmd| matches!(cmd, wavenav_engine::DrawCmd::Text { text: actual, .. } if actual == &text)), "{}: {render:?}", case.id);
+            }
+            (None, None, Some(expected)) => {
+                assert!(
+                    !response.ok && response.wml.is_none() && response.engine_deck_input.is_none(),
+                    "{}",
+                    case.id
+                );
+                let error = response.error.expect("decode error");
+                assert_eq!(error.code, "PROTOCOL_ERROR", "{}", case.id);
+                assert!(
+                    error.message.contains(&expected),
+                    "{}: {}",
+                    case.id,
+                    error.message
+                );
+            }
+            _ => panic!("{} must specify a success or failure outcome", case.id),
+        }
+    }
+}
+
+#[test]
 fn transport_map_success_payload_utf16le_textual_wml_maps_ok() {
     let base = "http://example.test/index.wml".to_string();
     let utf16le_body: Vec<u8> = vec![
@@ -491,7 +570,7 @@ fn transport_map_success_payload_external_charset_conflict_is_deterministic() {
 }
 
 #[test]
-fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
+fn transport_map_success_payload_unregistered_generic_wbxml_fails_before_engine_handoff() {
     let response = map_success_payload_response(SuccessPayloadParams {
         status: 200,
         is_wap_scheme: false,
@@ -499,7 +578,7 @@ fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
         upstream_url: "http://upstream.example",
         final_url: "http://request.example".to_string(),
         content_type: "application/vnd.wap.wbxml".to_string(),
-        body: b"\x03\x0a\x6a\x00\x3f",
+        body: b"\x03\x01\x6a\x00\x3f",
         attempt: 1,
         elapsed_ms: 2.0,
         request_id: None,
@@ -508,8 +587,9 @@ fn transport_map_success_payload_generic_wbxml_does_not_select_wml_tokens() {
     assert!(!response.ok);
     assert_eq!(
         response.error.as_ref().map(|error| error.code.as_str()),
-        Some("UNSUPPORTED_CONTENT_TYPE")
+        Some("WBXML_DECODE_FAILED")
     );
+    assert!(response.engine_deck_input.is_none());
 }
 
 #[test]

@@ -1,0 +1,30 @@
+---
+id: "fixture:WBXML-FX-CHARSET-MIBENUM"
+key: "WBXML-FX-CHARSET-MIBENUM"
+type: "fixture"
+generated: true
+slice: "WML-3"
+status: "implemented"
+tags:
+  - "wap-knowledge-graph"
+  - "wap-knowledge-graph/fixture"
+---
+
+# Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.
+
+> Generated from canonical repository manifests. Do not edit this note directly.
+
+## Relationships
+
+- `verified-by` ← [[clauses/WBXML-CL-CHARSET-MIBENUM|WBXML-CL-CHARSET-MIBENUM]]
+
+## Data
+
+```json
+{
+  "kind": "binary-decoder",
+  "status": "implemented",
+  "assertion": "Interpret the charset field as an IANA MIBenum value, with zero meaning unknown.",
+  "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
+}
+```

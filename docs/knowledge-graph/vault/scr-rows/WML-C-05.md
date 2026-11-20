@@ -48,20 +48,29 @@ tags:
     "enhancementMayReplaceStrictBehavior": false
   },
   "reviewState": "source-extracted-class-c-applied-mapping-provisional",
-  "implementationStatus": "partial",
+  "implementationStatus": "implemented",
   "evidenceState": "direct-test-linked",
-  "assessmentNote": "The transport maps UTF-8-compatible input and BOM-marked UTF-16, but the full recognized-charset and external-metadata precedence model is not implemented.",
+  "assessmentNote": "Lowband verifies MIME/BOM/XML precedence, lossless Unicode mapping, malformed-byte rejection, and the WBXML charset boundary. Native and WASM render the same document characters across the supported source encodings.",
   "implementationEvidence": [
     {
       "path": "transport-rust/src/responses.rs",
       "symbol": "decode_textual_wml_payload"
+    },
+    {
+      "path": "transport-rust/src/wbxml_decoder.rs",
+      "symbol": "decode_wbxml"
     }
   ],
   "testEvidence": [
     {
       "path": "transport-rust/src/tests/fetch_mapping.rs",
-      "test": "transport_map_success_payload_utf16le_textual_wml_maps_ok",
-      "command": "cd transport-rust && cargo test --lib transport_map_success_payload_utf16le_textual_wml_maps_ok"
+      "test": "transport_wml_307_raw_text_encoding",
+      "command": "cd transport-rust && cargo test --lib transport_wml_307_raw_text_encoding"
+    },
+    {
+      "path": "transport-rust/src/tests/wbxml_conformance.rs",
+      "test": "transport_wbxml_wml_307_historical_charset_fixtures",
+      "command": "cd transport-rust && cargo test --lib transport_wbxml_wml_307_historical_charset_fixtures"
     }
   ],
   "ownerLayers": [

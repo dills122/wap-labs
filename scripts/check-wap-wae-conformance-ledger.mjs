@@ -354,7 +354,7 @@ const wmlscriptc = obligations.find(
   (obligation) => obligation.id === 'WAESpec-C-021'
 );
 if (
-  genericWbxml?.mapping?.implementationStatus !== 'missing' ||
+  genericWbxml?.mapping?.implementationStatus !== 'partial' ||
   wmlc?.mapping?.implementationStatus !== 'implemented' ||
   wmlscriptc?.mapping?.implementationStatus !== 'missing'
 ) {
@@ -434,7 +434,7 @@ const selectedStatusCounts = countBy(
 );
 if (
   JSON.stringify(selectedStatusCounts) !==
-  JSON.stringify({ implemented: 5, missing: 3, partial: 3 }) ||
+  JSON.stringify({ implemented: 5, missing: 2, partial: 4 }) ||
   JSON.stringify(ledger.summary?.selectedImplementationStatus) !==
   JSON.stringify(selectedStatusCounts)
 ) {
@@ -446,10 +446,10 @@ const selectedTestCount = selectedRequired.filter(
   (obligation) => obligation.mapping?.testEvidence?.length > 0
 ).length;
 if (
-  selectedTestCount !== 8 ||
+  selectedTestCount !== 9 ||
   ledger.summary?.selectedDirectTestEvidenceCount !== selectedTestCount
 ) {
-  failures.push('selected direct-test evidence count must remain 8/11');
+  failures.push('selected direct-test evidence count must be 9/11');
 }
 if (
   ledger.summary?.itemCount !== obligations.length ||

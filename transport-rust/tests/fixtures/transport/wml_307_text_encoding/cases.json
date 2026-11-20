@@ -1,0 +1,180 @@
+{
+  "sourceSections": [
+    "WAP-191_104-WML §6.1",
+    "WAP-191_104-WML §6.2 and XML 1.0 §§2.2, 4.1",
+    "XML 1.0 §4.3.3 and Appendix F",
+    "IANA text/vnd.wap.wml registration and RFC 2376 §3.1"
+  ],
+  "cases": [
+    {
+      "id": "xml-default-utf8-ignores-in-deck-meta",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIj8+PCFET0NUWVBFIHdtbCBQVUJMSUMgIi0vL1dBUEZPUlVNLy9EVEQgV01MIDEuMy8vRU4iICJodHRwOi8vd3d3LndhcGZvcnVtLm9yZy9EVEQvd21sMTMuZHRkIj48d21sPjxoZWFkPjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0idGV4dC92bmQud2FwLndtbDsgY2hhcnNldD1VUy1BU0NJSSIvPjwvaGVhZD48Y2FyZCBpZD0ibWFpbiI+PHA+Q2Fmw6kgJmFtcDsgJiMzMDI7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=US-ASCII\"/></head><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "utf8-bom-stripped",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgd21sIFBVQkxJQyAiLS8vV0FQRk9SVU0vL0RURCBXTUwgMS4zLy9FTiIgImh0dHA6Ly93d3cud2FwZm9ydW0ub3JnL0RURC93bWwxMy5kdGQiPjx3bWw+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZsOpICZhbXA7ICYjMzAyOzwvcD48L2NhcmQ+PC93bWw+",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "utf16le-bom",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "//48AD8AeABtAGwAIAB2AGUAcgBzAGkAbwBuAD0AIgAxAC4AMAAiACAAZQBuAGMAbwBkAGkAbgBnAD0AIgBVAFQARgAtADEANgAiAD8APgA8ACEARABPAEMAVABZAFAARQAgAHcAbQBsACAAUABVAEIATABJAEMAIAAiAC0ALwAvAFcAQQBQAEYATwBSAFUATQAvAC8ARABUAEQAIABXAE0ATAAgADEALgAzAC8ALwBFAE4AIgAgACIAaAB0AHQAcAA6AC8ALwB3AHcAdwAuAHcAYQBwAGYAbwByAHUAbQAuAG8AcgBnAC8ARABUAEQALwB3AG0AbAAxADMALgBkAHQAZAAiAD4APAB3AG0AbAA+ADwAYwBhAHIAZAAgAGkAZAA9ACIAbQBhAGkAbgAiAD4APABwAD4AQwBhAGYA6QAgACYAYQBtAHAAOwAgACYAIwAzADAAMgA7ADwALwBwAD4APAAvAGMAYQByAGQAPgA8AC8AdwBtAGwAPgA=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "utf16be-bom",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "/v8APAA/AHgAbQBsACAAdgBlAHIAcwBpAG8AbgA9ACIAMQAuADAAIgA/AD4APAAhAEQATwBDAFQAWQBQAEUAIAB3AG0AbAAgAFAAVQBCAEwASQBDACAAIgAtAC8ALwBXAEEAUABGAE8AUgBVAE0ALwAvAEQAVABEACAAVwBNAEwAIAAxAC4AMwAvAC8ARQBOACIAIAAiAGgAdAB0AHAAOgAvAC8AdwB3AHcALgB3AGEAcABmAG8AcgB1AG0ALgBvAHIAZwAvAEQAVABEAC8AdwBtAGwAMQAzAC4AZAB0AGQAIgA+ADwAdwBtAGwAPgA8AGMAYQByAGQAIABpAGQAPQAiAG0AYQBpAG4AIgA+ADwAcAA+2AHcAAAgAEMAYQBmAOkAIAAmAGEAbQBwADsAIAAmACMAMwAwADIAOwA8AC8AcAA+ADwALwBjAGEAcgBkAD4APAAvAHcAbQBsAD4=",
+      "decodedWml": "<?xml version=\"1.0\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>𐐀 Café &amp; &#302;</p></card></wml>",
+      "renderedText": "𐐀 Café & Į"
+    },
+    {
+      "id": "mime-utf16-uses-bom",
+      "contentType": "text/vnd.wap.wml; charset=UTF-16",
+      "bodyBase64": "/v8APAA/AHgAbQBsACAAdgBlAHIAcwBpAG8AbgA9ACIAMQAuADAAIgAgAGUAbgBjAG8AZABpAG4AZwA9ACIAVQBUAEYALQAxADYAIgA/AD4APAAhAEQATwBDAFQAWQBQAEUAIAB3AG0AbAAgAFAAVQBCAEwASQBDACAAIgAtAC8ALwBXAEEAUABGAE8AUgBVAE0ALwAvAEQAVABEACAAVwBNAEwAIAAxAC4AMwAvAC8ARQBOACIAIAAiAGgAdAB0AHAAOgAvAC8AdwB3AHcALgB3AGEAcABmAG8AcgB1AG0ALgBvAHIAZwAvAEQAVABEAC8AdwBtAGwAMQAzAC4AZAB0AGQAIgA+ADwAdwBtAGwAPgA8AGMAYQByAGQAIABpAGQAPQAiAG0AYQBpAG4AIgA+ADwAcAA+AEMAYQBmAOkAIAAmAGEAbQBwADsAIAAmACMAMwAwADIAOwA8AC8AcAA+ADwALwBjAGEAcgBkAD4APAAvAHcAbQBsAD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "mime-utf16le-signaled-without-bom",
+      "contentType": "text/vnd.wap.wml; charset=UTF-16LE",
+      "bodyBase64": "PAA/AHgAbQBsACAAdgBlAHIAcwBpAG8AbgA9ACIAMQAuADAAIgAgAGUAbgBjAG8AZABpAG4AZwA9ACIAVQBUAEYALQAxADYATABFACIAPwA+ADwAIQBEAE8AQwBUAFkAUABFACAAdwBtAGwAIABQAFUAQgBMAEkAQwAgACIALQAvAC8AVwBBAFAARgBPAFIAVQBNAC8ALwBEAFQARAAgAFcATQBMACAAMQAuADMALwAvAEUATgAiACAAIgBoAHQAdABwADoALwAvAHcAdwB3AC4AdwBhAHAAZgBvAHIAdQBtAC4AbwByAGcALwBEAFQARAAvAHcAbQBsADEAMwAuAGQAdABkACIAPgA8AHcAbQBsAD4APABjAGEAcgBkACAAaQBkAD0AIgBtAGEAaQBuACIAPgA8AHAAPgBDAGEAZgDpACAAJgBhAG0AcAA7ACAAJgAjADMAMAAyADsAPAAvAHAAPgA8AC8AYwBhAHIAZAA+ADwALwB3AG0AbAA+AA==",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "xml-declaration-selects-latin1",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0nSVNPLTg4NTktMSc/PjwhRE9DVFlQRSB3bWwgUFVCTElDICItLy9XQVBGT1JVTS8vRFREIFdNTCAxLjMvL0VOIiAiaHR0cDovL3d3dy53YXBmb3J1bS5vcmcvRFREL3dtbDEzLmR0ZCI+PHdtbD48aGVhZD48bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvdm5kLndhcC53bWw7IGNoYXJzZXQ9VVRGLTgiLz48L2hlYWQ+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZukgJmFtcDsgJiMzMDI7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding='ISO-8859-1'?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=UTF-8\"/></head><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "mime-charset-overrides-xml-declaration",
+      "contentType": "text/vnd.wap.wml; charset=\"ISO-8859-1\"",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgd21sIFBVQkxJQyAiLS8vV0FQRk9SVU0vL0RURCBXTUwgMS4zLy9FTiIgImh0dHA6Ly93d3cud2FwZm9ydW0ub3JnL0RURC93bWwxMy5kdGQiPjx3bWw+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZukgJmFtcDsgJiMzMDI7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "mime-ascii-with-unicode-reference",
+      "contentType": "text/vnd.wap.wml; charset=US-ASCII",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIj8+PCFET0NUWVBFIHdtbCBQVUJMSUMgIi0vL1dBUEZPUlVNLy9EVEQgV01MIDEuMy8vRU4iICJodHRwOi8vd3d3LndhcGZvcnVtLm9yZy9EVEQvd21sMTMuZHRkIj48d21sPjxjYXJkIGlkPSJtYWluIj48cD5DYWYmIzIzMzsgJmFtcDsgJiMzMDI7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Caf&#233; &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į"
+    },
+    {
+      "id": "unsupported-declaration",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iWC1VTktOT1dOIj8+PCFET0NUWVBFIHdtbCBQVUJMSUMgIi0vL1dBUEZPUlVNLy9EVEQgV01MIDEuMy8vRU4iICJodHRwOi8vd3d3LndhcGZvcnVtLm9yZy9EVEQvd21sMTMuZHRkIj48d21sPjxjYXJkIGlkPSJtYWluIj48cD5DYWbDqSAmYW1wOyAmIzMwMjs8L3A+PC9jYXJkPjwvd21sPg==",
+      "errorContains": "Unsupported WML charset"
+    },
+    {
+      "id": "unsupported-explicit-charset",
+      "contentType": "text/vnd.wap.wml; charset=X-UNKNOWN",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgd21sIFBVQkxJQyAiLS8vV0FQRk9SVU0vL0RURCBXTUwgMS4zLy9FTiIgImh0dHA6Ly93d3cud2FwZm9ydW0ub3JnL0RURC93bWwxMy5kdGQiPjx3bWw+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZsOpICZhbXA7ICYjMzAyOzwvcD48L2NhcmQ+PC93bWw+",
+      "errorContains": "Unsupported WML charset"
+    },
+    {
+      "id": "bom-conflicts-with-mime-charset",
+      "contentType": "text/vnd.wap.wml; charset=ISO-8859-1",
+      "bodyBase64": "77u/PD94bWwgdmVyc2lvbj0iMS4wIj8+PCFET0NUWVBFIHdtbCBQVUJMSUMgIi0vL1dBUEZPUlVNLy9EVEQgV01MIDEuMy8vRU4iICJodHRwOi8vd3d3LndhcGZvcnVtLm9yZy9EVEQvd21sMTMuZHRkIj48d21sPjxjYXJkIGlkPSJtYWluIj48cD5DYWbDqSAmYW1wOyAmIzMwMjs8L3A+PC9jYXJkPjwvd21sPg==",
+      "errorContains": "BOM conflicts with MIME charset"
+    },
+    {
+      "id": "bom-conflicts-with-xml-declaration",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NTktMSI/PjwhRE9DVFlQRSB3bWwgUFVCTElDICItLy9XQVBGT1JVTS8vRFREIFdNTCAxLjMvL0VOIiAiaHR0cDovL3d3dy53YXBmb3J1bS5vcmcvRFREL3dtbDEzLmR0ZCI+PHdtbD48Y2FyZCBpZD0ibWFpbiI+PHA+Q2Fmw6kgJmFtcDsgJiMzMDI7PC9wPjwvY2FyZD48L3dtbD4=",
+      "errorContains": "BOM conflicts with XML declaration"
+    },
+    {
+      "id": "generic-utf16-without-encoding-signature",
+      "contentType": "text/vnd.wap.wml; charset=UTF-16",
+      "bodyBase64": "PAA/AHgAbQBsACAAdgBlAHIAcwBpAG8AbgA9ACIAMQAuADAAIgA/AD4APAAhAEQATwBDAFQAWQBQAEUAIAB3AG0AbAAgAFAAVQBCAEwASQBDACAAIgAtAC8ALwBXAEEAUABGAE8AUgBVAE0ALwAvAEQAVABEACAAVwBNAEwAIAAxAC4AMwAvAC8ARQBOACIAIAAiAGgAdAB0AHAAOgAvAC8AdwB3AHcALgB3AGEAcABmAG8AcgB1AG0ALgBvAHIAZwAvAEQAVABEAC8AdwBtAGwAMQAzAC4AZAB0AGQAIgA+ADwAdwBtAGwAPgA8AGMAYQByAGQAIABpAGQAPQAiAG0AYQBpAG4AIgA+ADwAcAA+AEMAYQBmAOkAIAAmAGEAbQBwADsAIAAmACMAMwAwADIAOwA8AC8AcAA+ADwALwBjAGEAcgBkAD4APAAvAHcAbQBsAD4A",
+      "errorContains": "UTF-16 payload requires a BOM"
+    },
+    {
+      "id": "malformed-utf8-is-not-replaced",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PHdtbD7DKDwvd21sPg==",
+      "errorContains": "Invalid UTF-8 payload"
+    },
+    {
+      "id": "malformed-utf16-surrogate",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "//4A2A==",
+      "errorContains": "unpaired surrogate"
+    },
+    {
+      "id": "ascii-rejects-non-ascii-octet",
+      "contentType": "text/vnd.wap.wml; charset=US-ASCII",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIj8+PCFET0NUWVBFIHdtbCBQVUJMSUMgIi0vL1dBUEZPUlVNLy9EVEQgV01MIDEuMy8vRU4iICJodHRwOi8vd3d3LndhcGZvcnVtLm9yZy9EVEQvd21sMTMuZHRkIj48d21sPjxjYXJkIGlkPSJtYWluIj48cD5DYWbpICZhbXA7ICYjMzAyOzwvcD48L2NhcmQ+PC93bWw+",
+      "errorContains": "Invalid US-ASCII payload"
+    },
+    {
+      "id": "latin1-retains-c1-codepoint",
+      "contentType": "text/vnd.wap.wml",
+      "decodedWml": "<?xml version=\"1.0\" encoding='ISO-8859-1'?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><head><meta http-equiv=\"Content-Type\" content=\"text/vnd.wap.wml; charset=UTF-8\"/></head><card id=\"main\"><p>Café &amp; &#302;</p></card></wml>",
+      "renderedText": "Café & Į",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0nSVNPLTg4NTktMSc/PjwhRE9DVFlQRSB3bWwgUFVCTElDICItLy9XQVBGT1JVTS8vRFREIFdNTCAxLjMvL0VOIiAiaHR0cDovL3d3dy53YXBmb3J1bS5vcmcvRFREL3dtbDEzLmR0ZCI+PHdtbD48aGVhZD48bWV0YSBodHRwLWVxdWl2PSJDb250ZW50LVR5cGUiIGNvbnRlbnQ9InRleHQvdm5kLndhcC53bWw7IGNoYXJzZXQ9VVRGLTgiLz48L2hlYWQ+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZumAICZhbXA7ICYjMzAyOzwvcD48L2NhcmQ+PC93bWw+"
+    },
+    {
+      "id": "utf16-without-bom-or-external-charset",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "ADwAPwB4AG0AbAAgAHYAZQByAHMAaQBvAG4APQAiADEALgAwACIAIABlAG4AYwBvAGQAaQBuAGcAPQAiAFUAVABGAC0AMQA2ACIAPwA+ADwAdwBtAGwALwA+",
+      "errorContains": "NUL is not a legal XML character"
+    },
+    {
+      "id": "unsupported-utf32-bom",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "//4AAA==",
+      "errorContains": "Unsupported WML charset: UTF-32 BOM"
+    },
+    {
+      "id": "lossless-us-ascii-references",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVMtQVNDSUkiPz48IURPQ1RZUEUgd21sIFBVQkxJQyAiLS8vV0FQRk9SVU0vL0RURCBXTUwgMS4zLy9FTiIgImh0dHA6Ly93d3cud2FwZm9ydW0ub3JnL0RURC93bWwxMy5kdGQiPjx3bWw+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZiYjMjMzOyAmIzMwMjsgJiN4MUY2MDA7ICYjeEZGRkQ7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Caf&#233; &#302; &#x1F600; &#xFFFD;</p></card></wml>",
+      "renderedText": "Café Į 😀 �"
+    },
+    {
+      "id": "lossless-latin1-source-and-references",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iSVNPLTg4NTktMSI/PjwhRE9DVFlQRSB3bWwgUFVCTElDICItLy9XQVBGT1JVTS8vRFREIFdNTCAxLjMvL0VOIiAiaHR0cDovL3d3dy53YXBmb3J1bS5vcmcvRFREL3dtbDEzLmR0ZCI+PHdtbD48Y2FyZCBpZD0ibWFpbiI+PHA+Q2Fm6SAmIzMwMjsgJiN4MUY2MDA7ICYjeEZGRkQ7PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café &#302; &#x1F600; &#xFFFD;</p></card></wml>",
+      "renderedText": "Café Į 😀 �"
+    },
+    {
+      "id": "lossless-utf8-source",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgd21sIFBVQkxJQyAiLS8vV0FQRk9SVU0vL0RURCBXTUwgMS4zLy9FTiIgImh0dHA6Ly93d3cud2FwZm9ydW0ub3JnL0RURC93bWwxMy5kdGQiPjx3bWw+PGNhcmQgaWQ9Im1haW4iPjxwPkNhZsOpIMSuIPCfmIAg77+9PC9wPjwvY2FyZD48L3dtbD4=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café Į 😀 �</p></card></wml>",
+      "renderedText": "Café Į 😀 �"
+    },
+    {
+      "id": "lossless-utf16-source",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "//48AD8AeABtAGwAIAB2AGUAcgBzAGkAbwBuAD0AIgAxAC4AMAAiACAAZQBuAGMAbwBkAGkAbgBnAD0AIgBVAFQARgAtADEANgAiAD8APgA8ACEARABPAEMAVABZAFAARQAgAHcAbQBsACAAUABVAEIATABJAEMAIAAiAC0ALwAvAFcAQQBQAEYATwBSAFUATQAvAC8ARABUAEQAIABXAE0ATAAgADEALgAzAC8ALwBFAE4AIgAgACIAaAB0AHQAcAA6AC8ALwB3AHcAdwAuAHcAYQBwAGYAbwByAHUAbQAuAG8AcgBnAC8ARABUAEQALwB3AG0AbAAxADMALgBkAHQAZAAiAD4APAB3AG0AbAA+ADwAYwBhAHIAZAAgAGkAZAA9ACIAbQBhAGkAbgAiAD4APABwAD4AQwBhAGYA6QAgAC4BIAA92ADeIAD9/zwALwBwAD4APAAvAGMAYQByAGQAPgA8AC8AdwBtAGwAPgA=",
+      "decodedWml": "<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\"><wml><card id=\"main\"><p>Café Į 😀 �</p></card></wml>",
+      "renderedText": "Café Į 😀 �"
+    },
+    {
+      "id": "lossy-utf8-surrogate-rejected",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PHdtbD48Y2FyZD48cD7toIA8L3A+PC9jYXJkPjwvd21sPg==",
+      "errorContains": "Invalid UTF-8 payload"
+    },
+    {
+      "id": "lossy-utf8-above-unicode-rejected",
+      "contentType": "text/vnd.wap.wml",
+      "bodyBase64": "PHdtbD48Y2FyZD48cD70kICAPC9wPjwvY2FyZD48L3dtbD4=",
+      "errorContains": "Invalid UTF-8 payload"
+    }
+  ]
+}

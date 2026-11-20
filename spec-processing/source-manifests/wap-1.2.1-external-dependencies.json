@@ -552,7 +552,7 @@
       "applicability": "strict-browser",
       "citedByFamilies": ["wbxml"],
       "citationLabels": ["IANACharset"],
-      "reviewState": "historical-snapshot-required"
+      "reviewState": "verified-bracketing-captures-approval-date-unverified"
     },
     {
       "id": "unicode-2.0.0",

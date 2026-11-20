@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "releaseId": "wap-1.2.1",
   "sourceManifest": "spec-processing/source-manifests/wap-1.2.1-external-dependencies.json",
-  "recordedOn": "2026-07-24",
+  "recordedOn": "2026-11-19",
   "status": "external-source-acquisition-in-progress",
   "policy": {
     "repositoryMode": "metadata-only",
@@ -12,8 +12,8 @@
   },
   "summary": {
     "dependencyCount": 43,
-    "artifactCount": 48,
-    "artifactBytesTotal": 14588705,
+    "artifactCount": 50,
+    "artifactBytesTotal": 14684988,
     "byAcquisitionState": {
       "metadata-only-licensed-payload": 5,
       "verified-private-full-artifact": 36,
@@ -826,7 +826,7 @@
       "authority": "IANA",
       "authorityRecordUrl": "https://www.iana.org/assignments/character-sets/character-sets.xhtml",
       "acquisitionState": "verified-private-partial-artifact",
-      "note": "The current registry is preserved for research, but the WBXML-era historical registry snapshot remains open.",
+      "note": "The current registry is preserved alongside two verified historical captures that bracket the WBXML 1.3 approval date. The exact registry state on 25 July 2001 remains unverified.",
       "artifacts": [
         {
           "id": "iana-character-sets-current-xml",
@@ -837,6 +837,28 @@
           "cacheRef": "private-research-cache/wap-1.2.1/external/iana/character-sets.xml",
           "bytes": 110797,
           "sha256": "d3741a07a6eaa4451f8878af5cfc92289480ae42f448567a3163420cdcde00e9",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "iana-character-sets-20010609031130",
+          "sourceUrl": "https://web.archive.org/web/20010609031130id_/http://www.iana.org/assignments/character-sets",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-11-19",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/iana/character-sets-20010609031130.txt",
+          "bytes": 48034,
+          "sha256": "8f5e172c9fa350c42942caafa95109f4d0a5b23ef713428923cf8cd33c3e3583",
+          "checksumAlgorithm": "sha256"
+        },
+        {
+          "id": "iana-character-sets-20011030145938",
+          "sourceUrl": "https://web.archive.org/web/20011030145938id_/http://www.iana.org/assignments/character-sets",
+          "mediaType": "text/plain",
+          "retrievedOn": "2026-11-19",
+          "state": "verified-temporary",
+          "cacheRef": "private-research-cache/wap-1.2.1/external/iana/character-sets-20011030145938.txt",
+          "bytes": 48249,
+          "sha256": "2575a989bbd96db90ba8409c1d720209c1dfc2800b6c21cc14ab69e8f2e7938e",
           "checksumAlgorithm": "sha256"
         }
       ]

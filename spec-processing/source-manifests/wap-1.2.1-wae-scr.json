@@ -86,10 +86,10 @@
     },
     "selectedImplementationStatus": {
       "implemented": 5,
-      "missing": 3,
-      "partial": 3
+      "missing": 2,
+      "partial": 4
     },
-    "selectedDirectTestEvidenceCount": 8
+    "selectedDirectTestEvidenceCount": 9
   },
   "obligations": [
     {
@@ -613,11 +613,26 @@
           "WAE-602",
           "R0-08"
         ],
-        "implementationStatus": "missing",
-        "assessmentNote": "The generic application/vnd.wap.wbxml media type is absent from the supported content-type matrix; WMLC-specific WBXML decoding does not satisfy this separate row.",
-        "implementationEvidence": [],
-        "testEvidence": [],
-        "evidenceState": "gap-work-item-mapped"
+        "implementationStatus": "partial",
+        "assessmentNote": "Lowband routes generic WBXML by registered public identifier, with native fixtures for WML 1.3 and SI 1.0. Broader vocabulary support and WAE integration remain open.",
+        "implementationEvidence": [
+          {
+            "path": "transport-rust/src/wbxml.rs",
+            "symbol": "decode_wbxml_for_content_type"
+          },
+          {
+            "path": "transport-rust/src/responses.rs",
+            "symbol": "map_success_payload_response"
+          }
+        ],
+        "testEvidence": [
+          {
+            "path": "transport-rust/src/tests/wbxml_conformance.rs",
+            "test": "transport_wml_307_generic_wbxml_fixtures",
+            "command": "cd transport-rust && cargo test --lib transport_wml_307_generic_wbxml_fixtures"
+          }
+        ],
+        "evidenceState": "direct-test-linked"
       }
     },
     {

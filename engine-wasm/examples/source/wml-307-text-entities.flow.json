@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "example": "wml307TextEntities",
+  "flows": [
+    {
+      "id": "textual-wml-entity-render",
+      "title": "WML character references resolve once and preserve Unicode",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-307"],
+      "specItems": ["WML-CL-ENTITY-FORMS", "WML-CL-ENTITY-UNICODE-IDENTITY"],
+      "initial": {
+        "state": { "activeCardId": "main" },
+        "render": { "textIncludes": ["Café ĮĮ &quot;"] }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next" },
+            "render": { "textIncludes": ["Done"] }
+          }
+        }
+      ]
+    }
+  ]
+}

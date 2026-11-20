@@ -1,0 +1,493 @@
+{
+  "sourceSections": [
+    "WAP-192-WBXML-20010725-a §§5.5, 6.3–6.4, 7.2",
+    "WAP-167-ServiceInd-20010731-a §§5.2.1, 6.2, 7, 8.2.2, 8.3, 9",
+    "WAP-167_103-ServiceInd-20010926-a",
+    "WAP-203-WSP-20000504-a Table 40, Content Type Assignments",
+    "WAP-192 §5.8.4.2 and XML 1.0 §§2.2, 3.3.3, 4.1",
+    "WAP-168-ServiceLoad-20010731-a §§8.1–8.2, 9.3; WAP-168_103-ServiceLoad-20010816-a",
+    "WAP-175-CacheOp-20010731-a §§8.1–8.2, 9.3; WAP-175_102-CacheOp-20010816-a",
+    "WAP-169-WTA-20000707-a §§9.4.1.3, 9.4.1.7; WAP-169_101-WTA-20001107-a §6",
+    "OMA WBXML Public Document IDs",
+    "WAP-191_104-WML-20010718-a §8.8"
+  ],
+  "cases": [
+    {
+      "id": "generic-numeric-si-omits-implied-attributes",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 05 6a 00 45 46 03 48 65 6c 6c 6f 00 01 01",
+      "expectedXml": "<si><indication action=\"signal-medium\">Hello</indication></si>",
+      "kind": "si"
+    },
+    {
+      "id": "typed-si-mime-case-and-literal-public-id",
+      "contentType": "Application/Vnd.Wap.Sic; charset=UTF-8",
+      "bytesHex": "03 00 00 00 1c 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 53 49 20 31 2e 30 2f 2f 45 4e 00 45 46 03 48 65 6c 6c 6f 00 01 01",
+      "expectedXml": "<si><indication action=\"signal-medium\">Hello</indication></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-tokenized-attribute-prefix-and-fragment",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 05 6a 00 45 c6 0c 03 65 78 61 6d 70 6c 65 00 85 03 70 61 74 68 00 01 03 48 69 20 26 20 62 79 65 00 01 01",
+      "expectedXml": "<si><indication href=\"http://example.com/path\" action=\"signal-medium\" si-id=\"http://example.com/path\">Hi &amp; bye</indication></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-literal-tags-attributes-and-values",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 13 73 69 00 69 6e 64 69 63 61 74 69 6f 6e 00 68 72 65 66 00 44 00 c4 03 04 0e 03 68 74 74 70 3a 2f 2f 65 78 61 6d 70 6c 65 2e 63 6f 6d 2f 70 61 74 68 00 01 03 48 69 20 26 20 62 79 65 00 01 01",
+      "expectedXml": "<si><indication href=\"http://example.com/path\" action=\"signal-medium\" si-id=\"http://example.com/path\">Hi &amp; bye</indication></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-explicit-values-win",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 08 0b 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 11 03 69 64 00 01 01",
+      "expectedXml": "<si><indication action=\"signal-high\" href=\"https://example.test/\" si-id=\"id\"/></si>",
+      "kind": "si",
+      "wspMediaOctet": 174
+    },
+    {
+      "id": "si-explicit-empty-id-wins",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0b 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 11 01 01",
+      "expectedXml": "<si><indication href=\"https://example.test/\" si-id=\"\" action=\"signal-medium\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-delete-omission-remains-visible",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 09 0b 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 01 01",
+      "expectedXml": "<si><indication action=\"delete\" href=\"https://example.test/\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-info-and-item-tokens",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 06 47 c8 12 03 6e 6f 74 69 63 65 00 01 03 64 61 74 61 00 01 01 01",
+      "expectedXml": "<si><indication action=\"signal-medium\"/><info><item class=\"notice\">data</item></info></si>",
+      "kind": "si"
+    },
+    {
+      "id": "generic-wml-uses-registered-public-id",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 00 7f 67 60 03 48 65 6c 6c 6f 00 01 01 01",
+      "expectedXml": "<wml><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">Hello</p></card></wml>",
+      "kind": "wml",
+      "wspMediaOctet": 169
+    },
+    {
+      "id": "typed-si-rejects-wml-id",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 0a 6a 00 7f 67 60 03 48 65 6c 6c 6f 00 01 01 01",
+      "expectedErrorContains": "unsupported numeric public identifier"
+    },
+    {
+      "id": "typed-wml-rejects-si-id",
+      "contentType": "application/vnd.wap.wmlc",
+      "bytesHex": "03 05 6a 00 45 46 03 48 65 6c 6c 6f 00 01 01",
+      "expectedErrorContains": "unsupported numeric public identifier"
+    },
+    {
+      "id": "generic-rejects-unknown-id",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 01 6a 00 05",
+      "expectedErrorContains": "unsupported numeric public identifier"
+    },
+    {
+      "id": "generic-rejects-unregistered-literal-id",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 1c 2d 2f 2f 45 58 41 4d 50 4c 45 2f 2f 44 54 44 20 55 4e 4b 4e 4f 57 4e 2f 2f 45 4e 00 05",
+      "expectedErrorContains": "unsupported literal public identifier"
+    },
+    {
+      "id": "si-does-not-interpret-wml-variable-extension",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 46 42 61 00 01 01",
+      "expectedErrorContains": "SI extension token"
+    },
+    {
+      "id": "si-rejects-unregistered-code-page",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 00 01 05",
+      "expectedErrorContains": "unassigned SI tag code page 1"
+    },
+    {
+      "id": "unrelated-mime-cannot-select-si",
+      "contentType": "application/octet-stream",
+      "bytesHex": "03 05 6a 00 45 46 03 48 65 6c 6c 6f 00 01 01",
+      "expectedErrorContains": "no selected token table",
+      "expectedFetchError": "UNSUPPORTED_CONTENT_TYPE"
+    },
+    {
+      "id": "si-entity-in-href-is-escaped-once-in-implied-id",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 05 6a 00 45 86 0b 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 3f 61 3d 31 00 02 26 03 62 3d 32 00 01 01",
+      "expectedXml": "<si><indication href=\"https://example.test/?a=1&amp;b=2\" action=\"signal-medium\" si-id=\"https://example.test/?a=1&amp;b=2\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-opaque-created-and-expires",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 07 19 99 06 25 15 23 15 10 c3 04 19 99 06 30 01 01",
+      "expectedXml": "<si><indication created=\"1999-06-25T15:23:15Z\" si-expires=\"1999-06-30T00:00:00Z\" action=\"signal-medium\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-opaque-hour-and-minute-precision",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 05 20 00 02 29 06 10 c3 06 20 00 02 29 06 40 01 01",
+      "expectedXml": "<si><indication created=\"2000-02-29T06:00:00Z\" si-expires=\"2000-02-29T06:40:00Z\" action=\"signal-medium\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-opaque-literal-created-year-zero",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 13 69 6e 64 69 63 61 74 69 6f 6e 00 63 72 65 61 74 65 64 00 45 84 00 04 0b c3 04 00 00 02 29 01 01",
+      "expectedXml": "<si><indication created=\"0000-02-29T00:00:00Z\" action=\"signal-medium\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-opaque-retained-zero-pairs",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 07 20 24 12 31 00 00 00 01 01",
+      "expectedXml": "<si><indication si-expires=\"2024-12-31T00:00:00Z\" action=\"signal-medium\"/></si>",
+      "kind": "si"
+    },
+    {
+      "id": "si-opaque-short-date",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 03 20 24 02 01 01",
+      "expectedErrorContains": "expected 4 to 7 bytes"
+    },
+    {
+      "id": "si-opaque-long-date",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 08 20 24 02 29 12 34 56 00 01 01",
+      "expectedErrorContains": "expected 4 to 7 bytes"
+    },
+    {
+      "id": "si-opaque-bad-high-nibble",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 04 20 24 a2 29 01 01",
+      "expectedErrorContains": "invalid packed decimal digit"
+    },
+    {
+      "id": "si-opaque-bad-low-nibble",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 04 20 24 02 2a 01 01",
+      "expectedErrorContains": "invalid packed decimal digit"
+    },
+    {
+      "id": "si-opaque-month-zero",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 04 20 24 00 01 01 01",
+      "expectedErrorContains": "invalid calendar date"
+    },
+    {
+      "id": "si-opaque-impossible-day",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 04 20 24 04 31 01 01",
+      "expectedErrorContains": "invalid calendar date"
+    },
+    {
+      "id": "si-opaque-non-leap-century",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 04 19 00 02 29 01 01",
+      "expectedErrorContains": "invalid calendar date"
+    },
+    {
+      "id": "si-opaque-hour-24",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 05 20 24 01 01 24 01 01",
+      "expectedErrorContains": "invalid time"
+    },
+    {
+      "id": "si-opaque-minute-60",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a c3 06 20 24 01 01 23 60 01 01",
+      "expectedErrorContains": "invalid time"
+    },
+    {
+      "id": "si-opaque-second-60",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 07 20 24 01 01 23 59 60 01 01",
+      "expectedErrorContains": "invalid time"
+    },
+    {
+      "id": "si-opaque-text-prefix",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0a 03 00 c3 04 20 24 01 01 01 01",
+      "expectedErrorContains": "OPAQUE must be the entire SI date value"
+    },
+    {
+      "id": "si-opaque-text-suffix",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 04 20 24 01 01 03 78 00 01 01",
+      "expectedErrorContains": "OPAQUE must be the entire SI date value"
+    },
+    {
+      "id": "si-opaque-second-opaque",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 04 20 24 01 01 c3 04 20 24 01 01 01 01",
+      "expectedErrorContains": "OPAQUE must be the entire SI date value"
+    },
+    {
+      "id": "si-opaque-non-date-attribute",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 0b c3 04 20 24 01 01 01 01",
+      "expectedErrorContains": "OPAQUE attribute is unsupported for SI 1.0"
+    },
+    {
+      "id": "si-opaque-truncated-payload",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 86 10 c3 07 20 24 01",
+      "expectedErrorContains": "truncated OPAQUE payload"
+    },
+    {
+      "id": "si-opaque-date-attribute-on-si-root",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 85 0a c3 04 20 24 01 01 01",
+      "expectedErrorContains": "OPAQUE attribute is unsupported for SI 1.0"
+    },
+    {
+      "id": "si-opaque-element-content",
+      "contentType": "application/vnd.wap.sic",
+      "bytesHex": "03 05 6a 00 45 46 c3 04 20 24 01 01 01 01",
+      "expectedErrorContains": "OPAQUE content is unsupported for SI 1.0"
+    },
+    {
+      "id": "generic-wml-preserves-attribute-whitespace-entities",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 00 7f e7 36 03 41 00 02 09 02 0a 02 0d 03 42 00 01 60 03 48 65 6c 6c 6f 00 01 01 01",
+      "expectedXml": "<wml><card title=\"A&#9;&#10;&#13;B\" newcontext=\"false\" ordered=\"true\"><p align=\"left\">Hello</p></card></wml>",
+      "kind": "wml"
+    },
+    {
+      "id": "generic-wml-rejects-inline-control",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 00 7f 67 60 03 1f 00 01 01 01",
+      "expectedErrorContains": "U+001F is not permitted in XML 1.0"
+    },
+    {
+      "id": "generic-wml-rejects-table-noncharacter",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 04 ef bf be 00 7f 67 60 83 00 01 01 01",
+      "expectedErrorContains": "U+FFFE is not permitted in XML 1.0"
+    },
+    {
+      "id": "sl-typed-wsp-omitted-action-default",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "03 06 6a 00 85 0c 03 65 78 61 6d 70 6c 65 00 88 01",
+      "expectedXml": "<sl href=\"https://www.example.org/\" action=\"execute-low\"/>",
+      "kind": "sl",
+      "wspMediaOctet": 176
+    },
+    {
+      "id": "sl-generic-explicit-default-equivalence",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 85 0c 03 65 78 61 6d 70 6c 65 00 88 05 01",
+      "expectedXml": "<sl href=\"https://www.example.org/\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-literal-default-equivalence",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 24 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 53 4c 20 31 2e 30 2f 2f 45 4e 00 73 6c 00 68 72 65 66 00 84 1c 04 1f 03 68 74 74 70 73 3a 2f 2f 77 77 77 2e 65 78 61 6d 70 6c 65 2e 6f 72 67 2f 00 01",
+      "expectedXml": "<sl href=\"https://www.example.org/\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-explicit-execute-high-overrides-default",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "03 06 6a 00 85 06 09 03 65 78 61 6d 70 6c 65 00 88 01",
+      "expectedXml": "<sl action=\"execute-high\" href=\"http://example.org/\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-explicit-cache-overrides-default",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "03 06 6a 00 85 07 0b 03 65 78 61 6d 70 6c 65 00 88 01",
+      "expectedXml": "<sl action=\"cache\" href=\"https://example.org/\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "co-typed-wsp-both-invalidation-tags",
+      "contentType": "application/vnd.wap.coc",
+      "bytesHex": "03 07 6a 00 45 86 07 03 65 78 61 6d 70 6c 65 00 85 03 6f 62 6a 65 63 74 00 01 87 08 03 65 78 61 6d 70 6c 65 00 87 01 01",
+      "expectedXml": "<co><invalidate-object uri=\"http://www.example.com/object\"/><invalidate-service uri=\"https://example.net/\"/></co>",
+      "kind": "co",
+      "wspMediaOctet": 178
+    },
+    {
+      "id": "co-generic-literal-equivalence",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 48 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 4f 20 31 2e 30 2f 2f 45 4e 00 63 6f 00 69 6e 76 61 6c 69 64 61 74 65 2d 6f 62 6a 65 63 74 00 69 6e 76 61 6c 69 64 61 74 65 2d 73 65 72 76 69 63 65 00 75 72 69 00 44 1c 84 1f 04 44 03 68 74 74 70 3a 2f 2f 77 77 77 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d 2f 6f 62 6a 65 63 74 00 01 84 31 04 44 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 6e 65 74 2f 00 01 01",
+      "expectedXml": "<co><invalidate-object uri=\"http://www.example.com/object\"/><invalidate-service uri=\"https://example.net/\"/></co>",
+      "kind": "co"
+    },
+    {
+      "id": "channel12-typed-wsp-default-and-implied-absence",
+      "contentType": "application/vnd.wap.channelc",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 01 46 03 54 69 74 6c 65 00 01 47 03 53 75 6d 6d 61 72 79 00 01 88 09 03 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" useraccessible=\"false\"><title>Title</title><abstract>Summary</abstract><resource href=\"https://example.test/\"/></channel>",
+      "kind": "channel",
+      "wspMediaOctet": 150
+    },
+    {
+      "id": "channel12-generic-explicit-default-equivalence",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 16 03 66 61 6c 73 65 00 01 46 03 54 69 74 6c 65 00 01 47 03 53 75 6d 6d 61 72 79 00 01 88 09 03 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" useraccessible=\"false\"><title>Title</title><abstract>Summary</abstract><resource href=\"https://example.test/\"/></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "channel12-explicit-true-overrides-default",
+      "contentType": "application/vnd.wap.channelc; version=1.2",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 16 03 74 72 75 65 00 01 46 03 54 69 74 6c 65 00 01 47 03 53 75 6d 6d 61 72 79 00 01 88 09 03 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" useraccessible=\"true\"><title>Title</title><abstract>Summary</abstract><resource href=\"https://example.test/\"/></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "sl-typed-mime-rejects-co-public-id",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "03 07 6a 00 05",
+      "expectedErrorContains": "unsupported numeric public identifier"
+    },
+    {
+      "id": "co-typed-mime-rejects-sl-literal-id",
+      "contentType": "application/vnd.wap.coc",
+      "bytesHex": "03 00 00 6a 1c 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 53 4c 20 31 2e 30 2f 2f 45 4e 00 05",
+      "expectedErrorContains": "unsupported literal public identifier"
+    },
+    {
+      "id": "co-tag-cannot-be-read-as-sl",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 06",
+      "expectedErrorContains": "unknown SL tag token"
+    },
+    {
+      "id": "sl-unassigned-tag-page",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "03 06 6a 00 00 01 05",
+      "expectedErrorContains": "unassigned SL tag code page 1"
+    },
+    {
+      "id": "co-does-not-use-wml-attribute-values",
+      "contentType": "application/vnd.wap.coc",
+      "bytesHex": "03 07 6a 00 45 86 05 89 01 01",
+      "expectedErrorContains": "unknown CO attribute-value token"
+    },
+    {
+      "id": "channel12-has-no-attribute-value-tokens",
+      "contentType": "application/vnd.wap.channelc",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 85 05 85 01",
+      "expectedErrorContains": "unknown Channel attribute-value token"
+    },
+    {
+      "id": "channel11-numeric-id-is-not-aliased-to-channel12",
+      "contentType": "application/vnd.wap.channelc",
+      "bytesHex": "03 08 6a 00 05",
+      "expectedErrorContains": "unsupported numeric public identifier"
+    },
+    {
+      "id": "channel-typed-version-conflicts-with-channel12-id",
+      "contentType": "application/vnd.wap.channelc; version=1.1",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 05",
+      "expectedErrorContains": "unsupported Channel MIME version"
+    },
+    {
+      "id": "sl-legacy-wbxml-version-outside-slice",
+      "contentType": "application/vnd.wap.slc",
+      "bytesHex": "02 06 6a 00 05",
+      "expectedErrorContains": "unsupported WBXML version byte"
+    },
+    {
+      "id": "sl-unprefixed-href",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 85 08 03 2f 64 6f 63 75 6d 65 6e 74 00 01",
+      "expectedXml": "<sl href=\"/document\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-http-www-prefix-and-edu-fragment",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 85 0a 03 65 78 61 6d 70 6c 65 00 86 01",
+      "expectedXml": "<sl href=\"http://www.example.edu/\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-http-prefix-and-net-fragment",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 85 09 03 65 78 61 6d 70 6c 65 00 87 01",
+      "expectedXml": "<sl href=\"http://example.net/\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "sl-https-prefix-and-com-fragment",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 06 6a 00 85 0b 03 65 78 61 6d 70 6c 65 00 85 01",
+      "expectedXml": "<sl href=\"https://example.com/\" action=\"execute-low\"/>",
+      "kind": "sl"
+    },
+    {
+      "id": "co-additional-uri-prefixes-and-fragments",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 07 6a 00 45 86 05 03 2f 64 6f 63 75 6d 65 6e 74 00 01 87 06 03 65 78 61 6d 70 6c 65 00 86 01 86 09 03 65 78 61 6d 70 6c 65 00 88 01 01",
+      "expectedXml": "<co><invalidate-object uri=\"/document\"/><invalidate-service uri=\"http://example.edu/\"/><invalidate-object uri=\"https://www.example.org/\"/></co>",
+      "kind": "co"
+    },
+    {
+      "id": "channel12-optional-values-and-prefixed-events",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 06 03 68 74 74 70 73 3a 2f 2f 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 0e 03 6f 6b 2e 74 65 73 74 2f 00 12 03 66 61 69 6c 2e 74 65 73 74 2f 00 14 03 63 63 2f 69 63 00 01 46 03 54 69 74 6c 65 00 01 88 08 03 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 66 69 6c 65 00 0a 03 31 32 33 00 0b 03 64 65 6d 6f 00 0c 03 31 32 33 34 61 62 63 64 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" base=\"https://example.test/\" success=\"http://ok.test/\" failure=\"https://fail.test/\" eventid=\"wtaev-cc/ic\" useraccessible=\"false\"><title>Title</title><resource href=\"http://example.test/file\" lastmod=\"123\" etag=\"demo\" md5=\"1234abcd\"/></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "channel12-unprefixed-optional-values",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 0d 03 2f 6f 6b 00 10 03 2f 66 61 69 6c 00 13 03 77 74 61 65 76 2d 63 63 2f 69 63 00 01 46 03 54 69 74 6c 65 00 01 88 07 03 2f 64 6f 63 75 6d 65 6e 74 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" success=\"/ok\" failure=\"/fail\" eventid=\"wtaev-cc/ic\" useraccessible=\"false\"><title>Title</title><resource href=\"/document\"/></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "channel12-alternate-success-and-failure-prefixes",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 0f 03 6f 6b 2e 74 65 73 74 2f 00 11 03 66 61 69 6c 2e 74 65 73 74 2f 00 01 46 03 54 69 74 6c 65 00 01 88 09 03 65 78 61 6d 70 6c 65 2e 74 65 73 74 2f 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" success=\"https://ok.test/\" failure=\"http://fail.test/\" useraccessible=\"false\"><title>Title</title><resource href=\"https://example.test/\"/></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "channel12-literal-tag-and-attribute-default",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 42 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 63 68 61 6e 6e 65 6c 00 6d 61 78 73 70 61 63 65 00 63 68 61 6e 6e 65 6c 69 64 00 74 69 74 6c 65 00 c4 21 04 29 03 31 36 00 04 32 03 78 00 01 44 3c 03 54 69 74 6c 65 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" useraccessible=\"false\"><title>Title</title></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "channel12-tokenized-tag-and-attribute-default",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 00 00 6a 21 2d 2f 2f 57 41 50 46 4f 52 55 4d 2f 2f 44 54 44 20 43 48 41 4e 4e 45 4c 20 31 2e 32 2f 2f 45 4e 00 c5 05 03 31 36 00 15 03 78 00 01 46 03 54 69 74 6c 65 00 01 01",
+      "expectedXml": "<channel maxspace=\"16\" channelid=\"x\" useraccessible=\"false\"><title>Title</title></channel>",
+      "kind": "channel"
+    },
+    {
+      "id": "wml-implied-card-language-inherited-from-deck",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 00 ff 50 03 65 6e 00 01 67 60 03 48 65 6c 6c 6f 00 01 01 01",
+      "expectedXml": "<wml xml:lang=\"en\"><card newcontext=\"false\" ordered=\"true\"><p align=\"left\">Hello</p></card></wml>",
+      "kind": "wml",
+      "expectedCardLanguage": "en"
+    },
+    {
+      "id": "wml-explicit-card-language-overrides-inherited-value",
+      "contentType": "application/vnd.wap.wbxml",
+      "bytesHex": "03 0a 6a 00 ff 50 03 65 6e 00 01 e7 50 03 66 72 00 01 60 03 48 65 6c 6c 6f 00 01 01 01",
+      "expectedXml": "<wml xml:lang=\"en\"><card xml:lang=\"fr\" newcontext=\"false\" ordered=\"true\"><p align=\"left\">Hello</p></card></wml>",
+      "kind": "wml",
+      "expectedCardLanguage": "fr"
+    }
+  ]
+}

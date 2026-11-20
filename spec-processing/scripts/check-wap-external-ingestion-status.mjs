@@ -219,8 +219,8 @@ if (
 ) {
   failures.push('summary.byAcquisitionState does not match records');
 }
-if (artifactCount !== 48) {
-  failures.push(`artifactCount=${artifactCount}; expected 48`);
+if (artifactCount !== 50) {
+  failures.push(`artifactCount=${artifactCount}; expected 50`);
 }
 
 if (failures.length > 0) {
@@ -233,7 +233,7 @@ if (failures.length > 0) {
 
 console.log('==> WAP 1.2.1 external ingestion status');
 console.log('PASS 43/43 authority-locked dependencies have acquisition records');
-console.log('PASS 48 cached artifacts have non-empty hash/size evidence');
+console.log(`PASS ${artifactCount} cached artifacts have non-empty hash/size evidence`);
 console.log('PASS 36 full; 2 partial; 5 licensed-payload metadata-only');
 if (args['cache-dir']) {
   console.log('PASS optional research-cache hashes match the committed ledger');
