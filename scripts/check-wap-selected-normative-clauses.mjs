@@ -59,7 +59,7 @@ const familyDefinitions = new Map([
       ledgerFile: 'wap-1.2.1-wml-scr.json',
       selectedDisposition: 'required-by-class-c-client-mcf',
       expectedParents: 39,
-      expectedClauses: 175
+      expectedClauses: 176
     }
   ],
   [
@@ -457,6 +457,12 @@ const wml307EvidenceByClauseId = new Map([
   ['WML-CL-REFERENCE-UNICODE-MAPPING', wml307EncodingFixtureEvidence],
   ['WML-CL-REFERENCE-WBXML-PRECEDENCE', wml307WbxmlCharsetFixtureEvidence]
 ]);
+const wml308ClauseIds = new Set(['WML-CL-INPUT-TITLE-PRESENTATION']);
+const wml308FixtureEvidence = {
+  path: 'engine-wasm/examples/source/wml-308-input-title.wml',
+  testPath: 'engine-wasm/engine/src/engine_tests/wml_308_input_title.rs',
+  command: 'cargo test --manifest-path engine-wasm/engine/Cargo.toml --lib wml_308_input_title'
+};
 const wml309ClauseIds = new Set([
   'WML-CL-DO-ACTIVE-VISIBILITY',
   'WML-CL-DO-LABEL-BEST-EFFORT',
@@ -725,6 +731,7 @@ const implementedWmlClauseIds = new Set([
   ...wml303ClauseIds,
   ...wml305ClauseIds,
   ...wml307EvidenceByClauseId.keys(),
+  ...wml308ClauseIds,
   ...wml309ClauseIds,
   'WML-CL-DECK-ACCESS-REQUIRED',
   'WML-CL-BR-LINE-BREAK',
@@ -994,6 +1001,7 @@ for (const family of ledger.families ?? []) {
         ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
         ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
         ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
+        ...(wml308ClauseIds.has(candidate.id) ? ['WML-308'] : []),
         ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
         ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
         ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -1017,6 +1025,7 @@ for (const family of ledger.families ?? []) {
       ...(wml305ClauseIds.has(candidate.id) ? ['WML-305'] : []),
       ...(wml306ClauseIds.has(candidate.id) ? ['WML-306'] : []),
       ...(wml307ClauseIds.has(candidate.id) ? ['WML-307'] : []),
+      ...(wml308ClauseIds.has(candidate.id) ? ['WML-308'] : []),
       ...(wml309ClauseIds.has(candidate.id) ? ['WML-309'] : []),
       ...(wmls501ClauseIds.has(candidate.id) ? ['WMLS-501'] : []),
       ...(wmls502ClauseIds.has(candidate.id) ? ['WMLS-502'] : []),
@@ -1063,10 +1072,11 @@ for (const family of ledger.families ?? []) {
       failures.push(`${candidate.id}: owner/work/evidence mapping drift`);
     }
 
-    const wml307Evidence = wml307EvidenceByClauseId.get(candidate.id);
-    const selectedEvidence = waeGenericWbxmlClauseIds.has(candidate.id)
-      ? genericWbxmlFixtureEvidence
-      : wmlAnchorEvidenceByClauseId.get(candidate.id) ?? wml307Evidence;
+    const selectedEvidence = wml308ClauseIds.has(candidate.id)
+      ? wml308FixtureEvidence
+      : waeGenericWbxmlClauseIds.has(candidate.id)
+        ? genericWbxmlFixtureEvidence
+        : wmlAnchorEvidenceByClauseId.get(candidate.id) ?? wml307EvidenceByClauseId.get(candidate.id);
     if (
       !candidate.fixturePlan?.id ||
       globalFixtureIds.has(candidate.fixturePlan.id) ||
@@ -1381,7 +1391,7 @@ const expectedSummary = {
 };
 if (
   selectedParentCount !== 198 ||
-  clauseCount !== 762 ||
+  clauseCount !== 763 ||
   JSON.stringify(ledger.summary) !== JSON.stringify(expectedSummary)
 ) {
   failures.push(`summary drift: ${selectedParentCount} parents / ${clauseCount} clauses`);

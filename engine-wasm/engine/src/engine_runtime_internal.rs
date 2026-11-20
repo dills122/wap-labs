@@ -795,7 +795,12 @@ fn substitute_card_text_and_links(
                         option.label = evaluate_vdata(&option.label, vars)?;
                     }
                 }
-                InlineNode::Break | InlineNode::Input { .. } => {}
+                InlineNode::Input {
+                    title: Some(title), ..
+                } => {
+                    *title = evaluate_vdata(title, vars)?;
+                }
+                InlineNode::Break | InlineNode::Input { title: None, .. } => {}
             }
         }
     }

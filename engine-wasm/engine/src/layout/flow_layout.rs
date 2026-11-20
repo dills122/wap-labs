@@ -159,6 +159,7 @@ fn layout_card_impl(
                         }
                         InlineNode::Input {
                             name,
+                            title,
                             value,
                             is_password,
                             mask,
@@ -169,7 +170,11 @@ fn layout_card_impl(
                             } else {
                                 value.clone()
                             };
-                            ParagraphPart::Segment(format!("[{name}: {display_value}]"))
+                            let label = title
+                                .as_deref()
+                                .filter(|title| !title.trim().is_empty())
+                                .unwrap_or(name);
+                            ParagraphPart::Segment(format!("[{label}: {display_value}]"))
                         }
                         InlineNode::Select {
                             control_id,
@@ -671,6 +676,7 @@ mod tests {
                 InlineNode::Input {
                     control_id: "UserName".to_string(),
                     name: "UserName".to_string(),
+                    title: None,
                     value: "AHMED".to_string(),
                     default_value: Some("AHMED".to_string()),
                     is_password: false,
@@ -681,6 +687,7 @@ mod tests {
                 InlineNode::Input {
                     control_id: "Password".to_string(),
                     name: "Password".to_string(),
+                    title: None,
                     value: "secret".to_string(),
                     default_value: Some("secret".to_string()),
                     is_password: true,

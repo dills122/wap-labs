@@ -251,12 +251,12 @@ if (
       'gap-work-item-mapped': 14,
       'optional-not-assessed': 28
     }) ||
-  graph.summary.directClauseCountsByWorkItem['WML-201'] !== 178 ||
+  graph.summary.directClauseCountsByWorkItem['WML-201'] !== 179 ||
   JSON.stringify(graph.summary.directClauseFamiliesByWorkItem['WML-201']) !==
     JSON.stringify(['wae', 'wml']) ||
   graph.summary.unmappedNormativeFamiliesByWorkItem['WML-201'] ||
   !wml201Pack.includes('- Direct SCR rows: 76') ||
-  !wml201Pack.includes('- Direct normative clauses: 178') ||
+  !wml201Pack.includes('- Direct normative clauses: 179') ||
   !wml201Pack.includes('34 `direct-test-linked`') ||
   !wml201Pack.includes('14 `gap-work-item-mapped`') ||
   !wml201Pack.includes('28 `optional-not-assessed`') ||
@@ -264,7 +264,7 @@ if (
   !wml201Pack.includes('**WML-C-76**')
 ) {
   failures.push(
-    'WML-201 must expose the exact 76-row SCR matrix, all 178 direct WAE/WML clauses, and conservative direct-evidence states without a declared-family gap'
+    'WML-201 must expose the exact 76-row SCR matrix, all 179 direct WAE/WML clauses, and conservative direct-evidence states without a declared-family gap'
   );
 }
 try {
@@ -419,6 +419,18 @@ if (
   wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-307']
 ) {
   failures.push('WML-307 must expose its direct WML and WBXML obligations in a focused context pack');
+}
+
+const wml308Pack = renderContextPack(wml3Graph, 'WML-308');
+if (
+  !wml308Pack.startsWith('# WML-308 AI Context Pack') ||
+  !wml308Pack.includes('- Selected work items: 1') ||
+  !wml308Pack.includes('**WML-CL-INPUT-TITLE-PRESENTATION**') ||
+  !wml308Pack.includes('WML-FX-INPUT-TITLE-PRESENTATION') ||
+  JSON.stringify(wml3Graph.summary.unmappedNormativeFamiliesByWorkItem['WML-308']) !==
+    JSON.stringify(['wae'])
+) {
+  failures.push('WML-308 must expose input title evidence and preserve the unresolved WAE gap');
 }
 
 const wml309Pack = renderContextPack(wml3Graph, 'WML-309');

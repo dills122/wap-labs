@@ -1108,6 +1108,37 @@ fn wasm_wml_201_anchor_tasks_match_native_frames_and_state() {
 }
 
 #[wasm_bindgen_test]
+fn wasm_wml_308_input_title_frames_match_native_before_and_after_title_updates() {
+    use crate::engine_tests::wml_308_input_title::{frame_text, CONTENT_TYPE, EXAMPLE, URL};
+
+    let mut native = WmlEngine::new();
+    native
+        .load_deck_context(EXAMPLE, URL, CONTENT_TYPE, None)
+        .expect("native title deck should load");
+    let mut wasm = WmlEngine::wasm_new();
+    wasm.load_deck_context_wasm(EXAMPLE, URL, CONTENT_TYPE, None, None)
+        .expect("WASM title deck should load");
+
+    for (caption, expected) in [("City", "[City: Oslo]"), ("District", "[District: Oslo]")] {
+        assert!(native.set_var("Caption".to_string(), caption.to_string()));
+        assert!(wasm.set_var_wasm("Caption".to_string(), caption.to_string()));
+
+        let native_frame = native.render_frame().expect("native title frame");
+        let wasm_frame = wasm.render_frame_wasm().expect("WASM title frame");
+        let wasm_rows = Reflect::get(&wasm_frame, &JsValue::from_str("rows")).expect("WASM rows");
+        let wasm_rows: serde_json::Value =
+            serde_wasm_bindgen::from_value(wasm_rows).expect("WASM rows as JSON data");
+
+        assert_eq!(
+            wasm_rows,
+            serde_json::to_value(&native_frame.rows).expect("native rows as JSON data")
+        );
+        assert!(frame_text(&native_frame).contains(&expected));
+        assert!(frame_text(&native_frame).contains(&"[Access code: ****]"));
+    }
+}
+
+#[wasm_bindgen_test]
 fn wasm_wml_309_frame_and_action_input_match_native_contract() {
     let mut engine = WmlEngine::wasm_new();
     engine
