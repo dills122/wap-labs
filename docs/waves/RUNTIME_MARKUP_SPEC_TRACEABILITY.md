@@ -59,6 +59,10 @@ Legend:
   - Evidence: [x] `WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT` verifies that omitted and
     explicit left alignment both draw text at column zero in strict WML 1.3. Run
     `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_alignment_default`.
+  - Evidence: [x] `WML-CL-PARAGRAPH-SOFT-HYPHEN` checks that U+00AD is hidden
+    unless wrapping selects its break point. The native and WASM fixture checks
+    both cases, and the canonical Waves story checks their exact draw rows.
+    Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_soft_hyphen` and `pnpm test:story WML-201`.
 
 ### RQ-RMK-002 Task model support and execution
 

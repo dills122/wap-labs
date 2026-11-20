@@ -1181,6 +1181,10 @@ const wml201FixtureEvidence = new Map(
     [
       'WML-CL-PARAGRAPH-ALIGNMENT-DEFAULT',
       ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_alignment_default']
+    ],
+    [
+      'WML-CL-PARAGRAPH-SOFT-HYPHEN',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_soft_hyphen']
     ]
   ].map(([id, [testPath, filter]]) => [
     id,
