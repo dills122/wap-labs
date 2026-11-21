@@ -191,7 +191,10 @@ fn validate_attributes(element: &XmlElement, ids: &mut HashSet<String>) -> Resul
             required(element, &["columns"])?;
             vdata(element, &["title"])?;
             numbers(element, &["columns"])?;
-            if element.attr("columns") == Some("0") {
+            if element
+                .attr("columns")
+                .is_some_and(|columns| columns.bytes().all(|byte| byte == b'0'))
+            {
                 return Err("Invalid <table>: attribute 'columns' must not be zero".to_string());
             }
             literal(element, &["align"])?;

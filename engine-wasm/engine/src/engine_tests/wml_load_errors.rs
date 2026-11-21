@@ -388,6 +388,52 @@ fn wml_205_enforces_case_literal_length_and_cross_attribute_error_conditions() {
     }
 }
 
+#[cfg_attr(not(target_arch = "wasm32"), test)]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+fn wml_fx_table_positive_column_count() {
+    // WAP-191_104-WML §11.8.5 requires a columns number and forbids zero.
+    let table_deck = |columns: &str| {
+        format!("<wml><card id=\"table\"><p><table{columns}><tr><td>x</td></tr></table></p></card></wml>")
+    };
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck_context(
+            &strict_wml(r#"<wml><card id="stable"><p>Stable</p></card></wml>"#),
+            "http://local.test/stable.wml",
+            "text/vnd.wap.wml; validation=strict",
+            None,
+        )
+        .expect("strict baseline deck should load");
+    assert!(engine.set_var("session".to_string(), "preserved".to_string()));
+
+    for (label, columns) in [
+        ("missing", ""),
+        ("empty", r#" columns="""#),
+        ("zero", r#" columns="0""#),
+        ("padded zero", r#" columns="00""#),
+        ("decoded padded zero", r#" columns="0&#48;""#),
+        ("explicit plus sign", r#" columns="+1""#),
+        ("negative", r#" columns="-1""#),
+        ("junk suffix", r#" columns="1x""#),
+    ] {
+        assert_strict_invalid_load_is_atomic(&mut engine, label, &table_deck(columns));
+    }
+
+    for columns in ["1", "003", "1234567890123456789012345678901234567890"] {
+        let root = table_deck(&format!(r#" columns="{columns}""#));
+        engine
+            .load_deck_context(
+                &strict_wml(&root),
+                "http://local.test/table.wml",
+                "text/vnd.wap.wml; validation=strict",
+                None,
+            )
+            .unwrap_or_else(|error| panic!("columns={columns} must load: {error}"));
+        assert_eq!(engine.active_card_id().as_deref(), Ok("table"));
+        assert!(engine.last_wml_load_diagnostics().is_empty());
+    }
+}
+
 #[test]
 fn wml_204_invalid_control_variable_references_reject_load_atomically() {
     let invalid_controls = [
