@@ -416,7 +416,7 @@ impl WmlEngine {
             self.focused_link_idx,
             limits,
         )?;
-        let render = layout.render_list.clone();
+        let render = layout.render_list;
         let focus_index = if layout.focus_targets.is_empty() {
             None
         } else {
@@ -429,7 +429,8 @@ impl WmlEngine {
         let content_rows = layout
             .segments
             .last()
-            .map_or(0, |segment| segment.y.saturating_add(1));
+            .map_or(0, |segment| segment.y.saturating_add(1))
+            .max(layout.reserved_row_end);
         let viewport_rows = ENGINE_VIEWPORT_ROWS;
         let max_offset_row = content_rows.saturating_sub(viewport_rows);
         let offset_row = u32::try_from(self.viewport_offset_row)
@@ -499,24 +500,25 @@ impl WmlEngine {
             .collect::<Result<Vec<_>, String>>()?;
         let selection = focus_index
             .and_then(|index| layout.focus_targets.get(index))
+            .copied()
             .map_or(EngineSelectionState::None, |target| match target {
                 FocusTarget::Link(_) | FocusTarget::Anchor(_) => EngineSelectionState::None,
                 FocusTarget::Input { control_id, name } => EngineSelectionState::Input {
-                    control_id: control_id.clone(),
-                    name: name.clone(),
+                    control_id: control_id.to_owned(),
+                    name: name.to_owned(),
                     editing: self
                         .active_input_edit
                         .as_ref()
-                        .is_some_and(|edit| edit.control_id == *control_id),
+                        .is_some_and(|edit| edit.control_id == control_id),
                 },
                 FocusTarget::Select(control_id) => EngineSelectionState::Select {
-                    control_id: control_id.clone(),
+                    control_id: control_id.to_owned(),
                     editing: self
                         .active_select_edit
                         .as_ref()
-                        .is_some_and(|edit| edit.select_name == *control_id),
+                        .is_some_and(|edit| edit.select_name == control_id),
                     value: self.active_select_edit.as_ref().and_then(|edit| {
-                        (edit.select_name == *control_id)
+                        (edit.select_name == control_id)
                             .then(|| self.focused_select_edit_value())
                             .flatten()
                     }),

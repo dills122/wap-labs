@@ -4,14 +4,15 @@ use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderRe
 use crate::render::render_list::{DrawCmd, RenderList};
 use crate::runtime::card::{Card, CardTaskAction};
 use crate::runtime::node::{
-    is_breakable_space, InlineContext, InlineNode, Node, NONBREAKING_SPACE,
+    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, NONBREAKING_SPACE,
 };
 
 #[derive(Clone, Debug, Default)]
-pub struct LayoutResult {
+pub struct LayoutResult<'card> {
     pub render_list: RenderList,
-    pub focus_targets: Vec<FocusTarget>,
+    pub focus_targets: Vec<FocusTarget<'card>>,
     pub segments: Vec<LayoutSegment>,
+    pub(crate) reserved_row_end: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -22,31 +23,31 @@ pub struct LayoutSegment {
     pub focus_index: Option<usize>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum FocusTarget {
-    Link(String),
-    Anchor(CardTaskAction),
-    Input { control_id: String, name: String },
-    Select(String),
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FocusTarget<'card> {
+    Link(&'card str),
+    Anchor(&'card CardTaskAction),
+    Input {
+        control_id: &'card str,
+        name: &'card str,
+    },
+    Select(&'card str),
 }
 
-impl FocusTarget {
-    fn for_inline_node(node: &InlineNode) -> Option<Self> {
+impl<'card> FocusTarget<'card> {
+    fn for_inline_node(node: &'card InlineNode) -> Option<Self> {
         match node {
-            InlineNode::Link { href, .. } => Some(Self::Link(href.clone())),
-            InlineNode::Anchor { action, .. } => Some(Self::Anchor(action.clone())),
+            InlineNode::Link { href, .. } => Some(Self::Link(href)),
+            InlineNode::Anchor { action, .. } => Some(Self::Anchor(action)),
             InlineNode::Input {
                 control_id, name, ..
-            } => Some(Self::Input {
-                control_id: control_id.clone(),
-                name: name.clone(),
-            }),
-            InlineNode::Select { control_id, .. } => Some(Self::Select(control_id.clone())),
+            } => Some(Self::Input { control_id, name }),
+            InlineNode::Select { control_id, .. } => Some(Self::Select(control_id)),
             InlineNode::Text(_) | InlineNode::Break | InlineNode::BreakOpportunity => None,
         }
     }
 
-    pub(crate) fn in_card(card: &Card) -> impl Iterator<Item = Self> + '_ {
+    pub(crate) fn in_card(card: &'card Card) -> impl Iterator<Item = Self> + 'card {
         card.nodes
             .iter()
             .filter_map(|node| match node {
@@ -61,18 +62,22 @@ impl FocusTarget {
     ///
     /// This is the only place the `input:`/`select:` prefix encoding is
     /// produced. The prefixes are part of the host-visible render-list shape
-    /// (see the `browser/src-tauri` render assertions), so the string form is
-    /// built once here at the output boundary rather than being round-tripped
-    /// back into a `FocusTarget` internally.
-    pub fn to_render_href(&self) -> String {
+    /// (see the `browser/src-tauri` render assertions). Build the string when
+    /// emitting a draw command for this target.
+    fn to_render_href(self) -> String {
+        let (prefix, destination) = self.render_href_parts();
+        [prefix, destination].concat()
+    }
+
+    fn render_href_parts(&self) -> (&str, &str) {
         match self {
-            FocusTarget::Link(href) => href.clone(),
+            FocusTarget::Link(href) => ("", href),
             FocusTarget::Anchor(action) => match action.base_and_set_vars().0 {
-                CardTaskAction::Go { href, .. } => href.clone(),
-                _ => "anchor:task".to_string(),
+                CardTaskAction::Go { href, .. } => ("", href),
+                _ => ("", "anchor:task"),
             },
-            FocusTarget::Input { control_id, .. } => format!("input:{control_id}"),
-            FocusTarget::Select(name) => format!("select:{name}"),
+            FocusTarget::Input { control_id, .. } => ("input:", control_id),
+            FocusTarget::Select(name) => ("select:", name),
         }
     }
 
@@ -93,100 +98,137 @@ struct Fragment<'a> {
 
 enum ParagraphPart<'a> {
     Fragment(Fragment<'a>),
+    Control {
+        entry: &'a InlineNode,
+        focus_index: Option<usize>,
+    },
     Break,
     BreakOpportunity,
 }
 
-fn paragraph_parts<'a>(
-    inline: &'a [InlineNode],
+fn inline_parts<'a>(
+    entry: &'a InlineNode,
     context: InlineContext,
-    targets: &mut Vec<FocusTarget>,
-) -> Vec<ParagraphPart<'a>> {
+    targets: &mut Vec<FocusTarget<'a>>,
+) -> impl Iterator<Item = ParagraphPart<'a>> + 'a {
     let keep_nbsp = context == InlineContext::Paragraph;
-    let mut parts = Vec::new();
-    for entry in inline {
-        let focus_index = FocusTarget::for_inline_node(entry).map(|target| {
-            let index = targets.len();
-            targets.push(target);
-            index
-        });
-        let fragment = |text, keep_nbsp| {
-            ParagraphPart::Fragment(Fragment {
-                text,
-                focus_index,
-                keep_nbsp,
-            })
-        };
+    let focus_index = FocusTarget::for_inline_node(entry).map(|target| {
+        let index = targets.len();
+        targets.push(target);
+        index
+    });
+    let fragment = move |text, keep_nbsp| {
+        ParagraphPart::Fragment(Fragment {
+            text,
+            focus_index,
+            keep_nbsp,
+        })
+    };
 
-        match entry {
-            InlineNode::Break => parts.push(ParagraphPart::Break),
-            InlineNode::BreakOpportunity => parts.push(ParagraphPart::BreakOpportunity),
-            InlineNode::Text(text) if keep_nbsp && text.is_empty() => {}
-            InlineNode::Text(text) if keep_nbsp && text.chars().all(is_breakable_space) => {
-                parts.push(ParagraphPart::BreakOpportunity);
-            }
-            InlineNode::Text(text) | InlineNode::Link { text, .. } => {
-                parts.push(fragment(Cow::Borrowed(text.as_str()), keep_nbsp));
-            }
-            InlineNode::Anchor { label_lines, .. } => {
-                for (index, text) in label_lines.iter().enumerate() {
-                    if index != 0 {
-                        parts.push(ParagraphPart::Break);
-                    }
-                    parts.push(fragment(Cow::Borrowed(text.as_str()), keep_nbsp));
-                }
-            }
-            InlineNode::Input {
-                name,
-                title,
-                value,
-                is_password,
-                mask,
-                ..
-            } => {
-                let display_value = if *is_password {
-                    mask.obscure(value)
-                } else {
-                    value.clone()
-                };
-                let label = title
+    let mut anchor_lines = &[][..];
+    let part = match entry {
+        InlineNode::Break => Some(ParagraphPart::Break),
+        InlineNode::BreakOpportunity => Some(ParagraphPart::BreakOpportunity),
+        InlineNode::Text(text) if keep_nbsp && text.is_empty() => None,
+        InlineNode::Text(text) if keep_nbsp && text.chars().all(is_breakable_space) => {
+            Some(ParagraphPart::BreakOpportunity)
+        }
+        InlineNode::Text(text) | InlineNode::Link { text, .. } => {
+            Some(fragment(Cow::Borrowed(text.as_str()), keep_nbsp))
+        }
+        InlineNode::Anchor { label_lines, .. } => {
+            anchor_lines = label_lines;
+            None
+        }
+        InlineNode::Input { .. } | InlineNode::Select { .. } => {
+            Some(ParagraphPart::Control { entry, focus_index })
+        }
+    };
+    part.into_iter().chain(
+        anchor_lines
+            .iter()
+            .enumerate()
+            .flat_map(move |(index, text)| {
+                [
+                    (index != 0).then_some(ParagraphPart::Break),
+                    Some(fragment(Cow::Borrowed(text.as_str()), keep_nbsp)),
+                ]
+                .into_iter()
+                .flatten()
+            }),
+    )
+}
+
+enum ControlDisplayChunk<'a> {
+    Text(&'a str),
+    MaskedPassword(char),
+}
+
+fn write_control_display<E>(
+    entry: &InlineNode,
+    mut write: impl FnMut(ControlDisplayChunk<'_>) -> Result<(), E>,
+) -> Result<(), E> {
+    use ControlDisplayChunk::{MaskedPassword, Text};
+
+    write(Text("["))?;
+    let mut write_label = |label: &str| {
+        write(Text(label))?;
+        write(Text(": "))
+    };
+    match entry {
+        InlineNode::Input {
+            name,
+            title,
+            value,
+            is_password,
+            mask,
+            ..
+        } => {
+            write_label(
+                title
                     .as_deref()
                     .filter(|title| !title.trim().is_empty())
-                    .unwrap_or(name);
-                parts.push(fragment(
-                    Cow::Owned(format!("[{label}: {display_value}]")),
-                    false,
-                ));
+                    .unwrap_or(name),
+            )?;
+            if *is_password {
+                for ch in mask.obscure(value) {
+                    write(MaskedPassword(ch))?;
+                }
+            } else {
+                write(Text(value))?;
             }
-            InlineNode::Select {
-                control_id,
-                name,
-                iname,
-                title,
-                options,
-                selected_indices,
-                multiple,
-                ..
-            } => {
-                let selected = selected_indices
-                    .iter()
-                    .filter_map(|index| options.get(*index))
-                    .map(|option| option.label.as_str())
-                    .collect::<Vec<_>>()
-                    .join(if *multiple { "; " } else { "" });
-                let label = title
+        }
+        InlineNode::Select {
+            control_id,
+            name,
+            iname,
+            title,
+            options,
+            selected_indices,
+            multiple,
+            ..
+        } => {
+            write_label(
+                title
                     .as_ref()
                     .or(name.as_ref())
                     .or(iname.as_ref())
-                    .unwrap_or(control_id);
-                parts.push(fragment(
-                    Cow::Owned(format!("[{label}: {selected}]")),
-                    false,
-                ));
+                    .unwrap_or(control_id),
+            )?;
+            for (index, option) in selected_indices
+                .iter()
+                .filter_map(|index| options.get(*index))
+                .enumerate()
+            {
+                if index != 0 && *multiple {
+                    write(Text("; "))?;
+                }
+                write(Text(&option.label))?;
             }
         }
+        _ => unreachable!("only form controls have a control display"),
     }
-    parts
+    write(Text("]"))
 }
 
 fn joins_previous(previous: &str, next: &Fragment<'_>) -> bool {
@@ -208,7 +250,7 @@ pub fn layout_card(
     card: &Card,
     viewport_cols: usize,
     focused_link_idx: usize,
-) -> Result<LayoutResult, EngineRenderError> {
+) -> Result<LayoutResult<'_>, EngineRenderError> {
     layout_card_impl(
         card,
         viewport_cols,
@@ -223,7 +265,7 @@ pub(crate) fn layout_card_with_limits(
     viewport_cols: usize,
     focused_link_idx: usize,
     limits: EngineRenderLimits,
-) -> Result<LayoutResult, EngineRenderError> {
+) -> Result<LayoutResult<'_>, EngineRenderError> {
     layout_card_impl(card, viewport_cols, focused_link_idx, limits, true)
 }
 
@@ -233,7 +275,7 @@ fn layout_card_impl(
     focused_link_idx: usize,
     limits: EngineRenderLimits,
     count_render_pass: bool,
-) -> Result<LayoutResult, EngineRenderError> {
+) -> Result<LayoutResult<'_>, EngineRenderError> {
     #[cfg(feature = "render-test-instrumentation")]
     if count_render_pass {
         LAYOUT_PASS_COUNT.with(|count| count.set(count.get() + 1));
@@ -243,35 +285,105 @@ fn layout_card_impl(
 
     let mut result = LayoutResult::default();
     let mut row_count = 0usize;
+    let mut nowrap = NowrapState::default();
+    // A significant nowrap paragraph anywhere on the card makes earlier
+    // unpainted wrapped paragraphs part of the logical row layout.
+    let has_nowrap = card.nodes.iter().any(|node| {
+        matches!(node, Node::Paragraph { inline, mode: Some(ParagraphMode::NoWrap) }
+            if inline.iter().any(InlineNode::is_significant_in_paragraph))
+    });
 
     for node in &card.nodes {
-        let (inline, context) = match node {
-            Node::Paragraph { inline, .. } => (inline, InlineContext::Paragraph),
-            Node::CardContent(inline) => (inline, InlineContext::Card),
+        let (inline, context, is_nowrap) = match node {
+            Node::Paragraph { inline, mode } => (
+                inline,
+                InlineContext::Paragraph,
+                *mode == Some(ParagraphMode::NoWrap),
+            ),
+            Node::CardContent(inline) => (inline, InlineContext::Card, false),
             Node::Break => {
-                check_next_row(&limits, row_count)?;
-                row_count += 1;
+                nowrap.advance_row(&limits, &mut row_count, &mut result)?;
+                // Card-level breaks (including those inside pre) consume a row
+                // even when nothing paints after them.
+                if has_nowrap {
+                    result.reserved_row_end = row_count as u32;
+                }
                 continue;
             }
         };
 
-        let first_focus = result.focus_targets.len();
-        let parts = paragraph_parts(inline, context, &mut result.focus_targets);
-        let hrefs: Vec<_> = result.focus_targets[first_focus..]
+        if is_nowrap {
+            layout_nowrap(
+                inline,
+                &mut result,
+                &limits,
+                &mut row_count,
+                focused_link_idx,
+                &mut nowrap,
+            )?;
+            continue;
+        }
+        let significant_paragraph = context == InlineContext::Paragraph
+            && inline.iter().any(InlineNode::is_significant_in_paragraph);
+        // Wrapped paragraphs can reuse a row opened by another wrapped
+        // paragraph's trailing break. Nowrap starts on a new row.
+        if significant_paragraph && nowrap.pending_row != PendingParagraphRow::TrailingWrap {
+            nowrap.consume_paragraph_boundary(&limits, &mut row_count, &mut result)?;
+        }
+        let first_row = row_count;
+        let mut painted = false;
+
+        // Card-level paint or a break can occupy the pending line itself.
+        // Empty card content leaves it available for the next node.
+        let parts: Vec<_> = inline
             .iter()
-            .map(FocusTarget::to_render_href)
+            .flat_map(|entry| inline_parts(entry, context, &mut result.focus_targets))
             .collect();
         let mut parts = parts.into_iter();
         while let Some(part) = parts.next() {
             let first = match part {
                 // Explicit breaks consume a row even when they have no paint.
                 ParagraphPart::Break => {
-                    check_next_row(&limits, row_count)?;
-                    row_count += 1;
+                    nowrap.advance_row(&limits, &mut row_count, &mut result)?;
+                    if significant_paragraph && has_nowrap {
+                        result.reserved_row_end = row_count as u32;
+                        // A focus target belongs to the open row even when its label
+                        // paints nothing. Paint or a subsequent break uses that row.
+                        let row_has_focus = parts
+                            .as_slice()
+                            .iter()
+                            .take_while(|part| !matches!(part, ParagraphPart::Break))
+                            .any(|part| {
+                                matches!(part, ParagraphPart::Fragment(fragment)
+                                    if fragment.focus_index.is_some())
+                            });
+                        if row_has_focus {
+                            nowrap.pending_row = PendingParagraphRow::UnpaintedWrap;
+                        } else if !painted {
+                            // A following nowrap paragraph starts after the open row.
+                            nowrap.pending_row = PendingParagraphRow::TrailingWrap;
+                        }
+                    }
                     continue;
                 }
                 ParagraphPart::BreakOpportunity => continue,
                 ParagraphPart::Fragment(fragment) => fragment,
+                ParagraphPart::Control { entry, focus_index } => {
+                    let mut text = String::new();
+                    write_control_display(entry, |chunk| {
+                        match chunk {
+                            ControlDisplayChunk::Text(chunk) => text.push_str(chunk),
+                            ControlDisplayChunk::MaskedPassword(ch) => text.push(ch),
+                        }
+                        Ok::<_, std::convert::Infallible>(())
+                    })
+                    .expect("writing to a string is infallible");
+                    Fragment {
+                        text: Cow::Owned(text),
+                        focus_index,
+                        keep_nbsp: false,
+                    }
+                }
             };
 
             let mut text = first.text;
@@ -332,45 +444,269 @@ fn layout_card_impl(
             })?;
 
             for line in lines {
+                painted = true;
+                nowrap.pending_row = PendingParagraphRow::None;
                 check_next_row(&limits, row_count)?;
                 let y = row_count as u32;
                 let mut x = 0;
                 for (fragment, text) in line.fragments() {
-                    check_next_draw(
-                        &limits,
-                        result.segments.len(),
-                        result.render_list.draw.len(),
-                    )?;
                     let focus_index = focus_indices[fragment];
-                    let draw = match focus_index {
-                        Some(index) => DrawCmd::Link {
+                    x = push_segment(
+                        &mut result,
+                        &limits,
+                        LayoutSegment {
                             x,
                             y,
                             text: text.to_owned(),
-                            focused: index == focused_link_idx,
-                            href: hrefs[index - first_focus].clone(),
+                            focus_index,
                         },
-                        None => DrawCmd::Text {
-                            x,
-                            y,
-                            text: text.to_owned(),
-                        },
-                    };
-                    result.segments.push(LayoutSegment {
-                        x,
-                        y,
-                        text: text.to_owned(),
-                        focus_index,
-                    });
-                    result.render_list.draw.push(draw);
-                    x += text.chars().count() as u32;
+                        focused_link_idx,
+                    )?;
                 }
                 row_count += 1;
             }
         }
+        if row_count == first_row && significant_paragraph && has_nowrap {
+            nowrap.pending_row = PendingParagraphRow::UnpaintedWrap;
+        }
     }
 
+    if nowrap.pending_row.reserves_extent() {
+        nowrap.consume_paragraph_boundary(&limits, &mut row_count, &mut result)?;
+    }
     Ok(result)
+}
+
+#[derive(Default, PartialEq, Eq)]
+enum PendingParagraphRow {
+    #[default]
+    None,
+    TrailingNowrap,
+    TrailingWrap,
+    UnpaintedWrap,
+}
+
+impl PendingParagraphRow {
+    fn reserves_extent(&self) -> bool {
+        matches!(self, Self::TrailingNowrap | Self::UnpaintedWrap)
+    }
+}
+
+#[derive(Default)]
+struct NowrapState {
+    draw_payload_bytes: usize,
+    pending_row: PendingParagraphRow,
+}
+
+impl NowrapState {
+    fn consume_paragraph_boundary(
+        &mut self,
+        limits: &EngineRenderLimits,
+        row_count: &mut usize,
+        result: &mut LayoutResult<'_>,
+    ) -> Result<(), EngineRenderError> {
+        if self.pending_row != PendingParagraphRow::None {
+            self.advance_row(limits, row_count, result)?;
+        }
+        Ok(())
+    }
+
+    fn advance_row(
+        &mut self,
+        limits: &EngineRenderLimits,
+        row_count: &mut usize,
+        result: &mut LayoutResult<'_>,
+    ) -> Result<(), EngineRenderError> {
+        check_next_row(limits, *row_count)?;
+        *row_count += 1;
+        if std::mem::take(&mut self.pending_row).reserves_extent() {
+            result.reserved_row_end = *row_count as u32;
+        }
+        Ok(())
+    }
+
+    fn account_draw_bytes(
+        &mut self,
+        limits: &EngineRenderLimits,
+        bytes: usize,
+    ) -> Result<(), EngineRenderError> {
+        let observed = self.draw_payload_bytes.saturating_add(bytes);
+        if observed > limits.serialized_bytes {
+            return Err(EngineRenderError::resource_limit(
+                EngineRenderResource::SerializedBytes,
+                limits.serialized_bytes,
+                observed,
+            ));
+        }
+        self.draw_payload_bytes = observed;
+        Ok(())
+    }
+}
+
+fn layout_nowrap<'card>(
+    inline: &'card [InlineNode],
+    result: &mut LayoutResult<'card>,
+    limits: &EngineRenderLimits,
+    row_count: &mut usize,
+    focused_link_idx: usize,
+    state: &mut NowrapState,
+) -> Result<(), EngineRenderError> {
+    let first_row = *row_count;
+    let mut x = 0;
+    let mut pending_space = false;
+    for entry in inline {
+        for part in inline_parts(entry, InlineContext::Paragraph, &mut result.focus_targets) {
+            // Hold whitespace until the next painted character, even across substitutions
+            // that expand to nothing. Keep separators outside a focus target's hit region.
+            let mut text = String::new();
+            let mut separator = false;
+            let mut normalize = |chunk: ControlDisplayChunk<'_>, focus_index: Option<usize>| {
+                let mut utf8 = [0; 4];
+                let (chunk, masked_password): (&str, _) = match chunk {
+                    ControlDisplayChunk::Text(chunk) => (chunk, false),
+                    // The obscurer has already resolved which mask literals to keep.
+                    ControlDisplayChunk::MaskedPassword(ch) => (ch.encode_utf8(&mut utf8), true),
+                };
+                for ch in chunk
+                    .chars()
+                    .filter(|&ch| masked_password || ch != SOFT_HYPHEN)
+                {
+                    if !masked_password && is_breakable_space(ch) {
+                        pending_space = x > 0 || !text.is_empty();
+                        continue;
+                    }
+                    let space = std::mem::take(&mut pending_space);
+                    if text.is_empty() {
+                        state.consume_paragraph_boundary(limits, row_count, result)?;
+                        check_next_row(limits, *row_count)?;
+                        separator = space && focus_index.is_some();
+                        check_output_slots(limits, result, 1 + usize::from(separator))?;
+                    }
+                    // Each painted byte appears in the draw list, even beyond the viewport.
+                    state.account_draw_bytes(limits, ch.len_utf8() + usize::from(space))?;
+                    if space && !(text.is_empty() && separator) {
+                        text.push(' ');
+                    }
+                    text.push(ch);
+                }
+                Ok::<_, EngineRenderError>(())
+            };
+            let focus_index = match part {
+                ParagraphPart::Break => {
+                    state.consume_paragraph_boundary(limits, row_count, result)?;
+                    // End the current logical row, even if another break left it empty.
+                    check_next_row(limits, *row_count)?;
+                    *row_count += 1;
+                    x = 0;
+                    pending_space = false;
+                    continue;
+                }
+                ParagraphPart::BreakOpportunity => {
+                    pending_space = x > 0;
+                    continue;
+                }
+                ParagraphPart::Fragment(fragment) => {
+                    normalize(
+                        ControlDisplayChunk::Text(&fragment.text),
+                        fragment.focus_index,
+                    )?;
+                    fragment.focus_index
+                }
+                ParagraphPart::Control { entry, focus_index } => {
+                    write_control_display(entry, |chunk| normalize(chunk, focus_index))?;
+                    focus_index
+                }
+            };
+            if text.is_empty() {
+                continue;
+            }
+
+            if let Some(index) = focus_index {
+                // A multiline anchor repeats its destination in every emitted command.
+                let (prefix, destination) = result.focus_targets[index].render_href_parts();
+                state.account_draw_bytes(limits, prefix.len().saturating_add(destination.len()))?;
+            }
+            let y = *row_count as u32;
+            if separator {
+                x = push_segment(
+                    result,
+                    limits,
+                    LayoutSegment {
+                        x,
+                        y,
+                        text: " ".into(),
+                        focus_index: None,
+                    },
+                    focused_link_idx,
+                )?;
+            }
+            x = push_segment(
+                result,
+                limits,
+                LayoutSegment {
+                    x,
+                    y,
+                    text,
+                    focus_index,
+                },
+                focused_link_idx,
+            )?;
+        }
+    }
+    let ends_with_break = x == 0 && *row_count > first_row;
+    if x > 0 {
+        *row_count += 1;
+    } else if !ends_with_break && inline.iter().any(InlineNode::is_significant_in_paragraph) {
+        // A focus target can be significant even when its label has no painted glyphs.
+        state.consume_paragraph_boundary(limits, row_count, result)?;
+        check_next_row(limits, *row_count)?;
+        *row_count += 1;
+    }
+    if *row_count > first_row {
+        // A trailing break opens an empty line. Defer it until the next significant
+        // paragraph or the end of the card so intervening insignificant content costs no row.
+        state.pending_row = if ends_with_break {
+            PendingParagraphRow::TrailingNowrap
+        } else {
+            PendingParagraphRow::None
+        };
+        result.reserved_row_end = *row_count as u32;
+    }
+    Ok(())
+}
+
+fn push_segment(
+    result: &mut LayoutResult<'_>,
+    limits: &EngineRenderLimits,
+    segment: LayoutSegment,
+    focused_link_idx: usize,
+) -> Result<u32, EngineRenderError> {
+    check_output_slots(limits, result, 1)?;
+    let LayoutSegment {
+        x,
+        y,
+        text,
+        focus_index,
+    } = &segment;
+    let (x, y) = (*x, *y);
+    let draw = match *focus_index {
+        Some(index) => DrawCmd::Link {
+            x,
+            y,
+            text: text.clone(),
+            focused: index == focused_link_idx,
+            href: result.focus_targets[index].to_render_href(),
+        },
+        None => DrawCmd::Text {
+            x,
+            y,
+            text: text.clone(),
+        },
+    };
+    let end_x = x + text.chars().count() as u32;
+    result.segments.push(segment);
+    result.render_list.draw.push(draw);
+    Ok(end_x)
 }
 
 fn check_next_row(limits: &EngineRenderLimits, rows: usize) -> Result<(), EngineRenderError> {
@@ -384,23 +720,27 @@ fn check_next_row(limits: &EngineRenderLimits, rows: usize) -> Result<(), Engine
     Ok(())
 }
 
-fn check_next_draw(
+fn check_output_slots(
     limits: &EngineRenderLimits,
-    segments: usize,
-    draw_commands: usize,
+    result: &LayoutResult<'_>,
+    needed: usize,
 ) -> Result<(), EngineRenderError> {
-    if segments >= limits.segments {
+    if limits.segments.saturating_sub(result.segments.len()) < needed {
         return Err(EngineRenderError::resource_limit(
             EngineRenderResource::LayoutSegments,
             limits.segments,
-            segments.saturating_add(1),
+            limits.segments.saturating_add(1),
         ));
     }
-    if draw_commands >= limits.draw_commands {
+    if limits
+        .draw_commands
+        .saturating_sub(result.render_list.draw.len())
+        < needed
+    {
         return Err(EngineRenderError::resource_limit(
             EngineRenderResource::DrawCommands,
             limits.draw_commands,
-            draw_commands.saturating_add(1),
+            limits.draw_commands.saturating_add(1),
         ));
     }
     Ok(())
@@ -776,6 +1116,1176 @@ mod tests {
 
     fn draw(engine: &WmlEngine) -> serde_json::Value {
         serde_json::to_value(engine.render().unwrap().draw).unwrap()
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout() {
+        // WAP-191_104-WML §11.8.3: an unspecified mode inherits within the card.
+        let mut engine =
+            strict_card_body(r#"<p mode="nowrap">Alpha Beta Gamma</p><p>Delta Epsilon</p>"#);
+        engine.set_viewport_cols(8).expect("valid viewport");
+        assert_paragraph_text_rows(&engine, &[(0, "Alpha Beta Gamma"), (1, "Delta Epsilon")]);
+
+        engine
+            .navigate_to_card("next".into())
+            .expect("navigate to next card");
+        assert_paragraph_text_rows(&engine, &[(0, "Destinat"), (1, "ion")]);
+    }
+
+    fn assert_paragraph_text_rows(engine: &WmlEngine, expected: &[(u32, &str)]) {
+        let render = engine.render().expect("paragraph fixture must render");
+        assert_paragraph_draw_rows(&render.draw, expected);
+    }
+
+    fn assert_paragraph_draw_rows(draw: &[DrawCmd], expected: &[(u32, &str)]) {
+        assert!(
+            draw.len() == expected.len()
+                && draw.iter().zip(expected).all(|(cmd, &(row, line))| {
+                    matches!(cmd, DrawCmd::Text { x: 0, y, text } if *y == row && text == line)
+                }),
+            "paragraph fixture must paint the expected rows"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_ignores_insignificant_mode_changes() {
+        let mut engine = strict_card_body(concat!(
+            r#"<p mode="nowrap">Alpha Beta Gamma</p>"#,
+            r#"<p mode="wrap">   </p><p mode="wrap">$(blank)</p><p mode="wrap">&shy;</p>"#,
+            r#"<p>Delta Epsilon</p><p mode="wrap">Alpha Beta Gamma</p><p>Delta Epsilon</p>"#,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        assert!(engine.set_var("blank".into(), " \t\n ".into()));
+        assert_paragraph_text_rows(
+            &engine,
+            &[
+                (0, "Alpha Beta Gamma"),
+                (1, "Delta Epsilon"),
+                (2, "Alpha"),
+                (3, "Beta"),
+                (4, "Gamma"),
+                (5, "Delta"),
+                (6, "Epsilon"),
+            ],
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_preserves_inline_seams_and_breaks() {
+        let mut engine = strict_card_body(concat!(
+            r##"<p mode="nowrap">$(left)<a href="#next">$(middle)</a> &#9; $(missing)"##,
+            r##"<a href="#main">Café&nbsp;D&shy;EF</a>$(right)<br/><br/>tail</p><p>after line</p>"##,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        assert!(engine.set_var("left".into(), "  Alpha\t Beta".into()));
+        assert!(engine.set_var("middle".into(), "G\u{ad}amma".into()));
+        assert!(engine.set_var("right".into(), "\t seam \t".into()));
+        assert!(
+            draw(&engine)
+                == serde_json::json!([
+                    {"type": "text", "x": 0, "y": 0, "text": "Alpha Beta"},
+                    {"type": "link", "x": 10, "y": 0, "text": "Gamma", "focused": true, "href": "#next"},
+                    {"type": "text", "x": 15, "y": 0, "text": " "},
+                    {"type": "link", "x": 16, "y": 0, "text": "Café\u{a0}DEF", "focused": false, "href": "#main"},
+                    {"type": "text", "x": 24, "y": 0, "text": " seam"},
+                    {"type": "text", "x": 0, "y": 2, "text": "tail"},
+                    {"type": "text", "x": 0, "y": 3, "text": "after line"}
+                ]),
+            "nowrap must preserve inline seams, ownership, and explicit breaks"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_retains_offscreen_targets() {
+        use crate::{EngineFocusTargetKind, EngineFrameSegment, EngineInputEvent};
+
+        let mut engine = strict_card_body(concat!(
+            r##"<p mode="nowrap"><a href="#main">Stay</a>abcdefghijklmno"##,
+            r##"<anchor>Go<go href="#next"/></anchor><input name="pin" type="password" value="123"/>"##,
+            r#"<select name="pick"><option>é</option></select></p>"#,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        engine
+            .handle_key("down".into())
+            .expect("focus offscreen anchor");
+        let output = engine.render_output().expect("focus fixture must render");
+        let frame = output.presentation;
+        assert!(
+            matches!(
+                output.render.draw.get(2),
+                Some(DrawCmd::Link { x: 19, y: 0, text, focused: true, href })
+                    if text == "Go" && href == "#next"
+            ),
+            "offscreen anchor must retain its draw coordinates and focus"
+        );
+        let [row] = frame.rows.as_slice() else {
+            panic!("expected one presentation row");
+        };
+        assert_eq!(row.index, 0);
+        assert!(
+            matches!(
+                row.segments.get(2),
+                Some(EngineFrameSegment::Focusable { x: 19, text, focused: true, .. })
+                    if text == "Go"
+            ) && matches!(
+                row.segments.get(3),
+                Some(EngineFrameSegment::Focusable { x: 21, text, .. }) if text == "[pin: ***]"
+            ) && matches!(
+                row.segments.get(4),
+                Some(EngineFrameSegment::Focusable { x: 31, text, .. }) if text == "[pick: é]"
+            ),
+            "offscreen presentation must keep anchor and form geometry and mask the password"
+        );
+        let hits = frame.hit_regions.iter().map(|hit| {
+            (
+                hit.x,
+                hit.y,
+                hit.width,
+                hit.height,
+                hit.action_id.as_str(),
+                hit.target_kind,
+            )
+        });
+        assert!(
+            hits.eq([
+                (0, 0, 4, 1, "focus:0", EngineFocusTargetKind::Link),
+                (19, 0, 2, 1, "focus:1", EngineFocusTargetKind::Link),
+                (21, 0, 10, 1, "focus:2", EngineFocusTargetKind::Input),
+                (31, 0, 9, 1, "focus:3", EngineFocusTargetKind::Select),
+            ]),
+            "hit regions must match the logical coordinates and target order"
+        );
+        engine
+            .handle_key("enter".into())
+            .expect("activate focused anchor");
+        assert!(
+            engine.active_card_id().as_deref() == Ok("next"),
+            "keyboard must open the destination card"
+        );
+        assert!(engine.navigate_back());
+        let frame = engine.render_frame().expect("restored card must render");
+        engine
+            .handle_input(EngineInputEvent::Click {
+                frame_id: frame.frame_id,
+                x: 20,
+                y: 0,
+            })
+            .expect("click at logical offscreen coordinates");
+        assert!(
+            engine.active_card_id().as_deref() == Ok("next"),
+            "pointer must open the destination card"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_preserves_form_control_seams() {
+        use crate::EngineFocusTargetKind::{Input, Link, Select};
+
+        let mut engine = strict_card_body(concat!(
+            r##"<p mode="nowrap">A <input name="n"/> <a href="#next">B</a>"##,
+            r#" <select name="s"><option>é</option></select> C</p>"#,
+            r#"<p mode="wrap">$(missing)</p>"#,
+            r##"<p>D<input name="m"/><a href="#next">E</a>"##,
+            r#"<select name="t"><option>é</option></select>F</p>"#,
+            r##"<p>G<a href="#next">H </a><input name="q"/> <select name="u">"##,
+            r##"<option>é</option></select><a href="#next"> I</a></p>"##,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        let output = engine
+            .render_output()
+            .expect("form seams fixture must render");
+        let paint = output.render.draw.iter().map(|command| match command {
+            DrawCmd::Text { x, y, text } | DrawCmd::Link { x, y, text, .. } => {
+                (*x, *y, text.as_str())
+            }
+        });
+        assert!(
+            paint.eq([
+                (0, 0, "A"),
+                (1, 0, " "),
+                (2, 0, "[n: ]"),
+                (7, 0, " "),
+                (8, 0, "B"),
+                (9, 0, " "),
+                (10, 0, "[s: é]"),
+                (16, 0, " C"),
+                (0, 1, "D"),
+                (1, 1, "[m: ]"),
+                (6, 1, "E"),
+                (7, 1, "[t: é]"),
+                (13, 1, "F"),
+                (0, 2, "G"),
+                (1, 2, "H"),
+                (2, 2, " "),
+                (3, 2, "[q: ]"),
+                (8, 2, " "),
+                (9, 2, "[u: é]"),
+                (15, 2, " "),
+                (16, 2, "I"),
+            ]),
+            "form seams must paint authored spaces and preserve adjoining fragments"
+        );
+        let hits = output
+            .presentation
+            .hit_regions
+            .iter()
+            .map(|hit| (hit.x, hit.y, hit.width, hit.target_kind));
+        assert!(
+            hits.eq([
+                (2, 0, 5, Input),
+                (8, 0, 1, Link),
+                (10, 0, 6, Select),
+                (1, 1, 5, Input),
+                (6, 1, 1, Link),
+                (7, 1, 6, Select),
+                (1, 2, 1, Link),
+                (3, 2, 5, Input),
+                (9, 2, 6, Select),
+                (16, 2, 1, Link),
+            ]),
+            "form seams must keep spaces outside link and control hit regions"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_reports_terminal_logical_rows() {
+        use crate::render::frame::ENGINE_VIEWPORT_ROWS;
+        use crate::EngineInputEvent;
+
+        type TerminalBreakCase = (&'static str, &'static [(u32, &'static str)], u32, usize);
+        let cases: &[TerminalBreakCase] = &[
+            (
+                r#"<p mode="wrap"><br/></p><p mode="nowrap">B</p>"#,
+                &[(2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="wrap">A<br/></p><pre>$(missing)</pre><p mode="nowrap">B</p>"#,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="wrap"><br/><br/></p><pre>$(missing)</pre><p mode="nowrap">B</p>"#,
+                &[(3, "B")],
+                4,
+                4,
+            ),
+            (r#"<p mode="wrap"><br/></p><p>B</p>"#, &[(1, "B")], 2, 2),
+            (
+                r#"<p mode="nowrap">A<br/></p><p><br/>B</p>"#,
+                &[(0, "A"), (3, "B")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="nowrap"><br/><br/></p><p>B</p>"#,
+                &[(3, "B")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><p mode="wrap"><br/>B</p>"#,
+                &[(0, "A"), (3, "B")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="nowrap">A</p><p mode="wrap"><br/></p>"#,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><p mode="wrap"><br/></p>"#,
+                &[(0, "A")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A</p><p mode="wrap">B<br/><br/></p>"#,
+                &[(0, "A"), (1, "B")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><p mode="wrap"><br/></p><p>B</p>"#,
+                &[(0, "A"), (3, "B")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="wrap">A<br/></p><p mode="wrap"><br/></p>"#,
+                &[(0, "A")],
+                1,
+                3,
+            ),
+            (r#"<p mode="nowrap"><br/><br/></p>"#, &[], 3, 3),
+            (r#"<p mode="nowrap">A<br/><br/></p>"#, &[(0, "A")], 3, 3),
+            (
+                r#"<p mode="nowrap">A<br/></p><p><br/></p>"#,
+                &[(0, "A")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/>B</p>"#,
+                &[(0, "A"), (1, "B")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><p>B</p>"#,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><p> </p><p mode="wrap">B</p>"#,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r##"<p mode="nowrap">A<br/></p><p mode="wrap"><a href="#next">&shy;</a></p><pre>B</pre>"##,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre>$(missing)</pre><p>B</p>"#,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre>$(blank)</pre>"#,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre>$(missing)</pre>"#,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre>&shy;</pre>"#,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre>Paint</pre><p>B</p>"#,
+                &[(0, "A"), (1, "Paint"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre><br/></pre><p>B</p>"#,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A<br/></p><pre><br/></pre>"#,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A</p><p mode="wrap">B</p><pre/>"#,
+                &[(0, "A"), (1, "B")],
+                2,
+                2,
+            ),
+            (
+                r#"<p mode="nowrap">A</p><p mode="wrap">B</p><pre><br/></pre>"#,
+                &[(0, "A"), (1, "B")],
+                3,
+                3,
+            ),
+            (
+                r#"<p mode="nowrap">A</p><p mode="wrap">B</p><pre><br/></pre><p>C</p>"#,
+                &[(0, "A"), (1, "B"), (3, "C")],
+                4,
+                4,
+            ),
+            (
+                r#"<p mode="wrap">A</p><p>B</p><pre><br/></pre>"#,
+                &[(0, "A"), (1, "B")],
+                2,
+                3,
+            ),
+            (
+                r##"<p mode="nowrap">A</p><p mode="wrap"><a href="#next">&shy;</a></p>"##,
+                &[(0, "A")],
+                2,
+                2,
+            ),
+            (
+                r##"<p mode="wrap">A</p><p><a href="#next">&shy;</a></p>"##,
+                &[(0, "A")],
+                1,
+                1,
+            ),
+            (
+                r##"<p mode="nowrap">A</p><p mode="wrap"><br/><a href="#next">&shy;</a></p><p>B</p>"##,
+                &[(0, "A"), (3, "B")],
+                4,
+                4,
+            ),
+            (
+                r##"<p mode="nowrap">A</p><p mode="wrap"><br/><a href="#next">&shy;</a></p>"##,
+                &[(0, "A")],
+                3,
+                3,
+            ),
+            (
+                r##"<p mode="nowrap">A</p><p mode="wrap">B<br/><a href="#next">&shy;</a></p><p>C</p>"##,
+                &[(0, "A"), (1, "B"), (4, "C")],
+                5,
+                5,
+            ),
+            (
+                r##"<p mode="wrap">A</p><p><br/><a href="#next">&shy;</a></p><p>B</p>"##,
+                &[(0, "A"), (2, "B")],
+                3,
+                3,
+            ),
+            (
+                r##"<p mode="wrap">A</p><p><br/><a href="#next">&shy;</a></p>"##,
+                &[(0, "A")],
+                1,
+                2,
+            ),
+            (r#"<p mode="wrap">A<br/><br/></p>"#, &[(0, "A")], 1, 3),
+        ];
+        for &(body, painted_rows, content_rows, rows) in cases {
+            let mut engine = strict_card_body(body);
+            assert!(engine.set_var("blank".into(), " \t ".into()));
+            let limits = EngineRenderLimits {
+                rows,
+                ..EngineRenderLimits::default()
+            };
+            let output = engine
+                .render_output_with_limits(limits)
+                .unwrap_or_else(|err| panic!("{body} must fit the row budget: {err:?}"));
+            let frame = output.presentation;
+            assert_paragraph_draw_rows(&output.render.draw, painted_rows);
+            assert!(
+                frame
+                    .rows
+                    .iter()
+                    .map(|row| row.index)
+                    .eq(painted_rows.iter().map(|&(row, _)| row)),
+                "the frame must preserve the painted logical row indices"
+            );
+            assert_eq!(frame.viewport.content_rows, content_rows, "{body}");
+            assert!(
+                matches!(
+                    engine.render_output_with_limits(EngineRenderLimits {
+                        rows: rows - 1,
+                        ..limits
+                    }),
+                    Err(EngineRenderError::ResourceLimit {
+                        resource: EngineRenderResource::LayoutRows,
+                        limit,
+                        observed,
+                        ..
+                    }) if limit == rows - 1 && observed == rows
+                ),
+                "paragraph breaks and boundaries must report the typed row limit"
+            );
+        }
+
+        let breaks = "<br/>".repeat(ENGINE_VIEWPORT_ROWS as usize + 1);
+        let mut engine = strict_card_body(&format!(r#"<p mode="nowrap">{breaks}</p>"#));
+        let frame = engine
+            .render_frame()
+            .expect("blank scroll fixture must render");
+        assert_eq!(frame.viewport.content_rows, ENGINE_VIEWPORT_ROWS + 2);
+        engine
+            .handle_input(EngineInputEvent::Scroll {
+                frame_id: frame.frame_id,
+                delta_rows: 2,
+            })
+            .expect("scroll must reach the final blank row");
+        let frame = engine
+            .render_frame()
+            .expect("scrolled blank fixture must render");
+        assert_eq!(frame.viewport.offset_row, 2);
+        assert!(
+            frame.rows.is_empty(),
+            "blank logical rows must not add paint"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_scrolls_to_terminal_unpainted_wrap_rows() {
+        use crate::render::frame::ENGINE_VIEWPORT_ROWS;
+        use crate::EngineInputEvent;
+
+        let prefix = r#"<p mode="nowrap">A</p>"#.repeat(ENGINE_VIEWPORT_ROWS as usize);
+        for (suffix, extra_rows) in [
+            ("<pre/>".to_owned(), 0),
+            ("<pre><br/></pre>".to_owned(), 1),
+            (r#"<p mode="wrap"><br/></p>"#.to_owned(), 1),
+            (
+                r##"<p mode="wrap"><a href="#next">&shy;</a></p>"##.repeat(2),
+                2,
+            ),
+        ] {
+            let mut engine = strict_card_body(&format!("{prefix}{suffix}"));
+            let frame = engine.render_frame().expect("mixed card must render");
+            assert_eq!(
+                frame.viewport.content_rows,
+                ENGINE_VIEWPORT_ROWS + extra_rows,
+                "{suffix}"
+            );
+            engine
+                .handle_input(EngineInputEvent::Scroll {
+                    frame_id: frame.frame_id,
+                    delta_rows: 3,
+                })
+                .expect("scroll must reach the terminal logical rows");
+            let frame = engine
+                .render_frame()
+                .expect("scrolled mixed card must render");
+            assert_eq!(frame.viewport.offset_row, extra_rows);
+            assert_eq!(
+                frame.rows.len(),
+                (ENGINE_VIEWPORT_ROWS - extra_rows) as usize
+            );
+            assert!(frame.hit_regions.is_empty());
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_starts_after_unpainted_wrapped_paragraphs() {
+        let wrap = r##"<p mode="wrap"><a href="#next">&shy;</a></p><p> </p>"##;
+        for unpainted_rows in 1..=2 {
+            let wrapped_prefix = wrap.repeat(unpainted_rows);
+            let mixed = strict_card_body(&format!(r#"{wrapped_prefix}<p mode="nowrap">B</p>"#));
+            let limits = EngineRenderLimits {
+                rows: unpainted_rows + 1,
+                segments: 1,
+                draw_commands: 1,
+                ..EngineRenderLimits::default()
+            };
+            let output = mixed
+                .render_output_with_limits(limits)
+                .expect("mixed paragraphs must fit the logical row budget");
+            assert_paragraph_draw_rows(&output.render.draw, &[(unpainted_rows as u32, "B")]);
+            assert_eq!(
+                output.presentation.viewport.content_rows,
+                limits.rows as u32
+            );
+            assert!(matches!(output.presentation.focus, Some(focus) if focus.index == 0));
+            assert!(matches!(
+                mixed.render_output_with_limits(EngineRenderLimits {
+                    rows: unpainted_rows,
+                    ..limits
+                }),
+                Err(EngineRenderError::ResourceLimit {
+                    resource: EngineRenderResource::LayoutRows,
+                    limit,
+                    observed,
+                    ..
+                }) if limit == unpainted_rows && observed == limits.rows
+            ));
+
+            let wrapped = strict_card_body(&format!("{wrapped_prefix}<p>B</p>"));
+            let output = wrapped
+                .render_output_with_limits(EngineRenderLimits { rows: 1, ..limits })
+                .expect("wrapped paragraphs must retain their existing row budget");
+            assert_paragraph_draw_rows(&output.render.draw, &[(0, "B")]);
+            assert_eq!(output.presentation.viewport.content_rows, 1);
+        }
+
+        let mixed = strict_card_body(&format!(r#"{wrap}<p>B</p><p mode="nowrap">C</p>"#));
+        let output = mixed
+            .render_output_with_limits(EngineRenderLimits {
+                rows: 3,
+                segments: 2,
+                draw_commands: 2,
+                ..EngineRenderLimits::default()
+            })
+            .expect("a wrapped paragraph must keep its row before nowrap begins");
+        assert_paragraph_draw_rows(&output.render.draw, &[(1, "B"), (2, "C")]);
+        assert_eq!(output.presentation.viewport.content_rows, 3);
+        assert!(output.presentation.hit_regions.is_empty());
+        assert!(matches!(output.presentation.focus, Some(focus) if focus.index == 0));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_keeps_unpainted_row_before_next_wrap() {
+        let suffix = r##"<p mode="wrap"><a href="#next">&shy;</a></p><p> </p><p>B</p>"##;
+        for (mode, final_row) in [("wrap", 1), ("nowrap", 2)] {
+            let engine = strict_card_body(&format!(r#"<p mode="{mode}">A</p>{suffix}"#));
+            let output = engine
+                .render_output_with_limits(EngineRenderLimits {
+                    rows: final_row as usize + 1,
+                    segments: 2,
+                    draw_commands: 2,
+                    ..EngineRenderLimits::default()
+                })
+                .expect("the paragraph boundary must fit the row budget");
+            assert_paragraph_draw_rows(&output.render.draw, &[(0, "A"), (final_row, "B")]);
+            assert_eq!(output.presentation.viewport.content_rows, final_row + 1);
+            assert!(output.presentation.hit_regions.is_empty());
+            assert!(matches!(output.presentation.focus, Some(focus) if focus.index == 0));
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_reserves_significant_unpainted_rows() {
+        let mut engine = strict_card_body(concat!(
+            r#"<p mode="nowrap">A<br/></p><p mode="wrap"> &shy; </p>"#,
+            r##"<p><a href="#next">&shy;</a></p><p>Delta Epsilon</p>"##,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        let limits = EngineRenderLimits {
+            rows: 4,
+            segments: 2,
+            draw_commands: 2,
+            ..EngineRenderLimits::default()
+        };
+        let output = engine
+            .render_output_with_limits(limits)
+            .expect("the invisible link must spend only a logical row");
+        assert_paragraph_draw_rows(&output.render.draw, &[(0, "A"), (3, "Delta Epsilon")]);
+        assert_eq!(output.presentation.viewport.content_rows, 4);
+        assert!(output.presentation.hit_regions.is_empty());
+        assert!(matches!(output.presentation.focus, Some(focus) if focus.index == 0));
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits { rows: 2, ..limits }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::LayoutRows,
+                limit: 2,
+                observed: 3,
+                ..
+            })
+        ));
+        engine
+            .handle_key("enter".into())
+            .expect("invisible link must activate");
+        assert!(engine.active_card_id().as_deref() == Ok("next"));
+
+        let terminal = strict_card_body(concat!(
+            r##"<p mode="nowrap"><a href="#next">&shy;</a></p>"##,
+            r#"<p mode="wrap"> &shy; </p>"#,
+        ));
+        let blank_limits = EngineRenderLimits {
+            rows: 1,
+            segments: 0,
+            draw_commands: 0,
+            ..limits
+        };
+        let output = terminal
+            .render_output_with_limits(blank_limits)
+            .expect("a terminal invisible link must fit with no paint slots");
+        assert_eq!(output.presentation.viewport.content_rows, 1);
+        assert!(output.render.draw.is_empty());
+        assert!(output.presentation.rows.is_empty());
+        assert!(matches!(
+            terminal.render_output_with_limits(EngineRenderLimits {
+                rows: 0,
+                ..blank_limits
+            }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::LayoutRows,
+                limit: 0,
+                observed: 1,
+                ..
+            })
+        ));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_keeps_invisible_link_focus_with_long_destination() {
+        let mut engine = strict_card_body(
+            r#"<p mode="nowrap"><a href="https://example.test/$(path)">&shy;</a></p>"#,
+        );
+        let path = "x".repeat(8192);
+        let destination = format!("https://example.test/{path}");
+        assert!(engine.set_var("path".into(), path));
+        let limits = EngineRenderLimits {
+            rows: 1,
+            segments: 0,
+            draw_commands: 0,
+            serialized_bytes: 4096,
+        };
+        let output = engine
+            .render_output_with_limits(limits)
+            .expect("the invisible link must fit without drawing its destination");
+        let frame = output.presentation;
+        assert_eq!(frame.viewport.content_rows, 1);
+        assert!(output.render.draw.is_empty());
+        assert!(frame.rows.is_empty());
+        assert!(frame.hit_regions.is_empty());
+        assert!(matches!(
+            frame.focus,
+            Some(focus) if focus.index == 0 && focus.focus_id == "focus:0"
+                && focus.target_kind == crate::EngineFocusTargetKind::Link
+        ));
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits { rows: 0, ..limits }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::LayoutRows,
+                limit: 0,
+                observed: 1,
+                ..
+            })
+        ));
+        engine
+            .handle_key("enter".into())
+            .expect("keyboard must activate the invisible link");
+        assert!(
+            engine.external_navigation_intent().as_deref() == Some(destination.as_str()),
+            "activation must use the complete expanded destination"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_counts_each_draw_destination() {
+        let mut engine = strict_card_body(
+            r#"<p mode="nowrap"><anchor>A<br/>B<go href="https://example.test/$(path)"/></anchor></p>"#,
+        );
+        let path = "x".repeat(2048);
+        let destination = format!("https://example.test/{path}");
+        assert!(engine.set_var("path".into(), path));
+        let limits = EngineRenderLimits {
+            rows: 2,
+            segments: 2,
+            draw_commands: 2,
+            ..EngineRenderLimits::default()
+        };
+        let output = engine
+            .render_output_with_limits(limits)
+            .expect("both copies of the destination must fit");
+        assert!(matches!(
+            output.render.draw.as_slice(),
+            [DrawCmd::Link { y: 0, href: first, text: a, .. },
+             DrawCmd::Link { y: 1, href: second, text: b, .. }]
+                if first == &destination && second == &destination && a == "A" && b == "B"
+        ));
+        let serialized_bytes = destination.len() + 2;
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits { serialized_bytes, ..limits }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::SerializedBytes,
+                limit,
+                observed,
+                ..
+            }) if limit == serialized_bytes && observed == 2 * destination.len() + 2
+        ));
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits {
+                serialized_bytes,
+                draw_commands: 1,
+                ..limits
+            }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::DrawCommands,
+                limit: 1,
+                observed: 2,
+                ..
+            })
+        ));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_bounds_cumulative_painted_bytes() {
+        let engine = strict_card_body(concat!(
+            r#"<p mode="nowrap">  éé&shy;  </p>"#,
+            r##"<p>ééé  <a href="#next">界界界</a></p>"##,
+        ));
+        let limits = EngineRenderLimits {
+            rows: 2,
+            segments: 4,
+            draw_commands: 4,
+            serialized_bytes: 10,
+        };
+        let output = engine
+            .render_output_with_limits(EngineRenderLimits {
+                serialized_bytes: usize::MAX,
+                ..limits
+            })
+            .expect("the painted text must fit the structural budgets");
+        assert_eq!(output.render.draw.len(), 4);
+        assert!(
+            matches!(
+                engine.render_output_with_limits(limits),
+                Err(EngineRenderError::ResourceLimit {
+                    resource: EngineRenderResource::SerializedBytes,
+                    limit: 10,
+                    observed: 14,
+                    ..
+                })
+            ),
+            "layout must reject the first separator and character that exceed the painted UTF-8 budget"
+        );
+        assert!(
+            matches!(
+                engine.render_output_with_limits(EngineRenderLimits {
+                    serialized_bytes: 25,
+                    ..limits
+                }),
+                Err(EngineRenderError::ResourceLimit {
+                    resource: EngineRenderResource::SerializedBytes,
+                    limit: 25,
+                    observed: 26,
+                    ..
+                })
+            ),
+            "exact serialization must also enforce its budget when the draw payload fits"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_streams_multiselect_labels() {
+        let mut engine = strict_card_body(concat!(
+            r#"<p mode="nowrap">Pick <select name="choices" title="$(heading)" multiple="true" value="first;second">"#,
+            r#"<option value="first">$(first)</option><option value="second">$(second)</option>"#,
+            r#"</select> done</p>"#,
+        ));
+        engine.set_viewport_cols(8).expect("valid viewport");
+        let first = "é".repeat(2048);
+        let second = "界".repeat(2048);
+        assert!(engine.set_var("heading".into(), "  Pick   two  ".into()));
+        assert!(engine.set_var("first".into(), format!("  {first}  ")));
+        assert!(engine.set_var("second".into(), format!("  {second}  ")));
+        let limits = EngineRenderLimits {
+            rows: 2,
+            segments: 8,
+            draw_commands: 8,
+            serialized_bytes: 24,
+        };
+        let Err(EngineRenderError::ResourceLimit {
+            resource,
+            limit,
+            observed,
+            ..
+        }) = engine.render_output_with_limits(limits)
+        else {
+            panic!("the multiselect must exceed the byte budget");
+        };
+        assert_eq!(resource, EngineRenderResource::SerializedBytes);
+        assert_eq!(limit, 24);
+        // "Pick [ Pick two : " costs 18 bytes before the first two-byte glyph.
+        assert_eq!(
+            observed, 26,
+            "the multiselect must stop at the first normalized byte-budget overflow"
+        );
+
+        let output = engine
+            .render_output()
+            .expect("the multiselect must fit the default byte budget");
+        let expected = format!("[ Pick two : {first} ; {second} ]");
+        let width = expected.chars().count() as u32;
+        assert!(
+            matches!(
+                output.render.draw.as_slice(),
+                [
+                    DrawCmd::Text { x: 0, y: 0, text: prefix },
+                    DrawCmd::Text { x: 4, y: 0, text: space },
+                    DrawCmd::Link { x: 5, y: 0, text, .. },
+                    DrawCmd::Text { x, y: 0, text: suffix },
+                ] if prefix == "Pick" && space == " " && text == &expected
+                    && *x == 5 + width && suffix == " done"
+            ),
+            "the multiselect must paint its normalized title and selected labels in one segment"
+        );
+        assert!(
+            matches!(
+                output.presentation.hit_regions.as_slice(),
+                [hit] if (hit.x, hit.y, hit.width, hit.target_kind)
+                    == (5, 0, width, crate::EngineFocusTargetKind::Select)
+            ),
+            "the full multiselect display must have one logical hit region"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_streams_password_drafts() {
+        use crate::{EngineFocusTargetKind, EngineFrameSegment, EngineSelectionState};
+
+        let mut engine = strict_card_body(
+            r#"<p mode="nowrap">abcdefgh<input name="pin" type="password" value="7"/></p>"#,
+        );
+        engine.set_viewport_cols(8).expect("valid viewport");
+        assert!(engine
+            .begin_focused_input_edit()
+            .expect("input edit must begin"));
+        let draft = "界".repeat(4096);
+        assert!(engine.set_focused_input_edit_draft(draft));
+        let limits = EngineRenderLimits {
+            rows: 1,
+            segments: 2,
+            draw_commands: 2,
+            serialized_bytes: 16,
+        };
+        assert!(
+            matches!(
+                engine.render_output_with_limits(limits),
+                Err(EngineRenderError::ResourceLimit {
+                    resource: EngineRenderResource::SerializedBytes,
+                    limit: 16,
+                    observed: 17,
+                    ..
+                })
+            ),
+            "the active password draft must stop at the first painted-byte overflow"
+        );
+
+        let output = engine
+            .render_output_with_limits(EngineRenderLimits {
+                serialized_bytes: EngineRenderLimits::default().serialized_bytes,
+                ..limits
+            })
+            .expect("the full masked draft must fit one row and two draw slots");
+        let expected = format!("[pin: {}]", "*".repeat(4096));
+        let frame = output.presentation;
+        assert_eq!(frame.viewport.content_rows, 1);
+        assert!(matches!(
+            frame.selection,
+            EngineSelectionState::Input { editing: true, .. }
+        ));
+        assert!(
+            matches!(
+                output.render.draw.as_slice(),
+                [DrawCmd::Text { x: 0, y: 0, text: prefix }, DrawCmd::Link { x: 8, y: 0, text, .. }]
+                    if prefix == "abcdefgh" && text == &expected
+            ),
+            "the draw list must keep the offscreen password masked on one row"
+        );
+        assert!(
+            matches!(
+                frame.rows.as_slice(),
+                [row] if row.index == 0 && matches!(
+                    row.segments.as_slice(),
+                    [EngineFrameSegment::Text { .. }, EngineFrameSegment::Focusable {
+                        x: 8, text, target_kind: EngineFocusTargetKind::Input, focused: true, ..
+                    }] if text == &expected
+                )
+            ),
+            "the presentation must keep the focused password masked at the same position"
+        );
+        assert!(
+            matches!(
+                frame.hit_regions.as_slice(),
+                [hit] if (hit.x, hit.y, hit.width, hit.target_kind)
+                    == (8, 0, expected.len() as u32, EngineFocusTargetKind::Input)
+            ),
+            "the password hit region must span the full offscreen display"
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_preserves_password_mask_literals() {
+        // The escaped literal is visible only when matched. The suffix exceeds the mask.
+        let input = r#"<input name="pin" type="password" format="M\é1M"/>"#;
+        let mut card_content = WmlEngine::new();
+        card_content
+            .load_deck(&format!(r#"<wml><card id="main">{input}</card></wml>"#))
+            .expect("card-level input must load in compatibility mode");
+        for mut engine in [
+            strict_card_body(&format!(r#"<p mode="nowrap">{input}</p>"#)),
+            strict_card_body(&format!(r#"<p mode="wrap">{input}</p>"#)),
+            card_content,
+        ] {
+            assert!(engine
+                .begin_focused_input_edit()
+                .expect("input edit must begin"));
+            for (draft, expected) in [("界éab", "[pin: *é**]"), ("界øab", "[pin: ****]")] {
+                assert!(engine.set_focused_input_edit_draft(draft.into()));
+                let output = engine.render().expect("literal mask must render");
+                assert!(
+                    matches!(output.draw.as_slice(), [DrawCmd::Link { text, .. }] if text == expected),
+                    "password painting must preserve only matching mask literals"
+                );
+            }
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_preserves_password_mask_literal_geometry() {
+        use crate::EngineFocusTargetKind::{Input, Link};
+
+        for (format, drafts) in [
+            (
+                r"M\ \ M",
+                [("a  b", "[pin: *  *]"), ("a xb", "[pin: * **]")],
+            ),
+            (
+                r"N\&#x2003;\&#x2003;N",
+                [
+                    ("1\u{2003}\u{2003}2", "[pin: *\u{2003}\u{2003}*]"),
+                    ("1\u{2003}x2", "[pin: *\u{2003}**]"),
+                ],
+            ),
+            (
+                r"M\&#173;M",
+                [("a\u{ad}b", "[pin: *\u{ad}*]"), ("axb", "[pin: ***]")],
+            ),
+        ] {
+            let mut engine = strict_card_body(&format!(
+                r##"<p mode="nowrap">abcdefgh<input name="pin" type="password" format="{format}"/><a href="#next">Next</a></p>"##
+            ));
+            engine.set_viewport_cols(8).expect("valid viewport");
+            assert!(engine
+                .begin_focused_input_edit()
+                .expect("input edit must begin"));
+            for (draft, expected) in drafts {
+                assert!(engine.set_focused_input_edit_draft(draft.into()));
+                let output = engine
+                    .render_output_with_limits(EngineRenderLimits::default())
+                    .expect("the password mask must render");
+                let width = expected.chars().count() as u32;
+                assert!(
+                    matches!(
+                        output.render.draw.as_slice(),
+                        [DrawCmd::Text { .. }, DrawCmd::Link { x: 8, y: 0, text, .. },
+                            DrawCmd::Link { x, y: 0, text: next, .. }]
+                            if text == expected && *x == 8 + width && next == "Next"
+                    ),
+                    "unexpected draw commands for {draft:?}: {:?}",
+                    output.render.draw
+                );
+                assert!(matches!(
+                    output.presentation.hit_regions.as_slice(),
+                    [pin, next] if (pin.x, pin.y, pin.width, pin.target_kind) == (8, 0, width, Input)
+                        && (next.x, next.y, next.width, next.target_kind) == (8 + width, 0, 4, Link)
+                ));
+            }
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_checks_structure_before_painted_bytes() {
+        let after_break = strict_card_body(concat!(
+            r#"<p mode="nowrap">A<br/></p><p>$(missing)&shy;</p>"#,
+            r#"<p>ééé</p>"#,
+        ));
+        let control = strict_card_body(r#"<p mode="nowrap">A <input name="n" value="abc"/></p>"#);
+        let limits = EngineRenderLimits {
+            rows: 2,
+            segments: 3,
+            draw_commands: 3,
+            serialized_bytes: 1,
+        };
+        for (engine, limited, expected) in [
+            (&after_break, limits, EngineRenderResource::LayoutRows),
+            (
+                &control,
+                EngineRenderLimits {
+                    segments: 2,
+                    ..limits
+                },
+                EngineRenderResource::LayoutSegments,
+            ),
+            (
+                &control,
+                EngineRenderLimits {
+                    draw_commands: 2,
+                    ..limits
+                },
+                EngineRenderResource::DrawCommands,
+            ),
+        ] {
+            assert!(
+                matches!(
+                    engine.render_output_with_limits(limited),
+                    Err(EngineRenderError::ResourceLimit {
+                        resource,
+                        limit: 2,
+                        observed: 3,
+                        ..
+                    }) if resource == expected
+                ),
+                "nowrap must check the deferred row and both separator/control slots before bytes"
+            );
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_nowrap_layout_enforces_structural_budgets() {
+        let mut engine = strict_card_body(
+            r##"<p mode="nowrap">Alpha Beta Gamma<a href="#next">abcdefghijklmnop</a></p>"##,
+        );
+        engine.set_viewport_cols(1).expect("valid viewport");
+        let limits = EngineRenderLimits {
+            rows: 1,
+            segments: 2,
+            draw_commands: 2,
+            serialized_bytes: usize::MAX,
+        };
+        let output = engine
+            .render_output_with_limits(limits)
+            .expect("one logical row must fit");
+        assert_eq!(output.presentation.viewport.content_rows, 1);
+        assert_eq!(output.render.draw.len(), 2);
+        assert!(
+            matches!(
+                output.render.draw.get(1),
+                Some(DrawCmd::Link { x: 16, y: 0, text, .. }) if text == "abcdefghijklmnop"
+            ),
+            "width must not split the offscreen link"
+        );
+        for (limited, expected, limit) in [
+            (
+                EngineRenderLimits { rows: 0, ..limits },
+                EngineRenderResource::LayoutRows,
+                0,
+            ),
+            (
+                EngineRenderLimits {
+                    segments: 1,
+                    ..limits
+                },
+                EngineRenderResource::LayoutSegments,
+                1,
+            ),
+            (
+                EngineRenderLimits {
+                    draw_commands: 1,
+                    ..limits
+                },
+                EngineRenderResource::DrawCommands,
+                1,
+            ),
+        ] {
+            assert!(
+                matches!(
+                    engine.render_output_with_limits(limited),
+                    Err(EngineRenderError::ResourceLimit { resource, limit: actual, observed, .. })
+                        if resource == expected && actual == limit && observed == limit + 1
+                ),
+                "nowrap must report the expected typed structural limit"
+            );
+        }
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -1771,10 +3281,7 @@ mod tests {
         };
 
         let out = layout_card(&card, 4, 0).expect("layout should fit budgets");
-        assert_eq!(
-            out.focus_targets,
-            vec![FocusTarget::Link("#next".to_string())]
-        );
+        assert_eq!(out.focus_targets, vec![FocusTarget::Link("#next")]);
 
         let link_chunks: Vec<bool> = out
             .render_list
@@ -1854,14 +3361,14 @@ mod tests {
             out.focus_targets,
             vec![
                 FocusTarget::Input {
-                    control_id: "UserName".to_string(),
-                    name: "UserName".to_string(),
+                    control_id: "UserName",
+                    name: "UserName",
                 },
                 FocusTarget::Input {
-                    control_id: "Password".to_string(),
-                    name: "Password".to_string(),
+                    control_id: "Password",
+                    name: "Password",
                 },
-                FocusTarget::Select("Country".to_string())
+                FocusTarget::Select("Country")
             ]
         );
         assert!(out
