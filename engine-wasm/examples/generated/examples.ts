@@ -3944,6 +3944,78 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"plain\">\n    <p>Keep these words Red <a href=\"#joined\">Fox</a></p>\n  </card>\n  <card id=\"joined\">\n    <p>Keep these words Red&nbsp;<a href=\"#next\">Fox</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201ParagraphEmptyIgnored",
+    "label": "WML-201 Insignificant Paragraphs",
+    "description": "Empty elements, whitespace-only paragraphs, and paragraphs that expand to empty text take up no rows.",
+    "goal": "Follow the link immediately below the first line of text.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-PARAGRAPH-EMPTY-IGNORED"
+    ],
+    "testingAc": [
+      "See Before and Continue on consecutive rows.",
+      "Select Continue to reach Destination."
+    ],
+    "flows": [
+      {
+        "id": "waves-paragraph-empty-ignored",
+        "title": "Waves ignores insignificant paragraphs before a link",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-PARAGRAPH-EMPTY-IGNORED"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Before"
+              },
+              {
+                "row": 1,
+                "text": "Continue"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next"
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p>Before</p>\n    <p/>\n    <p></p>\n    <p>\n    </p>\n    <p>$(empty)</p>\n    <p>$(message)</p>\n    <p><a href=\"#next\">Continue</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml201ParagraphSoftHyphen",
     "label": "WML-201 Paragraph Soft Hyphen",
     "description": "A discretionary hyphen is invisible inside a word and visible at a selected line break.",

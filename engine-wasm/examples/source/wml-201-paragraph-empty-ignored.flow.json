@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "example": "wml201ParagraphEmptyIgnored",
+  "flows": [
+    {
+      "id": "waves-paragraph-empty-ignored",
+      "title": "Waves ignores insignificant paragraphs before a link",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-PARAGRAPH-EMPTY-IGNORED"],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Before" },
+            { "row": 1, "text": "Continue" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next" },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] }
+          }
+        }
+      ]
+    }
+  ]
+}
