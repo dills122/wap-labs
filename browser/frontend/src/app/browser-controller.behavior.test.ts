@@ -73,6 +73,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
   const utilityRailPanelEl = document.createElement('details');
   const toastEl = document.createElement('div');
   const liveAnnouncerEl = document.createElement('div');
+  const navigationActivityEl = document.createElement('span');
   const wmlInput = document.createElement('textarea');
   const baseUrlInput = document.createElement('input');
   const viewportColsInput = document.createElement('input');
@@ -116,6 +117,7 @@ const createRefs = (): BrowserShellRefs & { statusMessages: string[] } => {
     utilityRailPanelEl,
     toastEl,
     liveAnnouncerEl,
+    navigationActivityEl,
     runModeSelectEl,
     localExampleSelectEl,
     loadLocalBtnEl,
@@ -1872,9 +1874,9 @@ describe('BrowserController behavior coverage', () => {
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
 
       // Past the delay threshold and the fetch still hasn't resolved.
-      await vi.advanceTimersByTimeAsync(200);
-      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
-      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).not.toBeNull();
+      await vi.advanceTimersByTimeAsync(450);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('true');
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
 
       resolveFetch?.();
       // Still under fake timers here -- flushAsyncWork's real setTimeout(0)
@@ -1883,6 +1885,7 @@ describe('BrowserController behavior coverage', () => {
 
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
       expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
     } finally {
       vi.useRealTimers();
     }

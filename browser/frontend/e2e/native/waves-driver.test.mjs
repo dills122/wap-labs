@@ -41,6 +41,7 @@ function fixture({ initialNavigationAction = 'go', controlledHttpBase } = {}) {
       }
     })],
     ['#run-mode', element({ getAttribute: async () => 'network' })],
+    ['#navigation-activity', element({ getAttribute: async (name) => name === 'data-active' ? 'true' : '' })],
     ['#welcome-help-panel', element({ isDisplayed: async () => false })],
     ['#btn-connect-network', element({ click: async () => calls.push(['click', 'connect']) })],
     ['#fetch-url', element({
@@ -150,6 +151,13 @@ test('controlled HTTP navigation accepts only approved paths at the configured l
     'http://127.0.0.1:1234/examples/interop-check.wml'
   ])
     await assert.rejects(page.openControlledHttpUrl(bad), /controlled HTTP origin/);
+});
+
+test('navigation activity waits for the requested indicator state', async () => {
+  const { page, calls } = fixture();
+  await page.waitForNavigationActivity(true);
+  assert.ok(calls.some(([kind, selector]) => kind === 'find' && selector === '#navigation-activity'));
+  await assert.rejects(page.waitForNavigationActivity(false));
 });
 
 test('Stop timing measures in the document while clicking through WebDriver', async () => {

@@ -93,6 +93,7 @@ export class BrowserPresenter {
   private snapshotDirty = true;
   private transportResponseDirty = true;
   private navigationProgressTimer: ReturnType<typeof setTimeout> | undefined;
+  private navigationProgressGeneration = 0;
   private developerToolsBridge: DeveloperToolsHostBridge | undefined;
   private readonly viewportRenderer: CanvasViewportRenderer;
   // U7: flushDeveloperPanels() re-serializes whichever dev-panel sub-object
@@ -343,36 +344,34 @@ export class BrowserPresenter {
   // existing immediate, full-skeleton behavior. Returns a callback the
   // caller must invoke (typically from a `finally`) once the navigation
   // settles, which cancels the pending delay or clears the indicator if it
-  // already appeared. Callers are expected to run one navigation at a time
-  // (already true for every current call site), so this does not attempt to
-  // coordinate overlapping in-flight calls.
+  // already appeared. A generation prevents a superseded navigation's
+  // cleanup from hiding a newer request's activity.
   beginNavigationProgress(delayMs: number = WAVES_CONFIG.navigationProgressDelayMs): () => void {
+    const generation = ++this.navigationProgressGeneration;
+    if (this.navigationProgressTimer) clearTimeout(this.navigationProgressTimer);
+    this.navigationProgressTimer = undefined;
+    if (this.refs.navigationActivityEl) this.refs.navigationActivityEl.dataset.active = 'false';
     if (!this.hasRenderedContent) {
       this.setViewportSkeleton(true);
       return () => {
-        this.setViewportSkeleton(false);
+        if (generation === this.navigationProgressGeneration) this.setViewportSkeleton(false);
       };
     }
 
-    if (this.navigationProgressTimer) {
-      clearTimeout(this.navigationProgressTimer);
-      this.navigationProgressTimer = undefined;
-    }
-    let fired = false;
     this.navigationProgressTimer = setTimeout(() => {
+      if (generation !== this.navigationProgressGeneration) return;
       this.navigationProgressTimer = undefined;
-      fired = true;
-      this.setViewportSkeleton(true);
+      if (this.refs.navigationActivityEl) this.refs.navigationActivityEl.dataset.active = 'true';
+      this.announce(WAVES_COPY.shell.navigationPending);
     }, delayMs);
 
     return () => {
+      if (generation !== this.navigationProgressGeneration) return;
       if (this.navigationProgressTimer) {
         clearTimeout(this.navigationProgressTimer);
         this.navigationProgressTimer = undefined;
       }
-      if (fired) {
-        this.setViewportSkeleton(false);
-      }
+      if (this.refs.navigationActivityEl) this.refs.navigationActivityEl.dataset.active = 'false';
     };
   }
 
@@ -540,12 +539,8 @@ export class BrowserPresenter {
     this.latestRenderList = {
       draw: renderList.draw.map((command) => ({ ...command }))
     };
-    // Real content just landed -- cancel any pending delayed in-progress
-    // indicator so it can't appear after the fact (see beginNavigationProgress).
-    if (this.navigationProgressTimer) {
-      clearTimeout(this.navigationProgressTimer);
-      this.navigationProgressTimer = undefined;
-    }
+    // A render can also be produced by a timer while navigation is still
+    // pending, so only the owning navigation may finish its activity state.
     this.setViewportSkeleton(false);
     this.hasRenderedContent = true;
     this.refs.viewportEl.classList.add('viewport-has-content');

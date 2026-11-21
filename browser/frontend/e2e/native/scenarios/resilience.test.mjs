@@ -24,6 +24,7 @@ function fixture() {
         async pressSoftkey(key) { calls.push(['softkey', key]); },
         async waitForDeckText(text) { calls.push(['deck', text]); return `deck: ${text}`; },
         async waitForAddress(address) { calls.push(['address', address]); return address; },
+        async waitForNavigationActivity(active) { calls.push(['activity', active]); },
         async readSanitizedAddress() { return 'wap://localhost/'; },
         async stopNavigation() { calls.push(['stop']); return 'Navigation stopped.'; },
         async stopNavigationMeasured() { calls.push(['stop']); return { status: 'Navigation stopped.', acknowledgementMs: 42 }; }
@@ -176,6 +177,9 @@ test('explicit Stop preserves the prior deck and permits a later recovery naviga
   await RESILIENCE_SCENARIOS.find(({ id }) => id === 'RACE-NATIVE-002').run(context);
 
   assert.deepEqual(calls.filter(([kind]) => kind === 'stop'), [['stop']]);
+  assert.deepEqual(calls.filter(([kind]) => kind === 'activity'), [
+    ['activity', true], ['activity', false], ['activity', false]
+  ]);
   assert.ok(calls.some((entry) => entry[0] === 'deck' && entry[1] === 'Local WAP training environment.'));
   assert.ok(calls.some((entry) => entry[0] === 'deck' && entry[1] === 'W13-A'));
   assert.deepEqual(
