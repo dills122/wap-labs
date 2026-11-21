@@ -1462,13 +1462,13 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-PARAGRAPH-EMPTY-IGNORED` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-EMPTY-IGNORED` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-MODE-INHERITANCE** — Inherit unspecified wrap mode from the previous significant paragraph and default the first paragraph to wrap.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-PARAGRAPH-MODE-INHERITANCE` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-MODE-INHERITANCE` (`rendering`, `implemented`)
 - **WML-CL-PARAGRAPH-NONBREAKING-SPACE** — Do not treat non-breaking space as a legal inter-word line-break point.
   - Family: `wml`; force: `explicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
@@ -1492,7 +1492,7 @@ Evidence commands:
   - Source: `WAP-191_104-WML` §11.8.3 (11.8.3 Paragraphs)
   - Parents: `WML-C-36`
   - Requirements: `RQ-RMK-001`
-  - Fixture: `WML-FX-PARAGRAPH-WRAP-MODE` (`rendering`, `planned`)
+  - Fixture: `WML-FX-PARAGRAPH-WRAP-MODE` (`rendering`, `implemented`)
 - **WML-CL-POSTFIELD-REQUEST-PAIR** — Submit each postfield as a name/value pair using the encoding selected by the enclosing go task.
   - Family: `wml`; force: `implicit-must`; level: `required`
   - Source: `WAP-191_104-WML` §9.3 (9.3 The Postfield Element)

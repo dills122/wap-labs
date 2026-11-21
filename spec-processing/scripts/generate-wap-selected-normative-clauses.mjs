@@ -1189,6 +1189,18 @@ const wml201FixtureEvidence = new Map(
     [
       'WML-CL-PARAGRAPH-NONBREAKING-SPACE',
       ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_nonbreaking_space']
+    ],
+    [
+      'WML-CL-PARAGRAPH-WRAP-MODE',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_nowrap_layout']
+    ],
+    [
+      'WML-CL-PARAGRAPH-MODE-INHERITANCE',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_nowrap_layout_ignores_insignificant_mode_changes']
+    ],
+    [
+      'WML-CL-PARAGRAPH-EMPTY-IGNORED',
+      ['engine-wasm/engine/src/layout/flow_layout.rs', 'wml_fx_paragraph_empty_ignored']
     ]
   ].map(([id, [testPath, filter]]) => [
     id,

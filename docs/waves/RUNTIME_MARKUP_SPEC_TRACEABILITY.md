@@ -69,6 +69,18 @@ Legend:
     A group wider than the viewport stays together. Links extending past the
     visible columns remain keyboard-accessible.
     Run `cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_nonbreaking_space` and `pnpm test:story WML-201`.
+  - Evidence: [x] The native and WASM paragraph fixtures verify
+    `WML-CL-PARAGRAPH-WRAP-MODE`, `WML-CL-PARAGRAPH-MODE-INHERITANCE`, and
+    `WML-CL-PARAGRAPH-EMPTY-IGNORED`. The
+    [canonical Waves story](../../engine-wasm/examples/source/wml-201-nowrap-panning.flow.json)
+    checks inherited nowrap across a whitespace-only paragraph, explicit wrap,
+    exact draw rows, and keyboard activation. Run `pnpm test:story WML-201`.
+    Independent Ruflo review and local Chromium verification used `e4ccb0ba`.
+    At 1× and 2× device pixel ratios, the interaction checks covered the
+    complete line tail, focus above and below the vertical hit window,
+    pointer activation after scrolling both axes, navigation reset, and both
+    queued-click races. The trailing-break spacing case remains a follow-up.
+
 
 ### RQ-RMK-002 Task model support and execution
 

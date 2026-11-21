@@ -43,7 +43,7 @@
     "recommendedClauseCount": 29,
     "permittedClauseCount": 12,
     "plannedFixtureCount": 763,
-    "assessedClauseCount": 388
+    "assessedClauseCount": 391
   },
   "families": [
     {
@@ -9283,8 +9283,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-WRAP-MODE",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Apply wrap or nowrap behavior and provide a way to view complete non-wrapped lines."
+            "status": "implemented",
+            "assertion": "Apply wrap or nowrap behavior and provide a way to view complete non-wrapped lines.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_nowrap_layout"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9302,7 +9307,7 @@
             "parentImplementationSnapshot": {
               "WML-C-36": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -9437,8 +9442,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-MODE-INHERITANCE",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Inherit unspecified wrap mode from the previous significant paragraph and default the first paragraph to wrap."
+            "status": "implemented",
+            "assertion": "Inherit unspecified wrap mode from the previous significant paragraph and default the first paragraph to wrap.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_nowrap_layout_ignores_insignificant_mode_changes"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9456,7 +9466,7 @@
             "parentImplementationSnapshot": {
               "WML-C-36": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
@@ -9579,8 +9589,13 @@
           "fixturePlan": {
             "id": "WML-FX-PARAGRAPH-EMPTY-IGNORED",
             "kind": "rendering",
-            "status": "planned",
-            "assertion": "Ignore empty or whitespace-only paragraphs without allowing them to alter inherited wrap state."
+            "status": "implemented",
+            "assertion": "Ignore empty or whitespace-only paragraphs without allowing them to alter inherited wrap state.",
+            "evidence": {
+              "path": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "testPath": "engine-wasm/engine/src/layout/flow_layout.rs",
+              "command": "cargo test --manifest-path engine-wasm/engine/Cargo.toml wml_fx_paragraph_empty_ignored"
+            }
           },
           "mapping": {
             "ownerLayers": [
@@ -9598,7 +9613,7 @@
             "parentImplementationSnapshot": {
               "WML-C-36": "partial"
             },
-            "clauseImplementationStatus": "not-assessed",
+            "clauseImplementationStatus": "implemented",
             "evidenceGate": "A source-derived direct fixture and reviewed code/test evidence are required before this clause may be marked implemented."
           },
           "directWorkItems": [
