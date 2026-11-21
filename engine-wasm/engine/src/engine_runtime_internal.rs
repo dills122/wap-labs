@@ -1,5 +1,5 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest};
-use crate::runtime::node::{InlineContext, InlineNode, Node};
+use crate::runtime::node::{InlineContext, InlineNode, Node, ParagraphMode};
 use crate::runtime::variable::{
     checked_insert as checked_insert_var, evaluate as evaluate_variable, SubstitutionContext,
 };
@@ -744,6 +744,18 @@ impl WmlEngine {
             self.apply_select_index_to_card(&mut card, &edit.select_name, edit.draft_index);
         }
         substitute_card_text_and_links(&mut card, &self.vars)?;
+        let mut mode = ParagraphMode::Wrap;
+        for node in &mut card.nodes {
+            if let Node::Paragraph {
+                mode: paragraph_mode,
+                inline,
+            } = node
+            {
+                if inline.iter().any(InlineNode::is_significant_in_paragraph) {
+                    mode = *paragraph_mode.get_or_insert(mode);
+                }
+            }
+        }
         Ok(card)
     }
 }

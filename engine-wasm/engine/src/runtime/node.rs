@@ -31,7 +31,7 @@ pub enum ParagraphMode {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Node {
     Paragraph {
-        /// Authored mode. An omitted attribute is left for card-local resolution.
+        /// Authored mode in the deck, effective mode for significant paragraphs in layout snapshots.
         mode: Option<ParagraphMode>,
         inline: Vec<InlineNode>,
     },
@@ -89,4 +89,21 @@ pub enum InlineNode {
         options: Vec<SelectOption>,
         selected_indices: Vec<usize>,
     },
+}
+
+impl InlineNode {
+    pub(crate) fn is_significant_in_paragraph(&self) -> bool {
+        match self {
+            // A soft hyphen only has an effect when a line breaks there.
+            Self::Text(text) => text
+                .chars()
+                .any(|character| character != '\u{00ad}' && !is_breakable_space(character)),
+            Self::BreakOpportunity => false,
+            Self::Break
+            | Self::Link { .. }
+            | Self::Anchor { .. }
+            | Self::Input { .. }
+            | Self::Select { .. } => true,
+        }
+    }
 }

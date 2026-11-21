@@ -136,6 +136,163 @@ fn retains_authored_paragraph_mode_during_variable_substitution() {
     );
 }
 
+fn paragraph_modes(card: &Card) -> Vec<Option<ParagraphMode>> {
+    card.nodes
+        .iter()
+        .filter_map(|node| match node {
+            Node::Paragraph { mode, .. } => Some(*mode),
+            _ => None,
+        })
+        .collect()
+}
+
+fn layout_paragraph_modes(engine: &WmlEngine) -> Vec<Option<ParagraphMode>> {
+    paragraph_modes(&engine.runtime_card_for_layout().unwrap())
+}
+
+#[test]
+fn paragraph_mode_inheritance_defaults_and_switches_in_both_directions() {
+    use ParagraphMode::{NoWrap, Wrap};
+
+    let mut engine = WmlEngine::new();
+    // WAP-191_104-WML §11.8.3 defaults each card to wrap and inherits from
+    // the previous significant paragraph in that card.
+    engine
+        .load_deck(
+            r#"<wml><card id="home">
+                <p>Default</p>
+                <p mode="nowrap">Switch to nowrap</p>
+                <br/><a href="next.wml">Card content</a>
+                <p>Still nowrap</p>
+                <p mode="wrap">Switch to wrap</p>
+                <p>Still wrap</p>
+            </card></wml>"#,
+        )
+        .unwrap();
+
+    assert_eq!(
+        layout_paragraph_modes(&engine),
+        [
+            Some(Wrap),
+            Some(NoWrap),
+            Some(NoWrap),
+            Some(Wrap),
+            Some(Wrap)
+        ]
+    );
+    assert_eq!(
+        paragraph_modes(engine.active_card_internal().unwrap()),
+        [None, Some(NoWrap), None, Some(Wrap), None]
+    );
+}
+
+#[test]
+fn paragraph_mode_inheritance_resets_on_entry_and_recomputes_on_revisit() {
+    use ParagraphMode::{NoWrap, Wrap};
+
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"<wml><card id="first">
+                <p mode="nowrap">$(word)</p><p>First card</p>
+            </card><card id="second">
+                <p>Second card</p>
+            </card></wml>"#,
+        )
+        .unwrap();
+    assert!(engine.set_var("word".into(), "Visible".into()));
+    assert_eq!(
+        layout_paragraph_modes(&engine),
+        [Some(NoWrap), Some(NoWrap)]
+    );
+
+    engine.navigate_to_card("second".into()).unwrap();
+    assert_eq!(layout_paragraph_modes(&engine), [Some(Wrap)]);
+
+    assert!(engine.set_var("word".into(), String::new()));
+    assert!(engine.navigate_back());
+    assert_eq!(layout_paragraph_modes(&engine), [Some(NoWrap), Some(Wrap)]);
+}
+
+#[test]
+fn paragraph_mode_inheritance_uses_substituted_content_on_each_snapshot() {
+    use ParagraphMode::{NoWrap, Wrap};
+
+    let mut engine = WmlEngine::new();
+    engine
+        .load_deck(
+            r#"<wml><card id="home">
+                <p mode="nowrap">$(word)</p><p>Following paragraph</p>
+            </card></wml>"#,
+        )
+        .unwrap();
+
+    // Exercise an isolated formatting marker alongside text that resolves to empty.
+    let Node::Paragraph { inline, .. } = &mut engine.deck.as_mut().unwrap().cards[0].nodes[0]
+    else {
+        panic!("expected a paragraph");
+    };
+    inline.push(InlineNode::BreakOpportunity);
+
+    let card = engine.runtime_card_for_layout().unwrap();
+    let Node::Paragraph { inline, .. } = &card.nodes[0] else {
+        panic!("expected a paragraph");
+    };
+    assert_eq!(
+        inline,
+        &[
+            InlineNode::Text(String::new()),
+            InlineNode::BreakOpportunity,
+        ]
+    );
+    assert_eq!(paragraph_modes(&card), [Some(NoWrap), Some(Wrap)]);
+
+    assert!(engine.set_var("word".into(), "Visible".into()));
+    assert_eq!(
+        layout_paragraph_modes(&engine),
+        [Some(NoWrap), Some(NoWrap)]
+    );
+    assert!(engine.set_var("word".into(), " \t\n".into()));
+    assert_eq!(layout_paragraph_modes(&engine), [Some(NoWrap), Some(Wrap)]);
+}
+
+#[test]
+fn paragraph_mode_inheritance_distinguishes_significant_inline_content() {
+    use ParagraphMode::{NoWrap, Wrap};
+
+    for (content, expected) in [
+        ("$(missing)", Wrap),
+        ("$(blank)", Wrap),
+        ("&shy;", Wrap),
+        ("&nbsp;", NoWrap),
+        ("<br/>", NoWrap),
+        (r#"<input name="entry"/>"#, NoWrap),
+        (
+            r#"<select name="choice"><option>Choice</option></select>"#,
+            NoWrap,
+        ),
+        (r#"<a href="next.wml">$(missing)</a>"#, NoWrap),
+        ("<anchor>$(missing)<prev/></anchor>", NoWrap),
+    ] {
+        let mut engine = WmlEngine::new();
+        engine
+            .load_deck(&format!(
+                r#"<wml><card id="home">
+                    <p mode="wrap">Start</p><p mode="nowrap">{content}</p>
+                    <p>Following paragraph</p><p>$(missing)</p>
+                </card></wml>"#,
+            ))
+            .unwrap();
+        assert!(engine.set_var("blank".into(), " \t\n".into()));
+
+        assert_eq!(
+            layout_paragraph_modes(&engine),
+            [Some(Wrap), Some(NoWrap), Some(expected), None],
+            "paragraph content {content:?}"
+        );
+    }
+}
+
 fn push_string(bytes: &mut Vec<u8>, value: &str) {
     let raw = value.as_bytes();
     assert!(
