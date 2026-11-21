@@ -245,9 +245,8 @@ impl WmlEngine {
         self.push_trace("KEY", format!("key={key}"));
         // Use authored targets for dispatch. Labels and viewport wrapping are
         // presentation concerns, and authored hrefs must be evaluated once.
-        let targets: Vec<_> = FocusTarget::in_card(self.active_card_internal()?).collect();
+        let target_total = FocusTarget::in_card(self.active_card_internal()?).count();
         let accept_action = self.active_do_action_internal("accept")?;
-        let target_total = targets.len();
         self.focused_link_idx = clamp_focus(self.focused_link_idx, target_total);
 
         match key {
@@ -289,13 +288,14 @@ impl WmlEngine {
                     }
                     return Ok(());
                 }
-                let target = targets
-                    .get(self.focused_link_idx)
+                let target = FocusTarget::in_card(self.active_card_internal()?)
+                    .nth(self.focused_link_idx)
                     .ok_or_else(|| "Focused target index out of range".to_string())?;
                 match target {
                     FocusTarget::Input { name, .. } => {
+                        let name = name.to_owned();
                         self.active_select_edit = None;
-                        self.push_trace("ACTION_INPUT", name.clone());
+                        self.push_trace("ACTION_INPUT", name);
                         if self.active_input_edit.is_some() {
                             self.commit_focused_input_edit_internal()?;
                             if let Some(action) = accept_action {
@@ -319,8 +319,9 @@ impl WmlEngine {
                         return Ok(());
                     }
                     FocusTarget::Select(name) => {
+                        let name = name.to_owned();
                         self.cancel_active_input_edit_with_debug();
-                        self.push_trace("ACTION_SELECT", name.clone());
+                        self.push_trace("ACTION_SELECT", name);
                         if self.active_select_edit.is_some() {
                             self.commit_focused_select_edit_internal()?;
                         } else {
@@ -329,23 +330,25 @@ impl WmlEngine {
                         return Ok(());
                     }
                     FocusTarget::Anchor(action) => {
+                        let action = action.clone();
                         self.cancel_active_input_edit_with_debug();
                         self.active_select_edit = None;
                         // A plain Go uses the exact shorthand link dispatch, including
                         // its script extension and request defaults.
-                        match action {
+                        match &action {
                             CardTaskAction::Go { href, request }
                                 if *request == CardGoRequest::default() =>
                             {
                                 self.execute_action_href(href)?;
                             }
-                            _ => self.execute_card_task_action(action)?,
+                            _ => self.execute_card_task_action(&action)?,
                         }
                     }
                     FocusTarget::Link(href) => {
+                        let href = href.to_owned();
                         self.cancel_active_input_edit_with_debug();
                         self.active_select_edit = None;
-                        self.execute_action_href(href)?;
+                        self.execute_action_href(&href)?;
                     }
                 }
             }
@@ -550,7 +553,7 @@ impl WmlEngine {
         Ok(true)
     }
 
-    fn focused_target_internal(&self) -> Result<Option<FocusTarget>, String> {
+    fn focused_target_internal(&self) -> Result<Option<FocusTarget<'_>>, String> {
         let targets: Vec<_> = FocusTarget::in_card(self.active_card_internal()?).collect();
         let focus = clamp_focus(self.focused_link_idx, targets.len());
         Ok(targets.into_iter().nth(focus))
@@ -558,14 +561,16 @@ impl WmlEngine {
 
     fn focused_input_internal(&self) -> Result<Option<(String, String)>, String> {
         match self.focused_target_internal()? {
-            Some(FocusTarget::Input { control_id, name }) => Ok(Some((control_id, name))),
+            Some(FocusTarget::Input { control_id, name }) => {
+                Ok(Some((control_id.to_owned(), name.to_owned())))
+            }
             _ => Ok(None),
         }
     }
 
     fn focused_select_name_internal(&self) -> Result<Option<String>, String> {
         match self.focused_target_internal()? {
-            Some(FocusTarget::Select(name)) => Ok(Some(name)),
+            Some(FocusTarget::Select(name)) => Ok(Some(name.to_owned())),
             _ => Ok(None),
         }
     }

@@ -3944,6 +3944,103 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"plain\">\n    <p>Keep these words Red <a href=\"#joined\">Fox</a></p>\n  </card>\n  <card id=\"joined\">\n    <p>Keep these words Red&nbsp;<a href=\"#next\">Fox</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201NowrapPanning",
+    "label": "WML-201 Nowrap Panning",
+    "description": "The second visible paragraph inherits nowrap across a whitespace-only paragraph. An explicit wrap paragraph and the destination use normal wrapping.",
+    "goal": "Reveal and activate the Tail link beyond the right edge of the LCD.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-PARAGRAPH-WRAP-MODE",
+      "WML-CL-PARAGRAPH-MODE-INHERITANCE",
+      "WML-CL-PARAGRAPH-EMPTY-IGNORED"
+    ],
+    "testingAc": [
+      "With Near focused, tab to Horizontal pan and use End to reveal Tail.",
+      "Return focus to the viewport. Down focuses and reveals Tail, and Select opens Destination.",
+      "On Destination, the horizontal control is hidden."
+    ],
+    "flows": [
+      {
+        "id": "waves-nowrap-panning",
+        "title": "Waves navigates to a link in an inherited nowrap paragraph",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-PARAGRAPH-WRAP-MODE",
+          "WML-CL-PARAGRAPH-MODE-INHERITANCE",
+          "WML-CL-PARAGRAPH-EMPTY-IGNORED"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Near"
+              },
+              {
+                "row": 1,
+                "text": "012345678901234567890123456789012345678901234567890123456789Tail"
+              },
+              {
+                "row": 2,
+                "text": "Alpha Beta Gamma"
+              },
+              {
+                "row": 3,
+                "text": "Delta Epsilon"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next"
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p mode=\"nowrap\"><a href=\"#main\">Near</a></p>\n    <p mode=\"wrap\"> </p>\n    <p>012345678901234567890123456789012345678901234567890123456789<a href=\"#next\">Tail</a></p>\n    <p mode=\"wrap\">Alpha Beta Gamma Delta Epsilon</p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml201ParagraphEmptyIgnored",
     "label": "WML-201 Insignificant Paragraphs",
     "description": "Empty elements, whitespace-only paragraphs, and paragraphs that expand to empty text take up no rows.",

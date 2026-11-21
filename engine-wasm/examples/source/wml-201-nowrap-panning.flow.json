@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "example": "wml201NowrapPanning",
+  "flows": [
+    {
+      "id": "waves-nowrap-panning",
+      "title": "Waves navigates to a link in an inherited nowrap paragraph",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": [
+        "WML-CL-PARAGRAPH-WRAP-MODE",
+        "WML-CL-PARAGRAPH-MODE-INHERITANCE",
+        "WML-CL-PARAGRAPH-EMPTY-IGNORED"
+      ],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Near" },
+            {
+              "row": 1,
+              "text": "012345678901234567890123456789012345678901234567890123456789Tail"
+            },
+            { "row": 2, "text": "Alpha Beta Gamma" },
+            { "row": 3, "text": "Delta Epsilon" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "activeCardId": "next" },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] }
+          }
+        }
+      ]
+    }
+  ]
+}

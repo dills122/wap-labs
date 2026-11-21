@@ -28,7 +28,7 @@ explicit capability/mode.
 | Selected obligations | 712 effective source rows reduce to 198 selected parent rows across nine mandatory families |
 | Nested clauses | The 198 parents expand into 763 clauses: 722 required, 29 recommended, and 12 permitted |
 | Crosswalk | Every selected parent has source anchors, strict disposition, requirement IDs, owner layers, work items, and an evidence state |
-| Fixtures | All 763 clause fixtures have target locations; 388 clauses now have direct conformance assessment and 375 remain unassessed |
+| Fixtures | All 763 clause fixtures have target locations; 391 clauses now have direct conformance assessment and 372 remain unassessed |
 | Successor delta | All 198 selected rows are classified; 17 have successor-derived foundations, with 2 compatible and 15 requiring strict correction |
 | External dependencies | 43 authority-locked dependencies have 50 private artifacts; 60 residual labels are explicitly non-blocking for Class C and profile-activated |
 | Execution program | 13 dependency-ordered sprints contain 83 unique work items plus the machine-checked `TRN-7-CL-C` selected-profile completion gate |
@@ -57,7 +57,7 @@ Parent-level status is an audit snapshot, not a compliance percentage:
 | WSP | 8 | 57 | 8 | 0 | 0 |
 | **Total** | **198** | **763** | **49** | **71** | **78** |
 
-Parent-row status is not a substitute for direct clause evidence. With 388 of
+Parent-row status is not a substitute for direct clause evidence. With 391 of
 763 clauses assessed, the project remains `pre-conformance` until every
 selected obligation is implemented or retains an explicit, release-blocking
 gap.
@@ -113,7 +113,7 @@ claim.
 The remaining build work is now measurable:
 
 1. close or correct the 71 partial and 78 missing parent rows;
-2. implement and assess the remaining 375 direct clause fixtures;
+2. implement and assess the remaining 372 direct clause fixtures;
 3. correct the 15 successor-derived foundations that are not yet proven
    strict-target compatible;
 4. preserve native Rust/WASM behavior parity and generated contract

@@ -10,7 +10,7 @@ import {
 
 interface DrawOperation {
   kind: 'clear' | 'fill-rect' | 'fill-text' | 'transform';
-  args: readonly (number | string)[];
+  args: readonly (number | string | undefined)[];
   fillStyle?: string;
 }
 
@@ -49,6 +49,46 @@ const createContext = (operations: DrawOperation[]): CanvasViewportContext => ({
 });
 
 describe('CanvasViewportRenderer', () => {
+  it('pans to the engine nowrap anchor at column 19 without widening the canvas', () => {
+    const container = document.createElement('div');
+    const viewport = container.appendChild(document.createElement('div'));
+    const elements = ensureCanvasViewportElements(viewport);
+    const operations: DrawOperation[] = [];
+    const renderer = new CanvasViewportRenderer(viewport, elements, {
+      context: createContext(operations),
+      getPixelRatio: () => 2,
+      getSize: () => ({ width: 80, height: 40 }),
+      getStyle: () => FIXED_STYLE
+    });
+
+    // The leading draw commands from wml_fx_paragraph_nowrap_layout_retains_offscreen_targets.
+    renderer.render(
+      canvasFrameFromRenderList({
+        draw: [
+          { type: 'link', x: 0, y: 0, text: 'Stay', focused: true, href: '#main' },
+          { type: 'text', x: 4, y: 0, text: 'abcdefghijklmno' },
+          { type: 'link', x: 19, y: 0, text: 'Go', focused: false, href: '#next' }
+        ]
+      })
+    );
+
+    expect(elements.canvas.width).toBe(160);
+    const range = container.querySelector<HTMLInputElement>('input[type="range"]');
+    expect(range?.labels?.[0]?.textContent).toBe('Horizontal pan');
+    expect(range?.closest('label')?.hidden).toBe(false);
+    expect(range?.max).toBe('52');
+    if (!range) throw new Error('Missing horizontal pan control');
+    range.value = range.max;
+    range.dispatchEvent(new Event('input'));
+    expect(operations.filter(({ kind }) => kind === 'fill-text').at(-1)?.args).toEqual([
+      'Go',
+      65,
+      0
+    ]);
+    expect(elements.canvas.width).toBe(160);
+    renderer.dispose();
+  });
+
   it('adapts legacy draw commands to presentation-frame-shaped rows', () => {
     const frame = canvasFrameFromRenderList({
       draw: [
@@ -63,11 +103,11 @@ describe('CanvasViewportRenderer', () => {
         {
           index: 1,
           segments: [
-            { type: 'focusable', text: 'Go', focused: true },
-            { type: 'text', text: ' now' }
+            { type: 'focusable', x: 0, text: 'Go', focused: true },
+            { type: 'text', x: 2, text: ' now' }
           ]
         },
-        { index: 2, segments: [{ type: 'text', text: 'tail' }] }
+        { index: 2, segments: [{ type: 'text', x: 0, text: 'tail' }] }
       ]
     });
   });
@@ -86,13 +126,13 @@ describe('CanvasViewportRenderer', () => {
 
     renderer.render({
       rows: [
-        { index: 2, segments: [{ type: 'text', text: 'Last' }] },
+        { index: 2, segments: [{ type: 'text', x: 0, text: 'Last' }] },
         {
           index: 1,
           segments: [
-            { type: 'focusable', text: 'Go', focused: true },
-            { type: 'text', text: ' ' },
-            { type: 'focusable', text: 'Next', focused: false }
+            { type: 'focusable', x: 0, text: 'Go', focused: true },
+            { type: 'text', x: 2, text: ' ' },
+            { type: 'focusable', x: 3, text: 'Next', focused: false }
           ]
         }
       ]
@@ -124,7 +164,7 @@ describe('CanvasViewportRenderer', () => {
     });
     const text = '[Access & security: ****]';
     renderer.render({
-      rows: [{ index: 0, segments: [{ type: 'focusable', text, focused: true }] }]
+      rows: [{ index: 0, segments: [{ type: 'focusable', x: 0, text, focused: true }] }]
     });
 
     expect(elements.accessibleText.textContent).toBe(text);
@@ -136,6 +176,49 @@ describe('CanvasViewportRenderer', () => {
     renderer.dispose();
   });
 
+  it('fits wide fallback glyphs and link decorations within wrapped logical cells', () => {
+    const container = document.createElement('div');
+    const viewport = container.appendChild(document.createElement('div'));
+    const elements = ensureCanvasViewportElements(viewport);
+    const operations: DrawOperation[] = [];
+    const context = createContext(operations);
+    context.measureText = (text) => ({ width: text === 'M' || text === 'A' ? 8 : 14 });
+    vi.spyOn(elements.canvas, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 30, 40));
+    const renderer = new CanvasViewportRenderer(viewport, elements, {
+      context,
+      getPixelRatio: () => 1,
+      getSize: () => ({ width: 30, height: 40 }),
+      getStyle: () => FIXED_STYLE
+    });
+
+    renderer.render({
+      rows: [
+        {
+          index: 0,
+          segments: [
+            { type: 'focusable', x: 0, text: '漢', focused: true },
+            { type: 'focusable', x: 1, text: 'A' },
+            { type: 'focusable', x: 2, text: '語' }
+          ]
+        }
+      ]
+    });
+
+    expect(operations.filter(({ kind }) => kind === 'fill-text').map(({ args }) => args)).toEqual([
+      ['漢', 3, 0, 8],
+      ['A', 11, 0],
+      ['語', 19, 0, 8]
+    ]);
+    expect(operations.filter(({ kind }) => kind === 'fill-rect').map(({ args }) => args)).toEqual([
+      [3, 0, 8, 18],
+      [11, 15, 8, 1],
+      [19, 15, 8, 1]
+    ]);
+    expect(renderer.pointerToEngineCoordinates(11, 2)).toEqual({ x: 1, y: 0 });
+    expect(container.querySelector('label')?.hidden).toBe(true);
+    renderer.dispose();
+  });
+
   it('converts CSS-scaled device pixels into deterministic engine columns and rows', () => {
     const geometry = {
       bounds: { left: 10, top: 20, width: 160, height: 100 },
@@ -144,12 +227,17 @@ describe('CanvasViewportRenderer', () => {
       pixelRatio: 2,
       columnWidth: 8,
       lineHeight: 16,
-      inlinePadding: 4
+      inlinePadding: 4,
+      panOffset: 0
     };
 
     expect(mapCanvasPointerToEngineCoordinates(30, 29, geometry)).toEqual({ x: 4, y: 1 });
     expect(mapCanvasPointerToEngineCoordinates(11, 29, geometry)).toEqual(null);
     expect(mapCanvasPointerToEngineCoordinates(170, 29, geometry)).toEqual(null);
+    expect(mapCanvasPointerToEngineCoordinates(11, 29, { ...geometry, panOffset: 162 })).toEqual({
+      x: 20,
+      y: 1
+    });
   });
 
   it('redraws on resize and disconnects its observer', () => {
@@ -169,7 +257,7 @@ describe('CanvasViewportRenderer', () => {
       }
     });
 
-    renderer.render({ rows: [{ index: 0, segments: [{ type: 'text', text: 'Ready' }] }] });
+    renderer.render({ rows: [{ index: 0, segments: [{ type: 'text', x: 0, text: 'Ready' }] }] });
     const drawCount = operations.filter(({ kind }) => kind === 'fill-text').length;
 
     redraw?.();
@@ -177,5 +265,48 @@ describe('CanvasViewportRenderer', () => {
 
     renderer.dispose();
     expect(disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('clamps to the widest draw row on resize and hides the control when content fits', () => {
+    const container = document.createElement('div');
+    const viewport = container.appendChild(document.createElement('div'));
+    const elements = ensureCanvasViewportElements(viewport);
+    const operations: DrawOperation[] = [];
+    let resize: (() => void) | undefined;
+    let width = 80;
+    const renderer = new CanvasViewportRenderer(viewport, elements, {
+      context: createContext(operations),
+      getSize: () => ({ width, height: 40 }),
+      getStyle: () => FIXED_STYLE,
+      observeResize: (redraw) => {
+        resize = redraw;
+        return { disconnect: vi.fn() };
+      }
+    });
+    const firstRow = { index: 0, segments: [{ type: 'text' as const, x: 0, text: 'Wrapped' }] };
+    const lastRow = { index: 25, segments: [{ type: 'text' as const, x: 20, text: 'End' }] };
+    renderer.render({ rows: [firstRow, lastRow] });
+    const range = container.querySelector<HTMLInputElement>('input[type="range"]')!;
+    expect(range.max).toBe('64');
+    range.value = range.max;
+    range.dispatchEvent(new Event('input'));
+    expect(operations.filter(({ kind }) => kind === 'fill-text').at(-1)?.args).toEqual([
+      'End',
+      59,
+      450
+    ]);
+
+    width = 110;
+    resize?.();
+    expect(elements.canvas.width).toBe(110);
+    expect(range.valueAsNumber).toBe(34);
+    renderer.render({
+      rows: [firstRow, { ...lastRow, segments: [{ type: 'text', x: 16, text: 'End' }] }]
+    });
+    expect(range.valueAsNumber).toBe(10);
+    renderer.render({ rows: [firstRow] });
+    expect(range.valueAsNumber).toBe(0);
+    expect(range.closest('label')?.hidden).toBe(true);
+    renderer.dispose();
   });
 });

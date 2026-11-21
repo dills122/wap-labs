@@ -4,7 +4,7 @@ key: "WML-FX-PARAGRAPH-EMPTY-IGNORED"
 type: "fixture"
 generated: true
 pilot: "WML-2"
-status: "planned"
+status: "implemented"
 tags:
   - "wap-knowledge-graph"
   - "wap-knowledge-graph/fixture"
@@ -23,7 +23,7 @@ tags:
 ```json
 {
   "kind": "rendering",
-  "status": "planned",
+  "status": "implemented",
   "assertion": "Ignore empty or whitespace-only paragraphs without allowing them to alter inherited wrap state.",
   "source": "spec-processing/source-manifests/wap-1.2.1-selected-normative-clauses.json"
 }

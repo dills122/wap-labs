@@ -133,7 +133,7 @@ still have separate gates.
 
 The first `CONF-003` slice now expands all 39 selected WML rows into 176
 deduplicated, section-hash-anchored clauses. Every clause has an inherited
-owner/work mapping and a direct fixture plan. The WML family now has 159
+owner/work mapping and a direct fixture plan. The WML family now has 162
 implemented clause fixtures with reviewed direct evidence, including the
 completed WML-202 through WML-205 slices and the WML-302/WML-303 runtime
 slices plus WML-305 timer, WML-301 context/history/card-table closure, the ten directly
@@ -144,7 +144,8 @@ WML-201 adds shorthand Go equivalence evidence. Explicit anchor activation has
 engine coverage, with host-owned Prev history integration still open.
 WML-308 adds direct input-title presentation evidence scoped to WML-C-33.
 Additional WML-201 fixtures cover nested links, invalid anchor placement and task counts, significant paragraph breaks, default left paragraph alignment, discretionary soft-hyphen rendering, and nonbreaking spaces across inline fragments.
-Shared clauses are deduplicated. The other 17 clauses stay
+WML-201 also verifies paragraph wrap mode, card-local inheritance, and ignored empty paragraphs in the engine and the Waves panning story.
+Shared clauses are deduplicated. The other 14 clauses stay
 `not-assessed`, and the parent-row implementation audit remains conservative.
 
 Outside the 39 required Class C rows, `WML-C-34` (`meta`) behavior and the

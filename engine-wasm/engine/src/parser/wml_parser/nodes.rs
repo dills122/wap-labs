@@ -545,15 +545,11 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
     }
 }
 
-fn is_inline_text_fragment(node: &InlineNode) -> bool {
-    matches!(
-        node,
-        InlineNode::Text(_) | InlineNode::Link { .. } | InlineNode::Anchor { .. }
-    )
-}
-
 fn note_break_opportunity(out: &mut Vec<InlineNode>) {
-    if out.last().is_some_and(is_inline_text_fragment) {
+    if out
+        .last()
+        .is_some_and(|node| !matches!(node, InlineNode::Break | InlineNode::BreakOpportunity))
+    {
         out.push(InlineNode::BreakOpportunity);
     }
 }
@@ -565,11 +561,13 @@ fn discard_trailing_break_opportunity(out: &mut Vec<InlineNode>) {
 }
 
 fn push_inline_fragment(out: &mut Vec<InlineNode>, node: InlineNode, spacing: InlineSpacing) {
-    if !is_inline_text_fragment(&node) {
+    if matches!(node, InlineNode::Break) {
         discard_trailing_break_opportunity(out);
         out.push(node);
         return;
     }
+    // Retain authored spaces beside controls until layout knows the effective mode.
+    // Wrapped layout already treats controls as separate fragments.
     if spacing.leading {
         note_break_opportunity(out);
     }

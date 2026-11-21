@@ -353,8 +353,9 @@ fn parses_text_and_password_inputs_into_inline_nodes() {
     match &deck.cards[0].nodes[0] {
         Node::Paragraph { inline: items, .. } => {
             assert!(matches!(&items[0], InlineNode::Text(t) if t == "User"));
+            assert_eq!(items[1], InlineNode::BreakOpportunity);
             assert!(matches!(
-                &items[1],
+                &items[2],
                 InlineNode::Input {
                     name,
                     value,
