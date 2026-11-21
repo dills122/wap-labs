@@ -23,7 +23,9 @@ import { renderDeveloperToolsSummary, type DeveloperToolsState } from './develop
 import {
   canvasFrameFromRenderList,
   CanvasViewportRenderer,
-  ensureCanvasViewportElements
+  ensureCanvasViewportElements,
+  type CanvasViewportPanUpdate,
+  type EngineClickCoordinates
 } from './canvas-viewport-renderer';
 import {
   projectHostStatus,
@@ -535,7 +537,7 @@ export class BrowserPresenter {
     this.scheduleDeveloperPanelFlush();
   }
 
-  drawRenderList(renderList: RenderList): void {
+  drawRenderList(renderList: RenderList, panUpdate?: CanvasViewportPanUpdate): void {
     assertHostRenderOutputWithinLimits(renderList);
     this.latestRenderList = {
       draw: renderList.draw.map((command) => ({ ...command }))
@@ -549,7 +551,14 @@ export class BrowserPresenter {
     this.setViewportSkeleton(false);
     this.hasRenderedContent = true;
     this.refs.viewportEl.classList.add('viewport-has-content');
-    this.viewportRenderer.render(canvasFrameFromRenderList(renderList));
+    this.viewportRenderer.render(canvasFrameFromRenderList(renderList), panUpdate);
+  }
+
+  viewportPointerToEngineCoordinates(
+    clientX: number,
+    clientY: number
+  ): EngineClickCoordinates | null {
+    return this.viewportRenderer.pointerToEngineCoordinates(clientX, clientY);
   }
 
   getRenderList(): RenderList | null {

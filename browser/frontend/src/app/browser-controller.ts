@@ -36,7 +36,6 @@ import {
 } from './local-examples';
 import { WAVES_CONFIG } from './waves-config';
 import { runtimeFailureCopy, WAVES_COPY } from './waves-copy';
-import { canvasPointerToEngineCoordinates } from './canvas-viewport-renderer';
 import {
   parseLocalExampleFavoriteTarget,
   parseNetworkFavoriteTarget,
@@ -83,6 +82,7 @@ export class BrowserController {
   private runMode: RunMode = 'local';
   private activeLocalExampleKey = defaultLocalDeckExample().key;
   private committedLocalExampleKey: string | undefined;
+  private pendingNetworkDeckReset = false;
   private lastNetworkUrl: string;
   // U2: set by the navigation state machine's onNavigationError hook just
   // before loadTransportUrl below reads state.navigationStatus === 'error',
@@ -96,6 +96,7 @@ export class BrowserController {
   private localBackAvailable = false;
   private pendingLocalTimerFrame: { generation: number; frame: EngineFrame } | undefined;
   private committedFrame: EngineFrame | undefined;
+  private committedDeckGeneration = 0;
   private networkNavigationCancellable = false;
   private lastFailedNavigation:
     | {
@@ -167,6 +168,8 @@ export class BrowserController {
         onStateEvent: (action, details) => {
           this.presenter.recordTimeline(action, 'state', details);
           if (action === 'engine-load-deck-context') {
+            // A replacement deck can reuse the current URL and card ID.
+            this.pendingNetworkDeckReset = true;
             // Every engineLoadDeckContextFrame call (local or network)
             // clears the engine's nav stack; keep the local back-availability
             // approximation in sync so it doesn't go stale across a mode
@@ -480,7 +483,7 @@ export class BrowserController {
       contentType: 'text/vnd.wap.wml'
     });
     const snapshot = frame.snapshot;
-    this.applyFrame(frame);
+    this.applyFrame(frame, true);
     this.timerRuntime.resetScriptTimers();
     this.timerRuntime.applySnapshot(snapshot);
     this.presenter.setTransportResponse(null);
@@ -728,11 +731,32 @@ export class BrowserController {
   };
 
   private readonly handleViewportClick = (event: MouseEvent): void => {
-    if (event.button !== 0) {
+    const committedFrame = this.committedFrame;
+    if (event.button !== 0 || !committedFrame) {
       return;
     }
+    const coordinates = this.presenter.viewportPointerToEngineCoordinates(
+      event.clientX,
+      event.clientY
+    );
+    if (!coordinates) {
+      return;
+    }
+    const { offsetRow, rows } = committedFrame.presentation.viewport;
+    // Convert the absolute canvas row to the committed frame's viewport-relative hit row.
+    const y = coordinates.y - offsetRow;
+    if (y < 0 || y >= rows) {
+      return;
+    }
+    const input: EngineInputEvent = {
+      type: 'click',
+      frameId: committedFrame.presentation.frameId,
+      x: coordinates.x,
+      y
+    };
+    const deckGeneration = this.committedDeckGeneration;
     void this.keyboardIntentRouter.serializeEngineAction(() =>
-      this.withAction('viewport-click', async () => this.applyEngineClick(event))()
+      this.withAction('viewport-click', async () => this.applyEngineClick(input, deckGeneration))()
     );
   };
 
@@ -925,7 +949,7 @@ export class BrowserController {
         contentType: 'text/vnd.wap.wml'
       });
       const snapshot = frame.snapshot;
-      this.applyFrame(frame);
+      this.applyFrame(frame, true);
       // A fresh deck load always clears the engine's nav stack (see U3).
       this.localBackAvailable = false;
       if (!this.bootDeckReadyEmitted) {
@@ -1064,25 +1088,16 @@ export class BrowserController {
     );
   }
 
-  private async applyEngineClick(event: MouseEvent): Promise<void> {
-    const committedFrame = this.committedFrame;
-    if (!committedFrame) {
+  private async applyEngineClick(
+    input: Extract<EngineInputEvent, { type: 'click' }>,
+    deckGeneration: number
+  ): Promise<void> {
+    if (
+      this.committedDeckGeneration !== deckGeneration ||
+      this.committedFrame?.presentation.frameId !== input.frameId
+    ) {
       return;
     }
-    const coordinates = canvasPointerToEngineCoordinates(
-      this.viewportCanvas,
-      this.refs.viewportEl,
-      event.clientX,
-      event.clientY
-    );
-    if (!coordinates) {
-      return;
-    }
-    const input: EngineInputEvent = {
-      type: 'click',
-      frameId: committedFrame.presentation.frameId,
-      ...coordinates
-    };
     await this.applyEngineMutation(
       () => this.hostClient.engineHandleInputFrame({ event: input }),
       () => this.navigation.applyEngineInput(input)
@@ -1314,10 +1329,43 @@ export class BrowserController {
     };
   }
 
-  private applyFrame(frame: EngineFrame): void {
+  private applyFrame(frame: EngineFrame, deckLoaded = false): void {
+    const previous = this.committedFrame;
+    const replacedDeck = deckLoaded || this.pendingNetworkDeckReset;
+    const reset =
+      replacedDeck ||
+      previous?.snapshot.baseUrl !== frame.snapshot.baseUrl ||
+      previous?.snapshot.activeCardId !== frame.snapshot.activeCardId;
+    const focus = frame.presentation.focus;
+    const reveal =
+      !reset &&
+      focus?.targetKind === 'link' &&
+      focus.focusId !== previous?.presentation.focus?.focusId
+        ? this.focusedLinkBounds(frame, focus.focusId)
+        : undefined;
+    if (replacedDeck) {
+      this.committedDeckGeneration += 1;
+      this.pendingNetworkDeckReset = false;
+    }
     this.committedFrame = frame;
     this.presenter.setSnapshot(frame.snapshot);
-    this.presenter.drawRenderList(frame.render);
+    this.presenter.drawRenderList(frame.render, { reset, reveal });
+  }
+
+  private focusedLinkBounds(
+    frame: EngineFrame,
+    focusId: string
+  ): { x: number; width: number } | undefined {
+    const hitRegion = frame.presentation.hitRegions.find((region) => region.actionId === focusId);
+    if (hitRegion) {
+      return hitRegion;
+    }
+
+    // The draw list includes focused links outside the engine's pointer hit window.
+    const link = frame.render.draw.find(
+      (draw) => draw.type === 'link' && draw.focused && draw.text
+    );
+    return link && { x: link.x, width: Array.from(link.text).length };
   }
 
   private noteCommittedLocalSession(activeCardId?: string): void {

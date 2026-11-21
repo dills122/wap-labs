@@ -1,0 +1,25 @@
+<!--
+label: WML-201 Nowrap Panning
+work-items: WML-201
+spec-items: WML-CL-PARAGRAPH-WRAP-MODE, WML-CL-PARAGRAPH-MODE-INHERITANCE, WML-CL-PARAGRAPH-EMPTY-IGNORED
+description: The second visible paragraph inherits nowrap across a whitespace-only paragraph. An explicit wrap paragraph and the destination use normal wrapping.
+goal: Reveal and activate the Tail link beyond the right edge of the LCD.
+testing-ac:
+- With Near focused, tab to Horizontal pan and use End to reveal Tail.
+- Return focus to the viewport. Down focuses and reveals Tail, and Select opens Destination.
+- On Destination, the horizontal control is hidden.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN"
+  "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p mode="nowrap"><a href="#main">Near</a></p>
+    <p mode="wrap"> </p>
+    <p>012345678901234567890123456789012345678901234567890123456789<a href="#next">Tail</a></p>
+    <p mode="wrap">Alpha Beta Gamma Delta Epsilon</p>
+  </card>
+  <card id="next">
+    <p>Destination</p>
+  </card>
+</wml>

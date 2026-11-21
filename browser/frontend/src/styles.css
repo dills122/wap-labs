@@ -782,6 +782,18 @@ body:not([data-boot-phase='deck-ready']) .reference-view,
   min-height: calc(396px * var(--handset-scale));
 }
 
+.viewport-horizontal-pan:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.viewport-horizontal-pan input {
+  flex: 1;
+  min-width: 0;
+}
+
 .viewport-skeleton:not(.viewport-has-content) .viewport-canvas {
   position: absolute;
   inset: 0;

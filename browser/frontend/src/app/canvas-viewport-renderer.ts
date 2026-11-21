@@ -2,6 +2,7 @@ import type { RenderList } from '../../../contracts/engine';
 
 export interface CanvasViewportSegment {
   type: 'text' | 'focusable';
+  x: number;
   text: string;
   focused?: boolean;
 }
@@ -11,12 +12,15 @@ export interface CanvasViewportRow {
   segments: readonly CanvasViewportSegment[];
 }
 
-// This is deliberately a structural subset of EnginePresentationFrame. F1-03
-// can pass presentation frames directly once the controller owns that input;
-// until then the presenter adapts the legacy RenderList through the helper
-// below.
+// The draw list includes all rows, including those outside the engine's
+// current vertical hit window.
 export interface CanvasViewportFrame {
   rows: readonly CanvasViewportRow[];
+}
+
+export interface CanvasViewportPanUpdate {
+  reset?: boolean;
+  reveal?: { x: number; width: number };
 }
 
 export interface CanvasViewportElements {
@@ -44,7 +48,7 @@ export interface CanvasViewportContext {
   setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void;
   clearRect(x: number, y: number, width: number, height: number): void;
   fillRect(x: number, y: number, width: number, height: number): void;
-  fillText(text: string, x: number, y: number): void;
+  fillText(text: string, x: number, y: number, maxWidth?: number): void;
   measureText(text: string): Pick<TextMetrics, 'width'>;
 }
 
@@ -68,6 +72,7 @@ export interface CanvasPointerGeometry {
   columnWidth: number;
   lineHeight: number;
   inlinePadding: number;
+  panOffset: number;
 }
 
 export interface EngineClickCoordinates {
@@ -104,8 +109,8 @@ export const canvasFrameFromRenderList = (renderList: RenderList): CanvasViewpor
     const segments = rows.get(command.y) ?? [];
     segments.push(
       command.type === 'link'
-        ? { type: 'focusable', text: command.text, focused: command.focused }
-        : { type: 'text', text: command.text }
+        ? { type: 'focusable', x: command.x, text: command.text, focused: command.focused }
+        : { type: 'text', x: command.x, text: command.text }
     );
     rows.set(command.y, segments);
   }
@@ -123,7 +128,18 @@ export class CanvasViewportRenderer {
   private readonly getSize: () => { width: number; height: number };
   private readonly getStyle: () => CanvasViewportStyle;
   private readonly resizeSubscription: ResizeSubscription | undefined;
+  private readonly panLabel = document.createElement('label');
+  private readonly panInput = document.createElement('input');
   private lastFrame: CanvasViewportFrame | null = null;
+  private panOffset = 0;
+  private pointerGeometry: Omit<CanvasPointerGeometry, 'bounds' | 'panOffset'> | null = null;
+
+  private readonly handlePanInput = (): void => {
+    if (this.lastFrame) {
+      this.panOffset = this.panInput.valueAsNumber;
+      this.paint(this.lastFrame.rows);
+    }
+  };
 
   constructor(
     private readonly viewport: HTMLElement,
@@ -135,21 +151,38 @@ export class CanvasViewportRenderer {
     this.getPixelRatio = options.getPixelRatio ?? (() => window.devicePixelRatio || 1);
     this.getSize = options.getSize ?? (() => measureViewport(viewport));
     this.getStyle = options.getStyle ?? (() => readViewportStyle(viewport));
+    this.panLabel.className = 'viewport-horizontal-pan';
+    this.panLabel.hidden = true;
+    this.panInput.type = 'range';
+    this.panInput.min = '0';
+    this.panInput.step = 'any';
+    this.panInput.addEventListener('input', this.handlePanInput);
+    this.panLabel.append('Horizontal pan', this.panInput);
+    viewport.after(this.panLabel);
     const observeResize = options.observeResize ?? defaultResizeObserver(viewport);
     this.resizeSubscription = observeResize?.(() => {
       if (this.lastFrame) {
-        this.render(this.lastFrame);
+        this.paint(this.lastFrame.rows);
       }
     });
   }
 
-  render(frame: CanvasViewportFrame): void {
+  render(frame: CanvasViewportFrame, panUpdate: CanvasViewportPanUpdate = {}): void {
     const rows = [...frame.rows].sort((left, right) => left.index - right.index);
     this.lastFrame = { rows };
     this.elements.accessibleText.textContent = rows
       .map((row) => row.segments.map((segment) => segment.text).join(''))
       .join('\n');
+    if (panUpdate.reset) {
+      this.panOffset = 0;
+    }
+    this.paint(rows, panUpdate.reveal);
+  }
 
+  private paint(
+    rows: readonly CanvasViewportRow[],
+    reveal?: CanvasViewportPanUpdate['reveal']
+  ): void {
     const context = this.context;
     if (!context) {
       return;
@@ -177,40 +210,98 @@ export class CanvasViewportRenderer {
     }
     this.elements.canvas.style.height = `${cssHeight}px`;
 
+    context.font = style.font;
+    const columnWidth = measureColumnWidth(context, style);
+    let contentRight = 0;
+    const paintRows = rows.map((row) => {
+      const segments = row.segments.map((segment) => {
+        const x = style.inlinePadding + segment.x * columnWidth;
+        const textWidth = context.measureText(segment.text).width;
+        const logicalWidth = Array.from(segment.text).length * columnWidth;
+        if (segment.text) {
+          contentRight = Math.max(contentRight, x + logicalWidth + style.inlinePadding);
+        }
+        return { segment, x, textWidth, logicalWidth };
+      });
+      return { y: row.index * style.lineHeight, segments };
+    });
+    const maxPan = measuredSize.width > 0 ? Math.max(0, contentRight - cssWidth) : 0;
+    if (reveal && maxPan > 0) {
+      const left = reveal.x * columnWidth;
+      const right = left + reveal.width * columnWidth;
+      const visibleWidth = cssWidth - 2 * style.inlinePadding;
+      if (left < this.panOffset || right - left > visibleWidth) {
+        this.panOffset = left;
+      } else if (right > this.panOffset + visibleWidth) {
+        this.panOffset = right - visibleWidth;
+      }
+    }
+    this.panOffset = Math.max(0, Math.min(this.panOffset, maxPan));
+    this.panInput.max = String(maxPan);
+    this.panInput.value = String(this.panOffset);
+    if (maxPan === 0 && document.activeElement === this.panInput) {
+      this.viewport.focus({ preventScroll: true });
+    }
+    this.panLabel.hidden = maxPan === 0;
+    this.pointerGeometry = {
+      backingWidth,
+      backingHeight,
+      pixelRatio,
+      columnWidth,
+      lineHeight: style.lineHeight,
+      inlinePadding: style.inlinePadding
+    };
+
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, backingWidth, backingHeight);
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    context.font = style.font;
     context.textBaseline = 'top';
 
-    rows.forEach((row) => {
-      let cursorX = style.inlinePadding;
-      const rowY = row.index * style.lineHeight;
-      for (const segment of row.segments) {
-        const textWidth = context.measureText(segment.text).width;
+    for (const { y: rowY, segments } of paintRows) {
+      for (const { segment, x, textWidth, logicalWidth } of segments) {
+        const drawX = x - this.panOffset;
+        const decorationWidth = Math.min(textWidth, logicalWidth);
         if (segment.type === 'focusable' && segment.focused) {
           context.fillStyle = style.focusBackground;
-          context.fillRect(cursorX, rowY, textWidth, style.lineHeight);
+          context.fillRect(drawX, rowY, decorationWidth, style.lineHeight);
           context.fillStyle = style.focusForeground;
         } else {
           context.fillStyle = segment.type === 'focusable' ? style.linkColor : style.textColor;
         }
-        context.fillText(segment.text, cursorX, rowY);
+        if (textWidth > logicalWidth) {
+          context.fillText(segment.text, drawX, rowY, logicalWidth);
+        } else {
+          context.fillText(segment.text, drawX, rowY);
+        }
         if (segment.type === 'focusable' && !segment.focused) {
           context.fillRect(
-            cursorX,
+            drawX,
             rowY + style.fontSize + style.underlineOffset,
-            textWidth,
+            decorationWidth,
             style.underlineThickness
           );
         }
-        cursorX += textWidth;
       }
+    }
+  }
+
+  pointerToEngineCoordinates(clientX: number, clientY: number): EngineClickCoordinates | null {
+    const canvas = this.elements.canvas;
+    const geometry = this.pointerGeometry;
+    if (!geometry) {
+      return canvasPointerToEngineCoordinates(canvas, this.viewport, clientX, clientY);
+    }
+    return mapCanvasPointerToEngineCoordinates(clientX, clientY, {
+      ...geometry,
+      bounds: canvas.getBoundingClientRect(),
+      panOffset: this.panOffset
     });
   }
 
   dispose(): void {
     this.resizeSubscription?.disconnect();
+    this.panInput.removeEventListener('input', this.handlePanInput);
+    this.panLabel.remove();
   }
 }
 
@@ -226,7 +317,8 @@ export const mapCanvasPointerToEngineCoordinates = (
     pixelRatio,
     columnWidth,
     lineHeight,
-    inlinePadding
+    inlinePadding,
+    panOffset
   } = geometry;
   if (
     !Number.isFinite(clientX) ||
@@ -251,7 +343,7 @@ export const mapCanvasPointerToEngineCoordinates = (
   // Pointer coordinates arrive in post-CSS-transform pixels. Convert through
   // the backing store and then remove the Canvas device-pixel transform so
   // the engine receives its host-neutral column/row grid.
-  const drawX = (localX * backingWidth) / bounds.width / pixelRatio;
+  const drawX = (localX * backingWidth) / bounds.width / pixelRatio + panOffset;
   const drawY = (localY * backingHeight) / bounds.height / pixelRatio;
   if (drawX < inlinePadding) {
     return null;
@@ -262,7 +354,7 @@ export const mapCanvasPointerToEngineCoordinates = (
   };
 };
 
-export const canvasPointerToEngineCoordinates = (
+const canvasPointerToEngineCoordinates = (
   canvas: HTMLCanvasElement,
   viewport: HTMLElement,
   clientX: number,
@@ -279,11 +371,15 @@ export const canvasPointerToEngineCoordinates = (
     backingWidth: canvas.width,
     backingHeight: canvas.height,
     pixelRatio: positiveDimension(window.devicePixelRatio, 1),
-    columnWidth: positiveDimension(context.measureText('M').width, style.fontSize * 0.6),
+    columnWidth: measureColumnWidth(context, style),
     lineHeight: style.lineHeight,
-    inlinePadding: style.inlinePadding
+    inlinePadding: style.inlinePadding,
+    panOffset: 0
   });
 };
+
+const measureColumnWidth = (context: CanvasViewportContext, style: CanvasViewportStyle): number =>
+  positiveDimension(context.measureText('M').width, style.fontSize * 0.6);
 
 const getCanvasContext = (canvas: HTMLCanvasElement): CanvasViewportContext | null => {
   // jsdom deliberately has no Canvas implementation. Avoid calling its
