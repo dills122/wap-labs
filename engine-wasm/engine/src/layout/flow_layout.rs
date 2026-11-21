@@ -780,6 +780,150 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_paragraph_empty_ignored() {
+        // WAP-191_104-WML §11.8.3 ignores insignificant paragraphs and
+        // starts consecutive significant paragraphs on separate rows.
+        let first = "<p>Before</p>";
+        let next = r##"<p><a href="#next">Continue</a></p>"##;
+        let baseline = strict_card_body(&format!("{first}{next}"));
+        let baseline_render = baseline.render().expect("baseline must render");
+        assert!(
+            matches!(
+                baseline_render.draw.as_slice(),
+                [
+                    DrawCmd::Text { x: 0, y: 0, text: before },
+                    DrawCmd::Link { x: 0, y: 1, text: link, focused: true, href },
+                ] if before == "Before" && link == "Continue" && href == "#next"
+            ),
+            "significant paragraphs must occupy consecutive rows"
+        );
+        let baseline_frame = baseline.render_frame().expect("baseline frame must render");
+        let [baseline_hit] = baseline_frame.hit_regions.as_slice() else {
+            panic!("expected one baseline link region");
+        };
+        assert_eq!(
+            (
+                baseline_hit.x,
+                baseline_hit.y,
+                baseline_hit.width,
+                baseline_hit.height
+            ),
+            (0, 1, 8, 1)
+        );
+
+        let mut example = load_strict_deck(include_str!(
+            "../../../examples/source/wml-201-paragraph-empty-ignored.wml"
+        ));
+        for (value, visible) in [
+            ("", false),
+            (" \t\n ", false),
+            ("Visible", true),
+            (" \r\n ", false),
+        ] {
+            assert!(example.set_var("message".into(), value.into()));
+            let frame = example.render_frame().expect("example frame must render");
+            assert!(
+                frame.focus == baseline_frame.focus,
+                "link focus must remain stable"
+            );
+            if visible {
+                let render = example.render().expect("visible paragraph must render");
+                assert!(
+                    matches!(
+                        render.draw.as_slice(),
+                        [
+                            DrawCmd::Text { x: 0, y: 0, text: before },
+                            DrawCmd::Text { x: 0, y: 1, text: message },
+                            DrawCmd::Link { x: 0, y: 2, text: link, focused: true, href },
+                        ] if before == "Before" && message == "Visible"
+                            && link == "Continue" && href == "#next"
+                    ),
+                    "visible substitution must add one row before the link"
+                );
+                let mut expected_hit = baseline_hit.clone();
+                expected_hit.y = 2;
+                assert!(
+                    frame.hit_regions == [expected_hit],
+                    "visible substitution must move the link region down one row"
+                );
+            } else {
+                assert!(
+                    frame.rows == baseline_frame.rows,
+                    "empty elements and insignificant white space must leave the rows unchanged"
+                );
+                assert!(
+                    frame.hit_regions == baseline_frame.hit_regions,
+                    "insignificant paragraphs must leave link geometry unchanged"
+                );
+            }
+        }
+        example
+            .handle_key("enter".into())
+            .expect("link must activate");
+        assert_eq!(example.active_card_id().as_deref(), Ok("next"));
+
+        for paragraph in [
+            "<p>&nbsp;</p>",
+            "<p><br/></p>",
+            r#"<p><input name="entry"/></p>"#,
+        ] {
+            let engine = strict_card_body(&format!("{first}{paragraph}{next}"));
+            let frame = engine
+                .render_frame()
+                .expect("significant control frame must render");
+            let link = frame
+                .hit_regions
+                .last()
+                .expect("expected a following link region");
+            assert_eq!((link.x, link.y, link.width, link.height), (0, 2, 8, 1));
+            assert!(
+                link.target_kind == crate::EngineFocusTargetKind::Link,
+                "the following link must keep its hit region"
+            );
+            match paragraph {
+                "<p>&nbsp;</p>" => assert!(
+                    matches!(
+                        engine.render().expect("nonbreaking space must render").draw.as_slice(),
+                        [_, DrawCmd::Text { x: 0, y: 1, text }, _] if text == "\u{a0}"
+                    ),
+                    "nonbreaking space must keep its glyph"
+                ),
+                "<p><br/></p>" => assert!(
+                    matches!(
+                        engine
+                            .render()
+                            .expect("authored break must render")
+                            .draw
+                            .as_slice(),
+                        [DrawCmd::Text { y: 0, .. }, DrawCmd::Link { y: 2, .. }]
+                    ),
+                    "authored break must leave an unpainted row"
+                ),
+                _ => {
+                    assert!(
+                        matches!(
+                            frame.hit_regions.as_slice(),
+                            [input, _] if input.x == 0 && input.y == 1
+                                && input.width > 0 && input.height == 1
+                                && input.target_kind == crate::EngineFocusTargetKind::Input
+                        ),
+                        "the input must keep its own hit region"
+                    );
+                    assert!(
+                        matches!(
+                            frame.focus,
+                            Some(focus) if focus.index == 0
+                                && focus.target_kind == crate::EngineFocusTargetKind::Input
+                        ),
+                        "the input must take focus before the following link"
+                    );
+                }
+            }
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_paragraph_nonbreaking_space() {
         let mut example = load_strict_deck(include_str!(
             "../../../examples/source/wml-201-inline-nonbreaking-space.wml"
