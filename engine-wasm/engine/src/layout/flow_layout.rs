@@ -215,20 +215,20 @@ pub(crate) fn table_column_starts(
     context: InlineContext,
     vars: &HashMap<String, String>,
 ) -> Option<Vec<u32>> {
-    let columns = table.rows.first()?.len();
-    if columns == 0 || columns > viewport_cols || u32::try_from(columns) != Ok(table.columns) {
+    let columns = usize::try_from(table.columns).ok()?;
+    if columns == 0 || columns > viewport_cols {
         return None;
     }
-    let mut widths = vec![0; columns];
+    // Unauthored trailing columns have zero width in every row.
+    let authored_columns = table.rows.iter().map(Vec::len).max()?;
+    let mut widths = vec![0; authored_columns];
     let mut remaining_width = viewport_cols;
     // Column maxima only grow. Reject overflow immediately and retain just
     // the widths while checking the whole table's eligibility.
     for row in &table.rows {
-        if row.len() != columns {
-            return None;
-        }
-        for (cell, width) in row.iter().zip(&mut widths) {
-            let cell = resolve_table_cell(cell.as_ref()?, viewport_cols, context, vars)?;
+        for (entry, width) in row.iter().zip(&mut widths) {
+            let Some(entry) = entry else { continue };
+            let cell = resolve_table_cell(entry, viewport_cols, context, vars)?;
             let cols = cell.text.chars().count();
             remaining_width = remaining_width.checked_sub(cols.saturating_sub(*width))?;
             *width = (*width).max(cols);
@@ -485,14 +485,15 @@ fn layout_card_impl<'a>(
                 } => {
                     painted = true;
                     nowrap.pending_row = PendingParagraphRow::None;
-                    let columns = table.column_starts.len();
                     if table.rows.len() > limits.rows.saturating_sub(row_count) {
                         check_next_row(&limits, limits.rows)?;
                     }
-                    check_output_slots(&limits, &result, table.rows.len().saturating_mul(columns))?;
+                    let outputs = table.rows.iter().flatten().flatten().count();
+                    check_output_slots(&limits, &result, outputs)?;
                     let mut next_focus_index = first_focus_index;
                     for row in &table.rows {
-                        for (entry, &x) in row.iter().flatten().zip(&table.column_starts) {
+                        for (entry, &x) in row.iter().zip(&table.column_starts) {
+                            let Some(entry) = entry else { continue };
                             let cell = resolve_table_cell(entry, viewport_cols, context, vars)
                                 .ok_or_else(|| {
                                     EngineRenderError::engine_failure(
@@ -1289,6 +1290,269 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_short_row_padding() {
+        // WAP-191_104-WML §11.8.5: missing cells act like appended empty td elements.
+        let source = include_str!("../../../examples/source/wml-201-table-short-row-padding.wml");
+        let mut engine = load_strict_deck(source);
+        let mut explicit =
+            load_strict_deck(&source.replacen("</td></tr>", "</td><td/><td/></tr>", 1));
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Before"},
+            {"type": "link", "x": 0, "y": 2, "text": "Short", "href": "#main", "focused": true},
+            {"type": "text", "x": 0, "y": 3, "text": "Wide"},
+            {"type": "text", "x": 5, "y": 3, "text": "Mid"},
+            {"type": "link", "x": 8, "y": 3, "text": "Open", "href": "#next", "focused": false},
+            {"type": "text", "x": 0, "y": 5, "text": "After"}
+        ]);
+        assert_eq!(draw(&engine), expected);
+        assert_eq!(draw(&explicit), expected);
+        let alternate = load_strict_deck(&alternate_table_dtd(source));
+        assert_eq!(draw(&alternate)[2]["text"], "WideMid");
+        assert_eq!(draw(&alternate)[3]["y"], 4);
+
+        for (deck, authored_cells) in [(&engine, 1), (&explicit, 3)] {
+            let card = deck.runtime_card_for_layout().unwrap();
+            let [Node::Paragraph { inline, .. }] = card.nodes.as_slice() else {
+                panic!("expected one paragraph");
+            };
+            let table = inline
+                .iter()
+                .find_map(|entry| match entry {
+                    InlineNode::Table(table) => Some(table),
+                    _ => None,
+                })
+                .expect("the table must use the bounded grid");
+            assert_eq!(table.columns, 3, "logical slots in each row");
+            assert_eq!(table.rows[0].len(), authored_cells);
+            assert!(table.rows[0][1..].iter().all(Option::is_none));
+            assert_eq!(table.rows[1].len(), 3);
+            assert_eq!(table.column_starts, [0, 5, 8]);
+        }
+
+        let frame = engine.render_output().unwrap().presentation;
+        let explicit_frame = explicit.render_output().unwrap().presentation;
+        assert_eq!(frame.rows, explicit_frame.rows);
+        assert_eq!(frame.hit_regions, explicit_frame.hit_regions);
+        assert_eq!(
+            frame
+                .hit_regions
+                .iter()
+                .map(|hit| (hit.x, hit.y, hit.width, hit.height, hit.action_id.as_str()))
+                .collect::<Vec<_>>(),
+            [(0, 2, 5, 1, "focus:0"), (8, 3, 4, 1, "focus:1")]
+        );
+        explicit.handle_key("down".into()).unwrap();
+        assert_eq!(explicit.focused_link_index(), 1);
+        assert_eq!(draw(&explicit)[4]["focused"], true);
+        explicit.handle_key("down".into()).unwrap();
+        assert_eq!(explicit.focused_link_index(), 0);
+        explicit.handle_key("down".into()).unwrap();
+        explicit.handle_key("enter".into()).unwrap();
+        assert_eq!(explicit.active_card_id().as_deref(), Ok("next"));
+        engine
+            .handle_input(EngineInputEvent::Click {
+                frame_id: frame.frame_id,
+                x: 8,
+                y: 3,
+            })
+            .unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_short_row_padding_only_short_rows_and_limits() {
+        let mut engine = strict_paragraph(concat!(
+            r#"<table columns="3"><tr><td>$(word)</td></tr>"#,
+            r##"<tr><td>X</td><td><a href="#$(target)">Open</a></td></tr></table>"##,
+        ));
+        assert!(engine.set_var("target".into(), "next".into()));
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Fox"},
+            {"type": "text", "x": 0, "y": 1, "text": "X"},
+            {"type": "link", "x": 3, "y": 1, "text": "Open", "href": "#next", "focused": true}
+        ]);
+        assert_eq!(draw(&engine), expected);
+        let output = engine.render_output().unwrap();
+        assert_eq!(output.presentation.viewport.content_rows, 2);
+        let limits = EngineRenderLimits {
+            rows: 2,
+            segments: 3,
+            draw_commands: 3,
+            serialized_bytes: serde_json::to_vec(&output).unwrap().len(),
+        };
+        let fit = engine.render_output_with_limits(limits).unwrap();
+        assert_eq!(
+            serde_json::to_value(fit).unwrap(),
+            serde_json::to_value(output).unwrap()
+        );
+        let card = engine.runtime_card_for_layout().unwrap();
+        let payload_bytes = "FoxXOpen#next".len();
+        let payload_limits = EngineRenderLimits {
+            serialized_bytes: payload_bytes,
+            ..limits
+        };
+        assert!(layout_card_with_limits(&card, 20, 0, payload_limits).is_ok());
+        assert!(matches!(
+            layout_card_with_limits(&card, 20, 0, EngineRenderLimits {
+                serialized_bytes: payload_bytes - 1,
+                ..payload_limits
+            }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::SerializedBytes,
+                limit,
+                observed,
+                ..
+            }) if limit == payload_bytes - 1 && observed == payload_bytes
+        ));
+        for (below, resource, fitting) in [
+            (
+                EngineRenderLimits { rows: 1, ..limits },
+                EngineRenderResource::LayoutRows,
+                limits.rows,
+            ),
+            (
+                EngineRenderLimits {
+                    segments: 2,
+                    ..limits
+                },
+                EngineRenderResource::LayoutSegments,
+                limits.segments,
+            ),
+            (
+                EngineRenderLimits {
+                    draw_commands: 2,
+                    ..limits
+                },
+                EngineRenderResource::DrawCommands,
+                limits.draw_commands,
+            ),
+            (
+                EngineRenderLimits {
+                    serialized_bytes: limits.serialized_bytes - 1,
+                    ..limits
+                },
+                EngineRenderResource::SerializedBytes,
+                limits.serialized_bytes,
+            ),
+        ] {
+            assert!(
+                matches!(
+                    engine.render_output_with_limits(below),
+                    Err(EngineRenderError::ResourceLimit { resource: actual, limit, observed, .. })
+                        if actual == resource && limit == fitting - 1 && observed == fitting
+                ),
+                "{resource:?}"
+            );
+        }
+        assert_eq!(draw(&engine), expected);
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_short_row_padding_balanced_control_and_fallback() {
+        let short = "<tr><td>$(word)</td></tr>";
+        let full = r##"<tr><td>A</td><td>B</td><td><a href="#$(target)">Open</a></td></tr>"##;
+        let balanced = strict_paragraph(&format!(r#"<table columns="3">{full}{full}</table>"#));
+        assert_eq!(balanced.render().unwrap().draw.len(), 6);
+        for (case, mode, attrs, rows) in [
+            (
+                "short and long rows",
+                "wrap",
+                r#"columns="3""#,
+                "<tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>",
+            ),
+            (
+                "columns wider than viewport",
+                "wrap",
+                r#"columns="4294967295""#,
+                "",
+            ),
+            (
+                "columns outside the viewport range",
+                "wrap",
+                r#"columns="4294967296""#,
+                "",
+            ),
+            (
+                "columns outside machine integers",
+                "wrap",
+                r#"columns="1234567890123456789012345678901234567890""#,
+                "",
+            ),
+            (
+                "entirely empty row",
+                "wrap",
+                r#"columns="3""#,
+                "<tr><td/><td/></tr>",
+            ),
+            (
+                "interior empty cell",
+                "wrap",
+                r#"columns="3""#,
+                "<tr><td>A</td><td/><td>C</td></tr>",
+            ),
+            (
+                "unsupported content",
+                "wrap",
+                r#"columns="3""#,
+                "<tr><td>A<br/>B</td></tr>",
+            ),
+            ("alignment", "wrap", r#"columns="3" align="L""#, ""),
+            ("nowrap", "nowrap", r#"columns="3""#, ""),
+        ] {
+            let body = format!("<p>Before</p><p mode=\"{mode}\"><table {attrs}>{short}{full}{rows}</table></p><p>After</p>");
+            let source = format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main">{body}</card><card id="next"><p>Destination</p></card></wml>"#
+            );
+            assert_short_table_legacy(&source, "Fox", case);
+        }
+        // A variable may make a previously eligible grid too wide.
+        assert_short_table_legacy(
+            &include_str!("../../../examples/source/wml-201-table-short-row-padding.wml")
+                .replace(">Short<", ">$(word)<"),
+            "123456789",
+            "overwide expanded content",
+        );
+    }
+
+    fn assert_short_table_legacy(source: &str, word: &str, case: &str) {
+        let mut strict = load_strict_deck(source);
+        let mut alternate = load_strict_deck(&alternate_table_dtd(source));
+        let renders = [&mut strict, &mut alternate].map(|engine| {
+            engine.set_viewport_cols(10).unwrap();
+            assert!(engine.set_var("word".into(), word.into()));
+            assert!(engine.set_var("target".into(), "next".into()));
+            engine.render_output().unwrap()
+        });
+        assert_eq!(
+            serde_json::to_value(&renders[0].render).unwrap(),
+            serde_json::to_value(&renders[1].render).unwrap(),
+            "{case}"
+        );
+        assert_eq!(
+            renders[0].presentation.rows, renders[1].presentation.rows,
+            "{case}"
+        );
+        assert_eq!(
+            renders[0].presentation.hit_regions, renders[1].presentation.hit_regions,
+            "{case}"
+        );
+    }
+
+    fn alternate_table_dtd(source: &str) -> String {
+        source.replace(
+            r#"PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd""#,
+            r#"SYSTEM "http://example.test/alternate.dtd""#,
+        )
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_exact_columns() {
         // WAP-191_104-WML §11.8.5: each authored cell in these balanced rows
         // occupies its own declared column, with shared starts across rows.
@@ -1390,10 +1654,7 @@ mod tests {
             );
             let mut strict = load_strict_deck(&source);
             strict.set_viewport_cols(10).unwrap();
-            let mut alternate = load_strict_deck(&source.replace(
-                r#"PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd""#,
-                r#"SYSTEM "http://example.test/alternate.dtd""#,
-            ));
+            let mut alternate = load_strict_deck(&alternate_table_dtd(&source));
             alternate.set_viewport_cols(10).unwrap();
             assert_eq!(draw(&strict), draw(&alternate), "{fixture}");
         }

@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "example": "wml201TableShortRowPadding",
+  "flows": [
+    {
+      "id": "short-table-row-and-link-activation",
+      "title": "A padded row preserves table layout and link order",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-TABLE-SHORT-ROW-PADDING"],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Before" },
+            { "row": 2, "text": "Short" },
+            { "row": 3, "text": "WideMidOpen" },
+            { "row": 5, "text": "After" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

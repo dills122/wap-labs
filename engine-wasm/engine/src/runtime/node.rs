@@ -49,11 +49,14 @@ pub struct SelectOption {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Table {
+    // Every retained row has this many logical slots. Slots beyond the
+    // authored cells are significant trailing empties and need no storage.
     pub(crate) columns: u32,
-    // A cell without a simple text or link fragment requires legacy layout.
+    // None represents an authored trailing empty cell.
     pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
     pub(crate) legacy: Vec<InlineNode>,
     // Populated only on the layout copy after the whole grid is measured.
+    // Columns with no authored cells share the end of the measured columns.
     pub(crate) column_starts: Vec<u32>,
 }
 
