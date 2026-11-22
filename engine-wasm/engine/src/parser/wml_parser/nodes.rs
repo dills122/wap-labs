@@ -536,6 +536,17 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
                     {
                         Some(LegacyCellSpacing::Variable(authored.len()))
                     }
+                    // A single interior link leaves two text groups, at least one of them merged.
+                    ([XmlNode::Element(link)], [InlineNode::Link { href, .. }])
+                        if spacing == LegacyCellSpacing::Literals
+                            && count >= 4
+                            && !authored.is_empty()
+                            && authored.len() < count as usize - 1
+                            && matches!(link.children.as_slice(), [XmlNode::Text(label)] if is_legacy_cell_text(label))
+                            && href.strip_prefix('#').is_some_and(is_xml_name) =>
+                    {
+                        Some(LegacyCellSpacing::Link(authored.len()))
+                    }
                     _ => None,
                 };
             }

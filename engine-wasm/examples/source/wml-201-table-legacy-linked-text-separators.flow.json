@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "example": "wml201TableLegacyLinkedTextSeparators",
+  "flows": [
+    {
+      "id": "legacy-table-fallback-separates-text-beside-a-link",
+      "title": "An overwide table separates text cells on both sides of a card link",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-TABLE-LONG-ROW-AGGREGATION"],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Red Fox" },
+            { "row": 1, "text": "End" },
+            { "row": 2, "text": "Up Skyline" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
