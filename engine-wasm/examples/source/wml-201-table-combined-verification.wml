@@ -1,0 +1,34 @@
+<!--
+label: WML-201 Table Combined Verification
+description: Displays exact, short, and long rows together in a three-column table.
+goal: Verify shared column starts, invisible padding, and independent links in the final column.
+work-items: WML-201
+spec-items: WML-CL-TABLE-EXACT-COLUMNS, WML-CL-TABLE-SHORT-ROW-PADDING, WML-CL-TABLE-LONG-ROW-AGGREGATION
+testing-ac:
+- Activate Open table to initialize the substitutions and display the table.
+- Confirm that Before and After surround the rows and that the short row displays only Short.
+- Confirm that the final cell of the long row reads Fox Go End with one space at each merged boundary.
+- Move focus from Short to Go to End and activate each of the merged links to reach its own destination.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="start">
+    <p><anchor>Open table
+      <go href="#main">
+        <setvar name="word" value="Fox"/>
+        <setvar name="first" value="Go"/>
+        <setvar name="second" value="End"/>
+      </go>
+    </anchor></p>
+  </card>
+  <card id="main">
+    <p>Before<table columns="3">
+      <tr><td>A</td><td>Mid</td><td>Base</td></tr>
+      <tr><td><a href="#main">Short</a></td></tr>
+      <tr><td>Wide</td><td>X</td><td>$(word)</td><td><a href="#first">$(first)</a></td><td><a href="#second">$(second)</a></td></tr>
+    </table>After</p>
+  </card>
+  <card id="first"><p><a href="#main">First destination</a></p></card>
+  <card id="second"><p>Second destination</p></card>
+</wml>

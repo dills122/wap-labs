@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "example": "wml201TableCombinedVerification",
+  "flows": [
+    {
+      "id": "mixed-table-rows-and-merged-link-activation",
+      "title": "Exact, padded, and aggregated rows share a grid and preserve link order",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": [
+        "WML-CL-TABLE-EXACT-COLUMNS",
+        "WML-CL-TABLE-SHORT-ROW-PADDING",
+        "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+      ],
+      "initial": {
+        "state": { "activeCardId": "start", "focusedLinkIndex": 0 }
+      },
+      "steps": [
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+            "render": {
+              "textAtRows": [
+                { "row": 0, "text": "Before" },
+                { "row": 2, "text": "AMidBase" },
+                { "row": 3, "text": "Short" },
+                { "row": 4, "text": "WideXFox Go End" },
+                { "row": 6, "text": "After" }
+              ]
+            }
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "activeCardId": "first", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "First destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 0 } }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "keyboard", "key": "ArrowDown" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 2 } }
+        },
+        {
+          "action": { "type": "keyboard", "key": "Enter" },
+          "expect": {
+            "state": { "activeCardId": "second", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "Second destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}

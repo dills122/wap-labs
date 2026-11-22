@@ -1335,6 +1335,150 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_combined_verification() {
+        // WAP-191_104-WML §11.8.5 applies all three row rules within one table.
+        let source =
+            include_str!("../../../examples/source/wml-201-table-combined-verification.wml");
+        let load = |source: &str| {
+            let mut engine = load_strict_deck(source);
+            engine.set_viewport_cols(18).unwrap();
+            engine.handle_key("enter".into()).unwrap();
+            assert_eq!(engine.active_card_id().as_deref(), Ok("main"));
+            engine
+        };
+        let mut engine = load(source);
+        let explicit_source =
+            source.replace(">Short</a></td></tr>", ">Short</a></td><td/><td/></tr>");
+        assert_ne!(source, explicit_source);
+        let explicit = load(&explicit_source);
+
+        for (deck, short_cell_count) in [(&engine, 1), (&explicit, 3)] {
+            let card = deck.runtime_card_for_layout().unwrap();
+            let [Node::Paragraph { inline, .. }] = card.nodes.as_slice() else {
+                panic!("expected one paragraph");
+            };
+            let table = inline
+                .iter()
+                .find_map(|entry| match entry {
+                    InlineNode::Table(table) => Some(table),
+                    _ => None,
+                })
+                .expect("the mixed table must use the bounded grid");
+            assert_eq!(table.columns, 3);
+            assert_eq!(table.column_starts, [0, 5, 8]);
+            assert_eq!(
+                table.rows.iter().map(Vec::len).collect::<Vec<_>>(),
+                [3, short_cell_count, 5]
+            );
+            assert!(table.rows[1][1..].iter().all(Option::is_none));
+            for (row, occupied) in table.rows.iter().zip([[1, 1, 1], [1, 0, 0], [1, 1, 3]]) {
+                // The iterator leaves trailing empty columns implicit.
+                let mut columns =
+                    super::table_row_columns(row, 3).map(|cells| cells.iter().flatten().count());
+                assert_eq!(
+                    std::array::from_fn(|_| columns.next().unwrap_or(0)),
+                    occupied
+                );
+                assert_eq!(columns.next(), None);
+            }
+        }
+
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Before"},
+            {"type": "text", "x": 0, "y": 2, "text": "A"},
+            {"type": "text", "x": 5, "y": 2, "text": "Mid"},
+            {"type": "text", "x": 8, "y": 2, "text": "Base"},
+            {"type": "link", "x": 0, "y": 3, "text": "Short", "href": "#main", "focused": true},
+            {"type": "text", "x": 0, "y": 4, "text": "Wide"},
+            {"type": "text", "x": 5, "y": 4, "text": "X"},
+            {"type": "text", "x": 8, "y": 4, "text": "Fox"},
+            {"type": "text", "x": 11, "y": 4, "text": " "},
+            {"type": "link", "x": 12, "y": 4, "text": "Go", "href": "#first", "focused": false},
+            {"type": "text", "x": 14, "y": 4, "text": " "},
+            {"type": "link", "x": 15, "y": 4, "text": "End", "href": "#second", "focused": false},
+            {"type": "text", "x": 0, "y": 6, "text": "After"}
+        ]);
+        assert_eq!(draw(&engine), expected);
+        assert_eq!(draw(&explicit), expected);
+        let frame = engine.render_output().unwrap().presentation;
+        let explicit_frame = explicit.render_output().unwrap().presentation;
+        assert_eq!(frame.rows, explicit_frame.rows);
+        assert_eq!(frame.hit_regions, explicit_frame.hit_regions);
+        assert_table_hit_regions(
+            &frame,
+            &[
+                (0, 3, 5, 1, "focus:0"),
+                (12, 4, 2, 1, "focus:1"),
+                (15, 4, 3, 1, "focus:2"),
+            ],
+        );
+        assert_table_limits(
+            &engine,
+            7,
+            13,
+            "AMidBaseShort#mainWideXFox Go#first End#second".len(),
+        );
+
+        let mut narrow = load(source);
+        narrow.set_viewport_cols(17).unwrap();
+        let mut alternate = load(&alternate_table_dtd(source));
+        alternate.set_viewport_cols(17).unwrap();
+        let fallback = draw(&narrow);
+        assert_eq!(fallback, draw(&alternate));
+        // The legacy path loses column starts and puts the merged links on separate rows.
+        assert_eq!(
+            &fallback.as_array().unwrap()[3..6],
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 4, "text": "WideXFox"},
+                {"type": "link", "x": 0, "y": 5, "text": "Go", "href": "#first", "focused": false},
+                {"type": "link", "x": 0, "y": 6, "text": "End", "href": "#second", "focused": false}
+            ])
+            .as_array()
+            .unwrap()
+        );
+
+        for (index, command) in [(1, 9), (2, 11), (0, 4)] {
+            engine.handle_key("down".into()).unwrap();
+            assert_eq!(engine.focused_link_index(), index);
+            assert_eq!(draw(&engine)[command]["focused"], true);
+        }
+        engine.handle_key("down".into()).unwrap();
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("first"));
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("main"));
+        assert_eq!(engine.focused_link_index(), 0);
+        engine.handle_key("down".into()).unwrap();
+        engine.handle_key("down".into()).unwrap();
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("second"));
+
+        for (x, destination) in [(12, "first"), (15, "second")] {
+            let mut pointer = load(source);
+            let frame = pointer.render_output().unwrap().presentation;
+            pointer
+                .handle_input(EngineInputEvent::Click {
+                    frame_id: frame.frame_id,
+                    x: 14,
+                    y: 4,
+                })
+                .unwrap();
+            assert_eq!(pointer.active_card_id().as_deref(), Ok("main"));
+            assert_eq!(pointer.focused_link_index(), 0);
+            let frame = pointer.render_output().unwrap().presentation;
+            pointer
+                .handle_input(EngineInputEvent::Click {
+                    frame_id: frame.frame_id,
+                    x,
+                    y: 4,
+                })
+                .unwrap();
+            assert_eq!(pointer.active_card_id().as_deref(), Ok(destination));
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_long_row_aggregation() {
         // WAP-191_104-WML §11.8.5 puts every excess cell in the last column,
         // with a single inter-word space at each merged boundary.
