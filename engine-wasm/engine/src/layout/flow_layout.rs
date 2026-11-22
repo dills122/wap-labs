@@ -1429,7 +1429,7 @@ mod tests {
 
         let render = engine.render().unwrap();
         assert_eq!(render.draw.len(), 3_600);
-        for (row, pair) in render.draw.chunks_exact(2).enumerate() {
+        for (row, pair) in render.draw.as_chunks::<2>().0.iter().enumerate() {
             assert!(matches!(
                 pair,
                 [DrawCmd::Text { x: 0, y, text }, DrawCmd::Text { x: 40, y: right_y, text: right }]
