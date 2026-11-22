@@ -1,0 +1,19 @@
+<!--
+label: WML-201 Table Legacy Multiword Separators
+description: Wraps a one-column table with a multiword cell at the Waves 20-column viewport.
+goal: Verify that the legacy fallback preserves the space inside a cell and inserts a space at each merged cell boundary.
+work-items: WML-201
+spec-items: WML-CL-TABLE-LONG-ROW-AGGREGATION
+testing-ac:
+- Confirm that Red Fox End Up occupies the first row and Sunset occupies the second row.
+- Activate Continue to display the destination card.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p mode="wrap"><table columns="1"><tr><td>Red Fox</td><td>End</td><td>Up</td><td>Sunset</td></tr></table></p>
+    <p><a href="#next">Continue</a></p>
+  </card>
+  <card id="next"><p>Destination</p></card>
+</wml>

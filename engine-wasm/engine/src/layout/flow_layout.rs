@@ -1369,6 +1369,48 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_multiword_separators() {
+        let table =
+            r#"<table columns="1"><tr><td>Red Fox</td><td>End</td><td>Up</td></tr></table>"#;
+        let mut engine = strict_paragraph(table);
+        engine.set_viewport_cols(14).unwrap();
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Red Fox"},
+                {"type": "text", "x": 7, "y": 0, "text": " "},
+                {"type": "text", "x": 8, "y": 0, "text": "End"},
+                {"type": "text", "x": 11, "y": 0, "text": " "},
+                {"type": "text", "x": 12, "y": 0, "text": "Up"}
+            ])
+        );
+
+        let mut repeated_spaces = strict_paragraph(&table.replace("Red Fox", "Red   Fox"));
+        repeated_spaces.set_viewport_cols(14).unwrap();
+        assert_eq!(draw(&repeated_spaces), draw(&engine));
+
+        engine.set_viewport_cols(13).unwrap();
+        repeated_spaces.set_viewport_cols(13).unwrap();
+        let mut paragraph = strict_paragraph("Red Fox End Up");
+        paragraph.set_viewport_cols(13).unwrap();
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Red Fox End"},
+            {"type": "text", "x": 0, "y": 1, "text": "Up"}
+        ]);
+        assert_eq!(draw(&paragraph), expected);
+        assert_eq!(draw(&engine), expected);
+        assert_eq!(draw(&repeated_spaces), expected);
+        assert_render_limits(&engine, 2, 2);
+
+        let mut bounded = strict_paragraph(&format!("Before{table}After"));
+        bounded.set_viewport_cols(13).unwrap();
+        let mut bounded_paragraph = strict_paragraph("Before<br/>Red Fox End Up<br/>After");
+        bounded_paragraph.set_viewport_cols(13).unwrap();
+        assert_eq!(draw(&bounded), draw(&bounded_paragraph));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_legacy_merge_separators_exclusions() {
         let cells = "<td>Red</td><td>Fox</td><td>End</td>";
         let table = format!(r#"<table columns="1"><tr>{cells}</tr></table>"#);
@@ -1400,7 +1442,8 @@ mod tests {
             ("anchor", r##"<p><table columns="1"><tr><td>Red</td><td><anchor>Fox<go href="#main"/></anchor></td><td>End</td></tr></table></p>"##.into()),
             ("formatting", r#"<p><table columns="1"><tr><td>Red</td><td><b>Fox</b></td><td>End</td></tr></table></p>"#.into()),
             ("inline break", r#"<p><table columns="1"><tr><td>Red</td><td>Fox<br/>Run</td><td>End</td></tr></table></p>"#.into()),
-            ("multiple words in a cell", r#"<p><table columns="1"><tr><td>Red Fox</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
+            ("non-breaking space", r#"<p><table columns="1"><tr><td>Red&nbsp;Fox</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
+            ("soft hyphen", r#"<p><table columns="1"><tr><td>Red Fox&shy;es</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
         ] {
             assert_table_legacy(&source(body), "Fox", case);
         }
@@ -1409,25 +1452,40 @@ mod tests {
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_legacy_merge_separators_waves_deck() {
-        let source =
-            include_str!("../../../examples/source/wml-201-table-legacy-merge-separators.wml");
-        // The Waves story starts at 20 columns. The 23-column aggregate cannot
-        // use the grid, while the unspaced 19-column baseline fits on one row.
-        let mut engine = load_strict_deck(source);
-        let alternate = load_strict_deck(&alternate_table_dtd(source));
-        assert_eq!(
-            draw(&alternate)[0],
-            serde_json::json!({"type": "text", "x": 0, "y": 0, "text": "RedFoxEndSilverMoon"})
-        );
-        assert_eq!(
-            &draw(&engine).as_array().unwrap()[..2],
-            &[
-                serde_json::json!({"type": "text", "x": 0, "y": 0, "text": "Red Fox End Silver"}),
-                serde_json::json!({"type": "text", "x": 0, "y": 1, "text": "Moon"})
-            ]
-        );
-        engine.handle_key("enter".into()).unwrap();
-        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+        for (source, baseline, first_row, second_row) in [
+            (
+                include_str!("../../../examples/source/wml-201-table-legacy-merge-separators.wml"),
+                "RedFoxEndSilverMoon",
+                "Red Fox End Silver",
+                "Moon",
+            ),
+            (
+                include_str!(
+                    "../../../examples/source/wml-201-table-legacy-multiword-separators.wml"
+                ),
+                "Red FoxEndUpSunset",
+                "Red Fox End Up",
+                "Sunset",
+            ),
+        ] {
+            // Both aggregates overflow the Waves story's 20 columns, while
+            // their unseparated legacy projections fit on one row.
+            let mut engine = load_strict_deck(source);
+            let alternate = load_strict_deck(&alternate_table_dtd(source));
+            assert_eq!(
+                draw(&alternate)[0],
+                serde_json::json!({"type": "text", "x": 0, "y": 0, "text": baseline})
+            );
+            assert_eq!(
+                &draw(&engine).as_array().unwrap()[..2],
+                &[
+                    serde_json::json!({"type": "text", "x": 0, "y": 0, "text": first_row}),
+                    serde_json::json!({"type": "text", "x": 0, "y": 1, "text": second_row})
+                ]
+            );
+            engine.handle_key("enter".into()).unwrap();
+            assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+        }
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
