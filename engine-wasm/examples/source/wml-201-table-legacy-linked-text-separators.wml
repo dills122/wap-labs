@@ -1,0 +1,18 @@
+<!--
+label: WML-201 Table Legacy Linked Text Separators
+description: Wraps a one-column table with an interior card link at the Waves 20-column viewport.
+goal: Verify that the fallback separates adjacent text cells on both sides of the link and preserves the link destination.
+work-items: WML-201
+spec-items: WML-CL-TABLE-LONG-ROW-AGGREGATION
+testing-ac:
+- Confirm that Red Fox, End, and Up Skyline occupy three successive rows.
+- Activate End to display the destination card.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p mode="wrap"><table columns="1"><tr><td>Red</td><td>Fox</td><td><a href="#next">End</a></td><td>Up</td><td>Skyline</td></tr></table></p>
+  </card>
+  <card id="next"><p>Destination</p></card>
+</wml>

@@ -1411,6 +1411,208 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_linked_text_separators() {
+        // WAP-191_104-WML §11.8.5 requires a space at each merged cell boundary.
+        let table = r##"<table columns="1"><tr><td>Red</td><td>Fox</td><td><a href="#next">End</a></td><td>Up</td><td>Sky</td></tr></table>"##;
+        let prose = r##"Red Fox <a href="#next">End</a> Up Sky"##;
+        let mut engine = strict_paragraph(table);
+        let mut paragraph = strict_paragraph(prose);
+        engine.set_viewport_cols(17).unwrap();
+        paragraph.set_viewport_cols(17).unwrap();
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Red Fox"},
+            {"type": "link", "x": 0, "y": 1, "text": "End", "href": "#next", "focused": true},
+            {"type": "text", "x": 0, "y": 2, "text": "Up Sky"}
+        ]);
+        assert_eq!(draw(&paragraph), expected);
+        assert_eq!(draw(&engine), expected);
+        let frame = engine.render_output().unwrap().presentation;
+        assert_table_hit_regions(&frame, &[(0, 1, 3, 1, "focus:0")]);
+        assert_render_limits(&engine, 3, 3);
+
+        for (cell, word) in [("<td>Red</td>", "Red "), ("<td>Up</td>", "Up ")] {
+            let mut one_sided = strict_paragraph(&table.replace(cell, ""));
+            let mut paragraph = strict_paragraph(&prose.replace(word, ""));
+            one_sided.set_viewport_cols(10).unwrap();
+            paragraph.set_viewport_cols(10).unwrap();
+            assert_eq!(draw(&one_sided), draw(&paragraph));
+        }
+
+        engine.set_viewport_cols(18).unwrap();
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Red"},
+                {"type": "text", "x": 3, "y": 0, "text": " "},
+                {"type": "text", "x": 4, "y": 0, "text": "Fox"},
+                {"type": "text", "x": 7, "y": 0, "text": " "},
+                {"type": "link", "x": 8, "y": 0, "text": "End", "href": "#next", "focused": true},
+                {"type": "text", "x": 11, "y": 0, "text": " "},
+                {"type": "text", "x": 12, "y": 0, "text": "Up"},
+                {"type": "text", "x": 14, "y": 0, "text": " "},
+                {"type": "text", "x": 15, "y": 0, "text": "Sky"}
+            ])
+        );
+        let frame = engine.render_output().unwrap().presentation;
+        assert_table_hit_regions(&frame, &[(8, 0, 3, 1, "focus:0")]);
+        assert_render_limits(&engine, 1, 9);
+
+        let surrounded = |content: &str| {
+            strict_card_body(&format!(
+                r##"<p>Before <a href="#main">Start</a></p><p>{content}</p><p>After <a href="#main">Last</a></p>"##
+            ))
+        };
+        for (cols, x, y, last_y) in [(17, 0, 4, 8), (18, 8, 3, 6)] {
+            let mut engine = surrounded(table);
+            engine.set_viewport_cols(cols).unwrap();
+            if cols == 17 {
+                let prose_with_table_boundaries = format!("<br/>{prose}<br/>");
+                let mut paragraph = surrounded(prose_with_table_boundaries.as_str());
+                paragraph.set_viewport_cols(cols).unwrap();
+                assert_eq!(draw(&engine), draw(&paragraph));
+            }
+            let frame = engine.render_output().unwrap().presentation;
+            assert_table_hit_regions(
+                &frame,
+                &[
+                    (0, 1, 5, 1, "focus:0"),
+                    (x, y, 3, 1, "focus:1"),
+                    (0, last_y, 4, 1, "focus:2"),
+                ],
+            );
+            for index in [1, 2, 0, 1] {
+                engine.handle_key("down".into()).unwrap();
+                assert_eq!(engine.focused_link_index(), index);
+            }
+            engine.handle_key("enter".into()).unwrap();
+            assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+
+            let mut pointer = surrounded(table);
+            pointer.set_viewport_cols(cols).unwrap();
+            for (click_x, destination) in [(x + 3, "main"), (x + 2, "next")] {
+                let frame = pointer.render_output().unwrap().presentation;
+                pointer
+                    .handle_input(EngineInputEvent::Click {
+                        frame_id: frame.frame_id,
+                        x: click_x,
+                        y,
+                    })
+                    .unwrap();
+                assert_eq!(pointer.active_card_id().as_deref(), Ok(destination));
+                assert_eq!(pointer.focused_link_index(), 0);
+            }
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_linked_text_separators_exclusions() {
+        let link = r##"<a href="#next">End</a>"##;
+        let cells = format!("<td>Red</td><td>Fox</td><td>{link}</td><td>Up</td><td>Sky</td>");
+        let table = format!(r#"<table columns="1"><tr>{cells}</tr></table>"#);
+        let paragraph = |table: &str| format!("<p>{table}</p>");
+        for (case, body) in [
+            ("nowrap", format!(r#"<p mode="nowrap">{table}</p>"#)),
+            (
+                "inherited nowrap",
+                format!(r#"<p mode="nowrap">Before</p><p>{table}</p>"#),
+            ),
+            (
+                "alignment",
+                paragraph(&table.replace("columns=\"1\"", "columns=\"1\" align=\"L\"")),
+            ),
+            (
+                "multiple rows",
+                paragraph(&table.replace("</table>", "<tr><td>More</td></tr></table>")),
+            ),
+            (
+                "multiple columns",
+                paragraph(&table.replace("columns=\"1\"", "columns=\"2\"")),
+            ),
+            (
+                "empty sibling",
+                paragraph(&table.replace("<td>Fox</td>", "<td/>")),
+            ),
+            (
+                "unsupported sibling",
+                paragraph(&table.replace("Fox", "<b>Fox</b>")),
+            ),
+            ("multiple links", paragraph(&table.replace("Fox", link))),
+            (
+                "external href",
+                paragraph(&table.replace("#next", "other.wml#next")),
+            ),
+            ("empty fragment", paragraph(&table.replace("#next", "#"))),
+            (
+                "variable href",
+                paragraph(&table.replace("#next", "#$(target)")),
+            ),
+            (
+                "variable label",
+                paragraph(&table.replace("End", "$(word)")),
+            ),
+            (
+                "variable sibling",
+                paragraph(&table.replace("Fox", "$(word)")),
+            ),
+            ("empty label", paragraph(&table.replace("End", ""))),
+            (
+                "formatted link label",
+                paragraph(&table.replace("End", "E<br/>nd")),
+            ),
+            (
+                "unsupported sibling whitespace",
+                paragraph(&table.replace("Sky", "S&nbsp;ky")),
+            ),
+            (
+                "unsupported label whitespace",
+                paragraph(&table.replace("End", "E&nbsp;nd")),
+            ),
+            (
+                "no text before link",
+                paragraph(&table.replace(
+                    &format!("<tr>{cells}"),
+                    &format!("<tr><td>{link}</td><td>Red</td><td>Fox</td><td>Up</td><td>Sky</td>"),
+                )),
+            ),
+            (
+                "no text after link",
+                paragraph(&table.replace(
+                    &cells,
+                    &format!("<td>Red</td><td>Fox</td><td>Up</td><td>Sky</td><td>{link}</td>"),
+                )),
+            ),
+            (
+                "one sibling on each side",
+                paragraph(&table.replace("<td>Fox</td>", "").replace("<td>Up</td>", "")),
+            ),
+        ] {
+            assert_table_legacy(&strict_table_source(&body), "Fox", case);
+        }
+
+        let source = strict_table_source(&paragraph(&table));
+        let mut alternate = load_strict_deck(&alternate_table_dtd(&source));
+        alternate.set_viewport_cols(17).unwrap();
+        assert_eq!(draw(&alternate)[0]["text"], "RedFox");
+        assert_eq!(draw(&alternate)[2]["text"], "UpSky");
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_linked_text_separators_waves_deck() {
+        let mut engine = load_strict_deck(include_str!(
+            "../../../examples/source/wml-201-table-legacy-linked-text-separators.wml"
+        ));
+        let paragraph = strict_paragraph(r##"Red Fox <a href="#next">End</a> Up Skyline"##);
+        assert_eq!(draw(&engine), draw(&paragraph));
+        let frame = engine.render_output().unwrap().presentation;
+        assert_table_hit_regions(&frame, &[(0, 1, 3, 1, "focus:0")]);
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_legacy_vdata_separators() {
         // WAP-191_104-WML §11.8.5 requires a space between aggregated cells.
         let table =
