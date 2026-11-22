@@ -4626,6 +4626,83 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p mode=\"wrap\"><table columns=\"1\"><tr><td>Red Fox</td><td>End</td><td>Up</td><td>Sunset</td></tr></table></p>\n    <p><a href=\"#next\">Continue</a></p>\n  </card>\n  <card id=\"next\"><p>Destination</p></card>\n</wml>\n"
   },
   {
+    "key": "wml201TableLegacyVdataSeparators",
+    "label": "WML-201 Table Legacy Variable Separators",
+    "description": "Sets a variable before entering a card with an overwide one-column table.",
+    "goal": "Verify that the Waves 20-column viewport wraps the resolved cell with a space between each merged cell.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+    ],
+    "testingAc": [
+      "Activate Show table to set tone to Red Fox and enter the table card.",
+      "Confirm that Red Fox End Up occupies the first row and Sunset occupies the second row."
+    ],
+    "flows": [
+      {
+        "id": "legacy-table-fallback-wraps-resolved-variable-cell",
+        "title": "An overwide table wraps a resolved variable with the merged cell separators",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Show table"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "table",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Red Fox End Up"
+                  },
+                  {
+                    "row": 1,
+                    "text": "Sunset"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><anchor>Show table<go href=\"#table\"><setvar name=\"tone\" value=\"Red Fox\"/></go></anchor></p>\n  </card>\n  <card id=\"table\">\n    <p mode=\"wrap\"><table columns=\"1\"><tr><td>$(tone)</td><td>End</td><td>Up</td><td>Sunset</td></tr></table></p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml201TableLongRowAggregation",
     "label": "WML-201 Table Long Row Aggregation",
     "description": "Displays balanced, short, and long rows in a two-column table, followed by a one-column table.",
