@@ -4472,6 +4472,83 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"1\"><tr><td>Single</td></tr></table>Between<table columns=\"002\"><tr><td>A</td><td><a href=\"#next\">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableLegacyMergeSeparators",
+    "label": "WML-201 Table Legacy Merge Separators",
+    "description": "Wraps a single row of surplus literal cells at the Waves 20-column viewport.",
+    "goal": "Verify that the legacy table fallback keeps spaces between merged words.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+    ],
+    "testingAc": [
+      "Confirm that Red Fox End Silver occupies the first row and Moon occupies the second row.",
+      "Activate Continue to display the destination card."
+    ],
+    "flows": [
+      {
+        "id": "legacy-table-fallback-wraps-merged-words",
+        "title": "An overwide table wraps with spaces between merged words",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Red Fox End Silver"
+              },
+              {
+                "row": 1,
+                "text": "Moon"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p mode=\"wrap\"><table columns=\"1\"><tr><td>Red</td><td>Fox</td><td>End</td><td>Silver</td><td>Moon</td></tr></table></p>\n    <p><a href=\"#next\">Continue</a></p>\n  </card>\n  <card id=\"next\"><p>Destination</p></card>\n</wml>\n"
+  },
+  {
     "key": "wml201TableLongRowAggregation",
     "label": "WML-201 Table Long Row Aggregation",
     "description": "Displays balanced, short, and long rows in a two-column table, followed by a one-column table.",

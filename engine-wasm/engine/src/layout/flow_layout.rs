@@ -7,6 +7,7 @@ use crate::render::render_list::{DrawCmd, RenderList};
 use crate::runtime::card::{Card, CardTaskAction};
 use crate::runtime::node::{
     is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, Table, NONBREAKING_SPACE,
+    TABLE_CELL_SEPARATOR,
 };
 
 #[derive(Clone, Debug, Default)]
@@ -177,8 +178,6 @@ struct ResolvedTableCell {
     text: String,
     href: Option<String>,
 }
-
-const TABLE_CELL_SEPARATOR: &str = " ";
 
 fn table_row_columns(
     row: &[Option<InlineNode>],
@@ -1335,6 +1334,104 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_merge_separators() {
+        let table = r#"<table columns="1"><tr><td>Red</td><td>Fox</td><td>End</td></tr></table>"#;
+        let mut engine = strict_paragraph(table);
+        engine.set_viewport_cols(11).unwrap();
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Red"},
+                {"type": "text", "x": 3, "y": 0, "text": " "},
+                {"type": "text", "x": 4, "y": 0, "text": "Fox"},
+                {"type": "text", "x": 7, "y": 0, "text": " "},
+                {"type": "text", "x": 8, "y": 0, "text": "End"}
+            ])
+        );
+
+        engine.set_viewport_cols(10).unwrap();
+        let mut paragraph = strict_paragraph("Red Fox End");
+        paragraph.set_viewport_cols(10).unwrap();
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Red Fox"},
+            {"type": "text", "x": 0, "y": 1, "text": "End"}
+        ]);
+        assert_eq!(draw(&paragraph), expected);
+        assert_eq!(draw(&engine), expected);
+        assert_render_limits(&engine, 2, 2);
+
+        let mut bounded = strict_paragraph(&format!("Before{table}After"));
+        bounded.set_viewport_cols(10).unwrap();
+        let mut bounded_paragraph = strict_paragraph("Before<br/>Red Fox End<br/>After");
+        bounded_paragraph.set_viewport_cols(10).unwrap();
+        assert_eq!(draw(&bounded), draw(&bounded_paragraph));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_merge_separators_exclusions() {
+        let cells = "<td>Red</td><td>Fox</td><td>End</td>";
+        let table = format!(r#"<table columns="1"><tr>{cells}</tr></table>"#);
+        let source = |body| {
+            format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main">{body}</card></wml>"#
+            )
+        };
+        let mut alternate =
+            load_strict_deck(&alternate_table_dtd(&source(format!("<p>{table}</p>"))));
+        alternate.set_viewport_cols(10).unwrap();
+        assert_eq!(
+            draw(&alternate),
+            serde_json::json!([{"type": "text", "x": 0, "y": 0, "text": "RedFoxEnd"}])
+        );
+        for (case, body) in [
+            ("nowrap", format!(r#"<p mode="nowrap">{table}</p>"#)),
+            ("inherited nowrap", format!(r#"<p mode="nowrap">Before</p><p>{table}</p>"#)),
+            ("alignment", format!(r#"<p><table columns="1" align="L"><tr>{cells}</tr></table></p>"#)),
+            ("one cell", r#"<p><table columns="1"><tr><td>RedFoxEndSilver</td></tr></table></p>"#.into()),
+            ("multiple rows", format!(r#"<p><table columns="1"><tr>{cells}</tr><tr><td>Next</td></tr></table></p>"#)),
+            ("multiple columns", format!(r#"<p><table columns="2"><tr>{cells}<td>Silver</td></tr></table></p>"#)),
+            ("empty cell", format!(r#"<p><table columns="1"><tr>{cells}<td/></tr></table></p>"#)),
+            ("variable reference", r#"<p><table columns="1"><tr><td>Red</td><td>$(word)</td><td>End</td></tr></table></p>"#.into()),
+            ("escaped dollar", r#"<p><table columns="1"><tr><td>Red</td><td>&#36;&#36;Fox</td><td>End</td></tr></table></p>"#.into()),
+            ("link", r##"<p><table columns="1"><tr><td>Red</td><td><a href="#main">Fox</a></td><td>End</td></tr></table></p>"##.into()),
+            ("anchor", r##"<p><table columns="1"><tr><td>Red</td><td><anchor>Fox<go href="#main"/></anchor></td><td>End</td></tr></table></p>"##.into()),
+            ("formatting", r#"<p><table columns="1"><tr><td>Red</td><td><b>Fox</b></td><td>End</td></tr></table></p>"#.into()),
+            ("inline break", r#"<p><table columns="1"><tr><td>Red</td><td>Fox<br/>Run</td><td>End</td></tr></table></p>"#.into()),
+            ("multiple words in a cell", r#"<p><table columns="1"><tr><td>Red Fox</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
+        ] {
+            assert_table_legacy(&source(body), "Fox", case);
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_merge_separators_waves_deck() {
+        let source =
+            include_str!("../../../examples/source/wml-201-table-legacy-merge-separators.wml");
+        // The Waves story starts at 20 columns. The 23-column aggregate cannot
+        // use the grid, while the unspaced 19-column baseline fits on one row.
+        let mut engine = load_strict_deck(source);
+        let alternate = load_strict_deck(&alternate_table_dtd(source));
+        assert_eq!(
+            draw(&alternate)[0],
+            serde_json::json!({"type": "text", "x": 0, "y": 0, "text": "RedFoxEndSilverMoon"})
+        );
+        assert_eq!(
+            &draw(&engine).as_array().unwrap()[..2],
+            &[
+                serde_json::json!({"type": "text", "x": 0, "y": 0, "text": "Red Fox End Silver"}),
+                serde_json::json!({"type": "text", "x": 0, "y": 1, "text": "Moon"})
+            ]
+        );
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_combined_verification() {
         // WAP-191_104-WML §11.8.5 applies all three row rules within one table.
         let source =
@@ -1755,19 +1852,7 @@ mod tests {
     }
 
     fn assert_table_limits(engine: &WmlEngine, rows: usize, outputs: usize, payload_bytes: usize) {
-        let output = engine.render_output().unwrap();
-        assert_eq!(output.presentation.viewport.content_rows as usize, rows);
-        let limits = EngineRenderLimits {
-            rows,
-            segments: outputs,
-            draw_commands: outputs,
-            serialized_bytes: serde_json::to_vec(&output).unwrap().len(),
-        };
-        let fit = engine.render_output_with_limits(limits).unwrap();
-        assert_eq!(
-            serde_json::to_value(fit).unwrap(),
-            serde_json::to_value(output).unwrap()
-        );
+        let limits = assert_render_limits(engine, rows, outputs);
         let card = engine.runtime_card_for_layout().unwrap();
         let payload_limits = EngineRenderLimits {
             serialized_bytes: payload_bytes,
@@ -1786,6 +1871,22 @@ mod tests {
                 ..
             }) if limit == payload_bytes - 1 && observed == payload_bytes
         ));
+    }
+
+    fn assert_render_limits(engine: &WmlEngine, rows: usize, outputs: usize) -> EngineRenderLimits {
+        let output = engine.render_output().unwrap();
+        assert_eq!(output.presentation.viewport.content_rows as usize, rows);
+        let limits = EngineRenderLimits {
+            rows,
+            segments: outputs,
+            draw_commands: outputs,
+            serialized_bytes: serde_json::to_vec(&output).unwrap().len(),
+        };
+        let fit = engine.render_output_with_limits(limits).unwrap();
+        assert_eq!(
+            serde_json::to_value(fit).unwrap(),
+            serde_json::to_value(output).unwrap()
+        );
         for (below, resource, fitting) in [
             (
                 EngineRenderLimits {
@@ -1829,6 +1930,7 @@ mod tests {
                 "{resource:?}"
             );
         }
+        limits
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]

@@ -2,6 +2,7 @@ use super::card::CardTaskAction;
 use super::input_mask::InputMask;
 
 pub(crate) const NONBREAKING_SPACE: char = '\u{a0}';
+pub(crate) const TABLE_CELL_SEPARATOR: &str = " ";
 
 pub(crate) fn is_breakable_space(character: char) -> bool {
     character != NONBREAKING_SPACE && character.is_whitespace()
@@ -57,9 +58,33 @@ pub struct Table {
     // cell in a balanced or short row.
     pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
     pub(crate) legacy: Vec<InlineNode>,
+    // The parser verified a single row of surplus literal words in one column.
+    pub(crate) merge_legacy_words: bool,
     // Populated only on the layout copy after the whole grid is measured.
     // Columns with no authored cells share the end of the measured columns.
     pub(crate) column_starts: Vec<u32>,
+}
+
+impl Table {
+    pub(crate) fn space_legacy_words(&mut self) {
+        if !self.merge_legacy_words {
+            return;
+        }
+        // Keep any leading spacing marker in the legacy projection.
+        let Some(InlineNode::Text(text)) = self.legacy.last_mut() else {
+            return;
+        };
+        text.clear();
+        for (index, cell) in self.rows[0].iter().flatten().enumerate() {
+            let InlineNode::Text(word) = cell else {
+                unreachable!("the parser retained only literal words");
+            };
+            if index > 0 {
+                text.push_str(TABLE_CELL_SEPARATOR);
+            }
+            text.push_str(word);
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

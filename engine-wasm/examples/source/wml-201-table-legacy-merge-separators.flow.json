@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "example": "wml201TableLegacyMergeSeparators",
+  "flows": [
+    {
+      "id": "legacy-table-fallback-wraps-merged-words",
+      "title": "An overwide table wraps with spaces between merged words",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-TABLE-LONG-ROW-AGGREGATION"],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Red Fox End Silver" },
+            { "row": 1, "text": "Moon" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
