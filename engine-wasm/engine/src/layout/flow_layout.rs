@@ -1,10 +1,12 @@
 use std::borrow::Cow;
+use std::collections::HashMap;
 
+use crate::engine_runtime_internal::{substitute_inline, RuntimeLayoutCard};
 use crate::render::frame::{EngineRenderError, EngineRenderLimits, EngineRenderResource};
 use crate::render::render_list::{DrawCmd, RenderList};
 use crate::runtime::card::{Card, CardTaskAction};
 use crate::runtime::node::{
-    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, NONBREAKING_SPACE,
+    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, Table, NONBREAKING_SPACE,
 };
 
 #[derive(Clone, Debug, Default)]
@@ -43,7 +45,10 @@ impl<'card> FocusTarget<'card> {
                 control_id, name, ..
             } => Some(Self::Input { control_id, name }),
             InlineNode::Select { control_id, .. } => Some(Self::Select(control_id)),
-            InlineNode::Text(_) | InlineNode::Break | InlineNode::BreakOpportunity => None,
+            InlineNode::Table(_)
+            | InlineNode::Text(_)
+            | InlineNode::Break
+            | InlineNode::BreakOpportunity => None,
         }
     }
 
@@ -55,6 +60,7 @@ impl<'card> FocusTarget<'card> {
                 Node::Break => None,
             })
             .flatten()
+            .flat_map(InlineNode::legacy_inline)
             .filter_map(Self::for_inline_node)
     }
 
@@ -104,6 +110,17 @@ enum ParagraphPart<'a> {
     },
     Break,
     BreakOpportunity,
+    Table {
+        table: &'a Table,
+        first_focus_index: usize,
+    },
+}
+
+fn register_focus<'a>(entry: &'a InlineNode, targets: &mut Vec<FocusTarget<'a>>) -> Option<usize> {
+    let target = FocusTarget::for_inline_node(entry)?;
+    let index = targets.len();
+    targets.push(target);
+    Some(index)
 }
 
 fn inline_parts<'a>(
@@ -112,11 +129,7 @@ fn inline_parts<'a>(
     targets: &mut Vec<FocusTarget<'a>>,
 ) -> impl Iterator<Item = ParagraphPart<'a>> + 'a {
     let keep_nbsp = context == InlineContext::Paragraph;
-    let focus_index = FocusTarget::for_inline_node(entry).map(|target| {
-        let index = targets.len();
-        targets.push(target);
-        index
-    });
+    let focus_index = register_focus(entry, targets);
     let fragment = move |text, keep_nbsp| {
         ParagraphPart::Fragment(Fragment {
             text,
@@ -127,6 +140,7 @@ fn inline_parts<'a>(
 
     let mut anchor_lines = &[][..];
     let part = match entry {
+        InlineNode::Table(_) => unreachable!("tables are expanded by the paragraph layout"),
         InlineNode::Break => Some(ParagraphPart::Break),
         InlineNode::BreakOpportunity => Some(ParagraphPart::BreakOpportunity),
         InlineNode::Text(text) if keep_nbsp && text.is_empty() => None,
@@ -157,6 +171,75 @@ fn inline_parts<'a>(
                 .flatten()
             }),
     )
+}
+
+struct ResolvedTableCell {
+    text: String,
+    href: Option<String>,
+}
+
+fn resolve_table_cell(
+    entry: &InlineNode,
+    viewport_cols: usize,
+    context: InlineContext,
+    vars: &HashMap<String, String>,
+) -> Option<ResolvedTableCell> {
+    let mut entry = entry.clone();
+    substitute_inline(&mut entry, context, vars).ok()?;
+    let (text, href) = match entry {
+        InlineNode::Text(text) => (text, None),
+        InlineNode::Link { text, href } => (text, Some(href)),
+        _ => return None,
+    };
+    let [line]: [WrappedLine; 1] = wrap_text(
+        WrapSource {
+            text: &text,
+            seams: &[],
+            keep_nbsp: true,
+        },
+        viewport_cols,
+        1,
+    )
+    .ok()?
+    .try_into()
+    .ok()?;
+    Some(ResolvedTableCell {
+        text: line.text,
+        href,
+    })
+}
+
+pub(crate) fn table_column_starts(
+    table: &Table,
+    viewport_cols: usize,
+    context: InlineContext,
+    vars: &HashMap<String, String>,
+) -> Option<Vec<u32>> {
+    let columns = table.rows.first()?.len();
+    if columns == 0 || columns > viewport_cols || u32::try_from(columns) != Ok(table.columns) {
+        return None;
+    }
+    let mut widths = vec![0; columns];
+    let mut remaining_width = viewport_cols;
+    // Column maxima only grow. Reject overflow immediately and retain just
+    // the widths while checking the whole table's eligibility.
+    for row in &table.rows {
+        if row.len() != columns {
+            return None;
+        }
+        for (cell, width) in row.iter().zip(&mut widths) {
+            let cell = resolve_table_cell(cell.as_ref()?, viewport_cols, context, vars)?;
+            let cols = cell.text.chars().count();
+            remaining_width = remaining_width.checked_sub(cols.saturating_sub(*width))?;
+            *width = (*width).max(cols);
+        }
+    }
+    let starts = widths.into_iter().scan(0, |x, width| {
+        let start = *x;
+        *x += width as u32;
+        Some(start)
+    });
+    Some(starts.collect())
 }
 
 enum ControlDisplayChunk<'a> {
@@ -252,7 +335,8 @@ pub fn layout_card(
     focused_link_idx: usize,
 ) -> Result<LayoutResult<'_>, EngineRenderError> {
     layout_card_impl(
-        card,
+        &card.nodes,
+        &HashMap::new(),
         viewport_cols,
         focused_link_idx,
         EngineRenderLimits::default(),
@@ -260,22 +344,30 @@ pub fn layout_card(
     )
 }
 
-pub(crate) fn layout_card_with_limits(
-    card: &Card,
+pub(crate) fn layout_card_with_limits<'a>(
+    card: &'a RuntimeLayoutCard<'_>,
     viewport_cols: usize,
     focused_link_idx: usize,
     limits: EngineRenderLimits,
-) -> Result<LayoutResult<'_>, EngineRenderError> {
-    layout_card_impl(card, viewport_cols, focused_link_idx, limits, true)
+) -> Result<LayoutResult<'a>, EngineRenderError> {
+    layout_card_impl(
+        &card.nodes,
+        card.vars,
+        viewport_cols,
+        focused_link_idx,
+        limits,
+        true,
+    )
 }
 
-fn layout_card_impl(
-    card: &Card,
+fn layout_card_impl<'a>(
+    nodes: &'a [Node],
+    vars: &HashMap<String, String>,
     viewport_cols: usize,
     focused_link_idx: usize,
     limits: EngineRenderLimits,
     count_render_pass: bool,
-) -> Result<LayoutResult<'_>, EngineRenderError> {
+) -> Result<LayoutResult<'a>, EngineRenderError> {
     #[cfg(feature = "render-test-instrumentation")]
     if count_render_pass {
         LAYOUT_PASS_COUNT.with(|count| count.set(count.get() + 1));
@@ -288,12 +380,12 @@ fn layout_card_impl(
     let mut nowrap = NowrapState::default();
     // A significant nowrap paragraph anywhere on the card makes earlier
     // unpainted wrapped paragraphs part of the logical row layout.
-    let has_nowrap = card.nodes.iter().any(|node| {
+    let has_nowrap = nodes.iter().any(|node| {
         matches!(node, Node::Paragraph { inline, mode: Some(ParagraphMode::NoWrap) }
             if inline.iter().any(InlineNode::is_significant_in_paragraph))
     });
 
-    for node in &card.nodes {
+    for node in nodes {
         let (inline, context, is_nowrap) = match node {
             Node::Paragraph { inline, mode } => (
                 inline,
@@ -335,10 +427,30 @@ fn layout_card_impl(
 
         // Card-level paint or a break can occupy the pending line itself.
         // Empty card content leaves it available for the next node.
-        let parts: Vec<_> = inline
-            .iter()
-            .flat_map(|entry| inline_parts(entry, context, &mut result.focus_targets))
-            .collect();
+        let mut parts = Vec::new();
+        for entry in inline {
+            if let InlineNode::Table(table) = entry {
+                if !table.column_starts.is_empty() {
+                    let first_focus_index = result.focus_targets.len();
+                    result.focus_targets.extend(
+                        table
+                            .rows
+                            .iter()
+                            .flatten()
+                            .flatten()
+                            .filter_map(FocusTarget::for_inline_node),
+                    );
+                    parts.push(ParagraphPart::Table {
+                        table,
+                        first_focus_index,
+                    });
+                    continue;
+                }
+            }
+            for entry in entry.legacy_inline() {
+                parts.extend(inline_parts(entry, context, &mut result.focus_targets));
+            }
+        }
         let mut parts = parts.into_iter();
         while let Some(part) = parts.next() {
             let first = match part {
@@ -367,6 +479,52 @@ fn layout_card_impl(
                     continue;
                 }
                 ParagraphPart::BreakOpportunity => continue,
+                ParagraphPart::Table {
+                    table,
+                    first_focus_index,
+                } => {
+                    painted = true;
+                    nowrap.pending_row = PendingParagraphRow::None;
+                    let columns = table.column_starts.len();
+                    if table.rows.len() > limits.rows.saturating_sub(row_count) {
+                        check_next_row(&limits, limits.rows)?;
+                    }
+                    check_output_slots(&limits, &result, table.rows.len().saturating_mul(columns))?;
+                    let mut next_focus_index = first_focus_index;
+                    for row in &table.rows {
+                        for (entry, &x) in row.iter().flatten().zip(&table.column_starts) {
+                            let cell = resolve_table_cell(entry, viewport_cols, context, vars)
+                                .ok_or_else(|| {
+                                    EngineRenderError::engine_failure(
+                                        "Measured table cell could not be rendered",
+                                    )
+                                })?;
+                            let focus_index = cell.href.as_ref().map(|_| {
+                                let index = next_focus_index;
+                                next_focus_index += 1;
+                                index
+                            });
+                            nowrap.account_draw_bytes(
+                                &limits,
+                                cell.text.len() + cell.href.as_ref().map_or(0, String::len),
+                            )?;
+                            push_segment_with_href(
+                                &mut result,
+                                &limits,
+                                LayoutSegment {
+                                    x,
+                                    y: row_count as u32,
+                                    text: cell.text,
+                                    focus_index,
+                                },
+                                focused_link_idx,
+                                cell.href,
+                            )?;
+                        }
+                        row_count += 1;
+                    }
+                    continue;
+                }
                 ParagraphPart::Fragment(fragment) => fragment,
                 ParagraphPart::Control { entry, focus_index } => {
                     let mut text = String::new();
@@ -554,7 +712,7 @@ fn layout_nowrap<'card>(
     let first_row = *row_count;
     let mut x = 0;
     let mut pending_space = false;
-    for entry in inline {
+    for entry in inline.iter().flat_map(InlineNode::legacy_inline) {
         for part in inline_parts(entry, InlineContext::Paragraph, &mut result.focus_targets) {
             // Hold whitespace until the next painted character, even across substitutions
             // that expand to nothing. Keep separators outside a focus target's hit region.
@@ -592,6 +750,7 @@ fn layout_nowrap<'card>(
                 Ok::<_, EngineRenderError>(())
             };
             let focus_index = match part {
+                ParagraphPart::Table { .. } => unreachable!("nowrap uses legacy table layout"),
                 ParagraphPart::Break => {
                     state.consume_paragraph_boundary(limits, row_count, result)?;
                     // End the current logical row, even if another break left it empty.
@@ -681,6 +840,16 @@ fn push_segment(
     segment: LayoutSegment,
     focused_link_idx: usize,
 ) -> Result<u32, EngineRenderError> {
+    push_segment_with_href(result, limits, segment, focused_link_idx, None)
+}
+
+fn push_segment_with_href(
+    result: &mut LayoutResult<'_>,
+    limits: &EngineRenderLimits,
+    segment: LayoutSegment,
+    focused_link_idx: usize,
+    resolved_href: Option<String>,
+) -> Result<u32, EngineRenderError> {
     check_output_slots(limits, result, 1)?;
     let LayoutSegment {
         x,
@@ -695,7 +864,7 @@ fn push_segment(
             y,
             text: text.clone(),
             focused: index == focused_link_idx,
-            href: result.focus_targets[index].to_render_href(),
+            href: resolved_href.unwrap_or_else(|| result.focus_targets[index].to_render_href()),
         },
         None => DrawCmd::Text {
             x,
@@ -1082,7 +1251,7 @@ mod tests {
     use crate::render::render_list::DrawCmd;
     use crate::runtime::card::Card;
     use crate::runtime::node::{InlineNode, Node};
-    use crate::WmlEngine;
+    use crate::{EngineInputEvent, WmlEngine};
 
     fn load_strict_deck(wml: &str) -> WmlEngine {
         let mut engine = WmlEngine::new();
@@ -1116,6 +1285,180 @@ mod tests {
 
     fn draw(engine: &WmlEngine) -> serde_json::Value {
         serde_json::to_value(engine.render().unwrap().draw).unwrap()
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_exact_columns() {
+        // WAP-191_104-WML §11.8.5: each authored cell in these balanced rows
+        // occupies its own declared column, with shared starts across rows.
+        let mut engine = load_strict_deck(include_str!(
+            "../../../examples/source/wml-201-table-exact-columns.wml"
+        ));
+        let expected = serde_json::json!([
+            {"type": "link", "x": 0, "y": 0, "text": "Before", "href": "#main", "focused": true},
+            {"type": "text", "x": 0, "y": 2, "text": "Single"},
+            {"type": "text", "x": 0, "y": 4, "text": "Between"},
+            {"type": "text", "x": 0, "y": 6, "text": "A"},
+            {"type": "link", "x": 4, "y": 6, "text": "Open", "href": "#next", "focused": false},
+            {"type": "text", "x": 0, "y": 7, "text": "Long"},
+            {"type": "text", "x": 4, "y": 7, "text": "Z"},
+            {"type": "link", "x": 0, "y": 9, "text": "After", "href": "#main", "focused": false}
+        ]);
+        assert_eq!(draw(&engine), expected);
+        let frame = engine.render_output().unwrap().presentation;
+        assert_eq!(
+            frame
+                .hit_regions
+                .iter()
+                .map(|hit| (hit.x, hit.y, hit.width, hit.height, hit.action_id.as_str()))
+                .collect::<Vec<_>>(),
+            [
+                (0, 0, 6, 1, "focus:0"),
+                (4, 6, 4, 1, "focus:1"),
+                (0, 9, 5, 1, "focus:2")
+            ]
+        );
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits {
+                draw_commands: 4,
+                ..EngineRenderLimits::default()
+            }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::DrawCommands,
+                limit: 4,
+                observed: 5,
+                ..
+            })
+        ));
+        assert_eq!(draw(&engine), expected);
+        engine.handle_key("down".into()).unwrap();
+        assert_eq!(engine.focused_link_index(), 1);
+        assert_eq!(draw(&engine)[4]["focused"], true);
+        engine.handle_key("up".into()).unwrap();
+        assert_eq!(engine.focused_link_index(), 0);
+        engine
+            .handle_input(EngineInputEvent::Click {
+                frame_id: frame.frame_id,
+                x: 4,
+                y: 6,
+            })
+            .unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_exact_columns_whole_table_fallback() {
+        for (fixture, mode, columns, rows) in [
+            (
+                "mixed row widths",
+                "wrap",
+                "2",
+                "<tr><td>A</td><td>B</td></tr><tr><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr>",
+            ),
+            (
+                "overwide combined columns",
+                "wrap",
+                "2",
+                "<tr><td>123456</td><td>B</td></tr><tr><td>C</td><td>123456</td></tr>",
+            ),
+            (
+                "declaration outside machine integer sizes",
+                "wrap",
+                "1234567890123456789012345678901234567890",
+                "<tr><td>A</td><td>B</td></tr>",
+            ),
+            (
+                "in-cell break",
+                "wrap",
+                "2",
+                r##"<tr><td>A</td><td>B</td></tr><tr><td>C<br/>D</td><td><a href="#next">Open</a></td></tr>"##,
+            ),
+            (
+                "nowrap paragraph",
+                "nowrap",
+                "2",
+                "<tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr>",
+            ),
+        ] {
+            let source = format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p mode="{mode}">Before<table columns="{columns}">{rows}</table>After</p></card>
+<card id="next"><p>Destination</p></card></wml>"#
+            );
+            let mut strict = load_strict_deck(&source);
+            strict.set_viewport_cols(10).unwrap();
+            let mut alternate = load_strict_deck(&source.replace(
+                r#"PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd""#,
+                r#"SYSTEM "http://example.test/alternate.dtd""#,
+            ));
+            alternate.set_viewport_cols(10).unwrap();
+            assert_eq!(draw(&strict), draw(&alternate), "{fixture}");
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_exact_columns_resolves_cell_text_and_link_before_layout() {
+        let mut engine = strict_paragraph(
+            r#"<table columns="02"><tr><td>$(word)</td><td><a href="$(dest)">$(label)</a></td></tr></table>"#,
+        );
+        assert!(engine.set_var("dest".into(), "#next".into()));
+        assert!(engine.set_var("label".into(), "Open".into()));
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Fox"},
+                {"type": "link", "x": 3, "y": 0, "text": "Open", "href": "%23next", "focused": true}
+            ])
+        );
+        assert!(engine.set_var("word".into(), "12345678901234567890".into()));
+        assert_eq!(draw(&engine)[1]["y"], 1);
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_exact_columns_skips_unused_legacy_substitution() {
+        let rows = "<tr><td>$(word)</td><td>Z</td></tr>".repeat(1_800);
+        let mut engine = strict_paragraph(&format!(r#"<table columns="2">{rows}</table>"#));
+        engine.set_viewport_cols(42).unwrap();
+        let word = "x".repeat(40);
+        assert!(engine.set_var("word".into(), word.clone()));
+
+        let render = engine.render().unwrap();
+        assert_eq!(render.draw.len(), 3_600);
+        for (row, pair) in render.draw.as_chunks::<2>().0.iter().enumerate() {
+            assert!(matches!(
+                pair,
+                [DrawCmd::Text { x: 0, y, text }, DrawCmd::Text { x: 40, y: right_y, text: right }]
+                    if *y == row as u32 && y == right_y && text == &word && right == "Z"
+            ));
+        }
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits {
+                rows: 1_799,
+                ..EngineRenderLimits::default()
+            }),
+            Err(EngineRenderError::ResourceLimit {
+                resource: EngineRenderResource::LayoutRows,
+                limit: 1_799,
+                observed: 1_800,
+                ..
+            })
+        ));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_exact_columns_overwide_expansion_uses_legacy() {
+        let rows = "<tr><td>$x</td><td>z</td></tr>".repeat(512);
+        let mut engine = strict_paragraph(&format!(r#"<table columns="2">{rows}</table>"#));
+        assert!(engine.set_var("x".into(), "x".repeat(64 * 1024)));
+        // The legacy projection joins the source text before substituting.
+        // Its references to the undefined variable xz produce no draws.
+        assert!(engine.render().unwrap().draw.is_empty());
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -2966,6 +3309,19 @@ mod tests {
 
     #[test]
     fn every_structural_budget_accepts_exactly_at_limit_and_rejects_one_over() {
+        fn layout(
+            card: &Card,
+            limits: EngineRenderLimits,
+        ) -> Result<super::LayoutResult<'_>, EngineRenderError> {
+            super::layout_card_impl(
+                &card.nodes,
+                &std::collections::HashMap::new(),
+                1,
+                0,
+                limits,
+                false,
+            )
+        }
         let exact = text_rows(3);
         let one_over = text_rows(4);
 
@@ -2976,15 +3332,14 @@ mod tests {
             serialized_bytes: usize::MAX,
         };
         assert_eq!(
-            layout_card_with_limits(&exact, 1, 0, segment_limits)
+            layout(&exact, segment_limits)
                 .expect("exact segment limit should render")
                 .segments
                 .len(),
             3
         );
         assert_resource_limit(
-            layout_card_with_limits(&one_over, 1, 0, segment_limits)
-                .expect_err("one over segment limit should fail"),
+            layout(&one_over, segment_limits).expect_err("one over segment limit should fail"),
             EngineRenderResource::LayoutSegments,
         );
 
@@ -2995,7 +3350,7 @@ mod tests {
             serialized_bytes: usize::MAX,
         };
         assert_eq!(
-            layout_card_with_limits(&exact, 1, 0, draw_limits)
+            layout(&exact, draw_limits)
                 .expect("exact draw limit should render")
                 .render_list
                 .draw
@@ -3003,8 +3358,7 @@ mod tests {
             3
         );
         assert_resource_limit(
-            layout_card_with_limits(&one_over, 1, 0, draw_limits)
-                .expect_err("one over draw limit should fail"),
+            layout(&one_over, draw_limits).expect_err("one over draw limit should fail"),
             EngineRenderResource::DrawCommands,
         );
 
@@ -3022,11 +3376,9 @@ mod tests {
             draw_commands: 0,
             serialized_bytes: usize::MAX,
         };
-        layout_card_with_limits(&exact_rows, 1, 0, row_limits)
-            .expect("exact row limit should render");
+        layout(&exact_rows, row_limits).expect("exact row limit should render");
         assert_resource_limit(
-            layout_card_with_limits(&one_over_rows, 1, 0, row_limits)
-                .expect_err("one over row limit should fail"),
+            layout(&one_over_rows, row_limits).expect_err("one over row limit should fail"),
             EngineRenderResource::LayoutRows,
         );
     }

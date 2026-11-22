@@ -48,7 +48,18 @@ pub struct SelectOption {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Table {
+    pub(crate) columns: u32,
+    // A cell without a simple text or link fragment requires legacy layout.
+    pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
+    pub(crate) legacy: Vec<InlineNode>,
+    // Populated only on the layout copy after the whole grid is measured.
+    pub(crate) column_starts: Vec<u32>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum InlineNode {
+    Table(Table),
     Text(String),
     /// Authored whitespace trimmed from an inline text or label boundary.
     /// Layout uses it to retain a legal break after variable substitution.
@@ -92,8 +103,19 @@ pub enum InlineNode {
 }
 
 impl InlineNode {
+    pub(crate) fn legacy_inline(&self) -> &[Self] {
+        match self {
+            Self::Table(table) => &table.legacy,
+            _ => std::slice::from_ref(self),
+        }
+    }
+
     pub(crate) fn is_significant_in_paragraph(&self) -> bool {
         match self {
+            Self::Table(table) => {
+                !table.column_starts.is_empty()
+                    || table.legacy.iter().any(Self::is_significant_in_paragraph)
+            }
             // A soft hyphen only has an effect when a line breaks there.
             Self::Text(text) => text
                 .chars()

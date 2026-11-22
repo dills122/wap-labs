@@ -174,7 +174,8 @@ fn as_input(item: &InlineNode) -> Option<InputRef<'_>> {
             mask,
             empty_ok: *empty_ok,
         }),
-        InlineNode::Text(_)
+        InlineNode::Table(_)
+        | InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
@@ -201,7 +202,8 @@ fn as_input_mut(item: &mut InlineNode) -> Option<InputMut<'_>> {
             mask: &*mask,
             empty_ok: *empty_ok,
         }),
-        InlineNode::Text(_)
+        InlineNode::Table(_)
+        | InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
@@ -228,7 +230,8 @@ fn as_select(item: &InlineNode) -> Option<SelectRef<'_>> {
             options,
             selected_indices,
         }),
-        InlineNode::Text(_)
+        InlineNode::Table(_)
+        | InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
@@ -259,7 +262,8 @@ fn as_select_mut(item: &mut InlineNode) -> Option<SelectMut<'_>> {
             options: options.as_slice(),
             selected_indices,
         }),
-        InlineNode::Text(_)
+        InlineNode::Table(_)
+        | InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }
@@ -272,7 +276,8 @@ fn as_control_mut(item: &mut InlineNode) -> Option<ControlMut<'_>> {
     match item {
         InlineNode::Input { .. } => as_input_mut(item).map(ControlMut::Input),
         InlineNode::Select { .. } => as_select_mut(item).map(ControlMut::Select),
-        InlineNode::Text(_)
+        InlineNode::Table(_)
+        | InlineNode::Text(_)
         | InlineNode::Break
         | InlineNode::BreakOpportunity
         | InlineNode::Link { .. }

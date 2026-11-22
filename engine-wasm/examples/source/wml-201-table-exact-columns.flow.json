@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "example": "wml201TableExactColumns",
+  "flows": [
+    {
+      "id": "balanced-table-rows-and-link-activation",
+      "title": "Balanced tables preserve authored rows and link activation",
+      "target": "waves-browser",
+      "setup": { "runMode": "local" },
+      "workItems": ["WML-201"],
+      "specItems": ["WML-CL-TABLE-EXACT-COLUMNS"],
+      "initial": {
+        "state": { "activeCardId": "main", "focusedLinkIndex": 0 },
+        "render": {
+          "textAtRows": [
+            { "row": 0, "text": "Before" },
+            { "row": 2, "text": "Single" },
+            { "row": 4, "text": "Between" },
+            { "row": 6, "text": "AOpen" },
+            { "row": 7, "text": "LongZ" },
+            { "row": 9, "text": "After" }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "action": { "type": "key", "key": "down" },
+          "expect": { "state": { "activeCardId": "main", "focusedLinkIndex": 1 } }
+        },
+        {
+          "action": { "type": "key", "key": "enter" },
+          "expect": {
+            "state": { "activeCardId": "next", "externalNavigationIntent": null },
+            "render": { "textAtRows": [{ "row": 0, "text": "Destination" }] },
+            "traceKinds": ["KEY", "ACTION_FRAGMENT"]
+          }
+        }
+      ]
+    }
+  ]
+}
