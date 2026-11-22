@@ -1,9 +1,10 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{
-    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, SelectOption, Table,
+    is_breakable_space, is_legacy_cell_text, InlineContext, InlineNode, LegacyCellSpacing, Node,
+    ParagraphMode, SelectOption, Table,
 };
-use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
+use crate::runtime::variable::{decode_literal_dollars, is_valid_name, validate as validate_vdata};
 use std::collections::HashMap;
 
 use super::actions::parse_first_task_action_xml;
@@ -473,7 +474,8 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
         next: 0,
     };
     let authored_rows = child_elements(table);
-    let mut merge_legacy_cells = columns == 1 && authored_rows.clone().count() == 1;
+    let mut legacy_cell_spacing =
+        (columns == 1 && authored_rows.clone().count() == 1).then_some(LegacyCellSpacing::Literals);
     let mut rows = Vec::new();
     for row in authored_rows {
         let cells = child_elements(row);
@@ -483,7 +485,9 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
         if count == 0 {
             return;
         }
-        merge_legacy_cells &= count > 1;
+        if count == 1 {
+            legacy_cell_spacing = None;
+        }
         let mut authored = Vec::new();
         for cell in cells {
             if cell.children.is_empty() {
@@ -517,15 +521,24 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
             ) else {
                 return;
             };
-            merge_legacy_cells = merge_legacy_cells
-                && cell
-                    .children
-                    .iter()
-                    .all(|node| matches!(node, XmlNode::Text(_)))
-                && matches!(inline.as_slice(), [InlineNode::Text(text)]
-                    if !text.is_empty()
-                        && !text.contains(['$', '\u{00ad}'])
-                        && !text.chars().any(|ch| ch != ' ' && ch.is_whitespace()));
+            if let Some(spacing) = legacy_cell_spacing {
+                legacy_cell_spacing = match (cell.children.as_slice(), inline.as_slice()) {
+                    ([XmlNode::Text(_)], [InlineNode::Text(text)]) if is_legacy_cell_text(text) => {
+                        Some(spacing)
+                    }
+                    ([XmlNode::Text(raw)], [InlineNode::Text(text)])
+                        if spacing == LegacyCellSpacing::Literals
+                            && raw == text
+                            && raw
+                                .strip_prefix("$(")
+                                .and_then(|body| body.strip_suffix(')'))
+                                .is_some_and(is_valid_name) =>
+                    {
+                        Some(LegacyCellSpacing::Variable(authored.len()))
+                    }
+                    _ => None,
+                };
+            }
             match inline.as_slice() {
                 [InlineNode::Text(_) | InlineNode::Link { .. }] => authored.push(inline.pop()),
                 _ => return,
@@ -543,7 +556,7 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
             columns,
             rows,
             legacy,
-            merge_legacy_cells,
+            legacy_cell_spacing,
             column_starts: Vec::new(),
         }),
     );

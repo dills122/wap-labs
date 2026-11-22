@@ -1411,18 +1411,126 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_vdata_separators() {
+        // WAP-191_104-WML §11.8.5 requires a space between aggregated cells.
+        let table =
+            r#"<table columns="1"><tr><td>$(tone)</td><td>End</td><td>Up</td></tr></table>"#;
+        let mut engine = strict_paragraph(table);
+        let mut literal = strict_paragraph(&table.replace("$(tone)", "Red Fox"));
+        assert!(engine.set_var("tone".into(), "Red Fox".into()));
+
+        engine.set_viewport_cols(14).unwrap();
+        literal.set_viewport_cols(14).unwrap();
+        assert_eq!(draw(&engine), draw(&literal));
+        assert_eq!(draw(&engine).as_array().unwrap().len(), 5);
+
+        engine.set_viewport_cols(13).unwrap();
+        literal.set_viewport_cols(13).unwrap();
+        let expected = serde_json::json!([
+            {"type": "text", "x": 0, "y": 0, "text": "Red Fox End"},
+            {"type": "text", "x": 0, "y": 1, "text": "Up"}
+        ]);
+        assert_eq!(draw(&literal), expected);
+        assert_eq!(draw(&engine), expected);
+        assert_render_limits(&engine, 2, 2);
+
+        engine.set_viewport_cols(14).unwrap();
+        literal.set_viewport_cols(14).unwrap();
+        assert_eq!(draw(&engine), draw(&literal));
+        engine.set_viewport_cols(13).unwrap();
+        assert!(engine.set_var("tone".into(), "Red".into()));
+        let mut shorter = strict_paragraph(&table.replace("$(tone)", "Red"));
+        shorter.set_viewport_cols(13).unwrap();
+        assert_eq!(draw(&engine), draw(&shorter));
+        assert_eq!(draw(&engine).as_array().unwrap().len(), 5);
+        assert!(engine.set_var("tone".into(), "Red Fox".into()));
+        assert_eq!(draw(&engine), expected);
+
+        let mut bounded = strict_paragraph(&format!("Before{table}After"));
+        assert!(bounded.set_var("tone".into(), "Red Fox".into()));
+        bounded.set_viewport_cols(13).unwrap();
+        let mut bounded_literal = strict_paragraph("Before<br/>Red Fox End Up<br/>After");
+        bounded_literal.set_viewport_cols(13).unwrap();
+        assert_eq!(draw(&bounded), draw(&bounded_literal));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_vdata_separators_unset_and_unsafe_values() {
+        let body =
+            r#"<p><table columns="1"><tr><td>$(tone)</td><td>End</td><td>Up</td></tr></table></p>"#;
+        let source = strict_table_source(body);
+        let mut engine = load_strict_deck(&source);
+        let mut alternate = load_strict_deck(&alternate_table_dtd(&source));
+        for value in [
+            None,
+            Some(""),
+            Some(" Red Fox"),
+            Some("Red Fox "),
+            Some("Red\tFox"),
+            Some("Red\nFox"),
+            Some("Red\u{a0}Fox"),
+            Some("Red\u{2002}Fox"),
+            Some("Red\u{00ad}Fox"),
+            Some("Red\0Fox"),
+            Some("Red$Fox"),
+        ] {
+            for current in [&mut engine, &mut alternate] {
+                current.set_viewport_cols(6).unwrap();
+                if let Some(value) = value {
+                    assert!(current.set_var("tone".into(), value.into()));
+                }
+            }
+            assert_eq!(draw(&engine), draw(&alternate), "{value:?}");
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_vdata_separators_preserve_substitution_limit() {
+        use crate::runtime::variable::MAX_SUBSTITUTION_OUTPUT_BYTES;
+
+        let table =
+            r#"<table columns="1"><tr><td>$(tone)</td><td>End</td><td>Up</td></tr></table>"#;
+        let mut engine = strict_paragraph(table);
+        let text_limit = MAX_SUBSTITUTION_OUTPUT_BYTES;
+        engine.set_viewport_cols((text_limit - 1) as u64).unwrap();
+        let exact = "x".repeat(text_limit - "EndUp".len());
+        assert!(engine.set_var("tone".into(), exact.clone()));
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": format!("{exact} End")},
+                {"type": "text", "x": 0, "y": 1, "text": "Up"}
+            ])
+        );
+        assert!(engine.set_var("tone".into(), format!("{exact}x")));
+        assert!(matches!(
+            engine.render_output_with_limits(EngineRenderLimits {
+                rows: 0,
+                ..EngineRenderLimits::default()
+            }),
+            Err(EngineRenderError::EngineFailure { message })
+                if message == format!("variable substitution exceeds {text_limit}-byte output limit")
+        ));
+    }
+
+    fn strict_table_source(body: &str) -> String {
+        format!(
+            r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main">{body}</card></wml>"#
+        )
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_legacy_merge_separators_exclusions() {
         let cells = "<td>Red</td><td>Fox</td><td>End</td>";
         let table = format!(r#"<table columns="1"><tr>{cells}</tr></table>"#);
-        let source = |body| {
-            format!(
-                r#"<?xml version="1.0"?>
-<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
-<wml><card id="main">{body}</card></wml>"#
-            )
-        };
-        let mut alternate =
-            load_strict_deck(&alternate_table_dtd(&source(format!("<p>{table}</p>"))));
+        let mut alternate = load_strict_deck(&alternate_table_dtd(&strict_table_source(&format!(
+            "<p>{table}</p>"
+        ))));
         alternate.set_viewport_cols(10).unwrap();
         assert_eq!(
             draw(&alternate),
@@ -1436,7 +1544,6 @@ mod tests {
             ("multiple rows", format!(r#"<p><table columns="1"><tr>{cells}</tr><tr><td>Next</td></tr></table></p>"#)),
             ("multiple columns", format!(r#"<p><table columns="2"><tr>{cells}<td>Silver</td></tr></table></p>"#)),
             ("empty cell", format!(r#"<p><table columns="1"><tr>{cells}<td/></tr></table></p>"#)),
-            ("variable reference", r#"<p><table columns="1"><tr><td>Red</td><td>$(word)</td><td>End</td></tr></table></p>"#.into()),
             ("escaped dollar", r#"<p><table columns="1"><tr><td>Red</td><td>&#36;&#36;Fox</td><td>End</td></tr></table></p>"#.into()),
             ("link", r##"<p><table columns="1"><tr><td>Red</td><td><a href="#main">Fox</a></td><td>End</td></tr></table></p>"##.into()),
             ("anchor", r##"<p><table columns="1"><tr><td>Red</td><td><anchor>Fox<go href="#main"/></anchor></td><td>End</td></tr></table></p>"##.into()),
@@ -1445,8 +1552,101 @@ mod tests {
             ("non-breaking space", r#"<p><table columns="1"><tr><td>Red&nbsp;Fox</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
             ("soft hyphen", r#"<p><table columns="1"><tr><td>Red Fox&shy;es</td><td>End</td><td>Silver</td></tr></table></p>"#.into()),
         ] {
-            assert_table_legacy(&source(body), "Fox", case);
+            assert_table_legacy(&strict_table_source(&body), "Fox", case);
         }
+
+        let vdata_cells = "<td>$(word)</td><td>End</td><td>Up</td>";
+        let vdata_table = format!(r#"<table columns="1"><tr>{vdata_cells}</tr></table>"#);
+        for (case, body) in [
+            (
+                "nowrap vdata",
+                format!(r#"<p mode="nowrap">{vdata_table}</p>"#),
+            ),
+            (
+                "inherited nowrap vdata",
+                format!(r#"<p mode="nowrap">Before</p><p>{vdata_table}</p>"#),
+            ),
+            (
+                "aligned vdata",
+                format!(
+                    "<p>{}</p>",
+                    vdata_table.replace("columns=\"1\"", "columns=\"1\" align=\"L\"")
+                ),
+            ),
+            (
+                "multiple rows with vdata",
+                format!(
+                    "<p>{}</p>",
+                    vdata_table.replace("</table>", "<tr><td>Next</td></tr></table>")
+                ),
+            ),
+            (
+                "multiple columns with vdata",
+                format!(
+                    "<p>{}</p>",
+                    vdata_table.replace("columns=\"1\"", "columns=\"2\"")
+                ),
+            ),
+            (
+                "unsupported content beside vdata",
+                format!("<p>{}</p>", vdata_table.replace("End", "<b>End</b>")),
+            ),
+            (
+                "link beside vdata",
+                format!(
+                    "<p>{}</p>",
+                    vdata_table.replace("End", r##"<a href="#main">End</a>"##)
+                ),
+            ),
+            (
+                "ineligible whitespace beside vdata",
+                format!("<p>{}</p>", vdata_table.replace("End", "E&nbsp;nd")),
+            ),
+            (
+                "multiple variable cells",
+                format!("<p>{}</p>", vdata_table.replace("End", "$(word)")),
+            ),
+        ] {
+            assert_table_legacy(&strict_table_source(&body), "Red Fox", case);
+        }
+
+        for cell in [
+            "$word",
+            "$(word:noesc)",
+            "$(word:escape)",
+            "X$(word)",
+            "$(word)X",
+            "$(word)$(word)",
+            "$$(word)",
+            " $(word)",
+            "$(word) ",
+        ] {
+            let table = vdata_table.replace("$(word)", cell);
+            assert_table_legacy(
+                &strict_table_source(&format!("<p>{table}</p>")),
+                "Red Fox",
+                cell,
+            );
+        }
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_legacy_vdata_separators_waves_deck() {
+        let mut engine = load_strict_deck(include_str!(
+            "../../../examples/source/wml-201-table-legacy-vdata-separators.wml"
+        ));
+        assert_eq!(engine.active_card_id().as_deref(), Ok("main"));
+        assert_eq!(draw(&engine)[0]["text"], "Show table");
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("table"));
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "text", "x": 0, "y": 0, "text": "Red Fox End Up"},
+                {"type": "text", "x": 0, "y": 1, "text": "Sunset"}
+            ])
+        );
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]

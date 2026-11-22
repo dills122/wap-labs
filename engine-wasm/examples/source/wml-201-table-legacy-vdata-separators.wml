@@ -1,0 +1,20 @@
+<!--
+label: WML-201 Table Legacy Variable Separators
+description: Sets a variable before entering a card with an overwide one-column table.
+goal: Verify that the Waves 20-column viewport wraps the resolved cell with a space between each merged cell.
+work-items: WML-201
+spec-items: WML-CL-TABLE-LONG-ROW-AGGREGATION
+testing-ac:
+- Activate Show table to set tone to Red Fox and enter the table card.
+- Confirm that Red Fox End Up occupies the first row and Sunset occupies the second row.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p><anchor>Show table<go href="#table"><setvar name="tone" value="Red Fox"/></go></anchor></p>
+  </card>
+  <card id="table">
+    <p mode="wrap"><table columns="1"><tr><td>$(tone)</td><td>End</td><td>Up</td><td>Sunset</td></tr></table></p>
+  </card>
+</wml>
