@@ -52,7 +52,9 @@ pub struct Table {
     // Every retained row has this many logical slots. Slots beyond the
     // authored cells are significant trailing empties and need no storage.
     pub(crate) columns: u32,
-    // None represents an authored trailing empty cell.
+    // Rows keep authored cells in order. The final logical column contains
+    // all cells from its authored position onward. None is a trailing empty
+    // cell in a balanced or short row.
     pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
     pub(crate) legacy: Vec<InlineNode>,
     // Populated only on the layout copy after the whole grid is measured.

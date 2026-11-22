@@ -478,12 +478,16 @@ fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize
         let Ok(count) = u32::try_from(cells.clone().count()) else {
             return;
         };
-        if count == 0 || count > columns {
+        if count == 0 {
             return;
         }
         let mut authored = Vec::new();
         for cell in cells {
             if cell.children.is_empty() {
+                // Grid aggregation is limited to rows with nonempty fragments.
+                if count > columns {
+                    return;
+                }
                 authored.push(None);
                 continue;
             }

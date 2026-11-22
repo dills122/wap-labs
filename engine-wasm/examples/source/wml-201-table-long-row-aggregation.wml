@@ -1,0 +1,26 @@
+<!--
+label: WML-201 Table Long Row Aggregation
+description: Displays balanced, short, and long rows in a two-column table, followed by a one-column table.
+goal: Verify spacing between merged cells and independent link activation.
+work-items: WML-201
+spec-items: WML-CL-TABLE-LONG-ROW-AGGREGATION
+testing-ac:
+- Confirm that Fox Go End appears in the final column and Up Go End occupies one row in the one-column table.
+- Move focus from Before to the first Go link and activate it to display the destination card.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p><a href="#main">Before</a><table columns="2">
+      <tr><td>Wide</td><td>Base</td></tr>
+      <tr><td>S</td></tr>
+      <tr><td>A</td><td>Fox</td><td><a href="#next">Go</a></td><td>End</td></tr>
+    </table>Between<table columns="1">
+      <tr><td><a href="#main">Up</a></td><td><a href="#next">Go</a></td><td>End</td></tr>
+    </table><a href="#main">After</a></p>
+  </card>
+  <card id="next">
+    <p>Destination</p>
+  </card>
+</wml>

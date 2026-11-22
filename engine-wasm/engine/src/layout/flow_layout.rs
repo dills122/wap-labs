@@ -178,6 +178,19 @@ struct ResolvedTableCell {
     href: Option<String>,
 }
 
+const TABLE_CELL_SEPARATOR: &str = " ";
+
+fn table_row_columns(
+    row: &[Option<InlineNode>],
+    columns: usize,
+) -> impl Iterator<Item = &[Option<InlineNode>]> {
+    let (leading, final_column) = row.split_at(row.len().min(columns - 1));
+    leading
+        .iter()
+        .map(std::slice::from_ref)
+        .chain((!final_column.is_empty()).then_some(final_column))
+}
+
 fn resolve_table_cell(
     entry: &InlineNode,
     viewport_cols: usize,
@@ -220,16 +233,22 @@ pub(crate) fn table_column_starts(
         return None;
     }
     // Unauthored trailing columns have zero width in every row.
-    let authored_columns = table.rows.iter().map(Vec::len).max()?;
+    let authored_columns = table.rows.iter().map(Vec::len).max()?.min(columns);
     let mut widths = vec![0; authored_columns];
     let mut remaining_width = viewport_cols;
     // Column maxima only grow. Reject overflow immediately and retain just
     // the widths while checking the whole table's eligibility.
     for row in &table.rows {
-        for (entry, width) in row.iter().zip(&mut widths) {
-            let Some(entry) = entry else { continue };
-            let cell = resolve_table_cell(entry, viewport_cols, context, vars)?;
-            let cols = cell.text.chars().count();
+        for (fragments, width) in table_row_columns(row, authored_columns).zip(&mut widths) {
+            let mut cols = 0;
+            for (index, entry) in fragments.iter().flatten().enumerate() {
+                let cell = resolve_table_cell(entry, viewport_cols, context, vars)?;
+                cols +=
+                    cell.text.chars().count() + TABLE_CELL_SEPARATOR.len() * usize::from(index > 0);
+                if cols > *width + remaining_width {
+                    return None;
+                }
+            }
             remaining_width = remaining_width.checked_sub(cols.saturating_sub(*width))?;
             *width = (*width).max(cols);
         }
@@ -488,39 +507,65 @@ fn layout_card_impl<'a>(
                     if table.rows.len() > limits.rows.saturating_sub(row_count) {
                         check_next_row(&limits, limits.rows)?;
                     }
-                    let outputs = table.rows.iter().flatten().flatten().count();
+                    let columns = table.column_starts.len();
+                    // Long rows have no empty cells, so each excess cell adds a separator.
+                    let outputs = table
+                        .rows
+                        .iter()
+                        .map(|row| row.iter().flatten().count() + row.len().saturating_sub(columns))
+                        .sum();
                     check_output_slots(&limits, &result, outputs)?;
                     let mut next_focus_index = first_focus_index;
                     for row in &table.rows {
-                        for (entry, &x) in row.iter().zip(&table.column_starts) {
-                            let Some(entry) = entry else { continue };
-                            let cell = resolve_table_cell(entry, viewport_cols, context, vars)
-                                .ok_or_else(|| {
-                                    EngineRenderError::engine_failure(
-                                        "Measured table cell could not be rendered",
-                                    )
-                                })?;
-                            let focus_index = cell.href.as_ref().map(|_| {
-                                let index = next_focus_index;
-                                next_focus_index += 1;
-                                index
-                            });
-                            nowrap.account_draw_bytes(
-                                &limits,
-                                cell.text.len() + cell.href.as_ref().map_or(0, String::len),
-                            )?;
-                            push_segment_with_href(
-                                &mut result,
-                                &limits,
-                                LayoutSegment {
-                                    x,
-                                    y: row_count as u32,
-                                    text: cell.text,
-                                    focus_index,
-                                },
-                                focused_link_idx,
-                                cell.href,
-                            )?;
+                        let y = row_count as u32;
+                        for (fragments, &start) in
+                            table_row_columns(row, columns).zip(&table.column_starts)
+                        {
+                            let mut x = start;
+                            for (index, entry) in fragments.iter().flatten().enumerate() {
+                                if index > 0 {
+                                    nowrap
+                                        .account_draw_bytes(&limits, TABLE_CELL_SEPARATOR.len())?;
+                                    x = push_segment(
+                                        &mut result,
+                                        &limits,
+                                        LayoutSegment {
+                                            x,
+                                            y,
+                                            text: TABLE_CELL_SEPARATOR.to_owned(),
+                                            focus_index: None,
+                                        },
+                                        focused_link_idx,
+                                    )?;
+                                }
+                                let cell = resolve_table_cell(entry, viewport_cols, context, vars)
+                                    .ok_or_else(|| {
+                                        EngineRenderError::engine_failure(
+                                            "Measured table cell could not be rendered",
+                                        )
+                                    })?;
+                                let focus_index = cell.href.as_ref().map(|_| {
+                                    let index = next_focus_index;
+                                    next_focus_index += 1;
+                                    index
+                                });
+                                nowrap.account_draw_bytes(
+                                    &limits,
+                                    cell.text.len() + cell.href.as_ref().map_or(0, String::len),
+                                )?;
+                                x = push_segment_with_href(
+                                    &mut result,
+                                    &limits,
+                                    LayoutSegment {
+                                        x,
+                                        y,
+                                        text: cell.text,
+                                        focus_index,
+                                    },
+                                    focused_link_idx,
+                                    cell.href,
+                                )?;
+                            }
                         }
                         row_count += 1;
                     }
@@ -1290,6 +1335,199 @@ mod tests {
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_long_row_aggregation() {
+        // WAP-191_104-WML §11.8.5 puts every excess cell in the last column,
+        // with a single inter-word space at each merged boundary.
+        let mut engine = strict_paragraph(concat!(
+            r##"<a href="#main">$(before)</a><table columns="2">"##,
+            r#"<tr><td>Wide</td><td>Base</td></tr><tr><td>S</td></tr>"#,
+            r##"<tr><td>A</td><td>$(word)</td><td><a href="#$(target)">$(label)</a></td><td>End</td></tr>"##,
+            r##"</table><a href="#main">$(after)</a>"##,
+        ));
+        for (name, value) in [
+            ("before", "Before"),
+            ("target", "next"),
+            ("label", "Go"),
+            ("after", "After"),
+        ] {
+            assert!(engine.set_var(name.into(), value.into()));
+        }
+        assert_eq!(
+            draw(&engine),
+            serde_json::json!([
+                {"type": "link", "x": 0, "y": 0, "text": "Before", "href": "#main", "focused": true},
+                {"type": "text", "x": 0, "y": 2, "text": "Wide"},
+                {"type": "text", "x": 4, "y": 2, "text": "Base"},
+                {"type": "text", "x": 0, "y": 3, "text": "S"},
+                {"type": "text", "x": 0, "y": 4, "text": "A"},
+                {"type": "text", "x": 4, "y": 4, "text": "Fox"},
+                {"type": "text", "x": 7, "y": 4, "text": " "},
+                {"type": "link", "x": 8, "y": 4, "text": "Go", "href": "#next", "focused": false},
+                {"type": "text", "x": 10, "y": 4, "text": " "},
+                {"type": "text", "x": 11, "y": 4, "text": "End"},
+                {"type": "link", "x": 0, "y": 6, "text": "After", "href": "#main", "focused": false}
+            ])
+        );
+        let frame = engine.render_output().unwrap().presentation;
+        assert_table_hit_regions(
+            &frame,
+            &[
+                (0, 0, 6, 1, "focus:0"),
+                (8, 4, 2, 1, "focus:1"),
+                (0, 6, 5, 1, "focus:2"),
+            ],
+        );
+        for x in [7, 10] {
+            engine
+                .handle_input(EngineInputEvent::Click {
+                    frame_id: frame.frame_id.clone(),
+                    x,
+                    y: 4,
+                })
+                .unwrap();
+            assert_eq!(engine.focused_link_index(), 0);
+            assert_eq!(engine.active_card_id().as_deref(), Ok("main"));
+        }
+        engine.handle_key("down".into()).unwrap();
+        assert_eq!(engine.focused_link_index(), 1);
+        assert_eq!(draw(&engine)[7]["focused"], true);
+        engine.handle_key("down".into()).unwrap();
+        assert_eq!(engine.focused_link_index(), 2);
+        assert_eq!(draw(&engine)[10]["focused"], true);
+        engine.handle_key("up".into()).unwrap();
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_long_row_aggregation_one_column_and_limits() {
+        let mut engine = strict_paragraph(concat!(
+            r##"<table columns="1"><tr><td><a href="#$(first)">$(left)</a></td>"##,
+            r##"<td><a href="#$(target)">$(right)</a></td><td>$(end)</td></tr></table>"##,
+        ));
+        for (name, value) in [
+            ("first", "main"),
+            ("left", "Up"),
+            ("target", "next"),
+            ("right", "Go"),
+            ("end", "é"),
+        ] {
+            assert!(engine.set_var(name.into(), value.into()));
+        }
+        let expected = serde_json::json!([
+            {"type": "link", "x": 0, "y": 0, "text": "Up", "href": "#main", "focused": true},
+            {"type": "text", "x": 2, "y": 0, "text": " "},
+            {"type": "link", "x": 3, "y": 0, "text": "Go", "href": "#next", "focused": false},
+            {"type": "text", "x": 5, "y": 0, "text": " "},
+            {"type": "text", "x": 6, "y": 0, "text": "é"}
+        ]);
+        assert_eq!(draw(&engine), expected);
+        assert_table_limits(&engine, 1, 5, "Up#main Go#next é".len());
+        assert_eq!(draw(&engine), expected);
+
+        let frame = engine.render_output().unwrap().presentation;
+        assert_table_hit_regions(&frame, &[(0, 0, 2, 1, "focus:0"), (3, 0, 2, 1, "focus:1")]);
+        engine
+            .handle_input(EngineInputEvent::Click {
+                frame_id: frame.frame_id.clone(),
+                x: 2,
+                y: 0,
+            })
+            .unwrap();
+        assert_eq!(engine.focused_link_index(), 0);
+        engine
+            .handle_input(EngineInputEvent::Click {
+                frame_id: frame.frame_id,
+                x: 3,
+                y: 0,
+            })
+            .unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
+    fn wml_fx_table_long_row_aggregation_whole_table_fallback() {
+        let balanced = "<tr><td>Wide</td><td>Base</td></tr>";
+        let long = r##"<tr><td>A</td><td>$(word)</td><td><a href="#next">Z</a></td></tr>"##;
+        let source = |mode, attrs, extra| {
+            format!(
+                r#"<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml><card id="main"><p mode="{mode}">Before<table {attrs}>{balanced}{long}{extra}</table>After</p></card>
+<card id="next"><p>Destination</p></card></wml>"#
+            )
+        };
+        let supported = source("wrap", r#"columns="2""#, "");
+        let mut grid = load_strict_deck(&supported);
+        grid.set_viewport_cols(10).unwrap();
+        assert!(grid.set_var("word".into(), "Four".into()));
+        assert_eq!(
+            draw(&grid)[6],
+            serde_json::json!({"type": "link", "x": 9, "y": 3, "text": "Z", "href": "#next", "focused": true})
+        );
+        let mut alternate = load_strict_deck(&alternate_table_dtd(&supported));
+        alternate.set_viewport_cols(10).unwrap();
+        assert!(alternate.set_var("word".into(), "Four".into()));
+        assert_ne!(draw(&grid), draw(&alternate));
+
+        for (word, case) in [
+            ("Seven", "combined width after substitution"),
+            ("LongerThanViewport", "wrapped expansion"),
+            ("", "empty expansion"),
+            ("\u{00ad}", "invisible expansion"),
+        ] {
+            assert_table_legacy(&supported, word, case);
+        }
+        for (case, mode, attrs, extra) in [
+            ("alignment", "wrap", r#"columns="2" align="LR""#, ""),
+            (
+                "oversized positive declaration",
+                "wrap",
+                r#"columns="4294967295""#,
+                "",
+            ),
+            ("nowrap", "nowrap", r#"columns="2""#, ""),
+            (
+                "entirely empty row",
+                "wrap",
+                r#"columns="2""#,
+                "<tr><td/><td/></tr>",
+            ),
+            (
+                "unsupported aggregate fragment",
+                "wrap",
+                r#"columns="2""#,
+                "<tr><td>A</td><td>B</td><td>C<br/>D</td></tr>",
+            ),
+            (
+                "authored empty in long row",
+                "wrap",
+                r#"columns="2""#,
+                "<tr><td>A</td><td>B</td><td/></tr>",
+            ),
+        ] {
+            assert_table_legacy(&source(mode, attrs, extra), "Four", case);
+        }
+    }
+
+    fn assert_table_hit_regions(
+        frame: &crate::render::frame::EnginePresentationFrame,
+        expected: &[(u32, u32, u32, u32, &str)],
+    ) {
+        assert_eq!(
+            frame
+                .hit_regions
+                .iter()
+                .map(|hit| (hit.x, hit.y, hit.width, hit.height, hit.action_id.as_str()))
+                .collect::<Vec<_>>(),
+            expected
+        );
+    }
+
+    #[cfg_attr(not(target_arch = "wasm32"), test)]
+    #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_short_row_padding() {
         // WAP-191_104-WML §11.8.5: missing cells act like appended empty td elements.
         let source = include_str!("../../../examples/source/wml-201-table-short-row-padding.wml");
@@ -1333,14 +1571,7 @@ mod tests {
         let explicit_frame = explicit.render_output().unwrap().presentation;
         assert_eq!(frame.rows, explicit_frame.rows);
         assert_eq!(frame.hit_regions, explicit_frame.hit_regions);
-        assert_eq!(
-            frame
-                .hit_regions
-                .iter()
-                .map(|hit| (hit.x, hit.y, hit.width, hit.height, hit.action_id.as_str()))
-                .collect::<Vec<_>>(),
-            [(0, 2, 5, 1, "focus:0"), (8, 3, 4, 1, "focus:1")]
-        );
+        assert_table_hit_regions(&frame, &[(0, 2, 5, 1, "focus:0"), (8, 3, 4, 1, "focus:1")]);
         explicit.handle_key("down".into()).unwrap();
         assert_eq!(explicit.focused_link_index(), 1);
         assert_eq!(draw(&explicit)[4]["focused"], true);
@@ -1373,12 +1604,19 @@ mod tests {
             {"type": "link", "x": 3, "y": 1, "text": "Open", "href": "#next", "focused": true}
         ]);
         assert_eq!(draw(&engine), expected);
+        assert_table_limits(&engine, 2, 3, "FoxXOpen#next".len());
+        assert_eq!(draw(&engine), expected);
+        engine.handle_key("enter".into()).unwrap();
+        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
+    }
+
+    fn assert_table_limits(engine: &WmlEngine, rows: usize, outputs: usize, payload_bytes: usize) {
         let output = engine.render_output().unwrap();
-        assert_eq!(output.presentation.viewport.content_rows, 2);
+        assert_eq!(output.presentation.viewport.content_rows as usize, rows);
         let limits = EngineRenderLimits {
-            rows: 2,
-            segments: 3,
-            draw_commands: 3,
+            rows,
+            segments: outputs,
+            draw_commands: outputs,
             serialized_bytes: serde_json::to_vec(&output).unwrap().len(),
         };
         let fit = engine.render_output_with_limits(limits).unwrap();
@@ -1387,7 +1625,6 @@ mod tests {
             serde_json::to_value(output).unwrap()
         );
         let card = engine.runtime_card_for_layout().unwrap();
-        let payload_bytes = "FoxXOpen#next".len();
         let payload_limits = EngineRenderLimits {
             serialized_bytes: payload_bytes,
             ..limits
@@ -1407,13 +1644,16 @@ mod tests {
         ));
         for (below, resource, fitting) in [
             (
-                EngineRenderLimits { rows: 1, ..limits },
+                EngineRenderLimits {
+                    rows: rows - 1,
+                    ..limits
+                },
                 EngineRenderResource::LayoutRows,
                 limits.rows,
             ),
             (
                 EngineRenderLimits {
-                    segments: 2,
+                    segments: outputs - 1,
                     ..limits
                 },
                 EngineRenderResource::LayoutSegments,
@@ -1421,7 +1661,7 @@ mod tests {
             ),
             (
                 EngineRenderLimits {
-                    draw_commands: 2,
+                    draw_commands: outputs - 1,
                     ..limits
                 },
                 EngineRenderResource::DrawCommands,
@@ -1445,9 +1685,6 @@ mod tests {
                 "{resource:?}"
             );
         }
-        assert_eq!(draw(&engine), expected);
-        engine.handle_key("enter".into()).unwrap();
-        assert_eq!(engine.active_card_id().as_deref(), Ok("next"));
     }
 
     #[cfg_attr(not(target_arch = "wasm32"), test)]
@@ -1458,12 +1695,6 @@ mod tests {
         let balanced = strict_paragraph(&format!(r#"<table columns="3">{full}{full}</table>"#));
         assert_eq!(balanced.render().unwrap().draw.len(), 6);
         for (case, mode, attrs, rows) in [
-            (
-                "short and long rows",
-                "wrap",
-                r#"columns="3""#,
-                "<tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>",
-            ),
             (
                 "columns wider than viewport",
                 "wrap",
@@ -1509,10 +1740,10 @@ mod tests {
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
 <wml><card id="main">{body}</card><card id="next"><p>Destination</p></card></wml>"#
             );
-            assert_short_table_legacy(&source, "Fox", case);
+            assert_table_legacy(&source, "Fox", case);
         }
         // A variable may make a previously eligible grid too wide.
-        assert_short_table_legacy(
+        assert_table_legacy(
             &include_str!("../../../examples/source/wml-201-table-short-row-padding.wml")
                 .replace(">Short<", ">$(word)<"),
             "123456789",
@@ -1520,7 +1751,7 @@ mod tests {
         );
     }
 
-    fn assert_short_table_legacy(source: &str, word: &str, case: &str) {
+    fn assert_table_legacy(source: &str, word: &str, case: &str) {
         let mut strict = load_strict_deck(source);
         let mut alternate = load_strict_deck(&alternate_table_dtd(source));
         let renders = [&mut strict, &mut alternate].map(|engine| {
@@ -1571,17 +1802,13 @@ mod tests {
         ]);
         assert_eq!(draw(&engine), expected);
         let frame = engine.render_output().unwrap().presentation;
-        assert_eq!(
-            frame
-                .hit_regions
-                .iter()
-                .map(|hit| (hit.x, hit.y, hit.width, hit.height, hit.action_id.as_str()))
-                .collect::<Vec<_>>(),
-            [
+        assert_table_hit_regions(
+            &frame,
+            &[
                 (0, 0, 6, 1, "focus:0"),
                 (4, 6, 4, 1, "focus:1"),
-                (0, 9, 5, 1, "focus:2")
-            ]
+                (0, 9, 5, 1, "focus:2"),
+            ],
         );
         assert!(matches!(
             engine.render_output_with_limits(EngineRenderLimits {
@@ -1615,12 +1842,6 @@ mod tests {
     #[cfg_attr(target_arch = "wasm32", wasm_bindgen_test::wasm_bindgen_test)]
     fn wml_fx_table_exact_columns_whole_table_fallback() {
         for (fixture, mode, columns, rows) in [
-            (
-                "mixed row widths",
-                "wrap",
-                "2",
-                "<tr><td>A</td><td>B</td></tr><tr><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr>",
-            ),
             (
                 "overwide combined columns",
                 "wrap",
