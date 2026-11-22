@@ -21,7 +21,7 @@ const MAX_PARSE_VISITED_NODES: usize = 50_000;
 
 pub(super) struct ParseBudget {
     visited_nodes: usize,
-    alternate_dtd: bool,
+    document_type: Option<WmlDocumentType>,
     diagnostics: Vec<WmlLoadDiagnostic>,
 }
 
@@ -29,7 +29,7 @@ impl ParseBudget {
     fn new(document_type: Option<WmlDocumentType>) -> Self {
         Self {
             visited_nodes: 0,
-            alternate_dtd: document_type == Some(WmlDocumentType::Alternate),
+            document_type,
             diagnostics: Vec::new(),
         }
     }
@@ -54,7 +54,9 @@ impl ParseBudget {
     }
 
     pub(super) fn note_alternate_dtd_unknown(&mut self, element_name: &str) {
-        if self.alternate_dtd && !is_known_wml_element(element_name) {
+        if self.document_type == Some(WmlDocumentType::Alternate)
+            && !is_known_wml_element(element_name)
+        {
             self.diagnostics.push(WmlLoadDiagnostic::unsupported(format!(
                 "Unsupported alternate-DTD element <{element_name}> was ignored while preserving recognized content"
             )));

@@ -1,3 +1,4 @@
+use crate::layout::flow_layout::table_column_starts;
 use crate::runtime::card::{link_label_fallback, CardGoRequest};
 use crate::runtime::node::{InlineContext, InlineNode, Node, ParagraphMode};
 use crate::runtime::variable::{
@@ -14,6 +15,12 @@ mod trace;
 
 #[cfg(test)]
 pub(crate) use navigation::{parse_script_href, ParsedScriptRef};
+
+pub(crate) struct RuntimeLayoutCard<'a> {
+    pub(crate) id: String,
+    pub(crate) nodes: Vec<Node>,
+    pub(crate) vars: &'a HashMap<String, String>,
+}
 
 impl WmlEngine {
     pub(crate) fn execute_script_unit_internal(&self, bytes: &[u8]) -> ScriptExecutionOutcome {
@@ -740,7 +747,7 @@ impl WmlEngine {
         node_lookup::find_input(card, control_id).map(|input| (input.mask.clone(), input.empty_ok))
     }
 
-    pub(crate) fn runtime_card_for_layout(&self) -> Result<runtime::card::Card, String> {
+    pub(crate) fn runtime_card_for_layout(&self) -> Result<RuntimeLayoutCard<'_>, String> {
         let mut card = self.active_card_internal()?.clone();
         if let Some(edit) = &self.active_input_edit {
             self.apply_input_value_to_card(&mut card, &edit.control_id, &edit.draft_value);
@@ -748,83 +755,107 @@ impl WmlEngine {
         if let Some(edit) = &self.active_select_edit {
             self.apply_select_index_to_card(&mut card, &edit.select_name, edit.draft_index);
         }
-        substitute_card_text_and_links(&mut card, &self.vars)?;
-        let mut mode = ParagraphMode::Wrap;
-        for node in &mut card.nodes {
-            if let Node::Paragraph {
-                mode: paragraph_mode,
-                inline,
-            } = node
-            {
-                if inline.iter().any(InlineNode::is_significant_in_paragraph) {
-                    mode = *paragraph_mode.get_or_insert(mode);
-                }
-            }
-        }
-        Ok(card)
+        substitute_card_text_and_links(&mut card, &self.vars, self.viewport_cols)?;
+        Ok(RuntimeLayoutCard {
+            id: card.id,
+            nodes: card.nodes,
+            vars: &self.vars,
+        })
     }
 }
 
 fn substitute_card_text_and_links(
     card: &mut runtime::card::Card,
     vars: &HashMap<String, String>,
+    viewport_cols: usize,
 ) -> Result<(), String> {
+    let mut inherited_mode = ParagraphMode::Wrap;
     for node in &mut card.nodes {
-        let (inline, context) = match node {
-            Node::Paragraph { inline, .. } => (inline, InlineContext::Paragraph),
-            Node::CardContent(inline) => (inline, InlineContext::Card),
+        let (inline, context, paragraph_mode) = match node {
+            Node::Paragraph { inline, mode } => (inline, InlineContext::Paragraph, Some(mode)),
+            Node::CardContent(inline) => (inline, InlineContext::Card, None),
             Node::Break => continue,
         };
-        let is_blank = |text: &str| text.chars().all(|character| context.is_space(character));
-        for entry in inline {
-            match entry {
-                InlineNode::Text(text) => *text = evaluate_vdata(text, vars)?,
-                InlineNode::Link { text, href } => {
-                    *text = evaluate_vdata(text, vars)?;
-                    *href = evaluate_href(href, vars)?;
-                    if is_blank(text) {
-                        *text = link_label_fallback(href).to_string();
+        let wraps = paragraph_mode
+            .as_ref()
+            .is_none_or(|mode| mode.unwrap_or(inherited_mode) == ParagraphMode::Wrap);
+        for entry in &mut *inline {
+            if let InlineNode::Table(table) = entry {
+                if wraps {
+                    if let Some(starts) = table_column_starts(table, viewport_cols, context, vars) {
+                        table.column_starts = starts;
+                        continue;
                     }
                 }
-                InlineNode::Anchor {
-                    label_lines,
-                    action,
-                } => {
-                    for text in &mut *label_lines {
-                        *text = evaluate_vdata(text, vars)?;
-                    }
-                    let base = match &mut *action {
-                        CardTaskAction::WithSetVars { action, .. } => action.as_mut(),
-                        action => action,
-                    };
-                    if let CardTaskAction::Go { href, .. } = base {
-                        *href = evaluate_href(href, vars)?;
-                    }
-                    if label_lines.iter().all(|text| is_blank(text)) {
-                        let fallback = action.anchor_label_fallback().unwrap_or("Open");
-                        if let Some(first) = label_lines.first_mut() {
-                            *first = fallback.to_string();
-                        }
-                    }
-                }
-                InlineNode::Select { title, options, .. } => {
-                    if let Some(title) = title {
-                        *title = evaluate_vdata(title, vars)?;
-                    }
-                    for option in options {
-                        option.label = evaluate_vdata(&option.label, vars)?;
-                    }
-                }
-                InlineNode::Input {
-                    title: Some(title), ..
-                } => {
-                    *title = evaluate_vdata(title, vars)?;
-                }
-                InlineNode::Break
-                | InlineNode::BreakOpportunity
-                | InlineNode::Input { title: None, .. } => {}
+            }
+            substitute_inline(entry, context, vars)?;
+        }
+        if let Some(mode) = paragraph_mode {
+            if inline.iter().any(InlineNode::is_significant_in_paragraph) {
+                inherited_mode = *mode.get_or_insert(inherited_mode);
             }
         }
+    }
+    Ok(())
+}
+
+pub(crate) fn substitute_inline(
+    entry: &mut InlineNode,
+    context: InlineContext,
+    vars: &HashMap<String, String>,
+) -> Result<(), String> {
+    let is_blank = |text: &str| text.chars().all(|character| context.is_space(character));
+    match entry {
+        InlineNode::Table(table) => {
+            for entry in &mut table.legacy {
+                substitute_inline(entry, context, vars)?;
+            }
+        }
+        InlineNode::Text(text) => *text = evaluate_vdata(text, vars)?,
+        InlineNode::Link { text, href } => {
+            *text = evaluate_vdata(text, vars)?;
+            *href = evaluate_href(href, vars)?;
+            if is_blank(text) {
+                *text = link_label_fallback(href).to_string();
+            }
+        }
+        InlineNode::Anchor {
+            label_lines,
+            action,
+        } => {
+            for text in &mut *label_lines {
+                *text = evaluate_vdata(text, vars)?;
+            }
+            let base = match &mut *action {
+                CardTaskAction::WithSetVars { action, .. } => action.as_mut(),
+                action => action,
+            };
+            if let CardTaskAction::Go { href, .. } = base {
+                *href = evaluate_href(href, vars)?;
+            }
+            if label_lines.iter().all(|text| is_blank(text)) {
+                let fallback = action.anchor_label_fallback().unwrap_or("Open");
+                if let Some(first) = label_lines.first_mut() {
+                    *first = fallback.to_string();
+                }
+            }
+        }
+        InlineNode::Select { title, options, .. } => {
+            if let Some(title) = title {
+                *title = evaluate_vdata(title, vars)?;
+            }
+            for option in options {
+                option.label = evaluate_vdata(&option.label, vars)?;
+            }
+        }
+        InlineNode::Input {
+            title: Some(title), ..
+        } => {
+            *title = evaluate_vdata(title, vars)?;
+        }
+        InlineNode::Break
+        | InlineNode::BreakOpportunity
+        | InlineNode::Input { title: None, .. } => {}
     }
     Ok(())
 }

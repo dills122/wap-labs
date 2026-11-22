@@ -1,0 +1,20 @@
+<!--
+label: WML-201 Table Exact Columns
+description: Displays balanced one- and two-column tables with an inline link.
+goal: Verify shared column starts, authored row order, and activation from a table cell.
+work-items: WML-201
+spec-items: WML-CL-TABLE-EXACT-COLUMNS
+testing-ac:
+- Confirm the single cell stays between the surrounding content and the two authored rows occupy separate lines.
+- Move focus to Open and confirm that activating it displays the destination card.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p><a href="#main">Before</a><table columns="1"><tr><td>Single</td></tr></table>Between<table columns="002"><tr><td>A</td><td><a href="#next">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href="#main">After</a></p>
+  </card>
+  <card id="next">
+    <p>Destination</p>
+  </card>
+</wml>

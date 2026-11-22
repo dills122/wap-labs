@@ -1,13 +1,13 @@
 use crate::runtime::card::{link_label_fallback, CardGoRequest, CardTaskAction};
 use crate::runtime::input_mask::InputMask;
 use crate::runtime::node::{
-    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, SelectOption,
+    is_breakable_space, InlineContext, InlineNode, Node, ParagraphMode, SelectOption, Table,
 };
 use crate::runtime::variable::{decode_literal_dollars, validate as validate_vdata};
 use std::collections::HashMap;
 
 use super::actions::parse_first_task_action_xml;
-use super::xml::{normalize_inline_text, normalize_text, XmlElement, XmlNode};
+use super::xml::{normalize_inline_text, normalize_text, WmlDocumentType, XmlElement, XmlNode};
 use super::ParseBudget;
 
 #[derive(Default)]
@@ -372,6 +372,7 @@ fn map_inline_nodes_recursive(
                         discard_trailing_break_opportunity(out);
                         out.push(InlineNode::Break);
                     }
+                    let start = out.len();
                     map_inline_nodes_recursive(
                         &element.children,
                         pending_text,
@@ -382,6 +383,9 @@ fn map_inline_nodes_recursive(
                         table_boundaries,
                     )?;
                     flush_pending_inline_text(pending_text, out);
+                    if budget.document_type == Some(WmlDocumentType::Wml13) {
+                        retain_balanced_table(element, out, start, depth + 1);
+                    }
                     if boundary.after {
                         discard_trailing_break_opportunity(out);
                         out.push(InlineNode::Break);
@@ -440,6 +444,97 @@ fn map_inline_nodes_recursive(
         }
     }
     Ok(())
+}
+
+fn retain_balanced_table(
+    table: &XmlElement,
+    out: &mut Vec<InlineNode>,
+    start: usize,
+    depth: usize,
+) {
+    if table.attr("align").is_some() {
+        return;
+    }
+    // The validated number can be larger than any machine integer. Counts
+    // outside u32 cannot match an authored row under the existing node budget.
+    let Some(columns) = table
+        .attr("columns")
+        .and_then(|value| value.parse::<u32>().ok())
+    else {
+        return;
+    };
+    let rows = child_elements(table);
+    if !rows
+        .clone()
+        .all(|row| u32::try_from(child_elements(row).count()) == Ok(columns))
+    {
+        return;
+    }
+    // Leave the trailing spacing marker visible to the surrounding inline walker.
+    let trailing_space = matches!(out.last(), Some(InlineNode::BreakOpportunity));
+    let end = out.len() - usize::from(trailing_space);
+    if start >= end {
+        return;
+    }
+
+    // The legacy walk above owns validation, limits, and control IDs. Only
+    // simple cells are parsed again, with the same inline normalization.
+    let mut grid_budget = ParseBudget::new(None);
+    let mut control_ids = ControlIdAllocator::default();
+    let mut boundaries = TableBoundaryPlan {
+        boundaries: Vec::new(),
+        next: 0,
+    };
+    let rows = rows
+        .map(|row| {
+            child_elements(row)
+                .map(|cell| {
+                    let simple = cell.children.iter().all(|child| match child {
+                        XmlNode::Text(_) => true,
+                        XmlNode::Element(link) => {
+                            link.name == "a"
+                                && link
+                                    .children
+                                    .iter()
+                                    .all(|node| matches!(node, XmlNode::Text(_)))
+                        }
+                    });
+                    if !simple {
+                        return None;
+                    }
+                    let mut inline = map_inline_nodes(
+                        &cell.children,
+                        &mut grid_budget,
+                        depth + 2,
+                        &mut control_ids,
+                        &mut boundaries,
+                    )
+                    .ok()?;
+                    match inline.as_slice() {
+                        [InlineNode::Text(_) | InlineNode::Link { .. }] => inline.pop(),
+                        _ => None,
+                    }
+                })
+                .collect()
+        })
+        .collect();
+    let legacy = out.drain(start..end).collect();
+    out.insert(
+        start,
+        InlineNode::Table(Table {
+            columns,
+            rows,
+            legacy,
+            column_starts: Vec::new(),
+        }),
+    );
+}
+
+fn child_elements(element: &XmlElement) -> impl Iterator<Item = &XmlElement> + Clone {
+    element.children.iter().filter_map(|node| match node {
+        XmlNode::Element(child) => Some(child),
+        XmlNode::Text(_) => None,
+    })
 }
 
 fn parse_link_inline_node(
@@ -548,6 +643,7 @@ fn flush_pending_inline_text(pending_text: &mut String, out: &mut Vec<InlineNode
 fn note_break_opportunity(out: &mut Vec<InlineNode>) {
     if out
         .last()
+        .and_then(|node| node.legacy_inline().last())
         .is_some_and(|node| !matches!(node, InlineNode::Break | InlineNode::BreakOpportunity))
     {
         out.push(InlineNode::BreakOpportunity);

@@ -136,8 +136,8 @@ fn retains_authored_paragraph_mode_during_variable_substitution() {
     );
 }
 
-fn paragraph_modes(card: &Card) -> Vec<Option<ParagraphMode>> {
-    card.nodes
+fn paragraph_modes(nodes: &[Node]) -> Vec<Option<ParagraphMode>> {
+    nodes
         .iter()
         .filter_map(|node| match node {
             Node::Paragraph { mode, .. } => Some(*mode),
@@ -147,7 +147,7 @@ fn paragraph_modes(card: &Card) -> Vec<Option<ParagraphMode>> {
 }
 
 fn layout_paragraph_modes(engine: &WmlEngine) -> Vec<Option<ParagraphMode>> {
-    paragraph_modes(&engine.runtime_card_for_layout().unwrap())
+    paragraph_modes(&engine.runtime_card_for_layout().unwrap().nodes)
 }
 
 #[test]
@@ -181,7 +181,7 @@ fn paragraph_mode_inheritance_defaults_and_switches_in_both_directions() {
         ]
     );
     assert_eq!(
-        paragraph_modes(engine.active_card_internal().unwrap()),
+        paragraph_modes(&engine.active_card_internal().unwrap().nodes),
         [None, Some(NoWrap), None, Some(Wrap), None]
     );
 }
@@ -245,7 +245,7 @@ fn paragraph_mode_inheritance_uses_substituted_content_on_each_snapshot() {
             InlineNode::BreakOpportunity,
         ]
     );
-    assert_eq!(paragraph_modes(&card), [Some(NoWrap), Some(Wrap)]);
+    assert_eq!(paragraph_modes(&card.nodes), [Some(NoWrap), Some(Wrap)]);
 
     assert!(engine.set_var("word".into(), "Visible".into()));
     assert_eq!(
