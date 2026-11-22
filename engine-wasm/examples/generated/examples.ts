@@ -4188,6 +4188,185 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"fit\">\n    <p>international&shy;ization</p>\n    <p><a href=\"#wrap\">Wrap</a></p>\n  </card>\n  <card id=\"wrap\">\n    <p>electroencephalo&shy;graphically</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableCombinedVerification",
+    "label": "WML-201 Table Combined Verification",
+    "description": "Displays exact, short, and long rows together in a three-column table.",
+    "goal": "Verify shared column starts, invisible padding, and independent links in the final column.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-EXACT-COLUMNS",
+      "WML-CL-TABLE-SHORT-ROW-PADDING",
+      "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+    ],
+    "testingAc": [
+      "Activate Open table to initialize the substitutions and display the table.",
+      "Confirm that Before and After surround the rows and that the short row displays only Short.",
+      "Confirm that the final cell of the long row reads Fox Go End with one space at each merged boundary.",
+      "Move focus from Short to Go to End and activate each of the merged links to reach its own destination."
+    ],
+    "flows": [
+      {
+        "id": "mixed-table-rows-and-merged-link-activation",
+        "title": "Exact, padded, and aggregated rows share a grid and preserve link order",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-EXACT-COLUMNS",
+          "WML-CL-TABLE-SHORT-ROW-PADDING",
+          "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "start",
+            "focusedLinkIndex": 0
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 0
+              },
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Before"
+                  },
+                  {
+                    "row": 2,
+                    "text": "AMidBase"
+                  },
+                  {
+                    "row": 3,
+                    "text": "Short"
+                  },
+                  {
+                    "row": 4,
+                    "text": "WideXFox Go End"
+                  },
+                  {
+                    "row": 6,
+                    "text": "After"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "first",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "First destination"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 0
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "ArrowDown"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 2
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "keyboard",
+              "key": "Enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "second",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Second destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"start\">\n    <p><anchor>Open table\n      <go href=\"#main\">\n        <setvar name=\"word\" value=\"Fox\"/>\n        <setvar name=\"first\" value=\"Go\"/>\n        <setvar name=\"second\" value=\"End\"/>\n      </go>\n    </anchor></p>\n  </card>\n  <card id=\"main\">\n    <p>Before<table columns=\"3\">\n      <tr><td>A</td><td>Mid</td><td>Base</td></tr>\n      <tr><td><a href=\"#main\">Short</a></td></tr>\n      <tr><td>Wide</td><td>X</td><td>$(word)</td><td><a href=\"#first\">$(first)</a></td><td><a href=\"#second\">$(second)</a></td></tr>\n    </table>After</p>\n  </card>\n  <card id=\"first\"><p><a href=\"#main\">First destination</a></p></card>\n  <card id=\"second\"><p>Second destination</p></card>\n</wml>\n"
+  },
+  {
     "key": "wml201TableExactColumns",
     "label": "WML-201 Table Exact Columns",
     "description": "Displays balanced one- and two-column tables with an inline link.",
