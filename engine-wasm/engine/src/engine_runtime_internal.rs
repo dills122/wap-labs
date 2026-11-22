@@ -789,6 +789,13 @@ fn substitute_card_text_and_links(
                 }
             }
             substitute_inline(entry, context, vars)?;
+            if wraps {
+                if let InlineNode::Table(table) = entry {
+                    // A retained literal-word row can miss the grid only on width
+                    // once its legacy text has passed substitution limits.
+                    table.space_legacy_words();
+                }
+            }
         }
         if let Some(mode) = paragraph_mode {
             if inline.iter().any(InlineNode::is_significant_in_paragraph) {
