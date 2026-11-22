@@ -4472,6 +4472,87 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"1\"><tr><td>Single</td></tr></table>Between<table columns=\"002\"><tr><td>A</td><td><a href=\"#next\">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableLegacyLinkedTextSeparators",
+    "label": "WML-201 Table Legacy Linked Text Separators",
+    "description": "Wraps a one-column table with an interior card link at the Waves 20-column viewport.",
+    "goal": "Verify that the fallback separates adjacent text cells on both sides of the link and preserves the link destination.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+    ],
+    "testingAc": [
+      "Confirm that Red Fox, End, and Up Skyline occupy three successive rows.",
+      "Activate End to display the destination card."
+    ],
+    "flows": [
+      {
+        "id": "legacy-table-fallback-separates-text-beside-a-link",
+        "title": "An overwide table separates text cells on both sides of a card link",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Red Fox"
+              },
+              {
+                "row": 1,
+                "text": "End"
+              },
+              {
+                "row": 2,
+                "text": "Up Skyline"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p mode=\"wrap\"><table columns=\"1\"><tr><td>Red</td><td>Fox</td><td><a href=\"#next\">End</a></td><td>Up</td><td>Skyline</td></tr></table></p>\n  </card>\n  <card id=\"next\"><p>Destination</p></card>\n</wml>\n"
+  },
+  {
     "key": "wml201TableLegacyMergeSeparators",
     "label": "WML-201 Table Legacy Merge Separators",
     "description": "Wraps a single row of surplus literal cells at the Waves 20-column viewport.",
