@@ -1,8 +1,17 @@
 use super::card::CardTaskAction;
 use super::input_mask::InputMask;
+use super::variable::{evaluate, SubstitutionContext};
+use std::collections::HashMap;
 
 pub(crate) const NONBREAKING_SPACE: char = '\u{a0}';
 pub(crate) const TABLE_CELL_SEPARATOR: &str = " ";
+
+pub(crate) fn is_legacy_cell_text(text: &str) -> bool {
+    !text.is_empty()
+        && text.trim() == text
+        && !text.contains(['$', '\u{00ad}'])
+        && !text.chars().any(|ch| ch != ' ' && ch.is_whitespace())
+}
 
 pub(crate) fn is_breakable_space(character: char) -> bool {
     character != NONBREAKING_SPACE && character.is_whitespace()
@@ -58,31 +67,55 @@ pub struct Table {
     // cell in a balanced or short row.
     pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
     pub(crate) legacy: Vec<InlineNode>,
-    // The parser verified a single row of surplus literal text cells in one column.
-    pub(crate) merge_legacy_cells: bool,
+    // The parser verified a single row of surplus text cells in one column.
+    pub(crate) legacy_cell_spacing: Option<LegacyCellSpacing>,
     // Populated only on the layout copy after the whole grid is measured.
     // Columns with no authored cells share the end of the measured columns.
     pub(crate) column_starts: Vec<u32>,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum LegacyCellSpacing {
+    Literals,
+    Variable(usize),
+}
+
 impl Table {
-    pub(crate) fn space_legacy_cells(&mut self) {
-        if !self.merge_legacy_cells {
+    pub(crate) fn space_legacy_cells(&mut self, vars: &HashMap<String, String>) {
+        let Some(spacing) = self.legacy_cell_spacing else {
             return;
-        }
+        };
+        let resolved = match spacing {
+            LegacyCellSpacing::Literals => None,
+            LegacyCellSpacing::Variable(index) => {
+                let Some(InlineNode::Text(reference)) = &self.rows[0][index] else {
+                    unreachable!("the parser retained a text variable");
+                };
+                let Ok(value) = evaluate(reference, vars, SubstitutionContext::VData) else {
+                    return;
+                };
+                if !is_legacy_cell_text(&value) || value.chars().any(char::is_control) {
+                    return;
+                }
+                Some((index, value))
+            }
+        };
         // Keep any leading spacing marker in the legacy projection.
         let Some(InlineNode::Text(text)) = self.legacy.last_mut() else {
             return;
         };
         text.clear();
-        for (index, cell) in self.rows[0].iter().flatten().enumerate() {
-            let InlineNode::Text(cell_text) = cell else {
-                unreachable!("the parser retained only literal text cells");
+        for (index, cell) in self.rows[0].iter().enumerate() {
+            let Some(InlineNode::Text(cell_text)) = cell else {
+                unreachable!("the parser retained only text cells");
             };
             if index > 0 {
                 text.push_str(TABLE_CELL_SEPARATOR);
             }
-            text.push_str(cell_text);
+            match &resolved {
+                Some((variable_index, value)) if index == *variable_index => text.push_str(value),
+                _ => text.push_str(cell_text),
+            }
         }
     }
 }
