@@ -58,16 +58,16 @@ pub struct Table {
     // cell in a balanced or short row.
     pub(crate) rows: Vec<Vec<Option<InlineNode>>>,
     pub(crate) legacy: Vec<InlineNode>,
-    // The parser verified a single row of surplus literal words in one column.
-    pub(crate) merge_legacy_words: bool,
+    // The parser verified a single row of surplus literal text cells in one column.
+    pub(crate) merge_legacy_cells: bool,
     // Populated only on the layout copy after the whole grid is measured.
     // Columns with no authored cells share the end of the measured columns.
     pub(crate) column_starts: Vec<u32>,
 }
 
 impl Table {
-    pub(crate) fn space_legacy_words(&mut self) {
-        if !self.merge_legacy_words {
+    pub(crate) fn space_legacy_cells(&mut self) {
+        if !self.merge_legacy_cells {
             return;
         }
         // Keep any leading spacing marker in the legacy projection.
@@ -76,13 +76,13 @@ impl Table {
         };
         text.clear();
         for (index, cell) in self.rows[0].iter().flatten().enumerate() {
-            let InlineNode::Text(word) = cell else {
-                unreachable!("the parser retained only literal words");
+            let InlineNode::Text(cell_text) = cell else {
+                unreachable!("the parser retained only literal text cells");
             };
             if index > 0 {
                 text.push_str(TABLE_CELL_SEPARATOR);
             }
-            text.push_str(word);
+            text.push_str(cell_text);
         }
     }
 }
