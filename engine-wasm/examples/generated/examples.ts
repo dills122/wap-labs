@@ -4188,6 +4188,111 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\"\n  \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"fit\">\n    <p>international&shy;ization</p>\n    <p><a href=\"#wrap\">Wrap</a></p>\n  </card>\n  <card id=\"wrap\">\n    <p>electroencephalo&shy;graphically</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableExactColumns",
+    "label": "WML-201 Table Exact Columns",
+    "description": "Displays balanced one- and two-column tables with an inline link.",
+    "goal": "Verify shared column starts, authored row order, and activation from a table cell.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-EXACT-COLUMNS"
+    ],
+    "testingAc": [
+      "Confirm the single cell stays between the surrounding content and the two authored rows occupy separate lines.",
+      "Move focus to Open and confirm that activating it displays the destination card."
+    ],
+    "flows": [
+      {
+        "id": "balanced-table-rows-and-link-activation",
+        "title": "Balanced tables preserve authored rows and link activation",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-EXACT-COLUMNS"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Before"
+              },
+              {
+                "row": 2,
+                "text": "Single"
+              },
+              {
+                "row": 4,
+                "text": "Between"
+              },
+              {
+                "row": 6,
+                "text": "AOpen"
+              },
+              {
+                "row": 7,
+                "text": "LongZ"
+              },
+              {
+                "row": 9,
+                "text": "After"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"1\"><tr><td>Single</td></tr></table>Between<table columns=\"002\"><tr><td>A</td><td><a href=\"#next\">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml202TemplateShadowing",
     "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
     "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",
