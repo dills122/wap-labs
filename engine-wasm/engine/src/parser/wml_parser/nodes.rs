@@ -384,7 +384,7 @@ fn map_inline_nodes_recursive(
                     )?;
                     flush_pending_inline_text(pending_text, out);
                     if budget.document_type == Some(WmlDocumentType::Wml13) {
-                        retain_balanced_table(element, out, start, depth + 1);
+                        retain_table_grid(element, out, start, depth + 1);
                     }
                     if boundary.after {
                         discard_trailing_break_opportunity(out);
@@ -446,30 +446,17 @@ fn map_inline_nodes_recursive(
     Ok(())
 }
 
-fn retain_balanced_table(
-    table: &XmlElement,
-    out: &mut Vec<InlineNode>,
-    start: usize,
-    depth: usize,
-) {
+fn retain_table_grid(table: &XmlElement, out: &mut Vec<InlineNode>, start: usize, depth: usize) {
     if table.attr("align").is_some() {
         return;
     }
-    // The validated number can be larger than any machine integer. Counts
-    // outside u32 cannot match an authored row under the existing node budget.
+    // The validated number can exceed the shared native/WASM viewport range.
     let Some(columns) = table
         .attr("columns")
         .and_then(|value| value.parse::<u32>().ok())
     else {
         return;
     };
-    let rows = child_elements(table);
-    if !rows
-        .clone()
-        .all(|row| u32::try_from(child_elements(row).count()) == Ok(columns))
-    {
-        return;
-    }
     // Leave the trailing spacing marker visible to the surrounding inline walker.
     let trailing_space = matches!(out.last(), Some(InlineNode::BreakOpportunity));
     let end = out.len() - usize::from(trailing_space);
@@ -485,39 +472,54 @@ fn retain_balanced_table(
         boundaries: Vec::new(),
         next: 0,
     };
-    let rows = rows
-        .map(|row| {
-            child_elements(row)
-                .map(|cell| {
-                    let simple = cell.children.iter().all(|child| match child {
-                        XmlNode::Text(_) => true,
-                        XmlNode::Element(link) => {
-                            link.name == "a"
-                                && link
-                                    .children
-                                    .iter()
-                                    .all(|node| matches!(node, XmlNode::Text(_)))
-                        }
-                    });
-                    if !simple {
-                        return None;
-                    }
-                    let mut inline = map_inline_nodes(
-                        &cell.children,
-                        &mut grid_budget,
-                        depth + 2,
-                        &mut control_ids,
-                        &mut boundaries,
-                    )
-                    .ok()?;
-                    match inline.as_slice() {
-                        [InlineNode::Text(_) | InlineNode::Link { .. }] => inline.pop(),
-                        _ => None,
-                    }
-                })
-                .collect()
-        })
-        .collect();
+    let mut rows = Vec::new();
+    for row in child_elements(table) {
+        let cells = child_elements(row);
+        let Ok(count) = u32::try_from(cells.clone().count()) else {
+            return;
+        };
+        if count == 0 || count > columns {
+            return;
+        }
+        let mut authored = Vec::new();
+        for cell in cells {
+            if cell.children.is_empty() {
+                authored.push(None);
+                continue;
+            }
+            let simple = cell.children.iter().all(|child| match child {
+                XmlNode::Text(_) => true,
+                XmlNode::Element(link) => {
+                    link.name == "a"
+                        && link
+                            .children
+                            .iter()
+                            .all(|node| matches!(node, XmlNode::Text(_)))
+                }
+            });
+            // Allow only trailing authored empties after supported content.
+            if !simple || matches!(authored.last(), Some(None)) {
+                return;
+            }
+            let Ok(mut inline) = map_inline_nodes(
+                &cell.children,
+                &mut grid_budget,
+                depth + 2,
+                &mut control_ids,
+                &mut boundaries,
+            ) else {
+                return;
+            };
+            match inline.as_slice() {
+                [InlineNode::Text(_) | InlineNode::Link { .. }] => authored.push(inline.pop()),
+                _ => return,
+            }
+        }
+        if matches!(authored.first(), Some(None)) {
+            return;
+        }
+        rows.push(authored);
+    }
     let legacy = out.drain(start..end).collect();
     out.insert(
         start,

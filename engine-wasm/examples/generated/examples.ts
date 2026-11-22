@@ -4293,6 +4293,103 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"1\"><tr><td>Single</td></tr></table>Between<table columns=\"002\"><tr><td>A</td><td><a href=\"#next\">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableShortRowPadding",
+    "label": "WML-201 Table Short Row Padding",
+    "description": "Displays a short first row and a complete second row in a three-column table.",
+    "goal": "Verify that the short row stays in place and keyboard focus crosses the row boundary.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-SHORT-ROW-PADDING"
+    ],
+    "testingAc": [
+      "Confirm the short row displays only Short and the next row displays Wide, Mid, and Open.",
+      "Move focus from Short to Open and activate it to display the destination card."
+    ],
+    "flows": [
+      {
+        "id": "short-table-row-and-link-activation",
+        "title": "A padded row preserves table layout and link order",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-SHORT-ROW-PADDING"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Before"
+              },
+              {
+                "row": 2,
+                "text": "Short"
+              },
+              {
+                "row": 3,
+                "text": "WideMidOpen"
+              },
+              {
+                "row": 5,
+                "text": "After"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p>Before<table columns=\"003\"><tr><td><a href=\"#main\">Short</a></td></tr><tr><td>Wide</td><td>Mid</td><td><a href=\"#next\">Open</a></td></tr></table>After</p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml202TemplateShadowing",
     "label": "WML Deck Metadata, Card Context, and Template Task Shadowing",
     "description": "Root language plus ordered deck access/meta data coexist with a deck-level accept binding that is inherited, overridden, and then masked by a newcontext card binding with the same effective name.",

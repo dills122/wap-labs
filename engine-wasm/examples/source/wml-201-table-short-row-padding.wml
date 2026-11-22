@@ -1,0 +1,20 @@
+<!--
+label: WML-201 Table Short Row Padding
+description: Displays a short first row and a complete second row in a three-column table.
+goal: Verify that the short row stays in place and keyboard focus crosses the row boundary.
+work-items: WML-201
+spec-items: WML-CL-TABLE-SHORT-ROW-PADDING
+testing-ac:
+- Confirm the short row displays only Short and the next row displays Wide, Mid, and Open.
+- Move focus from Short to Open and activate it to display the destination card.
+-->
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.3//EN" "http://www.wapforum.org/DTD/wml13.dtd">
+<wml>
+  <card id="main">
+    <p>Before<table columns="003"><tr><td><a href="#main">Short</a></td></tr><tr><td>Wide</td><td>Mid</td><td><a href="#next">Open</a></td></tr></table>After</p>
+  </card>
+  <card id="next">
+    <p>Destination</p>
+  </card>
+</wml>
