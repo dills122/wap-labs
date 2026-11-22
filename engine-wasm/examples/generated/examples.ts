@@ -4293,6 +4293,115 @@ export const EXAMPLES: HostExample[] = [
     "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"1\"><tr><td>Single</td></tr></table>Between<table columns=\"002\"><tr><td>A</td><td><a href=\"#next\">Open</a></td></tr><tr><td>Long</td><td>Z</td></tr></table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
   },
   {
+    "key": "wml201TableLongRowAggregation",
+    "label": "WML-201 Table Long Row Aggregation",
+    "description": "Displays balanced, short, and long rows in a two-column table, followed by a one-column table.",
+    "goal": "Verify spacing between merged cells and independent link activation.",
+    "workItems": [
+      "WML-201"
+    ],
+    "specItems": [
+      "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+    ],
+    "testingAc": [
+      "Confirm that Fox Go End appears in the final column and Up Go End occupies one row in the one-column table.",
+      "Move focus from Before to the first Go link and activate it to display the destination card."
+    ],
+    "flows": [
+      {
+        "id": "long-table-rows-and-link-activation",
+        "title": "Long rows keep spaces and independent links in the final column",
+        "target": "waves-browser",
+        "setup": {
+          "runMode": "local"
+        },
+        "workItems": [
+          "WML-201"
+        ],
+        "specItems": [
+          "WML-CL-TABLE-LONG-ROW-AGGREGATION"
+        ],
+        "initial": {
+          "state": {
+            "activeCardId": "main",
+            "focusedLinkIndex": 0
+          },
+          "render": {
+            "textAtRows": [
+              {
+                "row": 0,
+                "text": "Before"
+              },
+              {
+                "row": 2,
+                "text": "WideBase"
+              },
+              {
+                "row": 3,
+                "text": "S"
+              },
+              {
+                "row": 4,
+                "text": "AFox Go End"
+              },
+              {
+                "row": 6,
+                "text": "Between"
+              },
+              {
+                "row": 8,
+                "text": "Up Go End"
+              },
+              {
+                "row": 10,
+                "text": "After"
+              }
+            ]
+          }
+        },
+        "steps": [
+          {
+            "action": {
+              "type": "key",
+              "key": "down"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "main",
+                "focusedLinkIndex": 1
+              }
+            }
+          },
+          {
+            "action": {
+              "type": "key",
+              "key": "enter"
+            },
+            "expect": {
+              "state": {
+                "activeCardId": "next",
+                "externalNavigationIntent": null
+              },
+              "traceKinds": [
+                "KEY",
+                "ACTION_FRAGMENT"
+              ],
+              "render": {
+                "textAtRows": [
+                  {
+                    "row": 0,
+                    "text": "Destination"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "wml": "<?xml version=\"1.0\"?>\n<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">\n<wml>\n  <card id=\"main\">\n    <p><a href=\"#main\">Before</a><table columns=\"2\">\n      <tr><td>Wide</td><td>Base</td></tr>\n      <tr><td>S</td></tr>\n      <tr><td>A</td><td>Fox</td><td><a href=\"#next\">Go</a></td><td>End</td></tr>\n    </table>Between<table columns=\"1\">\n      <tr><td><a href=\"#main\">Up</a></td><td><a href=\"#next\">Go</a></td><td>End</td></tr>\n    </table><a href=\"#main\">After</a></p>\n  </card>\n  <card id=\"next\">\n    <p>Destination</p>\n  </card>\n</wml>\n"
+  },
+  {
     "key": "wml201TableShortRowPadding",
     "label": "WML-201 Table Short Row Padding",
     "description": "Displays a short first row and a complete second row in a three-column table.",
