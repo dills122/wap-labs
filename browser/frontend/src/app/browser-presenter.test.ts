@@ -29,6 +29,7 @@ const createRefs = (): BrowserShellRefs => {
   const localExampleGoalEl = document.createElement('p');
   const localExampleTestingAcEl = document.createElement('ul');
   const navigationPhaseBarEl = document.createElement('section');
+  const navigationActivityEl = document.createElement('span');
   navigationPhaseBarEl.hidden = true;
   navigationPhaseBarEl.innerHTML = `
     <strong id="navigation-phase-label"></strong>
@@ -70,7 +71,8 @@ const createRefs = (): BrowserShellRefs => {
     localExampleDescriptionEl,
     localExampleGoalEl,
     localExampleTestingAcEl,
-    navigationPhaseBarEl
+    navigationPhaseBarEl,
+    navigationActivityEl
   };
 };
 
@@ -571,8 +573,11 @@ describe('BrowserPresenter', () => {
       vi.advanceTimersByTime(50);
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
       expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
 
       endProgress();
+      vi.advanceTimersByTime(200);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
       expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
       // Existing content must never be touched by a navigation that never
@@ -583,7 +588,7 @@ describe('BrowserPresenter', () => {
     }
   });
 
-  it('shows a lightweight in-progress hint for a repeat navigation slower than the delay', () => {
+  it('shows quiet toolbar activity for a repeat navigation slower than the delay', () => {
     vi.useFakeTimers();
     try {
       const refs = createRefs();
@@ -593,15 +598,14 @@ describe('BrowserPresenter', () => {
       const endProgress = presenter.beginNavigationProgress(180);
       vi.advanceTimersByTime(180);
 
-      expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(true);
-      expect(refs.viewportEl.getAttribute('aria-busy')).toBe('true');
-      const hint = refs.viewportEl.querySelector('.viewport-navigation-hint');
-      expect(hint).not.toBeNull();
-      expect(hint?.textContent).toBe(WAVES_COPY.shell.navigationPending);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('true');
+      expect(refs.liveAnnouncerEl.textContent).toBe(WAVES_COPY.shell.navigationPending);
+      expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
       // Existing content must stay on screen underneath the hint.
       expect(refs.viewportEl.textContent).toContain('hello');
 
       endProgress();
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
       expect(refs.viewportEl.querySelector('.viewport-navigation-hint')).toBeNull();
       expect(refs.viewportEl.textContent).toContain('hello');
@@ -610,7 +614,28 @@ describe('BrowserPresenter', () => {
     }
   });
 
-  it('cancels a pending in-progress delay if a fresh render arrives first', () => {
+  it('does not let an older navigation clear a newer activity indicator', () => {
+    vi.useFakeTimers();
+    try {
+      const refs = createRefs();
+      const presenter = new BrowserPresenter(refs, initialSession, 20);
+      presenter.drawRenderList({ draw: [{ type: 'text', text: 'hello', x: 0, y: 0 }] });
+      const endOld = presenter.beginNavigationProgress(180);
+      vi.advanceTimersByTime(180);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('true');
+      const endNew = presenter.beginNavigationProgress(180);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
+      endOld();
+      vi.advanceTimersByTime(180);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('true');
+      endNew();
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps activity tied to navigation when an unrelated render arrives', () => {
     vi.useFakeTimers();
     try {
       const refs = createRefs();
@@ -622,11 +647,13 @@ describe('BrowserPresenter', () => {
       presenter.drawRenderList({ draw: [{ type: 'text', text: 'second', x: 0, y: 0 }] });
       vi.advanceTimersByTime(200);
 
-      // The delayed indicator must not appear after the render already landed.
+      // A timer-driven render does not finish a pending request.
       expect(refs.viewportEl.classList.contains('viewport-skeleton')).toBe(false);
+      expect(refs.navigationActivityEl?.dataset.active).toBe('true');
       expect(refs.viewportEl.textContent).toContain('second');
 
       endProgress();
+      expect(refs.navigationActivityEl?.dataset.active).toBe('false');
       expect(refs.viewportEl.textContent).toContain('second');
     } finally {
       vi.useRealTimers();

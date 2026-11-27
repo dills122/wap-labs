@@ -170,7 +170,7 @@ select {
 .omnibox {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) 28px auto;
   order: 5;
   min-width: 0;
   overflow: hidden;
@@ -215,6 +215,36 @@ select {
 .omnibox-actions {
   display: flex;
   border-left: var(--rule-hair) solid var(--host-border);
+}
+
+.navigation-activity {
+  display: grid;
+  width: 28px;
+  place-items: center;
+}
+
+.navigation-activity > span {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--host-accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.navigation-activity[data-active='true'] > span {
+  opacity: 1;
+  animation: navigation-activity-spin 1s steps(8) infinite;
+}
+
+@keyframes navigation-activity-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#btn-fetch-url {
+  width: 4.5rem;
 }
 
 .omnibox-actions .btn {
@@ -1455,5 +1485,10 @@ pre {
 
   .phase-bar-indicator {
     animation: none !important;
+  }
+
+  .navigation-activity > span {
+    animation: none !important;
+    border-top-color: var(--host-accent);
   }
 }
